@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.analyzer.PackageOracleFactory
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleOrigin
-import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.projectSourceModules
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
@@ -37,11 +37,11 @@ class IdePackageOracleFactory(val project: Project) : PackageOracleFactory {
         return when (moduleInfo.platform) {
             JvmPlatform -> when (moduleInfo.moduleOrigin) {
                 ModuleOrigin.LIBRARY -> JavaPackagesOracle(moduleInfo, project)
-                ModuleOrigin.MODULE -> JvmSourceOracle(moduleInfo as ModuleSourceInfo, project)
+                ModuleOrigin.MODULE -> JvmSourceOracle(moduleInfo, project)
                 ModuleOrigin.OTHER -> PackageOracle.Optimistic
             }
             else -> when (moduleInfo.moduleOrigin) {
-                ModuleOrigin.MODULE -> KotlinSourceFilesOracle(moduleInfo as ModuleSourceInfo)
+                ModuleOrigin.MODULE -> KotlinSourceFilesOracle(moduleInfo, project)
                 else -> PackageOracle.Optimistic // binaries for non-jvm platform need some oracles based on their structure
             }
         }
@@ -54,17 +54,18 @@ class IdePackageOracleFactory(val project: Project) : PackageOracleFactory {
         override fun packageExists(fqName: FqName) = facade.findPackage(fqName.asString(), scope) != null
     }
 
-    private class KotlinSourceFilesOracle(private val moduleInfo: ModuleSourceInfo) : PackageOracle {
-        private val cacheService = ServiceManager.getService(moduleInfo.module.project, PerModulePackageCacheService::class.java)
+    private class KotlinSourceFilesOracle(moduleInfo: IdeaModuleInfo, private val project: Project) : PackageOracle {
+        private val cacheService = ServiceManager.getService(project, PerModulePackageCacheService::class.java)
+        private val sourceModules = moduleInfo.projectSourceModules()
 
         override fun packageExists(fqName: FqName): Boolean {
-            return cacheService.packageExists(fqName, moduleInfo)
+            return sourceModules?.any { cacheService.packageExists(fqName, it) } ?: false
         }
     }
 
-    private class JvmSourceOracle(moduleInfo: ModuleSourceInfo, project: Project) : PackageOracle {
+    private class JvmSourceOracle(moduleInfo: IdeaModuleInfo, project: Project) : PackageOracle {
         private val javaPackagesOracle = JavaPackagesOracle(moduleInfo, project)
-        private val kotlinSourceOracle = KotlinSourceFilesOracle(moduleInfo)
+        private val kotlinSourceOracle = KotlinSourceFilesOracle(moduleInfo, project)
 
         override fun packageExists(fqName: FqName) =
             javaPackagesOracle.packageExists(fqName)

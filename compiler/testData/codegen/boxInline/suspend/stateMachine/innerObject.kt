@@ -1,4 +1,5 @@
 // FILE: inlined.kt
+// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
 
@@ -16,9 +17,10 @@ suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit) {
 }
 
 // FILE: inlineSite.kt
+// COMMON_COROUTINES_TEST
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(object: Continuation<Unit> {

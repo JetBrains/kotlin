@@ -3,7 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:JvmVersion
 package kotlin.collections
 
 import java.util.AbstractList
@@ -24,6 +23,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
      * @return the element previously at the specified position.
      */
     abstract override fun set(index: Int, element: E): E
+
     /**
      * Removes an element at the specified [index] from the list.
      *
@@ -33,6 +33,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
      * @return the element that has been removed.
      */
     abstract override fun removeAt(index: Int): E
+
     /**
      * Inserts an element into the list at the specified [index].
      *

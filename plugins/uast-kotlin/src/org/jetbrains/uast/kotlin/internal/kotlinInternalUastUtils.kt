@@ -34,9 +34,11 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -46,6 +48,8 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeApproximator
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.uast.*
@@ -70,7 +74,7 @@ internal fun DeclarationDescriptor.toSource(): PsiElement? {
     }
 }
 
-internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
+internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.SYNCHRONIZED, initializer)
 
 internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: Boolean): PsiType {
     if (this.isError) return UastErrorType
@@ -95,7 +99,7 @@ internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: B
             else -> {
                 val typeConstructor = this.constructor
                 if (typeConstructor is IntegerValueTypeConstructor) {
-                    typeConstructor.supertypes.first().toPsiType(source, element, boxed)
+                    TypeUtils.getDefaultPrimitiveNumberType(typeConstructor).toPsiType(source, element, boxed)
                 } else {
                     null
                 }
@@ -112,7 +116,8 @@ internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: B
 
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
     val typeMappingMode = if (boxed) TypeMappingMode.GENERIC_ARGUMENT else TypeMappingMode.DEFAULT
-    typeMapper.mapType(this, signatureWriter, typeMappingMode)
+    val approximatedType = TypeApproximator().approximateDeclarationType(this, true, element.languageVersionSettings)
+    typeMapper.mapType(approximatedType, signatureWriter, typeMappingMode)
 
     val signature = StringCharacterIterator(signatureWriter.toString())
 

@@ -1,4 +1,8 @@
-@file:kotlin.jvm.JvmVersion
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 
@@ -7,7 +11,6 @@ package kotlin.text
 /**
  * Sets the character at the specified [index] to the specified [value].
  */
-@kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
 public inline operator fun StringBuilder.set(index: Int, value: Char): Unit = this.setCharAt(index, value)
 

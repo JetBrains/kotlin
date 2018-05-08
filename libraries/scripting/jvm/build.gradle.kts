@@ -20,9 +20,15 @@ sourceSets {
 
 kotlin.experimental.coroutines = Coroutines.ENABLE
 
+val jar = runtimeJar()
+val sourcesJar = sourcesJar()
+val javadocJar = javadocJar()
+
 dist()
 
-ideaPlugin()
+ideaPlugin {
+    from(jar, sourcesJar)
+}
 
 standardPublicJars()
 

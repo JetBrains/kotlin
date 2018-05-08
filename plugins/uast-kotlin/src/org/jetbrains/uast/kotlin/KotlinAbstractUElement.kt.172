@@ -26,9 +26,10 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
+import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
-abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement {
+abstract class KotlinAbstractUElement(private val givenParent: UElement?) : KotlinUElementWithComments, UElement {
 
     override val uastParent: UElement? by lz {
         givenParent ?: convertParent()

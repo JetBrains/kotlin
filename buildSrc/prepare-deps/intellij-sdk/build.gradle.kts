@@ -28,8 +28,12 @@ val intellijSeparateSdks: Boolean by rootProject.extra
 val installIntellijCommunity = !intellijUltimateEnabled || intellijSeparateSdks
 val installIntellijUltimate = intellijUltimateEnabled
 
-val platformBaseVersion = intellijVersion.substringBefore('.', "").takeIf { it.isNotEmpty() }
-        ?: error("Invalid IDEA version $intellijVersion")
+val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
+if (intellijVersionDelimiterIndex == -1) {
+    error("Invalid IDEA version $intellijVersion")
+}
+
+val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterIndex)
 
 logger.info("intellijUltimateEnabled: $intellijUltimateEnabled")
 
@@ -93,7 +97,12 @@ dependencies {
         }
     }
     sources("com.jetbrains.intellij.idea:ideaIC:$intellijVersion:sources@jar")
-    `asm-shaded-sources`("asmsources:asm-src:$platformBaseVersion@zip")
+    if (platformBaseVersion == "182") {
+        // There is no asm sources for 182 yet
+        `asm-shaded-sources`("asmsources:asm-src:181@zip")
+    } else {
+        `asm-shaded-sources`("asmsources:asm-src:$platformBaseVersion@zip")
+    }
     `jps-standalone`("com.jetbrains.intellij.idea:jps-standalone:$intellijVersion")
     `jps-build-test`("com.jetbrains.intellij.idea:jps-build-test:$intellijVersion")
     `intellij-core`("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")

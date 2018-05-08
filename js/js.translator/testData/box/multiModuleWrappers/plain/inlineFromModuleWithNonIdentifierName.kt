@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1116
 // MODULE: #my-libr@ry
 // FILE: bar.kt

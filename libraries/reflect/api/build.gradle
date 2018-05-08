@@ -14,7 +14,7 @@ sourceSets {
 }
 
 dependencies {
-    compile project(':kotlin-stdlib')
+    compile project(path: ':kotlin-stdlib', configuration: 'distJar')
     compileOnly project(':core:descriptors')
     compileOnly project(':core:descriptors.jvm')
     compileOnly project(':core:deserialization')

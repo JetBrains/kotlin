@@ -21,43 +21,41 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class JsLookupTrackerTestGenerated extends AbstractJsLookupTrackerTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInJs() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/lookupTracker/js"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("classifierMembers")
     public void testClassifierMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/js/classifierMembers/");
-        doTest(fileName);
+        runTest("jps-plugin/testData/incremental/lookupTracker/js/classifierMembers/");
     }
 
     @TestMetadata("conventions")
     public void testConventions() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/js/conventions/");
-        doTest(fileName);
+        runTest("jps-plugin/testData/incremental/lookupTracker/js/conventions/");
     }
 
     @TestMetadata("expressionType")
     public void testExpressionType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/js/expressionType/");
-        doTest(fileName);
+        runTest("jps-plugin/testData/incremental/lookupTracker/js/expressionType/");
     }
 
     @TestMetadata("localDeclarations")
     public void testLocalDeclarations() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/js/localDeclarations/");
-        doTest(fileName);
+        runTest("jps-plugin/testData/incremental/lookupTracker/js/localDeclarations/");
     }
 
     @TestMetadata("packageDeclarations")
     public void testPackageDeclarations() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/js/packageDeclarations/");
-        doTest(fileName);
+        runTest("jps-plugin/testData/incremental/lookupTracker/js/packageDeclarations/");
     }
 
     @TestMetadata("simple")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/js/simple/");
-        doTest(fileName);
+        runTest("jps-plugin/testData/incremental/lookupTracker/js/simple/");
     }
 }

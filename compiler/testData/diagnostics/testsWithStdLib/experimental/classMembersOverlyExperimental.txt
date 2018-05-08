@@ -1,4 +1,3 @@
-// -- Module: <api> --
 package
 
 package api {
@@ -20,19 +19,12 @@ package api {
         }
     }
 
-    @kotlin.Experimental(changesMayBreak = {Impact.COMPILATION}, level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) public final annotation class ExperimentalAPI : kotlin.Annotation {
+    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) public final annotation class ExperimentalAPI : kotlin.Annotation {
         public constructor ExperimentalAPI()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-}
-
-
-// -- Module: <usage> --
-package
-
-package api {
 }
 
 package usage {

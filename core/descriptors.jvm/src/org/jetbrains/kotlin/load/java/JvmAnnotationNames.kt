@@ -48,6 +48,8 @@ val NOT_NULL_ANNOTATIONS = listOf(
         FqName("io.reactivex.annotations.NonNull")
 )
 
+val NULLABILITY_ANNOTATIONS = NULLABLE_ANNOTATIONS + JAVAX_NONNULL_ANNOTATION + NOT_NULL_ANNOTATIONS
+
 val COMPATQUAL_NULLABLE_ANNOTATION = FqName("org.checkerframework.checker.nullness.compatqual.NullableDecl")
 val COMPATQUAL_NONNULL_ANNOTATION = FqName("org.checkerframework.checker.nullness.compatqual.NonNullDecl")
 

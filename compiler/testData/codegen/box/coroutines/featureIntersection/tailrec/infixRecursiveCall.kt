@@ -1,9 +1,10 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// IGNORE_BACKEND_WITHOUT_CHECK: JS
+// COMMON_COROUTINES_TEST
+// DONT_RUN_GENERATED_CODE: JS
 
 import helpers.*
-import kotlin.coroutines.experimental.*
+import COROUTINES_PACKAGE.*
 
 tailrec suspend infix fun Int.foo(x: Int) {
     if (x == 0) return

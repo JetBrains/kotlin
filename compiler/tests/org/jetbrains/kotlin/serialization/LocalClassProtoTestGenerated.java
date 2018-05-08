@@ -21,49 +21,46 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class LocalClassProtoTestGenerated extends AbstractLocalClassProtoTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInLocal() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/serialization/local"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("annotationsInLocalClass.kt")
     public void testAnnotationsInLocalClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/serialization/local/annotationsInLocalClass.kt");
-        doTest(fileName);
+        runTest("compiler/testData/serialization/local/annotationsInLocalClass.kt");
     }
 
     @TestMetadata("anonymousObject.kt")
     public void testAnonymousObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/serialization/local/anonymousObject.kt");
-        doTest(fileName);
+        runTest("compiler/testData/serialization/local/anonymousObject.kt");
     }
 
     @TestMetadata("deepInnerChain.kt")
     public void testDeepInnerChain() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/serialization/local/deepInnerChain.kt");
-        doTest(fileName);
+        runTest("compiler/testData/serialization/local/deepInnerChain.kt");
     }
 
     @TestMetadata("innerOfLocal.kt")
     public void testInnerOfLocal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/serialization/local/innerOfLocal.kt");
-        doTest(fileName);
+        runTest("compiler/testData/serialization/local/innerOfLocal.kt");
     }
 
     @TestMetadata("localClassInSignature.kt")
     public void testLocalClassInSignature() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/serialization/local/localClassInSignature.kt");
-        doTest(fileName);
+        runTest("compiler/testData/serialization/local/localClassInSignature.kt");
     }
 
     @TestMetadata("simpleInMemberFunction.kt")
     public void testSimpleInMemberFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/serialization/local/simpleInMemberFunction.kt");
-        doTest(fileName);
+        runTest("compiler/testData/serialization/local/simpleInMemberFunction.kt");
     }
 
     @TestMetadata("simpleInTopLevelFunction.kt")
     public void testSimpleInTopLevelFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/serialization/local/simpleInTopLevelFunction.kt");
-        doTest(fileName);
+        runTest("compiler/testData/serialization/local/simpleInTopLevelFunction.kt");
     }
 }

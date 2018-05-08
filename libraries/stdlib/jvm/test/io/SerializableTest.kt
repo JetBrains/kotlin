@@ -1,4 +1,8 @@
-@file:kotlin.jvm.JvmVersion
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.io
 
 import java.io.*
@@ -83,5 +87,5 @@ private fun hexToBytes(value: String): ByteArray = value.split(" ").map { Intege
 public fun <T> deserializeFromHex(value: String) = deserializeFromByteArray<T>(hexToBytes(value))
 
 public fun <T> serializeToHex(value: T) =
-        serializeToByteArray(value).joinToString(" ") { (it.toInt() and 0xFF).toString(16).padStart(2, '0') }
+    serializeToByteArray(value).joinToString(" ") { (it.toInt() and 0xFF).toString(16).padStart(2, '0') }
 

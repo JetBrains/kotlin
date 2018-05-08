@@ -21,16 +21,7 @@ public final class kotlin/ExceptionsKt {
 }
 
 public abstract interface annotation class kotlin/Experimental : java/lang/annotation/Annotation {
-	public abstract fun changesMayBreak ()[Lkotlin/Experimental$Impact;
 	public abstract fun level ()Lkotlin/Experimental$Level;
-}
-
-public final class kotlin/Experimental$Impact : java/lang/Enum {
-	public static final field COMPILATION Lkotlin/Experimental$Impact;
-	public static final field LINKAGE Lkotlin/Experimental$Impact;
-	public static final field RUNTIME Lkotlin/Experimental$Impact;
-	public static fun valueOf (Ljava/lang/String;)Lkotlin/Experimental$Impact;
-	public static fun values ()[Lkotlin/Experimental$Impact;
 }
 
 public final class kotlin/Experimental$Level : java/lang/Enum {
@@ -2079,7 +2070,6 @@ public final class kotlin/coroutines/experimental/intrinsics/IntrinsicsKt {
 	public static final fun createCoroutineUnchecked (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 	public static final fun createCoroutineUnchecked (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 	public static final fun getCOROUTINE_SUSPENDED ()Ljava/lang/Object;
-	public static final fun getCoroutineContext ()Lkotlin/coroutines/experimental/CoroutineContext;
 }
 
 public abstract class kotlin/coroutines/experimental/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/experimental/Continuation {

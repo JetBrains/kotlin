@@ -14,6 +14,5 @@ package kotlin.text
  *
  * Provides the way to use Regex API on the instances of [java.util.regex.Pattern].
  */
-@JvmVersion
 @kotlin.internal.InlineOnly
 public inline fun java.util.regex.Pattern.toRegex(): Regex = Regex(this)

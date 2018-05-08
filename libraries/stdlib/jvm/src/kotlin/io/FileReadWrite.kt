@@ -1,6 +1,11 @@
-@file:JvmVersion
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:JvmMultifileClass
 @file:JvmName("FilesKt")
+
 package kotlin.io
 
 import java.io.*
@@ -13,7 +18,8 @@ import kotlin.internal.*
  * Returns a new [FileReader] for reading the content of this file.
  */
 @kotlin.internal.InlineOnly
-public inline fun File.reader(charset: Charset = Charsets.UTF_8): InputStreamReader = inputStream().reader(charset)
+public inline fun File.reader(charset: Charset = Charsets.UTF_8): InputStreamReader =
+    inputStream().reader(charset)
 
 /**
  * Returns a new [BufferedReader] for reading the content of this file.
@@ -21,13 +27,15 @@ public inline fun File.reader(charset: Charset = Charsets.UTF_8): InputStreamRea
  * @param bufferSize necessary size of the buffer.
  */
 @kotlin.internal.InlineOnly
-public inline fun File.bufferedReader(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader = reader(charset).buffered(bufferSize)
+public inline fun File.bufferedReader(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader =
+    reader(charset).buffered(bufferSize)
 
 /**
  * Returns a new [FileWriter] for writing the content of this file.
  */
 @kotlin.internal.InlineOnly
-public inline fun File.writer(charset: Charset = Charsets.UTF_8): OutputStreamWriter = outputStream().writer(charset)
+public inline fun File.writer(charset: Charset = Charsets.UTF_8): OutputStreamWriter =
+    outputStream().writer(charset)
 
 /**
  * Returns a new [BufferedWriter] for writing the content of this file.
@@ -35,13 +43,15 @@ public inline fun File.writer(charset: Charset = Charsets.UTF_8): OutputStreamWr
  * @param bufferSize necessary size of the buffer.
  */
 @kotlin.internal.InlineOnly
-public inline fun File.bufferedWriter(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter = writer(charset).buffered(bufferSize)
+public inline fun File.bufferedWriter(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter =
+    writer(charset).buffered(bufferSize)
 
 /**
  * Returns a new [PrintWriter] for writing the content of this file.
  */
 @kotlin.internal.InlineOnly
-public inline fun File.printWriter(charset: Charset = Charsets.UTF_8): PrintWriter = PrintWriter(bufferedWriter(charset))
+public inline fun File.printWriter(charset: Charset = Charsets.UTF_8): PrintWriter =
+    PrintWriter(bufferedWriter(charset))
 
 /**
  * Gets the entire content of this file as a byte array.
@@ -195,4 +205,4 @@ public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
  */
 @RequireKotlin("1.2", versionKind = RequireKotlinVersionKind.COMPILER_VERSION, message = "Requires newer compiler version to be inlined correctly.")
 public inline fun <T> File.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T =
-        bufferedReader(charset).use { block(it.lineSequence()) }
+    bufferedReader(charset).use { block(it.lineSequence()) }

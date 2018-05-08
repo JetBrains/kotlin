@@ -115,7 +115,7 @@ class NewKotlinFileAction
 
     companion object {
         private fun findOrCreateTarget(dir: PsiDirectory, name: String, directorySeparators: Array<Char>): Pair<String, PsiDirectory> {
-            var className = name.removeSuffix(".kt")
+            var className = name.substringBeforeLast(".kt")
             var targetDir = dir
 
             for (splitChar in directorySeparators) {

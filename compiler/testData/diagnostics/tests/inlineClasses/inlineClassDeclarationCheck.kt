@@ -3,7 +3,7 @@
 
 inline class A0(val x: Int)
 
-<!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS!>inline class A1<!>
+<!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS!>inline<!> class A1
 inline class A2<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>()<!>
 inline class A3(<!INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!>x: Int<!>)
 inline class A4(<!INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!>var x: Int<!>)
@@ -15,14 +15,14 @@ inline class A9(final val x: Int)
 
 class B1 {
     companion object {
-        <!INLINE_CLASS_NOT_TOP_LEVEL!>inline class C1(val x: Int)<!>
+        <!INLINE_CLASS_NOT_TOP_LEVEL!>inline<!> class C1(val x: Int)
     }
 
-    <!INLINE_CLASS_NOT_TOP_LEVEL!>inline class C2(val x: Int)<!>
+    <!INLINE_CLASS_NOT_TOP_LEVEL!>inline<!> class C2(val x: Int)
 }
 
 object B2 {
-    <!INLINE_CLASS_NOT_TOP_LEVEL!>inline class C3(val x: Int)<!>
+    <!INLINE_CLASS_NOT_TOP_LEVEL!>inline<!> class C3(val x: Int)
 }
 
 final inline class D0(val x: Int)

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // SKIP_TXT
 class StateMachine<Q> internal constructor() {
     fun getInputStub(): Q = null <!UNCHECKED_CAST!>as Q<!>
@@ -12,7 +13,7 @@ class Problem<F>(){
 
     fun createStateMachine(): StateMachine<F> = stateMachine {
         val letter = getInputStub()
-        if (letter is Any)
+        if (<!NI;USELESS_IS_CHECK!>letter is Any<!>)
             println("yes")
     }
 }

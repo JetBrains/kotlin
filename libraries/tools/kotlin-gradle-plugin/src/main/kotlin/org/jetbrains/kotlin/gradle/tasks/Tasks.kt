@@ -198,6 +198,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @TaskAction
     open fun execute(inputs: IncrementalTaskInputs): Unit {
+        // Check that the JDK tools are available in Gradle (fail-fast, instead of a fail during the compiler run):
+        findToolsJar()
+
         val sourceRoots = getSourceRoots()
         val allKotlinSources = sourceRoots.kotlinSourceFiles
 

@@ -1,6 +1,11 @@
-@file:JvmVersion
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:JvmMultifileClass
 @file:JvmName("FilesKt")
+
 package kotlin.io
 
 import java.io.*
@@ -17,7 +22,7 @@ import kotlin.comparisons.*
  * If [directory] is not specified then the default temporary-file directory will be used.
  *
  * @return a file object corresponding to a newly-created directory.
-*
+ *
  * @throws IOException in case of input/output error.
  * @throws IllegalArgumentException if [prefix] is shorter than three symbols.
  */
@@ -39,7 +44,7 @@ public fun createTempDir(prefix: String = "tmp", suffix: String? = null, directo
  * If [directory] is not specified then the default temporary-file directory will be used.
  *
  * @return a file object corresponding to a newly-created file.
-*
+ *
  * @throws IOException in case of input/output error.
  * @throws IllegalArgumentException if [prefix] is shorter than three symbols.
  */
@@ -75,8 +80,8 @@ public val File.nameWithoutExtension: String
  *
  * @throws IllegalArgumentException if this and base paths have different roots.
  */
-public fun File.toRelativeString(base: File): String
-        = toRelativeStringOrNull(base) ?: throw IllegalArgumentException("this and base files have different roots: $this and $base.")
+public fun File.toRelativeString(base: File): String =
+    toRelativeStringOrNull(base) ?: throw IllegalArgumentException("this and base files have different roots: $this and $base.")
 
 /**
  * Calculates the relative path for this file from [base] file.
@@ -96,8 +101,8 @@ public fun File.relativeTo(base: File): File = File(this.toRelativeString(base))
  *
  * @return File with relative path from [base] to this, or `this` if this and base paths have different roots.
  */
-public fun File.relativeToOrSelf(base: File): File
-        = toRelativeStringOrNull(base)?.let(::File) ?: this
+public fun File.relativeToOrSelf(base: File): File =
+    toRelativeStringOrNull(base)?.let(::File) ?: this
 
 /**
  * Calculates the relative path for this file from [base] file.
@@ -106,8 +111,8 @@ public fun File.relativeToOrSelf(base: File): File
  *
  * @return File with relative path from [base] to this, or `null` if this and base paths have different roots.
  */
-public fun File.relativeToOrNull(base: File): File?
-        = toRelativeStringOrNull(base)?.let(::File)
+public fun File.relativeToOrNull(base: File): File? =
+    toRelativeStringOrNull(base)?.let(::File)
 
 
 private fun File.toRelativeStringOrNull(base: File): String? {
@@ -121,7 +126,7 @@ private fun File.toRelativeStringOrNull(base: File): String? {
     val baseCount = baseComponents.size
     val thisCount = thisComponents.size
 
-    val sameCount = run countSame@ {
+    val sameCount = run countSame@{
         var i = 0
         val maxSameCount = minOf(thisCount, baseCount)
         while (i < maxSameCount && thisComponents.segments[i] == baseComponents.segments[i])
@@ -185,9 +190,11 @@ public fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int
         val stillExists = if (!overwrite) true else !target.delete()
 
         if (stillExists) {
-            throw FileAlreadyExistsException(file = this,
-                    other = target,
-                    reason = "The destination file already exists.")
+            throw FileAlreadyExistsException(
+                file = this,
+                other = target,
+                reason = "The destination file already exists."
+            )
         }
     }
 
@@ -250,10 +257,10 @@ private class TerminateException(file: File) : FileSystemException(file) {}
  * @param overwrite `true` if it is allowed to overwrite existing destination files and directories.
  * @return `false` if the copying was terminated, `true` otherwise.
  */
-public fun File.copyRecursively(target: File,
-                                overwrite: Boolean = false,
-                                onError: (File, IOException) -> OnErrorAction =
-                                         { _, exception -> throw exception }
+public fun File.copyRecursively(
+    target: File,
+    overwrite: Boolean = false,
+    onError: (File, IOException) -> OnErrorAction = { _, exception -> throw exception }
 ): Boolean {
     if (!exists()) {
         return onError(this, NoSuchFileException(file = this, reason = "The source file doesn't exist.")) !=
@@ -371,11 +378,11 @@ public fun File.endsWith(other: String): Boolean = endsWith(File(other))
  *
  * @return normalized pathname with . and possibly .. removed.
  */
-public fun File.normalize(): File
-        = with (toComponents()) { root.resolve(segments.normalize().joinToString(File.separator)) }
+public fun File.normalize(): File =
+    with(toComponents()) { root.resolve(segments.normalize().joinToString(File.separator)) }
 
-private fun FilePathComponents.normalize(): FilePathComponents
-        = FilePathComponents(root, segments.normalize())
+private fun FilePathComponents.normalize(): FilePathComponents =
+    FilePathComponents(root, segments.normalize())
 
 private fun List<File>.normalize(): List<File> {
     val list: MutableList<File> = ArrayList(this.size)

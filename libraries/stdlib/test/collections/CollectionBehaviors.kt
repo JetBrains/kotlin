@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package test.collections.behaviors
@@ -21,8 +10,8 @@ import test.collections.CompareContext
 public fun <T> CompareContext<List<T>>.listBehavior() {
     equalityBehavior()
     collectionBehavior()
-    compareProperty( { listIterator() }, { listIteratorBehavior() })
-    compareProperty( { listIterator(0) }, { listIteratorBehavior() })
+    compareProperty({ listIterator() }, { listIteratorBehavior() })
+    compareProperty({ listIterator(0) }, { listIteratorBehavior() })
 
     propertyFails { listIterator(-1) }
     propertyFails { listIterator(size + 1) }
@@ -35,8 +24,8 @@ public fun <T> CompareContext<List<T>>.listBehavior() {
     propertyEquals { indexOf(elementAtOrNull(0)) }
     propertyEquals { lastIndexOf(elementAtOrNull(0)) }
 
-    propertyFails { subList(0, size + 1)}
-    propertyFails { subList(-1, 0)}
+    propertyFails { subList(0, size + 1) }
+    propertyFails { subList(-1, 0) }
     propertyEquals { subList(0, size) }
 }
 
@@ -84,7 +73,7 @@ public fun <K, V> CompareContext<Map<K, V>>.mapBehavior() {
     propertyEquals { size }
     propertyEquals { isEmpty() }
 
-    (object {}).let { propertyEquals { containsKey(it as Any?) }  }
+    (object {}).let { propertyEquals { containsKey(it as Any?) } }
 
     if (expected.isEmpty().not())
         propertyEquals { contains(keys.first()) }
@@ -93,13 +82,13 @@ public fun <K, V> CompareContext<Map<K, V>>.mapBehavior() {
     propertyEquals { containsValue(values.firstOrNull()) }
     propertyEquals { get(null as Any?) }
 
-    compareProperty( { keys }, { setBehavior("keySet") } )
-    compareProperty( { entries }, { setBehavior("entrySet") } )
-    compareProperty( { values }, { collectionBehavior("values") })
+    compareProperty({ keys }, { setBehavior("keySet") })
+    compareProperty({ entries }, { setBehavior("entrySet") })
+    compareProperty({ values }, { collectionBehavior("values") })
 }
 
 public fun <T> CompareContext<T>.equalityBehavior(objectName: String = "") {
-    val prefix = objectName +  if (objectName.isNotEmpty()) "." else ""
+    val prefix = objectName + if (objectName.isNotEmpty()) "." else ""
     equals(objectName)
     propertyEquals(prefix + "hashCode") { hashCode() }
     propertyEquals(prefix + "toString") { toString() }
@@ -107,11 +96,11 @@ public fun <T> CompareContext<T>.equalityBehavior(objectName: String = "") {
 
 
 public fun <T> CompareContext<Collection<T>>.collectionBehavior(objectName: String = "") {
-    val prefix = objectName +  if (objectName.isNotEmpty()) "." else ""
-    propertyEquals (prefix + "size") { size }
-    propertyEquals (prefix + "isEmpty") { isEmpty() }
+    val prefix = objectName + if (objectName.isNotEmpty()) "." else ""
+    propertyEquals(prefix + "size") { size }
+    propertyEquals(prefix + "isEmpty") { isEmpty() }
 
-    (object {}).let { propertyEquals { contains(it as Any?) }  }
+    (object {}).let { propertyEquals { contains(it as Any?) } }
     propertyEquals { contains(firstOrNull()) }
     propertyEquals { containsAll(this) }
 }

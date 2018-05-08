@@ -21,10 +21,13 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineMarkerTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     @TestMetadata("actualEnumEntries")
     public void testActualEnumEntries() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/actualEnumEntries/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/actualEnumEntries/");
     }
 
     public void testAllFilesPresentInMultiModuleLineMarker() throws Exception {
@@ -33,145 +36,121 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
 
     @TestMetadata("expectEnumEntries")
     public void testExpectEnumEntries() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/expectEnumEntries/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/expectEnumEntries/");
     }
 
     @TestMetadata("fromActualAnnotation")
     public void testFromActualAnnotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromActualAnnotation/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromActualAnnotation/");
     }
 
     @TestMetadata("fromActualPrimaryConstructor")
     public void testFromActualPrimaryConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromActualPrimaryConstructor/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromActualPrimaryConstructor/");
     }
 
     @TestMetadata("fromActualSealedClass")
     public void testFromActualSealedClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromActualSealedClass/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromActualSealedClass/");
     }
 
     @TestMetadata("fromActualSecondaryConstructor")
     public void testFromActualSecondaryConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromActualSecondaryConstructor/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromActualSecondaryConstructor/");
     }
 
     @TestMetadata("fromActualTypeAlias")
     public void testFromActualTypeAlias() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromActualTypeAlias/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromActualTypeAlias/");
     }
 
     @TestMetadata("fromClassToAlias")
     public void testFromClassToAlias() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromClassToAlias/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromClassToAlias/");
     }
 
     @TestMetadata("fromClassToJavaAliasInTest")
     public void testFromClassToJavaAliasInTest() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromClassToJavaAliasInTest/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromClassToJavaAliasInTest/");
     }
 
     @TestMetadata("fromCommonToJvmHeader")
     public void testFromCommonToJvmHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromCommonToJvmHeader/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromCommonToJvmHeader/");
     }
 
     @TestMetadata("fromCommonToJvmImpl")
     public void testFromCommonToJvmImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromCommonToJvmImpl/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromCommonToJvmImpl/");
     }
 
     @TestMetadata("fromExpectedAnnotation")
     public void testFromExpectedAnnotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromExpectedAnnotation/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromExpectedAnnotation/");
     }
 
     @TestMetadata("fromExpectedPrimaryConstructor")
     public void testFromExpectedPrimaryConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromExpectedPrimaryConstructor/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromExpectedPrimaryConstructor/");
     }
 
     @TestMetadata("fromExpectedSealedClass")
     public void testFromExpectedSealedClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromExpectedSealedClass/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromExpectedSealedClass/");
     }
 
     @TestMetadata("fromExpectedSecondaryConstructor")
     public void testFromExpectedSecondaryConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromExpectedSecondaryConstructor/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromExpectedSecondaryConstructor/");
     }
 
     @TestMetadata("fromExpectedTypeAlias")
     public void testFromExpectedTypeAlias() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/fromExpectedTypeAlias/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/fromExpectedTypeAlias/");
     }
 
     @TestMetadata("hierarchyWithExpectClassCommonSide")
     public void testHierarchyWithExpectClassCommonSide() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/hierarchyWithExpectClassCommonSide/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/hierarchyWithExpectClassCommonSide/");
     }
 
     @TestMetadata("hierarchyWithExpectClassCommonSideNonJavaIds")
     public void testHierarchyWithExpectClassCommonSideNonJavaIds() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/hierarchyWithExpectClassCommonSideNonJavaIds/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/hierarchyWithExpectClassCommonSideNonJavaIds/");
     }
 
     @TestMetadata("hierarchyWithExpectClassPlatformSide")
     public void testHierarchyWithExpectClassPlatformSide() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/hierarchyWithExpectClassPlatformSide/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/hierarchyWithExpectClassPlatformSide/");
     }
 
     @TestMetadata("kotlinTestAnnotations")
     public void testKotlinTestAnnotations() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/kotlinTestAnnotations/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/kotlinTestAnnotations/");
     }
 
     @TestMetadata("suspendImplInPlatformModules")
     public void testSuspendImplInPlatformModules() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/suspendImplInPlatformModules/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/suspendImplInPlatformModules/");
     }
 
     @TestMetadata("topLevelFunWithKotlinTest")
     public void testTopLevelFunWithKotlinTest() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/topLevelFunWithKotlinTest/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/topLevelFunWithKotlinTest/");
     }
 
     @TestMetadata("transitive")
     public void testTransitive() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/transitive/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/transitive/");
     }
 
     @TestMetadata("transitiveCommon")
     public void testTransitiveCommon() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/transitiveCommon/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/transitiveCommon/");
     }
 
     @TestMetadata("withOverloads")
     public void testWithOverloads() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/withOverloads/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleLineMarker/withOverloads/");
     }
 }

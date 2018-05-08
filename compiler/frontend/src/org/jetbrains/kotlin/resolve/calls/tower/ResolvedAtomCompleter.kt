@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.builtins.replaceReturnType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -88,7 +88,7 @@ class ResolvedAtomCompleter(
     private fun completeLambda(lambda: ResolvedLambdaAtom) {
         val returnType = resultSubstitutor.safeSubstitute(lambda.returnType)
 
-        updateTraceForLambdaReturnType(lambda, trace, returnType)
+        updateTraceForLambda(lambda, trace, returnType)
 
         for (lambdaResult in lambda.resultArguments) {
             val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
@@ -102,7 +102,7 @@ class ResolvedAtomCompleter(
         }
     }
 
-    private fun updateTraceForLambdaReturnType(lambda: ResolvedLambdaAtom, trace: BindingTrace, returnType: UnwrappedType) {
+    private fun updateTraceForLambda(lambda: ResolvedLambdaAtom, trace: BindingTrace, returnType: UnwrappedType) {
         val psiCallArgument = lambda.atom.psiCallArgument
 
         val ktArgumentExpression: KtExpression
@@ -124,7 +124,24 @@ class ResolvedAtomCompleter(
         functionDescriptor.setReturnType(returnType)
 
         val existingLambdaType = trace.getType(ktArgumentExpression) ?: throw AssertionError("No type for resolved lambda argument")
-        trace.recordType(ktArgumentExpression, existingLambdaType.replaceReturnType(returnType))
+        trace.recordType(ktArgumentExpression, resultSubstitutor.substituteKeepAnnotations(existingLambdaType.unwrap()))
+
+        // Mainly this is needed for builder-like inference, when we have type `SomeType<K, V>.() -> Unit` and now we want to update those K, V
+        val extensionReceiverParameter = functionDescriptor.extensionReceiverParameter
+        if (extensionReceiverParameter != null) {
+            require(extensionReceiverParameter is ReceiverParameterDescriptorImpl) {
+                "Extension receiver for anonymous function ($extensionReceiverParameter) should be ReceiverParameterDescriptorImpl"
+            }
+
+            val valueType = extensionReceiverParameter.value.type.unwrap()
+            val newValueType = resultSubstitutor.substituteKeepAnnotations(valueType)
+
+            val newReceiverValue = extensionReceiverParameter.value.replaceType(newValueType)
+
+            functionDescriptor.setExtensionReceiverParameter(
+                ReceiverParameterDescriptorImpl(extensionReceiverParameter.containingDeclaration, newReceiverValue)
+            )
+        }
     }
 
     private fun completeCallableReference(

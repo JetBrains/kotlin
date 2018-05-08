@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // SKIP_MINIFICATION
 // This test assumes that external JS code calls Kotlin code directly
 package foo

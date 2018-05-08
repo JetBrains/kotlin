@@ -47,9 +47,11 @@ import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.idea.refactoring.formatClass
 import org.jetbrains.kotlin.idea.refactoring.formatFunction
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
+import org.jetbrains.kotlin.idea.refactoring.isTrueJavaMethod
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
+import org.jetbrains.kotlin.idea.search.usagesSearch.constructor
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.liftToExpected
@@ -160,10 +162,13 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
                     is SafeDeleteOverrideAnnotation ->
                         usageInfo.smartPointer.element?.let { usageElement ->
-                            if (usageElement.toLightMethods().all { method -> method.findSuperMethods().isEmpty() }) {
-                                KotlinSafeDeleteOverrideAnnotation(usageElement, usageInfo.referencedElement)
+                            when {
+                                usageElement.isTrueJavaMethod() -> usageInfo
+                                usageElement.toLightMethods().all { method -> method.findSuperMethods().isEmpty() } -> {
+                                    KotlinSafeDeleteOverrideAnnotation(usageElement, usageInfo.referencedElement) as UsageInfo
+                                }
+                                else -> null
                             }
-                            else null
                         }
 
                     is SafeDeleteReferenceJavaDeleteUsageInfo ->
@@ -234,8 +239,9 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
         fun findDelegationCallUsages(element: PsiElement) {
             val constructors = when (element) {
-                is PsiClass -> element.constructors
-                is PsiMethod -> arrayOf(element)
+                is KtClass -> element.allConstructors
+                is PsiClass -> element.constructors.toList()
+                is PsiMethod -> listOf(element)
                 else -> return
             }
             for (constructor in constructors) {
@@ -250,10 +256,8 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
         return when (element) {
             is KtClassOrObject -> {
-                element.toLightClass()?.let { klass ->
-                    findDelegationCallUsages(klass)
-                    findUsagesByJavaProcessor(klass, false)
-                } ?: findKotlinDeclarationUsages(element)
+                findDelegationCallUsages(element)
+                findKotlinDeclarationUsages(element)
             }
 
             is KtSecondaryConstructor -> {

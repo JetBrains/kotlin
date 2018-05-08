@@ -101,7 +101,11 @@ class MainFunctionDetector {
 
     companion object {
 
-        fun isMain(descriptor: DeclarationDescriptor, checkJvmStaticAnnotation: Boolean = true): Boolean {
+        fun isMain(
+            descriptor: DeclarationDescriptor,
+            checkJvmStaticAnnotation: Boolean = true,
+            checkReturnType: Boolean = true
+        ): Boolean {
             if (descriptor !is FunctionDescriptor) return false
 
             if (getJVMFunctionName(descriptor) != "main") {
@@ -127,8 +131,7 @@ class MainFunctionDetector {
                 return false
             }
 
-            val returnType = descriptor.returnType
-            if (returnType == null || !KotlinBuiltIns.isUnit(returnType)) return false
+            if (checkReturnType && !isMainReturnType(descriptor)) return false
 
             if (DescriptorUtils.isTopLevelDeclaration(descriptor)) return true
 
@@ -136,6 +139,11 @@ class MainFunctionDetector {
             return containingDeclaration is ClassDescriptor
                     && containingDeclaration.kind.isSingleton
                     && (descriptor.hasJvmStaticAnnotation() || !checkJvmStaticAnnotation)
+        }
+
+        fun isMainReturnType(descriptor: FunctionDescriptor): Boolean {
+            val returnType = descriptor.returnType
+            return returnType != null && KotlinBuiltIns.isUnit(returnType)
         }
 
         private fun getJVMFunctionName(functionDescriptor: FunctionDescriptor): String {

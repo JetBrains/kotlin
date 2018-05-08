@@ -228,7 +228,7 @@ class AnonymousObjectTransformer(
                 val data = header.data
                 val strings = header.strings
                 if (data != null && strings != null) {
-                    AsmUtil.writeAnnotationData(av, data, strings.asList())
+                    AsmUtil.writeAnnotationData(av, data, strings)
                 }
                 return@action
             }

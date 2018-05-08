@@ -21,19 +21,47 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInMultiplatform() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiplatform"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("touchActual")
     public void testTouchActual() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiplatform/touchActual/");
-        doTest(fileName);
+        runTest("jps-plugin/testData/incremental/multiplatform/touchActual/");
     }
 
     @TestMetadata("touchExpect")
     public void testTouchExpect() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiplatform/touchExpect/");
-        doTest(fileName);
+        runTest("jps-plugin/testData/incremental/multiplatform/touchExpect/");
+    }
+
+    @TestMetadata("jps-plugin/testData/incremental/multiplatform/touchActual")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TouchActual extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTouchActual() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiplatform/touchActual"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+    }
+
+    @TestMetadata("jps-plugin/testData/incremental/multiplatform/touchExpect")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TouchExpect extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTouchExpect() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiplatform/touchExpect"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
     }
 }

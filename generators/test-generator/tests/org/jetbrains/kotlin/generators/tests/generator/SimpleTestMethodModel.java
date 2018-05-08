@@ -19,27 +19,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget;
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTargetWithoutCheck;
 
 public class SimpleTestMethodModel implements TestMethodModel {
 
     @NotNull
     private final File rootDir;
     @NotNull
-    private final File file;
-    @NotNull
-    private final String doTestMethodName;
+    protected final File file;
     @NotNull
     private final Pattern filenamePattern;
     @NotNull
-    private final TargetBackend targetBackend;
+    protected final TargetBackend targetBackend;
 
     private final boolean skipIgnored;
 
     public SimpleTestMethodModel(
             @NotNull File rootDir,
             @NotNull File file,
-            @NotNull String doTestMethodName,
             @NotNull Pattern filenamePattern,
             @Nullable Boolean checkFilenameStartsLowerCase,
             @NotNull TargetBackend targetBackend,
@@ -47,7 +43,6 @@ public class SimpleTestMethodModel implements TestMethodModel {
     ) {
         this.rootDir = rootDir;
         this.file = file;
-        this.doTestMethodName = doTestMethodName;
         this.filenamePattern = filenamePattern;
         this.targetBackend = targetBackend;
         this.skipIgnored = skipIgnored;
@@ -66,35 +61,7 @@ public class SimpleTestMethodModel implements TestMethodModel {
     @Override
     public void generateBody(@NotNull Printer p) {
         String filePath = KotlinTestUtils.getFilePath(file) + (file.isDirectory() ? "/" : "");
-        p.println("String fileName = KotlinTestUtils.navigationMetadata(\"", filePath, "\");");
-
-        boolean ignoredTarget = isIgnoredTarget(targetBackend, file);
-
-        if (ignoredTarget) {
-            p.println("if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {");
-            p.pushIndent();
-            p.println(doTestMethodName, "(fileName);");
-            p.println("return;");
-            p.popIndent();
-            p.println("}");
-
-            p.println("try {");
-            p.pushIndent();
-        }
-
-        p.println(doTestMethodName, "(fileName);");
-
-        if (ignoredTarget) {
-            p.popIndent();
-            p.println("}");
-            p.println("catch (Throwable ignore) {");
-            p.pushIndent();
-            p.println("ignore.printStackTrace();");
-            p.println("return;");
-            p.popIndent();
-            p.println("}");
-            p.println("throw new AssertionError(\"Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.\");");
-        }
+        p.println(RunTestMethodModel.METHOD_NAME, "(\"", filePath, "\");");
     }
 
     @Override
@@ -128,8 +95,7 @@ public class SimpleTestMethodModel implements TestMethodModel {
             unescapedName = relativePath + "-" + StringsKt.capitalize(extractedName);
         }
 
-        boolean ignored = isIgnoredTargetWithoutCheck(targetBackend, file) ||
-                          skipIgnored && isIgnoredTarget(targetBackend, file);
+        boolean ignored = skipIgnored && isIgnoredTarget(targetBackend, file);
         return (ignored ? "ignore" : "test") + StringsKt.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
     }
 

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
 public class ReceiverParameterDescriptorImpl extends AbstractReceiverParameterDescriptor {

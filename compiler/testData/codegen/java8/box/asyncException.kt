@@ -1,9 +1,10 @@
 // WITH_RUNTIME
+// COMMON_COROUTINES_TEST
 // FULL_JDK
 
 import java.util.concurrent.CompletableFuture
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 fun exception(v: String): CompletableFuture<String> = CompletableFuture.supplyAsync { throw RuntimeException(v) }
 

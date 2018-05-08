@@ -25,6 +25,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
+import org.gradle.api.artifacts.Dependency
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
 import org.jetbrains.kotlin.gradle.KotlinGradleModel
@@ -37,6 +38,7 @@ import org.jetbrains.plugins.gradle.model.FileCollectionDependency
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
+import java.io.File
 import java.util.*
 
 var DataNode<ModuleData>.isResolved
@@ -84,6 +86,14 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
 
         val gradleIdeaProject = gradleModule.project
 
+        fun getDependencyByFiles(files: Collection<File>) = files
+            .mapTo(HashSet()) {
+                val path = FileUtil.toSystemIndependentName(it.path)
+                val targetSourceSetId = outputToSourceSet?.get(path)?.first ?: return@mapTo null
+                sourceSetByName?.get(targetSourceSetId)?.first
+            }
+            .singleOrNull()
+
         fun DataNode<out ModuleData>.getDependencies(): Collection<DataNode<out ModuleData>> {
             if (useModulePerSourceSet()) {
                 if (sourceSetByName == null) return emptySet()
@@ -91,20 +101,18 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                 return externalSourceSet.dependencies.mapNotNullTo(LinkedHashSet()) { dependency ->
                     when (dependency) {
                         is ExternalProjectDependency -> {
-                            val targetModuleNode = ExternalSystemApiUtil.findFirstRecursively(ideProject) {
-                                (it.data as? ModuleData)?.id == dependency.projectPath
-                            } as DataNode<ModuleData>? ?: return@mapNotNullTo null
-                            ExternalSystemApiUtil.findAll(targetModuleNode, GradleSourceSetData.KEY)
-                                .firstOrNull { it.sourceSetName == "main" }
+                            if (dependency.configurationName == Dependency.DEFAULT_CONFIGURATION) {
+                                val targetModuleNode = ExternalSystemApiUtil.findFirstRecursively(ideProject) {
+                                    (it.data as? ModuleData)?.id == dependency.projectPath
+                                } as DataNode<ModuleData>? ?: return@mapNotNullTo null
+                                ExternalSystemApiUtil.findAll(targetModuleNode, GradleSourceSetData.KEY)
+                                    .firstOrNull { it.sourceSetName == "main" }
+                            } else {
+                                getDependencyByFiles(dependency.projectDependencyArtifacts)
+                            }
                         }
                         is FileCollectionDependency -> {
-                            dependency.files
-                                .mapTo(HashSet()) {
-                                    val path = FileUtil.toSystemIndependentName(it.path)
-                                    val targetSourceSetId = outputToSourceSet?.get(path)?.first ?: return@mapTo null
-                                    sourceSetByName[targetSourceSetId]?.first
-                                }
-                                .singleOrNull()
+                            getDependencyByFiles(dependency.files)
                         }
                         else -> null
                     }

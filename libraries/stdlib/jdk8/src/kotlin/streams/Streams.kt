@@ -50,7 +50,8 @@ public fun DoubleStream.asSequence(): Sequence<Double> = Sequence { iterator() }
  * Creates a sequential [Stream] instance that produces elements from the original sequence.
  */
 @SinceKotlin("1.2")
-public fun <T> Sequence<T>.asStream(): Stream<T> = StreamSupport.stream({ Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED) }, Spliterator.ORDERED, false)
+public fun <T> Sequence<T>.asStream(): Stream<T> =
+    StreamSupport.stream({ Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED) }, Spliterator.ORDERED, false)
 
 /**
  * Returns a [List] containing all elements produced by this stream.

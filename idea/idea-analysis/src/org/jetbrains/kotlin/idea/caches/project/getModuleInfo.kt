@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.isKotlinBinary
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.sure
@@ -61,7 +62,7 @@ fun getLibrarySourcesModuleInfos(project: Project, virtualFile: VirtualFile) =
         virtualFile
     )
 
-fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
+fun collectAllModuleInfosFromIdeaModel(project: Project, platform: TargetPlatform): List<IdeaModuleInfo> {
     val ideaModules = ModuleManager.getInstance(project).modules.toList()
     val modulesSourcesInfos = ideaModules.flatMap(Module::correspondingModuleInfos)
 
@@ -87,8 +88,28 @@ fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
         )
     }
 
-    return modulesSourcesInfos + librariesInfos + sdksInfos
+    return mergePlatformModules(modulesSourcesInfos, platform) + librariesInfos + sdksInfos
 }
+
+private fun mergePlatformModules(
+    allModules: List<IdeaModuleInfo>,
+    platform: TargetPlatform
+): List<IdeaModuleInfo> {
+    if (platform == TargetPlatform.Common) return allModules
+
+    val platformModules =
+        allModules.flatMap { module ->
+            if (module is ModuleSourceInfo && module.platform == platform && module.expectedBy.isNotEmpty())
+                listOf(module to module.expectedBy)
+            else emptyList()
+        }.map { (module, expectedBys) ->
+            PlatformModuleInfo(module, expectedBys)
+        }
+
+    val rest = allModules - platformModules.flatMap { it.containedModules }
+    return rest + platformModules
+}
+
 
 fun getScriptRelatedModuleInfo(project: Project, virtualFile: VirtualFile): ModuleSourceInfo? {
     val projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)

@@ -21,106 +21,99 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+    }
+
     public void testAllFilesPresentInNonLocalReturns() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
     }
 
     @TestMetadata("explicitLocalReturn.kt")
     public void testExplicitLocalReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/explicitLocalReturn.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/explicitLocalReturn.kt");
     }
 
     @TestMetadata("justReturnInLambda.kt")
     public void testJustReturnInLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/justReturnInLambda.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/justReturnInLambda.kt");
     }
 
     @TestMetadata("kt5199.kt")
     public void testKt5199() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/kt5199.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/kt5199.kt");
     }
 
     @TestMetadata("kt8948.kt")
     public void testKt8948() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/kt8948.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/kt8948.kt");
     }
 
     @TestMetadata("kt8948v2.kt")
     public void testKt8948v2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/kt8948v2.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/kt8948v2.kt");
     }
 
     @TestMetadata("nestedNonLocals.kt")
     public void testNestedNonLocals() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/nestedNonLocals.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/nestedNonLocals.kt");
     }
 
     @TestMetadata("noInlineLocalReturn.kt")
     public void testNoInlineLocalReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/noInlineLocalReturn.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/noInlineLocalReturn.kt");
     }
 
     @TestMetadata("nonLocalReturnFromOuterLambda.kt")
     public void testNonLocalReturnFromOuterLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/nonLocalReturnFromOuterLambda.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/nonLocalReturnFromOuterLambda.kt");
     }
 
     @TestMetadata("propertyAccessors.kt")
     public void testPropertyAccessors() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/propertyAccessors.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/propertyAccessors.kt");
     }
 
     @TestMetadata("returnFromFunctionExpr.kt")
     public void testReturnFromFunctionExpr() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/returnFromFunctionExpr.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/returnFromFunctionExpr.kt");
     }
 
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/simple.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/simple.kt");
     }
 
     @TestMetadata("simpleFunctional.kt")
     public void testSimpleFunctional() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/simpleFunctional.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/simpleFunctional.kt");
     }
 
     @TestMetadata("simpleVoid.kt")
     public void testSimpleVoid() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/simpleVoid.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/simpleVoid.kt");
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Deparenthesize extends AbstractNonLocalReturnsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
         public void testAllFilesPresentInDeparenthesize() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
 
         @TestMetadata("bracket.kt")
         public void testBracket() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize/bracket.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize/bracket.kt");
         }
 
         @TestMetadata("labeled.kt")
         public void testLabeled() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize/labeled.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize/labeled.kt");
         }
     }
 
@@ -128,106 +121,99 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TryFinally extends AbstractNonLocalReturnsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
         public void testAllFilesPresentInTryFinally() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
 
         @TestMetadata("kt20433.kt")
         public void testKt20433() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433.kt");
         }
 
         @TestMetadata("kt20433_2.kt")
         public void testKt20433_2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_2.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_2.kt");
         }
 
         @TestMetadata("kt20433_2_void.kt")
         public void testKt20433_2_void() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_2_void.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_2_void.kt");
         }
 
         @TestMetadata("kt20433_void.kt")
         public void testKt20433_void() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_void.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt20433_void.kt");
         }
 
         @TestMetadata("kt6956.kt")
         public void testKt6956() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt6956.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt6956.kt");
         }
 
         @TestMetadata("kt7273.kt")
         public void testKt7273() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt7273.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt7273.kt");
         }
 
         @TestMetadata("nonLocalReturnFromCatchBlock.kt")
         public void testNonLocalReturnFromCatchBlock() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnFromCatchBlock.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnFromCatchBlock.kt");
         }
 
         @TestMetadata("nonLocalReturnFromOuterLambda.kt")
         public void testNonLocalReturnFromOuterLambda() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnFromOuterLambda.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnFromOuterLambda.kt");
         }
 
         @TestMetadata("nonLocalReturnToCatchBlock.kt")
         public void testNonLocalReturnToCatchBlock() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnToCatchBlock.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnToCatchBlock.kt");
         }
 
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CallSite extends AbstractNonLocalReturnsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
             public void testAllFilesPresentInCallSite() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
             @TestMetadata("callSite.kt")
             public void testCallSite() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/callSite.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/callSite.kt");
             }
 
             @TestMetadata("callSiteComplex.kt")
             public void testCallSiteComplex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/callSiteComplex.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/callSiteComplex.kt");
             }
 
             @TestMetadata("exceptionTableSplit.kt")
             public void testExceptionTableSplit() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/exceptionTableSplit.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/exceptionTableSplit.kt");
             }
 
             @TestMetadata("exceptionTableSplitNoReturn.kt")
             public void testExceptionTableSplitNoReturn() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/exceptionTableSplitNoReturn.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/exceptionTableSplitNoReturn.kt");
             }
 
             @TestMetadata("finallyInFinally.kt")
             public void testFinallyInFinally() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/finallyInFinally.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/finallyInFinally.kt");
             }
 
             @TestMetadata("wrongVarInterval.kt")
             public void testWrongVarInterval() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/wrongVarInterval.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/wrongVarInterval.kt");
             }
         }
 
@@ -235,56 +221,52 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Chained extends AbstractNonLocalReturnsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
             public void testAllFilesPresentInChained() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
             @TestMetadata("finallyInFinally.kt")
             public void testFinallyInFinally() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/finallyInFinally.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/finallyInFinally.kt");
             }
 
             @TestMetadata("finallyInFinally2.kt")
             public void testFinallyInFinally2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/finallyInFinally2.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/finallyInFinally2.kt");
             }
 
             @TestMetadata("intReturn.kt")
             public void testIntReturn() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturn.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturn.kt");
             }
 
             @TestMetadata("intReturnComplex.kt")
             public void testIntReturnComplex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex.kt");
             }
 
             @TestMetadata("intReturnComplex2.kt")
             public void testIntReturnComplex2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex2.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex2.kt");
             }
 
             @TestMetadata("intReturnComplex3.kt")
             public void testIntReturnComplex3() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex3.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex3.kt");
             }
 
             @TestMetadata("intReturnComplex4.kt")
             public void testIntReturnComplex4() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex4.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex4.kt");
             }
 
             @TestMetadata("nestedLambda.kt")
             public void testNestedLambda() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/nestedLambda.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/nestedLambda.kt");
             }
         }
 
@@ -292,80 +274,72 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DeclSite extends AbstractNonLocalReturnsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
             public void testAllFilesPresentInDeclSite() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
             @TestMetadata("complex.kt")
             public void testComplex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/complex.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/complex.kt");
             }
 
             @TestMetadata("intReturn.kt")
             public void testIntReturn() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/intReturn.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/intReturn.kt");
             }
 
             @TestMetadata("intReturnComplex.kt")
             public void testIntReturnComplex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/intReturnComplex.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/intReturnComplex.kt");
             }
 
             @TestMetadata("longReturn.kt")
             public void testLongReturn() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/longReturn.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/longReturn.kt");
             }
 
             @TestMetadata("nested.kt")
             public void testNested() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/nested.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/nested.kt");
             }
 
             @TestMetadata("returnInFinally.kt")
             public void testReturnInFinally() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/returnInFinally.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/returnInFinally.kt");
             }
 
             @TestMetadata("returnInTry.kt")
             public void testReturnInTry() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/returnInTry.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/returnInTry.kt");
             }
 
             @TestMetadata("returnInTryAndFinally.kt")
             public void testReturnInTryAndFinally() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/returnInTryAndFinally.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/returnInTryAndFinally.kt");
             }
 
             @TestMetadata("severalInTry.kt")
             public void testSeveralInTry() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/severalInTry.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/severalInTry.kt");
             }
 
             @TestMetadata("severalInTryComplex.kt")
             public void testSeveralInTryComplex() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/severalInTryComplex.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/severalInTryComplex.kt");
             }
 
             @TestMetadata("voidInlineFun.kt")
             public void testVoidInlineFun() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/voidInlineFun.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/voidInlineFun.kt");
             }
 
             @TestMetadata("voidNonLocal.kt")
             public void testVoidNonLocal() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/voidNonLocal.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/voidNonLocal.kt");
             }
         }
 
@@ -373,104 +347,92 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ExceptionTable extends AbstractNonLocalReturnsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
             public void testAllFilesPresentInExceptionTable() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
             @TestMetadata("break.kt")
             public void testBreak() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/break.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/break.kt");
             }
 
             @TestMetadata("continue.kt")
             public void testContinue() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/continue.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/continue.kt");
             }
 
             @TestMetadata("exceptionInFinally.kt")
             public void testExceptionInFinally() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/exceptionInFinally.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/exceptionInFinally.kt");
             }
 
             @TestMetadata("forInFinally.kt")
             public void testForInFinally() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/forInFinally.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/forInFinally.kt");
             }
 
             @TestMetadata("innerAndExternal.kt")
             public void testInnerAndExternal() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/innerAndExternal.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/innerAndExternal.kt");
             }
 
             @TestMetadata("innerAndExternalNested.kt")
             public void testInnerAndExternalNested() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/innerAndExternalNested.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/innerAndExternalNested.kt");
             }
 
             @TestMetadata("innerAndExternalSimple.kt")
             public void testInnerAndExternalSimple() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/innerAndExternalSimple.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/innerAndExternalSimple.kt");
             }
 
             @TestMetadata("nested.kt")
             public void testNested() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/nested.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/nested.kt");
             }
 
             @TestMetadata("nestedWithReturns.kt")
             public void testNestedWithReturns() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/nestedWithReturns.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/nestedWithReturns.kt");
             }
 
             @TestMetadata("nestedWithReturnsSimple.kt")
             public void testNestedWithReturnsSimple() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/nestedWithReturnsSimple.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/nestedWithReturnsSimple.kt");
             }
 
             @TestMetadata("noFinally.kt")
             public void testNoFinally() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/noFinally.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/noFinally.kt");
             }
 
             @TestMetadata("severalCatchClause.kt")
             public void testSeveralCatchClause() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/severalCatchClause.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/severalCatchClause.kt");
             }
 
             @TestMetadata("simpleThrow.kt")
             public void testSimpleThrow() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/simpleThrow.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/simpleThrow.kt");
             }
 
             @TestMetadata("synchonized.kt")
             public void testSynchonized() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/synchonized.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/synchonized.kt");
             }
 
             @TestMetadata("throwInFinally.kt")
             public void testThrowInFinally() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/throwInFinally.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/throwInFinally.kt");
             }
 
             @TestMetadata("tryCatchInFinally.kt")
             public void testTryCatchInFinally() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/tryCatchInFinally.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable/tryCatchInFinally.kt");
             }
         }
 
@@ -478,14 +440,17 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Variables extends AbstractNonLocalReturnsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
             public void testAllFilesPresentInVariables() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
             @TestMetadata("kt7792.kt")
             public void testKt7792() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables/kt7792.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables/kt7792.kt");
             }
         }
     }

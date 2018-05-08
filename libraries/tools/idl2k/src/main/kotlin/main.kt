@@ -1,6 +1,7 @@
 package org.jetbrains.idl2k
 
 import org.antlr.v4.runtime.ANTLRFileStream
+import org.jetbrains.idl2k.util.readCopyrightNoticeFromProfile
 import java.io.*
 import java.net.*
 import java.util.*
@@ -15,6 +16,8 @@ fun main(args: Array<String>) {
         System.exit(1)
         return
     }
+
+    val copyrightNotice = readCopyrightNoticeFromProfile(File("../../../.idea/copyright/apache.xml"))
 
     val repositoryPre = srcDir.walkTopDown().filter { it.isDirectory || it.extension == "idl" }.asSequence().filter { it.isFile }.toList().sortedBy { it.absolutePath }.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
         System.err.flush()
@@ -82,12 +85,10 @@ fun main(args: Array<String>) {
         File(outDir, pkg + ".kt").bufferedWriter().use { w ->
             println("Generating for package $pkg...")
 
-            w.appendln("/*")
-            w.appendln(" * Generated file")
-            w.appendln(" * DO NOT EDIT")
-            w.appendln(" * ")
-            w.appendln(" * See libraries/tools/idl2k for details")
-            w.appendln(" */")
+            w.appendln(copyrightNotice)
+
+            w.appendln("// NOTE: THIS FILE IS AUTO-GENERATED, DO NOT EDIT!")
+            w.appendln("// See libraries/tools/idl2k for details")
 
             w.appendln()
             w.appendln("@file:Suppress(\"NESTED_CLASS_IN_EXTERNAL_INTERFACE\")")

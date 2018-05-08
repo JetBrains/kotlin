@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1125
 // FILE: a.kt
 fun foo(n: Int): String = js("""

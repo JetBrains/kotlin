@@ -36,6 +36,9 @@ open class KotlinUMethod(
         psi: KtLightMethod,
         givenParent: UElement?
 ) : KotlinAbstractUElement(givenParent), UAnnotationMethod, JavaUElementWithComments, PsiMethod by psi {
+    override val comments: List<UComment>
+        get() = super<KotlinAbstractUElement>.comments
+
     override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
 
     override val uastDefaultValue by lz {

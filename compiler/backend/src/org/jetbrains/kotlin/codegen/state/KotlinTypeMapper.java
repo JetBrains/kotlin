@@ -1586,7 +1586,8 @@ public class KotlinTypeMapper {
     public JvmMethodSignature mapScriptSignature(
             @NotNull ScriptDescriptor script,
             @NotNull List<ScriptDescriptor> importedScripts,
-            List<? extends KType> implicitReceivers
+            List<? extends KType> implicitReceivers,
+            List<? extends Pair<String, ? extends KType>> environmentVariables
     ) {
         JvmSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
 
@@ -1598,6 +1599,10 @@ public class KotlinTypeMapper {
 
         if (implicitReceivers.size() > 0) {
             writeParameter(sw, DescriptorUtilsKt.getModule(script).getBuiltIns().getArray().getDefaultType(), null);
+        }
+
+        if (environmentVariables.size() > 0) {
+            writeParameter(sw, DescriptorUtilsKt.getModule(script).getBuiltIns().getMap().getDefaultType(), null);
         }
 
         for (ValueParameterDescriptor valueParameter : script.getUnsubstitutedPrimaryConstructor().getValueParameters()) {

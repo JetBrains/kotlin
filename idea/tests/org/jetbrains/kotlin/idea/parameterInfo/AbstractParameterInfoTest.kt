@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.idea.parameterInfo
 
 import com.intellij.codeInsight.hint.ShowParameterInfoContext
 import com.intellij.codeInsight.hint.ShowParameterInfoHandler
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
+import java.io.File
 
 abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
@@ -50,6 +53,12 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
     }
 
     protected fun doTest(fileName: String) {
+        val prefix = FileUtil.getNameWithoutExtension(PathUtil.getFileName(fileName))
+        val mainFile = File(FileUtil.toSystemDependentName(fileName))
+        mainFile.parentFile
+            .listFiles { dir, name -> name.startsWith("$prefix.") }
+            .forEach { myFixture.configureByFile(FileUtil.toSystemIndependentName(it.path)) }
+
         myFixture.configureByFile(fileName)
 
         val file = myFixture.file as KtFile

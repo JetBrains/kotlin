@@ -1,33 +1,20 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
 import kotlin.test.assertEquals
 
-@Suppress("DEPRECATION_ERROR")
 class Controller {
-    suspend fun controllerSuspendHereOld() =
-        if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
-            "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
+    suspend fun controllerSuspendHere() =
+        if (coroutineContext != EmptyCoroutineContext)
+            "${coroutineContext} != $EmptyCoroutineContext"
         else
             "OK"
 
-    suspend fun controllerMultipleArgsOld(a: Any, b: Any, c: Any) =
-        if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
-            "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
-        else
-            "OK"
-
-    suspend fun controllerSuspendHereNew() =
-        if (kotlin.coroutines.experimental.coroutineContext != EmptyCoroutineContext)
-            "${kotlin.coroutines.experimental.coroutineContext} != $EmptyCoroutineContext"
-        else
-            "OK"
-
-    suspend fun controllerMultipleArgsNew(a: Any, b: Any, c: Any) =
-        if (kotlin.coroutines.experimental.coroutineContext != EmptyCoroutineContext)
-            "${kotlin.coroutines.experimental.coroutineContext} != $EmptyCoroutineContext"
+    suspend fun controllerMultipleArgs(a: Any, b: Any, c: Any) =
+        if (coroutineContext != EmptyCoroutineContext)
+            "${coroutineContext} != $EmptyCoroutineContext"
         else
             "OK"
 
@@ -53,40 +40,22 @@ class Controller {
 
 fun box(): String {
     val c = Controller()
-    var res = c.builder { controllerSuspendHereOld() }
+    var res = c.builder { controllerSuspendHere() }
     if (res != "OK") {
         return "fail 1 $res"
     }
-    res = c.builder { controllerMultipleArgsOld(1, 1, 1) }
+    res = c.builder { controllerMultipleArgs(1, 1, 1) }
     if (res != "OK") {
         return "fail 2 $res"
     }
     res = c.builder {
-        @Suppress("DEPRECATION_ERROR")
-        if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
-            "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
+        if (coroutineContext != EmptyCoroutineContext)
+            "${coroutineContext} != $EmptyCoroutineContext"
         else
             "OK"
     }
     if (res != "OK") {
         return "fail 3 $res"
-    }
-    res = c.builder { controllerSuspendHereNew() }
-    if (res != "OK") {
-        return "fail 4 $res"
-    }
-    res = c.builder { controllerMultipleArgsNew(1, 1, 1) }
-    if (res != "OK") {
-        return "fail 5 $res"
-    }
-    res = c.builder {
-        if (kotlin.coroutines.experimental.coroutineContext != EmptyCoroutineContext)
-            "${kotlin.coroutines.experimental.coroutineContext} != $EmptyCoroutineContext"
-        else
-            "OK"
-    }
-    if (res != "OK") {
-        return "fail 6 $res"
     }
 
     return "OK"

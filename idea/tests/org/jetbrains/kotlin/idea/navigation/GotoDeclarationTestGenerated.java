@@ -21,67 +21,61 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class GotoDeclarationTestGenerated extends AbstractGotoDeclarationTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInGotoDeclaration() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoDeclaration"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("itExtensionLambda.test")
     public void testItExtensionLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoDeclaration/itExtensionLambda.test");
-        doTest(fileName);
+        runTest("idea/testData/navigation/gotoDeclaration/itExtensionLambda.test");
     }
 
     @TestMetadata("itExtensionLambdaInBrackets.test")
     public void testItExtensionLambdaInBrackets() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoDeclaration/itExtensionLambdaInBrackets.test");
-        doTest(fileName);
+        runTest("idea/testData/navigation/gotoDeclaration/itExtensionLambdaInBrackets.test");
     }
 
     @TestMetadata("itInLambdaAsDefaultArgument.test")
     public void testItInLambdaAsDefaultArgument() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoDeclaration/itInLambdaAsDefaultArgument.test");
-        doTest(fileName);
+        runTest("idea/testData/navigation/gotoDeclaration/itInLambdaAsDefaultArgument.test");
     }
 
     @TestMetadata("itInLambdaWithoutCall.test")
     public void testItInLambdaWithoutCall() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoDeclaration/itInLambdaWithoutCall.test");
-        doTest(fileName);
+        runTest("idea/testData/navigation/gotoDeclaration/itInLambdaWithoutCall.test");
     }
 
     @TestMetadata("itParameterInLambda.test")
     public void testItParameterInLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoDeclaration/itParameterInLambda.test");
-        doTest(fileName);
+        runTest("idea/testData/navigation/gotoDeclaration/itParameterInLambda.test");
     }
 
     @TestMetadata("labeledThisToClass.test")
     public void testLabeledThisToClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoDeclaration/labeledThisToClass.test");
-        doTest(fileName);
+        runTest("idea/testData/navigation/gotoDeclaration/labeledThisToClass.test");
     }
 
     @TestMetadata("labeledThisToMemberExtension.test")
     public void testLabeledThisToMemberExtension() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoDeclaration/labeledThisToMemberExtension.test");
-        doTest(fileName);
+        runTest("idea/testData/navigation/gotoDeclaration/labeledThisToMemberExtension.test");
     }
 
     @TestMetadata("thisExtensionFunction.test")
     public void testThisExtensionFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoDeclaration/thisExtensionFunction.test");
-        doTest(fileName);
+        runTest("idea/testData/navigation/gotoDeclaration/thisExtensionFunction.test");
     }
 
     @TestMetadata("thisExtensionLambda.test")
     public void testThisExtensionLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoDeclaration/thisExtensionLambda.test");
-        doTest(fileName);
+        runTest("idea/testData/navigation/gotoDeclaration/thisExtensionLambda.test");
     }
 
     @TestMetadata("thisInExtensionPropertyAccessor.test")
     public void testThisInExtensionPropertyAccessor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoDeclaration/thisInExtensionPropertyAccessor.test");
-        doTest(fileName);
+        runTest("idea/testData/navigation/gotoDeclaration/thisInExtensionPropertyAccessor.test");
     }
 }

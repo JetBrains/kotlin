@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 /*
  * Based on GWT AbstractMap
@@ -57,38 +46,39 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
     }
 
     private var _keys: MutableSet<K>? = null
-    override val keys: MutableSet<K> get() {
-        if (_keys == null) {
-            _keys = object : AbstractMutableSet<K>() {
-                override fun add(element: K): Boolean = throw UnsupportedOperationException("Add is not supported on keys")
-                override fun clear() {
-                    this@AbstractMutableMap.clear()
-                }
-
-                override operator fun contains(element: K): Boolean = containsKey(element)
-
-                override operator fun iterator(): MutableIterator<K> {
-                    val entryIterator = entries.iterator()
-                    return object : MutableIterator<K> {
-                        override fun hasNext(): Boolean = entryIterator.hasNext()
-                        override fun next(): K = entryIterator.next().key
-                        override fun remove() = entryIterator.remove()
+    override val keys: MutableSet<K>
+        get() {
+            if (_keys == null) {
+                _keys = object : AbstractMutableSet<K>() {
+                    override fun add(element: K): Boolean = throw UnsupportedOperationException("Add is not supported on keys")
+                    override fun clear() {
+                        this@AbstractMutableMap.clear()
                     }
-                }
 
-                override fun remove(element: K): Boolean {
-                    if (containsKey(element)) {
-                        this@AbstractMutableMap.remove(element)
-                        return true
+                    override operator fun contains(element: K): Boolean = containsKey(element)
+
+                    override operator fun iterator(): MutableIterator<K> {
+                        val entryIterator = entries.iterator()
+                        return object : MutableIterator<K> {
+                            override fun hasNext(): Boolean = entryIterator.hasNext()
+                            override fun next(): K = entryIterator.next().key
+                            override fun remove() = entryIterator.remove()
+                        }
                     }
-                    return false
-                }
 
-                override val size: Int get() = this@AbstractMutableMap.size
+                    override fun remove(element: K): Boolean {
+                        if (containsKey(element)) {
+                            this@AbstractMutableMap.remove(element)
+                            return true
+                        }
+                        return false
+                    }
+
+                    override val size: Int get() = this@AbstractMutableMap.size
+                }
             }
+            return _keys!!
         }
-        return _keys!!
-    }
 
     actual abstract override fun put(key: K, value: V): V?
 
@@ -99,36 +89,38 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
     }
 
     private var _values: MutableCollection<V>? = null
-    override val values: MutableCollection<V> get() {
-        if (_values == null) {
-            _values = object : AbstractMutableCollection<V>() {
-                override fun add(element: V): Boolean = throw UnsupportedOperationException("Add is not supported on values")
-                override fun clear() = this@AbstractMutableMap.clear()
+    override val values: MutableCollection<V>
+        get() {
+            if (_values == null) {
+                _values = object : AbstractMutableCollection<V>() {
+                    override fun add(element: V): Boolean = throw UnsupportedOperationException("Add is not supported on values")
+                    override fun clear() = this@AbstractMutableMap.clear()
 
-                override operator fun contains(element: V): Boolean = containsValue(element)
+                    override operator fun contains(element: V): Boolean = containsValue(element)
 
-                override operator fun iterator(): MutableIterator<V> {
-                    val entryIterator = entries.iterator()
-                    return object : MutableIterator<V> {
-                        override fun hasNext(): Boolean = entryIterator.hasNext()
-                        override fun next(): V = entryIterator.next().value
-                        override fun remove() = entryIterator.remove()
+                    override operator fun iterator(): MutableIterator<V> {
+                        val entryIterator = entries.iterator()
+                        return object : MutableIterator<V> {
+                            override fun hasNext(): Boolean = entryIterator.hasNext()
+                            override fun next(): V = entryIterator.next().value
+                            override fun remove() = entryIterator.remove()
+                        }
                     }
-                }
 
-                override val size: Int get() = this@AbstractMutableMap.size
+                    override val size: Int get() = this@AbstractMutableMap.size
 
-                // TODO: should we implement them this way? Currently it's unspecified in JVM
-                override fun equals(other: Any?): Boolean {
-                    if (this === other) return true
-                    if (other !is Collection<*>) return false
-                    return AbstractList.orderedEquals(this, other)
+                    // TODO: should we implement them this way? Currently it's unspecified in JVM
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) return true
+                        if (other !is Collection<*>) return false
+                        return AbstractList.orderedEquals(this, other)
+                    }
+
+                    override fun hashCode(): Int = AbstractList.orderedHashCode(this)
                 }
-                override fun hashCode(): Int = AbstractList.orderedHashCode(this)
             }
+            return _values!!
         }
-        return _values!!
-    }
 
     override fun remove(key: K): V? {
         val iter = entries.iterator()

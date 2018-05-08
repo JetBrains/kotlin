@@ -21,62 +21,62 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInResolvedCalls() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true, "enhancedSignatures");
     }
 
     @TestMetadata("explicitReceiverIsDispatchReceiver.kt")
     public void testExplicitReceiverIsDispatchReceiver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/explicitReceiverIsDispatchReceiver.kt");
-        doTest(fileName);
+        runTest("compiler/testData/resolvedCalls/explicitReceiverIsDispatchReceiver.kt");
     }
 
     @TestMetadata("explicitReceiverIsExtensionReceiver.kt")
     public void testExplicitReceiverIsExtensionReceiver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/explicitReceiverIsExtensionReceiver.kt");
-        doTest(fileName);
+        runTest("compiler/testData/resolvedCalls/explicitReceiverIsExtensionReceiver.kt");
     }
 
     @TestMetadata("hasBothDispatchAndExtensionReceivers.kt")
     public void testHasBothDispatchAndExtensionReceivers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/hasBothDispatchAndExtensionReceivers.kt");
-        doTest(fileName);
+        runTest("compiler/testData/resolvedCalls/hasBothDispatchAndExtensionReceivers.kt");
     }
 
     @TestMetadata("hasBothDispatchAndExtensionReceiversWithoutExplicitReceiver.kt")
     public void testHasBothDispatchAndExtensionReceiversWithoutExplicitReceiver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/hasBothDispatchAndExtensionReceiversWithoutExplicitReceiver.kt");
-        doTest(fileName);
+        runTest("compiler/testData/resolvedCalls/hasBothDispatchAndExtensionReceiversWithoutExplicitReceiver.kt");
     }
 
     @TestMetadata("implicitReceiverIsDispatchReceiver.kt")
     public void testImplicitReceiverIsDispatchReceiver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/implicitReceiverIsDispatchReceiver.kt");
-        doTest(fileName);
+        runTest("compiler/testData/resolvedCalls/implicitReceiverIsDispatchReceiver.kt");
     }
 
     @TestMetadata("implicitReceiverIsExtensionReceiver.kt")
     public void testImplicitReceiverIsExtensionReceiver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/implicitReceiverIsExtensionReceiver.kt");
-        doTest(fileName);
+        runTest("compiler/testData/resolvedCalls/implicitReceiverIsExtensionReceiver.kt");
     }
 
     @TestMetadata("impliedThisNoExplicitReceiver.kt")
     public void testImpliedThisNoExplicitReceiver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/impliedThisNoExplicitReceiver.kt");
-        doTest(fileName);
+        runTest("compiler/testData/resolvedCalls/impliedThisNoExplicitReceiver.kt");
     }
 
     @TestMetadata("simpleCall.kt")
     public void testSimpleCall() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/simpleCall.kt");
-        doTest(fileName);
+        runTest("compiler/testData/resolvedCalls/simpleCall.kt");
     }
 
     @TestMetadata("compiler/testData/resolvedCalls/arguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Arguments extends AbstractResolvedCallsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInArguments() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -85,44 +85,42 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FunctionLiterals extends AbstractResolvedCallsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInFunctionLiterals() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("chainedLambdas.kt")
             public void testChainedLambdas() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/functionLiterals/chainedLambdas.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/functionLiterals/chainedLambdas.kt");
             }
 
             @TestMetadata("notInferredLambdaReturnType.kt")
             public void testNotInferredLambdaReturnType() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/functionLiterals/notInferredLambdaReturnType.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/functionLiterals/notInferredLambdaReturnType.kt");
             }
 
             @TestMetadata("notInferredLambdaType.kt")
             public void testNotInferredLambdaType() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/functionLiterals/notInferredLambdaType.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/functionLiterals/notInferredLambdaType.kt");
             }
 
             @TestMetadata("simpleGenericLambda.kt")
             public void testSimpleGenericLambda() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/functionLiterals/simpleGenericLambda.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/functionLiterals/simpleGenericLambda.kt");
             }
 
             @TestMetadata("simpleLambda.kt")
             public void testSimpleLambda() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/functionLiterals/simpleLambda.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/functionLiterals/simpleLambda.kt");
             }
 
             @TestMetadata("unmappedLambda.kt")
             public void testUnmappedLambda() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/functionLiterals/unmappedLambda.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/functionLiterals/unmappedLambda.kt");
             }
         }
 
@@ -130,32 +128,32 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class GenericCalls extends AbstractResolvedCallsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInGenericCalls() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/genericCalls"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("inferredParameter.kt")
             public void testInferredParameter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/genericCalls/inferredParameter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/genericCalls/inferredParameter.kt");
             }
 
             @TestMetadata("simpleGeneric.kt")
             public void testSimpleGeneric() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/genericCalls/simpleGeneric.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/genericCalls/simpleGeneric.kt");
             }
 
             @TestMetadata("uninferredParameter.kt")
             public void testUninferredParameter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/genericCalls/uninferredParameter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/genericCalls/uninferredParameter.kt");
             }
 
             @TestMetadata("uninferredParameterTypeMismatch.kt")
             public void testUninferredParameterTypeMismatch() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/genericCalls/uninferredParameterTypeMismatch.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/genericCalls/uninferredParameterTypeMismatch.kt");
             }
         }
 
@@ -163,20 +161,22 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NamedArguments extends AbstractResolvedCallsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInNamedArguments() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/namedArguments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("positionedAfterNamed.kt")
             public void testPositionedAfterNamed() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/namedArguments/positionedAfterNamed.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/namedArguments/positionedAfterNamed.kt");
             }
 
             @TestMetadata("shiftedArgsMatch.kt")
             public void testShiftedArgsMatch() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/namedArguments/shiftedArgsMatch.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/namedArguments/shiftedArgsMatch.kt");
             }
         }
 
@@ -184,32 +184,32 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class OneArgument extends AbstractResolvedCallsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInOneArgument() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/oneArgument"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("argumentHasNoType.kt")
             public void testArgumentHasNoType() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/oneArgument/argumentHasNoType.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/oneArgument/argumentHasNoType.kt");
             }
 
             @TestMetadata("simpleMatch.kt")
             public void testSimpleMatch() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/oneArgument/simpleMatch.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/oneArgument/simpleMatch.kt");
             }
 
             @TestMetadata("typeMismatch.kt")
             public void testTypeMismatch() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/oneArgument/typeMismatch.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/oneArgument/typeMismatch.kt");
             }
 
             @TestMetadata("unmappedArgument.kt")
             public void testUnmappedArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/oneArgument/unmappedArgument.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/oneArgument/unmappedArgument.kt");
             }
         }
 
@@ -217,20 +217,22 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class RealExamples extends AbstractResolvedCallsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInRealExamples() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/realExamples"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("emptyList.kt")
             public void testEmptyList() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/realExamples/emptyList.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/realExamples/emptyList.kt");
             }
 
             @TestMetadata("emptyMutableList.kt")
             public void testEmptyMutableList() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/realExamples/emptyMutableList.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/realExamples/emptyMutableList.kt");
             }
         }
 
@@ -238,14 +240,17 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SeveralCandidates extends AbstractResolvedCallsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInSeveralCandidates() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/arguments/severalCandidates"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("mostSpecific.kt")
             public void testMostSpecific() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/arguments/severalCandidates/mostSpecific.kt");
-                doTest(fileName);
+                runTest("compiler/testData/resolvedCalls/arguments/severalCandidates/mostSpecific.kt");
             }
         }
     }
@@ -254,26 +259,27 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DifferentCallElements extends AbstractResolvedCallsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInDifferentCallElements() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/differentCallElements"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("annotationCall.kt")
         public void testAnnotationCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/differentCallElements/annotationCall.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/differentCallElements/annotationCall.kt");
         }
 
         @TestMetadata("delegatorToSuperCall.kt")
         public void testDelegatorToSuperCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/differentCallElements/delegatorToSuperCall.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/differentCallElements/delegatorToSuperCall.kt");
         }
 
         @TestMetadata("simpleArrayAccess.kt")
         public void testSimpleArrayAccess() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/differentCallElements/simpleArrayAccess.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/differentCallElements/simpleArrayAccess.kt");
         }
     }
 
@@ -281,44 +287,42 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Dynamic extends AbstractResolvedCallsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInDynamic() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/dynamic"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("explicitReceiverIsDispatchReceiver.kt")
         public void testExplicitReceiverIsDispatchReceiver() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/dynamic/explicitReceiverIsDispatchReceiver.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/dynamic/explicitReceiverIsDispatchReceiver.kt");
         }
 
         @TestMetadata("explicitReceiverIsExtensionReceiver.kt")
         public void testExplicitReceiverIsExtensionReceiver() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/dynamic/explicitReceiverIsExtensionReceiver.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/dynamic/explicitReceiverIsExtensionReceiver.kt");
         }
 
         @TestMetadata("hasBothDispatchAndExtensionReceivers.kt")
         public void testHasBothDispatchAndExtensionReceivers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/dynamic/hasBothDispatchAndExtensionReceivers.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/dynamic/hasBothDispatchAndExtensionReceivers.kt");
         }
 
         @TestMetadata("hasBothDispatchAndExtensionReceiversWithoutExplicitReceiver.kt")
         public void testHasBothDispatchAndExtensionReceiversWithoutExplicitReceiver() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/dynamic/hasBothDispatchAndExtensionReceiversWithoutExplicitReceiver.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/dynamic/hasBothDispatchAndExtensionReceiversWithoutExplicitReceiver.kt");
         }
 
         @TestMetadata("implicitReceiverIsDispatchReceiver.kt")
         public void testImplicitReceiverIsDispatchReceiver() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/dynamic/implicitReceiverIsDispatchReceiver.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/dynamic/implicitReceiverIsDispatchReceiver.kt");
         }
 
         @TestMetadata("implicitReceiverIsExtensionReceiver.kt")
         public void testImplicitReceiverIsExtensionReceiver() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/dynamic/implicitReceiverIsExtensionReceiver.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/dynamic/implicitReceiverIsExtensionReceiver.kt");
         }
     }
 
@@ -326,44 +330,42 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FunctionTypes extends AbstractResolvedCallsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInFunctionTypes() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/functionTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("invokeForExtensionFunctionType.kt")
         public void testInvokeForExtensionFunctionType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/functionTypes/invokeForExtensionFunctionType.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/functionTypes/invokeForExtensionFunctionType.kt");
         }
 
         @TestMetadata("invokeForFunctionType.kt")
         public void testInvokeForFunctionType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/functionTypes/invokeForFunctionType.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/functionTypes/invokeForFunctionType.kt");
         }
 
         @TestMetadata("valOfExtensionFunctionType.kt")
         public void testValOfExtensionFunctionType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/functionTypes/valOfExtensionFunctionType.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/functionTypes/valOfExtensionFunctionType.kt");
         }
 
         @TestMetadata("valOfExtensionFunctionTypeInvoke.kt")
         public void testValOfExtensionFunctionTypeInvoke() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/functionTypes/valOfExtensionFunctionTypeInvoke.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/functionTypes/valOfExtensionFunctionTypeInvoke.kt");
         }
 
         @TestMetadata("valOfFunctionType.kt")
         public void testValOfFunctionType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/functionTypes/valOfFunctionType.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/functionTypes/valOfFunctionType.kt");
         }
 
         @TestMetadata("valOfFunctionTypeInvoke.kt")
         public void testValOfFunctionTypeInvoke() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/functionTypes/valOfFunctionTypeInvoke.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/functionTypes/valOfFunctionTypeInvoke.kt");
         }
     }
 
@@ -371,68 +373,62 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Invoke extends AbstractResolvedCallsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInInvoke() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/invoke"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("bothReceivers.kt")
         public void testBothReceivers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/bothReceivers.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/invoke/bothReceivers.kt");
         }
 
         @TestMetadata("dispatchReceiverAsReceiverForInvoke.kt")
         public void testDispatchReceiverAsReceiverForInvoke() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/dispatchReceiverAsReceiverForInvoke.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/invoke/dispatchReceiverAsReceiverForInvoke.kt");
         }
 
         @TestMetadata("extensionReceiverAsReceiverForInvoke.kt")
         public void testExtensionReceiverAsReceiverForInvoke() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/extensionReceiverAsReceiverForInvoke.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/invoke/extensionReceiverAsReceiverForInvoke.kt");
         }
 
         @TestMetadata("implicitReceiverForInvoke.kt")
         public void testImplicitReceiverForInvoke() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/implicitReceiverForInvoke.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/invoke/implicitReceiverForInvoke.kt");
         }
 
         @TestMetadata("invokeOnClassObject1.kt")
         public void testInvokeOnClassObject1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/invokeOnClassObject1.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/invoke/invokeOnClassObject1.kt");
         }
 
         @TestMetadata("invokeOnClassObject2.kt")
         public void testInvokeOnClassObject2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/invokeOnClassObject2.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/invoke/invokeOnClassObject2.kt");
         }
 
         @TestMetadata("invokeOnEnumEntry1.kt")
         public void testInvokeOnEnumEntry1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/invokeOnEnumEntry1.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/invoke/invokeOnEnumEntry1.kt");
         }
 
         @TestMetadata("invokeOnEnumEntry2.kt")
         public void testInvokeOnEnumEntry2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/invokeOnEnumEntry2.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/invoke/invokeOnEnumEntry2.kt");
         }
 
         @TestMetadata("invokeOnObject1.kt")
         public void testInvokeOnObject1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/invokeOnObject1.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/invoke/invokeOnObject1.kt");
         }
 
         @TestMetadata("invokeOnObject2.kt")
         public void testInvokeOnObject2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/invoke/invokeOnObject2.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/invoke/invokeOnObject2.kt");
         }
     }
 
@@ -440,26 +436,27 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ObjectsAndClassObjects extends AbstractResolvedCallsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInObjectsAndClassObjects() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/objectsAndClassObjects"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classObject.kt")
         public void testClassObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/objectsAndClassObjects/classObject.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/objectsAndClassObjects/classObject.kt");
         }
 
         @TestMetadata("kt5308IntRangeConstant.kt")
         public void testKt5308IntRangeConstant() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/objectsAndClassObjects/kt5308IntRangeConstant.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/objectsAndClassObjects/kt5308IntRangeConstant.kt");
         }
 
         @TestMetadata("object.kt")
         public void testObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/objectsAndClassObjects/object.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/objectsAndClassObjects/object.kt");
         }
     }
 
@@ -467,14 +464,17 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RealExamples extends AbstractResolvedCallsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInRealExamples() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/realExamples"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("stringPlusInBuilders.kt")
         public void testStringPlusInBuilders() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/realExamples/stringPlusInBuilders.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/realExamples/stringPlusInBuilders.kt");
         }
     }
 
@@ -482,20 +482,22 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Resolve extends AbstractResolvedCallsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInResolve() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/resolve"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("mostSpecificUninferredParam.kt")
         public void testMostSpecificUninferredParam() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/resolve/mostSpecificUninferredParam.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/resolve/mostSpecificUninferredParam.kt");
         }
 
         @TestMetadata("mostSpecificWithLambda.kt")
         public void testMostSpecificWithLambda() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/resolve/mostSpecificWithLambda.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/resolve/mostSpecificWithLambda.kt");
         }
     }
 
@@ -503,92 +505,82 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SecondaryConstructors extends AbstractResolvedCallsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInSecondaryConstructors() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classWithGenerics.kt")
         public void testClassWithGenerics() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/classWithGenerics.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/classWithGenerics.kt");
         }
 
         @TestMetadata("classWithGenerics2.kt")
         public void testClassWithGenerics2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/classWithGenerics2.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/classWithGenerics2.kt");
         }
 
         @TestMetadata("classWithGenerics3.kt")
         public void testClassWithGenerics3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/classWithGenerics3.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/classWithGenerics3.kt");
         }
 
         @TestMetadata("explicitPrimaryArgs.kt")
         public void testExplicitPrimaryArgs() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/explicitPrimaryArgs.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/explicitPrimaryArgs.kt");
         }
 
         @TestMetadata("explicitPrimaryCallSecondary.kt")
         public void testExplicitPrimaryCallSecondary() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/explicitPrimaryCallSecondary.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/explicitPrimaryCallSecondary.kt");
         }
 
         @TestMetadata("explicitPrimaryNoArgs.kt")
         public void testExplicitPrimaryNoArgs() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/explicitPrimaryNoArgs.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/explicitPrimaryNoArgs.kt");
         }
 
         @TestMetadata("implicitPrimary.kt")
         public void testImplicitPrimary() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/implicitPrimary.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/implicitPrimary.kt");
         }
 
         @TestMetadata("overload1.kt")
         public void testOverload1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/overload1.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/overload1.kt");
         }
 
         @TestMetadata("overload2.kt")
         public void testOverload2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/overload2.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/overload2.kt");
         }
 
         @TestMetadata("overload3.kt")
         public void testOverload3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/overload3.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/overload3.kt");
         }
 
         @TestMetadata("overloadDefault.kt")
         public void testOverloadDefault() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/overloadDefault.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/overloadDefault.kt");
         }
 
         @TestMetadata("overloadNamed.kt")
         public void testOverloadNamed() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/overloadNamed.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/overloadNamed.kt");
         }
 
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/simple.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/simple.kt");
         }
 
         @TestMetadata("varargs.kt")
         public void testVarargs() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/secondaryConstructors/varargs.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/secondaryConstructors/varargs.kt");
         }
     }
 
@@ -596,38 +588,37 @@ public class ResolvedCallsTestGenerated extends AbstractResolvedCallsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ThisOrSuper extends AbstractResolvedCallsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInThisOrSuper() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/thisOrSuper"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("labeledSuper.kt")
         public void testLabeledSuper() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/thisOrSuper/labeledSuper.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/thisOrSuper/labeledSuper.kt");
         }
 
         @TestMetadata("labeledThis.kt")
         public void testLabeledThis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/thisOrSuper/labeledThis.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/thisOrSuper/labeledThis.kt");
         }
 
         @TestMetadata("simpleSuper.kt")
         public void testSimpleSuper() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/thisOrSuper/simpleSuper.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/thisOrSuper/simpleSuper.kt");
         }
 
         @TestMetadata("simpleThis.kt")
         public void testSimpleThis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/thisOrSuper/simpleThis.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/thisOrSuper/simpleThis.kt");
         }
 
         @TestMetadata("thisInExtensionFunction.kt")
         public void testThisInExtensionFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolvedCalls/thisOrSuper/thisInExtensionFunction.kt");
-            doTest(fileName);
+            runTest("compiler/testData/resolvedCalls/thisOrSuper/thisInExtensionFunction.kt");
         }
     }
 }

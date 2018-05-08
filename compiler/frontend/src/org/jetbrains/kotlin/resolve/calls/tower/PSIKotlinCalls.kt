@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyForInvoke
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val KotlinCall.psiKotlinCall: PSIKotlinCall
     get() {
@@ -34,6 +38,9 @@ val KotlinCall.psiKotlinCall: PSIKotlinCall
         }
         return this as PSIKotlinCall
     }
+
+fun <D : CallableDescriptor> KotlinCall.getResolvedPsiKotlinCall(trace: BindingTrace): NewResolvedCallImpl<D>? =
+    psiKotlinCall.psiCall.getResolvedCall(trace.bindingContext) as? NewResolvedCallImpl<D>
 
 abstract class PSIKotlinCall : KotlinCall {
     abstract val psiCall: Call
@@ -50,6 +57,7 @@ class PSIKotlinCallImpl(
     override val psiCall: Call,
     override val tracingStrategy: TracingStrategy,
     override val explicitReceiver: ReceiverKotlinCallArgument?,
+    override val dispatchReceiverForInvokeExtension: ReceiverKotlinCallArgument?,
     override val name: Name,
     override val typeArguments: List<TypeArgument>,
     override val argumentsInParenthesis: List<KotlinCallArgument>,

@@ -1,8 +1,9 @@
 // FILE: test.kt
+// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
 
-import kotlin.coroutines.experimental.*
+import COROUTINES_PACKAGE.*
 
 class Controller {
     var res = "FAIL 1"
@@ -15,8 +16,9 @@ suspend inline fun test(controller: Controller = defaultController, c: suspend C
 }
 
 // FILE: box.kt
+// COMMON_COROUTINES_TEST
 
-import kotlin.coroutines.experimental.*
+import COROUTINES_PACKAGE.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(object: Continuation<Unit> {

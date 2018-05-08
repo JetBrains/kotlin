@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
-    override fun visitProperty(declaration: IrProperty, context: JsGenerationContext): JsStatement {
-        return jsVar(declaration.name, declaration.backingField?.initializer?.expression, context)
-    }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsStatement {
         return declaration.accept(IrFunctionToJsTransformer(), context).makeStmt()
@@ -28,7 +25,7 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
     }
 
     override fun visitField(declaration: IrField, context: JsGenerationContext): JsStatement {
-        val fieldName = declaration.name.toJsName()
+        val fieldName = context.getNameForSymbol(declaration.symbol)
         val initExpression =
             declaration.initializer?.accept(IrElementToJsExpressionTransformer(), context) ?: JsPrefixOperation(
                 JsUnaryOperator.VOID,

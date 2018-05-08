@@ -7,26 +7,26 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ReflectionTypes
+import org.jetbrains.kotlin.backend.common.descriptors.KnownPackageFragmentDescriptor
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.backend.js.JsDescriptorsFactory
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.Variance
 
 class JsIrBackendContext(
     val module: ModuleDescriptor,
@@ -34,8 +34,13 @@ class JsIrBackendContext(
     irModuleFragment: IrModuleFragment,
     symbolTable: SymbolTable
 ) : CommonBackendContext {
+
+    val intrinsics = JsIntrinsics(module, irBuiltIns, symbolTable)
+
     override val builtIns = module.builtIns
-    override val sharedVariablesManager = JsSharedVariablesManager(builtIns)
+    override val sharedVariablesManager =
+        JsSharedVariablesManager(builtIns, KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal")))
+    override val descriptorsFactory = JsDescriptorsFactory(builtIns)
 
     override val reflectionTypes: ReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
         // TODO
@@ -77,11 +82,11 @@ class JsIrBackendContext(
             override val stringBuilder
                 get() = TODO("not implemented")
             override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
-                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+                get() = TODO("not implemented")
             override val coroutineImpl: IrClassSymbol
-                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+                get() = TODO("not implemented")
             override val coroutineSuspendedGetter: IrSimpleFunctionSymbol
-                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+                get() = TODO("not implemented")
         }
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
@@ -90,37 +95,6 @@ class JsIrBackendContext(
     data class SecondaryCtorPair(val delegate: IrSimpleFunctionSymbol, val stub: IrSimpleFunctionSymbol)
 
     val secondaryConstructorsMap = mutableMapOf<IrConstructorSymbol, SecondaryCtorPair>()
-
-    private val stubBuilder = DeclarationStubGenerator(symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB)
-
-    val objectCreate: IrSimpleFunction = defineObjectCreateIntrinsic()
-
-    private fun defineObjectCreateIntrinsic(): IrSimpleFunction {
-
-        val typeParam = TypeParameterDescriptorImpl.createWithDefaultBound(
-            builtIns.any,
-            Annotations.EMPTY,
-            true,
-            Variance.INVARIANT,
-            Name.identifier("T"),
-            0
-        )
-
-        val returnType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeParam.typeConstructor, emptyList(), false)
-
-        val desc = SimpleFunctionDescriptorImpl.create(
-            module,
-            Annotations.EMPTY,
-            Name.identifier("Object\$create"),
-            CallableMemberDescriptor.Kind.SYNTHESIZED,
-            SourceElement.NO_SOURCE
-        ).apply {
-            initialize(null, null, listOf(typeParam), emptyList(), returnType, Modality.FINAL, Visibilities.PUBLIC)
-            isInline = true
-        }
-
-        return stubBuilder.generateFunctionStub(desc)
-    }
 
     private fun find(memberScope: MemberScope, className: String): ClassDescriptor {
         return find(memberScope, Name.identifier(className))
@@ -139,7 +113,7 @@ class JsIrBackendContext(
     }
 
     override fun getInternalFunctions(name: String): List<FunctionDescriptor> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented")
     }
 
     override fun log(message: () -> String) {
@@ -151,5 +125,4 @@ class JsIrBackendContext(
         /*TODO*/
         print(message)
     }
-
 }

@@ -27,8 +27,8 @@ public class CLIConfigurationKeys {
             CompilerConfigurationKey.create("message collector");
     public static final CompilerConfigurationKey<Boolean> ALLOW_KOTLIN_PACKAGE =
             CompilerConfigurationKey.create("allow kotlin package");
-    public static final CompilerConfigurationKey<Boolean> REPORT_PERF =
-            CompilerConfigurationKey.create("report performance information");
+    public static final CompilerConfigurationKey<CommonCompilerPerformanceManager> PERF_MANAGER =
+            CompilerConfigurationKey.create("performance manager");
 
     // Used in Eclipse plugin (see KotlinCLICompiler)
     public static final CompilerConfigurationKey<String> INTELLIJ_PLUGIN_ROOT =

@@ -21,355 +21,301 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class SlicerNullnessGroupingTestGenerated extends AbstractSlicerNullnessGroupingTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInInflow() throws Exception {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/slicer/inflow"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY);
     }
 
     @TestMetadata("anonymousFunBodyExpression.kt")
     public void testAnonymousFunBodyExpression() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/anonymousFunBodyExpression.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/anonymousFunBodyExpression.kt");
     }
 
     @TestMetadata("anonymousFunReturnExpression.kt")
     public void testAnonymousFunReturnExpression() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/anonymousFunReturnExpression.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/anonymousFunReturnExpression.kt");
     }
 
     @TestMetadata("cast.kt")
     public void testCast() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/cast.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/cast.kt");
     }
 
     @TestMetadata("compositeAssignments.kt")
     public void testCompositeAssignments() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/compositeAssignments.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/compositeAssignments.kt");
     }
 
     @TestMetadata("defaultGetterFieldInSetter.kt")
     public void testDefaultGetterFieldInSetter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/defaultGetterFieldInSetter.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/defaultGetterFieldInSetter.kt");
     }
 
     @TestMetadata("delegateGetter.kt")
     public void testDelegateGetter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/delegateGetter.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/delegateGetter.kt");
     }
 
     @TestMetadata("delegateToJavaGetter.kt")
     public void testDelegateToJavaGetter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/delegateToJavaGetter.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/delegateToJavaGetter.kt");
     }
 
     @TestMetadata("diamondHierarchyJKMiddleClassFun.kt")
     public void testDiamondHierarchyJKMiddleClassFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyJKMiddleClassFun.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/diamondHierarchyJKMiddleClassFun.kt");
     }
 
     @TestMetadata("diamondHierarchyJKMiddleInterfaceFun.kt")
     public void testDiamondHierarchyJKMiddleInterfaceFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyJKMiddleInterfaceFun.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/diamondHierarchyJKMiddleInterfaceFun.kt");
     }
 
     @TestMetadata("diamondHierarchyJKRootInterfaceFun.kt")
     public void testDiamondHierarchyJKRootInterfaceFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyJKRootInterfaceFun.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/diamondHierarchyJKRootInterfaceFun.kt");
     }
 
     @TestMetadata("diamondHierarchyMiddleClassFun.kt")
     public void testDiamondHierarchyMiddleClassFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyMiddleClassFun.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/diamondHierarchyMiddleClassFun.kt");
     }
 
     @TestMetadata("diamondHierarchyMiddleInterfaceFun.kt")
     public void testDiamondHierarchyMiddleInterfaceFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyMiddleInterfaceFun.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/diamondHierarchyMiddleInterfaceFun.kt");
     }
 
     @TestMetadata("diamondHierarchyRootInterfaceFun.kt")
     public void testDiamondHierarchyRootInterfaceFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyRootInterfaceFun.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/diamondHierarchyRootInterfaceFun.kt");
     }
 
     @TestMetadata("doubleLambdaResult.kt")
     public void testDoubleLambdaResult() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/doubleLambdaResult.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/doubleLambdaResult.kt");
     }
 
     @TestMetadata("funParamerer.kt")
     public void testFunParamerer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/funParamerer.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/funParamerer.kt");
     }
 
     @TestMetadata("funParamererWithDefault.kt")
     public void testFunParamererWithDefault() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/funParamererWithDefault.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/funParamererWithDefault.kt");
     }
 
     @TestMetadata("funResultViaCallableRef.kt")
     public void testFunResultViaCallableRef() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/funResultViaCallableRef.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/funResultViaCallableRef.kt");
     }
 
     @TestMetadata("funResultViaCallableRefWithAssignment.kt")
     public void testFunResultViaCallableRefWithAssignment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/funResultViaCallableRefWithAssignment.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/funResultViaCallableRefWithAssignment.kt");
     }
 
     @TestMetadata("funResultViaCallableRefWithDirectCall.kt")
     public void testFunResultViaCallableRefWithDirectCall() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/funResultViaCallableRefWithDirectCall.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/funResultViaCallableRefWithDirectCall.kt");
     }
 
     @TestMetadata("funWithExpressionBody.kt")
     public void testFunWithExpressionBody() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/funWithExpressionBody.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/funWithExpressionBody.kt");
     }
 
     @TestMetadata("funWithReturnExpressions.kt")
     public void testFunWithReturnExpressions() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/funWithReturnExpressions.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/funWithReturnExpressions.kt");
     }
 
     @TestMetadata("getterAndSetterUsingField.kt")
     public void testGetterAndSetterUsingField() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/getterAndSetterUsingField.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/getterAndSetterUsingField.kt");
     }
 
     @TestMetadata("getterExpressionBody.kt")
     public void testGetterExpressionBody() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/getterExpressionBody.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/getterExpressionBody.kt");
     }
 
     @TestMetadata("getterReturnExpression.kt")
     public void testGetterReturnExpression() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/getterReturnExpression.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/getterReturnExpression.kt");
     }
 
     @TestMetadata("ifExpression.kt")
     public void testIfExpression() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/ifExpression.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/ifExpression.kt");
     }
 
     @TestMetadata("lambdaResult.kt")
     public void testLambdaResult() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/lambdaResult.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/lambdaResult.kt");
     }
 
     @TestMetadata("lambdaResultWithAssignments.kt")
     public void testLambdaResultWithAssignments() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/lambdaResultWithAssignments.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/lambdaResultWithAssignments.kt");
     }
 
     @TestMetadata("lambdaResultWithDirectCall.kt")
     public void testLambdaResultWithDirectCall() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/lambdaResultWithDirectCall.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/lambdaResultWithDirectCall.kt");
     }
 
     @TestMetadata("lambdaResultWithDirectCallViaAssignment.kt")
     public void testLambdaResultWithDirectCallViaAssignment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/lambdaResultWithDirectCallViaAssignment.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/lambdaResultWithDirectCallViaAssignment.kt");
     }
 
     @TestMetadata("localVal.kt")
     public void testLocalVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/localVal.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/localVal.kt");
     }
 
     @TestMetadata("localVar.kt")
     public void testLocalVar() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/localVar.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/localVar.kt");
     }
 
     @TestMetadata("memberValWithInitializer.kt")
     public void testMemberValWithInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/memberValWithInitializer.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/memberValWithInitializer.kt");
     }
 
     @TestMetadata("memberValWithSplitInitializer.kt")
     public void testMemberValWithSplitInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/memberValWithSplitInitializer.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/memberValWithSplitInitializer.kt");
     }
 
     @TestMetadata("memberVarWithInitializer.kt")
     public void testMemberVarWithInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/memberVarWithInitializer.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/memberVarWithInitializer.kt");
     }
 
     @TestMetadata("memberVarWithSplitInitializer.kt")
     public void testMemberVarWithSplitInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/memberVarWithSplitInitializer.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/memberVarWithSplitInitializer.kt");
     }
 
     @TestMetadata("noFieldInGetter.kt")
     public void testNoFieldInGetter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/noFieldInGetter.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/noFieldInGetter.kt");
     }
 
     @TestMetadata("nonLocalReturn.kt")
     public void testNonLocalReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/nonLocalReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/nonLocalReturn.kt");
     }
 
     @TestMetadata("notNullAssertion.kt")
     public void testNotNullAssertion() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/notNullAssertion.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/notNullAssertion.kt");
     }
 
     @TestMetadata("nullsAndNotNulls.kt")
     public void testNullsAndNotNulls() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/nullsAndNotNulls.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/nullsAndNotNulls.kt");
     }
 
     @TestMetadata("overridingFunctionResult.kt")
     public void testOverridingFunctionResult() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/overridingFunctionResult.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/overridingFunctionResult.kt");
     }
 
     @TestMetadata("overridingParameter.kt")
     public void testOverridingParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/overridingParameter.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/overridingParameter.kt");
     }
 
     @TestMetadata("overridingPropertyGetterResult.kt")
     public void testOverridingPropertyGetterResult() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/overridingPropertyGetterResult.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/overridingPropertyGetterResult.kt");
     }
 
     @TestMetadata("overridingPropertyResult.kt")
     public void testOverridingPropertyResult() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/overridingPropertyResult.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/overridingPropertyResult.kt");
     }
 
     @TestMetadata("primaryConstructorParameter.kt")
     public void testPrimaryConstructorParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/primaryConstructorParameter.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/primaryConstructorParameter.kt");
     }
 
     @TestMetadata("primaryConstructorParameterWithDefault.kt")
     public void testPrimaryConstructorParameterWithDefault() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/primaryConstructorParameterWithDefault.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/primaryConstructorParameterWithDefault.kt");
     }
 
     @TestMetadata("qualifiedAssignmentsForQualifiedRef.kt")
     public void testQualifiedAssignmentsForQualifiedRef() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/qualifiedAssignmentsForQualifiedRef.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/qualifiedAssignmentsForQualifiedRef.kt");
     }
 
     @TestMetadata("qualifiedAssignmentsForSimpleRef.kt")
     public void testQualifiedAssignmentsForSimpleRef() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/qualifiedAssignmentsForSimpleRef.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/qualifiedAssignmentsForSimpleRef.kt");
     }
 
     @TestMetadata("safeCast.kt")
     public void testSafeCast() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/safeCast.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/safeCast.kt");
     }
 
     @TestMetadata("secondaryConstructorParameter.kt")
     public void testSecondaryConstructorParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/secondaryConstructorParameter.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/secondaryConstructorParameter.kt");
     }
 
     @TestMetadata("secondaryConstructorParameterWithDefault.kt")
     public void testSecondaryConstructorParameterWithDefault() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/secondaryConstructorParameterWithDefault.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/secondaryConstructorParameterWithDefault.kt");
     }
 
     @TestMetadata("settersViaDelegateForQualifiedRef.kt")
     public void testSettersViaDelegateForQualifiedRef() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/settersViaDelegateForQualifiedRef.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/settersViaDelegateForQualifiedRef.kt");
     }
 
     @TestMetadata("settersViaDelegateForSimpleRef.kt")
     public void testSettersViaDelegateForSimpleRef() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/settersViaDelegateForSimpleRef.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/settersViaDelegateForSimpleRef.kt");
     }
 
     @TestMetadata("settersViaJavaDelegate.kt")
     public void testSettersViaJavaDelegate() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/settersViaJavaDelegate.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/settersViaJavaDelegate.kt");
     }
 
     @TestMetadata("topLevelVal.kt")
     public void testTopLevelVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/topLevelVal.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/topLevelVal.kt");
     }
 
     @TestMetadata("topLevelVar.kt")
     public void testTopLevelVar() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/topLevelVar.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/topLevelVar.kt");
     }
 
     @TestMetadata("valParameter.kt")
     public void testValParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/valParameter.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/valParameter.kt");
     }
 
     @TestMetadata("varParameter.kt")
     public void testVarParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/varParameter.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/varParameter.kt");
     }
 
     @TestMetadata("whenExpression.kt")
     public void testWhenExpression() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/whenExpression.kt");
-        doTest(fileName);
+        runTest("idea/testData/slicer/inflow/whenExpression.kt");
     }
 }

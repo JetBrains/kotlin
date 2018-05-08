@@ -32,11 +32,14 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DescriptorUtilKt;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
+import org.jetbrains.kotlin.load.kotlin.ModuleMappingUtilKt;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
-import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMappingKt;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -123,7 +126,7 @@ public class ClassFileFactory implements OutputFileCollection {
         generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(packagePartSourceFiles)) {
             @Override
             public byte[] asBytes(ClassBuilderFactory factory) {
-                return ClassFileUtilsKt.serializeToByteArray(moduleProto);
+                return ModuleMappingKt.serializeToByteArray(moduleProto, JvmMetadataVersion.INSTANCE.toArray());
             }
 
             @Override
@@ -192,8 +195,9 @@ public class ClassFileFactory implements OutputFileCollection {
                     answer.append(file.asText());
                     break;
                 case "kotlin_module": {
-                    ModuleMapping mapping = ModuleMapping.Companion.create(
-                            file.asByteArray(), relativePath.getPath(), CompilerDeserializationConfiguration.Default.INSTANCE
+                    ModuleMapping mapping = ModuleMappingUtilKt.loadModuleMapping(
+                            ModuleMapping.Companion, file.asByteArray(), relativePath.getPath(),
+                            CompilerDeserializationConfiguration.Default.INSTANCE
                     );
                     for (Map.Entry<String, PackageParts> entry : mapping.getPackageFqName2Parts().entrySet()) {
                         FqName packageFqName = new FqName(entry.getKey());

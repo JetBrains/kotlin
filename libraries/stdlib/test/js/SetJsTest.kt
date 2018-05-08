@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.collections.js
 
 import kotlin.test.*
@@ -24,6 +29,7 @@ class ComplexSetJsTest : SetJsTest() {
 
     // hashSetOf returns ComlpexHashSet because it is Generic
     override fun createEmptyMutableSet(): MutableSet<String> = genericHashSetOf()
+
     override fun createEmptyMutableSetWithNullableValues(): MutableSet<String?> = genericHashSetOf()
 
 
@@ -87,7 +93,16 @@ abstract class SetJsTest {
     val data: Set<String> = createTestMutableSet()
     val empty: Set<String> = createEmptyMutableSet()
 
-    val SPECIAL_NAMES = arrayOf("__proto__", "constructor", "toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable")
+    val SPECIAL_NAMES = arrayOf(
+        "__proto__",
+        "constructor",
+        "toString",
+        "toLocaleString",
+        "valueOf",
+        "hasOwnProperty",
+        "isPrototypeOf",
+        "propertyIsEnumerable"
+    )
 
     @Test
     fun size() {
@@ -265,6 +280,7 @@ abstract class SetJsTest {
 
     //Helpers
     abstract fun createEmptyMutableSet(): MutableSet<String>
+
     abstract fun createEmptyMutableSetWithNullableValues(): MutableSet<String?>
 
     fun createTestMutableSet(): MutableSet<String> {
@@ -273,6 +289,7 @@ abstract class SetJsTest {
         set.add("bar")
         return set
     }
+
     fun createTestMutableSetReversed(): MutableSet<String> {
         val set = createEmptyMutableSet()
         set.add("bar")

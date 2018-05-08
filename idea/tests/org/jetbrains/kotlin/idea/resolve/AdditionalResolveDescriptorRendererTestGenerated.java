@@ -21,55 +21,51 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class AdditionalResolveDescriptorRendererTestGenerated extends AbstractAdditionalResolveDescriptorRendererTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInAdditionalLazyResolve() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/additionalLazyResolve"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("anonymousObjectInBaseConstructor.kt")
     public void testAnonymousObjectInBaseConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/anonymousObjectInBaseConstructor.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/additionalLazyResolve/anonymousObjectInBaseConstructor.kt");
     }
 
     @TestMetadata("anonymousObjectInClassInitializer.kt")
     public void testAnonymousObjectInClassInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/anonymousObjectInClassInitializer.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/additionalLazyResolve/anonymousObjectInClassInitializer.kt");
     }
 
     @TestMetadata("anonymousObjectInClassParameterInitializer.kt")
     public void testAnonymousObjectInClassParameterInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/anonymousObjectInClassParameterInitializer.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/additionalLazyResolve/anonymousObjectInClassParameterInitializer.kt");
     }
 
     @TestMetadata("functionLiteralInBaseConstructor.kt")
     public void testFunctionLiteralInBaseConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/functionLiteralInBaseConstructor.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/additionalLazyResolve/functionLiteralInBaseConstructor.kt");
     }
 
     @TestMetadata("localClassInClassInitializer.kt")
     public void testLocalClassInClassInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/localClassInClassInitializer.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/additionalLazyResolve/localClassInClassInitializer.kt");
     }
 
     @TestMetadata("localClassInClosureInClassParameterInitializer.kt")
     public void testLocalClassInClosureInClassParameterInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/localClassInClosureInClassParameterInitializer.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/additionalLazyResolve/localClassInClosureInClassParameterInitializer.kt");
     }
 
     @TestMetadata("localObjectInClassInitializer.kt")
     public void testLocalObjectInClassInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/localObjectInClassInitializer.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/additionalLazyResolve/localObjectInClassInitializer.kt");
     }
 
     @TestMetadata("localObjectInClosureInClassParameterInitializer.kt")
     public void testLocalObjectInClosureInClassParameterInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/additionalLazyResolve/localObjectInClosureInClassParameterInitializer.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/additionalLazyResolve/localObjectInClosureInClassParameterInitializer.kt");
     }
 }

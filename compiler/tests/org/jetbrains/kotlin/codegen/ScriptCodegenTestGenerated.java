@@ -21,10 +21,13 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     @TestMetadata("adder.kts")
     public void testAdder() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/adder.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/adder.kts");
     }
 
     public void testAllFilesPresentInScript() throws Exception {
@@ -33,169 +36,141 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
 
     @TestMetadata("classLiteralInsideFunction.kts")
     public void testClassLiteralInsideFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/classLiteralInsideFunction.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/classLiteralInsideFunction.kts");
     }
 
     @TestMetadata("destructuringDeclaration.kts")
     public void testDestructuringDeclaration() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/destructuringDeclaration.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/destructuringDeclaration.kts");
     }
 
     @TestMetadata("destructuringDeclarationUnderscore.kts")
     public void testDestructuringDeclarationUnderscore() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/destructuringDeclarationUnderscore.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/destructuringDeclarationUnderscore.kts");
     }
 
     @TestMetadata("empty.kts")
     public void testEmpty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/empty.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/empty.kts");
     }
 
     @TestMetadata("helloWorld.kts")
     public void testHelloWorld() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/helloWorld.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/helloWorld.kts");
     }
 
     @TestMetadata("inline.kts")
     public void testInline() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/inline.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/inline.kts");
     }
 
     @TestMetadata("kt20707.kts")
     public void testKt20707() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/kt20707.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/kt20707.kts");
     }
 
     @TestMetadata("kt22029.kts")
     public void testKt22029() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/kt22029.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/kt22029.kts");
     }
 
     @TestMetadata("localDelegatedProperty.kts")
     public void testLocalDelegatedProperty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/localDelegatedProperty.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/localDelegatedProperty.kts");
     }
 
     @TestMetadata("localDelegatedPropertyNoExplicitType.kts")
     public void testLocalDelegatedPropertyNoExplicitType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/localDelegatedPropertyNoExplicitType.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/localDelegatedPropertyNoExplicitType.kts");
     }
 
     @TestMetadata("localFunction.kts")
     public void testLocalFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/localFunction.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/localFunction.kts");
     }
 
     @TestMetadata("outerCapture.kts")
     public void testOuterCapture() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/outerCapture.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/outerCapture.kts");
     }
 
     @TestMetadata("parameter.kts")
     public void testParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/parameter.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/parameter.kts");
     }
 
     @TestMetadata("parameterArray.kts")
     public void testParameterArray() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/parameterArray.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/parameterArray.kts");
     }
 
     @TestMetadata("parameterClosure.kts")
     public void testParameterClosure() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/parameterClosure.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/parameterClosure.kts");
     }
 
     @TestMetadata("parameterLong.kts")
     public void testParameterLong() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/parameterLong.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/parameterLong.kts");
     }
 
     @TestMetadata("secondLevelFunction.kts")
     public void testSecondLevelFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/secondLevelFunction.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/secondLevelFunction.kts");
     }
 
     @TestMetadata("secondLevelFunctionClosure.kts")
     public void testSecondLevelFunctionClosure() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/secondLevelFunctionClosure.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/secondLevelFunctionClosure.kts");
     }
 
     @TestMetadata("secondLevelVal.kts")
     public void testSecondLevelVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/secondLevelVal.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/secondLevelVal.kts");
     }
 
     @TestMetadata("simpleClass.kts")
     public void testSimpleClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/simpleClass.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/simpleClass.kts");
     }
 
     @TestMetadata("string.kts")
     public void testString() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/string.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/string.kts");
     }
 
     @TestMetadata("topLevelFunction.kts")
     public void testTopLevelFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelFunction.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/topLevelFunction.kts");
     }
 
     @TestMetadata("topLevelFunctionClosure.kts")
     public void testTopLevelFunctionClosure() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelFunctionClosure.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/topLevelFunctionClosure.kts");
     }
 
     @TestMetadata("topLevelLocalDelegatedProperty.kts")
     public void testTopLevelLocalDelegatedProperty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelLocalDelegatedProperty.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/topLevelLocalDelegatedProperty.kts");
     }
 
     @TestMetadata("topLevelPropertiesWithGetSet.kts")
     public void testTopLevelPropertiesWithGetSet() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelPropertiesWithGetSet.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/topLevelPropertiesWithGetSet.kts");
     }
 
     @TestMetadata("topLevelProperty.kts")
     public void testTopLevelProperty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelProperty.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/topLevelProperty.kts");
     }
 
     @TestMetadata("topLevelPropertyWithProvideDelegate.kts")
     public void testTopLevelPropertyWithProvideDelegate() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelPropertyWithProvideDelegate.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/topLevelPropertyWithProvideDelegate.kts");
     }
 
     @TestMetadata("topLevelTypealias.kts")
     public void testTopLevelTypealias() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/topLevelTypealias.kts");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/script/topLevelTypealias.kts");
     }
 }

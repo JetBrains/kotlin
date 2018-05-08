@@ -21,7 +21,7 @@ import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinJvmModuleAnnotationsIndex
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex
-import org.jetbrains.kotlin.load.kotlin.PackageParts
+import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.name.ClassId
 
 class IDEPackagePartProvider(val scope: GlobalSearchScope) : PackagePartProvider {

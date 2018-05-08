@@ -60,8 +60,11 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYS
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.withIC
-import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
+import org.jetbrains.kotlin.jps.model.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.LibraryDependency.*
+import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
+import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
+import org.jetbrains.kotlin.jps.platforms.productionBuildTarget
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -175,8 +178,6 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         originalProjectDir = projDirPath.toFile()
         workDir = AbstractKotlinJpsBuildTestCase.copyTestDataToTmpDir(originalProjectDir)
         orCreateProjectDir
-
-        JpsUtils.resetCaches()
     }
 
     override fun tearDown() {
@@ -244,21 +245,26 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         buildAllModules().assertSuccessful()
 
         checkOutputFilesList()
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
+        checkWhen(touch("src/test1.kt"), null, pathsToDelete = k2jsOutput(PROJECT_NAME))
     }
 
     private fun k2jsOutput(vararg moduleNames: String): Array<String> {
-        val list = arrayListOf<String>()
-        for (moduleName in moduleNames) {
-            val outputDir = File("out/production/$moduleName")
-            list.add(toSystemIndependentName(JpsJsModuleUtils.getOutputFile(outputDir, moduleName, false).path))
-            list.add(toSystemIndependentName(JpsJsModuleUtils.getOutputMetaFile(outputDir, moduleName, false).path))
+        val moduleNamesSet = moduleNames.toSet()
+        val list = mutableListOf<String>()
 
-            val kjsmFiles = File(workDir, outputDir.path).walk()
-                .filter { it.isFile && it.extension.equals("kjsm", ignoreCase = true) }
-            list.addAll(kjsmFiles.map { toSystemIndependentName(it.relativeTo(workDir).path) })
+        myProject.modules.forEach {
+            if (it.name in moduleNamesSet) {
+                val outputDir = it.productionBuildTarget.outputDir!!
+                list.add(toSystemIndependentName(File("$outputDir/${it.name}.js").relativeTo(workDir).path))
+                list.add(toSystemIndependentName(File("$outputDir/${it.name}.meta.js").relativeTo(workDir).path))
 
+                val kjsmFiles = outputDir.walk()
+                    .filter { it.isFile && it.extension.equals("kjsm", ignoreCase = true) }
+
+                list.addAll(kjsmFiles.map { toSystemIndependentName(it.relativeTo(workDir).path) })
+            }
         }
+
         return list.toTypedArray()
     }
 
@@ -516,9 +522,9 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         assertEquals(1, myProject.modules.size)
         val module = myProject.modules.first()
-        val args = JpsKotlinCompilerSettings.getCommonCompilerArguments(module)
+        val args = module.kotlinCompilerArguments
         args.apiVersion = "1.2"
-        JpsKotlinCompilerSettings.setCommonCompilerArguments(myProject, args)
+        myProject.kotlinCommonCompilerArguments = args
 
         buildAllModules().assertSuccessful()
     }
@@ -807,28 +813,32 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testFileDoesNotExistWarning() {
+        fun absoluteFiles(vararg paths: String): Array<File> =
+            paths.map { File(it).absoluteFile }.toTypedArray()
+
         initProject(JVM_MOCK_RUNTIME)
 
+        val filesToBeReported = absoluteFiles("badroot.jar", "some/test.class")
+        val otherFiles = absoluteFiles("test/other/file.xml", "some/other/baddir")
+
         AbstractKotlinJpsBuildTestCase.addDependency(
-                JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module")), false, "LibraryWithBadRoots",
-                File("badroot.jar"),
-                File("test/other/file.xml"),
-                File("some/test.class"),
-                File("some/other/baddir"))
+            JpsJavaDependencyScope.COMPILE,
+            Lists.newArrayList(findModule("module")),
+            false,
+            "LibraryWithBadRoots",
+            *(filesToBeReported + otherFiles)
+        )
 
         val result = buildAllModules()
         result.assertSuccessful()
 
-        val warnings = result.getMessages(BuildMessage.Kind.WARNING)
+        val actualWarnings = result.getMessages(BuildMessage.Kind.WARNING).map { it.messageText }
+        val expectedWarnings = filesToBeReported.map { "Classpath entry points to a non-existent location: $it" }
 
-        Assert.assertArrayEquals(
-                arrayOf(
-                        """Classpath entry points to a non-existent location: TEST_PATH/badroot.jar""",
-                        """Classpath entry points to a non-existent location: TEST_PATH/some/test.class"""),
-                warnings.map {
-                    it.messageText.replace(File("").absolutePath, "TEST_PATH").replace("\\", "/")
-                }.sorted().toTypedArray()
-        )
+        val expectedText = expectedWarnings.sorted().joinToString("\n")
+        val actualText = actualWarnings.sorted().joinToString("\n")
+
+        Assert.assertEquals(expectedText, actualText)
     }
 
     fun testHelp() {

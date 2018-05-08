@@ -1,8 +1,9 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -SUSPENSION_CALL_MUST_BE_USED_AS_RETURN_VALUE
+// COMMON_COROUTINES_TEST
 
 interface SuperInterface
 
-@kotlin.coroutines.experimental.RestrictsSuspension
+@COROUTINES_PACKAGE.RestrictsSuspension
 open class RestrictedController : SuperInterface
 
 class SubClass : RestrictedController()

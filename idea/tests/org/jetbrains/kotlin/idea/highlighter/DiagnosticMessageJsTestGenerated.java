@@ -21,19 +21,21 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class DiagnosticMessageJsTestGenerated extends AbstractDiagnosticMessageJsTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+    }
+
     public void testAllFilesPresentInJs() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/diagnosticMessage/js"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, false);
     }
 
     @TestMetadata("jsCodeErrorHtml.kt")
     public void testJsCodeErrorHtml() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/js/jsCodeErrorHtml.kt");
-        doTest(fileName);
+        runTest("idea/testData/diagnosticMessage/js/jsCodeErrorHtml.kt");
     }
 
     @TestMetadata("jsCodeErrorText.kt")
     public void testJsCodeErrorText() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/js/jsCodeErrorText.kt");
-        doTest(fileName);
+        runTest("idea/testData/diagnosticMessage/js/jsCodeErrorText.kt");
     }
 }

@@ -1,4 +1,8 @@
-@file:kotlin.jvm.JvmVersion
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.numbers
 
 import java.math.BigInteger
@@ -35,7 +39,7 @@ class BigNumbersTest {
         assertEquals(BigInteger("-1"), -a shr 1)
         assertEquals(BigInteger("-1"), -a shr 2)
 
-        assertEquals(BigInteger("2"),  2.toBigInteger())
+        assertEquals(BigInteger("2"), 2.toBigInteger())
         assertEquals(BigInteger("-3"), -3L.toBigInteger())
 
         assertEquals(BigDecimal("2"), a.toBigDecimal())
@@ -44,7 +48,6 @@ class BigNumbersTest {
         assertEquals(BigDecimal("2.6E+3"), BigInteger("253").toBigDecimal(-1, MathContext(2, RoundingMode.UP)))
         assertEquals(BigDecimal("2.6E+2"), BigInteger("253").toBigDecimal(mathContext = MathContext(2, RoundingMode.UP)))
         assertEquals(BigDecimal("3"), BigInteger("253").toBigDecimal(2, MathContext(1, RoundingMode.UP)))
-
 
 
         var c = 2.toBigInteger()
@@ -75,10 +78,10 @@ class BigNumbersTest {
         assertEquals(BigDecimal("3"), a.inc())
         assertEquals(BigDecimal("1"), a.dec())
 
-        assertEquals(BigDecimal("2"),  2.toBigDecimal())
+        assertEquals(BigDecimal("2"), 2.toBigDecimal())
         assertEquals(BigDecimal("-3"), -3L.toBigDecimal())
         assertEquals(BigDecimal("2.0"), 2f.toBigDecimal())
-        assertEquals(BigDecimal("0.5"),  0.5.toBigDecimal())
+        assertEquals(BigDecimal("0.5"), 0.5.toBigDecimal())
 
         var c = "1.5".toBigDecimal()
         assertEquals(BigDecimal("1.5"), c++)

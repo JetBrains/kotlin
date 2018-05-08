@@ -625,13 +625,12 @@ internal object ImportForMissingOperatorFactory : ImportFixBase.Factory() {
 
 
 private fun KotlinIndicesHelper.getClassesByName(expressionForPlatform: KtExpression, name: String) =
-        when (TargetPlatformDetector.getPlatform(expressionForPlatform.containingKtFile)) {
-            JsPlatform -> getKotlinClasses({ it == name },
-                    // Enum entries should be contributes with members import fix
-                                           psiFilter = { ktDeclaration -> ktDeclaration !is KtEnumEntry },
-                                           kindFilter = { kind -> kind != ClassKind.ENUM_ENTRY })
-            JvmPlatform -> getJvmClassesByName(name)
-            else -> emptyList()
-        }
+    when (TargetPlatformDetector.getPlatform(expressionForPlatform.containingKtFile)) {
+        JvmPlatform -> getJvmClassesByName(name)
+        else -> getKotlinClasses({ it == name },
+            // Enum entries should be contributes with members import fix
+                                 psiFilter = { ktDeclaration -> ktDeclaration !is KtEnumEntry },
+                                 kindFilter = { kind -> kind != ClassKind.ENUM_ENTRY })
+    }
 
 private fun CallTypeAndReceiver<*, *>.toFilter() = { descriptor: DeclarationDescriptor -> this.callType.descriptorKindFilter.accepts(descriptor) }

@@ -25,12 +25,14 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.uast.*
 
 class KotlinUObjectLiteralExpression(
         override val psi: KtObjectLiteralExpression,
         givenParent: UElement?
-) : KotlinAbstractUExpression(givenParent), UObjectLiteralExpression, KotlinUElementWithType {
+) : KotlinAbstractUExpression(givenParent), UObjectLiteralExpression, UCallExpressionEx, KotlinUElementWithType {
+
     override val declaration: UClass by lz {
         val lightClass: KtLightClass? = psi.objectDeclaration.toLightClass()
         if (lightClass != null) {
@@ -70,7 +72,10 @@ class KotlinUObjectLiteralExpression(
     }
 
     override fun resolve() = superClassConstructorCall?.resolveCallToDeclaration(this) as? PsiMethod
-    
+
+    override fun getArgumentForParameter(i: Int): UExpression? =
+        superClassConstructorCall?.let { it.getResolvedCall(it.analyze()) }?.let { getArgumentExpressionByIndex(i, it, this) }
+
     private class ObjectLiteralClassReference(
             override val psi: KtSuperTypeCallEntry,
             givenParent: UElement?

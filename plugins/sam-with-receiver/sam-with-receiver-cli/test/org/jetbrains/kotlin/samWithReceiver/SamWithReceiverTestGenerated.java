@@ -21,61 +21,56 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class SamWithReceiverTestGenerated extends AbstractSamWithReceiverTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInDiagnostics() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("noParameters.kt")
     public void testNoParameters() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/noParameters.kt");
-        doTest(fileName);
+        runTest("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/noParameters.kt");
     }
 
     @TestMetadata("noReturnType.kt")
     public void testNoReturnType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/noReturnType.kt");
-        doTest(fileName);
+        runTest("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/noReturnType.kt");
     }
 
     @TestMetadata("samConversionNoParameters.kt")
     public void testSamConversionNoParameters() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/samConversionNoParameters.kt");
-        doTest(fileName);
+        runTest("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/samConversionNoParameters.kt");
     }
 
     @TestMetadata("samConversionSimple.kt")
     public void testSamConversionSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/samConversionSimple.kt");
-        doTest(fileName);
+        runTest("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/samConversionSimple.kt");
     }
 
     @TestMetadata("samConversionSimpleWithoutAnnotation.kt")
     public void testSamConversionSimpleWithoutAnnotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/samConversionSimpleWithoutAnnotation.kt");
-        doTest(fileName);
+        runTest("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/samConversionSimpleWithoutAnnotation.kt");
     }
 
     @TestMetadata("samWithAnnotation.kt")
     public void testSamWithAnnotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/samWithAnnotation.kt");
-        doTest(fileName);
+        runTest("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/samWithAnnotation.kt");
     }
 
     @TestMetadata("samWithoutAnnotation.kt")
     public void testSamWithoutAnnotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/samWithoutAnnotation.kt");
-        doTest(fileName);
+        runTest("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/samWithoutAnnotation.kt");
     }
 
     @TestMetadata("singleParameter.kt")
     public void testSingleParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/singleParameter.kt");
-        doTest(fileName);
+        runTest("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/singleParameter.kt");
     }
 
     @TestMetadata("singleParameterWithoutAnnotation.kt")
     public void testSingleParameterWithoutAnnotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/singleParameterWithoutAnnotation.kt");
-        doTest(fileName);
+        runTest("plugins/sam-with-receiver/sam-with-receiver-cli/testData/diagnostics/singleParameterWithoutAnnotation.kt");
     }
 }

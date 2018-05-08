@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_WITHOUT_CHECK: JS
+// DONT_RUN_GENERATED_CODE: JS
 
 tailrec infix fun Int.test(x : Int) : Int {
     if (this > 1) {

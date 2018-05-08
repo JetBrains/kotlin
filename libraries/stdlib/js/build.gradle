@@ -174,10 +174,10 @@ task compileJs(type: JavaExec) {
 
     main = "org.jetbrains.kotlin.js.FileMergerKt"
     doFirst {
-        args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path } +
-               (compileBuiltinsKotlin2Js.outputs.files.collect { it.path } +
-                compileKotlin2Js.outputs.files.collect { it.path } +
-                compileExperimentalKotlin2Js.outputs.files.collect { it.path }).findAll {
+        args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path }.sort() +
+               (compileBuiltinsKotlin2Js.outputs.files.collect { it.path }.sort() +
+                compileKotlin2Js.outputs.files.collect { it.path }.sort() /* +
+                compileExperimentalKotlin2Js.outputs.files.collect { it.path }.sort() */).findAll {
                    it.endsWith(".js") && !it.endsWith(".meta.js")
                }
     }
@@ -223,9 +223,9 @@ task compileJs(type: JavaExec) {
 
         sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
 
-        file(jsOutputMetaFile).text = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text +
+        file(jsOutputMetaFile).text = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text /* +
                                       file(compileExperimentalKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text
-                                              .replaceFirst(experimentalJsModuleName, 'kotlin')
+                                              .replaceFirst(experimentalJsModuleName, 'kotlin') */
     }
 }
 

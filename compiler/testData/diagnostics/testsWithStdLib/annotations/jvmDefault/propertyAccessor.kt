@@ -10,5 +10,5 @@ interface B {
 
     var prop2: String
         <!WRONG_ANNOTATION_TARGET!>@JvmDefault<!> get() = ""
-        <!WRONG_ANNOTATION_TARGET!>@JvmDefault<!> set(value) {}
+        <!WRONG_ANNOTATION_TARGET!>@JvmDefault<!> set(<!UNUSED_PARAMETER!>value<!>) {}
 }

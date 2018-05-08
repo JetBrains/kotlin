@@ -21,22 +21,23 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFileToSourceStubConverterTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     @TestMetadata("abstractEnum.kt")
     public void testAbstractEnum() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/abstractEnum.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/abstractEnum.kt");
     }
 
     @TestMetadata("abstractMethods.kt")
     public void testAbstractMethods() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/abstractMethods.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/abstractMethods.kt");
     }
 
     @TestMetadata("aliasedImports.kt")
     public void testAliasedImports() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/aliasedImports.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/aliasedImports.kt");
     }
 
     public void testAllFilesPresentInConverter() throws Exception {
@@ -45,331 +46,276 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
 
     @TestMetadata("annotations.kt")
     public void testAnnotations() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/annotations.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotations.kt");
     }
 
     @TestMetadata("annotations2.kt")
     public void testAnnotations2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/annotations2.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotations2.kt");
     }
 
     @TestMetadata("annotations3.kt")
     public void testAnnotations3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/annotations3.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotations3.kt");
     }
 
     @TestMetadata("comments.kt")
     public void testComments() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/comments.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/comments.kt");
     }
 
     @TestMetadata("cyrillicClassName.kt")
     public void testCyrillicClassName() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/cyrillicClassName.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/cyrillicClassName.kt");
     }
 
     @TestMetadata("dataClass.kt")
     public void testDataClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/dataClass.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/dataClass.kt");
     }
 
     @TestMetadata("defaultImpls.kt")
     public void testDefaultImpls() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/defaultImpls.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/defaultImpls.kt");
     }
 
     @TestMetadata("enums.kt")
     public void testEnums() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/enums.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/enums.kt");
     }
 
     @TestMetadata("errorLocationMapping.kt")
     public void testErrorLocationMapping() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/errorLocationMapping.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/errorLocationMapping.kt");
     }
 
     @TestMetadata("fileFacadeJvmName.kt")
     public void testFileFacadeJvmName() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/fileFacadeJvmName.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/fileFacadeJvmName.kt");
     }
 
     @TestMetadata("functions.kt")
     public void testFunctions() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/functions.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/functions.kt");
     }
 
     @TestMetadata("genericRawSignatures.kt")
     public void testGenericRawSignatures() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/genericRawSignatures.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/genericRawSignatures.kt");
     }
 
     @TestMetadata("genericSimple.kt")
     public void testGenericSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/genericSimple.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/genericSimple.kt");
     }
 
     @TestMetadata("ignoredMembers.kt")
     public void testIgnoredMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/ignoredMembers.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/ignoredMembers.kt");
     }
 
     @TestMetadata("importsForErrorTypes.kt")
     public void testImportsForErrorTypes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/importsForErrorTypes.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/importsForErrorTypes.kt");
     }
 
     @TestMetadata("importsKt22083.kt")
     public void testImportsKt22083() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/importsKt22083.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/importsKt22083.kt");
     }
 
     @TestMetadata("inheritanceSimple.kt")
     public void testInheritanceSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/inheritanceSimple.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/inheritanceSimple.kt");
     }
 
     @TestMetadata("innerClassesWithTypeParameters.kt")
     public void testInnerClassesWithTypeParameters() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/innerClassesWithTypeParameters.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/innerClassesWithTypeParameters.kt");
     }
 
     @TestMetadata("invalidFieldName.kt")
     public void testInvalidFieldName() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/invalidFieldName.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/invalidFieldName.kt");
     }
 
     @TestMetadata("javaKeywords.kt")
     public void testJavaKeywords() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/javaKeywords.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/javaKeywords.kt");
     }
 
     @TestMetadata("javaKeywordsInPackageNames.kt")
     public void testJavaKeywordsInPackageNames() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/javaKeywordsInPackageNames.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/javaKeywordsInPackageNames.kt");
     }
 
     @TestMetadata("jvmOverloads.kt")
     public void testJvmOverloads() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/jvmOverloads.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmOverloads.kt");
     }
 
     @TestMetadata("jvmStatic.kt")
     public void testJvmStatic() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/jvmStatic.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmStatic.kt");
     }
 
     @TestMetadata("jvmStaticFieldInParent.kt")
     public void testJvmStaticFieldInParent() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/jvmStaticFieldInParent.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmStaticFieldInParent.kt");
     }
 
     @TestMetadata("kt14996.kt")
     public void testKt14996() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/kt14996.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt14996.kt");
     }
 
     @TestMetadata("kt14997.kt")
     public void testKt14997() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/kt14997.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt14997.kt");
     }
 
     @TestMetadata("kt14998.kt")
     public void testKt14998() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/kt14998.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt14998.kt");
     }
 
     @TestMetadata("kt15145.kt")
     public void testKt15145() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/kt15145.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt15145.kt");
     }
 
     @TestMetadata("kt17567.kt")
     public void testKt17567() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/kt17567.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt17567.kt");
     }
 
     @TestMetadata("kt18377.kt")
     public void testKt18377() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/kt18377.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt18377.kt");
     }
 
     @TestMetadata("kt18682.kt")
     public void testKt18682() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/kt18682.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt18682.kt");
     }
 
     @TestMetadata("kt18791.kt")
     public void testKt18791() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/kt18791.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt18791.kt");
     }
 
     @TestMetadata("kt19700.kt")
     public void testKt19700() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/kt19700.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt19700.kt");
     }
 
     @TestMetadata("kt19750.kt")
     public void testKt19750() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/kt19750.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt19750.kt");
     }
 
     @TestMetadata("leadingDollars.kt")
     public void testLeadingDollars() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/leadingDollars.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/leadingDollars.kt");
     }
 
     @TestMetadata("leadingDollars2.kt")
     public void testLeadingDollars2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/leadingDollars2.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/leadingDollars2.kt");
     }
 
     @TestMetadata("mapEntry.kt")
     public void testMapEntry() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/mapEntry.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/mapEntry.kt");
     }
 
     @TestMetadata("maxErrorCount.kt")
     public void testMaxErrorCount() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/maxErrorCount.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/maxErrorCount.kt");
     }
 
     @TestMetadata("methodParameterNames.kt")
     public void testMethodParameterNames() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/methodParameterNames.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/methodParameterNames.kt");
     }
 
     @TestMetadata("methodPropertySignatureClash.kt")
     public void testMethodPropertySignatureClash() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/methodPropertySignatureClash.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/methodPropertySignatureClash.kt");
     }
 
     @TestMetadata("modifiers.kt")
     public void testModifiers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/modifiers.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/modifiers.kt");
     }
 
     @TestMetadata("multifileClass.kt")
     public void testMultifileClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/multifileClass.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/multifileClass.kt");
     }
 
     @TestMetadata("nestedClasses.kt")
     public void testNestedClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/nestedClasses.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/nestedClasses.kt");
     }
 
     @TestMetadata("nestedClasses2.kt")
     public void testNestedClasses2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/nestedClasses2.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/nestedClasses2.kt");
     }
 
     @TestMetadata("nestedClassesNonRootPackage.kt")
     public void testNestedClassesNonRootPackage() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/nestedClassesNonRootPackage.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/nestedClassesNonRootPackage.kt");
     }
 
     @TestMetadata("nonExistentClass.kt")
     public void testNonExistentClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/nonExistentClass.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/nonExistentClass.kt");
     }
 
     @TestMetadata("nonExistentClassTypesConversion.kt")
     public void testNonExistentClassTypesConversion() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/nonExistentClassTypesConversion.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/nonExistentClassTypesConversion.kt");
     }
 
     @TestMetadata("nonExistentClassWIthoutCorrection.kt")
     public void testNonExistentClassWIthoutCorrection() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/nonExistentClassWIthoutCorrection.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/nonExistentClassWIthoutCorrection.kt");
     }
 
     @TestMetadata("primitiveTypes.kt")
     public void testPrimitiveTypes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/primitiveTypes.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/primitiveTypes.kt");
     }
 
     @TestMetadata("propertyAnnotations.kt")
     public void testPropertyAnnotations() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/propertyAnnotations.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/propertyAnnotations.kt");
     }
 
     @TestMetadata("repeatableAnnotations.kt")
     public void testRepeatableAnnotations() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/repeatableAnnotations.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/repeatableAnnotations.kt");
     }
 
     @TestMetadata("severalPackageParts.kt")
     public void testSeveralPackageParts() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/severalPackageParts.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/severalPackageParts.kt");
     }
 
     @TestMetadata("strangeIdentifiers.kt")
     public void testStrangeIdentifiers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/strangeIdentifiers.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/strangeIdentifiers.kt");
     }
 
     @TestMetadata("strangeNames.kt")
     public void testStrangeNames() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/strangeNames.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/strangeNames.kt");
     }
 
     @TestMetadata("topLevel.kt")
     public void testTopLevel() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/topLevel.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/topLevel.kt");
     }
 }

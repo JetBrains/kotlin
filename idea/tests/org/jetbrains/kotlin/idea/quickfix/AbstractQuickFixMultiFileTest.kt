@@ -133,7 +133,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                         }
                         return TestFile(fileName, text)
                     }
-                })
+                }, "")
 
         val afterFile = subFiles.firstOrNull { file -> file.path.contains(".after") }
         val beforeFile = subFiles.firstOrNull { file -> file.path.contains(".before") }!!

@@ -141,8 +141,8 @@ class IrCallImpl(
         copyTypeArgumentsFrom(typeArguments)
     }
 
-    constructor(startOffset: Int, endOffset: Int, symbol: IrFunctionSymbol) :
-            this(startOffset, endOffset, symbol, symbol.descriptor)
+    constructor(startOffset: Int, endOffset: Int, symbol: IrFunctionSymbol, origin: IrStatementOrigin? = null) :
+            this(startOffset, endOffset, symbol, symbol.descriptor, origin = origin)
 
 
     override val superQualifier: ClassDescriptor? = superQualifierSymbol?.descriptor

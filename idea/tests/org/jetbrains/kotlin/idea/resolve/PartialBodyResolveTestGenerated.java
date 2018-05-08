@@ -21,445 +21,376 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInPartialBodyResolve() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/partialBodyResolve"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("AnonymousObjects.kt")
     public void testAnonymousObjects() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/AnonymousObjects.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/AnonymousObjects.kt");
     }
 
     @TestMetadata("As.kt")
     public void testAs() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/As.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/As.kt");
     }
 
     @TestMetadata("BangBang.kt")
     public void testBangBang() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/BangBang.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/BangBang.kt");
     }
 
     @TestMetadata("BangBangHasPlatformTypeBug.kt")
     public void testBangBangHasPlatformTypeBug() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/BangBangHasPlatformTypeBug.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/BangBangHasPlatformTypeBug.kt");
     }
 
     @TestMetadata("BangBangInIfCondition.kt")
     public void testBangBangInIfCondition() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/BangBangInIfCondition.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/BangBangInIfCondition.kt");
     }
 
     @TestMetadata("ClassInitializerHasNoValue.kt")
     public void testClassInitializerHasNoValue() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ClassInitializerHasNoValue.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/ClassInitializerHasNoValue.kt");
     }
 
     @TestMetadata("DeclarationsBefore.kt")
     public void testDeclarationsBefore() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/DeclarationsBefore.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/DeclarationsBefore.kt");
     }
 
     @TestMetadata("DoWhile.kt")
     public void testDoWhile() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/DoWhile.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/DoWhile.kt");
     }
 
     @TestMetadata("Elvis.kt")
     public void testElvis() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/Elvis.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/Elvis.kt");
     }
 
     @TestMetadata("ElvisReturn.kt")
     public void testElvisReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ElvisReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/ElvisReturn.kt");
     }
 
     @TestMetadata("ExpressionBodyExplicitType.kt")
     public void testExpressionBodyExplicitType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ExpressionBodyExplicitType.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/ExpressionBodyExplicitType.kt");
     }
 
     @TestMetadata("For1.kt")
     public void testFor1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/For1.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/For1.kt");
     }
 
     @TestMetadata("For2.kt")
     public void testFor2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/For2.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/For2.kt");
     }
 
     @TestMetadata("IfBranchesAutoCasts.kt")
     public void testIfBranchesAutoCasts() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfBranchesAutoCasts.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfBranchesAutoCasts.kt");
     }
 
     @TestMetadata("IfBranchesAutoCasts2.kt")
     public void testIfBranchesAutoCasts2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfBranchesAutoCasts2.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfBranchesAutoCasts2.kt");
     }
 
     @TestMetadata("IfBranchesSmartCast.kt")
     public void testIfBranchesSmartCast() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfBranchesSmartCast.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfBranchesSmartCast.kt");
     }
 
     @TestMetadata("IfCallWithConditionReturn.kt")
     public void testIfCallWithConditionReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfCallWithConditionReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfCallWithConditionReturn.kt");
     }
 
     @TestMetadata("IfEqAutoCast.kt")
     public void testIfEqAutoCast() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfEqAutoCast.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfEqAutoCast.kt");
     }
 
     @TestMetadata("IfIsReturn.kt")
     public void testIfIsReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfIsReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfIsReturn.kt");
     }
 
     @TestMetadata("IfNegatedNotNullReturn.kt")
     public void testIfNegatedNotNullReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNegatedNotNullReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNegatedNotNullReturn.kt");
     }
 
     @TestMetadata("IfNotIsError.kt")
     public void testIfNotIsError() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsError.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNotIsError.kt");
     }
 
     @TestMetadata("IfNotIsErrorQualifier.kt")
     public void testIfNotIsErrorQualifier() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsErrorQualifier.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNotIsErrorQualifier.kt");
     }
 
     @TestMetadata("IfNotIsErrorVariable.kt")
     public void testIfNotIsErrorVariable() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsErrorVariable.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNotIsErrorVariable.kt");
     }
 
     @TestMetadata("IfNotIsMyError.kt")
     public void testIfNotIsMyError() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsMyError.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNotIsMyError.kt");
     }
 
     @TestMetadata("IfNotIsMyErrorWithAliasImport.kt")
     public void testIfNotIsMyErrorWithAliasImport() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsMyErrorWithAliasImport.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNotIsMyErrorWithAliasImport.kt");
     }
 
     @TestMetadata("IfNotIsNothingProp.kt")
     public void testIfNotIsNothingProp() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsNothingProp.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNotIsNothingProp.kt");
     }
 
     @TestMetadata("IfNotIsReturn.kt")
     public void testIfNotIsReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNotIsReturn.kt");
     }
 
     @TestMetadata("IfNotIsReturn2.kt")
     public void testIfNotIsReturn2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsReturn2.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNotIsReturn2.kt");
     }
 
     @TestMetadata("IfNotIsThrow.kt")
     public void testIfNotIsThrow() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotIsThrow.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNotIsThrow.kt");
     }
 
     @TestMetadata("IfNotNullElseReturn.kt")
     public void testIfNotNullElseReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNotNullElseReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNotNullElseReturn.kt");
     }
 
     @TestMetadata("IfNullAlwaysExits.kt")
     public void testIfNullAlwaysExits() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullAlwaysExits.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullAlwaysExits.kt");
     }
 
     @TestMetadata("IfNullAndNullReturn.kt")
     public void testIfNullAndNullReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullAndNullReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullAndNullReturn.kt");
     }
 
     @TestMetadata("IfNullBreak.kt")
     public void testIfNullBreak() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullBreak.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullBreak.kt");
     }
 
     @TestMetadata("IfNullConditionalReturn.kt")
     public void testIfNullConditionalReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullConditionalReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullConditionalReturn.kt");
     }
 
     @TestMetadata("IfNullConditionalReturnWithElse.kt")
     public void testIfNullConditionalReturnWithElse() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullConditionalReturnWithElse.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullConditionalReturnWithElse.kt");
     }
 
     @TestMetadata("IfNullContinue.kt")
     public void testIfNullContinue() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullContinue.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullContinue.kt");
     }
 
     @TestMetadata("IfNullDoWhileWithBreak.kt")
     public void testIfNullDoWhileWithBreak() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullDoWhileWithBreak.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullDoWhileWithBreak.kt");
     }
 
     @TestMetadata("IfNullElseReturn.kt")
     public void testIfNullElseReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullElseReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullElseReturn.kt");
     }
 
     @TestMetadata("IfNullElvisReturn.kt")
     public void testIfNullElvisReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullElvisReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullElvisReturn.kt");
     }
 
     @TestMetadata("IfNullForWithReturn.kt")
     public void testIfNullForWithReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullForWithReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullForWithReturn.kt");
     }
 
     @TestMetadata("IfNullOrNullReturn.kt")
     public void testIfNullOrNullReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullOrNullReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullOrNullReturn.kt");
     }
 
     @TestMetadata("IfNullPrint.kt")
     public void testIfNullPrint() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullPrint.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullPrint.kt");
     }
 
     @TestMetadata("IfNullReturn.kt")
     public void testIfNullReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullReturn.kt");
     }
 
     @TestMetadata("IfNullWhileTrueWithBreak.kt")
     public void testIfNullWhileTrueWithBreak() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullWhileTrueWithBreak.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullWhileTrueWithBreak.kt");
     }
 
     @TestMetadata("IfNullWhileWithReturn.kt")
     public void testIfNullWhileWithReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfNullWhileWithReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfNullWhileWithReturn.kt");
     }
 
     @TestMetadata("IfReturn.kt")
     public void testIfReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IfReturn.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IfReturn.kt");
     }
 
     @TestMetadata("InIfExpressionElse.kt")
     public void testInIfExpressionElse() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/InIfExpressionElse.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/InIfExpressionElse.kt");
     }
 
     @TestMetadata("InsideAnonymousObject.kt")
     public void testInsideAnonymousObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/InsideAnonymousObject.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/InsideAnonymousObject.kt");
     }
 
     @TestMetadata("IntConstantTypeBug.kt")
     public void testIntConstantTypeBug() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/IntConstantTypeBug.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/IntConstantTypeBug.kt");
     }
 
     @TestMetadata("LabeledBreak.kt")
     public void testLabeledBreak() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LabeledBreak.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/LabeledBreak.kt");
     }
 
     @TestMetadata("LabeledContinue.kt")
     public void testLabeledContinue() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LabeledContinue.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/LabeledContinue.kt");
     }
 
     @TestMetadata("Lambda.kt")
     public void testLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/Lambda.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/Lambda.kt");
     }
 
     @TestMetadata("LambdaInCurrentStatement.kt")
     public void testLambdaInCurrentStatement() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LambdaInCurrentStatement.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/LambdaInCurrentStatement.kt");
     }
 
     @TestMetadata("LambdaReturnsNothing2.kt")
     public void testLambdaReturnsNothing2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LambdaReturnsNothing2.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/LambdaReturnsNothing2.kt");
     }
 
     @TestMetadata("LocalClass.kt")
     public void testLocalClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LocalClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/LocalClass.kt");
     }
 
     @TestMetadata("LocalFun.kt")
     public void testLocalFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LocalFun.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/LocalFun.kt");
     }
 
     @TestMetadata("LocalNothingFun.kt")
     public void testLocalNothingFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/LocalNothingFun.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/LocalNothingFun.kt");
     }
 
     @TestMetadata("MutliDeclaration.kt")
     public void testMutliDeclaration() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/MutliDeclaration.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/MutliDeclaration.kt");
     }
 
     @TestMetadata("NestedLoop.kt")
     public void testNestedLoop() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/NestedLoop.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/NestedLoop.kt");
     }
 
     @TestMetadata("OutOfBodyResolve.kt")
     public void testOutOfBodyResolve() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/OutOfBodyResolve.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/OutOfBodyResolve.kt");
     }
 
     @TestMetadata("PropertyAccessorBody.kt")
     public void testPropertyAccessorBody() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/PropertyAccessorBody.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/PropertyAccessorBody.kt");
     }
 
     @TestMetadata("PropertyByDelegate.kt")
     public void testPropertyByDelegate() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/PropertyByDelegate.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/PropertyByDelegate.kt");
     }
 
     @TestMetadata("ReturnLambda.kt")
     public void testReturnLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ReturnLambda.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/ReturnLambda.kt");
     }
 
     @TestMetadata("Simple.kt")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/Simple.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/Simple.kt");
     }
 
     @TestMetadata("SmartCastInTheSameStatement.kt")
     public void testSmartCastInTheSameStatement() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/SmartCastInTheSameStatement.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/SmartCastInTheSameStatement.kt");
     }
 
     @TestMetadata("SmartCastOfThis1.kt")
     public void testSmartCastOfThis1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/SmartCastOfThis1.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/SmartCastOfThis1.kt");
     }
 
     @TestMetadata("SmartCastOfThis2.kt")
     public void testSmartCastOfThis2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/SmartCastOfThis2.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/SmartCastOfThis2.kt");
     }
 
     @TestMetadata("SmartCastPointsResolveRequired1.kt")
     public void testSmartCastPointsResolveRequired1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/SmartCastPointsResolveRequired1.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/SmartCastPointsResolveRequired1.kt");
     }
 
     @TestMetadata("SmartCastPointsResolveRequired2.kt")
     public void testSmartCastPointsResolveRequired2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/SmartCastPointsResolveRequired2.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/SmartCastPointsResolveRequired2.kt");
     }
 
     @TestMetadata("ThisQualifiedAutoCast.kt")
     public void testThisQualifiedAutoCast() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ThisQualifiedAutoCast.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/ThisQualifiedAutoCast.kt");
     }
 
     @TestMetadata("While.kt")
     public void testWhile() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/While.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/While.kt");
     }
 
     @TestMetadata("WhileTrue.kt")
     public void testWhileTrue() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/WhileTrue.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/WhileTrue.kt");
     }
 
     @TestMetadata("WhileTrueCondition.kt")
     public void testWhileTrueCondition() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/WhileTrueCondition.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/partialBodyResolve/WhileTrueCondition.kt");
     }
 }

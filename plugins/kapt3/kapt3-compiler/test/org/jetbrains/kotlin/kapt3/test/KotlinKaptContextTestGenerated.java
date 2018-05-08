@@ -21,25 +21,26 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinKaptContextTestGenerated extends AbstractKotlinKaptContextTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInKotlinRunner() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("NestedClasses.kt")
     public void testNestedClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/NestedClasses.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/NestedClasses.kt");
     }
 
     @TestMetadata("Overloads.kt")
     public void testOverloads() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Overloads.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Overloads.kt");
     }
 
     @TestMetadata("Simple.kt")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Simple.kt");
-        doTest(fileName);
+        runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/Simple.kt");
     }
 }

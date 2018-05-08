@@ -1,19 +1,7 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
-@file:JvmVersion
 package kotlin.text
 
 import java.util.Collections
@@ -26,12 +14,14 @@ private interface FlagEnum {
     public val value: Int
     public val mask: Int
 }
+
 private fun Iterable<FlagEnum>.toInt(): Int =
-        this.fold(0, { value, option -> value or option.value })
-private inline fun <reified T> fromInt(value: Int): Set<T> where T : FlagEnum, T: Enum<T> =
-        Collections.unmodifiableSet(EnumSet.allOf(T::class.java).apply {
-            retainAll { value and it.mask == it.value }
-        })
+    this.fold(0, { value, option -> value or option.value })
+
+private inline fun <reified T> fromInt(value: Int): Set<T> where T : FlagEnum, T : Enum<T> =
+    Collections.unmodifiableSet(EnumSet.allOf(T::class.java).apply {
+        retainAll { value and it.mask == it.value }
+    })
 
 /**
  * Provides enumeration values to use to set regular expression options.
@@ -99,13 +89,13 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
 
 
     /** Creates a regular expression from the specified [pattern] string and the default options.  */
-    public actual constructor(pattern: String): this(Pattern.compile(pattern))
+    public actual constructor(pattern: String) : this(Pattern.compile(pattern))
 
     /** Creates a regular expression from the specified [pattern] string and the specified single [option].  */
-    public actual constructor(pattern: String, option: RegexOption): this(Pattern.compile(pattern, ensureUnicodeCase(option.value)))
+    public actual constructor(pattern: String, option: RegexOption) : this(Pattern.compile(pattern, ensureUnicodeCase(option.value)))
 
     /** Creates a regular expression from the specified [pattern] string and the specified set of [options].  */
-    public actual constructor(pattern: String, options: Set<RegexOption>): this(Pattern.compile(pattern, ensureUnicodeCase(options.toInt())))
+    public actual constructor(pattern: String, options: Set<RegexOption>) : this(Pattern.compile(pattern, ensureUnicodeCase(options.toInt())))
 
 
     /** The pattern string of this regular expression. */
@@ -129,13 +119,15 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-    public actual fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.matcher(input).findNext(startIndex, input)
+    public actual fun find(input: CharSequence, startIndex: Int = 0): MatchResult? =
+        nativePattern.matcher(input).findNext(startIndex, input)
 
     /**
      * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-    public actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, MatchResult::next)
+    public actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> =
+        generateSequence({ find(input, startIndex) }, MatchResult::next)
 
     /**
      * Attempts to match the entire [input] CharSequence against the pattern.
@@ -182,7 +174,8 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
      *
      * @param replacement A replacement expression that can include substitutions. See [Matcher.appendReplacement] for details.
      */
-    public actual fun replaceFirst(input: CharSequence, replacement: String): String = nativePattern.matcher(input).replaceFirst(replacement)
+    public actual fun replaceFirst(input: CharSequence, replacement: String): String =
+        nativePattern.matcher(input).replaceFirst(replacement)
 
 
     /**
@@ -193,7 +186,7 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
-        require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
+        require(limit >= 0, { "Limit must be non-negative, but was $limit." })
         return nativePattern.split(input, if (limit == 0) -1 else limit).asList()
     }
 
@@ -220,8 +213,10 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
     actual companion object {
         /** Returns a literal regex for the specified [literal] string. */
         public actual fun fromLiteral(literal: String): Regex = literal.toRegex(RegexOption.LITERAL)
+
         /** Returns a literal pattern for the specified [literal] string. */
         public actual fun escape(literal: String): String = Pattern.quote(literal)
+
         /** Returns a literal replacement expression for the specified [literal] string. */
         public actual fun escapeReplacement(literal: String): String = Matcher.quoteReplacement(literal)
 
@@ -259,6 +254,7 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
             else
                 null
         }
+
         override fun get(name: String): MatchGroup? {
             return IMPLEMENTATIONS.getMatchResultNamedGroup(matchResult, name)
         }

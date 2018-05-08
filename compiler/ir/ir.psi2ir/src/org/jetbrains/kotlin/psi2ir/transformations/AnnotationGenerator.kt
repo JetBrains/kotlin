@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -26,12 +28,18 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun generateAnnotationsForDeclarations(context: GeneratorContext, irElement: IrElement) {
-    irElement.acceptVoid(AnnotationGenerator(context))
+    val annotationGenerator = AnnotationGenerator(context.moduleDescriptor, context.symbolTable)
+    irElement.acceptVoid(annotationGenerator)
 }
 
-class AnnotationGenerator(private val context: GeneratorContext) : IrElementVisitorVoid {
+class AnnotationGenerator(
+    moduleDescriptor: ModuleDescriptor,
+    private val symbolTable: SymbolTable
+) : IrElementVisitorVoid {
 
-    private val constantValueGenerator = ConstantValueGenerator(context, this)
+    constructor(context: GeneratorContext) : this(context.moduleDescriptor, context.symbolTable)
+
+    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, this)
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -82,7 +90,7 @@ class AnnotationGenerator(private val context: GeneratorContext) : IrElementVisi
         val primaryConstructorDescriptor =
             annotationClassDescriptor.safeAs<ClassDescriptor>()?.unsubstitutedPrimaryConstructor
                     ?: throw AssertionError("No primary constructor for annotation class $annotationClassDescriptor")
-        val primaryConstructorSymbol = context.symbolTable.referenceConstructor(primaryConstructorDescriptor)
+        val primaryConstructorSymbol = symbolTable.referenceConstructor(primaryConstructorDescriptor)
 
         val psi = annotationDescriptor.source.safeAs<PsiSourceElement>()?.psi
         val startOffset = psi?.startOffset ?: UNDEFINED_OFFSET

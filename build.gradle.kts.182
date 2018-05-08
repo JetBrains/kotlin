@@ -12,7 +12,7 @@ import proguard.gradle.ProGuardTask
 buildscript {
     extra["defaultSnapshotVersion"] = "1.2-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.50-dev-310", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.50-dev-880", onlySuccessBootstrap = false))
 
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
@@ -111,15 +111,6 @@ extra["ideaUltimatePluginDir"] = project.file(ideaUltimatePluginDir)
 extra["cidrPluginDir"] = project.file(cidrPluginDir)
 extra["isSonatypeRelease"] = false
 
-Properties().apply {
-    load(File(rootDir, "resources", "kotlinManifest.properties").reader())
-    forEach {
-        val key = it.key
-        if (key != null && key is String)
-            extra[key] = it.value
-    }
-}
-
 extra["JDK_16"] = jdkPath("1.6")
 extra["JDK_17"] = jdkPath("1.7")
 extra["JDK_18"] = jdkPath("1.8")
@@ -128,6 +119,7 @@ extra["JDK_10"] = jdkPathIfFound("10")
 
 rootProject.apply {
     from(rootProject.file("versions.gradle.kts"))
+    from(rootProject.file("report.gradle.kts"))
 }
 
 extra["versions.protobuf-java"] = "2.6.1"
@@ -167,7 +159,6 @@ extra["IntellijCoreDependencies"] =
                "jna",
                "log4j",
                "picocontainer-1.2",
-               "snappy-in-java-0.5.1",
                "streamex",
                "trove4j")
 
@@ -186,7 +177,6 @@ extra["nativePlatformVariants"] =
 extra["compilerModules"] = arrayOf(
         ":compiler:util",
         ":compiler:container",
-        ":compiler:conditional-preprocessor",
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:psi",
@@ -260,11 +250,6 @@ apply {
         logger.info("Applying configuration for sonatype release")
         from("libraries/prepareSonatypeStaging.gradle")
     }
-}
-
-fun Project.allprojectsRecursive(body: Project.() -> Unit) {
-    this.body()
-    this.subprojects { allprojectsRecursive(body) }
 }
 
 fun Task.listConfigurationContents(configName: String) {
@@ -389,7 +374,6 @@ tasks {
         }
     }
 
-    // TODO: copied from TeamCityBuild.xml (with ultimate-related modification), consider removing after migrating from it
     "cleanupArtifacts" {
         doLast {
             delete(ideaPluginDir)
@@ -580,7 +564,17 @@ val zipPlugin by task<Zip> {
 val cidrPlugin by task<Copy> {
     dependsOn(ideaPlugin)
     into(cidrPluginDir)
-    from(ideaPluginDir) { exclude("lib/kotlin-plugin.jar") }
+    from(ideaPluginDir) {
+        exclude("lib/kotlin-plugin.jar")
+
+        exclude("lib/uast-kotlin.jar")
+        exclude("lib/uast-kotlin-ide.jar")
+
+        exclude("lib/android-ide.jar")
+        exclude("lib/android-output-parser-ide.jar")
+        exclude("lib/android-extensions-ide.jar")
+        exclude("lib/android-extensions-compiler.jar")
+    }
     from(cidrKotlinPlugin) { into("lib") }
 }
 

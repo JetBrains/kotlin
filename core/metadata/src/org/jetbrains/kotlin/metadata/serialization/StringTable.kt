@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.metadata.serialization
 
-import java.io.OutputStream
-
 interface StringTable {
     fun getStringIndex(string: String): Int
 
@@ -14,6 +12,4 @@ interface StringTable {
      * @param className the fully qualified name of some class in the format: `org/foo/bar/Test.Inner`
      */
     fun getQualifiedClassNameIndex(className: String, isLocal: Boolean): Int
-
-    fun serializeTo(output: OutputStream)
 }

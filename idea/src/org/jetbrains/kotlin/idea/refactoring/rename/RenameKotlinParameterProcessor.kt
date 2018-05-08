@@ -39,11 +39,10 @@ class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
 
     override fun findCollisions(
             element: PsiElement,
-            newName: String?,
+            newName: String,
             allRenames: MutableMap<out PsiElement, String>,
             result: MutableList<UsageInfo>
     ) {
-        if (newName == null) return
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return
         val descriptor = declaration.unsafeResolveToDescriptor() as VariableDescriptor
 
@@ -54,7 +53,7 @@ class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
         result += collisions
     }
 
-    override fun renameElement(element: PsiElement, newName: String?, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
+    override fun renameElement(element: PsiElement, newName: String, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
         super.renameElement(element, newName, usages, listener)
 
         usages.forEach { (it as? KtResolvableCollisionUsageInfo)?.apply() }

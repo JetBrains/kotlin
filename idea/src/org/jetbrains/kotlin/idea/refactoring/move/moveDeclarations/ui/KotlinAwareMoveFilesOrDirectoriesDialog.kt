@@ -24,7 +24,6 @@ import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.ui.RecentsManager
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton
@@ -36,10 +35,10 @@ import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.onTextChange
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import javax.swing.JComponent
-import javax.swing.event.DocumentEvent
 
 class KotlinAwareMoveFilesOrDirectoriesDialog(
         private val project: Project,
@@ -88,13 +87,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
                                                      TextComponentAccessor.TEXT_FIELD_WITH_HISTORY_WHOLE_TEXT)
         val textField = targetDirectoryField.childComponent.textEditor
         FileChooserFactory.getInstance().installFileCompletion(textField, descriptor, true, disposable)
-        textField.document.addDocumentListener(
-                object : DocumentAdapter() {
-                    override fun textChanged(e: DocumentEvent) {
-                        validateOKButton()
-                    }
-                }
-        )
+        textField.onTextChange { validateOKButton() }
         targetDirectoryField.setTextFieldPreferredWidth(CopyFilesOrDirectoriesDialog.MAX_PATH_LENGTH)
         Disposer.register(disposable, targetDirectoryField)
 

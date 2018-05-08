@@ -102,7 +102,7 @@ internal class ProjectResolutionFacade(
             globalContext
         )
 
-        val allModuleInfos = (allModules ?: collectAllModuleInfosFromIdeaModel(project)).toMutableSet()
+        val allModuleInfos = (allModules ?: collectAllModuleInfosFromIdeaModel(project, settings.platform)).toMutableSet()
 
         val syntheticFilesByModule = syntheticFiles.groupBy(KtFile::getModuleInfo)
         val syntheticFilesModules = syntheticFilesByModule.keys

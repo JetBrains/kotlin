@@ -1,7 +1,7 @@
 package org.test
 
 class Outer {
-    @Experimental(Experimental.Level.ERROR, [Experimental.Impact.LINKAGE])
+    @Experimental
     annotation class Nested
 }
 

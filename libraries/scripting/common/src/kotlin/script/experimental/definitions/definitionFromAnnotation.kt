@@ -13,8 +13,8 @@ import kotlin.script.experimental.annotations.KotlinScriptCompilationConfigurato
 import kotlin.script.experimental.annotations.KotlinScriptEvaluator
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.basic.AnnotationsBasedCompilationConfigurator
 import kotlin.script.experimental.basic.DummyEvaluator
-import kotlin.script.experimental.basic.PassThroughCompilationConfigurator
 import kotlin.script.experimental.util.TypedKey
 
 private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
@@ -42,7 +42,7 @@ open class ScriptDefinitionFromAnnotatedBaseClass(val environment: ScriptingEnvi
     override val compilationConfigurator =
         baseClass.findAnnotation<KotlinScriptCompilationConfigurator>()?.compilationConfigurator?.instantiateScriptHandler()
                 ?: explicitDefinition?.compilationConfigurator
-                ?: PassThroughCompilationConfigurator::class.instantiateScriptHandler()
+                ?: AnnotationsBasedCompilationConfigurator::class.instantiateScriptHandler()
 
     override val evaluator =
         baseClass.findAnnotation<KotlinScriptEvaluator>()?.evaluator?.instantiateScriptHandler()

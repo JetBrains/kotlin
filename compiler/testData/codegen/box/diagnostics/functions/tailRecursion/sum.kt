@@ -1,5 +1,5 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND_WITHOUT_CHECK: JS
+// DONT_RUN_GENERATED_CODE: JS
 
 tailrec fun sum(x: Long, sum: Long): Long {
     if (x == 0.toLong()) return sum

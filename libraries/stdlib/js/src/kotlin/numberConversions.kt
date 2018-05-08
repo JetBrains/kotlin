@@ -1,21 +1,9 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.text
-
 
 
 /**
@@ -108,7 +96,7 @@ public actual fun String.toDoubleOrNull(): Double? = (+(this.asDynamic())).unsaf
 public actual inline fun String.toFloatOrNull(): Float? = toDoubleOrNull().unsafeCast<Float?>()
 
 
-private fun String.isNaN(): Boolean = when(this.toLowerCase()) {
+private fun String.isNaN(): Boolean = when (this.toLowerCase()) {
     "nan", "+nan", "-nan" -> true
     else -> false
 }
@@ -118,7 +106,7 @@ private fun String.isNaN(): Boolean = when(this.toLowerCase()) {
  */
 @PublishedApi
 internal actual fun checkRadix(radix: Int): Int {
-    if(radix !in 2..36) {
+    if (radix !in 2..36) {
         throw IllegalArgumentException("radix $radix was not in valid range 2..36")
     }
     return radix

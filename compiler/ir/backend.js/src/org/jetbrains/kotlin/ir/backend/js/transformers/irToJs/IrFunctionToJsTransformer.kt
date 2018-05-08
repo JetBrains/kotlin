@@ -21,8 +21,7 @@ open class IrFunctionToJsTransformer : BaseIrElementToJsNodeTransformer<JsFuncti
 
     override fun visitConstructor(declaration: IrConstructor, context: JsGenerationContext): JsFunction {
         assert(declaration.symbol.isPrimary)
-        return translateFunction(declaration, declaration.symbol.constructedClassName.toJsName(), context)
+        val funcName = context.getNameForSymbol(declaration.symbol)
+        return translateFunction(declaration, funcName, context)
     }
-
-
 }

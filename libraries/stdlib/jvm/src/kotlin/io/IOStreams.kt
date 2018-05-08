@@ -1,5 +1,10 @@
-@file:JvmVersion
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:JvmName("ByteStreamsKt")
+
 package kotlin.io
 
 import java.io.*
@@ -8,36 +13,36 @@ import java.util.NoSuchElementException
 
 /** Returns an [Iterator] of bytes read from this input stream. */
 public operator fun BufferedInputStream.iterator(): ByteIterator =
-        object : ByteIterator() {
+    object : ByteIterator() {
 
-            var nextByte = -1
+        var nextByte = -1
 
-            var nextPrepared = false
+        var nextPrepared = false
 
-            var finished = false
+        var finished = false
 
-            private fun prepareNext() {
-                if (!nextPrepared && !finished) {
-                    nextByte = read()
-                    nextPrepared = true
-                    finished = (nextByte == -1)
-                }
-            }
-
-            public override fun hasNext(): Boolean {
-                prepareNext()
-                return !finished
-            }
-
-            public override fun nextByte(): Byte {
-                prepareNext()
-                if (finished)
-                    throw NoSuchElementException("Input stream is over.")
-                val res = nextByte.toByte()
-                nextPrepared = false
-                return res
+        private fun prepareNext() {
+            if (!nextPrepared && !finished) {
+                nextByte = read()
+                nextPrepared = true
+                finished = (nextByte == -1)
             }
         }
+
+        public override fun hasNext(): Boolean {
+            prepareNext()
+            return !finished
+        }
+
+        public override fun nextByte(): Byte {
+            prepareNext()
+            if (finished)
+                throw NoSuchElementException("Input stream is over.")
+            val res = nextByte.toByte()
+            nextPrepared = false
+            return res
+        }
+    }
 
 
 /** Creates a new byte input stream for the string. */
@@ -56,15 +61,15 @@ public inline fun ByteArray.inputStream(): ByteArrayInputStream = ByteArrayInput
  * @param length the length of the portion of the array to read.
  */
 @kotlin.internal.InlineOnly
-public inline fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
+public inline fun ByteArray.inputStream(offset: Int, length: Int): ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
 
 /**
  * Creates a buffered input stream wrapping this stream.
  * @param bufferSize the buffer size to use.
  */
 @kotlin.internal.InlineOnly
-public inline fun InputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedInputStream
-        = if (this is BufferedInputStream) this else BufferedInputStream(this, bufferSize)
+public inline fun InputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedInputStream =
+    if (this is BufferedInputStream) this else BufferedInputStream(this, bufferSize)
 
 /** Creates a reader on this input stream using UTF-8 or the specified [charset]. */
 @kotlin.internal.InlineOnly
@@ -79,8 +84,8 @@ public inline fun InputStream.bufferedReader(charset: Charset = Charsets.UTF_8):
  * @param bufferSize the buffer size to use.
  */
 @kotlin.internal.InlineOnly
-public inline fun OutputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedOutputStream
-        = if (this is BufferedOutputStream) this else BufferedOutputStream(this, bufferSize)
+public inline fun OutputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedOutputStream =
+    if (this is BufferedOutputStream) this else BufferedOutputStream(this, bufferSize)
 
 /** Creates a writer on this output stream using UTF-8 or the specified [charset]. */
 @kotlin.internal.InlineOnly

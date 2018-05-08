@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package templates
@@ -54,6 +43,8 @@ class MemberBuilder(
         private set
 
     var doc: String? = null; private set
+
+    val samples = mutableListOf<String>()
 
     val sequenceClassification = mutableListOf<SequenceClass>()
     var deprecate: Deprecation? = null; private set
@@ -128,6 +119,10 @@ class MemberBuilder(
 
     @Deprecated("Use specialFor", ReplaceWith("specialFor(*fs) { doc(valueBuilder) }"))
     fun doc(vararg fs: Family, valueBuilder: DocExtensions.() -> String) = specialFor(*fs) { doc(valueBuilder) }
+
+    fun sample(sampleRef: String) {
+        samples += sampleRef
+    }
 
     fun body(valueBuilder: () -> String) {
         body = valueBuilder()
@@ -302,6 +297,10 @@ class MemberBuilder(
             if (family == Sequences && sequenceClassification.isNotEmpty()) {
                 builder.append(" *\n")
                 builder.append(" * The operation is ${sequenceClassification.joinToString(" and ") { "_${it}_" }}.\n")
+            }
+            if (samples.any()) {
+                builder.append(" * \n")
+                samples.forEach { builder.append(" * @sample $it\n")}
             }
             builder.append(" */\n")
         }

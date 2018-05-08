@@ -21,139 +21,121 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiModuleSafeDeleteTestGenerated extends AbstractMultiModuleSafeDeleteTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInSafeDeleteMultiModule() throws Exception {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/safeDeleteMultiModule"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
     @TestMetadata("byHeaderClass/byHeaderClass.test")
     public void testByHeaderClass_ByHeaderClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClass/byHeaderClass.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClass/byHeaderClass.test");
     }
 
     @TestMetadata("byHeaderClassMemberFun/byHeaderClassMemberFun.test")
     public void testByHeaderClassMemberFun_ByHeaderClassMemberFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassMemberFun/byHeaderClassMemberFun.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassMemberFun/byHeaderClassMemberFun.test");
     }
 
     @TestMetadata("byHeaderClassMemberFunParameter/byHeaderClassMemberFunParameter.test")
     public void testByHeaderClassMemberFunParameter_ByHeaderClassMemberFunParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassMemberFunParameter/byHeaderClassMemberFunParameter.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassMemberFunParameter/byHeaderClassMemberFunParameter.test");
     }
 
     @TestMetadata("byHeaderClassMemberVal/byHeaderClassMemberVal.test")
     public void testByHeaderClassMemberVal_ByHeaderClassMemberVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassMemberVal/byHeaderClassMemberVal.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassMemberVal/byHeaderClassMemberVal.test");
     }
 
     @TestMetadata("byHeaderClassPrimaryConstructorParameter/headersAndImplsByHeaderClassPrimaryConstructorParameter.test")
     public void testByHeaderClassPrimaryConstructorParameter_HeadersAndImplsByHeaderClassPrimaryConstructorParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassPrimaryConstructorParameter/headersAndImplsByHeaderClassPrimaryConstructorParameter.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassPrimaryConstructorParameter/headersAndImplsByHeaderClassPrimaryConstructorParameter.test");
     }
 
     @TestMetadata("byHeaderClassSecondaryConstructor/byHeaderClassSecondaryConstructor.test")
     public void testByHeaderClassSecondaryConstructor_ByHeaderClassSecondaryConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassSecondaryConstructor/byHeaderClassSecondaryConstructor.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassSecondaryConstructor/byHeaderClassSecondaryConstructor.test");
     }
 
     @TestMetadata("byHeaderClassSecondaryConstructorParameter/headersAndImplsByHeaderClassSecondaryConstructorParameter.test")
     public void testByHeaderClassSecondaryConstructorParameter_HeadersAndImplsByHeaderClassSecondaryConstructorParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassSecondaryConstructorParameter/headersAndImplsByHeaderClassSecondaryConstructorParameter.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassSecondaryConstructorParameter/headersAndImplsByHeaderClassSecondaryConstructorParameter.test");
     }
 
     @TestMetadata("byHeaderFun/byHeaderFun.test")
     public void testByHeaderFun_ByHeaderFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderFun/byHeaderFun.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderFun/byHeaderFun.test");
     }
 
     @TestMetadata("byHeaderFunParamerer/byHeaderFunParameter.test")
     public void testByHeaderFunParamerer_ByHeaderFunParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderFunParamerer/byHeaderFunParameter.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderFunParamerer/byHeaderFunParameter.test");
     }
 
     @TestMetadata("byHeaderFunVarargParamerer/byHeaderFunVarargParameter.test")
     public void testByHeaderFunVarargParamerer_ByHeaderFunVarargParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderFunVarargParamerer/byHeaderFunVarargParameter.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderFunVarargParamerer/byHeaderFunVarargParameter.test");
     }
 
     @TestMetadata("byHeaderVal/byHeaderVal.test")
     public void testByHeaderVal_ByHeaderVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderVal/byHeaderVal.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderVal/byHeaderVal.test");
     }
 
     @TestMetadata("byImplClass/byImplClass.test")
     public void testByImplClass_ByImplClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClass/byImplClass.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClass/byImplClass.test");
     }
 
     @TestMetadata("byImplClassMemberFun/byImplClassMemberFun.test")
     public void testByImplClassMemberFun_ByImplClassMemberFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClassMemberFun/byImplClassMemberFun.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClassMemberFun/byImplClassMemberFun.test");
     }
 
     @TestMetadata("byImplClassMemberFunParameterLiftingToHeader/byImplClassMemberFunParameterLiftingToHeader.test")
     public void testByImplClassMemberFunParameterLiftingToHeader_ByImplClassMemberFunParameterLiftingToHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClassMemberFunParameterLiftingToHeader/byImplClassMemberFunParameterLiftingToHeader.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClassMemberFunParameterLiftingToHeader/byImplClassMemberFunParameterLiftingToHeader.test");
     }
 
     @TestMetadata("byImplClassMemberVal/byImplClassMemberVal.test")
     public void testByImplClassMemberVal_ByImplClassMemberVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClassMemberVal/byImplClassMemberVal.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClassMemberVal/byImplClassMemberVal.test");
     }
 
     @TestMetadata("byImplClassPrimaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassPrimaryConstructorParameter.test")
     public void testByImplClassPrimaryConstructorParameterLiftingToHeader_HeadersAndImplsByImplClassPrimaryConstructorParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClassPrimaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassPrimaryConstructorParameter.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClassPrimaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassPrimaryConstructorParameter.test");
     }
 
     @TestMetadata("byImplClassSecondaryConstructor/byImplClassSecondaryConstructor.test")
     public void testByImplClassSecondaryConstructor_ByImplClassSecondaryConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClassSecondaryConstructor/byImplClassSecondaryConstructor.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClassSecondaryConstructor/byImplClassSecondaryConstructor.test");
     }
 
     @TestMetadata("byImplClassSecondaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassSecondaryConstructorParameter.test")
     public void testByImplClassSecondaryConstructorParameterLiftingToHeader_HeadersAndImplsByImplClassSecondaryConstructorParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClassSecondaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassSecondaryConstructorParameter.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClassSecondaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassSecondaryConstructorParameter.test");
     }
 
     @TestMetadata("byImplFun/byImplFun.test")
     public void testByImplFun_ByImplFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplFun/byImplFun.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplFun/byImplFun.test");
     }
 
     @TestMetadata("byImplFunParamererLiftingToHeader/byImplFunParameterLiftingToHeader.test")
     public void testByImplFunParamererLiftingToHeader_ByImplFunParameterLiftingToHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplFunParamererLiftingToHeader/byImplFunParameterLiftingToHeader.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplFunParamererLiftingToHeader/byImplFunParameterLiftingToHeader.test");
     }
 
     @TestMetadata("byImplFunParamererNoLiftingToHeader/byImplFunParameterNoLiftingToHeader.test")
     public void testByImplFunParamererNoLiftingToHeader_ByImplFunParameterNoLiftingToHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplFunParamererNoLiftingToHeader/byImplFunParameterNoLiftingToHeader.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplFunParamererNoLiftingToHeader/byImplFunParameterNoLiftingToHeader.test");
     }
 
     @TestMetadata("byImplVal/byImplVal.test")
     public void testByImplVal_ByImplVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplVal/byImplVal.test");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplVal/byImplVal.test");
     }
 }

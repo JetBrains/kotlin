@@ -257,18 +257,20 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                         else -> null
                     }
 
-                    val targetFile: KtFile
+                    val targetFile: PsiFile
                     val copiedDeclaration: KtNamedDeclaration?
                     if (fileToCopy != null) {
                         targetFile = runWriteAction {
-                            val copiedFile = targetDirectory.copyFileFrom(targetFileName, fileToCopy) as KtFile
-                            if (fileToCopy.packageMatchesDirectory()) {
+                            val copiedFile = targetDirectory.copyFileFrom(targetFileName, fileToCopy)
+                            if (copiedFile is KtFile && fileToCopy.packageMatchesDirectory()) {
                                 targetDirectory.getPackage()?.qualifiedName?.let { copiedFile.packageFqName = FqName(it) }
                             }
                             performDelayedRefactoringRequests(project)
                             copiedFile
                         }
-                        copiedDeclaration = if (isSingleDeclarationInFile) targetFile.declarations.singleOrNull() as? KtNamedDeclaration else null
+                        copiedDeclaration = if (isSingleDeclarationInFile && targetFile is KtFile) {
+                            targetFile.declarations.singleOrNull() as? KtNamedDeclaration
+                        } else null
                     }
                     else {
                         targetFile = getOrCreateTargetFile(originalFile, targetDirectory, targetFileName, commandName) ?: return@executeCommand

@@ -1,10 +1,11 @@
 // IGNORE_BACKEND: NATIVE
+// COMMON_COROUTINES_TEST
 // FILE: A.kt
 // WITH_RUNTIME
 package a
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 class Controller {
     suspend fun suspendHere() = suspendCoroutineOrReturn<String> { x ->

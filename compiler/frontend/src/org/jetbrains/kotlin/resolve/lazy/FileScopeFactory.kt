@@ -153,7 +153,7 @@ class FileScopeFactory(
         val result = FileScopes(lexicalScope, lazyImportingScope, importResolver)
 
         private fun createDefaultImportResolversForFile(): Pair<LazyImportResolver, LazyImportResolver> {
-            val extraImports = file.originalFile.virtualFile?.let { vFile ->
+            val extraImports = file.takeIf { it.isScript() }?.originalFile?.virtualFile?.let { vFile ->
                 val scriptExternalDependencies = getScriptExternalDependencies(vFile, file.project)
                 ktImportsFactory.createImportDirectives(scriptExternalDependencies?.imports?.map { ImportPath.fromString(it) }.orEmpty())
             }.orEmpty()

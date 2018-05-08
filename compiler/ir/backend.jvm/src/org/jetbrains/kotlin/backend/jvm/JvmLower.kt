@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.NameUtils
 
 class JvmLower(val context: JvmBackendContext) {
@@ -35,7 +37,7 @@ class JvmLower(val context: JvmBackendContext) {
         PropertiesLowering().lower(irFile)
 
         //Should be before interface lowering
-        DefaultArgumentStubGenerator(context).runOnFilePostfix(irFile)
+        DefaultArgumentStubGenerator(context, false).runOnFilePostfix(irFile)
         StaticDefaultFunctionLowering(context.state).runOnFilePostfix(irFile)
 
         InterfaceLowering(context.state).runOnFilePostfix(irFile)
@@ -57,5 +59,7 @@ class JvmLower(val context: JvmBackendContext) {
         BridgeLowering(context).runOnFilePostfix(irFile)
 
         TailrecLowering(context).runOnFilePostfix(irFile)
+
+        irFile.acceptVoid(PatchDeclarationParentsVisitor())
     }
 }
