@@ -27,13 +27,17 @@ interface JKElement : JKTreeElement {
 
 interface JKUniverseDeclaration : JKElement, JKDeclaration
 
+interface JKDeclarationList : JKTreeElement {
+    var declarations: List<JKUniverseDeclaration>
+}
+
 interface JKUniverseClass : JKUniverseDeclaration, JKClass {
-    override var declarations: List<JKUniverseDeclaration>
+    override val declarationList: JKDeclarationList
 }
 
 interface JKModifier : JKElement
 
-interface JKModifierList : JKElement {
+interface JKModifierList : JKBranchElement, JKElement {
     var modifiers: List<JKModifier>
 }
 

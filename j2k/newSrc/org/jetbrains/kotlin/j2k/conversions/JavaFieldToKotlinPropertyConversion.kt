@@ -32,7 +32,7 @@ class JavaFieldToKotlinPropertyConversion : TransformerBasedConversion() {
 
     override fun visitUniverseClass(universeClass: JKUniverseClass) {
         somethingChanged = true
-        universeClass.declarations = universeClass.declarations.map {
+        universeClass.declarationList.declarations = universeClass.declarationList.declarations.map {
             if (it is JKJavaField) JKKtPropertyImpl(
                 it.modifierList,
                 it.type,
@@ -52,7 +52,7 @@ class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
 
     override fun visitUniverseClass(universeClass: JKUniverseClass) {
         somethingChanged = true
-        universeClass.declarations = universeClass.declarations.map {
+        universeClass.declarationList.declarations = universeClass.declarationList.declarations.map {
             if (it is JKJavaMethod) JKKtFunctionImpl(
                 JKJavaPrimitiveTypeImpl.BOOLEAN,
                 it.name,
