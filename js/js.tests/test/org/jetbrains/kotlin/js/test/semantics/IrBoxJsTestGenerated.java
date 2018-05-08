@@ -141,6 +141,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
                 runTest("js/js.translator/testData/box/callableReference/function/constructorsWithArgs.kt");
             }
 
+            @TestMetadata("constructorsWithArgsSimple.kt")
+            public void testConstructorsWithArgsSimple() throws Exception {
+                runTest("js/js.translator/testData/box/callableReference/function/constructorsWithArgsSimple.kt");
+            }
+
             @TestMetadata("extension.kt")
             public void testExtension() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/function/extension.kt");
