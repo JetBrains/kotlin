@@ -11762,6 +11762,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability/canBeVal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("const.kt")
+                public void testConst() throws Exception {
+                    runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/const.kt");
+                }
+
                 @TestMetadata("multiVariable.kt")
                 public void testMultiVariable() throws Exception {
                     runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/multiVariable.kt");

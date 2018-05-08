@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -94,6 +95,15 @@ class ChangeVariableMutabilityFix(element: KtValVarKeywordOwner, private val mak
                 val property = lateinitElement.getStrictParentOfType<KtProperty>() ?: return null
                 if (property.valOrVarKeyword.text != "val") return null
                 return ChangeVariableMutabilityFix(property, makeVar = true)
+            }
+        }
+
+        val CONST_VAL_FACTORY = object : KotlinSingleIntentionActionFactory() {
+            override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+                val (modifier, element) = Errors.WRONG_MODIFIER_TARGET.cast(diagnostic).run { a to psiElement }
+                if (modifier != KtTokens.CONST_KEYWORD) return null
+                val property = element.getStrictParentOfType<KtProperty>() ?: return null
+                return ChangeVariableMutabilityFix(property, makeVar = false)
             }
         }
     }
