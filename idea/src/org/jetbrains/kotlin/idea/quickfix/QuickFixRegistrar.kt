@@ -551,5 +551,6 @@ class QuickFixRegistrar : QuickFixContributor {
         EXPERIMENTAL_API_USAGE_ERROR.registerFactory(ExperimentalFixesFactory)
         EXPERIMENTAL_OVERRIDE.registerFactory(ExperimentalFixesFactory)
         EXPERIMENTAL_OVERRIDE_ERROR.registerFactory(ExperimentalFixesFactory)
+        EXPERIMENTAL_IS_NOT_ENABLED.registerFactory(MakeModuleExperimentalFix)
     }
 }

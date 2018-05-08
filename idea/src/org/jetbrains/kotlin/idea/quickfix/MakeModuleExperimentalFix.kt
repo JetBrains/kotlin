@@ -5,14 +5,20 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.additionalArgumentsAsList
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 
 class MakeModuleExperimentalFix(
     file: KtFile,
@@ -23,6 +29,8 @@ class MakeModuleExperimentalFix(
 
     override fun getFamilyName(): String = "Make module experimental"
 
+    private val compilerArgument = "-Xuse-experimental=$annotationFqName"
+
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
         val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false, commitModel = true)
@@ -31,7 +39,22 @@ class MakeModuleExperimentalFix(
             facetSettings.compilerSettings = it
         }
 
-        compilerSettings.additionalArguments += " -Xuse-experimental=$annotationFqName"
+        compilerSettings.additionalArguments += " $compilerArgument"
         facetSettings.updateMergedArguments()
+    }
+
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
+        val facet = KotlinFacet.get(module) ?: return true
+        val facetSettings = facet.configuration.settings
+        val compilerSettings = facetSettings.compilerSettings ?: return true
+        return compilerArgument !in compilerSettings.additionalArgumentsAsList
+    }
+
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val containingKtFile = diagnostic.psiElement.containingFile as? KtFile ?: return null
+            val module = containingKtFile.module ?: return null
+            return MakeModuleExperimentalFix(containingKtFile, module, ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAME)
+        }
     }
 }

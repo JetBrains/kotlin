@@ -6081,6 +6081,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testOverride() throws Exception {
             runTest("idea/testData/quickfix/experimental/override.kt");
         }
+
+        @TestMetadata("switchOn.kt")
+        public void testSwitchOn() throws Exception {
+            runTest("idea/testData/quickfix/experimental/switchOn.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/expressions")
