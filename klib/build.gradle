@@ -58,4 +58,11 @@ test {
     dependsOn 'cleanTest'
     systemProperty('konan.home', getProperty("konan.home"))
     dependsOn konanArtifacts.collect { it.getByTarget('host') }
+    if (useCustomDist) {
+        // Use the klib utility from the distribution
+        def distClasspath = fileTree("${project.getProperty("konan.home")}/konan/lib") {
+            include "**/*.jar"
+        }
+        classpath = distClasspath + sourceSets.test.runtimeClasspath - sourceSets.main.runtimeClasspath
+    }
 }
