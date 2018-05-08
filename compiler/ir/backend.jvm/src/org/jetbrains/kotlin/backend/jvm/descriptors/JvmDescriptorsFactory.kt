@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.ir.SourceManager
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.load.java.JavaVisibilities
@@ -44,17 +41,14 @@ class JvmDescriptorsFactory(
     private val psiSourceManager: PsiSourceManager,
     private val builtIns: KotlinBuiltIns
 ) : DescriptorsFactory {
-    private val singletonFieldDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
+    private val singletonFieldDescriptors = HashMap<IrBindableSymbol<*, *>, IrFieldSymbol>()
     private val outerThisDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
     private val innerClassConstructors = HashMap<ClassConstructorDescriptor, IrConstructorSymbol>()
 
-    override fun getSymbolForEnumEntry(enumEntry: IrEnumEntrySymbol): IrFieldSymbol {
-        val enumEntryDescriptor = enumEntry.descriptor
-        val fieldDescriptor = singletonFieldDescriptors.getOrPut(enumEntryDescriptor) {
-            createEnumEntryFieldDescriptor(enumEntryDescriptor)
+    override fun getSymbolForEnumEntry(enumEntry: IrEnumEntrySymbol): IrFieldSymbol =
+        singletonFieldDescriptors.getOrPut(enumEntry) {
+            IrFieldSymbolImpl(createEnumEntryFieldDescriptor(enumEntry.descriptor))
         }
-        return IrFieldSymbolImpl(fieldDescriptor)
-    }
 
     fun createFileClassDescriptor(fileEntry: SourceManager.FileEntry, packageFragment: PackageFragmentDescriptor): FileClassDescriptor {
         val ktFile = psiSourceManager.getKtFile(fileEntry as PsiSourceManager.PsiFileEntry)
@@ -128,9 +122,9 @@ class JvmDescriptorsFactory(
     }
 
     override fun getSymbolForObjectInstance(singleton: IrClassSymbol): IrFieldSymbol =
-        IrFieldSymbolImpl(singletonFieldDescriptors.getOrPut(singleton.descriptor) {
-            createObjectInstanceFieldDescriptor(singleton.descriptor)
-        })
+        singletonFieldDescriptors.getOrPut(singleton) {
+            IrFieldSymbolImpl(createObjectInstanceFieldDescriptor(singleton.descriptor))
+        }
 
     private fun createObjectInstanceFieldDescriptor(objectDescriptor: ClassDescriptor): PropertyDescriptor {
         assert(objectDescriptor.kind == ClassKind.OBJECT) { "Should be an object: $objectDescriptor" }

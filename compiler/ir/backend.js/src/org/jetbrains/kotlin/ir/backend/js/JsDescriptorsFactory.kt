@@ -24,12 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.name.Name
@@ -39,7 +34,7 @@ import java.util.*
 class JsDescriptorsFactory(
     private val builtIns: KotlinBuiltIns
 ) : DescriptorsFactory {
-    private val singletonFieldDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
+    private val singletonFieldDescriptors = HashMap<IrBindableSymbol<*, *>, IrFieldSymbol>()
     private val outerThisDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
     private val innerClassConstructors = HashMap<ClassConstructorDescriptor, IrConstructorSymbol>()
 
@@ -117,9 +112,9 @@ class JsDescriptorsFactory(
     }
 
     override fun getSymbolForObjectInstance(singleton: IrClassSymbol): IrFieldSymbol =
-        IrFieldSymbolImpl(singletonFieldDescriptors.getOrPut(singleton.descriptor) {
-            createObjectInstanceFieldDescriptor(singleton.descriptor)
-        })
+        singletonFieldDescriptors.getOrPut(singleton) {
+            IrFieldSymbolImpl(createObjectInstanceFieldDescriptor(singleton.descriptor))
+        }
 
     private fun createObjectInstanceFieldDescriptor(objectDescriptor: ClassDescriptor): PropertyDescriptor {
         assert(objectDescriptor.kind == ClassKind.OBJECT) { "Should be an object: $objectDescriptor" }
