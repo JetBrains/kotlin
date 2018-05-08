@@ -579,6 +579,7 @@ val cidrPlugin by task<Copy> {
         exclude("lib/jps-ide.jar")
         exclude("lib/jps/**")
         exclude("kotlinc/**")
+        exclude("lib/maven-ide.jar")
     }
     from(cidrKotlinPlugin) { into("lib") }
 }
