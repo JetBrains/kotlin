@@ -64,7 +64,7 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
 
         add(JSeparator(SwingConstants.VERTICAL))
 
-        isReplCheckbox = JCheckBox("Use REPL", false).customize()
+        isReplCheckbox = JCheckBox("Use REPL", false)
         add(isReplCheckbox)
         isReplCheckbox.addItemListener {
             scratchFile.getPsiFile()?.virtualFile?.apply {
@@ -74,7 +74,7 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
 
         add(JSeparator(SwingConstants.VERTICAL))
 
-        isMakeBeforeRunCheckbox = JCheckBox("Make before Run", false).customize()
+        isMakeBeforeRunCheckbox = JCheckBox("Make before Run", false)
         add(isMakeBeforeRunCheckbox)
         isMakeBeforeRunCheckbox.addItemListener {
             scratchFile.getPsiFile()?.virtualFile?.apply {
@@ -117,11 +117,6 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
     @TestOnly
     fun setMakeBeforeRun(isSelected: Boolean) {
         isMakeBeforeRunCheckbox.isSelected = isSelected
-    }
-
-    private fun JCheckBox.customize(): JCheckBox {
-        verticalTextPosition = SwingConstants.BOTTOM
-        return this
     }
 
     private fun createActionsToolbar(): JComponent {
