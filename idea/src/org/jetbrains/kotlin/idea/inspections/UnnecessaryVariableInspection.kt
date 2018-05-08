@@ -56,7 +56,7 @@ class UnnecessaryVariableInspection : AbstractApplicabilityBasedInspection<KtPro
 
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
         val property = element.getParentOfType<KtProperty>(strict = false) ?: return
-        KotlinInlineValHandler().inlineElement(project, editor, property)
+        KotlinInlineValHandler(withPrompt = false).inlineElement(project, editor, property)
     }
 
     companion object {
