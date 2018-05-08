@@ -3921,6 +3921,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/simpleAssign.kt");
         }
 
+        @TestMetadata("validAddition.kt")
+        public void testValidAddition() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/validAddition.kt");
+        }
+
         @TestMetadata("validSubtraction.kt")
         public void testValidSubtraction() throws Exception {
             runTest("idea/testData/inspectionsLocal/replaceWithOperatorAssignment/validSubtraction.kt");
