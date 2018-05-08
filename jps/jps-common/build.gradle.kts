@@ -10,7 +10,6 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:cli-common"))
     compile(project(":compiler:frontend.java"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep())
 }
 
@@ -19,3 +18,8 @@ sourceSets {
     "test" {}
 }
 
+runtimeJar {
+    archiveName = "jps-common-ide.jar"
+}
+
+ideaPlugin()
