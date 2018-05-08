@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
@@ -126,10 +127,10 @@ class JvmDescriptorsFactory(
         )
     }
 
-    override fun getFieldDescriptorForObjectInstance(objectDescriptor: ClassDescriptor): PropertyDescriptor =
-        singletonFieldDescriptors.getOrPut(objectDescriptor) {
-            createObjectInstanceFieldDescriptor(objectDescriptor)
-        }
+    override fun getSymbolForObjectInstance(singleton: IrClassSymbol): IrFieldSymbol =
+        IrFieldSymbolImpl(singletonFieldDescriptors.getOrPut(singleton.descriptor) {
+            createObjectInstanceFieldDescriptor(singleton.descriptor)
+        })
 
     private fun createObjectInstanceFieldDescriptor(objectDescriptor: ClassDescriptor): PropertyDescriptor {
         assert(objectDescriptor.kind == ClassKind.OBJECT) { "Should be an object: $objectDescriptor" }

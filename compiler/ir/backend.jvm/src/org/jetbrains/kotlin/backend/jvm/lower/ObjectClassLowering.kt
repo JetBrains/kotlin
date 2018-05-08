@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isCompanionObjectInInterfaceNotIntrinsic
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 
 class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 
@@ -53,7 +55,7 @@ class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformer
     private fun process(irClass: IrClass) {
         if (irClass.descriptor.kind != ClassKind.OBJECT) return
 
-        val publicInstanceDescriptor = context.descriptorsFactory.getFieldDescriptorForObjectInstance(irClass.descriptor)
+        val publicInstance = context.descriptorsFactory.getSymbolForObjectInstance(irClass.symbol)
 
         val constructor = irClass.descriptor.unsubstitutedPrimaryConstructor
                 ?: throw AssertionError("Object should have a primary constructor: ${irClass.descriptor}")
@@ -61,7 +63,7 @@ class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformer
         val publicInstanceOwner = if (irClass.descriptor.isCompanionObject) parentScope!!.irElement as IrDeclarationContainer else irClass
         if (isCompanionObjectInInterfaceNotIntrinsic(irClass.descriptor)) {
             // TODO rename to $$INSTANCE
-            val privateInstance = publicInstanceDescriptor.copy(
+            val privateInstance = publicInstance.descriptor.copy(
                 irClass.descriptor,
                 Modality.FINAL,
                 Visibilities.PROTECTED/*TODO package local*/,
@@ -69,36 +71,36 @@ class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformer
                 false
             ) as PropertyDescriptor
             privateInstance.name
-            val field = createInstanceFieldWithInitializer(privateInstance, constructor, irClass)
+            val field = createInstanceFieldWithInitializer(IrFieldSymbolImpl(privateInstance), constructor, irClass)
             createFieldWithCustomInitializer(
-                publicInstanceDescriptor,
+                publicInstance,
                 IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.symbol),
                 publicInstanceOwner
             )
         } else {
-            createInstanceFieldWithInitializer(publicInstanceDescriptor, constructor, publicInstanceOwner)
+            createInstanceFieldWithInitializer(publicInstance, constructor, publicInstanceOwner)
         }
     }
 
     private fun createInstanceFieldWithInitializer(
-        instanceFieldDescriptor: PropertyDescriptor,
+        fieldSymbol: IrFieldSymbol,
         constructor: ClassConstructorDescriptor,
         instanceOwner: IrDeclarationContainer
     ): IrField =
         createFieldWithCustomInitializer(
-            instanceFieldDescriptor,
+            fieldSymbol,
             IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, constructor),
             instanceOwner
         )
 
     private fun createFieldWithCustomInitializer(
-        instanceFieldDescriptor: PropertyDescriptor,
+        fieldSymbol: IrFieldSymbol,
         instanceInitializer: IrExpression,
         instanceOwner: IrDeclarationContainer
     ): IrField =
         IrFieldImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE,
-            instanceFieldDescriptor,
+            fieldSymbol,
             IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, instanceInitializer)
         ).also {
             pendingTransformations.add { instanceOwner.declarations.add(it) }

@@ -26,10 +26,12 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
@@ -114,10 +116,10 @@ class JsDescriptorsFactory(
         return IrConstructorSymbolImpl(newDescriptor)
     }
 
-    override fun getFieldDescriptorForObjectInstance(objectDescriptor: ClassDescriptor): PropertyDescriptor =
-        singletonFieldDescriptors.getOrPut(objectDescriptor) {
-            createObjectInstanceFieldDescriptor(objectDescriptor)
-        }
+    override fun getSymbolForObjectInstance(singleton: IrClassSymbol): IrFieldSymbol =
+        IrFieldSymbolImpl(singletonFieldDescriptors.getOrPut(singleton.descriptor) {
+            createObjectInstanceFieldDescriptor(singleton.descriptor)
+        })
 
     private fun createObjectInstanceFieldDescriptor(objectDescriptor: ClassDescriptor): PropertyDescriptor {
         assert(objectDescriptor.kind == ClassKind.OBJECT) { "Should be an object: $objectDescriptor" }
