@@ -11658,6 +11658,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("unusedVariableWithAnonymousFunctionInitialize1.kt")
+        public void testUnusedVariableWithAnonymousFunctionInitialize1() throws Exception {
+            runTest("idea/testData/quickfix/variables/unusedVariableWithAnonymousFunctionInitialize1.kt");
+        }
+
+        @TestMetadata("unusedVariableWithAnonymousFunctionInitialize2.kt")
+        public void testUnusedVariableWithAnonymousFunctionInitialize2() throws Exception {
+            runTest("idea/testData/quickfix/variables/unusedVariableWithAnonymousFunctionInitialize2.kt");
+        }
+
         @TestMetadata("unusedVariableWithConstantInitializer.kt")
         public void testUnusedVariableWithConstantInitializer() throws Exception {
             runTest("idea/testData/quickfix/variables/unusedVariableWithConstantInitializer.kt");
@@ -11671,6 +11681,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("unusedVariableWithInitializerAndComment.kt")
         public void testUnusedVariableWithInitializerAndComment() throws Exception {
             runTest("idea/testData/quickfix/variables/unusedVariableWithInitializerAndComment.kt");
+        }
+
+        @TestMetadata("unusedVariableWithLambdaInitializer1.kt")
+        public void testUnusedVariableWithLambdaInitializer1() throws Exception {
+            runTest("idea/testData/quickfix/variables/unusedVariableWithLambdaInitializer1.kt");
+        }
+
+        @TestMetadata("unusedVariableWithLambdaInitializer2.kt")
+        public void testUnusedVariableWithLambdaInitializer2() throws Exception {
+            runTest("idea/testData/quickfix/variables/unusedVariableWithLambdaInitializer2.kt");
         }
 
         @TestMetadata("unusedVariableWithNullInitializer.kt")
