@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
@@ -699,6 +700,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         @Override
         public void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter) {
             PsiElement originalElement = DescriptorToSourceUtils.descriptorToDeclaration(parameter);
+            ((FunctionDescriptorImpl) function).setGenerated(true);
             functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(originalElement, function), function, new FunctionGenerationStrategy() {
                 @Override
                 public void generateBody(
@@ -710,7 +712,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 ) {
                     Type componentType = signature.getReturnType();
                     InstructionAdapter iv = new InstructionAdapter(mv);
-                    addGeneratedAnnotation(mv);
 
                     if (!componentType.equals(Type.VOID_TYPE)) {
                         PropertyDescriptor property =
@@ -736,6 +737,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 @NotNull List<? extends KtParameter> constructorParameters
         ) {
             Type thisDescriptorType = typeMapper.mapType(descriptor);
+            ((FunctionDescriptorImpl) function).setGenerated(true);
 
             functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOriginFromPure(myClass, function), function, new FunctionGenerationStrategy() {
                 @Override
@@ -748,7 +750,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 ) {
                     InstructionAdapter iv = new InstructionAdapter(mv);
 
-                    addGeneratedAnnotation(mv);
                     iv.anew(thisDescriptorType);
                     iv.dup();
 
