@@ -24,18 +24,6 @@
 
 #ifndef KONAN_NO_DEBUG_API
 
-// Type for runtime representation of Konan object.
-enum Konan_RuntimeType {
-  INVALID = 0,
-  OBJECT = 1,
-  INT8 = 2,
-  INT16 = 3,
-  INT32 = 4,
-  INT64 = 5,
-  FLOAT32 = 6,
-  FLOAT64 = 7
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -46,24 +34,31 @@ char* Konan_DebugBuffer();
 
 // Get size of memory buffer where debugger can put data in Konan app process.
 RUNTIME_USED
-int Konan_DebugBufferSize();
+int32_t Konan_DebugBufferSize();
 
 // Put string representation of an object to the provided buffer.
 RUNTIME_USED
-int Konan_DebugObjectToUtf8Array(KRef obj, char* buffer, int bufferSize);
+int32_t Konan_DebugObjectToUtf8Array(KRef obj, char* buffer, int bufferSize);
 
 // Print to console string representation of an object.
 RUNTIME_USED
-int Konan_DebugPrint(KRef obj);
+int32_t Konan_DebugPrint(KRef obj);
+
+// Returns 1 if obj refers to an array, string or binary blob and 0 otherwise.
+RUNTIME_USED int Konan_DebugIsArray(KRef obj);
+
+// Returns number of fields in an objects, or elements in an array.
+RUNTIME_USED int Konan_DebugGetFieldCount(KRef obj);
 
 // Compute type of field or an array element at the index, or 0, if incorrect,
 // see Konan_RuntimeType.
-// TODO: currently, only object fields are supported, will be fixed soon.
 RUNTIME_USED int Konan_DebugGetFieldType(KRef obj, int index);
 
 // Compute address of field or an array element at the index, or null, if incorrect.
-// TODO: currently, only object fields are supported, will be fixed soon.
 RUNTIME_USED void* Konan_DebugGetFieldAddress(KRef obj, int index);
+
+// Compute address of field or an array element at the index, or null, if incorrect.
+RUNTIME_USED const char* Konan_DebugGetFieldName(KRef obj, int index);
 
 #ifdef __cplusplus
 }

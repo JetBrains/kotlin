@@ -416,7 +416,8 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             LLVMAddFunction(context.llvmModule, symbolName, llvmFunctionType)!!
         }
 
-        if (!context.config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)) {
+        // TODO: do we still need it?
+        if (!context.shouldOptimize()) {
             LLVMAddTargetDependentFunctionAttr(llvmFunction, "no-frame-pointer-elim", "true")
         }
 

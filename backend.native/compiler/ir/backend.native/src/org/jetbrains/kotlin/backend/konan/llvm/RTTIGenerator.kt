@@ -50,6 +50,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             fieldsCount: Int,
             packageName: String?,
             relativeName: String?,
+            extendedInfo: ConstPointer,
             writableTypeInfo: ConstPointer?) :
 
             Struct(
@@ -77,6 +78,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     kotlinStringLiteral(packageName),
                     kotlinStringLiteral(relativeName),
 
+                    extendedInfo,
+
                     *listOfNotNull(writableTypeInfo).toTypedArray()
             )
 
@@ -97,22 +100,36 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private val arrayClasses = mapOf(
-            "kotlin.Array"              to -LLVMABISizeOfType(llvmTargetData, kObjHeaderPtr).toInt(),
-            "kotlin.ByteArray"          to -1,
-            "kotlin.CharArray"          to -2,
-            "kotlin.ShortArray"         to -2,
-            "kotlin.IntArray"           to -4,
-            "kotlin.LongArray"          to -8,
-            "kotlin.FloatArray"         to -4,
-            "kotlin.DoubleArray"        to -8,
-            "kotlin.BooleanArray"       to -1,
-            "kotlin.String"             to -2,
-            "konan.ImmutableBinaryBlob" to -1
+            "kotlin.Array"              to kObjHeaderPtr,
+            "kotlin.ByteArray"          to LLVMInt8Type()!!,
+            "kotlin.CharArray"          to LLVMInt16Type()!!,
+            "kotlin.ShortArray"         to LLVMInt16Type()!!,
+            "kotlin.IntArray"           to LLVMInt32Type()!!,
+            "kotlin.LongArray"          to LLVMInt64Type()!!,
+            "kotlin.FloatArray"         to LLVMFloatType()!!,
+            "kotlin.DoubleArray"        to LLVMDoubleType()!!,
+            "kotlin.BooleanArray"       to LLVMInt8Type()!!,
+            "kotlin.String"             to LLVMInt16Type()!!,
+            "konan.ImmutableBinaryBlob" to LLVMInt8Type()!!
+    )
+
+    // Keep in sync with Konan_RuntimeType.
+    private val runtimeTypeMap = mapOf(
+            kObjHeaderPtr to 1,
+            LLVMInt8Type()!! to 2,
+            LLVMInt16Type()!! to 3,
+            LLVMInt32Type()!! to 4,
+            LLVMInt64Type()!! to 5,
+            LLVMFloatType()!! to 6,
+            LLVMDoubleType()!! to 7,
+            kInt8Ptr to 8,
+            LLVMInt1Type()!! to 9
     )
 
     private fun getInstanceSize(classType: LLVMTypeRef?, className: FqName) : Int {
-        val arraySize = arrayClasses.get(className.asString());
-        if (arraySize != null) return arraySize;
+        val elementType = arrayClasses.get(className.asString())
+        // Check if it is an array.
+        if (elementType != null) return -LLVMABISizeOfType(llvmTargetData, elementType).toInt()
         return LLVMStoreSizeOfType(llvmTargetData, classType).toInt()
     }
 
@@ -180,6 +197,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 fieldsPtr, if (classDesc.isInterface) -1 else fields.size,
                 reflectionInfo.packageName,
                 reflectionInfo.relativeName,
+                makeExtendedInfo(classDesc),
                 llvmDeclarations.writableTypeInfoGlobal?.pointer
         )
 
@@ -225,7 +243,45 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         }.sortedBy { it.nameSignature.value }
     }
 
-    // TODO: extract more code common with generate()
+    private fun mapRuntimeType(type: LLVMTypeRef): Int =
+            runtimeTypeMap[type] ?: throw Error("Unmapped type: ${llvmtype2string(type)}")
+
+    private fun makeExtendedInfo(descriptor: ClassDescriptor): ConstPointer {
+        // TODO: shall we actually do that?
+        if (context.shouldOptimize())
+            return NullPointer(runtime.extendedTypeInfoType)
+
+        val className = descriptor.fqNameSafe.toString()
+        val llvmDeclarations = context.llvmDeclarations.forClass(descriptor)
+        val bodyType = llvmDeclarations.bodyType
+        val elementType = arrayClasses[className]
+        val value = if (elementType != null) {
+            // An array type.
+            val runtimeElementType = mapRuntimeType(elementType)
+            Struct(runtime.extendedTypeInfoType,
+                    Int32(-runtimeElementType),
+                    NullPointer(int32Type), NullPointer(int8Type), NullPointer(kInt8Ptr))
+        } else {
+            data class FieldRecord(val offset: Int, val type: Int, val name: String)
+            val fields = getStructElements(bodyType).mapIndexedNotNull { index, type ->
+                FieldRecord(
+                        LLVMOffsetOfElement(llvmTargetData, bodyType, index).toInt(),
+                        mapRuntimeType(type),
+                        llvmDeclarations.fields[index].name.asString())
+            }
+            val offsetsPtr = staticData.placeGlobalConstArray("kextoff:$className", int32Type,
+                    fields.map { Int32(it.offset) })
+            val typesPtr = staticData.placeGlobalConstArray("kexttype:$className", int8Type,
+                    fields.map { Int8(it.type.toByte()) })
+            val namesPtr = staticData.placeGlobalConstArray("kextname:$className", kInt8Ptr,
+                    fields.map { staticData.placeCStringLiteral(it.name) })
+            Struct(runtime.extendedTypeInfoType, Int32(fields.size), offsetsPtr, typesPtr, namesPtr)
+        }
+        val result = staticData.placeGlobal("", value)
+        return result.pointer
+    }
+
+    // TODO: extract more code common with generate().
     fun generateSyntheticInterfaceImpl(
             descriptor: ClassDescriptor,
             methodImpls: Map<FunctionDescriptor, ConstPointer>
@@ -283,6 +339,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 fields = fieldsPtr, fieldsCount = fieldsCount,
                 packageName = reflectionInfo.packageName,
                 relativeName = reflectionInfo.relativeName,
+                extendedInfo = NullPointer(runtime.extendedTypeInfoType),
                 writableTypeInfo = writableTypeInfo
               ), vtable)
 

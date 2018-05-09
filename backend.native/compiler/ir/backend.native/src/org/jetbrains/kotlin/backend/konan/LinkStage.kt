@@ -33,7 +33,7 @@ internal class LinkStage(val context: Context) {
     private val platform = context.config.platform
     private val linker = platform.linker
 
-    private val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
+    private val optimize = context.shouldOptimize()
     private val debug = config.get(KonanConfigKeys.DEBUG) ?: false
     private val linkerOutput = when (context.config.produce) {
         CompilerOutputKind.DYNAMIC, CompilerOutputKind.FRAMEWORK -> LinkerOutputKind.DYNAMIC_LIBRARY

@@ -34,6 +34,7 @@ class Runtime(bitcodeFile: String) {
             ?: throw Error("struct.$name is not found in the Runtime module.")
 
     val typeInfoType = getStructType("TypeInfo")
+    val extendedTypeInfoType = getStructType("ExtendedTypeInfo")
     val writableTypeInfoType = getStructTypeOrNull("WritableTypeInfo")
     val fieldTableRecordType = getStructType("FieldTableRecord")
     val methodTableRecordType = getStructType("MethodTableRecord")

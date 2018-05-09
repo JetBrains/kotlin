@@ -911,7 +911,7 @@ internal object Devirtualization {
                              devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
         val nativePtrType = context.builtIns.nativePtr.defaultType
         val nativePtrEqualityOperatorSymbol = context.ir.symbols.areEqualByValue.single { it.descriptor.valueParameters[0].type == nativePtrType }
-        val optimize = context.config.configuration.get(KonanConfigKeys.OPTIMIZATION) ?: false
+        val optimize = context.shouldOptimize()
 
         irModule.transformChildrenVoid(object: IrElementTransformerVoidWithContext() {
             override fun visitCall(expression: IrCall): IrExpression {

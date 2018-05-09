@@ -32,6 +32,19 @@ namespace {
 
 char debugBuffer[4096];
 
+constexpr int runtimeTypeSize[] = {
+    -1,                  // INVALID
+    sizeof(ObjHeader*),  // OBJECT
+    1,                   // INT8
+    2,                   // INT16
+    4,                   // INT32
+    8,                   // INT64
+    4,                   // FLOAT32
+    8,                   // FLOAT64
+    sizeof(void*),       // NATIVE_PTR
+    1                    // BOOLEAN
+};
+
 }  // namespace
 
 extern "C" {
@@ -63,39 +76,88 @@ RUNTIME_USED KInt Konan_DebugPrint(KRef obj) {
   return 0;
 }
 
-RUNTIME_USED int Konan_DebugGetFieldType(KRef obj, int index) {
-  if (obj == nullptr || index < 0) return Konan_RuntimeType::INVALID;
-  auto typeInfo = obj->type_info();
-  if (typeInfo->instanceSize_ < 0) {
-    // Arrays.
-    if (index >= obj->array()->count_) return Konan_RuntimeType::INVALID;
-    if (typeInfo == theArrayTypeInfo) {
-      return Konan_RuntimeType::OBJECT;
-    }
-    // TODO: support other array types.
-    return Konan_RuntimeType::INVALID;
-  }
+RUNTIME_USED int Konan_DebugIsArray(KRef obj) {
+  return obj == nullptr || IsArray(obj) ? 1 : 0;
+}
 
-  // TODO: support primitive type fields as well!
-  if (index >= typeInfo->objOffsetsCount_) return Konan_RuntimeType::INVALID;
-  return Konan_RuntimeType::OBJECT;
+RUNTIME_USED int Konan_DebugGetFieldCount(KRef obj) {
+  if (obj == nullptr)
+    return 0;
+
+  auto typeInfo = obj->type_info();
+  auto extendedTypeInfo = typeInfo->extendedInfo_;
+
+  if (extendedTypeInfo == nullptr)
+    return 0;
+
+  if (IsArray(obj))
+    return obj->array()->count_;
+
+  return extendedTypeInfo->fieldsCount_;
+}
+
+
+RUNTIME_USED int Konan_DebugGetFieldType(KRef obj, int index) {
+  if (obj == nullptr || index < 0)
+    return Konan_RuntimeType::RT_INVALID;
+
+  auto typeInfo = obj->type_info();
+  auto extendedTypeInfo = typeInfo->extendedInfo_;
+
+  if (extendedTypeInfo == nullptr)
+    return Konan_RuntimeType::RT_INVALID;
+
+  if (extendedTypeInfo->fieldsCount_ < 0)
+    return -typeInfo->fieldsCount_;
+
+  if (index >= extendedTypeInfo->fieldsCount_)
+    return Konan_RuntimeType::RT_INVALID;
+
+  return extendedTypeInfo->fieldTypes_[index];
 }
 
 RUNTIME_USED void* Konan_DebugGetFieldAddress(KRef obj, int index) {
-  if (obj == nullptr || index < 0) return nullptr;
-  auto typeInfo = obj->type_info();
-  if (typeInfo->instanceSize_ < 0) {
-    // Arrays.
-    if (index >= obj->array()->count_) return nullptr;
-    if (typeInfo == theArrayTypeInfo) {
-      return ArrayAddressOfElementAt(obj->array(), index);
-    }
-    // TODO: support other array types.
+  if (obj == nullptr || index < 0)
     return nullptr;
-  }
-  // TODO: support primitive type fields as well!
-  if (index >= typeInfo->objOffsetsCount_) return nullptr;
-  return reinterpret_cast<uint8_t*>(obj + 1) + typeInfo->objOffsets_[index];
+
+  auto typeInfo = obj->type_info();
+  auto extendedTypeInfo = typeInfo->extendedInfo_;
+
+  if (extendedTypeInfo == nullptr)
+    return nullptr;
+
+   if (extendedTypeInfo->fieldsCount_ < 0) {
+     if (index >= obj->array()->count_)
+        return nullptr;
+
+      return reinterpret_cast<uint8_t*>(obj + 1) + index * runtimeTypeSize[-typeInfo->fieldsCount_];
+   }
+
+   if (index >= extendedTypeInfo->fieldsCount_)
+     return nullptr;
+
+   return reinterpret_cast<uint8_t*>(obj + 1) + extendedTypeInfo->fieldOffsets_[index];
+}
+
+// Compute address of field or an array element at the index, or null, if incorrect.
+RUNTIME_USED const char* Konan_DebugGetFieldName(KRef obj, int index) {
+  if (obj == nullptr || index < 0)
+    return nullptr;
+
+  auto typeInfo = obj->type_info();
+  auto extendedTypeInfo = typeInfo->extendedInfo_;
+
+  if (extendedTypeInfo == nullptr)
+    return nullptr;
+
+  // For arrays, field name makes not much sense.
+  if (extendedTypeInfo->fieldsCount_ < 0)
+    return "";
+
+  if (index >= extendedTypeInfo->fieldsCount_)
+    return nullptr;
+
+  return extendedTypeInfo->fieldNames_[index];
 }
 
 }  // extern "C"

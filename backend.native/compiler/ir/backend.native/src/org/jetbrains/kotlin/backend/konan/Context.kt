@@ -351,47 +351,31 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         printBitCode()
     }
 
-    fun shouldVerifyDescriptors(): Boolean {
-        return config.configuration.getBoolean(KonanConfigKeys.VERIFY_DESCRIPTORS) 
-    }
+    fun shouldVerifyDescriptors() = config.configuration.getBoolean(KonanConfigKeys.VERIFY_DESCRIPTORS)
 
-    fun shouldVerifyIr(): Boolean {
-        return config.configuration.getBoolean(KonanConfigKeys.VERIFY_IR) 
-    }
+    fun shouldVerifyIr() = config.configuration.getBoolean(KonanConfigKeys.VERIFY_IR)
 
-    fun shouldVerifyBitCode(): Boolean {
-        return config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE) 
-    }
+    fun shouldVerifyBitCode() = config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)
 
-    fun shouldPrintDescriptors(): Boolean {
-        return config.configuration.getBoolean(KonanConfigKeys.PRINT_DESCRIPTORS) 
-    }
+    fun shouldPrintDescriptors() = config.configuration.getBoolean(KonanConfigKeys.PRINT_DESCRIPTORS)
 
-    fun shouldPrintIr(): Boolean {
-        return config.configuration.getBoolean(KonanConfigKeys.PRINT_IR) 
-    }
+    fun shouldPrintIr() = config.configuration.getBoolean(KonanConfigKeys.PRINT_IR)
 
-    fun shouldPrintIrWithDescriptors(): Boolean {
-        return config.configuration.getBoolean(KonanConfigKeys.PRINT_IR_WITH_DESCRIPTORS)
-    }
+    fun shouldPrintIrWithDescriptors()=
+            config.configuration.getBoolean(KonanConfigKeys.PRINT_IR_WITH_DESCRIPTORS)
 
-    fun shouldPrintBitCode(): Boolean {
-        return config.configuration.getBoolean(KonanConfigKeys.PRINT_BITCODE) 
-    }
+    fun shouldPrintBitCode() = config.configuration.getBoolean(KonanConfigKeys.PRINT_BITCODE)
 
-    fun shouldPrintLocations(): Boolean {
-        return config.configuration.getBoolean(KonanConfigKeys.PRINT_LOCATIONS)
-    }
+    fun shouldPrintLocations() = config.configuration.getBoolean(KonanConfigKeys.PRINT_LOCATIONS)
 
-    fun shouldProfilePhases(): Boolean {
-        return config.configuration.getBoolean(KonanConfigKeys.TIME_PHASES) 
-    }
+    fun shouldProfilePhases() = config.configuration.getBoolean(KonanConfigKeys.TIME_PHASES)
 
-    fun shouldContainDebugInfo(): Boolean {
-        return config.configuration.getBoolean(KonanConfigKeys.DEBUG)
-    }
+    fun shouldContainDebugInfo() = config.configuration.getBoolean(KonanConfigKeys.DEBUG)
 
-    fun shouldGenerateTestRunner(): Boolean = config.configuration.getBoolean(KonanConfigKeys.GENERATE_TEST_RUNNER)
+    fun shouldOptimize() = config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
+
+    fun shouldGenerateTestRunner() =
+            config.configuration.getBoolean(KonanConfigKeys.GENERATE_TEST_RUNNER)
 
     override fun log(message: () -> String) {
         if (phase?.verbose ?: false) {

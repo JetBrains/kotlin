@@ -42,6 +42,34 @@ struct FieldTableRecord {
     int fieldOffset_;
 };
 
+// Type for runtime representation of Konan object.
+// Keep in sync with runtimeTypeMap in RTTIGenerator.
+enum Konan_RuntimeType {
+  RT_INVALID = 0,
+  RT_OBJECT = 1,
+  RT_INT8 = 2,
+  RT_INT16 = 3,
+  RT_INT32 = 4,
+  RT_INT64 = 5,
+  RT_FLOAT32 = 6,
+  RT_FLOAT64 = 7,
+  RT_NATIVE_PTR = 8,
+  RT_BOOLEAN = 9
+};
+
+// Extended information about a type.
+struct ExtendedTypeInfo {
+  // Number of fields (negated Konan_RuntimeType for array types).
+  int32_t fieldsCount_;
+  // Offsets of all fields.
+  const int32_t* fieldOffsets_;
+  // Types of all fields.
+  const uint8_t* fieldTypes_;
+  // Names of all fields.
+  const char** fieldNames_;
+  // TODO: do we want any other info here?
+};
+
 // This struct represents runtime type information and by itself is the compile time
 // constant.
 struct TypeInfo {
@@ -73,6 +101,9 @@ struct TypeInfo {
     // (e.g. TopLevel.Nested1.Nested2), or simple class name if it is local,
     // or `null` if the class is anonymous.
     ObjHeader* relativeName_;
+
+    // Extended RTTI.
+    const ExtendedTypeInfo* extendedInfo_;
 
 #if KONAN_TYPE_INFO_HAS_WRITABLE_PART
     WritableTypeInfo* writableInfo_;
