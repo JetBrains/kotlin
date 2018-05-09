@@ -356,9 +356,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return (ScriptContext) context;
     }
 
-    public StackValue genLazy(KtElement expr, Type type) {
+    private StackValue genLazy(KtElement expr, Type type) {
         StackValue value = gen(expr);
         return StackValue.coercion(value, type, null);
+    }
+
+    private StackValue genLazy(KtElement expr, Type type, KotlinType kotlinType) {
+        StackValue value = gen(expr);
+        return StackValue.coercion(value, type, kotlinType);
     }
 
     private StackValue genStatement(KtElement statement) {
@@ -3008,7 +3013,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return StackValue.coercion(generateSafeQualifiedExpression((KtSafeQualifiedExpression) expression, ifnull), type, kotlinType);
         }
         else {
-            return genLazy(expression, type);
+            return genLazy(expression, type, kotlinType);
         }
     }
 

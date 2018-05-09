@@ -65,7 +65,6 @@ enum class LanguageFeature(
     ProperForInArrayLoopRangeVariableAssignmentSemantic(KOTLIN_1_3),
     NestedClassesInAnnotations(KOTLIN_1_3),
     JvmStaticInInterface(KOTLIN_1_3),
-    InlineClasses(KOTLIN_1_3),
     ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion(KOTLIN_1_3),
     ProhibitNonConstValuesAsVarargsInAnnotations(KOTLIN_1_3),
     ReleaseCoroutines(KOTLIN_1_3),
@@ -89,6 +88,8 @@ enum class LanguageFeature(
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
 
     NewInference(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
+
+    InlineClasses(sinceVersion = null, defaultState = State.DISABLED),
 
     ;
 

@@ -1586,6 +1586,24 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineClasses extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInlineClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("inlineFunctionInsideInlineClassesBox.kt")
+        public void testInlineFunctionInsideInlineClassesBox() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/inlineFunctionInsideInlineClassesBox.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/innerClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

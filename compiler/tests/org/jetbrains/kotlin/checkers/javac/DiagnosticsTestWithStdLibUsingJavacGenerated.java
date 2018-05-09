@@ -2172,6 +2172,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/typealias.kt");
         }
 
+        @TestMetadata("usageNotAsAnnotation.kt")
+        public void testUsageNotAsAnnotation() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/usageNotAsAnnotation.kt");
+        }
+
         @TestMetadata("useExperimentalOnFile.kt")
         public void testUseExperimentalOnFile() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/useExperimentalOnFile.kt");
@@ -2195,6 +2200,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         @TestMetadata("useExperimentalWithSeveralAnnotations.kt")
         public void testUseExperimentalWithSeveralAnnotations() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/useExperimentalWithSeveralAnnotations.kt");
+        }
+
+        @TestMetadata("wasExperimental.kt")
+        public void testWasExperimental() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/wasExperimental.kt");
         }
     }
 

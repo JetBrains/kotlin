@@ -6620,19 +6620,40 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intrinsicSemantics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
-            @TestMetadata("coroutineContext.kt")
-            public void testCoroutineContext() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContext.kt");
-            }
-
-            @TestMetadata("coroutineContextReceiver.kt")
-            public void testCoroutineContextReceiver() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiver.kt");
+            @TestMetadata("coroutineContextReceiverNotIntrinsic.kt")
+            public void testCoroutineContextReceiverNotIntrinsic_1_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiverNotIntrinsic.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
             }
 
             @TestMetadata("coroutineContextReceiverNotIntrinsic.kt")
-            public void testCoroutineContextReceiverNotIntrinsic() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiverNotIntrinsic.kt");
+            public void testCoroutineContextReceiverNotIntrinsic_1_3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiverNotIntrinsic.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+            }
+
+            @TestMetadata("coroutineContextReceiver.kt")
+            public void testCoroutineContextReceiver_1_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiver.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("coroutineContextReceiver.kt")
+            public void testCoroutineContextReceiver_1_3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiver.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+            }
+
+            @TestMetadata("coroutineContext.kt")
+            public void testCoroutineContext_1_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContext.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("coroutineContext.kt")
+            public void testCoroutineContext_1_3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContext.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
             }
 
             @TestMetadata("intercepted.kt")
@@ -11052,6 +11073,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPosition.kt");
         }
 
+        @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
+        public void testElvisWithInlineClassAndNullConstant() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt");
+        }
+
         @TestMetadata("emptyConstructorForInlineClass.kt")
         public void testEmptyConstructorForInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt");
@@ -11060,6 +11086,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("inlineClassAsLastExpressionInInLambda.kt")
         public void testInlineClassAsLastExpressionInInLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt");
+        }
+
+        @TestMetadata("inlineFunctionInsideInlineClass.kt")
+        public void testInlineFunctionInsideInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClass.kt");
         }
 
         @TestMetadata("noAssertionsOnInlineClassBasedOnNullableType.kt")

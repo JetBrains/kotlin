@@ -15,7 +15,6 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains()
             assertContainsRegex("""-processorpath \S*.build.tmp.kapt.main.wrappers""".toRegex())
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertClassFilesNotContain(File(project.projectDir, "build/classes"), "ExampleSourceAnnotation")
@@ -41,9 +40,12 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
                 zip.close()
             }
 
-            assertTasksExecuted(listOf(
-                    ":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin",
-                    ":app:kaptGenerateStubsKotlin", ":app:kaptKotlin"))
+            assertTasksExecuted(
+                ":processor:kaptGenerateStubsKotlin",
+                ":processor:kaptKotlin",
+                ":app:kaptGenerateStubsKotlin",
+                ":app:kaptKotlin"
+            )
         }
 
         project.projectDir.getFileByName("Test.kt").modify { text ->
@@ -53,8 +55,8 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertTasksUpToDate(listOf(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin", ":app:kaptKotlin"))
-            assertTasksExecuted(listOf(":app:kaptGenerateStubsKotlin"))
+            assertTasksUpToDate(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin", ":app:kaptKotlin")
+            assertTasksExecuted(":app:kaptGenerateStubsKotlin")
         }
 
         project.projectDir.getFileByName("Test.kt").modify { text ->
@@ -63,8 +65,8 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertTasksUpToDate(listOf(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin"))
-            assertTasksExecuted(listOf(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin"))
+            assertTasksUpToDate(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin")
+            assertTasksExecuted(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin")
         }
     }
 
@@ -101,8 +103,7 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
         }
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin")
-            assertNotContains(":compileJava UP-TO-DATE")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             if (expectIncrementalCompilation)
                 assertNotContains("not incremental") else
                 assertContains("not incremental")
@@ -110,7 +111,8 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
         }
     }
 
-    @Test fun testApplyPluginFromBuildSrc() {
+    @Test
+    fun testApplyPluginFromBuildSrc() {
         val project = Project("kotlinProjectWithBuildSrc", gradleVersion)
         project.setupWorkingDir()
         File(project.projectDir, "buildSrc/build.gradle").modify { it.replace("\$kotlin_version", KOTLIN_VERSION) }
@@ -124,7 +126,7 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
         Project("internalTest", gradleVersion).build("build") {
             assertSuccessful()
             assertReportExists()
-            assertContains(":compileKotlin", ":compileTestKotlin")
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
         }
     }
 
@@ -132,8 +134,10 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
     fun testJavaLibraryCompatibility() {
         val project = Project("javaLibraryProject", gradleVersion)
 
-        Assume.assumeTrue("The java-library plugin is supported only in Gradle 3.4+ (current: $gradleVersion)",
-                project.testGradleVersionAtLeast("3.4"))
+        Assume.assumeTrue(
+            "The java-library plugin is supported only in Gradle 3.4+ (current: $gradleVersion)",
+            project.testGradleVersionAtLeast("3.4")
+        )
 
         val compileKotlinTasks = listOf(":libA:compileKotlin", ":libB:compileKotlin", ":app:compileKotlin")
         project.build("build") {
@@ -146,8 +150,8 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
         for (path in listOf("libA/src/main/kotlin/HelloA.kt", "libB/src/main/kotlin/HelloB.kt", "app/src/main/kotlin/App.kt")) {
             File(project.projectDir, path).modify { original ->
                 original.replace("helloA", "helloA1")
-                        .replace("helloB", "helloB1")
-                        .apply { assert(!equals(original)) }
+                    .replace("helloB", "helloB1")
+                    .apply { assert(!equals(original)) }
             }
         }
 

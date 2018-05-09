@@ -14,13 +14,15 @@ class IncrementalCompilationMultiProjectIT : BaseGradleIT() {
     }
 
     private fun androidBuildOptions() =
-            BuildOptions(withDaemon = true,
-                         androidHome = KotlinTestUtils.findAndroidSdk(),
-                         androidGradlePluginVersion = ANDROID_GRADLE_PLUGIN_VERSION,
-                         incremental = true)
+        BuildOptions(
+            withDaemon = true,
+            androidHome = KotlinTestUtils.findAndroidSdk(),
+            androidGradlePluginVersion = ANDROID_GRADLE_PLUGIN_VERSION,
+            incremental = true
+        )
 
     override fun defaultBuildOptions(): BuildOptions =
-            super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
+        super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
 
     @Test
     fun testDuplicatedClass() {
@@ -66,14 +68,16 @@ class IncrementalCompilationMultiProjectIT : BaseGradleIT() {
         }
 
         val aKt = project.projectDir.getFileByName("A.kt")
-        aKt.writeText("""
+        aKt.writeText(
+            """
 package bar
 
 open class A {
     fun a() {}
     fun newA() {}
 }
-""")
+"""
+        )
 
         project.build("build") {
             assertSuccessful()
@@ -96,8 +100,9 @@ open class A {
         project.build("build") {
             assertFailed()
             val affectedSources = project.projectDir.getFilesByNames(
-                    "B.kt", "barUseAB.kt", "barUseB.kt",
-                    "BB.kt", "fooCallUseAB.kt", "fooUseB.kt")
+                "B.kt", "barUseAB.kt", "barUseB.kt",
+                "BB.kt", "fooCallUseAB.kt", "fooUseB.kt"
+            )
             val relativePaths = project.relativize(affectedSources)
             assertCompiledKotlinSources(relativePaths, weakTesting = false)
         }
@@ -176,11 +181,13 @@ open class A {
 
         val libGroovySrcBar = File(lib, "src/main/groovy/bar").apply { mkdirs() }
         val groovyClass = File(libGroovySrcBar, "GroovyClass.groovy")
-        groovyClass.writeText("""
+        groovyClass.writeText(
+            """
             package bar
 
             class GroovyClass {}
-        """)
+        """
+        )
 
         project.build("build") {
             assertSuccessful()
@@ -269,24 +276,26 @@ abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking:
     }
 
     override fun defaultBuildOptions(): BuildOptions =
-            super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
+        super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
 
     protected val trackedJavaClass = "TrackedJavaClass.java"
     private val javaClass = "JavaClass.java"
-    protected val changeBody: (String)->String = { it.replace("Hello, World!", "Hello, World!!!!")  }
-    protected val changeSignature: (String)->String = { it.replace("String getString", "Object getString")  }
+    protected val changeBody: (String) -> String = { it.replace("Hello, World!", "Hello, World!!!!") }
+    protected val changeSignature: (String) -> String = { it.replace("String getString", "Object getString") }
 
     @Test
     fun testModifySignatureJavaInLib() {
-        doTest(javaClass, changeBody,
-               expectedAffectedSources = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
+        doTest(
+            javaClass, changeBody,
+            expectedAffectedSources = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
         )
     }
 
     @Test
     fun testModifyBodyJavaInLib() {
-        doTest(javaClass, changeBody,
-               expectedAffectedSources = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
+        doTest(
+            javaClass, changeBody,
+            expectedAffectedSources = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
         )
     }
 
@@ -294,9 +303,9 @@ abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking:
     abstract fun testModifyBodyTrackedJavaInLib()
 
     protected fun doTest(
-            fileToModify: String,
-            transformFile: (String)->String,
-            expectedAffectedSources: Collection<String>
+        fileToModify: String,
+        transformFile: (String) -> String,
+        expectedAffectedSources: Collection<String>
     ) {
         val project = Project("incrementalMultiproject")
 

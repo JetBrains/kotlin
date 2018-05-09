@@ -29,7 +29,7 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.declarations.UastLightIdentifier
 
-abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUElement(givenParent), UClass, JvmDeclarationUElement {
+abstract class AbstractKotlinUClass(givenParent: UElement?) : KotlinAbstractUElement(givenParent), UClass, JvmDeclarationUElementPlaceholder {
 
     override val uastDeclarations by lz {
         mutableListOf<UDeclaration>().apply {

@@ -147,6 +147,9 @@ public class DefaultErrorMessages {
         MAP.put(EXPERIMENTAL_OVERRIDE_ERROR, "This declaration overrides experimental member of supertype ''{1}'' and must be annotated with ''@{0}''", TO_STRING, NAME);
 
         MAP.put(EXPERIMENTAL_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-Xuse-experimental=kotlin.Experimental'");
+        MAP.put(EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION, "This class can only be used as an annotation");
+        MAP.put(EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL, "This class can only be used as an annotation or as an argument to @UseExperimental");
+
         MAP.put(USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, "@UseExperimental without any arguments has no effect");
         MAP.put(USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER, "Annotation ''{0}'' is not an experimental API marker, therefore its usage in @UseExperimental is ignored", TO_STRING);
         MAP.put(EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET, "Experimental annotation cannot be used on the following code elements: {0}. Please remove these targets", STRING);
@@ -624,8 +627,11 @@ public class DefaultErrorMessages {
         MAP.put(INLINE_CLASS_NOT_TOP_LEVEL, "Inline classes are only allowed on top level");
         MAP.put(INLINE_CLASS_NOT_FINAL, "Inline classes can be only final");
         MAP.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS, "Primary constructor is required for inline class");
+        MAP.put(NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS, "Primary constructor of inline class must be public");
         MAP.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter");
         MAP.put(INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER, "Inline class primary constructor must have only final read-only (val) property parameter");
+        MAP.put(INLINE_CLASS_WITH_INITIALIZER, "Inline class cannot have an initializer block");
+        MAP.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS, "Inline class cannot have properties with backing fields");
 
         MAP.put(VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED, "Variance annotations are only allowed for type parameters of classes and interfaces");
         MAP.put(BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, "Bounds are not allowed on type alias parameters");

@@ -43,10 +43,19 @@ annotation class Experimental(val level: Level = Level.ERROR) {
  *
  * This class is experimental itself and can only be used with the compiler argument `-Xuse-experimental=kotlin.Experimental`.
  */
-@Target(CLASS, PROPERTY, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, EXPRESSION, FILE)
+@Target(
+    CLASS, PROPERTY, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, EXPRESSION, FILE, TYPEALIAS
+)
 @Retention(SOURCE)
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 annotation class UseExperimental(
+    vararg val markerClass: KClass<out Annotation>
+)
+
+
+@Target(CLASS, PROPERTY, CONSTRUCTOR, FUNCTION, TYPEALIAS)
+@Retention(BINARY)
+internal annotation class WasExperimental(
     vararg val markerClass: KClass<out Annotation>
 )

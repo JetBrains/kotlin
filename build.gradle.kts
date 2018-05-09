@@ -565,13 +565,28 @@ val zipPlugin by task<Zip> {
 val cidrPlugin by task<Copy> {
     dependsOn(ideaPlugin)
     into(cidrPluginDir)
-    from(ideaPluginDir) { exclude("lib/kotlin-plugin.jar") }
+    from(ideaPluginDir) {
+        exclude("lib/kotlin-plugin.jar")
+
+        exclude("lib/uast-kotlin.jar")
+        exclude("lib/uast-kotlin-ide.jar")
+        exclude("lib/android-ide.jar")
+        exclude("lib/android-output-parser-ide.jar")
+        exclude("lib/android-extensions-ide.jar")
+        exclude("lib/android-extensions-compiler.jar")
+        exclude("lib/kapt3-idea.jar")
+        exclude("lib/j2k.jar")
+        exclude("lib/jps-ide.jar")
+        exclude("lib/jps/**")
+        exclude("kotlinc/**")
+        exclude("lib/maven-ide.jar")
+    }
     from(cidrKotlinPlugin) { into("lib") }
 }
 
 val zipCidrPlugin by task<Zip> {
     val destPath = project.findProperty("pluginZipPath") as String?
-            ?: "$distDir/artifacts/kotlin-plugin-$kotlinVersion-CIDR"
+            ?: "$distDir/artifacts/kotlin-plugin-$kotlinVersion-CIDR.zip"
     val destFile = File(destPath)
 
     destinationDir = destFile.parentFile

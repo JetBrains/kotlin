@@ -385,7 +385,7 @@ class PSICallResolver(
         override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<KotlinResolutionCandidate> {
             val explicitReceiver = if (stripExplicitReceiver) null else kotlinCall.explicitReceiver
             val variableCall = PSIKotlinCallForVariable(kotlinCall, explicitReceiver, kotlinCall.name)
-            return SimpleCandidateFactory(callComponents, scopeTower, variableCall, context.inferenceSession)
+            return SimpleCandidateFactory(callComponents, scopeTower, variableCall, createResolutionCallbacks(context))
         }
 
         override fun factoryForInvoke(variable: KotlinResolutionCandidate, useExplicitReceiver: Boolean):
@@ -406,7 +406,7 @@ class PSICallResolver(
             }
 
             return variableCallArgument.receiver to SimpleCandidateFactory(
-                callComponents, scopeTower, callForInvoke, context.inferenceSession
+                callComponents, scopeTower, callForInvoke, createResolutionCallbacks(context)
             )
         }
 

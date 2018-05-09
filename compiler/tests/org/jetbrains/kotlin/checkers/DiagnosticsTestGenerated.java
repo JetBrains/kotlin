@@ -10682,6 +10682,26 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             public void testInlineClassDeclarationCheck() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassDeclarationCheck.kt");
             }
+
+            @TestMetadata("presenceOfInitializerBlockInsideInlineClass.kt")
+            public void testPresenceOfInitializerBlockInsideInlineClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/presenceOfInitializerBlockInsideInlineClass.kt");
+            }
+
+            @TestMetadata("presenceOfPublicPrimaryConstructorForInlineClass.kt")
+            public void testPresenceOfPublicPrimaryConstructorForInlineClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/presenceOfPublicPrimaryConstructorForInlineClass.kt");
+            }
+
+            @TestMetadata("propertiesWithBackingFieldsInsideInlineClass.kt")
+            public void testPropertiesWithBackingFieldsInsideInlineClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/propertiesWithBackingFieldsInsideInlineClass.kt");
+            }
+
+            @TestMetadata("varargsOnParametersOfInlineClassType.kt")
+            public void testVarargsOnParametersOfInlineClassType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/varargsOnParametersOfInlineClassType.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/inner")

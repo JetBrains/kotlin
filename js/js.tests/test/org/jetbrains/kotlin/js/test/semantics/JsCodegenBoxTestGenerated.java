@@ -5622,19 +5622,22 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intrinsicSemantics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
-            @TestMetadata("coroutineContext.kt")
-            public void testCoroutineContext() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContext.kt");
+            @TestMetadata("coroutineContextReceiverNotIntrinsic.kt")
+            public void testCoroutineContextReceiverNotIntrinsic_1_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiverNotIntrinsic.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
             }
 
             @TestMetadata("coroutineContextReceiver.kt")
-            public void testCoroutineContextReceiver() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiver.kt");
+            public void testCoroutineContextReceiver_1_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiver.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
             }
 
-            @TestMetadata("coroutineContextReceiverNotIntrinsic.kt")
-            public void testCoroutineContextReceiverNotIntrinsic() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiverNotIntrinsic.kt");
+            @TestMetadata("coroutineContext.kt")
+            public void testCoroutineContext_1_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContext.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
             }
 
             @TestMetadata("intercepted.kt")
@@ -9627,6 +9630,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPosition.kt");
         }
 
+        @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
+        public void testElvisWithInlineClassAndNullConstant() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt");
+        }
+
         @TestMetadata("emptyConstructorForInlineClass.kt")
         public void testEmptyConstructorForInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt");
@@ -9635,6 +9643,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("inlineClassAsLastExpressionInInLambda.kt")
         public void testInlineClassAsLastExpressionInInLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt");
+        }
+
+        @TestMetadata("inlineFunctionInsideInlineClass.kt")
+        public void testInlineFunctionInsideInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClass.kt");
         }
 
         @TestMetadata("noAssertionsOnInlineClassBasedOnNullableType.kt")

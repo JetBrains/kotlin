@@ -4,6 +4,7 @@ public fun t1(): Foo
 public fun t2(): Foo
 public fun t3(): Bar?
 public fun t4(): Baz
+public fun t5(): Quux
 
 public final class Bar {
     @kotlin.SinceKotlin(version = "1.1") public constructor Bar()
@@ -21,6 +22,13 @@ public final class Bar {
 
 @kotlin.SinceKotlin(version = "1.1") public open class Foo {
     public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.SinceKotlin(version = "1.1") public final class Quux {
+    @kotlin.SinceKotlin(version = "1.0") public constructor Quux()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

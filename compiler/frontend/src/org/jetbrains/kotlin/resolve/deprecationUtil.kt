@@ -32,10 +32,12 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.resolve.DeprecationLevelValue.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.calls.checkers.isOperatorMod
 import org.jetbrains.kotlin.resolve.calls.checkers.shouldWarnAboutDeprecatedModFromBuiltIns
+import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
@@ -210,6 +212,8 @@ class DeprecationResolver(
     @JvmOverloads
     fun isHiddenInResolution(
         descriptor: DeclarationDescriptor,
+        call: Call? = null,
+        bindingContext: BindingContext? = null,
         isSuperCall: Boolean = false
     ): Boolean {
         if (descriptor is FunctionDescriptor) {
@@ -217,7 +221,19 @@ class DeprecationResolver(
             if (descriptor.isHiddenForResolutionEverywhereBesideSupercalls && !isSuperCall) return true
         }
 
-        if (!isHiddenBecauseOfKotlinVersionAccessibility(descriptor.original)) return true
+        val sinceKotlinAccessibility = isHiddenBecauseOfKotlinVersionAccessibility(descriptor.original)
+        if (sinceKotlinAccessibility is SinceKotlinAccessibility.NotAccessible) return true
+
+        if (sinceKotlinAccessibility is SinceKotlinAccessibility.NotAccessibleButWasExperimental) {
+            if (call != null && bindingContext != null) {
+                return with(ExperimentalUsageChecker) {
+                    sinceKotlinAccessibility.markerClasses.any { classDescriptor ->
+                        !call.callElement.isExperimentalityAccepted(classDescriptor.fqNameSafe, languageVersionSettings, bindingContext)
+                    }
+                }
+            }
+            return true
+        }
 
         return isDeprecatedHidden(descriptor)
     }

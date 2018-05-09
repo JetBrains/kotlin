@@ -20,12 +20,11 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.KtValueArgument
-import org.jetbrains.uast.JvmDeclarationUElement
 import org.jetbrains.uast.UComment
-import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.kotlin.JvmDeclarationUElementPlaceholder
 
-interface KotlinUElementWithComments : UElement, JvmDeclarationUElement {
+interface KotlinUElementWithComments : JvmDeclarationUElementPlaceholder {
 
     override val comments: List<UComment>
         get() {

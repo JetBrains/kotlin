@@ -66,6 +66,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
             runTest("idea/testData/scratch/unresolved.kts");
         }
 
+        @TestMetadata("unresolvedMultiline.kts")
+        public void testUnresolvedMultiline() throws Exception {
+            runTest("idea/testData/scratch/unresolvedMultiline.kts");
+        }
+
         @TestMetadata("userOutput.kts")
         public void testUserOutput() throws Exception {
             runTest("idea/testData/scratch/userOutput.kts");
@@ -74,6 +79,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         @TestMetadata("var.kts")
         public void testVar() throws Exception {
             runTest("idea/testData/scratch/var.kts");
+        }
+
+        @TestMetadata("veryLongOutput.kts")
+        public void testVeryLongOutput() throws Exception {
+            runTest("idea/testData/scratch/veryLongOutput.kts");
         }
 
         @TestMetadata("when.kts")
@@ -129,6 +139,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
             runTest("idea/testData/scratch/unresolved.kts");
         }
 
+        @TestMetadata("unresolvedMultiline.kts")
+        public void testUnresolvedMultiline() throws Exception {
+            runTest("idea/testData/scratch/unresolvedMultiline.kts");
+        }
+
         @TestMetadata("userOutput.kts")
         public void testUserOutput() throws Exception {
             runTest("idea/testData/scratch/userOutput.kts");
@@ -137,6 +152,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         @TestMetadata("var.kts")
         public void testVar() throws Exception {
             runTest("idea/testData/scratch/var.kts");
+        }
+
+        @TestMetadata("veryLongOutput.kts")
+        public void testVeryLongOutput() throws Exception {
+            runTest("idea/testData/scratch/veryLongOutput.kts");
         }
 
         @TestMetadata("when.kts")

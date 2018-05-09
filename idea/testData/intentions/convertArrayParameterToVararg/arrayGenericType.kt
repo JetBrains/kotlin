@@ -1,0 +1,1 @@
+fun <T> test(a<caret>: Array<T>) = a.size

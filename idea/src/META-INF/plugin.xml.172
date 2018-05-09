@@ -1602,6 +1602,16 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertVarargParameterToArrayIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertArrayParameterToVarargIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.LambdaToAnonymousFunctionIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -2847,9 +2857,6 @@
     <resolveScopeProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesResolveScopeProvider"/>
 
     <codeInsight.intention.jvmCommonIntentionActionsFactory language="kotlin" implementationClass="org.jetbrains.kotlin.idea.intentions.KotlinCommonIntentionActionsFactory"/>
-
-    <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService"
-                  serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastBindingContextProviderService"/>
 
     <statistics.usagesCollector implementation="org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector" />
     <statistics.usagesCollector implementation="org.jetbrains.kotlin.idea.parameterInfo.KotlinInlayParameterHintsUsageCollector" />

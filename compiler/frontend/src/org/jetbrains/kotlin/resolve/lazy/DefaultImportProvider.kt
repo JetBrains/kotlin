@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.SinceKotlinAccessibility
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.checkSinceKotlinVersionAccessibility
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -69,7 +70,7 @@ class DefaultImportProvider(
     val excludedImports: List<FqName> by storageManager.createLazyValue {
         val builtinTypeAliases =
             moduleDescriptor.findTypeAliasesInPackages(PACKAGES_WITH_ALIASES)
-                .filter { it.checkSinceKotlinVersionAccessibility(languageVersionSettings) }
+                .filter { it.checkSinceKotlinVersionAccessibility(languageVersionSettings) == SinceKotlinAccessibility.Accessible }
 
         val nonKotlinDefaultImportedPackages =
             defaultImports

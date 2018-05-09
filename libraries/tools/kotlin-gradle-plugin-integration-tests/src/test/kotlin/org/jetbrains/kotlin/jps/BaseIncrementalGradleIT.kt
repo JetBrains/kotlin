@@ -13,10 +13,10 @@ import kotlin.test.assertEquals
 abstract class BaseIncrementalGradleIT : BaseGradleIT() {
 
     inner class JpsTestProject(
-            val buildLogFinder: BuildLogFinder,
-            val resourcesBase: File,
-            val relPath: String,
-            minLogLevel: LogLevel = LogLevel.DEBUG
+        val buildLogFinder: BuildLogFinder,
+        val resourcesBase: File,
+        val relPath: String,
+        minLogLevel: LogLevel = LogLevel.DEBUG
     ) : Project(File(relPath).name, GradleVersionRequired.Exact("2.10"), null, minLogLevel) {
 
         override val resourcesRoot = File(resourcesBase, relPath)
@@ -42,13 +42,15 @@ abstract class BaseIncrementalGradleIT : BaseGradleIT() {
             assertReportExists()
         }
 
-        val buildLogFile = buildLogFinder.findBuildLog(resourcesRoot) ?:
-                throw IllegalStateException("build log file not found in $resourcesRoot")
+        val buildLogFile =
+            buildLogFinder.findBuildLog(resourcesRoot) ?: throw IllegalStateException("build log file not found in $resourcesRoot")
         val buildLogSteps = parseTestBuildLog(buildLogFile)
-        val modifications = getModificationsToPerform(resourcesRoot,
-                                                      moduleNames = null,
-                                                      allowNoFilesWithSuffixInTestData = false,
-                                                      touchPolicy = TouchPolicy.CHECKSUM)
+        val modifications = getModificationsToPerform(
+            resourcesRoot,
+            moduleNames = null,
+            allowNoFilesWithSuffixInTestData = false,
+            touchPolicy = TouchPolicy.CHECKSUM
+        )
 
         assert(modifications.size == buildLogSteps.size) {
             "Modifications count (${modifications.size}) != expected build log steps count (${buildLogSteps.size})"
@@ -67,14 +69,17 @@ abstract class BaseIncrementalGradleIT : BaseGradleIT() {
         rebuildAndCompareOutput(rebuildSucceedExpected = buildLogSteps.last().compileSucceeded)
     }
 
-    private fun JpsTestProject.buildAndAssertStageResults(expected: BuildStep, options: BuildOptions = defaultBuildOptions(), weakTesting: Boolean = false) {
+    private fun JpsTestProject.buildAndAssertStageResults(
+        expected: BuildStep,
+        options: BuildOptions = defaultBuildOptions(),
+        weakTesting: Boolean = false
+    ) {
         build("build", options = options) {
             if (expected.compileSucceeded) {
                 assertSuccessful()
                 assertCompiledJavaSources(expected.compiledJavaFiles, weakTesting)
                 assertCompiledKotlinSources(expected.compiledKotlinFiles, weakTesting)
-            }
-            else {
+            } else {
                 assertFailed()
             }
         }

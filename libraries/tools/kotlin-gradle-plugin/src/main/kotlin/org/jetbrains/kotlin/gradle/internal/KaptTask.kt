@@ -45,6 +45,9 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
     val kaptClasspath: FileCollection
         get() = project.files(*kaptClasspathConfigurations.toTypedArray())
 
+    @get:Classpath @get:InputFiles
+    val compilerClasspath: List<File> get() = kotlinCompileTask.computedCompilerClasspath
+
     @get:Internal
     internal lateinit var kaptClasspathConfigurations: List<Configuration>
 
@@ -107,7 +110,7 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
 
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
-        val environment = GradleCompilerEnvironment(kotlinCompileTask.computedCompilerClasspath, messageCollector, outputItemCollector, args)
+        val environment = GradleCompilerEnvironment(compilerClasspath, messageCollector, outputItemCollector, args)
         if (environment.toolsJar == null && !isAtLeastJava9) {
             throw GradleException("Could not find tools.jar in system classpath, which is required for kapt to work")
         }

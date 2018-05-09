@@ -93,7 +93,6 @@ task coroutinesJar(type: Jar) {
     version = null
     manifestAttributes(manifest, project, 'Main', true)
     project.configure(manifest) { attributes 'Kotlin-Version': '1.3' }
-    from("${rootDir}/dist/builtins")
     from sourceSets.coroutines.output
 }
 

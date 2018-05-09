@@ -21,7 +21,10 @@ interface KotlinResolutionStatelessCallbacks {
     fun isInfixCall(kotlinCall: KotlinCall): Boolean
     fun isOperatorCall(kotlinCall: KotlinCall): Boolean
     fun isSuperOrDelegatingConstructorCall(kotlinCall: KotlinCall): Boolean
-    fun isHiddenInResolution(descriptor: DeclarationDescriptor, kotlinCall: KotlinCall): Boolean
+    fun isHiddenInResolution(
+        descriptor: DeclarationDescriptor, kotlinCall: KotlinCall, resolutionCallbacks: KotlinResolutionCallbacks
+    ): Boolean
+
     fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean
     fun getScopeTowerForCallableReferenceArgument(argument: CallableReferenceKotlinCallArgument): ImplicitScopeTower
     fun getVariableCandidateIfInvoke(functionCall: KotlinCall): KotlinResolutionCandidate?
