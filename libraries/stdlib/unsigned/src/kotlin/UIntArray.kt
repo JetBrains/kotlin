@@ -7,6 +7,7 @@
 
 package kotlin
 
+@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 public inline class UIntArray internal constructor(private val storage: IntArray) : Collection<UInt> {
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
@@ -40,6 +41,7 @@ public /*inline*/ fun UIntArray(size: Int, init: (Int) -> UInt): UIntArray {
     return UIntArray(IntArray(size) { index -> init(index).toInt() })
 }
 
+@Suppress("FORBIDDEN_VARARG_PARAMETER_TYPE")
 public fun uintArrayOf(vararg elements: UInt): UIntArray {
     return UIntArray(elements.size) { index -> elements[index] }
 }

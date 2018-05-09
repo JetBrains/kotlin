@@ -7,6 +7,7 @@
 
 package kotlin
 
+@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 public inline class UByteArray internal constructor(private val storage: ByteArray) : Collection<UByte> {
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
@@ -40,6 +41,7 @@ public /*inline*/ fun UByteArray(size: Int, init: (Int) -> UByte): UByteArray {
     return UByteArray(ByteArray(size) { index -> init(index).toByte() })
 }
 
+@Suppress("FORBIDDEN_VARARG_PARAMETER_TYPE")
 public fun ubyteArrayOf(vararg elements: UByte): UByteArray {
     return UByteArray(elements.size) { index -> elements[index] }
 }

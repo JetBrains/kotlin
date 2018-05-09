@@ -41,6 +41,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println("import kotlin.experimental.*")
         out.println()
 
+        out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
         out.println("public inline class $className internal constructor(private val data: $storageType) : Comparable<$className> {")
         out.println()
         out.println("""    companion object {
@@ -256,6 +257,7 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
     val storageElementType = type.asSigned.capitalized
     val storageArrayType = storageElementType + "Array"
     override fun generateBody() {
+        out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
         out.println("public inline class $arrayType internal constructor(private val storage: $storageArrayType) : Collection<$elementType> {")
         out.println(
             """
@@ -293,6 +295,7 @@ public /*inline*/ fun $arrayType(size: Int, init: (Int) -> $elementType): $array
     return $arrayType($storageArrayType(size) { index -> init(index).to$storageElementType() })
 }
 
+@Suppress("FORBIDDEN_VARARG_PARAMETER_TYPE")
 public fun $arrayTypeOf(vararg elements: $elementType): $arrayType {
     return $arrayType(elements.size) { index -> elements[index] }
 }"""
