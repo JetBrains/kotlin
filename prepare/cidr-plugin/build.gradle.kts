@@ -34,7 +34,7 @@ val pluginXml by tasks.creating {
                 RegexOption.DOT_MATCHES_ALL)
 
         val excludeRegex = Regex(
-            """<!-- CIDR-PLUGIN-EXCLUDE-START -->(.*)<!-- CIDR-PLUGIN-EXCLUDE-END -->""",
+            """<!-- CIDR-PLUGIN-EXCLUDE-START -->(.*?)<!-- CIDR-PLUGIN-EXCLUDE-END -->""",
             RegexOption.DOT_MATCHES_ALL)
 
         val versionRegex = Regex("""<version>([^<]+)</version>""")
