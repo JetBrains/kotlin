@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import java.util.*
@@ -41,7 +39,7 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
         val class2Symbol = HashMap<ClassDescriptor, IrClass>()
 
         fun lowerInnerClass() {
-            if (!irClass.descriptor.isInner) return
+            if (!irClass.isInner) return
             rememberClassSymbols()
 
             createOuterThisField()
@@ -161,7 +159,7 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
                     var innerClass = irClass
 
                     while (innerClass != implicitThisClass) {
-                        if (!innerClass.descriptor.isInner) {
+                        if (!innerClass.isInner) {
                             // Captured 'this' unrelated to inner classes nesting hierarchy, leave it as is -
                             // should be transformed by closures conversion.
                             return expression
@@ -202,7 +200,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
                 val dispatchReceiver = expression.dispatchReceiver ?: return expression
                 val callee = expression.symbol as? IrConstructorSymbol ?: return expression
                 val parent = callee.owner.parent as? IrClass ?: return expression
-                if (!parent.descriptor.isInner) return expression
+                if (!parent.isInner) return expression
 
                 val newCallee = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(callee.owner)
                 val newCall = IrCallImpl(
@@ -223,14 +221,14 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
                 expression.transformChildrenVoid(this)
 
                 val dispatchReceiver = expression.dispatchReceiver ?: return expression
-                val callee = expression.symbol
-                if (!callee.descriptor.containingDeclaration.isInner) return expression
+                val classConstructor = expression.symbol.owner
+                if (!(classConstructor.parent as IrClass).isInner) return expression
 
-                val newCallee = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(callee.owner)
+                val newCallee = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(classConstructor)
                 val newCall = IrDelegatingConstructorCallImpl(
                     expression.startOffset, expression.endOffset, newCallee, newCallee.descriptor,
-                    null // TODO type arguments map
-                )
+                    classConstructor.typeParameters.size
+                ).apply { copyTypeArgumentsFrom(expression) }
 
                 newCall.putValueArgument(0, dispatchReceiver)
                 for (i in 1..newCallee.descriptor.valueParameters.lastIndex) {
