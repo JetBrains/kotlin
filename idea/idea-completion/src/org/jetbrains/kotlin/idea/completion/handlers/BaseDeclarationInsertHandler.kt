@@ -26,6 +26,9 @@ open class BaseDeclarationInsertHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val name = (item.`object` as? DeclarationLookupObject)?.name
         if (name != null && !name.isSpecial) {
+            if (context.document.isTextAt(context.startOffset - 1, "`")) {
+                context.document.deleteString(context.startOffset - 1, context.startOffset)
+            }
             context.document.replaceString(context.startOffset, context.tailOffset, name.render())
         }
     }
