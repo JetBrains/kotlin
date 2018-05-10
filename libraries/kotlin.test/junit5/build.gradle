@@ -1,0 +1,44 @@
+description = 'Kotlin Test JUnit 5'
+
+apply plugin: 'kotlin-platform-jvm'
+
+test {
+    useJUnitPlatform()
+}
+
+configureJvm6Project(project)
+configureDist(project)
+configurePublishing(project)
+
+project.ext["jpsLibraryPath"] = rootProject.distLibDir
+
+def junit5Version = rootProject.ext["versions.junit5"]
+
+dependencies {
+    expectedBy project(':kotlin-test:kotlin-test-annotations-common')
+    compile project(':kotlin-test:kotlin-test-jvm')
+
+    compile("org.junit.jupiter:junit-jupiter-api:$junit5Version")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
+}
+
+jar {
+    manifestAttributes(manifest, project, 'Test')
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+dist {
+    from (jar, sourcesJar)
+}
+
+compileKotlin {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]
+}
+
+compileTestKotlin {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+}
