@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
                 INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
             PROPERTY name:x type:kotlin.String visibility:public modality:OPEN flags:val
-              FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:
+              FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
                 EXPRESSION_BODY
                   GET_VAR 'value-parameter x0: String' type=kotlin.String origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:OPEN <> ($this:otherImpl.<no name provided>) returnType:String flags:

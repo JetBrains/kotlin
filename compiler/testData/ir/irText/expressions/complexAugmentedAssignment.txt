@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='X1'
     PROPERTY name:x1 type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Int visibility:public flags:final
+      FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Int visibility:public flags:
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x1> visibility:public modality:FINAL <> ($this:X1) returnType:Int flags:
@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='X2'
       PROPERTY name:x2 type:kotlin.Int visibility:public modality:FINAL flags:var
-        FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Int visibility:public flags:final
+        FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Int visibility:public flags:
           EXPRESSION_BODY
             CONST Int type=kotlin.Int value=0
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x2> visibility:public modality:FINAL <> ($this:X1.X2) returnType:Int flags:
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
             DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
             INSTANCE_INITIALIZER_CALL classDescriptor='X3'
         PROPERTY name:x3 type:kotlin.Int visibility:public modality:FINAL flags:var
-          FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Int visibility:public flags:final
+          FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Int visibility:public flags:
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=0
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x3> visibility:public modality:FINAL <> ($this:X1.X2.X3) returnType:Int flags:
@@ -197,7 +197,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
     PROPERTY name:s type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.Int visibility:public flags:final
+      FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.Int visibility:public flags:
         EXPRESSION_BODY
           GET_VAR 'value-parameter s: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:B) returnType:Int flags:

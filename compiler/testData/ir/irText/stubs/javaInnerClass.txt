@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
             GET_FIELD 'test: J.JInner' type=J.JInner origin=null
               receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
     PROPERTY FAKE_OVERRIDE name:x type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD FAKE_OVERRIDE name:x type:kotlin.Int visibility:public flags:final
+      FIELD FAKE_OVERRIDE name:x type:kotlin.Int visibility:public flags:
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:J) returnType:Unit flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:bar visibility:public modality:OPEN <> ($this:J) returnType:Unit flags:

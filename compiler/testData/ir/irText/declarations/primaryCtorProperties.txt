@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/primaryCtorProperties.kt
             GET_FIELD 'test1: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
     PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public flags:final
+      FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public flags:
         EXPRESSION_BODY
           GET_VAR 'value-parameter test2: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:

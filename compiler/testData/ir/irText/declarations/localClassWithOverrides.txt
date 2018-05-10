@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
           $this: VALUE_PARAMETER name:<this> type:outer.Local flags:
           BLOCK_BODY
         PROPERTY name:aval type:kotlin.Int visibility:public modality:OPEN flags:val
-          FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:public flags:
+          FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:public flags:final
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=1
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aval> visibility:public modality:OPEN <> ($this:outer.Local) returnType:Int flags:

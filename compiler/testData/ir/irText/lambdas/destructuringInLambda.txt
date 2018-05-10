@@ -140,7 +140,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
         RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
           CONST Boolean type=kotlin.Boolean value=true
   PROPERTY name:fn type:(A) -> kotlin.Int visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:fn type:(A) -> kotlin.Int visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:fn type:(A) -> kotlin.Int visibility:public flags:
       EXPRESSION_BODY
         BLOCK type=(A) -> kotlin.Int origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<name for destructuring parameter 0>:A) returnType:Int flags:

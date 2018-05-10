@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -47,7 +46,7 @@ class IrFieldImpl(
             this(
                 startOffset, endOffset, origin, symbol,
                 symbol.descriptor.name, symbol.descriptor.type, symbol.descriptor.visibility,
-                symbol.descriptor.modality == Modality.FINAL,
+                !symbol.descriptor.isVar,
                 symbol.descriptor.isEffectivelyExternal()
             )
 

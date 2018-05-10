@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/augmentedAssignment1.kt
   PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Int flags:

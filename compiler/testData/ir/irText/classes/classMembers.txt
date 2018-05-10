@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/classMembers.kt
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
     PROPERTY name:z type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:public flags:final
+      FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:public flags:
         EXPRESSION_BODY
           GET_VAR 'value-parameter z: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
@@ -177,4 +177,3 @@ FILE fqName:<root> fileName:/classMembers.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-

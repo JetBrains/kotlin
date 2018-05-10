@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/field.kt
   PROPERTY name:testSimple type:kotlin.Int visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:public flags:
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testSimple> visibility:public modality:FINAL <> () returnType:Int flags:
@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/field.kt
         SET_FIELD 'testSimple: Int' type=kotlin.Unit origin=EQ
           value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
   PROPERTY name:testAugmented type:kotlin.Int visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public flags:
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testAugmented> visibility:public modality:FINAL <> () returnType:Int flags:

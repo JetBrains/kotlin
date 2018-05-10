@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
         RETURN type=kotlin.Nothing from='<get-testVal>(): String'
           GET_FIELD 'testVal: String' type=kotlin.String origin=null
   PROPERTY name:testVar type:kotlin.String visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public flags:
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
           x: CONST String type=kotlin.String value=testVar.field
@@ -55,4 +55,3 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
       BLOCK_BODY
         SET_FIELD 'testVar: String' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: String' type=kotlin.String origin=null
-

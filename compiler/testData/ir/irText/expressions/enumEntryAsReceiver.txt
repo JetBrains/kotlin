@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
                 GET_FIELD 'value2: String' type=kotlin.String origin=null
                   receiver: GET_VAR 'this@B: B' type=X.B origin=null
         PROPERTY name:value type:() -> kotlin.String visibility:public modality:OPEN flags:val
-          FIELD PROPERTY_BACKING_FIELD name:value type:() -> kotlin.String visibility:public flags:
+          FIELD PROPERTY_BACKING_FIELD name:value type:() -> kotlin.String visibility:public flags:final
             EXPRESSION_BODY
               BLOCK type=() -> kotlin.String origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:String flags:

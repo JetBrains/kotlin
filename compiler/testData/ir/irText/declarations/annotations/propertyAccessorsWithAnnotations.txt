@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
         RETURN type=kotlin.Nothing from='<get-test3>(): String'
           GET_FIELD 'test3: String' type=kotlin.String origin=null
   PROPERTY name:test4 type:kotlin.String visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public flags:
       EXPRESSION_BODY
         CONST String type=kotlin.String value=
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:String flags:
@@ -80,4 +80,3 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
       BLOCK_BODY
         SET_FIELD 'test4: String' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: String' type=kotlin.String origin=null
-

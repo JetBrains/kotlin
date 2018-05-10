@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/superCalls.kt
       $this: VALUE_PARAMETER name:<this> type:Base flags:
       BLOCK_BODY
     PROPERTY name:bar type:kotlin.String visibility:public modality:OPEN flags:val
-      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.String visibility:public flags:
+      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           CONST String type=kotlin.String value=
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:Base) returnType:String flags:
