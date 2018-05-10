@@ -1,3 +1,4 @@
+// INGORE_BACKEND: ANY
 // c.b.a.Foo$bar$A$B
 package c.b.a
 
