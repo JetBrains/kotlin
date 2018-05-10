@@ -23,7 +23,7 @@ private class DebugTreePrinter : JKVisitorVoid {
     internal val stringBuilder = StringBuilder()
     private val printer = Printer(stringBuilder)
 
-    override fun visitElement(element: JKElement) {
+    override fun visitElement(element: JKTreeElement) {
         printer.println(element.classNameWithoutJK(), " [")
         printer.indented {
             element.acceptChildren(this, null)
@@ -107,4 +107,4 @@ private inline fun Printer.indented(block: () -> Unit) {
 }
 
 
-fun JKElement.prettyDebugPrintTree(): String = DebugTreePrinter().apply { accept(this, null) }.stringBuilder.toString()
+fun JKTreeElement.prettyDebugPrintTree(): String = DebugTreePrinter().apply { accept(this, null) }.stringBuilder.toString()

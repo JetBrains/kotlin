@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.tree.JKElement
+import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.JKJavaField
 import org.jetbrains.kotlin.j2k.tree.JKJavaMethod
 import org.jetbrains.kotlin.j2k.tree.JKUniverseClass
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtPropertyImpl
 
 class JavaFieldToKotlinPropertyConversion : TransformerBasedConversion() {
-    override fun visitElement(element: JKElement) {
+    override fun visitElement(element: JKTreeElement) {
         element.acceptChildren(this, null)
     }
 
@@ -46,7 +46,7 @@ class JavaFieldToKotlinPropertyConversion : TransformerBasedConversion() {
 }
 
 class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
-    override fun visitElement(element: JKElement) {
+    override fun visitElement(element: JKTreeElement) {
         element.acceptChildren(this, null)
     }
 

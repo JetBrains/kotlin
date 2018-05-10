@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-interface JKOperator: JKElement
+interface JKOperator: JKTreeElement
 
 interface JKQualifier
 
-interface JKTreeElement {
-    var parent: JKTreeElement?
+interface JKElement {
+    var parent: JKElement?
 }
 
-interface JKBranchElement : JKTreeElement {
-    val children: List<JKElement>
+interface JKBranchElement : JKElement {
+    val children: List<JKTreeElement>
 }
 
 interface JKModifierListOwner {
@@ -36,7 +36,7 @@ interface JKReferenceTarget {
     val valid: Boolean
 }
 
-interface JKDeclaration : JKTreeElement, JKReferenceTarget
+interface JKDeclaration : JKElement, JKReferenceTarget
 
 interface JKClass : JKDeclaration, JKModifierListOwner {
     val name: JKNameIdentifier

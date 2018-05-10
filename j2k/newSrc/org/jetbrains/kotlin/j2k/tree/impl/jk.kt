@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-private class JKChild<T : JKElement>(val value: Int) : ReadWriteProperty<JKMutableBranchElement, T> {
+private class JKChild<T : JKTreeElement>(val value: Int) : ReadWriteProperty<JKMutableBranchElement, T> {
     override operator fun getValue(thisRef: JKMutableBranchElement, property: KProperty<*>): T {
         return thisRef.children[value] as T
     }
@@ -44,14 +44,14 @@ class JKListChild<T : JKTreeElement>() : ReadWriteProperty<JKMutableBranchElemen
         thisRef.children.forEach { it.parent = null }
         value.forEach { it.parent = thisRef }
         thisRef.children.clear()
-        thisRef.children.addAll(value as List<JKElement>)
+        thisRef.children.addAll(value as List<JKTreeElement>)
     }
 }
 
-abstract class JKElementBase : JKElement {
-    override var parent: JKTreeElement? = null
+abstract class JKElementBase : JKTreeElement {
+    override var parent: JKElement? = null
 
-    fun <D : JKElement> D.setParent(p: JKElement): D {
+    fun <D : JKTreeElement> D.setParent(p: JKTreeElement): D {
         parent = p
         return this
     }
@@ -62,7 +62,7 @@ abstract class JKElementBase : JKElement {
 }
 
 interface JKMutableBranchElement : JKBranchElement {
-    override val children: MutableList<JKElement>
+    override val children: MutableList<JKTreeElement>
 }
 
 abstract class JKBranchElementBase : JKElementBase(), JKMutableBranchElement {
@@ -71,21 +71,21 @@ abstract class JKBranchElementBase : JKElementBase(), JKMutableBranchElement {
     }
 
     protected var childNum = 0
-    protected fun <T : JKElement, U : T> child(v: U): ReadWriteProperty<JKMutableBranchElement, T> {
+    protected fun <T : JKTreeElement, U : T> child(v: U): ReadWriteProperty<JKMutableBranchElement, T> {
         return JKChild(childNum++)
     }
 
-    override val children: MutableList<JKElement> = mutableListOf()
+    override val children: MutableList<JKTreeElement> = mutableListOf()
 }
 
 abstract class JKElementListBase: JKElementBase(), JKMutableBranchElement {
-    override val children: MutableList<JKElement> = mutableListOf()
+    override val children: MutableList<JKTreeElement> = mutableListOf()
 
-    protected inline fun <reified T : JKElement> children(): JKListChild<T> {
+    protected inline fun <reified T : JKTreeElement> children(): JKListChild<T> {
         return JKListChild()
     }
 
-    protected inline fun <reified T : JKElement> children(v: List<T>): JKListChild<T> {
+    protected inline fun <reified T : JKTreeElement> children(v: List<T>): JKListChild<T> {
         children.addAll(v)
         return JKListChild()
     }

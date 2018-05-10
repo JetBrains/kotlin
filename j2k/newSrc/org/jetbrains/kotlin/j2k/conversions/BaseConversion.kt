@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.tree.JKElement
+import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 
 abstract class BaseConversion {
     /**
      * @return true if something changed
      */
-    abstract fun runConversion(treeRoot: JKElement): Boolean
+    abstract fun runConversion(treeRoot: JKTreeElement): Boolean
 
 }

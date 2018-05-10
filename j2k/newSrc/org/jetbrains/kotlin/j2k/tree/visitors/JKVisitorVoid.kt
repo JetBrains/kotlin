@@ -3,8 +3,8 @@ package org.jetbrains.kotlin.j2k.tree.visitors
 import org.jetbrains.kotlin.j2k.tree.*
 
 interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
-    fun visitElement(element: JKElement) 
-    override fun visitElement(element: JKElement, data: Nothing?) = visitElement(element)
+    fun visitElement(element: JKTreeElement)
+    override fun visitElement(element: JKTreeElement, data: Nothing?) = visitElement(element)
     fun visitUniverseDeclaration(universeDeclaration: JKUniverseDeclaration) = visitElement(universeDeclaration, null)
     override fun visitUniverseDeclaration(universeDeclaration: JKUniverseDeclaration, data: Nothing?) = visitUniverseDeclaration(universeDeclaration)
     fun visitUniverseClass(universeClass: JKUniverseClass) = visitUniverseDeclaration(universeClass, null)
