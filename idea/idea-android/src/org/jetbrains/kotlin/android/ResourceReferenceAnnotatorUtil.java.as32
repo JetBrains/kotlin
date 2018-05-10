@@ -24,9 +24,9 @@ import com.android.ide.common.resources.ResourceItem;
 import com.android.resources.ResourceType;
 import com.android.tools.idea.configurations.Configuration;
 import com.android.tools.idea.configurations.ConfigurationManager;
-import com.android.tools.idea.res.AppResourceRepository;
 import com.android.tools.idea.res.LocalResourceRepository;
 import com.android.tools.idea.res.ResourceHelper;
+import com.android.tools.idea.res.ResourceRepositoryManager;
 import com.android.tools.idea.ui.resourcechooser.ColorPicker;
 import com.android.utils.XmlUtils;
 import com.google.common.base.Charsets;
@@ -147,8 +147,11 @@ public class ResourceReferenceAnnotatorUtil {
             }
             return items.get(0).getResourceValue();
         } else {
-            LocalResourceRepository appResources = AppResourceRepository.getOrCreateInstance(module);
-            if (appResources == null) {
+            ResourceRepositoryManager repoManager = ResourceRepositoryManager.getOrCreateInstance(module);
+            if (repoManager == null) {
+                return null;
+            }
+            LocalResourceRepository appResources = repoManager.getAppResources(true);            if (appResources == null) {
                 return null;
             }
             if (!appResources.hasResourceItem(type, name)) {
