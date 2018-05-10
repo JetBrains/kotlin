@@ -32,7 +32,7 @@ class KotlinGradleModuleConfigurator : KotlinWithGradleConfigurator() {
         get() = JvmPlatform
 
     override val presentableText: String
-        get() = "Gradle"
+        get() = "Java with Gradle"
 
     override val kotlinPluginName: String
         get() = KOTLIN

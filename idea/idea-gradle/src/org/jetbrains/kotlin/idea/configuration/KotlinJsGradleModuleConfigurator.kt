@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 
 class KotlinJsGradleModuleConfigurator : KotlinWithGradleConfigurator() {
     override val name: String = "gradle-js"
-    override val presentableText: String = "Gradle (JavaScript)"
+    override val presentableText: String = "JavaScript with Gradle"
     override val targetPlatform: TargetPlatform = JsPlatform
     override val kotlinPluginName: String = KOTLIN_JS
     override fun getMinimumSupportedVersion() = "1.1.0"
