@@ -526,6 +526,47 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
             return KeptResult
         }
 
+        override fun visitVararg(expression: IrVararg, data: VisitData): VisitResult {
+            var decomposed = 0
+
+            val arguments = expression.elements.map {
+                val expr = (it as? IrSpreadElement)?.expression ?: it as IrExpression
+                Pair(it, expr.accept(this, data).applyIfChanged { decomposed++ })
+            }
+
+            if (decomposed == 0) return KeptResult
+
+            val newStatements = mutableListOf<IrStatement>()
+            val newArguments = arguments.map { (original, result) ->
+                if (decomposed == 0) original
+                else {
+                    val originalExpression = (original as? IrSpreadElement)?.expression ?: original as IrExpression
+                    val newExpression = result.runIfChangedOrDefault(originalExpression) {
+                        newStatements += statements
+                        decomposed--
+                        resultValue
+                    }
+                    val wrapVar = makeTempVar(expression.varargElementType)
+                    newStatements += JsIrBuilder.buildVar(wrapVar).apply { initializer = newExpression }
+                    val newValue = JsIrBuilder.buildGetValue(wrapVar)
+                    if (original is IrSpreadElement) {
+                        IrSpreadElementImpl(original.startOffset, original.endOffset, newValue)
+                    } else {
+                        newValue
+                    }
+                }
+            }
+
+            val newExpression = IrVarargImpl(
+                expression.startOffset,
+                expression.endOffset,
+                expression.type,
+                expression.varargElementType,
+                newArguments)
+
+            return DecomposedResult(newStatements, newExpression)
+        }
+
         override fun visitStringConcatenation(expression: IrStringConcatenation, data: VisitData): VisitResult {
             var decomposed = 0
 
