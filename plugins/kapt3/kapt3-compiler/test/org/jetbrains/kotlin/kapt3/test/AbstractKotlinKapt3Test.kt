@@ -208,7 +208,13 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
         @JvmStatic
         fun main(args: Array<String>) {
             if (args.isEmpty()) error("1 argument expected, 0 passed")
-            AbstractClassFileToSourceStubConverterTest().doTest(args[0])
+            val test = AbstractClassFileToSourceStubConverterTest()
+            try {
+                test.setUp()
+                test.doTest(args[0])
+            } finally {
+                test.tearDown()
+            }
         }
     }
 
