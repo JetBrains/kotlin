@@ -48,7 +48,9 @@ internal class KonanSerializerExtension(val context: Context) :
     }
 
     override fun serializeEnumEntry(descriptor: ClassDescriptor, proto: ProtoBuf.EnumEntry.Builder) {
-
+        // Serialization doesn't preserve enum entry order, so we need to serialize ordinal.
+        val ordinal = context.specialDeclarationsFactory.getEnumEntryOrdinal(descriptor)
+        proto.setExtension(KonanLinkData.enumEntryOrdinal, ordinal)
         super.serializeEnumEntry(descriptor, proto)
     }
 

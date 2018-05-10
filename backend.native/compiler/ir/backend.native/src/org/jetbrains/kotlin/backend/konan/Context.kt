@@ -51,10 +51,13 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
+import org.jetbrains.kotlin.metadata.KonanLinkData
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.getName
 import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
@@ -63,6 +66,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
     private val outerThisFields = mutableMapOf<ClassDescriptor, IrField>()
     private val bridgesDescriptors = mutableMapOf<Pair<IrSimpleFunction, BridgeDirections>, IrSimpleFunction>()
     private val loweredEnums = mutableMapOf<ClassDescriptor, LoweredEnum>()
+    private val ordinals = mutableMapOf<IrClass, Map<ClassDescriptor, Int>>()
 
     object DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS :
             IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
@@ -121,6 +125,27 @@ internal class SpecialDeclarationsFactory(val context: Context) {
         return loweredEnums.getOrPut(enumClassDescriptor) {
             enumSpecialDeclarationsFactory.createLoweredEnum(enumClassDescriptor)
         }
+    }
+
+    private fun assignOrdinalsToEnumEntries(irClass: IrClass): Map<ClassDescriptor, Int> {
+        val enumEntryOrdinals = mutableMapOf<ClassDescriptor, Int>()
+        irClass.declarations.filterIsInstance<IrEnumEntry>().forEachIndexed { index, entry ->
+            enumEntryOrdinals[entry.descriptor] = index
+        }
+        return enumEntryOrdinals
+    }
+
+    fun getEnumEntryOrdinal(entryDescriptor: ClassDescriptor): Int {
+        val enumClassDescriptor = entryDescriptor.containingDeclaration as ClassDescriptor
+        // If enum came from another module then we need to get serialized ordinal number.
+        // We serialize ordinal because current serialization cannot preserve enum entry order.
+        if (enumClassDescriptor is DeserializedClassDescriptor) {
+            return enumClassDescriptor.classProto.enumEntryList
+                    .first { entryDescriptor.name == enumClassDescriptor.c.nameResolver.getName(it.name) }
+                    .getExtension(KonanLinkData.enumEntryOrdinal)
+        }
+        val enumClass = context.ir.getEnum(enumClassDescriptor)
+        return ordinals.getOrPut(enumClass) { assignOrdinalsToEnumEntries(enumClass) }[entryDescriptor]!!
     }
 
     private fun initializeBridgeDescriptor(bridgeDescriptor: SimpleFunctionDescriptorImpl,

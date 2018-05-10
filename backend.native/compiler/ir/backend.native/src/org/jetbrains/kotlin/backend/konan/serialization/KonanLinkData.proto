@@ -44,6 +44,7 @@ extend Property {
 
 extend EnumEntry {
     repeated Annotation enum_entry_annotation = 170;
+    optional int32 enum_entry_ordinal = 171;
 }
 
 extend ValueParameter {

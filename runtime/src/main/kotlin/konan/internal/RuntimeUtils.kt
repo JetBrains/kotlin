@@ -94,8 +94,7 @@ fun ReportUnhandledException(e: Throwable) {
 @ExportForCppRuntime
 internal fun TheEmptyString() = ""
 
-fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T
-{
+fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
     var left = 0
     var right = values.size - 1
     while (left <= right) {
@@ -110,8 +109,7 @@ fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T
     throw Exception("Invalid enum name: $name")
 }
 
-fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T>
-{
+fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
     val result = @Suppress("TYPE_PARAMETER_AS_REIFIED") Array<T?>(values.size)
     for (value in values)
         result[value.ordinal] = value

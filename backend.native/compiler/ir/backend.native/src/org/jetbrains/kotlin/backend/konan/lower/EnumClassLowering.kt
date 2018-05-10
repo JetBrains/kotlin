@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -47,9 +46,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
+
 
 internal class EnumSyntheticFunctionsBuilder(val context: Context) {
     fun buildValuesExpression(startOffset: Int, endOffset: Int,
@@ -159,8 +157,12 @@ internal class EnumUsageLowering(val context: Context)
 }
 
 internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
+
     fun run(irFile: IrFile) {
         runOnFilePostfix(irFile)
+        // EnumWhenLowering should be performed before EnumUsageLowering because
+        // the latter performs lowering of IrGetEnumValue
+        EnumWhenLowering(context).lower(irFile)
         EnumUsageLowering(context).lower(irFile)
     }
 
@@ -177,7 +179,6 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
 
     private inner class EnumClassTransformer(val irClass: IrClass) {
         private val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(irClass.descriptor)
-        private val enumEntryOrdinals = mutableMapOf<ClassDescriptor, Int>()
         private val loweredEnumConstructors = mutableMapOf<ClassConstructorDescriptor, IrConstructor>()
         private val descriptorToIrConstructorWithDefaultArguments = mutableMapOf<ClassConstructorDescriptor, IrConstructor>()
         private val defaultEnumEntryConstructors = mutableMapOf<ClassConstructorDescriptor, IrConstructor>()
@@ -186,7 +187,6 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
 
         fun run() {
             insertInstanceInitializerCall()
-            assignOrdinalsToEnumEntries()
             lowerEnumConstructors(irClass)
             lowerEnumEntriesClasses()
             val defaultClass = createDefaultClassForEnumEntries()
@@ -219,16 +219,6 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                     return declaration
                 }
             })
-        }
-
-        private fun assignOrdinalsToEnumEntries() {
-            var ordinal = 0
-            irClass.declarations.forEach {
-                if (it is IrEnumEntry) {
-                    enumEntryOrdinals.put(it.descriptor, ordinal)
-                    ordinal++
-                }
-            }
         }
 
         private fun lowerEnumEntriesClasses() {
@@ -563,7 +553,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
         private abstract inner class InEnumEntry(private val enumEntry: ClassDescriptor) : EnumConstructorCallTransformer {
             override fun transform(enumConstructorCall: IrEnumConstructorCall): IrExpression {
                 val name = enumEntry.name.asString()
-                val ordinal = enumEntryOrdinals[enumEntry]!!
+                val ordinal = context.specialDeclarationsFactory.getEnumEntryOrdinal(enumEntry)
 
                 val descriptor = enumConstructorCall.descriptor
                 val startOffset = enumConstructorCall.startOffset

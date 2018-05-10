@@ -98,6 +98,7 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val nothing = symbolTable.referenceClass(builtIns.nothing)
     val throwable = symbolTable.referenceClass(builtIns.throwable)
     val string = symbolTable.referenceClass(builtIns.string)
+    val enum = symbolTable.referenceClass(builtIns.enum)
 
     val arrayList = symbolTable.referenceClass(getArrayListClassDescriptor(context))
 

@@ -763,6 +763,11 @@ task enum_loop(type: RunKonanTest) {
     source = "codegen/enum/loop.kt"
 }
 
+task switchLowering(type: RunKonanTest) {
+    goldValue = "EnumA.A\nok\nok\nok\nok\nok\n"
+    source = "codegen/enum/switchLowering.kt"
+}
+
 task mangling(type: LinkKonanTest) {
     goldValue = 
         "Int direct [1, 2, 3, 4]\n" +
@@ -2418,6 +2423,12 @@ task serialized_default_args(type: LinkKonanTest) {
 task serialized_no_typemap(type: RunStandaloneKonanTest) {
     source = "serialization/regression/no_type_map.kt"
     goldValue = "OK\n"
+}
+
+task serialized_enum_ordinal(type: LinkKonanTest) {
+    source = "serialization/enum_ordinal/main.kt"
+    lib = "serialization/enum_ordinal/library.kt"
+    goldValue = "0\n1\n2\nb\n"
 }
 
 task testing_annotations(type: RunStandaloneKonanTest) {
