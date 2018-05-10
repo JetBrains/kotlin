@@ -15480,6 +15480,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/ranges/forInStringVarUpdatedInLoopBody.kt");
         }
 
+        @TestMetadata("forInStringWithCustomIterator.kt")
+        public void testForInStringWithCustomIterator() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/forInStringWithCustomIterator.kt");
+        }
+
         @TestMetadata("forIntRange.kt")
         public void testForIntRange() throws Exception {
             runTest("compiler/testData/codegen/box/ranges/forIntRange.kt");

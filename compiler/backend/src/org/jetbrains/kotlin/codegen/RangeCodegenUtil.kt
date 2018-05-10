@@ -254,3 +254,9 @@ fun getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCallee: CallableDe
 
     throw AssertionError("Unexpected range type: $rangeType")
 }
+
+fun isCharSequenceIterator(descriptor: CallableDescriptor) =
+    descriptor.isTopLevelExtensionOnType("iterator", "kotlin.text") {
+        it.constructor.declarationDescriptor?.isTopLevelInPackage("CharSequence", "kotlin")
+                ?: false
+    }
