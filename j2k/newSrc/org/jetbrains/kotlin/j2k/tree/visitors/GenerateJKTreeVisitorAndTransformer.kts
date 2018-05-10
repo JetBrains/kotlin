@@ -98,7 +98,7 @@ fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceDat
         interfaceData.joinTo(this, separator = "\n") { (name, ext) ->
             val nameWithoutPrefix = name.removePrefix("JK")
             val argName = nameWithoutPrefix.decapitalize().safeVarName()
-            val generifyCall = if (name != "JKElement") "= visit${ext!!.removePrefix("JK")}($argName, data)" else ""
+            val generifyCall = if (name != "JKTreeElement") "= visit${ext!!.removePrefix("JK")}($argName, data)" else ""
             """
             |    fun visit$nameWithoutPrefix($argName: $name, data: D): R $generifyCall
             """.trimMargin()
@@ -119,7 +119,7 @@ fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceDat
             val nameWithoutPrefix = name.removePrefix("JK")
             val argName = nameWithoutPrefix.decapitalize().safeVarName()
             val arg = "$argName: $name"
-            val generifyCall = if (name != "JKElement") "= visit${ext!!.removePrefix("JK")}($argName, null)" else ""
+            val generifyCall = if (name != "JKTreeElement") "= visit${ext!!.removePrefix("JK")}($argName, null)" else ""
             """
             |    fun visit$nameWithoutPrefix($arg) $generifyCall
             |    override fun visit$nameWithoutPrefix($arg, data: Nothing?) = visit$nameWithoutPrefix($argName)
@@ -135,7 +135,7 @@ fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceDat
         appendln("import org.jetbrains.kotlin.j2k.tree.*")
         appendln()
 
-        appendln("interface $transformerName<in D> : JKVisitor<JKElement, D> {")
+        appendln("interface $transformerName<in D> : JKVisitor<JKTreeElement, D> {")
 
         interfaceData.joinTo(this, separator = "\n") { (name, ext) ->
             val nameWithoutPrefix = name.removePrefix("JK")
@@ -144,7 +144,7 @@ fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceDat
             val leastCommonName = name.firstCommonInterfaceName()
             val cast = "as $leastCommonName".takeIf { leastCommonName == name } ?: ""
 
-            val generifyCall = if (name != "JKElement") "= visit${ext!!.removePrefix("JK")}($argName, data) $cast" else ""
+            val generifyCall = if (name != "JKTreeElement") "= visit${ext!!.removePrefix("JK")}($argName, data) $cast" else ""
 
             """
             |    override fun visit$nameWithoutPrefix($argName: $name, data: D): $leastCommonName $generifyCall
@@ -170,7 +170,7 @@ fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceDat
 
             val leastCommonName = name.firstCommonInterfaceName()
             val cast = "as $leastCommonName".takeIf { leastCommonName == name } ?: ""
-            val generifyCall = if (name != "JKElement") "= visit${ext!!.removePrefix("JK")}($argName) $cast" else ""
+            val generifyCall = if (name != "JKTreeElement") "= visit${ext!!.removePrefix("JK")}($argName) $cast" else ""
 
             """
             |    fun visit$nameWithoutPrefix($arg): $leastCommonName $generifyCall

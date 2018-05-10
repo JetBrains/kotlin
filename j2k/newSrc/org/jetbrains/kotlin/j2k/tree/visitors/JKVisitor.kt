@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.j2k.tree.visitors
 import org.jetbrains.kotlin.j2k.tree.*
 
 interface JKVisitor<out R, in D> {
-    fun visitElement(element: JKElement, data: D): R 
+    fun visitElement(element: JKTreeElement, data: D): R
     fun visitUniverseDeclaration(universeDeclaration: JKUniverseDeclaration, data: D): R = visitElement(universeDeclaration, data)
     fun visitUniverseClass(universeClass: JKUniverseClass, data: D): R = visitUniverseDeclaration(universeClass, data)
     fun visitModifier(modifier: JKModifier, data: D): R = visitElement(modifier, data)

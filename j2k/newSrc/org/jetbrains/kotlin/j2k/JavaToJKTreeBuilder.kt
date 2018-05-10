@@ -318,7 +318,7 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
 
     private inner class ElementVisitor(val declarationMapper: DeclarationMapper) : JavaElementVisitor() {
 
-        var resultElement: JKElement? = null
+        var resultElement: JKTreeElement? = null
 
         override fun visitClass(aClass: PsiClass) {
             resultElement = with(declarationMapper) { aClass.toJK() }
@@ -338,7 +338,7 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
     }
 
 
-    fun buildTree(psi: PsiElement): JKElement? {
+    fun buildTree(psi: PsiElement): JKTreeElement? {
         assert(psi.language.`is`(JavaLanguage.INSTANCE)) { "Unable to build JK Tree using Java Visitor for language ${psi.language}" }
         val elementVisitor = ElementVisitor(declarationMapper)
         psi.accept(elementVisitor)

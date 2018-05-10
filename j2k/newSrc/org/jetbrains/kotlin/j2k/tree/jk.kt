@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.j2k.tree
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
-interface JKElement : JKTreeElement {
+interface JKTreeElement : JKElement {
     fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R
 
     fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
 }
 
-interface JKUniverseDeclaration : JKElement, JKDeclaration
+interface JKUniverseDeclaration : JKTreeElement, JKDeclaration
 
-interface JKDeclarationList : JKTreeElement {
+interface JKDeclarationList : JKElement {
     var declarations: List<JKUniverseDeclaration>
 }
 
@@ -35,9 +35,9 @@ interface JKUniverseClass : JKUniverseDeclaration, JKClass {
     override val declarationList: JKDeclarationList
 }
 
-interface JKModifier : JKElement
+interface JKModifier : JKTreeElement
 
-interface JKModifierList : JKBranchElement, JKElement {
+interface JKModifierList : JKBranchElement, JKTreeElement {
     var modifiers: List<JKModifier>
 }
 
@@ -45,7 +45,7 @@ interface JKAccessModifier : JKModifier
 
 interface JKModalityModifier : JKModifier
 
-interface JKReference : JKElement {
+interface JKReference : JKTreeElement {
     val target: JKReferenceTarget
     val referenceType: JKReferenceType
 
@@ -66,7 +66,7 @@ interface JKClassReference : JKReference {
     override val target: JKClass
 }
 
-interface JKType : JKElement
+interface JKType : JKTreeElement
 
 interface JKClassType : JKType {
     val classReference: JKClassReference
@@ -74,21 +74,21 @@ interface JKClassType : JKType {
     val parameters: List<JKType>
 }
 
-interface JKStatement : JKElement
+interface JKStatement : JKTreeElement
 
 interface JKLoop : JKStatement
 
-interface JKBlock : JKElement {
+interface JKBlock : JKTreeElement {
     var statements: List<JKStatement>
 }
 
-interface JKIdentifier : JKElement
+interface JKIdentifier : JKTreeElement
 
 interface JKNameIdentifier : JKIdentifier {
     val name: String
 }
 
-interface JKExpression : JKElement
+interface JKExpression : JKTreeElement
 
 interface JKExpressionStatement : JKStatement {
     val expression: JKExpression
@@ -138,7 +138,7 @@ interface JKTypeCastExpression : JKExpression {
     val type: JKType
 }
 
-interface JKExpressionList : JKElement {
+interface JKExpressionList : JKTreeElement {
     var expressions: List<JKExpression>
 }
 
@@ -151,7 +151,7 @@ interface JKLiteralExpression : JKExpression {
     }
 }
 
-interface JKValueArgument : JKElement {
+interface JKValueArgument : JKTreeElement {
     var type: JKType
     val name: String
 }

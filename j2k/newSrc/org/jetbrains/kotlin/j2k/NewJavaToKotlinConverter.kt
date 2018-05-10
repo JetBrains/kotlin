@@ -20,7 +20,7 @@ import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.j2k.tree.JKElement
+import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.prettyDebugPrintTree
 
 class NewJavaToKotlinConverter(
@@ -28,7 +28,7 @@ class NewJavaToKotlinConverter(
     private val settings: ConverterSettings
 ) {
 
-    private fun List<JKElement>.prettyPrintTrees() = buildString {
+    private fun List<JKTreeElement>.prettyPrintTrees() = buildString {
         for (tree in this@prettyPrintTrees) {
             appendln()
             appendln(tree.prettyDebugPrintTree())

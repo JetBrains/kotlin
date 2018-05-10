@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.j2k
 
 import org.jetbrains.kotlin.j2k.tree.JKClass
-import org.jetbrains.kotlin.j2k.tree.JKElement
+import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.JKUniverseClass
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.utils.Printer
@@ -37,7 +37,7 @@ class NewCodeBuilder {
 
 
     inner class Visitor : JKVisitor<Unit, Unit> {
-        override fun visitElement(element: JKElement, data: Unit) {
+        override fun visitElement(element: JKTreeElement, data: Unit) {
             printer.print("/* !!! Hit visitElement for element type: ${element::class} !!! */")
         }
 
@@ -56,7 +56,7 @@ class NewCodeBuilder {
     }
 
 
-    fun printCodeOut(root: JKElement): String {
+    fun printCodeOut(root: JKTreeElement): String {
         Visitor().also { root.accept(it, Unit) }
         return builder.toString()
     }

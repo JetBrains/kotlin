@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.j2k
 
 import org.jetbrains.kotlin.j2k.conversions.JavaFieldToKotlinPropertyConversion
 import org.jetbrains.kotlin.j2k.conversions.JavaMethodToKotlinFunctionConversion
-import org.jetbrains.kotlin.j2k.tree.JKElement
+import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 
 object ConversionsRunner {
 
-    fun doApply(trees: List<JKElement>) {
+    fun doApply(trees: List<JKTreeElement>) {
 
         trees.forEach {
             JavaFieldToKotlinPropertyConversion().runConversion(it)

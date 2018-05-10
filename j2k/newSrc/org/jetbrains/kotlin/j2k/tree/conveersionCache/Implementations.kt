@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKModifierListImpl
 
-abstract class JKMultiverseElementBase : JKTreeElement {
-    override var parent: JKTreeElement? = null
+abstract class JKMultiverseElementBase : JKElement {
+    override var parent: JKElement? = null
 
-    fun <D : JKElement> D.setParent(p: JKElement): D {
+    fun <D : JKTreeElement> D.setParent(p: JKTreeElement): D {
         parent = p
         return this
     }
