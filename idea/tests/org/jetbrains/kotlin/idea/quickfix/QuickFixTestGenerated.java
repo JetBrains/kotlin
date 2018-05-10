@@ -12059,6 +12059,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/wrapWithSafeLetCall/extensionMethod.kt");
         }
 
+        @TestMetadata("extentionFunctionCall.kt")
+        public void testExtentionFunctionCall() throws Exception {
+            runTest("idea/testData/quickfix/wrapWithSafeLetCall/extentionFunctionCall.kt");
+        }
+
+        @TestMetadata("extentionFunctionCall2.kt")
+        public void testExtentionFunctionCall2() throws Exception {
+            runTest("idea/testData/quickfix/wrapWithSafeLetCall/extentionFunctionCall2.kt");
+        }
+
         @TestMetadata("insideLet.kt")
         public void testInsideLet() throws Exception {
             runTest("idea/testData/quickfix/wrapWithSafeLetCall/insideLet.kt");
