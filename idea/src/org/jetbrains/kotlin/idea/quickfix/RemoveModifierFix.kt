@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -116,6 +117,18 @@ class RemoveModifierFix(
                     val type = modifierList.parent as KtTypeReference
                     if (!type.hasModifier(KtTokens.SUSPEND_KEYWORD)) return null
                     return RemoveModifierFix(type, KtTokens.SUSPEND_KEYWORD, isRedundant = false)
+                }
+            }
+        }
+
+        fun createRemoveLateinitFactory(): KotlinSingleIntentionActionFactory {
+            return object : KotlinSingleIntentionActionFactory() {
+                override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
+                    val keyword = diagnostic.psiElement
+                    val modifierList = keyword.parent as? KtDeclarationModifierList ?: return null
+                    val property = modifierList.parent as? KtProperty ?: return null
+                    if (!property.hasModifier(KtTokens.LATEINIT_KEYWORD)) return null
+                    return RemoveModifierFix(property, KtTokens.LATEINIT_KEYWORD, isRedundant = false)
                 }
             }
         }
