@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -28,9 +27,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.Variance
 
 class RemoveModifierFix(
-        element: KtModifierListOwner,
-        private val modifier: KtModifierKeywordToken,
-        private val isRedundant: Boolean
+    element: KtModifierListOwner,
+    private val modifier: KtModifierKeywordToken,
+    private val isRedundant: Boolean
 ) : KotlinQuickFixAction<KtModifierListOwner>(element) {
 
     private val text = run {
@@ -49,8 +48,7 @@ class RemoveModifierFix(
 
     override fun getText() = text
 
-    override fun isAvailable(project: Project, editor: Editor?, file: KtFile) =
-            (element?.hasModifier(modifier) ?: false)
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile) = (element?.hasModifier(modifier) ?: false)
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         invoke()
@@ -65,7 +63,10 @@ class RemoveModifierFix(
     }
 
     companion object {
-        fun createRemoveModifierFromListOwnerFactory(modifier: KtModifierKeywordToken, isRedundant: Boolean = false): KotlinSingleIntentionActionFactory {
+        fun createRemoveModifierFromListOwnerFactory(
+            modifier: KtModifierKeywordToken,
+            isRedundant: Boolean = false
+        ): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
                 override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
                     val modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, KtModifierListOwner::class.java) ?: return null
