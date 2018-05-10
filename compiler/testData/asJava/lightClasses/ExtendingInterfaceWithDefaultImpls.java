@@ -4,9 +4,6 @@ public interface B extends p.A {
 
     static final class DefaultImpls {
         @org.jetbrains.annotations.NotNull
-        public static java.lang.String b(p.B $this) { /* compiled code */ }
-
-        @org.jetbrains.annotations.NotNull
-        public static java.lang.String a(p.B $this) { /* compiled code */ }
+        public static final java.lang.String b(@org.jetbrains.annotations.NotNull p.B b) { /* compiled code */ }
     }
 }
