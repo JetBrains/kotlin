@@ -3547,6 +3547,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/inheritance/interfaces"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
             }
 
+            @TestMetadata("fromExternalInterface.kt")
+            public void testFromExternalInterface() throws Exception {
+                runTest("js/js.translator/testData/box/inheritance/interfaces/fromExternalInterface.kt");
+            }
+
             @TestMetadata("withDefaultMethod.kt")
             public void testWithDefaultMethod() throws Exception {
                 runTest("js/js.translator/testData/box/inheritance/interfaces/withDefaultMethod.kt");

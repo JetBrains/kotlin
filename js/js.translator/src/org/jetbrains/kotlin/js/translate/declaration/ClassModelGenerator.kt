@@ -192,7 +192,7 @@ class ClassModelGenerator(val context: TranslationContext) {
             if (!visitedDescriptors.add(original) || !original.filter()) return
             val overridden = original.getTypedOverriddenDescriptors().map { it.getOriginalDescriptor() }
 
-            if (original.kind.isReal) {
+            if (original.kind.isReal && !original.isEffectivelyExternal()) {
                 collectedDescriptors.putIfAbsent(original, source)
             }
             else {
