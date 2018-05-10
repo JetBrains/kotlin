@@ -51,10 +51,13 @@ class WrapWithSafeLetCallFix(
         val validator = NewDeclarationNameValidator(element, nullableExpression, NewDeclarationNameValidator.Target.VARIABLES)
         val name = KotlinNameSuggester.suggestNameByName("it", validator)
         nullableExpression.replace(factory.createExpression(name))
-        val newExpression: Any = if (receiverExpression != null) "${receiverExpression.text}.${element.text}" else element
+        val underLetExpression = when {
+            receiverExpression != null -> factory.createExpressionByPattern("$0.$1", receiverExpression, element)
+            else -> element
+        }
         val wrapped = when (name) {
-            "it" -> factory.createExpressionByPattern("$0?.let { $1 }", nullableText, newExpression)
-            else -> factory.createExpressionByPattern("$0?.let { $1 -> $2 }", nullableText, name, newExpression)
+            "it" -> factory.createExpressionByPattern("$0?.let { $1 }", nullableText, underLetExpression)
+            else -> factory.createExpressionByPattern("$0?.let { $1 -> $2 }", nullableText, name, underLetExpression)
         }
         (qualifiedExpression ?: element).replace(wrapped)
     }
