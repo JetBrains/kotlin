@@ -1509,6 +1509,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/changeSignature/addFunctionParameterLongNameRuntime.kt");
         }
 
+        @TestMetadata("addFunctionParameterWithSmartCast.kt")
+        public void testAddFunctionParameterWithSmartCast() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithSmartCast.kt");
+        }
+
         @TestMetadata("addNothingReturnType.kt")
         public void testAddNothingReturnType() throws Exception {
             runTest("idea/testData/quickfix/changeSignature/addNothingReturnType.kt");
@@ -3086,8 +3091,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
                 @TestMetadata("nullableReceiver.kt")
                 public void testNullableReceiver() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/nullableReceiver.kt");
-                    doTest(fileName);
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/nullableReceiver.kt");
                 }
 
                 @TestMetadata("objectMemberFunNoReceiver.kt")
@@ -4607,8 +4611,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
                 @TestMetadata("nullableReceiver.kt")
                 public void testNullableReceiver() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/nullableReceiver.kt");
-                    doTest(fileName);
+                    runTest("idea/testData/quickfix/createFromUsage/createVariable/property/nullableReceiver.kt");
                 }
 
                 @TestMetadata("objectMemberValNoReceiver.kt")

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getDataFlowAwareTypes
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -141,7 +142,7 @@ class AddFunctionParametersFix(
     ): KotlinParameterInfo {
         val name = getNewArgumentName(argument, validator)
         val expression = argument.getArgumentExpression()
-        val type = expression?.let { it.analyze().getType(it) } ?: functionDescriptor.builtIns.nullableAnyType
+        val type = expression?.let { getDataFlowAwareTypes(it).firstOrNull() } ?: functionDescriptor.builtIns.nullableAnyType
         return KotlinParameterInfo(functionDescriptor, -1, name, KotlinTypeInfo(false, null))
                 .apply { currentTypeInfo = KotlinTypeInfo(false, type) }
     }
