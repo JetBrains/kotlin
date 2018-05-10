@@ -42,22 +42,32 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
             if (it.getTargetFunctionDescriptor(context) == descriptor) it.labeledExpression?.delete()
         }
 
-        val extension = descriptor.extensionReceiverParameter?.type?.let { "$it." } ?: ""
-        val params = descriptor.valueParameters.joinToString { "${it.name}: ${it.type}" }
-        val returnType = descriptor.returnType?.let { if (it.isUnit()) "" else ": $it" } ?: ""
-        if (returnType.isNotEmpty()) {
-            val lastStatement = bodyExpression.statements.lastOrNull()
-            if (lastStatement != null && lastStatement !is KtReturnExpression) {
-                val foldableReturns = BranchedFoldingUtils.getFoldableReturns(lastStatement)
-                if (foldableReturns == null || foldableReturns.isEmpty()) {
-                    lastStatement.replace(psiFactory.createExpressionByPattern("return $0", lastStatement))
+        // TODO: check type rendering (!!!)
+        val anonymousFunction = psiFactory.createFunction(
+            KtPsiFactory.CallableBuilder(KtPsiFactory.CallableBuilder.Target.FUNCTION).apply {
+                typeParams()
+                descriptor.extensionReceiverParameter?.type?.let {
+                    receiver(it.toString())
                 }
-            }
-        }
-        val anonymousFunction = element.replaced(
-            psiFactory.createExpressionByPattern("fun $0($1)$2 { $3 }", extension, params, returnType, bodyExpression, reformat = false)
-        ) as KtNamedFunction
+                name("")
+                for (parameter in descriptor.valueParameters) {
+                    param(parameter.name.asString(), parameter.type.toString())
+                }
+                descriptor.returnType?.takeIf { !it.isUnit() }?.let {
+                    val lastStatement = bodyExpression.statements.lastOrNull()
+                    if (lastStatement != null && lastStatement !is KtReturnExpression) {
+                        val foldableReturns = BranchedFoldingUtils.getFoldableReturns(lastStatement)
+                        if (foldableReturns == null || foldableReturns.isEmpty()) {
+                            lastStatement.replace(psiFactory.createExpressionByPattern("return $0", lastStatement))
+                        }
+                    }
+                    returnType(it.toString())
+                } ?: noReturnType()
+                blockBody(" " + bodyExpression.text)
+            }.asString()
+        )
 
-        (anonymousFunction.parent as? KtLambdaArgument)?.also { it.moveInsideParentheses(it.analyze(BodyResolveMode.PARTIAL)) }
+        val resultingFunction = element.replaced(anonymousFunction)
+        (resultingFunction.parent as? KtLambdaArgument)?.also { it.moveInsideParentheses(it.analyze(BodyResolveMode.PARTIAL)) }
     }
 }
