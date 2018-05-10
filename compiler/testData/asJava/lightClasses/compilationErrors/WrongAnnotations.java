@@ -1,12 +1,11 @@
 public final class A {
-    public static final A.Companion Companion;
+    private final A.Companion Companion;
 
     public A() { /* compiled code */ }
 
-    @kotlin.jvm.JvmStatic
-    public static final void f3() { /* compiled code */ }
-
     public static final class Companion {
+        private Companion() { /* compiled code */ }
+
         @kotlin.jvm.JvmName(name = "realName")
         public final void realName() { /* compiled code */ }
 
@@ -24,7 +23,5 @@ public final class A {
 
         @kotlin.jvm.JvmOverloads
         public final void f6() { /* compiled code */ }
-
-        private Companion() { /* compiled code */ }
     }
 }
