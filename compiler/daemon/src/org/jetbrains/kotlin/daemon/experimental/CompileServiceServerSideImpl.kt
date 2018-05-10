@@ -12,13 +12,10 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import io.ktor.network.sockets.Socket
-import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.actor
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -159,7 +156,7 @@ class CompileServiceServerSideImpl(
         val activeTaskIds = arrayListOf<Int>()
         val waitingTasks = arrayListOf<CompileServiceTask>()
         fun tryInvokeShutdown(reason: String) {
-            println("tryInvokeShutdown | reason = $reason | tasksCnt = ${activeTaskIds.size} | shutdownTask = ${shutdownTask != null}")
+            println("tryInvokeShutdown | reason = $reason | tasks = ${activeTaskIds} | shutdownTask = ${shutdownTask != null}")
             if (activeTaskIds.isEmpty()) {
                 shutdownTask?.let { task ->
                     isWriteLocked = true
@@ -418,22 +415,27 @@ class CompileServiceServerSideImpl(
 
     override suspend fun getDaemonJVMOptions(): CompileService.CallResult<DaemonJVMOptions> = ifAlive(info = "getDaemonJVMOptions") {
         log.info("getDaemonJVMOptions: $daemonJVMOptions")// + daemonJVMOptions.mappers.flatMap { it.toArgs("-") })
-
         CompileService.CallResult.Good(daemonJVMOptions)
     }
 
     override suspend fun registerClient(aliveFlagPath: String?): CompileService.CallResult<Nothing> {
         log.info("fun registerClient")
         return ifAlive(minAliveness = Aliveness.Alive, info = "registerClient") {
-            state.addClient(aliveFlagPath)
-            log.info("Registered a client alive file: $aliveFlagPath")
-            CompileService.CallResult.Ok()
+            registerClientImpl(aliveFlagPath)
         }
     }
 
-    override suspend fun getClients(): CompileService.CallResult<List<String>> = ifAlive(info = "getClients") {
-        CompileService.CallResult.Good(state.getClientsFlagPaths())
+    private fun registerClientImpl(aliveFlagPath: String?): CompileService.CallResult<Nothing> {
+        state.addClient(aliveFlagPath)
+        log.info("Registered a client alive file: $aliveFlagPath")
+        return CompileService.CallResult.Ok()
     }
+
+    override suspend fun getClients(): CompileService.CallResult<List<String>> = ifAlive(info = "getClients") {
+        getClientsImpl()
+    }
+
+    private fun getClientsImpl() = CompileService.CallResult.Good(state.getClientsFlagPaths())
 
     // TODO: consider tying a session to a client and use this info to cleanup
     override suspend fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> =
@@ -479,15 +481,19 @@ class CompileServiceServerSideImpl(
 
     override suspend fun scheduleShutdown(graceful: Boolean): CompileService.CallResult<Boolean> =
         ifAlive(minAliveness = Aliveness.LastSession, info = "scheduleShutdown") {
-            val res = when {
-                graceful -> gracefulShutdown(true)
-                else -> {
-                    shutdownWithDelay()
-                    true
-                }
-            }
-            CompileService.CallResult.Good(res)
+            scheduleShutdownImpl(graceful)
         }
+
+    private fun scheduleShutdownImpl(graceful: Boolean): CompileService.CallResult<Boolean> {
+        val res = when {
+            graceful -> gracefulShutdown(true)
+            else -> {
+                shutdownWithDelay()
+                true
+            }
+        }
+        return CompileService.CallResult.Good(res)
+    }
 
     override suspend fun compile(
         sessionId: Int,
@@ -684,7 +690,7 @@ class CompileServiceServerSideImpl(
         return compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles)
     }
 
-    override suspend fun leaseReplSession(
+        override suspend fun leaseReplSession(
         aliveFlagPath: String?,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
@@ -900,7 +906,7 @@ class CompileServiceServerSideImpl(
                                 log.info("other : $daemon")
                                 daemon.getClients().takeIf { it.isGood }?.let {
                                     it.get().forEach { clientAliveFile ->
-                                        registerClient(clientAliveFile)
+                                        registerClientImpl(clientAliveFile)
                                     }
                                 }
                                 daemon.scheduleShutdown(true)
@@ -931,10 +937,10 @@ class CompileServiceServerSideImpl(
                     ) {
                         // there is at least one bigger, handover my clients to it and shutdown
                         log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
-                        getClients().takeIf { it.isGood }?.let {
+                        getClientsImpl().takeIf { it.isGood }?.let {
                             it.get().forEach { bestDaemonWithMetadata.daemon.registerClient(it) }
                         }
-                        scheduleShutdown(true)
+                        scheduleShutdownImpl(true)
                     } else {
                         // undecided, do nothing
                         log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} equal prio, continue: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
@@ -970,7 +976,7 @@ class CompileServiceServerSideImpl(
             currentSessionId == state.sessions.lastSessionId
         ) {
             log.info("currentCompilationsCount == compilationsCounter.get()")
-            runBlocking {
+            async {
                 ifAliveExclusiveUnit(minAliveness = Aliveness.LastSession, info = "initiate elections - shutdown") {
                     log.info("Execute delayed shutdown!!!")
                     log.fine("Execute delayed shutdown")
@@ -1075,7 +1081,10 @@ class CompileServiceServerSideImpl(
             builder.register(LookupTracker::class.java, RemoteLookupTrackerClient(facade, eventManager, rpcProfiler))
         }
         if (facade.hasCompilationCanceledStatus()) {
+            log.info("facade.hasCompilationCanceledStatus() = true")
             builder.register(CompilationCanceledStatus::class.java, RemoteCompilationCanceledStatusClient(facade, rpcProfiler))
+        } else {
+            log.info("facade.hasCompilationCanceledStatus() = false")
         }
         builder.build()
     }

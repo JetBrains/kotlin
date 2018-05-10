@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.daemon.client.experimental
 
 import io.ktor.network.sockets.Socket
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.daemon.client.reportFromDaemon
 import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
@@ -24,19 +27,18 @@ open class CompilerCallbackServicesFacadeServerServerSide(
     val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
     val lookupTracker: LookupTracker? = null,
     val compilationCanceledStatus: CompilationCanceledStatus? = null,
+    val messageCollector: MessageCollector? = null,
     override val serverSocketWithPort: ServerSocketWrapper = findCallbackServerSocket()
 ) : CompilerCallbackServicesFacadeServerSide {
 
     override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
-        log.info(message)
+        messageCollector?.reportFromDaemon(null, category, severity, message, attachment)
     }
 
     override val clients = hashMapOf<Socket, Server.ClientInfo>()
 
-    private val log = Logger.getLogger("CompilerCallbackServicesFacadeServerServerSide")
-
     val clientSide : CompilerServicesFacadeBaseClientSide
-        get() = CompilerServicesFacadeBaseClientSideImpl(serverSocketWithPort.port)
+        get() = CompilerCallbackServicesFacadeClientSideImpl(serverSocketWithPort.port)
 
     override suspend fun hasIncrementalCaches(): Boolean = incrementalCompilationComponents != null
 

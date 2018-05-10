@@ -1,4 +1,6 @@
+import com.sun.javafx.scene.CameraHelper.project
 import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
+import org.jetbrains.kotlin.gradle.dsl.Coroutines
 
 plugins {
     kotlin("jvm")
@@ -29,4 +31,7 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {}
+}
+kotlin {
+    experimental.coroutines = Coroutines.ENABLE
 }

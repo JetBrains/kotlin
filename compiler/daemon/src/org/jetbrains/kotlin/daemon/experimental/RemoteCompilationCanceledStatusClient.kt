@@ -32,7 +32,7 @@ class RemoteCompilationCanceledStatusClient(
     val profiler: Profiler = DummyProfiler()
 ) : CompilationCanceledStatus {
 
-    private val log by lazy { Logger.getLogger("compiler") }
+    private val log by lazy { Logger.getLogger("RemoteCompilationCanceledStatusClient") }
 
     @Volatile
     var lastChecked: Long = System.nanoTime()
