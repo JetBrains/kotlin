@@ -111,9 +111,8 @@ class CompileServiceClientSideImpl(
         log.info("sending message (GetDaemonJVMOptionsMessage) ... (deaemon port = $serverPort)")
         val id = sendMessage(GetDaemonJVMOptionsMessage())
         log.info("message is sent!")
-        val resAsync = readMessage<CallResult<DaemonJVMOptions>>(id)
         log.info("reading message...")
-        val res = resAsync
+        val res = readMessage<CallResult<DaemonJVMOptions>>(id)
         log.info("reply : $res")
         return res
     }

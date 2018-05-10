@@ -118,9 +118,6 @@ class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logg
         val obj = CompletableDeferred<Any?>()
         readActor.send(SerObjectQuery(obj))
         val result = obj.await()
-        if (result is Server.ServerDownMessage<*>) {
-            throw IOException("connection closed by server")
-        }
         result
     }
 

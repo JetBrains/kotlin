@@ -9,9 +9,10 @@ import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSideImpl
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseServerSide
-import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacadeAsync
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerBase
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openIO
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.runWithTimeout
 import org.jetbrains.kotlin.daemon.common.experimental.toRMI
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import java.io.ObjectInputStream

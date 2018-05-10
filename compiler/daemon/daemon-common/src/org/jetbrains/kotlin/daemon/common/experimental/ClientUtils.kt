@@ -57,7 +57,7 @@ fun walkDaemonsAsync(
         registryDir.walk().toList() // list, since walk returns Sequence and Sequence.map{...} is not inline => coroutines dont work
             .map { Pair(it, portExtractor(it.name)) }
             .filter { (file, port) -> port != null && filter(file, port) }
-            .mapNotNullAsync { (file, port) ->
+            .mapNotNull { (file, port) ->
                 //.mapNotNull { (file, port) ->
                 // all actions process concurrently
                 log.info("\n<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>\n")
