@@ -167,8 +167,8 @@ bintray {
             name = project.version
             desc = "Kotlin Native Gradle plugin $konanVersion"
         }
-        publish  = project.findProperty("bintrayPublish")?.asBoolean() ?: false
-        override = project.findProperty("bintrayOverride")?.asBoolean() ?: false
+        publish  = project.findProperty("bintrayPublish").toString().toBoolean()
+        override = project.findProperty("bintrayOverride").toString().toBoolean()
     }
     publications = ['gradlePlugin']
 }
