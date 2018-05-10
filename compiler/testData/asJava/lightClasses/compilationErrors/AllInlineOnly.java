@@ -1,2 +1,1 @@
-public final class AllInlineOnly {
-}
+<not generated>

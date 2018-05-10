@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: ANY
 // p.AllInlineOnly
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("AllInlineOnly")
