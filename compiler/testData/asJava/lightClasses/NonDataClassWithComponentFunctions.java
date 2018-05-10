@@ -1,7 +1,11 @@
 public final class A {
     private final int y;
 
-    public boolean equals(@org.jetbrains.annotations.Nullable java.lang.Object other) { /* compiled code */ }
+    public A(int i) { /* compiled code */ }
+
+    public final int getY() { /* compiled code */ }
+
+    public boolean equals(@org.jetbrains.annotations.Nullable java.lang.Object p) { /* compiled code */ }
 
     public int hashCode() { /* compiled code */ }
 
@@ -9,8 +13,4 @@ public final class A {
     public java.lang.String toString() { /* compiled code */ }
 
     public final int component1() { /* compiled code */ }
-
-    public final int getY() { /* compiled code */ }
-
-    public A(int y) { /* compiled code */ }
 }
