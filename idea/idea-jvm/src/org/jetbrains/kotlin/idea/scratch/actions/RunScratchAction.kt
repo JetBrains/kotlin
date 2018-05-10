@@ -20,6 +20,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.compiler.CompilerManager
+import com.intellij.openapi.project.DumbService
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
@@ -55,7 +56,7 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
             return
         }
 
-        val runnable = r@ {
+        val runnable = r@{
             val executor = if (isRepl) provider.createReplExecutor(scratchFile) else provider.createCompilingExecutor(scratchFile)
             if (executor == null) {
                 handler.error(scratchFile, "Couldn't run ${psiFile.name}")
@@ -82,12 +83,22 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
                 e.presentation.isEnabled = true
 
                 log.error(ex)
+                return@r
             }
         }
 
         if (isMakeBeforeRun) {
-            CompilerManager.getInstance(project)
-                .make(module) { aborted, errors, _, _ -> if (!aborted && errors == 0) runnable() }
+            CompilerManager.getInstance(project).make(module) { aborted, errors, _, _ ->
+                if (!aborted && errors == 0) {
+                    if (DumbService.isDumb(project)) {
+                        DumbService.getInstance(project).smartInvokeLater {
+                            runnable()
+                        }
+                    } else {
+                        runnable()
+                    }
+                }
+            }
         } else {
             runnable()
         }
