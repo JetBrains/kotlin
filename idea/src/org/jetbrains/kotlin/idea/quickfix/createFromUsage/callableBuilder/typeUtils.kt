@@ -164,7 +164,7 @@ fun KtExpression.guessTypes(
         // if we know the actual type of the expression
         val theType1 = context.getType(this)
         if (theType1 != null && isAcceptable(theType1)) {
-            return getDataFlowAwareTypes(this, context).toTypedArray()
+            return getDataFlowAwareTypes(this, context, theType1).toTypedArray()
         }
     }
 
@@ -341,8 +341,12 @@ private fun TypePredicate.getRepresentativeTypes(): Set<KotlinType> {
     }
 }
 
-fun getDataFlowAwareTypes(expression: KtExpression, bindingContext: BindingContext = expression.analyze()): List<KotlinType> {
-    val originalType = bindingContext.getType(expression) ?: return emptyList()
+fun getDataFlowAwareTypes(
+    expression: KtExpression,
+    bindingContext: BindingContext = expression.analyze(),
+    originalType: KotlinType? = bindingContext.getType(expression)
+): Collection<KotlinType> {
+    if (originalType == null) return emptyList()
     val dataFlowInfo = bindingContext.getDataFlowInfoAfter(expression)
     val dataFlowValueFactory = expression.getResolutionFacade().frontendService<DataFlowValueFactory>()
     val dataFlowValue = dataFlowValueFactory.createDataFlowValue(

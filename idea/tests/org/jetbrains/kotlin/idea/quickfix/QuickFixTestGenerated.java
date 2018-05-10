@@ -3114,6 +3114,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/qualifiedCallInStringTemplateRuntime.kt");
                 }
 
+                @TestMetadata("receiverWithSmartCast.kt")
+                public void testReceiverWithSmartCast() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/receiverWithSmartCast.kt");
+                }
+
                 @TestMetadata("refInImport.kt")
                 public void testRefInImport() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/refInImport.kt");
