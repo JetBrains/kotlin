@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/genericInnerClass.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
-    CLASS CLASS name:Inner modality:FINAL visibility:public flags:
+    CLASS CLASS name:Inner modality:FINAL visibility:public flags:inner
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer<T1>.Inner<T2> flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:

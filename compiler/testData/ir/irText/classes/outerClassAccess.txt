@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/outerClassAccess.kt
     FUN name:foo visibility:public modality:FINAL <> ($this:Outer) returnType:Unit flags:
       $this: VALUE_PARAMETER name:<this> type:Outer flags:
       BLOCK_BODY
-    CLASS CLASS name:Inner modality:FINAL visibility:public flags:
+    CLASS CLASS name:Inner modality:FINAL visibility:public flags:inner
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.Inner flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/outerClassAccess.kt
         BLOCK_BODY
           CALL 'foo(): Unit' type=kotlin.Unit origin=null
             $this: GET_VAR 'this@Outer: Outer' type=Outer origin=null
-      CLASS CLASS name:Inner2 modality:FINAL visibility:public flags:
+      CLASS CLASS name:Inner2 modality:FINAL visibility:public flags:inner
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.Inner.Inner2 flags:
         superClasses:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:

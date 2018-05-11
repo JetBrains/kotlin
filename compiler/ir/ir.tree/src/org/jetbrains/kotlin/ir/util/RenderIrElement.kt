@@ -135,6 +135,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     private fun IrClass.renderClassFlags() =
         renderFlagsList(
             "companion".takeIf { isCompanion },
+            "inner".takeIf { isInner },
             "data".takeIf { isData },
             "external".takeIf { isExternal }
         )
