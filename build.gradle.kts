@@ -223,6 +223,7 @@ val coreLibProjects = listOf(
         ":kotlin-test:kotlin-test-common",
         ":kotlin-test:kotlin-test-jvm",
         ":kotlin-test:kotlin-test-junit",
+        ":kotlin-test:kotlin-test-junit5",
         ":kotlin-test:kotlin-test-testng",
         ":kotlin-test:kotlin-test-js",
         ":kotlin-reflect"
