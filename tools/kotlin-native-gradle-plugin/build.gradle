@@ -170,3 +170,12 @@ bintray {
     }
     publications = ['gradlePlugin']
 }
+
+gradlePlugin {
+    plugins {
+        create("konan") {
+            id = 'konan'
+            implementationClass = 'org.jetbrains.kotlin.gradle.plugin.KonanPlugin'
+        }
+    }
+}
