@@ -45,12 +45,11 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.*
 
-class NewKotlinFileAction
-    : CreateFileFromTemplateAction("Kotlin File/Class",
-                                   "Creates new Kotlin file or class",
-                                   KotlinFileType.INSTANCE.icon),
-      DumbAware
-{
+class NewKotlinFileAction : CreateFileFromTemplateAction(
+    "Kotlin File/Class",
+    "Creates new Kotlin file or class",
+    KotlinFileType.INSTANCE.icon
+), DumbAware {
     override fun postProcess(createdElement: PsiFile?, templateName: String?, customProperties: Map<String, String>?) {
         super.postProcess(createdElement, templateName, customProperties)
 
@@ -66,8 +65,7 @@ class NewKotlinFileAction
             val ktClass = createdElement.declarations.singleOrNull() as? KtNamedDeclaration
             if (ktClass != null) {
                 CreateFromTemplateAction.moveCaretAfterNameIdentifier(ktClass)
-            }
-            else {
+            } else {
                 val editor = FileEditorManager.getInstance(createdElement.project).selectedTextEditor ?: return
                 if (editor.document == createdElement.viewProvider.document) {
                     val lineCount = editor.document.lineCount
@@ -81,11 +79,11 @@ class NewKotlinFileAction
 
     override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
         builder.setTitle("New Kotlin File/Class")
-                .addKind("File", KotlinFileType.INSTANCE.icon, "Kotlin File")
-                .addKind("Class", KotlinIcons.CLASS, "Kotlin Class")
-                .addKind("Interface", KotlinIcons.INTERFACE, "Kotlin Interface")
-                .addKind("Enum class", KotlinIcons.ENUM, "Kotlin Enum")
-                .addKind("Object", KotlinIcons.OBJECT, "Kotlin Object")
+            .addKind("File", KotlinFileType.INSTANCE.icon, "Kotlin File")
+            .addKind("Class", KotlinIcons.CLASS, "Kotlin Class")
+            .addKind("Interface", KotlinIcons.INTERFACE, "Kotlin Interface")
+            .addKind("Enum class", KotlinIcons.ENUM, "Kotlin Enum")
+            .addKind("Object", KotlinIcons.OBJECT, "Kotlin Object")
     }
 
     override fun getActionName(directory: PsiDirectory, newName: String, templateName: String) = "Kotlin File/Class"
@@ -104,14 +102,14 @@ class NewKotlinFileAction
         return 0
     }
 
-    override fun equals(obj: Any?): Boolean {
-        return obj is NewKotlinFileAction
+    override fun equals(other: Any?): Boolean {
+        return other is NewKotlinFileAction
     }
 
     override fun startInWriteAction() = false
 
     override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory) =
-            Companion.createFileFromTemplate(name, template, dir)
+        Companion.createFileFromTemplate(name, template, dir)
 
     companion object {
         private fun findOrCreateTarget(dir: PsiDirectory, name: String, directorySeparators: Array<Char>): Pair<String, PsiDirectory> {
@@ -142,14 +140,14 @@ class NewKotlinFileAction
             val properties = Properties(defaultProperties)
 
             val element = try {
-                CreateFromTemplateDialog(project, dir, template,
-                                         AttributesDefaults(className).withFixedName(true),
-                                         properties).create()
-            }
-            catch (e: IncorrectOperationException) {
+                CreateFromTemplateDialog(
+                    project, dir, template,
+                    AttributesDefaults(className).withFixedName(true),
+                    properties
+                ).create()
+            } catch (e: IncorrectOperationException) {
                 throw e
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 LOG.error(e)
                 return null
             }
@@ -165,8 +163,7 @@ class NewKotlinFileAction
             service.isAlternativeResolveEnabled = true
             try {
                 return createFromTemplate(targetDir, className, template)
-            }
-            finally {
+            } finally {
                 service.isAlternativeResolveEnabled = false
             }
         }
@@ -176,7 +173,7 @@ class NewKotlinFileAction
 abstract class NewKotlinFileHook {
     companion object {
         val EP_NAME: ExtensionPointName<NewKotlinFileHook> =
-                ExtensionPointName.create<NewKotlinFileHook>("org.jetbrains.kotlin.newFileHook")
+            ExtensionPointName.create<NewKotlinFileHook>("org.jetbrains.kotlin.newFileHook")
     }
 
     abstract fun postProcess(createdElement: KtFile, module: Module)
