@@ -129,7 +129,13 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 if (javaClass == null || !javaClass.canRefactor()) return null
                 TypeInfo.StaticContextRequired(TypeInfo(javaClassifier.defaultType, Variance.IN_VARIANCE))
             }
-            is ReceiverValue -> TypeInfo(receiver.type, Variance.IN_VARIANCE)
+            is ReceiverValue -> {
+                val originalType = receiver.type
+                val finalType = if (receiver is ExpressionReceiver) {
+                    getDataFlowAwareTypes(receiver.expression, context, originalType).firstOrNull() ?: originalType
+                } else originalType
+                TypeInfo(finalType, Variance.IN_VARIANCE)
+            }
             else -> throw AssertionError("Unexpected receiver: $receiver")
         }
     }
