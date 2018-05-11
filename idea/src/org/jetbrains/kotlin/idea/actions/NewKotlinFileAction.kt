@@ -41,6 +41,8 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.*
@@ -162,7 +164,16 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
             val service = DumbService.getInstance(dir.project)
             service.isAlternativeResolveEnabled = true
             try {
-                return createFromTemplate(targetDir, className, template)
+                val psiFile = createFromTemplate(targetDir, className, template)
+                if (psiFile is KtFile) {
+                    val singleClass = psiFile.declarations.singleOrNull() as? KtClass
+                    if (singleClass != null && !singleClass.isEnum() && !singleClass.isInterface() && name.contains("Abstract")) {
+                        runWriteAction {
+                            singleClass.addModifier(KtTokens.ABSTRACT_KEYWORD)
+                        }
+                    }
+                }
+                return psiFile
             } finally {
                 service.isAlternativeResolveEnabled = false
             }
