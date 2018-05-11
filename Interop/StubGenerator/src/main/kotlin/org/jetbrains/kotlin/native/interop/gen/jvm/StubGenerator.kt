@@ -1026,6 +1026,6 @@ class StubGenerator(
             MappingBridgeGeneratorImpl(declarationMapper, simpleBridgeGenerator)
 
     companion object {
-        private val VALID_PACKAGE_NAME_REGEX = "[a-zA-Z1-9_.]".toRegex()
+        private val VALID_PACKAGE_NAME_REGEX = "[a-zA-Z0-9_.]+".toRegex()
     }
 }
