@@ -22,6 +22,7 @@ import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -32,11 +33,22 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
+import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.nullability
 
 private val LOG = Logger.getInstance("#org.jetbrains.kotlin.asJava.elements.lightAnnotations")
 
@@ -47,7 +59,7 @@ abstract class KtLightAbstractAnnotation(parent: PsiElement, computeDelegate: ()
 
     override val clsDelegate: PsiAnnotation
         get() {
-            if (ApplicationManager.getApplication().isUnitTestMode && this !is KtLightNonSourceAnnotation)
+            if (!accessAnnotationsClsDelegateIsAllowed && ApplicationManager.getApplication().isUnitTestMode && this !is KtLightNonSourceAnnotation)
                 LOG.error("KtLightAbstractAnnotation clsDelegate requested for ${this.javaClass}")
             return _clsDelegate
         }
@@ -126,7 +138,7 @@ class KtLightAnnotationForSourceEntry(
 
     override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? {
         val reference = (kotlinOrigin as? KtAnnotationEntry)?.typeReference?.reference
-                ?: (kotlinOrigin.calleeExpression as? KtNameReferenceExpression)?.reference
+                ?: (kotlinOrigin.calleeExpression?.nameReference)?.references?.firstOrNull()
                 ?: return null
         return KtLightPsiJavaCodeReferenceElement(
             kotlinOrigin.navigationElement,
@@ -204,11 +216,10 @@ class KtLightEmptyAnnotationParameterList(parent: PsiElement) : KtLightElementBa
     override fun getAttributes(): Array<PsiNameValuePair> = emptyArray()
 }
 
-class KtLightNullabilityAnnotation(member: KtLightElement<*, PsiModifierListOwner>, parent: PsiElement) : KtLightAbstractAnnotation(parent, {
+class KtLightNullabilityAnnotation(val member: KtLightElement<*, PsiModifierListOwner>, parent: PsiElement) :
+    KtLightAbstractAnnotation(parent, {
     // searching for last because nullability annotations are generated after backend generates source annotations
-    member.clsDelegate.modifierList?.annotations?.findLast {
-        isNullabilityAnnotation(it.qualifiedName)
-    } ?: KtLightNonExistentAnnotation(member)
+        getClsNullabilityAnnotation(member) ?: KtLightNonExistentAnnotation(member)
 }) {
     override fun fqNameMatches(fqName: String): Boolean {
         if (!isNullabilityAnnotation(fqName)) return false
@@ -221,19 +232,98 @@ class KtLightNullabilityAnnotation(member: KtLightElement<*, PsiModifierListOwne
 
     override fun findAttributeValue(attributeName: String?) = null
 
-    override fun getQualifiedName(): String? = Nullable::class.java.name
+    override fun getQualifiedName(): String? {
+        val annotatedElement = member.kotlinOrigin
+                ?: // it is out of our hands
+                return getClsNullabilityAnnotation(member)?.qualifiedName
+
+        // all data-class generated members are not-null
+        if (annotatedElement is KtClass && annotatedElement.isData()) return NotNull::class.java.name
+
+        if (annotatedElement is KtParameter) {
+            if (annotatedElement.containingClassOrObject?.isAnnotation() == true) return null
+            if (isNullableInJvmOverloads(annotatedElement)) return Nullable::class.java.name
+        }
+
+        // don't annotate property setters
+        if (annotatedElement is KtValVarKeywordOwner && member is KtLightMethod && member.returnType == PsiType.VOID) return null
+
+        val kotlinType = getTargetType(annotatedElement) ?: return null
+        if (KotlinBuiltIns.isPrimitiveType(kotlinType) && (annotatedElement as? KtParameter)?.isVarArg != true) {
+            // no need to annotate them explicitly except the case when overriding reference-type makes it non-primitive for Jvm
+            if (!(annotatedElement is KtCallableDeclaration && annotatedElement.hasModifier(KtTokens.OVERRIDE_KEYWORD))) return null
+
+            val overriddenDescriptors =
+                (annotatedElement.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, annotatedElement] as? CallableMemberDescriptor)?.overriddenDescriptors
+            if (overriddenDescriptors?.all { it.returnType == kotlinType } == true) return null
+        }
+        if (kotlinType.isUnit() && (annotatedElement !is KtValVarKeywordOwner)) return null // not annotate unit-functions
+        if (kotlinType.isTypeParameter()) {
+            if (!TypeUtils.hasNullableSuperType(kotlinType)) return NotNull::class.java.name
+            if (!kotlinType.isMarkedNullable) return null
+        }
+
+        val nullability = kotlinType.nullability()
+        return when (nullability) {
+            TypeNullability.NOT_NULL -> NotNull::class.java.name
+            TypeNullability.NULLABLE -> Nullable::class.java.name
+            TypeNullability.FLEXIBLE -> null
+        }
+    }
+
+    private fun isNullableInJvmOverloads(annotatedElement: KtParameter): Boolean {
+        if (annotatedElement.ownerFunction?.let { it.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, it]?.findJvmOverloadsAnnotation() } == null) return false
+        val lightParameterList = (member as? PsiParameter)?.parent as? PsiParameterList ?: return false
+        val lastParameter = (lightParameterList.parameters.lastOrNull() as? KtLightElement<*, *>)?.kotlinOrigin
+        return lastParameter == annotatedElement
+    }
+
+    internal fun KtTypeReference.getType(): KotlinType? = analyze()[BindingContext.TYPE, this]
+
+    private fun getTargetType(annotatedElement: PsiElement): KotlinType? {
+        if (annotatedElement is KtTypeReference) {
+            annotatedElement.getType()?.let { return it }
+        }
+        if (annotatedElement is KtCallableDeclaration) {
+            annotatedElement.typeReference?.getType()?.let { return it }
+        }
+        if (annotatedElement is KtNamedFunction) {
+            annotatedElement.bodyExpression?.let { it.getType(it.analyze()) }?.let { return it }
+        }
+        if (annotatedElement is KtProperty) {
+            annotatedElement.initializer?.let { it.getType(it.analyze()) }?.let { return it }
+            annotatedElement.delegateExpression?.let { it.getType(it.analyze())?.arguments?.firstOrNull()?.type }?.let { return it }
+        }
+        annotatedElement.getParentOfType<KtProperty>(false)?.let {
+            it.typeReference?.getType() ?: it.initializer?.let { it.getType(it.analyze()) }
+        }?.let { return it }
+        return null
+    }
+
 
     override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? = null
 
+    override fun getParameterList(): PsiAnnotationParameterList = KtLightEmptyAnnotationParameterList(this)
+
     override fun findDeclaredAttributeValue(attributeName: String?) = null
+}
+
+private fun getClsNullabilityAnnotation(member: KtLightElement<*, PsiModifierListOwner>): PsiAnnotation? {
+    if (!accessAnnotationsClsDelegateIsAllowed && ApplicationManager.getApplication().isUnitTestMode && member.kotlinOrigin != null)
+        LOG.error("nullability should be retrieved from `kotlinOrigin`")
+    return member.clsDelegate.modifierList?.annotations?.findLast {
+        isNullabilityAnnotation(it.qualifiedName)
+    }
 }
 
 internal fun isNullabilityAnnotation(qualifiedName: String?) = qualifiedName in backendNullabilityAnnotations
 
 private val backendNullabilityAnnotations = arrayOf(Nullable::class.java.name, NotNull::class.java.name)
 
+private fun KtElement.analyze(): BindingContext = LightClassGenerationSupport.getInstance(this.project).analyze(this)
+
 private fun KtElement.getResolvedCall(): ResolvedCall<out CallableDescriptor>? {
-    val context = LightClassGenerationSupport.getInstance(this.project).analyze(this)
+    val context = analyze()
     return this.getResolvedCall(context)
 }
 
@@ -300,4 +390,18 @@ private fun getAnnotationName(callee: KtExpression): String? {
         if (psiClass?.isAnnotationType == true) return psiClass.qualifiedName
     }
     return null
+}
+
+@TestOnly
+var accessAnnotationsClsDelegateIsAllowed = false
+
+@TestOnly
+fun <T> withAllowedAnnotationsClsDelegate(body: () -> T): T {
+    val prev = accessAnnotationsClsDelegateIsAllowed
+    try {
+        accessAnnotationsClsDelegateIsAllowed = true
+        return body()
+    } finally {
+        accessAnnotationsClsDelegateIsAllowed = prev
+    }
 }
