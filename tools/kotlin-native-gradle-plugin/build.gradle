@@ -37,7 +37,7 @@ buildscript {
         classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
     }
 }
-apply plugin: 'java'
+apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
@@ -80,11 +80,9 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-gradle-plugin:$buildKotlinVersion"
-    compile gradleApi()
 
     bundleDependencies "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
 
-    testCompile gradleTestKit()
     testCompile 'junit:junit:4.12'
     testCompile "org.jetbrains.kotlin:kotlin-test:$buildKotlinVersion"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$buildKotlinVersion"
