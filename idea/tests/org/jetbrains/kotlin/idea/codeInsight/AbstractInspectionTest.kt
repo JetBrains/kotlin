@@ -38,8 +38,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
         try {
             super.setUp()
             EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.add(ENTRY_POINT_ANNOTATION)
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             TestLoggerFactory.onTestFinished(false)
             throw e
         }
@@ -70,26 +69,26 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
         with(myFixture) {
             testDataPath = "${KotlinTestUtils.getHomeDirectory()}/$srcDir"
 
-            val afterFiles = srcDir.listFiles { it -> it.name == "inspectionData" }?.single()?.listFiles { it -> it.extension == "after" } ?: emptyArray()
+            val afterFiles = srcDir.listFiles { it -> it.name == "inspectionData" }?.single()?.listFiles { it -> it.extension == "after" }
+                    ?: emptyArray()
             val psiFiles = srcDir.walkTopDown().onEnter { it.name != "inspectionData" }.mapNotNull { file ->
                 when {
                     file.isDirectory -> null
                     file.extension == "kt" -> {
                         val text = FileUtil.loadFile(file, true)
                         val fileText =
-                                if (text.startsWith("package"))
-                                    text
-                                else
-                                    "package ${file.nameWithoutExtension};$text"
+                            if (text.startsWith("package"))
+                                text
+                            else
+                                "package ${file.nameWithoutExtension};$text"
                         if (forceUsePackageFolder) {
                             val packageName = fileText.substring(
-                                    "package".length,
-                                    fileText.indexOfAny(charArrayOf(';', '\n'))
+                                "package".length,
+                                fileText.indexOfAny(charArrayOf(';', '\n'))
                             ).trim()
                             val projectFileName = packageName.replace('.', '/') + "/" + file.name
                             addFileToProject(projectFileName, fileText)
-                        }
-                        else {
+                        } else {
                             configureByText(file.name, fileText)!!
                         }
                     }
@@ -111,11 +110,11 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                 configExtra(psiFiles, options)
 
                 val presentation = runInspection(
-                        inspectionClass, project, files = psiFiles.map { it.virtualFile!!}, withTestDir = inspectionsTestDir.path)
+                    inspectionClass, project, files = psiFiles.map { it.virtualFile!! }, withTestDir = inspectionsTestDir.path
+                )
 
                 if (afterFiles.isNotEmpty()) {
-                    presentation.problemDescriptors.forEach {
-                        problem ->
+                    presentation.problemDescriptors.forEach { problem ->
                         problem.fixes?.forEach {
                             CommandProcessor.getInstance().executeCommand(project, {
                                 runWriteAction { it.applyFix(project, problem) }
@@ -129,8 +128,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                     }
                 }
 
-            }
-            finally {
+            } finally {
                 fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }
             }
         }
