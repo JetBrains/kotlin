@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.cli.utilities
 
-import org.jetbrains.kotlin.backend.konan.library.defaultResolver
 import org.jetbrains.kotlin.backend.konan.library.impl.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.library.resolveLibrariesRecursive
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.native.interop.gen.jvm.interop

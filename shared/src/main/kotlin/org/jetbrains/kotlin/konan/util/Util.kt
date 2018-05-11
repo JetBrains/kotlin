@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.konan.util
+package org.jetbrains.kotlin.konan.util
 
 import kotlin.system.measureTimeMillis
 import org.jetbrains.kotlin.konan.file.*

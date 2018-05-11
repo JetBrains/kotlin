@@ -15,9 +15,9 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.util.prefixBaseNameIfNot
-import org.jetbrains.kotlin.backend.konan.util.removeSuffixIfPresent
-import org.jetbrains.kotlin.backend.konan.util.suffixIfNot
+import org.jetbrains.kotlin.konan.util.prefixBaseNameIfNot
+import org.jetbrains.kotlin.konan.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.konan.util.suffixIfNot
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.util.*
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
@@ -137,7 +136,7 @@ internal class PhaseManager(val context: Context)  {
 
         with (context) {
             profileIf(shouldProfilePhases(), "Phase ${nTabs(depth)} ${phase.name}") {
-                body() 
+                body()
             }
 
             if (shouldVerifyDescriptors()) {

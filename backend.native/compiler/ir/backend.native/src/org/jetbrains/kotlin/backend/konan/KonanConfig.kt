@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.konan.descriptors.createForwardDeclarationsModule
 import org.jetbrains.kotlin.backend.konan.library.*
 import org.jetbrains.kotlin.backend.konan.library.impl.*
-import org.jetbrains.kotlin.backend.konan.util.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -32,7 +31,9 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.util.profile
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
