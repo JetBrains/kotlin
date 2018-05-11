@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.utils.name
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -122,7 +121,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                     if (symbol.isBound) {
 
                         (symbol.owner as? IrFunction)?.dispatchReceiverParameter?.let {
-                            val key = SimpleMemberKey(it.type, symbol.name)
+                            val key = SimpleMemberKey(it.type, symbol.owner.name)
 
                             memberToIrFunction[key]?.let {
                                 // TODO: don't apply intrinsics when type of receiver or argument is Long
