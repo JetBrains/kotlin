@@ -13,6 +13,10 @@ static int posix_errno() {
     return errno;
 }
 
+static void set_posix_errno(int value) {
+        errno = value;
+}
+
 static short posix_htons(short x) {
     return htons(x);
 }

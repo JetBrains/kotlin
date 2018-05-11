@@ -23,9 +23,18 @@ static int posix_errno() {
         return errno;
 }
 
+static void set_posix_errno(int value) {
+        errno = value;
+}
+
+
 // Wrapper to access h_errno variable.
 static int posix_h_errno() {
         return h_errno;
+}
+
+static void set_posix_h_errno(int value) {
+        h_errno = value;
 }
 
 static int init_sockets() {
