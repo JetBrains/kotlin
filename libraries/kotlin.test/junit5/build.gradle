@@ -2,13 +2,11 @@ description = 'Kotlin Test JUnit 5'
 
 apply plugin: 'kotlin-platform-jvm'
 
-test {
-    useJUnitPlatform()
-}
-
 configureJvm6Project(project)
 configureDist(project)
 configurePublishing(project)
+ext.javaHome = JDK_18
+ext.jvmTarget = "1.8"
 
 project.ext["jpsLibraryPath"] = rootProject.distLibDir
 
@@ -35,10 +33,20 @@ dist {
     from (jar, sourcesJar)
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    kotlinOptions.jdkHome = JDK_18
+    kotlinOptions.jvmTarget = 1.8
+}
+
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]
 }
 
 compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+}
+
+test {
+    useJUnitPlatform()
+    executable = "$JDK_18/bin/java"
 }
