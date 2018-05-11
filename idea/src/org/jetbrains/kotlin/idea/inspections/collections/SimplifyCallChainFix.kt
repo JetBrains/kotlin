@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.inspections.collections
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -66,7 +67,8 @@ class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
                 argumentsText
             )
 
-            secondQualifiedExpression.replaced(newQualifiedExpression)
+            val result = secondQualifiedExpression.replaced(newQualifiedExpression)
+            ShortenReferences.DEFAULT.process(result)
         }
     }
 }

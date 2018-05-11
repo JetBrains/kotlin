@@ -1226,6 +1226,57 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/coroutines")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Coroutines extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCoroutines() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/coroutines"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/coroutines/redundantAsync")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class RedundantAsync extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInRedundantAsync() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/coroutines/redundantAsync"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/simple.kt");
+            }
+
+            @TestMetadata("simplest.kt")
+            public void testSimplest() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/simplest.kt");
+            }
+
+            @TestMetadata("withParent.kt")
+            public void testWithParent() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/withParent.kt");
+            }
+
+            @TestMetadata("withStartAndContext.kt")
+            public void testWithStartAndContext() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/withStartAndContext.kt");
+            }
+
+            @TestMetadata("withStartNoContext.kt")
+            public void testWithStartNoContext() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/withStartNoContext.kt");
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
