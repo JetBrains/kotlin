@@ -75,34 +75,34 @@ object ScratchToolWindow {
         if (ApplicationManager.getApplication().isUnitTestMode) return
 
         ApplicationManager.getApplication().invokeLater {
-                val toolWindow = getToolWindow(project) ?: createToolWindow(project)
-                val contents = toolWindow.contentManager.contents
-                for (content in contents) {
-                    val component = content.component
-                    if (component is ConsoleViewImpl) {
-                        component.print("$message\n", type)
-                    }
+            val toolWindow = getToolWindow(project) ?: createToolWindow(project)
+            val contents = toolWindow.contentManager.contents
+            for (content in contents) {
+                val component = content.component
+                if (component is ConsoleViewImpl) {
+                    component.print("$message\n", type)
                 }
-                toolWindow.setAvailable(true, null)
-                toolWindow.show(null)
             }
+            toolWindow.setAvailable(true, null)
+            toolWindow.show(null)
+        }
     }
 
     fun clearToolWindow(project: Project) {
         if (ApplicationManager.getApplication().isUnitTestMode) return
 
         ApplicationManager.getApplication().invokeLater {
-                val toolWindow = getToolWindow(project) ?: return@invokeLater
-                val contents = toolWindow.contentManager.contents
-                for (content in contents) {
-                    val component = content.component
-                    if (component is ConsoleViewImpl) {
-                        component.clear()
-                    }
+            val toolWindow = getToolWindow(project) ?: return@invokeLater
+            val contents = toolWindow.contentManager.contents
+            for (content in contents) {
+                val component = content.component
+                if (component is ConsoleViewImpl) {
+                    component.clear()
                 }
-                toolWindow.setAvailable(false, null)
-                toolWindow.hide(null)
             }
+            toolWindow.setAvailable(false, null)
+            toolWindow.hide(null)
+        }
     }
 
     private fun getToolWindow(project: Project): ToolWindow? {
