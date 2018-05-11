@@ -1,2 +1,1 @@
-public final class ActualTypeAliasKt {
-}
+<not generated>

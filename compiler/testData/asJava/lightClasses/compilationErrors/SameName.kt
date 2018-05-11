@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: ANY
 // A
 class A {
     fun f(i: Int, s: Double) {}
