@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.cli.common.script
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.script.findScriptDefinition
 import org.jetbrains.kotlin.script.*
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -28,7 +28,7 @@ import kotlin.concurrent.write
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 class CliScriptDependenciesProvider(
-        project: Project,
+        private val project: Project,
         private val scriptDefinitionProvider: ScriptDefinitionProvider
 ) : ScriptDependenciesProvider {
 
@@ -47,9 +47,11 @@ class CliScriptDependenciesProvider(
         else {
             val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
             if (scriptDef != null) {
-                val deps = scriptContentLoader
-                    .loadContentsAndResolveDependencies(scriptDef, file)
-                    .dependencies?.adjustByDefinition(scriptDef)
+                val result = scriptContentLoader.loadContentsAndResolveDependencies(scriptDef, file)
+
+                ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
+
+                val deps = result.dependencies?.adjustByDefinition(scriptDef)
 
                 if (deps != null) {
                     log.info("[kts] new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
