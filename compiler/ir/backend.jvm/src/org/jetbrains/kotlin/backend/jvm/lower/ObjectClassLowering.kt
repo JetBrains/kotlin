@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isCompanionObjectInInterfaceNotIntrinsic
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -99,9 +100,18 @@ class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformer
         instanceInitializer: IrExpression,
         instanceOwner: IrDeclarationContainer
     ): IrField {
-        val psiElementForCompanionObjectIfAny =
-            instanceOwner.declarations.firstOrNull { it.safeAs<IrClass>()?.isCompanion == true }
-                ?.descriptor?.safeAs<DeclarationDescriptorWithSource>()?.source?.getPsi()
+        val psiElementForCompanionObjectIfAny = if (instanceFieldDescriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+            if (instanceFieldDescriptor.name.asString() == "Companion" &&
+                instanceFieldDescriptor.containingDeclaration.safeAs<DeclarationDescriptor>()?.isCompanionObject() == true
+            ) {
+                instanceFieldDescriptor.containingDeclaration.safeAs<DeclarationDescriptorWithSource>()?.source?.getPsi()
+            } else {
+                instanceOwner.declarations.firstOrNull { it.safeAs<IrClass>()?.isCompanion == true }
+                    ?.descriptor?.safeAs<DeclarationDescriptorWithSource>()?.source?.getPsi()
+            }
+        } else {
+            null
+        }
 
         return IrFieldImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE(psiElementForCompanionObjectIfAny),
