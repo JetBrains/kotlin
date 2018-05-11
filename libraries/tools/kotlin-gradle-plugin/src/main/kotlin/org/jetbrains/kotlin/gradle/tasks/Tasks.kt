@@ -164,7 +164,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
                     ?: project.name
             val suffix = if (sourceSetName == "main") "" else "_$sourceSetName"
-            return filterModuleName("${baseName}_$suffix")
+            return filterModuleName("${baseName}$suffix")
         }
 
     @Suppress("UNCHECKED_CAST")
