@@ -29,7 +29,7 @@ import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
-open class KotlinScriptDefinition(val template: KClass<out Any>) : UserDataHolderBase() {
+open class KotlinScriptDefinition(open val template: KClass<out Any>) : UserDataHolderBase() {
 
     open val name: String = "Kotlin Script"
 
