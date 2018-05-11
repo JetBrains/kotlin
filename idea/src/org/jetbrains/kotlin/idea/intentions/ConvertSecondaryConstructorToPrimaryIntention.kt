@@ -101,8 +101,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
         val initializer = factory.createAnonymousInitializer() as? KtClassInitializer
         for (statement in bodyExpression?.statements ?: emptyList()) {
             val (rightDescriptor, leftDescriptor) =
-                    statement.tryConvertToPropertyByParameterInitialization(constructorDescriptor, context)
-                    ?: with(initializer) {
+                    statement.tryConvertToPropertyByParameterInitialization(constructorDescriptor, context) ?: with(initializer) {
                         (initializer?.body as? KtBlockExpression)?.let {
                             it.addBefore(statement.copy(), it.rBrace)
                             it.addBefore(factory.createNewLine(), it.rBrace)
@@ -191,11 +190,12 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
             if (hasPropertyAfterInitializer) {
                 // In this case we must move init {} down, because it uses a property declared below
                 klass.addDeclaration(initializer)
+                element.delete()
             } else {
-                klass.addDeclarationAfter(initializer, element)
+                element.replace(initializer)
             }
+        } else {
+            element.delete()
         }
-
-        element.delete()
     }
 }
