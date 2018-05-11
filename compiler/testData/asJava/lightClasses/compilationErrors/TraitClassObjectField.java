@@ -1,13 +1,13 @@
 public interface TraitClassObjectField {
-    TraitClassObjectField.Companion Companion;
-    @org.jetbrains.annotations.Nullable
-    java.lang.String x = "";
+    private TraitClassObjectField.Companion Companion;
 
     static final class Companion {
-        @org.jetbrains.annotations.Nullable
-        public static final java.lang.String x = "";
-        private static final java.lang.String y = "";
+        public final java.lang.String x;
+        private final java.lang.String y;
+        private final TraitClassObjectField.Companion Companion;
 
         private Companion() { /* compiled code */ }
+
+        private final java.lang.String getY() { /* compiled code */ }
     }
 }
