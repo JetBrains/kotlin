@@ -37,6 +37,9 @@ class KotlinGradleModuleConfigurator : KotlinWithGradleConfigurator() {
     override val kotlinPluginName: String
         get() = KOTLIN
 
+    override fun getKotlinPluginExpression(forKotlinDsl: Boolean): String =
+        if (forKotlinDsl) "kotlin(\"jvm\")" else "id 'org.jetbrains.kotlin.jvm'"
+
     override fun getJvmTarget(sdk: Sdk?, version: String) = getDefaultJvmTarget(sdk, version)?.description
 
     override fun configureModule(
