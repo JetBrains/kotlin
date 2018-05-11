@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -60,9 +61,9 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
     fun copy(irElement: IrElement, typeSubstitutor: TypeSubstitutor?): IrElement {
         this.typeSubstitutor = typeSubstitutor
         // Create all class descriptors and all necessary descriptors in order to create KotlinTypes.
-        irElement.acceptChildrenVoid(DescriptorCollectorCreatePhase())
+        irElement.acceptVoid(DescriptorCollectorCreatePhase())
         // Initialize all created descriptors possibly using previously created types.
-        irElement.acceptChildrenVoid(DescriptorCollectorInitPhase())
+        irElement.acceptVoid(DescriptorCollectorInitPhase())
         return irElement.accept(InlineCopyIr(), null)
     }
 
