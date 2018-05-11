@@ -41,12 +41,12 @@ class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
 
             val receiverExpression = (firstExpression as? KtQualifiedExpression)?.receiverExpression
 
-            val firstCallExpression = SimplifiableCallChainInspection.getCallExpression(firstExpression) ?: return
+            val firstCallExpression = AbstractCallChainChecker.getCallExpression(firstExpression) ?: return
             val secondCallExpression = secondQualifiedExpression.selectorExpression as? KtCallExpression ?: return
 
             val lastArgumentPrefix = if (newName.startsWith("joinTo")) "transform = " else ""
             val arguments = secondCallExpression.valueArgumentList?.arguments.orEmpty().map { it.text } +
-                            firstCallExpression.valueArgumentList?.arguments.orEmpty().map { "$lastArgumentPrefix${it.text}" }
+                    firstCallExpression.valueArgumentList?.arguments.orEmpty().map { "$lastArgumentPrefix${it.text}" }
             val lambdaExpression = firstCallExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()
 
             val argumentsText = arguments.ifNotEmpty { joinToString(prefix = "(", postfix = ")") } ?: ""
@@ -59,11 +59,11 @@ class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
                 lambdaExpression.text
             )
             else factory.createExpressionByPattern(
-                    "$0$1$2 $3",
-                    receiverExpression ?: "",
-                    operationSign,
-                    newName,
-                    argumentsText
+                "$0$1$2 $3",
+                receiverExpression ?: "",
+                operationSign,
+                newName,
+                argumentsText
             )
 
             secondQualifiedExpression.replaced(newQualifiedExpression)

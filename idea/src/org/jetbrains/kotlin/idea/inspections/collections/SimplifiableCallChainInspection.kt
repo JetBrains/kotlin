@@ -7,73 +7,40 @@ package org.jetbrains.kotlin.idea.inspections.collections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.qualifiedExpressionVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-class SimplifiableCallChainInspection : AbstractKotlinInspection() {
+class SimplifiableCallChainInspection : AbstractCallChainChecker() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
         qualifiedExpressionVisitor(fun(expression) {
-            val firstExpression = expression.receiverExpression
-            val firstCallExpression = getCallExpression(firstExpression) ?: return
-
-            val secondCallExpression = expression.selectorExpression as? KtCallExpression ?: return
-
-            val firstCalleeExpression = firstCallExpression.calleeExpression ?: return
-            val secondCalleeExpression = secondCallExpression.calleeExpression ?: return
-            val actualConversions = conversionGroups[
-                    firstCalleeExpression.text to secondCalleeExpression.text
-            ] ?: return
-
-            val context = expression.analyze()
-            val firstResolvedCall = firstExpression.getResolvedCall(context) ?: return
-            val conversion = actualConversions.firstOrNull {
-                firstResolvedCall.resultingDescriptor.fqNameOrNull()?.asString() == it.firstFqName
+            val conversion = findQualifiedConversion(expression, conversionGroups) check@{ conversion, firstResolvedCall, _, context ->
+                // Do not apply on maps due to lack of relevant stdlib functions
+                val builtIns = context[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type?.builtIns ?: return@check false
+                val firstReceiverType = firstResolvedCall.extensionReceiver?.type
+                val firstReceiverRawType = firstReceiverType?.constructor?.declarationDescriptor?.defaultType
+                if (firstReceiverRawType != null) {
+                    if (firstReceiverRawType.isSubtypeOf(builtIns.map.defaultType) ||
+                        firstReceiverRawType.isSubtypeOf(builtIns.mutableMap.defaultType)
+                    ) return@check false
+                }
+                if (conversion.replacement.startsWith("joinTo")) {
+                    // Function parameter in map must have String result type
+                    if (!firstResolvedCall.hasLastFunctionalParameterWithResult(context) {
+                            it.isSubtypeOf(JsPlatform.builtIns.charSequence.defaultType)
+                        }
+                    ) return@check false
+                }
+                true
             } ?: return
 
-            val builtIns = context[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type?.builtIns ?: return
-
-            // Do not apply on maps due to lack of relevant stdlib functions
-            val firstReceiverType = firstResolvedCall.extensionReceiver?.type
-            val firstReceiverRawType = firstReceiverType?.constructor?.declarationDescriptor?.defaultType
-            if (firstReceiverRawType != null) {
-                if (firstReceiverRawType.isSubtypeOf(builtIns.map.defaultType) ||
-                    firstReceiverRawType.isSubtypeOf(builtIns.mutableMap.defaultType)
-                ) return
-            }
-
-            // Do not apply for lambdas with return inside
-            val lambdaArgument = firstCallExpression.lambdaArguments.firstOrNull()
-            if (lambdaArgument?.anyDescendantOfType<KtReturnExpression>() == true) return
-
-            val secondResolvedCall = expression.getResolvedCall(context) ?: return
-            val secondResultingDescriptor = secondResolvedCall.resultingDescriptor
-            if (secondResultingDescriptor.fqNameOrNull()?.asString() != conversion.secondFqName) return
-            if (secondResolvedCall.valueArguments.any { (parameter, resolvedArgument) ->
-                    parameter.type.isFunctionOfAnyKind() &&
-                            resolvedArgument !is DefaultValueArgument
-                }
-            ) return
-
-            if (conversion.replacement.startsWith("joinTo")) {
-                // Function parameter in map must have String result type
-                if (!firstResolvedCall.hasLastFunctionalParameterWithResult(context) {
-                        it.isSubtypeOf(builtIns.charSequence.defaultType)
-                    }
-                ) return
-            }
 
             val descriptor = holder.manager.createProblemDescriptor(
                 expression,
-                firstCalleeExpression.textRange.shiftRight(-expression.startOffset),
+                expression.firstCalleeExpression()!!.textRange.shiftRight(-expression.startOffset),
                 "Call chain on collection type may be simplified",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
@@ -81,6 +48,8 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
             )
             holder.registerProblem(descriptor)
         })
+
+    private val conversionGroups = conversions.group()
 
     companion object {
 
@@ -109,20 +78,5 @@ class SimplifiableCallChainInspection : AbstractKotlinInspection() {
 
             Conversion("kotlin.collections.listOf", "kotlin.collections.filterNotNull", "listOfNotNull")
         )
-
-        private val conversionGroups = conversions.groupBy { it.firstName to it.secondName }
-
-        data class Conversion(val firstFqName: String, val secondFqName: String, val replacement: String) {
-            private fun String.convertToShort() = takeLastWhile { it != '.' }
-
-            val firstName = firstFqName.convertToShort()
-
-            val secondName = secondFqName.convertToShort()
-        }
-
-        fun getCallExpression(firstExpression: KtExpression) =
-            (firstExpression as? KtQualifiedExpression)?.selectorExpression as? KtCallExpression
-                    ?: firstExpression as? KtCallExpression
-
     }
 }
