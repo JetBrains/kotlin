@@ -3825,6 +3825,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/superCallNoClass.kt");
             }
 
+            @TestMetadata("superCallNoneApplicable.kt")
+            public void testSuperCallNoneApplicable() throws Exception {
+                runTest("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/superCallNoneApplicable.kt");
+            }
+
             @TestMetadata("thisCall.kt")
             public void testThisCall() throws Exception {
                 runTest("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/thisCall.kt");

@@ -340,6 +340,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         NO_VALUE_FOR_PARAMETER.registerFactory(CreateConstructorFromSuperTypeCallActionFactory)
         TOO_MANY_ARGUMENTS.registerFactory(CreateConstructorFromSuperTypeCallActionFactory)
+        NONE_APPLICABLE.registerFactory(CreateConstructorFromSuperTypeCallActionFactory)
 
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateClassFromConstructorCallActionFactory)
         UNRESOLVED_REFERENCE.registerFactory(CreateClassFromConstructorCallActionFactory)
