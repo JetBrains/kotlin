@@ -43,7 +43,6 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
             if (it.getTargetFunctionDescriptor(context) == descriptor) it.labeledExpression?.delete()
         }
 
-        // TODO: check type rendering (!!!)
         val anonymousFunction = psiFactory.createFunction(
             KtPsiFactory.CallableBuilder(KtPsiFactory.CallableBuilder.Target.FUNCTION).apply {
                 typeParams()

@@ -9664,6 +9664,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/lambdaToAnonymousFunction/extention2.kt");
         }
 
+        @TestMetadata("fullyQualified.kt")
+        public void testFullyQualified() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/fullyQualified.kt");
+        }
+
         @TestMetadata("hasComment.kt")
         public void testHasComment() throws Exception {
             runTest("idea/testData/intentions/lambdaToAnonymousFunction/hasComment.kt");
@@ -9722,6 +9727,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("variable.kt")
         public void testVariable() throws Exception {
             runTest("idea/testData/intentions/lambdaToAnonymousFunction/variable.kt");
+        }
+
+        @TestMetadata("withPackage.kt")
+        public void testWithPackage() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/withPackage.kt");
         }
     }
 
