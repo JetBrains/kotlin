@@ -8,4 +8,5 @@ class ConvertToInit() {
         bar()
     }
 
+    fun baz() {}
 }

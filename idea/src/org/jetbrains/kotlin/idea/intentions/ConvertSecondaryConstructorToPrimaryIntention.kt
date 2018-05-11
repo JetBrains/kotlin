@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
@@ -181,10 +182,17 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
         with (constructorInClass.replace(constructor)) {
             constructorCommentSaver.restore(this)
         }
-        element.delete()
 
-        if ((initializer.body as? KtBlockExpression)?.statements?.isNotEmpty() ?: false) {
-            klass.addDeclaration(initializer)
+        if ((initializer.body as? KtBlockExpression)?.statements?.isNotEmpty() == true) {
+            val hasPropertyAfterInitializer = element.parent.children.takeLastWhile { it !== element }.any {
+                it is KtProperty && ReferencesSearch.search(it, initializer.useScope).findFirst() != null
+            }
+            if (hasPropertyAfterInitializer)
+                klass.addDeclaration(initializer)
+            else
+                klass.addDeclarationAfter(initializer, element)
         }
+
+        element.delete()
     }
 }
