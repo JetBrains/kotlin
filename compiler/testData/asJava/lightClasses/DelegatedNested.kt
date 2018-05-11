@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: ANY
 // p.B
 package p
 

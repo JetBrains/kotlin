@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: ANY
 // p.Annotations
 package p
 

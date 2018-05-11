@@ -6,5 +6,7 @@
 @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.SOURCE)
 @java.lang.annotation.Target({})
 public @interface Anno {
+    final Anno(int i);
+
     int i();
 }
