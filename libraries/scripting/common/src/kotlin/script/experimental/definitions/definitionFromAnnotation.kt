@@ -8,10 +8,7 @@ package kotlin.script.experimental.definitions
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
-import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.annotations.KotlinScriptCompilationConfigurator
-import kotlin.script.experimental.annotations.KotlinScriptEvaluator
-import kotlin.script.experimental.annotations.KotlinScriptFileExtension
+import kotlin.script.experimental.annotations.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.basic.AnnotationsBasedCompilationConfigurator
 import kotlin.script.experimental.basic.DummyEvaluator
@@ -28,13 +25,13 @@ open class ScriptDefinitionFromAnnotatedBaseClass(val environment: ScriptingEnvi
             ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript on the $baseClass")
 
     private val explicitDefinition: ScriptDefinition? =
-        mainAnnotation.definition.takeIf { it != this::class }?.let { it.instantiateScriptHandler() }
+        baseClass.findAnnotation<KotlinScriptDefinition>()?.definition.takeIf { it != this::class }?.let { it.instantiateScriptHandler() }
 
     override val properties = (explicitDefinition?.properties ?: ScriptingEnvironment()).also { properties ->
         val toAdd = arrayListOf<Pair<TypedKey<*>, Any>>()
         baseClass.findAnnotation<KotlinScriptFileExtension>()?.let { toAdd += ScriptDefinitionProperties.fileExtension to it }
         if (properties.getOrNull(ScriptDefinitionProperties.name) == null) {
-            toAdd += ScriptDefinitionProperties.name to baseClass.simpleName!!
+            toAdd += ScriptDefinitionProperties.name to mainAnnotation.name
         }
         ScriptingEnvironment(properties, toAdd)
     }
