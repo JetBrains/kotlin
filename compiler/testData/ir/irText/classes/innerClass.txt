@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/innerClass.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Outer flags:
+    CONSTRUCTOR visibility:public <> () returnType:Outer flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/innerClass.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.TestInnerClass flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:public <> ($this:Outer) returnType:Outer.TestInnerClass flags:
+      CONSTRUCTOR visibility:public <> ($this:Outer) returnType:Outer.TestInnerClass flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Outer flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/innerClass.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.DerivedInnerClass flags:
       superClasses:
         CLASS CLASS name:TestInnerClass modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:public <> ($this:Outer) returnType:Outer.DerivedInnerClass flags:
+      CONSTRUCTOR visibility:public <> ($this:Outer) returnType:Outer.DerivedInnerClass flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Outer flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor TestInnerClass()'

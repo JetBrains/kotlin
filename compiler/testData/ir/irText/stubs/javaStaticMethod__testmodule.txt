@@ -4,7 +4,7 @@ MODULE_FRAGMENT name:<test-module>
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J flags:
       superClasses:
         UNBOUND: class Any
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:J flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:J flags:primary
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
         overridden:
           UNBOUND: operator fun equals(other: kotlin.Any?): kotlin.Boolean

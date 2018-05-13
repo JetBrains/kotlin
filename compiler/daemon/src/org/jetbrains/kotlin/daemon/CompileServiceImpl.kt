@@ -976,7 +976,13 @@ class CompileServiceImpl(
         }
         // TODO: consider possibilities to handle OutOfMemory
         catch (e: Throwable) {
-            log.info("Error: $e")
+            log.log(
+                Level.SEVERE,
+                "Exception: $e\n  ${e.stackTrace.joinToString("\n  ")}${
+                if (e.cause != null && e.cause != e) {
+                    "\nCaused by: ${e.cause}\n  ${e.cause!!.stackTrace.joinToString("\n  ")}"
+                } else ""
+                }")
             throw e
         }
     }

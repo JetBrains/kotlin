@@ -5,23 +5,29 @@ var value = 5
 
 class SimpleTest {
 
-    @BeforeTest fun beforeFun() {
+    @BeforeTest
+    fun beforeFun() {
         value *= 2
     }
 
-    @AfterTest fun afterFun() {
+    @AfterTest
+    fun afterFun() {
         value /= 2
     }
 
-    @Test fun testFoo() {
+    @Test
+    fun testFoo() {
         assertNotEquals(value, foo())
     }
 
-    @Test fun testBar() {
+    @Test
+    fun testBar() {
         assertEquals(value, foo())
     }
 
-    @Ignore @Test fun testFooWrong() {
+    @Ignore
+    @Test
+    fun testFooWrong() {
         assertEquals(20, foo())
     }
 
@@ -29,7 +35,8 @@ class SimpleTest {
 
 @Ignore
 class TestTest {
-    @Test fun emptyTest() {
+    @Test
+    fun emptyTest() {
     }
 }
 

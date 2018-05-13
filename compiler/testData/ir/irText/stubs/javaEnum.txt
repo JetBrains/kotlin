@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/javaEnum.kt
   PROPERTY name:test type:JEnum visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test type:JEnum visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test type:JEnum visibility:public flags:final
       EXPRESSION_BODY
         GET_ENUM 'ONE' type=JEnum
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:JEnum flags:

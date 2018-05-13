@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.util.contextWithNewLockAndCompositeExceptionTracker
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
@@ -215,8 +216,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val dependenciesForSyntheticFileCache =
             listOf(
                 PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
-                filesModificationTracker,
-                ScriptDependenciesModificationTracker.getInstance(project)
+                filesModificationTracker
             )
 
         val resolverDebugName =
@@ -382,17 +382,37 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         }
     }
 
+    private val scriptsCacheProvider = CachedValueProvider {
+        CachedValueProvider.Result(
+            object : SLRUCache<Set<KtFile>, ProjectResolutionFacade>(2, 3) {
+                override fun createValue(files: Set<KtFile>) = createFacadeForFilesWithSpecialModuleInfo(files)
+            },
+            LibraryModificationTracker.getInstance(project),
+            ProjectRootModificationTracker.getInstance(project),
+            ScriptDependenciesModificationTracker.getInstance(project))
+    }
+
+    private fun getFacadeForScripts(files: Set<KtFile>): ProjectResolutionFacade {
+        return CachedValuesManager.getManager(project).getCachedValue(project, scriptsCacheProvider).get(files)
+    }
+
     private fun getFacadeToAnalyzeFiles(files: Collection<KtFile>): ResolutionFacade {
         val file = files.first()
         val moduleInfo = file.getModuleInfo()
-        val specialFiles = files.filterNotInProjectSourceOrScript(moduleInfo)
-        return if (specialFiles.isNotEmpty()) {
-            val projectFacade = getFacadeForSpecialFiles(specialFiles)
-            ModuleResolutionFacadeImpl(projectFacade, moduleInfo)
-        } else {
-            val platform = TargetPlatformDetector.getPlatform(file)
-            getResolutionFacadeByModuleInfo(moduleInfo, platform)
+        val scripts = files.filterScripts()
+        if (scripts.isNotEmpty()) {
+            val projectFacade = getFacadeForScripts(scripts)
+            return ModuleResolutionFacadeImpl(projectFacade, moduleInfo)
         }
+
+        val specialFiles = files.filterNotInProjectSource(moduleInfo)
+        if (specialFiles.isNotEmpty()) {
+            val projectFacade = getFacadeForSpecialFiles(specialFiles)
+            return ModuleResolutionFacadeImpl(projectFacade, moduleInfo)
+        }
+
+        val platform = TargetPlatformDetector.getPlatform(file)
+        return getResolutionFacadeByModuleInfo(moduleInfo, platform)
     }
 
     override fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade? {
@@ -420,12 +440,18 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     override fun getResolutionFacadeByModuleInfo(moduleInfo: ModuleInfo, platform: TargetPlatform): ResolutionFacade? =
         (moduleInfo as? IdeaModuleInfo)?.let { getResolutionFacadeByModuleInfo(it, platform) }
 
-    private fun Collection<KtFile>.filterNotInProjectSourceOrScript(moduleInfo: IdeaModuleInfo): Set<KtFile> {
+    private fun Collection<KtFile>.filterNotInProjectSource (moduleInfo: IdeaModuleInfo): Set<KtFile> {
         return mapNotNull {
             if (it is KtCodeFragment) it.getContextFile() else it
         }.filter {
-            !ProjectRootsUtil.isInProjectSource(it) || !moduleInfo.contentScope().contains(it) || it.isScript()
+            !ProjectRootsUtil.isInProjectSource(it) || !moduleInfo.contentScope().contains(it)
         }.toSet()
+    }
+
+    private fun Collection<KtFile>.filterScripts(): Set<KtFile> {
+        return mapNotNull {
+            if (it is KtCodeFragment) it.getContextFile() else it
+        }.filter { it.isScript() }.toSet()
     }
 
     private fun KtCodeFragment.getContextFile(): KtFile? {

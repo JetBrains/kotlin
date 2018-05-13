@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/innerClassWithDelegatingConstructor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Outer flags:
+    CONSTRUCTOR visibility:public <> () returnType:Outer flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
@@ -11,14 +11,14 @@ FILE fqName:<root> fileName:/innerClassWithDelegatingConstructor.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.Inner flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:public <> ($this:Outer, x:kotlin.Int) returnType:Outer.Inner flags:
+      CONSTRUCTOR visibility:public <> ($this:Outer, x:kotlin.Int) returnType:Outer.Inner flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Outer flags:
         VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
       PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-        FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+        FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
           EXPRESSION_BODY
             GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Outer.Inner) returnType:Int flags:

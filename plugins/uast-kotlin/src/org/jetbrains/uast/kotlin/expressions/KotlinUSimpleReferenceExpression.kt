@@ -102,7 +102,7 @@ open class KotlinUSimpleReferenceExpression(
         private val resolvedCall: ResolvedCall<*>,
         private val accessorDescriptor: DeclarationDescriptor,
         val setterValue: KtExpression?
-    ) : UCallExpressionEx, JvmDeclarationUElement {
+    ) : UCallExpressionEx, JvmDeclarationUElementPlaceholder {
         override val methodName: String?
             get() = accessorDescriptor.name.asString()
 

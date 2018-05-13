@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.ide.scratch.ScratchUtil
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
@@ -71,6 +72,7 @@ fun PsiReference.canBeReferenceTo(candidateTarget: PsiElement): Boolean {
     // optimization
     return element.containingFile == candidateTarget.containingFile
            || ProjectRootsUtil.isInProjectOrLibSource(element)
+           || ScratchUtil.isScratch(element.containingFile.virtualFile)
 }
 
 fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {

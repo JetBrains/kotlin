@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/expectClassInherited.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:protected <> () returnType:A flags:
+    CONSTRUCTOR visibility:protected <> () returnType:A flags:primary
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:A) returnType:Unit flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/expectClassInherited.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B flags:
     superClasses:
       CLASS CLASS name:A modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (i:kotlin.Int) returnType:B flags:
+    CONSTRUCTOR visibility:public <> (i:kotlin.Int) returnType:B flags:primary
       VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
     FUN name:foo visibility:public modality:OPEN <> ($this:B) returnType:Unit flags:
       overridden:
@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/expectClassInherited.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:protected <> () returnType:A flags:
+    CONSTRUCTOR visibility:protected <> () returnType:A flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/expectClassInherited.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B flags:
     superClasses:
       CLASS CLASS name:A modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (i:kotlin.Int) returnType:B flags:
+    CONSTRUCTOR visibility:public <> (i:kotlin.Int) returnType:B flags:primary
       VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor A()'

@@ -91,7 +91,7 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
 
         if (descriptor.hasJvmFieldAnnotation()) return false
         val entryPointsManager = EntryPointsManager.getInstance(declaration.project) as EntryPointsManagerBase
-        if (UnusedSymbolInspection.checkAnnotatedUsingPatterns(descriptor,
+        if (UnusedSymbolInspection.checkAnnotatedUsingPatterns(declaration,
                                                                with (entryPointsManager) {
                                                                    additionalAnnotations + ADDITIONAL_ANNOTATIONS
                                                                })) return false

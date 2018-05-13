@@ -19,10 +19,12 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
         get() = "2.3.0"
 
     private fun androidBuildOptions() =
-            BuildOptions(withDaemon = true,
-                         androidHome = KotlinTestUtils.findAndroidSdk(),
-                         androidGradlePluginVersion = androidGradlePluginVersion,
-                         freeCommandLineArgs = listOf("-Pkapt.verbose=true"))
+        BuildOptions(
+            withDaemon = true,
+            androidHome = KotlinTestUtils.findAndroidSdk(),
+            androidGradlePluginVersion = androidGradlePluginVersion,
+            freeCommandLineArgs = listOf("-Pkapt.verbose=true")
+        )
 
     override fun defaultBuildOptions() = androidBuildOptions()
 
@@ -45,8 +47,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
         project.build("build", options = options) {
             assertSuccessful()
-            assertContains(":compileReleaseKotlin UP-TO-DATE")
-            assertContains(":compileReleaseJavaWithJavac UP-TO-DATE")
+            assertTasksUpToDate(":compileReleaseKotlin", ":compileReleaseJavaWithJavac")
         }
     }
 

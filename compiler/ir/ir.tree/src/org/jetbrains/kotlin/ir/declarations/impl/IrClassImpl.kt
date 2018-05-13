@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrClassImpl(
@@ -39,7 +40,8 @@ class IrClassImpl(
     override val visibility: Visibility,
     override val modality: Modality,
     override val isCompanion: Boolean,
-    override val isData: Boolean
+    override val isData: Boolean,
+    override val isExternal: Boolean
 ) : IrDeclarationBase(startOffset, endOffset, origin),
     IrClass {
 
@@ -48,7 +50,8 @@ class IrClassImpl(
                 startOffset, endOffset, origin, symbol,
                 symbol.descriptor.name, symbol.descriptor.kind,
                 symbol.descriptor.visibility, symbol.descriptor.modality,
-                symbol.descriptor.isCompanionObject, symbol.descriptor.isData
+                symbol.descriptor.isCompanionObject, symbol.descriptor.isData,
+                symbol.descriptor.isEffectivelyExternal()
             )
 
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor) :

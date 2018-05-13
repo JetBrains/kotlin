@@ -6,26 +6,15 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileWithId
-import com.intellij.openapi.vfs.newvfs.FileAttribute
-import kotlin.reflect.KProperty
+import org.jetbrains.kotlin.idea.core.util.fileAttribute
+import org.jetbrains.kotlin.idea.core.util.readString
+import org.jetbrains.kotlin.idea.core.util.writeString
+import java.io.DataInputStream
+import java.io.DataOutputStream
 
-var VirtualFile.scriptRelatedModuleName: String? by ScratchModuleNameProperty()
-
-private val moduleNameAttribute = FileAttribute("kotlin-script-moduleName", 1, false)
-private class ScratchModuleNameProperty {
-
-    operator fun getValue(file: VirtualFile, property: KProperty<*>): String? {
-        if (file !is VirtualFileWithId) return null
-
-        return moduleNameAttribute.readAttributeBytes(file)?.let { String(it) }
-    }
-
-    operator fun setValue(file: VirtualFile, property: KProperty<*>, newValue: String?) {
-        if (file !is VirtualFileWithId) return
-
-        if (newValue != null) {
-            moduleNameAttribute.writeAttributeBytes(file, newValue.toByteArray())
-        }
-    }
-}
+var VirtualFile.scriptRelatedModuleName: String? by fileAttribute(
+    name = "kotlin-script-moduleName",
+    version = 1,
+    read = DataInputStream::readString,
+    write = DataOutputStream::writeString
+)

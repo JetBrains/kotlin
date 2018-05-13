@@ -33,6 +33,8 @@ import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.caches.project.*
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*

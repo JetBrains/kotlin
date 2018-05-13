@@ -9,27 +9,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-val IrFunctionSymbol.kind get() = descriptor.kind
-
-val IrFunctionSymbol.modality get() = descriptor.modality
-
-val IrConstructorSymbol.isPrimary get() = descriptor.isPrimary
-
-val IrConstructorSymbol.constructedClassName get() = descriptor.constructedClass.name
-
 val IrConstructorSymbol.constructedClass get() = descriptor.constructedClass
-
-val IrValueSymbol.isSpecial get() = descriptor.name.isSpecial
-
-val IrSymbol.name get() = descriptor.name
-
-val IrClassSymbol.kind get() = descriptor.kind
-
-val IrClassSymbol.modality get() = descriptor.modality
 
 val IrClassSymbol.isAny get() = KotlinBuiltIns.isAny(descriptor)
 

@@ -56,12 +56,6 @@
       <interface-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</interface-class>
       <implementation-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</implementation-class>
     </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.scratch.ui.ScratchFileHook</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.scratch.ScratchFileModuleInfoProvider</implementation-class>
-    </component>
   </project-components>
 
   <application-components>
@@ -351,6 +345,9 @@
 
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.ProbablyNothingCallableNames"
                     serviceImplementation="org.jetbrains.kotlin.idea.project.ProbablyNothingCallableNamesImpl"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"/>
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
@@ -1602,6 +1599,16 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertVarargParameterToArrayIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertArrayParameterToVarargIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupPath="Kotlin"
@@ -2818,6 +2825,15 @@
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.RedundantAsyncInspection"
+                     displayName="Redundant async call"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 

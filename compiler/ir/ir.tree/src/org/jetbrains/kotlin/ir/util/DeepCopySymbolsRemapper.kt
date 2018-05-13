@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -34,6 +36,7 @@ open class DeepCopySymbolsRemapper(
     private val fields = hashMapOf<IrFieldSymbol, IrFieldSymbol>()
     private val files = hashMapOf<IrFileSymbol, IrFileSymbol>()
     private val functions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
+    private val returnableBlocks = hashMapOf<IrReturnableBlockSymbol, IrReturnableBlockSymbol>()
     private val typeParameters = hashMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
     private val valueParameters = hashMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
     private val variables = hashMapOf<IrVariableSymbol, IrVariableSymbol>()
@@ -118,6 +121,15 @@ open class DeepCopySymbolsRemapper(
         declaration.acceptChildrenVoid(this)
     }
 
+    override fun visitBlock(expression: IrBlock) {
+        if (expression is IrReturnableBlock) {
+            remapSymbol(returnableBlocks, expression) {
+                IrReturnableBlockSymbolImpl(expression.descriptor)
+            }
+        }
+        expression.acceptChildrenVoid(this)
+    }
+
     private fun <T : IrSymbol> Map<T, T>.getDeclared(symbol: T) =
         getOrElse(symbol) {
             throw IllegalArgumentException("Non-remapped symbol $symbol ${symbol.descriptor}")
@@ -145,7 +157,6 @@ open class DeepCopySymbolsRemapper(
     override fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol = variables.getReferenced(symbol)
     override fun getReferencedField(symbol: IrFieldSymbol): IrFieldSymbol = fields.getReferenced(symbol)
     override fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol = constructors.getReferenced(symbol)
-
     override fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol =
         when (symbol) {
             is IrValueParameterSymbol -> valueParameters.getReferenced(symbol)
@@ -159,6 +170,9 @@ open class DeepCopySymbolsRemapper(
             is IrConstructorSymbol -> constructors.getReferenced(symbol)
             else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
         }
+
+    override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol =
+        returnableBlocks.getReferenced(symbol)
 
     override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
         when (symbol) {

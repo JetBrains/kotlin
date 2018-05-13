@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/propertySetterParameterWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:AnnParam flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:AnnParam flags:
+    CONSTRUCTOR visibility:public <> () returnType:AnnParam flags:primary
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/propertySetterParameterWithAnnotations.kt
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Int flags:
@@ -36,13 +36,13 @@ FILE fqName:<root> fileName:/propertySetterParameterWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (p:kotlin.Int) returnType:C flags:
+    CONSTRUCTOR visibility:public <> (p:kotlin.Int) returnType:C flags:primary
       VALUE_PARAMETER name:p index:0 type:kotlin.Int flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
     PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:
         EXPRESSION_BODY
           GET_VAR 'value-parameter p: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:

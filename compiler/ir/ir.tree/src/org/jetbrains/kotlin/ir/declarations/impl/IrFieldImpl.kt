@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.types.KotlinType
 
 
@@ -36,12 +37,17 @@ class IrFieldImpl(
     override val symbol: IrFieldSymbol,
     override val name: Name,
     override val type: KotlinType,
-    override val visibility: Visibility
+    override val visibility: Visibility,
+    override val isFinal: Boolean,
+    override val isExternal: Boolean
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrField {
+
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, symbol: IrFieldSymbol) :
             this(
                 startOffset, endOffset, origin, symbol,
-                symbol.descriptor.name, symbol.descriptor.type, symbol.descriptor.visibility
+                symbol.descriptor.name, symbol.descriptor.type, symbol.descriptor.visibility,
+                !symbol.descriptor.isVar,
+                symbol.descriptor.isEffectivelyExternal()
             )
 
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor) :

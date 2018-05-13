@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/typeParameterBoundedBySubclass.kt
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[Derived1]
       superClassifiers:
         CLASS CLASS name:Derived1 modality:FINAL visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Base1<T> flags:
+    CONSTRUCTOR visibility:public <> () returnType:Base1<T> flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Base1'
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/typeParameterBoundedBySubclass.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Derived1 flags:
     superClasses:
       CLASS CLASS name:Base1 modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Derived1 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Derived1 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base1()'
           <T : Derived1>: Derived1
@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/typeParameterBoundedBySubclass.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Base2 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Base2 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Base2 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Base2'
@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/typeParameterBoundedBySubclass.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Derived2 flags:
     superClasses:
       CLASS CLASS name:Base2 modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Derived2 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Derived2 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base2()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Derived2'
@@ -102,3 +102,4 @@ FILE fqName:<root> fileName:/typeParameterBoundedBySubclass.kt
       overridden:
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+

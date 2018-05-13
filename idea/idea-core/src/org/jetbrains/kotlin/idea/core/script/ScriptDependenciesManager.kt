@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.core.script.dependencies.SyncScriptDependenciesLoader
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.findScriptDefinition
@@ -33,7 +34,7 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 // NOTE: this service exists exclusively because ScriptDependencyManager
 // cannot be registered as implementing two services (state would be duplicated)
 class IdeScriptDependenciesProvider(
-        private val scriptDependenciesManager: ScriptDependenciesManager
+    private val scriptDependenciesManager: ScriptDependenciesManager
 ) : ScriptDependenciesProvider {
     override fun getScriptDependencies(file: VirtualFile): ScriptDependencies? {
         return scriptDependenciesManager.getScriptDependencies(file)
@@ -41,8 +42,8 @@ class IdeScriptDependenciesProvider(
 }
 
 class ScriptDependenciesManager internal constructor(
-        private val cacheUpdater: ScriptDependenciesUpdater,
-        private val cache: ScriptDependenciesCache
+    private val cacheUpdater: ScriptDependenciesUpdater,
+    private val cache: ScriptDependenciesCache
 ) {
     fun getScriptClasspath(file: VirtualFile): List<VirtualFile> = toVfsRoots(cacheUpdater.getCurrentDependencies(file).classpath)
     fun getScriptDependencies(file: VirtualFile): ScriptDependencies = cacheUpdater.getCurrentDependencies(file)
@@ -55,7 +56,7 @@ class ScriptDependenciesManager internal constructor(
     companion object {
         @JvmStatic
         fun getInstance(project: Project): ScriptDependenciesManager =
-                ServiceManager.getService(project, ScriptDependenciesManager::class.java)
+            ServiceManager.getService(project, ScriptDependenciesManager::class.java)
 
         fun toVfsRoots(roots: Iterable<File>): List<VirtualFile> {
             return roots.mapNotNull { it.classpathEntryToVfs() }
@@ -78,8 +79,7 @@ class ScriptDependenciesManager internal constructor(
         fun updateScriptDependenciesSynchronously(virtualFile: VirtualFile, project: Project) {
             with(getInstance(project)) {
                 val scriptDefinition = ScriptDefinitionProvider.getInstance(project).findScriptDefinition(virtualFile)!!
-                cacheUpdater.updateSync(virtualFile, scriptDefinition)
-                cacheUpdater.notifyRootsChanged()
+                SyncScriptDependenciesLoader(virtualFile, scriptDefinition, project, shouldNotifyRootsChanged = true).updateDependencies()
             }
         }
     }

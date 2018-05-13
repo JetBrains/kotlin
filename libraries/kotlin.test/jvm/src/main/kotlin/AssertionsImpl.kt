@@ -6,6 +6,7 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("AssertionsKt")
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 package kotlin.test
 
 import kotlin.internal.*
@@ -32,7 +33,8 @@ private fun <T : Throwable> assertFailsWithImpl(exceptionClass: Class<T>, messag
 
 
 /** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
-actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T = assertFailsWithImpl(exceptionClass.java, message, block)
+actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T =
+    assertFailsWithImpl(exceptionClass.java, message, block)
 
 
 /**

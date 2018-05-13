@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/class.kt
     TYPE_PARAMETER name:T0 index:0 variance: upperBounds:[kotlin.Any?]
       superClassifiers:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Test<T0> flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test<T0> flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/class.kt
       TYPE_PARAMETER name:T1 index:0 variance: upperBounds:[kotlin.Any?]
         superClassifiers:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:public <> () returnType:Test.TestNested<T1> flags:
+      CONSTRUCTOR visibility:public <> () returnType:Test.TestNested<T1> flags:primary
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='TestNested'
@@ -81,7 +81,7 @@ FILE fqName:<root> fileName:/class.kt
       TYPE_PARAMETER name:T2 index:0 variance: upperBounds:[kotlin.Any?]
         superClassifiers:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:public <> ($this:Test<T0>) returnType:Test<T0>.TestInner<T2> flags:
+      CONSTRUCTOR visibility:public <> ($this:Test<T0>) returnType:Test<T0>.TestInner<T2> flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Test<T0> flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

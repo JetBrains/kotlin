@@ -21,9 +21,8 @@ internal fun setAdapter(adapter: dynamic) {
     if (js("typeof adapter === 'string'")) {
         NAME_TO_ADAPTER[adapter]?.let {
             setAdapter(it.invoke())
-        }?: throw IllegalArgumentException("Unsupported test framework adapter: '$adapter'")
-    }
-    else {
+        } ?: throw IllegalArgumentException("Unsupported test framework adapter: '$adapter'")
+    } else {
         currentAdapter = adapter
     }
 }
@@ -74,8 +73,9 @@ internal fun detectAdapter() = when {
 }
 
 internal val NAME_TO_ADAPTER: Map<String, () -> FrameworkAdapter> = mapOf(
-        "qunit" to ::QUnitAdapter,
-        "jasmine" to ::JasmineLikeAdapter,
-        "mocha" to ::JasmineLikeAdapter,
-        "jest" to ::JasmineLikeAdapter,
-        "auto" to ::detectAdapter)
+    "qunit" to ::QUnitAdapter,
+    "jasmine" to ::JasmineLikeAdapter,
+    "mocha" to ::JasmineLikeAdapter,
+    "jest" to ::JasmineLikeAdapter,
+    "auto" to ::detectAdapter
+)

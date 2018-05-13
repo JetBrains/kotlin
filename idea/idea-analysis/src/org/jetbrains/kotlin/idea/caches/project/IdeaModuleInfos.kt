@@ -48,7 +48,8 @@ import java.util.*
 
 internal val LOG = Logger.getInstance(IdeaModuleInfo::class.java)
 
-interface IdeaModuleInfo : ModuleInfo {
+@Suppress("DEPRECATION_ERROR")
+interface IdeaModuleInfo : org.jetbrains.kotlin.idea.caches.resolve.IdeaModuleInfo {
     fun contentScope(): GlobalSearchScope
 
     val moduleOrigin: ModuleOrigin
@@ -102,7 +103,11 @@ private fun OrderEntry.acceptAsDependency(forProduction: Boolean): Boolean {
             || scope.isForProductionCompile
 }
 
-private fun ideaModelDependencies(module: Module, forProduction: Boolean): List<IdeaModuleInfo> {
+private fun ideaModelDependencies(
+    module: Module,
+    forProduction: Boolean,
+    platform: TargetPlatform
+): List<IdeaModuleInfo> {
     //NOTE: lib dependencies can be processed several times during recursive traversal
     val result = LinkedHashSet<IdeaModuleInfo>()
     val dependencyEnumerator = ModuleRootManager.getInstance(module).orderEntries().compileOnly().recursively().exportedOnly()
@@ -115,7 +120,7 @@ private fun ideaModelDependencies(module: Module, forProduction: Boolean): List<
         }
         true
     }
-    return result.toList()
+    return result.filterNot { it is LibraryInfo && it.platform != platform }
 }
 
 fun Module.findImplementedModuleNames(modelsProvider: IdeModifiableModelsProvider): List<String> {
@@ -157,7 +162,7 @@ sealed class ModuleSourceInfoWithExpectedBy(private val forProduction: Boolean) 
 
     override fun dependencies(): List<IdeaModuleInfo> = module.cached(createCachedValueProvider {
         CachedValueProvider.Result(
-            ideaModelDependencies(module, forProduction),
+            ideaModelDependencies(module, forProduction, platform),
             ProjectRootModificationTracker.getInstance(module.project)
         )
     })
@@ -179,9 +184,9 @@ data class ModuleProductionSourceInfo internal constructor(
 }
 
 //TODO: (module refactoring) do not create ModuleTestSourceInfo when there are no test roots for module
-data class ModuleTestSourceInfo internal constructor(
-    override val module: Module
-) : ModuleSourceInfoWithExpectedBy(forProduction = false) {
+@Suppress("DEPRECATION_ERROR")
+data class ModuleTestSourceInfo internal constructor(override val module: Module) :
+    ModuleSourceInfoWithExpectedBy(forProduction = false), org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo {
 
     override val name = Name.special("<test sources for module ${module.name}>")
 

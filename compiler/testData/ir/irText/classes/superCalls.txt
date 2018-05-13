@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/superCalls.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Base flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Base flags:
+    CONSTRUCTOR visibility:public <> () returnType:Base flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Base'
@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/superCalls.kt
       $this: VALUE_PARAMETER name:<this> type:Base flags:
       BLOCK_BODY
     PROPERTY name:bar type:kotlin.String visibility:public modality:OPEN flags:val
-      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.String visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           CONST String type=kotlin.String value=
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:Base) returnType:String flags:
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/superCalls.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Derived flags:
     superClasses:
       CLASS CLASS name:Base modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Derived flags:
+    CONSTRUCTOR visibility:public <> () returnType:Derived flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Derived'

@@ -77,6 +77,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.AssertionError
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
@@ -243,6 +244,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             // gather relevant information
 
             val placement = placement
+            var nullableReceiver = false
             when (placement) {
                 is CallablePlacement.NoReceiver -> {
                     containingElement = placement.containingElement
@@ -255,14 +257,17 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     }
                 }
                 is CallablePlacement.WithReceiver -> {
-                    receiverClassDescriptor =
-                            placement.receiverTypeCandidate.theType.constructor.declarationDescriptor
+                    val theType = placement.receiverTypeCandidate.theType
+                    nullableReceiver = theType.isMarkedNullable
+                    receiverClassDescriptor = theType.constructor.declarationDescriptor
                     val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
                     containingElement = if (!config.isExtension && classDeclaration != null) classDeclaration else config.currentFile
                 }
                 else -> throw IllegalArgumentException("Placement wan't initialized")
             }
-            val receiverType = receiverClassDescriptor?.defaultType
+            val receiverType = receiverClassDescriptor?.defaultType?.let {
+                if (nullableReceiver) it.makeNullable() else it
+            }
 
             val project = config.currentFile.project
 

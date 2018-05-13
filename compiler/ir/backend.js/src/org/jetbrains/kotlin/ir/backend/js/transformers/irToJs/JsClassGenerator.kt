@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.backend.common.onlyIf
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.isAny
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -22,7 +24,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private val className = context.getNameForSymbol(irClass.symbol)
     private val classNameRef = className.makeRef()
-    private val baseClass = irClass.superClasses.firstOrNull { it.kind != ClassKind.INTERFACE }
+    private val baseClass = irClass.superClasses.firstOrNull { it.owner.kind != ClassKind.INTERFACE }
     private val baseClassName = baseClass?.let { context.getNameForSymbol(it) }
     private val classPrototypeRef = prototypeOf(classNameRef)
     private val classBlock = JsBlock()
@@ -138,7 +140,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun generateClassMetadata(): JsStatement {
         val metadataLiteral = JsObjectLiteral(true)
-        val simpleName = irClass.symbol.name
+        val simpleName = irClass.name
 
         if (!simpleName.isSpecial) {
             val simpleNameProp = JsPropertyInitializer(JsNameRef(Namer.METADATA_SIMPLE_NAME), JsStringLiteral(simpleName.identifier))
@@ -151,7 +153,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun generateSuperClasses(): JsPropertyInitializer = JsPropertyInitializer(
         JsNameRef(Namer.METADATA_INTERFACES),
-        JsArrayLiteral(irClass.superClasses.filter { it.kind == ClassKind.INTERFACE }.map { JsNameRef(context.getNameForSymbol(it.owner.symbol)) })
+        JsArrayLiteral(irClass.superClasses.filter { it.owner.kind == ClassKind.INTERFACE }.map { JsNameRef(context.getNameForSymbol(it.owner.symbol)) })
     )
 
 }

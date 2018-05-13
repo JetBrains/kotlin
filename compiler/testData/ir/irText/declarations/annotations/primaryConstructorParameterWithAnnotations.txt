@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/primaryConstructorParameterWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Ann flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Ann flags:
+    CONSTRUCTOR visibility:public <> () returnType:Ann flags:primary
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/primaryConstructorParameterWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
         annotations:
           CALL 'constructor Ann()' type=Ann origin=null
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/primaryConstructorParameterWithAnnotations.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test) returnType:Int flags:
@@ -51,3 +51,4 @@ FILE fqName:<root> fileName:/primaryConstructorParameterWithAnnotations.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+

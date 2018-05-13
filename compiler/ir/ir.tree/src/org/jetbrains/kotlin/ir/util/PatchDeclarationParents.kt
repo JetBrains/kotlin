@@ -9,18 +9,22 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrDeclarationBase
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import java.util.*
 
-fun <T : IrElement> T.patchDeclarationParents() =
+fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent? = null) =
     apply {
-        acceptVoid(PatchDeclarationParentsVisitor())
+        val visitor = initialParent?.let { PatchDeclarationParentsVisitor(it) } ?: PatchDeclarationParentsVisitor()
+        acceptVoid(visitor)
     }
 
-class PatchDeclarationParentsVisitor : IrElementVisitorVoid {
+class PatchDeclarationParentsVisitor() : IrElementVisitorVoid {
+
+    constructor(containingDeclaration: IrDeclarationParent) : this() {
+        declarationParentsStack.push(containingDeclaration)
+    }
 
     private val declarationParentsStack = ArrayDeque<IrDeclarationParent>()
 

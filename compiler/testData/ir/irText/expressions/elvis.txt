@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/elvis.kt
   PROPERTY name:p type:kotlin.Any? visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Any? visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Any? visibility:public flags:final
       EXPRESSION_BODY
         CONST Null type=kotlin.Nothing? value=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Any? flags:

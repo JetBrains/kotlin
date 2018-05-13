@@ -1,7 +1,7 @@
 @0:0..23:0 FILE fqName:test fileName:/augmentedAssignmentWithExpression.kt
   @2:0..8:1 CLASS CLASS name:Host modality:FINAL visibility:public flags:
     @2:0..8:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Host flags:
-    @2:0..8:1 CONSTRUCTOR visibility:public <> () returnType:test.Host flags:
+    @2:0..8:1 CONSTRUCTOR visibility:public <> () returnType:test.Host flags:primary
       @2:0..8:1 BLOCK_BODY
         @2:0..8:1 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         @2:0..8:1 INSTANCE_INITIALIZER_CALL classDescriptor='Host'

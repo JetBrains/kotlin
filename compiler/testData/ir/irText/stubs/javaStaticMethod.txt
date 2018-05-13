@@ -3,3 +3,4 @@ FILE fqName:<root> fileName:/javaStaticMethod.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(): Unit'
         CALL 'bar(): Unit' type=kotlin.Unit origin=null
+

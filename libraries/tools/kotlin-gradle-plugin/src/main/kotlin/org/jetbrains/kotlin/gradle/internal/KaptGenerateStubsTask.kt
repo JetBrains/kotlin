@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinWarn
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.SourceRoots
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
@@ -85,7 +86,11 @@ open class KaptGenerateStubsTask : KotlinCompile() {
     }
 
     override fun execute(inputs: IncrementalTaskInputs) {
-        val sourceRoots = kotlinCompileTask.getSourceRoots()
+        val sourceRoots = kotlinCompileTask.getSourceRoots().let {
+            val javaSourceRoots = it.javaSourceRoots.filterTo(HashSet()) { isSourceRootAllowed(it) }
+            val kotlinSourceFiles = it.kotlinSourceFiles
+            SourceRoots.ForJvm(kotlinSourceFiles, javaSourceRoots)
+        }
         val allKotlinSources = sourceRoots.kotlinSourceFiles
 
         logger.kotlinDebug { "All kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(project.rootProject.projectDir)}" }

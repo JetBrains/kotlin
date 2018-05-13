@@ -1509,6 +1509,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/changeSignature/addFunctionParameterLongNameRuntime.kt");
         }
 
+        @TestMetadata("addFunctionParameterWithSmartCast.kt")
+        public void testAddFunctionParameterWithSmartCast() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithSmartCast.kt");
+        }
+
         @TestMetadata("addNothingReturnType.kt")
         public void testAddNothingReturnType() throws Exception {
             runTest("idea/testData/quickfix/changeSignature/addNothingReturnType.kt");
@@ -3084,6 +3089,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/notExactArgument.kt");
                 }
 
+                @TestMetadata("nullableReceiver.kt")
+                public void testNullableReceiver() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/nullableReceiver.kt");
+                }
+
                 @TestMetadata("objectMemberFunNoReceiver.kt")
                 public void testObjectMemberFunNoReceiver() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/objectMemberFunNoReceiver.kt");
@@ -3102,6 +3112,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("qualifiedCallInStringTemplateRuntime.kt")
                 public void testQualifiedCallInStringTemplateRuntime() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/qualifiedCallInStringTemplateRuntime.kt");
+                }
+
+                @TestMetadata("receiverWithSmartCast.kt")
+                public void testReceiverWithSmartCast() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/receiverWithSmartCast.kt");
                 }
 
                 @TestMetadata("refInImport.kt")
@@ -4597,6 +4612,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("nonAbstractInInterface.kt")
                 public void testNonAbstractInInterface() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createVariable/property/nonAbstractInInterface.kt");
+                }
+
+                @TestMetadata("nullableReceiver.kt")
+                public void testNullableReceiver() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createVariable/property/nullableReceiver.kt");
                 }
 
                 @TestMetadata("objectMemberValNoReceiver.kt")
@@ -11762,6 +11782,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability/canBeVal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("const.kt")
+                public void testConst() throws Exception {
+                    runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/const.kt");
+                }
+
                 @TestMetadata("multiVariable.kt")
                 public void testMultiVariable() throws Exception {
                     runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/multiVariable.kt");
@@ -12052,6 +12077,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("extensionMethod.kt")
         public void testExtensionMethod() throws Exception {
             runTest("idea/testData/quickfix/wrapWithSafeLetCall/extensionMethod.kt");
+        }
+
+        @TestMetadata("extentionFunctionCall.kt")
+        public void testExtentionFunctionCall() throws Exception {
+            runTest("idea/testData/quickfix/wrapWithSafeLetCall/extentionFunctionCall.kt");
+        }
+
+        @TestMetadata("extentionFunctionCall2.kt")
+        public void testExtentionFunctionCall2() throws Exception {
+            runTest("idea/testData/quickfix/wrapWithSafeLetCall/extentionFunctionCall2.kt");
         }
 
         @TestMetadata("insideLet.kt")

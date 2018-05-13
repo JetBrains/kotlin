@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/object.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:Z flags:
+    CONSTRUCTOR visibility:private <> () returnType:Z flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Z'
@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/object.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z.A flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:public <> () returnType:Z.A flags:
+      CONSTRUCTOR visibility:public <> () returnType:Z.A flags:primary
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='A'

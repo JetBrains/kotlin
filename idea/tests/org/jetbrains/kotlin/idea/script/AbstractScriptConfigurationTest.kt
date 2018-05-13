@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.script
 
 import com.intellij.codeInsight.highlighting.HighlightUsagesHandler
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.Module
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager.Companion.updateScriptDependenciesSynchronously
+import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
 import org.jetbrains.kotlin.idea.navigation.GotoCheck
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -60,6 +62,16 @@ abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfi
             editor,
             InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_WARNINGS"),
             InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_INFOS"))
+    }
+
+    override fun setUp() {
+        super.setUp()
+        ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled = true
+    }
+
+    override fun tearDown() {
+        ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled = false
+        super.tearDown()
     }
 }
 
@@ -90,8 +102,8 @@ private const val configureConflictingModule = "// CONFLICTING_MODULE"
 
 private fun String.splitOrEmpty(delimeters: String) = split(delimeters).takeIf { it.size > 1 } ?: emptyList()
 internal val switches = listOf(
-        useDefaultTemplate,
-        configureConflictingModule
+    useDefaultTemplate,
+    configureConflictingModule
 )
 
 abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
@@ -181,11 +193,11 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         val libClasses = libSrcDir?.let { compileLibToDir(it) }
 
         return mapOf(
-                "runtime-classes" to ForTestCompileRuntime.runtimeJarForTests(),
-                "runtime-source" to File("libraries/stdlib/src"),
-                "lib-classes" to libClasses,
-                "lib-source" to libSrcDir,
-                "template-classes" to templateOutDir
+            "runtime-classes" to ForTestCompileRuntime.runtimeJarForTests(),
+            "runtime-source" to File("libraries/stdlib/src"),
+            "lib-classes" to libClasses,
+            "lib-source" to libSrcDir,
+            "template-classes" to templateOutDir
         )
     }
 
@@ -221,8 +233,8 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         val javaSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.java$"), srcDir)
         if (javaSourceFiles.isNotEmpty()) {
             KotlinTestUtils.compileJavaFiles(
-                    javaSourceFiles,
-                    listOf("-cp", StringUtil.join(listOf(*classpath, outDir), File.pathSeparator), "-d", outDir.path)
+                javaSourceFiles,
+                listOf("-cp", StringUtil.join(listOf(*classpath, outDir), File.pathSeparator), "-d", outDir.path)
             )
         }
         return outDir
@@ -231,16 +243,15 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     private fun registerScriptTemplateProvider(environment: Environment) {
         val provider = if (environment[useDefaultTemplate] == true) {
             FromTextTemplateProvider(environment)
-        }
-        else {
+        } else {
             CustomScriptTemplateProvider(environment)
         }
 
         PlatformTestUtil.registerExtension(
-                Extensions.getArea(project),
-                ScriptDefinitionContributor.EP_NAME,
-                provider,
-                testRootDisposable
+            Extensions.getArea(project),
+            ScriptDefinitionContributor.EP_NAME,
+            provider,
+            testRootDisposable
         )
         ScriptDefinitionsManager.getInstance(project).reloadScriptDefinitions()
     }

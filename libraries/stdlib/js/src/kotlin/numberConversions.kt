@@ -95,6 +95,39 @@ public actual fun String.toDoubleOrNull(): Double? = (+(this.asDynamic())).unsaf
 @kotlin.internal.InlineOnly
 public actual inline fun String.toFloatOrNull(): Float? = toDoubleOrNull().unsafeCast<Float?>()
 
+/**
+ * Returns a string representation of this [Byte] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public actual inline fun Byte.toString(radix: Int): String = this.toInt().toString(radix)
+
+/**
+ * Returns a string representation of this [Short] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
+ */
+@SinceKotlin("1.2")
+@kotlin.internal.InlineOnly
+public actual inline fun Short.toString(radix: Int): String = this.toInt().toString(radix)
+
+/**
+ * Returns a string representation of this [Long] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
+ */
+@SinceKotlin("1.2")
+public actual fun Long.toString(radix: Int): String = asDynamic().toString(checkRadix(radix))
+
+/**
+ * Returns a string representation of this [Int] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
+ */
+@SinceKotlin("1.2")
+public actual fun Int.toString(radix: Int): String = asDynamic().toString(checkRadix(radix))
 
 private fun String.isNaN(): Boolean = when (this.toLowerCase()) {
     "nan", "+nan", "-nan" -> true

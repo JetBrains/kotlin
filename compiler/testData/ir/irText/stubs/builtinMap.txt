@@ -40,3 +40,4 @@ FILE fqName:<root> fileName:/builtinMap.kt
                           value: CALL '<get-second>(): V1' type=V1 origin=GET_PROPERTY
                             $this: GET_VAR 'value-parameter pair: Pair<K1, V1>' type=kotlin.Pair<K1, V1> origin=null
                 FUNCTION_REFERENCE '<anonymous>() on LinkedHashMap<K1!, V1!> /* = LinkedHashMap<K1!, V1!> */: Unit' type=kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */.() -> kotlin.Unit origin=LAMBDA
+

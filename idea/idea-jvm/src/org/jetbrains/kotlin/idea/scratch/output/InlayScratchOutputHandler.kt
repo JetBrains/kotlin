@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.impl.FontInfo
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.Colors
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
@@ -44,7 +45,12 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     }
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
-        createInlay(file, expression.lineStart, output.text.substringBefore("\n"), output.type)
+        val inlayText = StringUtil.shortenTextWithEllipsis(output.text.substringBefore("\n"), 50, 0)
+        if (inlayText != output.text) {
+            ScratchToolWindow.addMessageToToolWindow(file.project, output.text, ConsoleViewContentType.NORMAL_OUTPUT)
+        }
+
+        createInlay(file, expression.lineStart, inlayText, output.type)
 
         if (output.type == ScratchOutputType.ERROR) {
             error(file, output.text)
