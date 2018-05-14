@@ -164,8 +164,9 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
     ): IntermediateValue {
         val thisValue = createThisValueForDelegate(thisClass, ktDelegate)
         return BackingFieldLValue(
+            context,
             ktDelegate.startOffset, ktDelegate.endOffset,
-            irDelegateField.descriptor.type,
+            irDelegateField.descriptor.type.toIrType(),
             irDelegateField,
             thisValue,
             null
@@ -327,7 +328,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
     }
 
     private fun createVariableValueForDelegate(irDelegate: IrVariableSymbol, ktDelegate: KtPropertyDelegate) =
-        VariableLValue(ktDelegate.startOffset, ktDelegate.endOffset, irDelegate)
+        VariableLValue(context, ktDelegate.startOffset, ktDelegate.endOffset, irDelegate, irDelegate.descriptor.type.toIrType())
 
     private inline fun createLocalPropertyAccessor(
         getterDescriptor: VariableAccessorDescriptor,
