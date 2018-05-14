@@ -96,6 +96,12 @@ private object CharCompanionObject {
 
     @JsName("MAX_SURROGATE")
     public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
+
+    @JsName("MAX_VALUE")
+    public const val MAX_VALUE: Char = '\uFFFF'
+
+    @JsName("MIN_VALUE")
+    public const val MIN_VALUE: Char = '\u0000'
 }
 
 private object StringCompanionObject {}

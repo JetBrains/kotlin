@@ -37,17 +37,3 @@ public fun Char.equals(other: Char, ignoreCase: Boolean = false): Boolean {
  * Returns `true` if this character is a Unicode surrogate code unit.
  */
 public fun Char.isSurrogate(): Boolean = this in Char.MIN_SURROGATE..Char.MAX_SURROGATE
-
-/**
- * Minimum value for character
- * @see <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html">
- */
-public val Char.Companion.MIN_VALUE: Char
-    get() = '\u0000'
-
-/**
- * Maximum value for character
- * @see <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html">
- */
-public val Char.Companion.MAX_VALUE: Char
-    get() = '\uffff'
