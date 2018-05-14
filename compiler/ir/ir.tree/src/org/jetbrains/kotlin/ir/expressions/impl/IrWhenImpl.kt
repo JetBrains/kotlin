@@ -51,7 +51,8 @@ class IrWhenImpl(
     endOffset: Int,
     type: IrType,
     override val origin: IrStatementOrigin? = null
-) : IrWhenBase(startOffset, endOffset, type) {
+) :
+    IrWhenBase(startOffset, endOffset, type) {
 
     constructor(
         startOffset: Int,
@@ -71,7 +72,9 @@ open class IrBranchImpl(
     endOffset: Int,
     override var condition: IrExpression,
     override var result: IrExpression
-) : IrElementBase(startOffset, endOffset), IrBranch {
+) :
+    IrElementBase(startOffset, endOffset),
+    IrBranch {
 
     constructor(condition: IrExpression, result: IrExpression) :
             this(condition.startOffset, condition.endOffset, condition, result)

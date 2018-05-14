@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -25,3 +26,15 @@ val IrType.classifierOrFail: IrClassifierSymbol
 
 val IrType.classifierOrNull: IrClassifierSymbol?
     get() = safeAs<IrSimpleType>()?.classifier
+
+fun IrType.makeNotNull() =
+    if (this is IrSimpleType && this.hasQuestionMark)
+        IrSimpleTypeImpl(
+            classifier,
+            false,
+            arguments,
+            annotations,
+            Variance.INVARIANT
+        )
+    else
+        this

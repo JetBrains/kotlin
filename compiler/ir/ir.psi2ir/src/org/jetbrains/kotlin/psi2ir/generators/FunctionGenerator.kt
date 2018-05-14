@@ -142,17 +142,20 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     ): IrBlockBody {
         val property = getter.correspondingProperty
 
-        val irBody = IrBlockBodyImpl(ktProperty.startOffset, ktProperty.endOffset)
+        val startOffset = ktProperty.startOffset
+        val endOffset = ktProperty.endOffset
+        val irBody = IrBlockBodyImpl(startOffset, endOffset)
 
         val receiver = generateReceiverExpressionForDefaultPropertyAccessor(ktProperty, property)
 
         irBody.statements.add(
             IrReturnImpl(
-                ktProperty.startOffset, ktProperty.endOffset, context.builtIns.nothingType,
+                startOffset, endOffset, context.irBuiltIns.nothingType,
                 irAccessor.symbol,
                 IrGetFieldImpl(
-                    ktProperty.startOffset, ktProperty.endOffset,
+                    startOffset, endOffset,
                     context.symbolTable.referenceField(property),
+                    property.type.toIrType(),
                     receiver
                 )
             )
@@ -167,17 +170,20 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     ): IrBlockBody {
         val property = setter.correspondingProperty
 
-        val irBody = IrBlockBodyImpl(ktProperty.startOffset, ktProperty.endOffset)
+        val startOffset = ktProperty.startOffset
+        val endOffset = ktProperty.endOffset
+        val irBody = IrBlockBodyImpl(startOffset, endOffset)
 
         val receiver = generateReceiverExpressionForDefaultPropertyAccessor(ktProperty, property)
 
-        val setterParameter = irAccessor.valueParameters.single().symbol
+        val irValueParameter = irAccessor.valueParameters.single()
         irBody.statements.add(
             IrSetFieldImpl(
-                ktProperty.startOffset, ktProperty.endOffset,
+                startOffset, endOffset,
                 context.symbolTable.referenceField(property),
                 receiver,
-                IrGetValueImpl(ktProperty.startOffset, ktProperty.endOffset, setterParameter)
+                IrGetValueImpl(startOffset, endOffset, irValueParameter.type, irValueParameter.symbol),
+                context.irBuiltIns.unitType
             )
         )
         return irBody
@@ -186,11 +192,14 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     private fun generateReceiverExpressionForDefaultPropertyAccessor(ktProperty: KtElement, property: PropertyDescriptor): IrExpression? {
         val containingDeclaration = property.containingDeclaration
         return when (containingDeclaration) {
-            is ClassDescriptor ->
+            is ClassDescriptor -> {
+                val thisAsReceiverParameter = containingDeclaration.thisAsReceiverParameter
                 IrGetValueImpl(
                     ktProperty.startOffset, ktProperty.endOffset,
-                    context.symbolTable.referenceValue(containingDeclaration.thisAsReceiverParameter)
+                    thisAsReceiverParameter.type.toIrType(),
+                    context.symbolTable.referenceValue(thisAsReceiverParameter)
                 )
+            }
             else -> null
         }
     }

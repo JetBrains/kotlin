@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 import org.jetbrains.kotlin.types.KotlinType
 
 class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
+
     fun generateAssignment(ktExpression: KtBinaryExpression): IrExpression {
         val ktLeft = ktExpression.left!!
         val irRhs = ktExpression.right!!.genExpr()
