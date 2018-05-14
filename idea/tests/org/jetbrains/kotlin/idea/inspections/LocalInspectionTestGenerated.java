@@ -613,6 +613,74 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             public void testMapWithReturn() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapWithReturn.kt");
             }
+
+            @TestMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class PrimitiveArray extends AbstractLocalInspectionTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInPrimitiveArray() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("filterFirst.kt")
+                public void testFilterFirst() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray/filterFirst.kt");
+                }
+
+                @TestMetadata("filterFirstOrNull.kt")
+                public void testFilterFirstOrNull() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray/filterFirstOrNull.kt");
+                }
+
+                @TestMetadata("filterIsEmpty.kt")
+                public void testFilterIsEmpty() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray/filterIsEmpty.kt");
+                }
+
+                @TestMetadata("filterIsNotEmpty.kt")
+                public void testFilterIsNotEmpty() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray/filterIsNotEmpty.kt");
+                }
+
+                @TestMetadata("filterLast.kt")
+                public void testFilterLast() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray/filterLast.kt");
+                }
+
+                @TestMetadata("filterLastOrNull.kt")
+                public void testFilterLastOrNull() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray/filterLastOrNull.kt");
+                }
+
+                @TestMetadata("filterSingle.kt")
+                public void testFilterSingle() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray/filterSingle.kt");
+                }
+
+                @TestMetadata("filterSingleOrNull.kt")
+                public void testFilterSingleOrNull() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray/filterSingleOrNull.kt");
+                }
+
+                @TestMetadata("mapFilterNotNull.kt")
+                public void testMapFilterNotNull() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray/mapFilterNotNull.kt");
+                }
+
+                @TestMetadata("mapJoinTo.kt")
+                public void testMapJoinTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray/mapJoinTo.kt");
+                }
+
+                @TestMetadata("mapJoinToString.kt")
+                public void testMapJoinToString() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray/mapJoinToString.kt");
+                }
+            }
         }
 
         @TestMetadata("idea/testData/inspectionsLocal/collections/uselessCallOnCollection")
