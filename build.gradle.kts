@@ -577,9 +577,6 @@ val cidrPlugin by task<Copy> {
         exclude("lib/android-extensions-compiler.jar")
         exclude("lib/kapt3-idea.jar")
         exclude("lib/j2k.jar")
-        exclude("lib/jps-ide.jar")
-        exclude("lib/jps/**")
-        exclude("kotlinc/**")
     }
     from(cidrKotlinPlugin) { into("lib") }
 }
