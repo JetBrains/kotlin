@@ -188,7 +188,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
             )
         }
 
-        val allLocalFixActions = highlightInfos.flatMap { it.quickFixActionMarkers }.map { it.first.action }
+        val allLocalFixActions = highlightInfos.flatMap { it.quickFixActionMarkers ?: emptyList() }.map { it.first.action }
 
         val localFixActions = allLocalFixActions.filter { fix -> localFixTextString == null || fix.text == localFixTextString }
         val availableDescription = allLocalFixActions.joinToString { it.text }
