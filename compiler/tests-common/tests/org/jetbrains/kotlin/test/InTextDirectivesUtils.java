@@ -227,7 +227,7 @@ public final class InTextDirectivesUtils {
     }
 
     public static boolean isIgnoredTarget(TargetBackend targetBackend, File file) {
-        if (targetBackend == TargetBackend.ANY) return false;
+        //if (targetBackend == TargetBackend.ANY) return false;
 
         List<String> ignoredBackends = findListWithPrefixes(textWithDirectives(file), IGNORE_BACKEND_DIRECTIVE_PREFIX);
         return ignoredBackends.contains(targetBackend.name());
