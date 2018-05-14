@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
+// TODO rewrite using IR Builders
+
 fun primitiveOp1(
     startOffset: Int, endOffset: Int,
     primitiveOpSymbol: IrSimpleFunctionSymbol,

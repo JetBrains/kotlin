@@ -72,8 +72,10 @@ class BodyGenerator(
             val ktDestructuringDeclaration = ktParameter.destructuringDeclaration ?: continue
             val valueParameter = getOrFail(BindingContext.VALUE_PARAMETER, ktParameter)
             val parameterValue = VariableLValue(
+                context,
                 ktDestructuringDeclaration.startOffset, ktDestructuringDeclaration.endOffset,
                 context.symbolTable.referenceValue(valueParameter),
+                valueParameter.type.toIrType(),
                 IrStatementOrigin.DESTRUCTURING_DECLARATION
             )
             statementGenerator.declareComponentVariablesInBlock(ktDestructuringDeclaration, irBlockBody, parameterValue)

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 
 class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
+
     fun generateClassLiteral(ktClassLiteral: KtClassLiteralExpression): IrExpression {
         val ktArgument = ktClassLiteral.receiverExpression!!
         val lhs = getOrFail(BindingContext.DOUBLE_COLON_LHS, ktArgument)

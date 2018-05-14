@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
-import org.jetbrains.kotlin.ir.builders.constNull
-import org.jetbrains.kotlin.ir.builders.equalsNull
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -35,6 +35,7 @@ class SafeCallReceiver(
     val dispatchReceiver: IntermediateValue?,
     val isAssignmentReceiver: Boolean
 ) : CallReceiver {
+
     override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
         val irTmp = generator.scope.createTemporaryVariable(extensionReceiver?.load() ?: dispatchReceiver!!.load(), "safe_receiver")
         val safeReceiverValue = VariableLValue(irTmp)
@@ -50,19 +51,17 @@ class SafeCallReceiver(
         }
 
         val irResult = withDispatchAndExtensionReceivers(dispatchReceiverValue, extensionReceiverValue)
-        val resultType = if (isAssignmentReceiver) irResult.type.builtIns.unitType else irResult.type.makeNullable()
+
+        val resultType = if (isAssignmentReceiver) generator.context.irBuiltIns.unitType else irResult.type.makeNullable()
 
         val irBlock = IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL)
 
         irBlock.statements.add(irTmp)
 
-        val irIfThenElse = IrIfThenElseImpl(
-            startOffset, endOffset, resultType,
-            generator.context.equalsNull(startOffset, endOffset, safeReceiverValue.load()),
-            generator.context.constNull(startOffset, endOffset),
-            irResult,
-            IrStatementOrigin.SAFE_CALL
-        )
+        val irIfThenElse =
+            generator.buildStatement(startOffset, endOffset, IrStatementOrigin.SAFE_CALL) {
+                irIfNull(resultType, safeReceiverValue.load(), irNull(), irResult)
+            }
         irBlock.statements.add(irIfThenElse)
 
         return irBlock

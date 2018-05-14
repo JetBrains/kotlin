@@ -409,4 +409,5 @@ abstract class StatementGeneratorExtension(val statementGenerator: StatementGene
     fun KtExpression.genExpr() = statementGenerator.generateExpression(this)
     fun KtExpression.genStmt() = statementGenerator.generateStatement(this)
     fun KotlinType.toIrType() = with(statementGenerator) { toIrType() }
+    fun translateType(kotlinType: KotlinType) = kotlinType.toIrType()
 }
