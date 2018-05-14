@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -73,7 +74,8 @@ fun MemberDescriptor.isInlineOnlyOrReifiable(): Boolean =
         this is CallableMemberDescriptor && (isReifiable() || DescriptorUtils.getDirectMember(this).isReifiable() || isInlineOnly())
 
 fun MemberDescriptor.isEffectivelyInlineOnly(): Boolean =
-    isInlineOnlyOrReifiable() || (this is FunctionDescriptor && this.isSuspend && this.valueParameters.any { it.isCrossinline })
+    isInlineOnlyOrReifiable() || (this is FunctionDescriptor && isSuspend && isInline &&
+            (valueParameters.any { it.isCrossinline } || visibility == Visibilities.PRIVATE))
 
 fun MemberDescriptor.isInlineOnly(): Boolean {
     if (this !is FunctionDescriptor ||

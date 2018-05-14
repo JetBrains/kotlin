@@ -18,6 +18,8 @@ suspend inline fun shouldNotHaveSuffix() {}
 
 suspend inline fun acceptsCrossinline(crossinline c: () -> Unit) {}
 
+private suspend inline fun privateInline() {}
+
 class Foo {
     suspend inline fun simple() {}
 
@@ -36,4 +38,6 @@ class Foo {
     suspend inline fun shouldNotHaveSuffix() {}
 
     suspend inline fun acceptsCrossinline(crossinline c: () -> Unit) {}
+
+    private suspend inline fun privateInline() {}
 }

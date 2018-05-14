@@ -8,6 +8,7 @@ public final class Foo {
     public final @org.jetbrains.annotations.Nullable method generic(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     private final method genericWithReified(p0: java.lang.Object, p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     private final method genericWithReified(p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    private synthetic final method privateInline(p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     private final @kotlin.internal.InlineOnly method shouldNotHaveSuffix(p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     private final @org.jetbrains.annotations.Nullable method simple$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.Unit, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     private final @org.jetbrains.annotations.Nullable method simple$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
@@ -24,6 +25,7 @@ public final class SimpleNamedKt {
     public final static @org.jetbrains.annotations.Nullable method generic(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     private final static method genericWithReified(p0: java.lang.Object, p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     private final static method genericWithReified(p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    private synthetic final static method privateInline(p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     private final static @kotlin.internal.InlineOnly method shouldNotHaveSuffix(p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     private final static @org.jetbrains.annotations.Nullable method simple$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.Unit, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     private final static @org.jetbrains.annotations.Nullable method simple$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
