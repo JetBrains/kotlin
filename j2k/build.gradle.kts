@@ -70,8 +70,6 @@ test.apply {
     exclude("**/*JavaToKotlinConverterForWebDemoTestGenerated*")
     dependsOn(testForWebDemo)
 }
-
 val cleanTest by tasks
 cleanTest.dependsOn(cleanTestForWebDemo)
 
-ideaPlugin()
