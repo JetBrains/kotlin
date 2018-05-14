@@ -27,7 +27,8 @@ abstract class IrNoArgumentsCallableReferenceBase(
     type: IrType,
     typeArgumentsCount: Int,
     origin: IrStatementOrigin? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, 0, origin),
+) :
+    IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, 0, origin),
     IrCallableReference {
 
     private fun throwNoValueArguments(): Nothing {

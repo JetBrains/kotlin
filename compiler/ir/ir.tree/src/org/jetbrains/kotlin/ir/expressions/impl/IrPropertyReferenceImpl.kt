@@ -34,7 +34,8 @@ class IrPropertyReferenceImpl(
     override val getter: IrFunctionSymbol?,
     override val setter: IrFunctionSymbol?,
     origin: IrStatementOrigin? = null
-) : IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, typeArgumentsCount, origin),
+) :
+    IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, typeArgumentsCount, origin),
     IrPropertyReference {
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

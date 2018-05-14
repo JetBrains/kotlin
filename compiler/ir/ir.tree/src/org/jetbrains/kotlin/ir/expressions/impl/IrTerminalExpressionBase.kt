@@ -25,6 +25,7 @@ abstract class IrTerminalExpressionBase(
     endOffset: Int,
     type: IrType
 ) : IrExpressionBase(startOffset, endOffset, type) {
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         // No children
     }

@@ -26,7 +26,10 @@ class IrContinueImpl(
     endOffset: Int,
     type: IrType,
     loop: IrLoop
-) : IrBreakContinueBase(startOffset, endOffset, type, loop), IrContinue {
+) :
+    IrBreakContinueBase(startOffset, endOffset, type, loop),
+    IrContinue {
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitContinue(this, data)
 }

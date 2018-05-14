@@ -31,7 +31,9 @@ abstract class IrContainerExpressionBase(
     type: IrType,
     override val origin: IrStatementOrigin? = null
 ) :
-    IrExpressionBase(startOffset, endOffset, type), IrContainerExpression {
+    IrExpressionBase(startOffset, endOffset, type),
+    IrContainerExpression {
+
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {

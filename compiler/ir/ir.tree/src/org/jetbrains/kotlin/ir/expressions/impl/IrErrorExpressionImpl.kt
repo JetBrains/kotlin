@@ -26,7 +26,11 @@ class IrErrorExpressionImpl(
     endOffset: Int,
     type: IrType,
     override val description: String
-) : IrTerminalExpressionBase(startOffset, endOffset, type), IrExpressionWithCopy, IrErrorExpression {
+) :
+    IrTerminalExpressionBase(startOffset, endOffset, type),
+    IrExpressionWithCopy,
+    IrErrorExpression {
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitErrorExpression(this, data)
 

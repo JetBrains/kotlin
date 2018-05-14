@@ -26,7 +26,10 @@ class IrThrowImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType
-) : IrExpressionBase(startOffset, endOffset, type), IrThrow {
+) :
+    IrExpressionBase(startOffset, endOffset, type),
+    IrThrow {
+
     constructor(
         startOffset: Int,
         endOffset: Int,
