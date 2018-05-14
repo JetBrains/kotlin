@@ -44,7 +44,7 @@ class JKListChild<T : JKTreeElement>() : ReadWriteProperty<JKMutableBranchElemen
         thisRef.children.forEach { it.parent = null }
         value.forEach { it.parent = thisRef }
         thisRef.children.clear()
-        thisRef.children.addAll(value as List<JKTreeElement>)
+        thisRef.children.addAll(value)
     }
 }
 
@@ -91,7 +91,7 @@ abstract class JKElementListBase: JKElementBase(), JKMutableBranchElement {
     }
 }
 
-class JKDeclarationListImpl : JKElementListBase(), JKDeclarationList {
+class JKUDeclarationListImpl : JKElementListBase(), JKUDeclarationList {
     override var declarations: List<JKUniverseDeclaration> by children()
 }
 
@@ -104,7 +104,7 @@ class JKClassImpl(modifierList: JKModifierList, name: JKNameIdentifier, override
     override var modifierList by child(modifierList)
     override val valid: Boolean = true
 
-    override val declarationList by child(JKDeclarationListImpl())
+    override val declarationList by child(JKUDeclarationListImpl())
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitUniverseClass(this, data)
 }
@@ -145,7 +145,7 @@ class JKPostfixExpressionImpl(expression: JKExpression, override var operator: J
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPostfixExpression(this, data)
 }
 
-class JKExpressionListImpl(expressions: MutableList<JKExpression> = mutableListOf()) : JKExpressionList, JKElementListBase() {
+class JKExpressionListImpl(expressions: List<JKExpression> = emptyList()) : JKExpressionList, JKElementListBase() {
     override var expressions by children(expressions)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitExpressionList(this, data)
 }

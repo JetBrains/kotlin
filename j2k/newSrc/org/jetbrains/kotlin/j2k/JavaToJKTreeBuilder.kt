@@ -23,8 +23,9 @@ import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.conveersionCache.JKMultiverseClass
-import org.jetbrains.kotlin.j2k.tree.conveersionCache.ReferenceTargetProvider
+import org.jetbrains.kotlin.j2k.tree.multiverse.JKMDeclarationList
+import org.jetbrains.kotlin.j2k.tree.multiverse.JKMultiverseClass
+import org.jetbrains.kotlin.j2k.tree.multiverse.ReferenceTargetProvider
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
 
@@ -32,7 +33,7 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
     override fun resolveClassReference(clazz: PsiClass): JKClass {
         val name = clazz.qualifiedName ?: TODO()
         return universe[name] ?: multiverse[name] ?: run {
-            val clazz = JKMultiverseClass(JKNameIdentifierImpl(name), mutableListOf(), JKClass.ClassKind.CLASS, JKModifierListImpl())
+            val clazz = JKMultiverseClass(JKNameIdentifierImpl(name), JKMDeclarationList(emptyList()), JKClass.ClassKind.CLASS, JKModifierListImpl())
             multiverse[name] = clazz
             clazz
         }
@@ -41,7 +42,7 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
     override fun resolveClassReference(identifier: String): JKClass {
         return universe[identifier] ?: multiverse[identifier] ?: run {
             val clazz =
-                JKMultiverseClass(JKNameIdentifierImpl(identifier), mutableListOf(), JKClass.ClassKind.CLASS, JKModifierListImpl())
+                JKMultiverseClass(JKNameIdentifierImpl(identifier), JKMDeclarationList(emptyList()), JKClass.ClassKind.CLASS, JKModifierListImpl())
             multiverse[identifier] = clazz
             clazz
         }
@@ -252,9 +253,13 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
                 isInterface -> JKClass.ClassKind.INTERFACE
                 else -> JKClass.ClassKind.CLASS
             }
+            val psi = this
             return JKClassImpl(with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name!!), classKind).apply {
-                declarations =
-                        children.mapNotNull { ElementVisitor(this@DeclarationMapper).apply { it.accept(this) }.resultElement as? JKUniverseDeclaration }
+                declarationList.apply {
+                    declarations = psi.children.mapNotNull {
+                        ElementVisitor(this@DeclarationMapper).apply { it.accept(this) }.resultElement as? JKUniverseDeclaration
+                    }
+                }
             }
         }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.j2k.tree.conveersionCache
+package org.jetbrains.kotlin.j2k.tree.multiverse
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
@@ -37,7 +37,9 @@ interface ReferenceTargetProvider {
     }
 
     fun resolveFieldReference(clazz: JKClass, field: PsiField): JKField {
-        return clazz.declarations.asSequence().filter { it is JKJavaField && it.name.name == field.name }.firstOrNull() as JKField?
-                ?: JKMultiverseField(JKNameIdentifierImpl(field.name)).also { clazz.cast<JKMultiverseClass>().declarations += it }
+        return clazz.declarationList.declarations.asSequence().filter { it is JKJavaField && it.name.name == field.name }.firstOrNull() as JKField?
+                ?: JKMultiverseField(JKNameIdentifierImpl(field.name)).also {
+                    clazz.cast<JKMultiverseClass>().declarationList.declarations += it
+                }
     }
 }

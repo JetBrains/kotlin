@@ -45,10 +45,10 @@ class NewCodeBuilder {
             printer.print(classKindString(universeClass.classKind))
             builder.append(" ")
             printer.print(universeClass.name.name)
-            if (universeClass.declarations.isNotEmpty()) {
+            if (universeClass.declarationList.declarations.isNotEmpty()) {
                 printer.println("{")
                 printer.pushIndent()
-                universeClass.declarations.forEach { it.accept(this, data) }
+                universeClass.declarationList.declarations.forEach { it.accept(this, data) }
                 printer.popIndent()
                 printer.println("}")
             }
