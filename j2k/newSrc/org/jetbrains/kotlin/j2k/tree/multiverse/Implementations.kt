@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.j2k.tree.conveersionCache
+package org.jetbrains.kotlin.j2k.tree.multiverse
 
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKJavaPrimitiveTypeImpl
@@ -46,9 +46,11 @@ class JKMultiverseMethod(override var name: JKNameIdentifier) : JKMethod, JKMult
 }
 
 class JKMultiverseClass(
-    override var name: JKNameIdentifier, override var declarations: List<JKDeclaration>,
+    override var name: JKNameIdentifier, override val declarationList: JKMDeclarationList,
     override var classKind: JKClass.ClassKind, override var modifierList: JKModifierList
 ) : JKClass, JKMultiverseElementBase() {
     override val valid: Boolean
         get() = true
 }
+
+class JKMDeclarationList(override val declarations: List<JKDeclaration>) : JKMultiverseElementBase(), JKDeclarationList
