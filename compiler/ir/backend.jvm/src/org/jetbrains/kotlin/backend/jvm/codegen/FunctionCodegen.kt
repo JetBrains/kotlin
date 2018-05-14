@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
@@ -60,7 +60,7 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
         FunctionCodegen.generateMethodAnnotations(descriptor, signature.asmMethod, methodVisitor, classCodegen, state.typeMapper)
         FunctionCodegen.generateParameterAnnotations(descriptor, methodVisitor, signature, classCodegen, state)
 
-        if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || descriptor.isExternal) {
+        if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
             methodVisitor.visitEnd()
             return
@@ -72,16 +72,15 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
 
     private fun calculateMethodFlags(isStatic: Boolean): Int {
         var flags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, state).or(if (isStatic) Opcodes.ACC_STATIC else 0).xor(
-            if (DescriptorUtils.isAnnotationClass(descriptor.containingDeclaration)) Opcodes.ACC_FINAL else 0/*TODO*/
+            if (classCodegen.irClass.isAnnotationClass) Opcodes.ACC_FINAL else 0/*TODO*/
         ).or(if (descriptor is JvmDescriptorWithExtraFlags) descriptor.extraFlags else 0)
 
         if (irFunction.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER) {
             flags = flags.xor(AsmUtil.getVisibilityAccessFlag(descriptor)).or(Opcodes.ACC_PUBLIC)
         }
 
-        val interfaceClInit = JvmCodegenUtil.isJvmInterface(classCodegen.descriptor) && InitializersLowering.clinitName == descriptor.name
-        if (interfaceClInit) {
-            //reset abstract flag
+        if (classCodegen.irClass.isJvmInterface && InitializersLowering.clinitName == irFunction.name) {
+            //reset abstract flag for <clinit>
             flags = flags.xor(Opcodes.ACC_ABSTRACT)
         }
         return flags
@@ -97,9 +96,8 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
     }
 
     private fun generateAnnotationDefaultValueIfNeeded(methodVisitor: MethodVisitor) {
-        val directMember = JvmCodegenUtil.getDirectMember(descriptor)
-        if (DescriptorUtils.isAnnotationClass(directMember.containingDeclaration)) {
-            val source = directMember.source
+        if (classCodegen.irClass.isAnnotationClass) {
+            val source = JvmCodegenUtil.getDirectMember(descriptor).source
             (source.getPsi() as? KtParameter)?.defaultValue?.apply {
                 val defaultValue = this
                 val constant = org.jetbrains.kotlin.codegen.ExpressionCodegen.getCompileTimeConstant(

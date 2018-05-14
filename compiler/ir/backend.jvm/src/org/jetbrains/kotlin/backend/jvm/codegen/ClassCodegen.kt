@@ -40,7 +40,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import java.lang.RuntimeException
 
 class ClassCodegen private constructor(
-    private val irClass: IrClass,
+    internal val irClass: IrClass,
     val context: JvmBackendContext,
     private val parentClassCodegen: ClassCodegen? = null
 ) : InnerClassConsumer {

@@ -44,7 +44,7 @@ import java.util.*
 
 class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
-        if (irClass.kind != ClassKind.ENUM_CLASS) return
+        if (!irClass.isEnumClass) return
 
         EnumClassTransformer(irClass).run()
     }
@@ -399,10 +399,10 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 // TODO local (non-enum) class in enum class constructor?
                 val previous = enumConstructorCallTransformer
 
-                if (containingClass.kind == ClassKind.ENUM_ENTRY) {
+                if (containingClass.isEnumEntry) {
                     assert(enumConstructorCallTransformer == null) { "Nested enum entry initialization:\n${declaration.dump()}" }
                     enumConstructorCallTransformer = InEnumEntryClassConstructor(enumEntryClassToEntry[containingClass]!!)
-                } else if (containingClass.kind == ClassKind.ENUM_CLASS) {
+                } else if (containingClass.isEnumClass) {
                     assert(enumConstructorCallTransformer == null) { "Nested enum entry initialization:\n${declaration.dump()}" }
                     enumConstructorCallTransformer = InEnumClassConstructor(declaration)
                 }

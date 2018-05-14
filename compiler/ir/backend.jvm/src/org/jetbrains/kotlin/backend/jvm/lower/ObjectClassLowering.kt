@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isCompanionObjectInInterfaceNotIntrinsic
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.util.isObject
 
 class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 
@@ -53,7 +54,7 @@ class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformer
 
 
     private fun process(irClass: IrClass) {
-        if (irClass.descriptor.kind != ClassKind.OBJECT) return
+        if (!irClass.isObject) return
 
         val publicInstance = context.descriptorsFactory.getSymbolForObjectInstance(irClass.symbol)
 

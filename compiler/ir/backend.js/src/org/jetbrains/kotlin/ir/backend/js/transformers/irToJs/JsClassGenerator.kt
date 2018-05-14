@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -24,7 +25,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private val className = context.getNameForSymbol(irClass.symbol)
     private val classNameRef = className.makeRef()
-    private val baseClass = irClass.superClasses.firstOrNull { it.owner.kind != ClassKind.INTERFACE }
+    private val baseClass = irClass.superClasses.firstOrNull { !it.owner.isInterface }
     private val baseClassName = baseClass?.let { context.getNameForSymbol(it) }
     private val classPrototypeRef = prototypeOf(classNameRef)
     private val classBlock = JsBlock()
@@ -74,7 +75,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         // interface I { foo() = "OK" }
         // interface II : I
         // II.prototype.foo = I.prototype.foo
-        if (irClass.kind != ClassKind.INTERFACE) {
+        if (!irClass.isInterface) {
             declaration.resolveFakeOverride()?.let {
                 val implClassDesc = it.descriptor.containingDeclaration as ClassDescriptor
                 if (!KotlinBuiltIns.isAny(implClassDesc)) {
@@ -153,7 +154,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun generateSuperClasses(): JsPropertyInitializer = JsPropertyInitializer(
         JsNameRef(Namer.METADATA_INTERFACES),
-        JsArrayLiteral(irClass.superClasses.filter { it.owner.kind == ClassKind.INTERFACE }.map { JsNameRef(context.getNameForSymbol(it.owner.symbol)) })
+        JsArrayLiteral(irClass.superClasses.filter { it.owner.isInterface }.map { JsNameRef(context.getNameForSymbol(it.owner.symbol)) })
     )
 
 }
