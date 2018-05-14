@@ -18,8 +18,8 @@ dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
     compile project(':kotlin-test:kotlin-test-jvm')
 
-    compile("org.junit.jupiter:junit-jupiter-api:$junit5Version")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
+    compile("org.junit.jupiter:junit-jupiter-api:5.0.0")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
 }
 
 jar {
