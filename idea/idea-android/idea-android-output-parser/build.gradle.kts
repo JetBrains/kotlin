@@ -18,8 +18,3 @@ sourceSets {
     "test" {}
 }
 
-runtimeJar {
-    archiveName = "android-output-parser-ide.jar"
-}
-
-ideaPlugin()
