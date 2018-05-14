@@ -192,19 +192,15 @@ fun getSomething() = 10
                 "fun provideApplicationContext(): Context? {"
             )
         }
-        // rebuilt because DaggerApplicationComponent.java was regenerated
-        val baseApplicationKt = project.projectDir.getFileByName("BaseApplication.kt")
-        // rebuilt because BuildConfig.java was regenerated (timestamp was changed)
-        val useBuildConfigJavaKt = project.projectDir.getFileByName("useBuildConfigJava.kt")
 
         project.build(":app:assembleDebug", options = options) {
             assertSuccessful()
-            assertCompiledKotlinSources(
-                project.relativize(
-                    androidModuleKt,
-                    baseApplicationKt,
-                    useBuildConfigJavaKt
-                )
+            assertCompiledKotlinSources(project.relativize(androidModuleKt))
+            assertTasksExecuted(
+                ":app:kaptGenerateStubsDebugKotlin",
+                ":app:kaptDebugKotlin",
+                ":app:compileDebugKotlin",
+                ":app:compileDebugJavaWithJavac"
             )
         }
     }
