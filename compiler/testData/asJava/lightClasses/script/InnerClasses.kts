@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: ANY
 // InnerClasses
 
 class Bar(val a: Int) {

@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: ANY
 // A
+// IGNORE_BACKEND: ANY
 class A {
     fun f(i: Int, s: Double) {}
     fun f(i: Int, s: Double) {}

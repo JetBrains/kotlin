@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: ANY
 // a.b.c.ActualTypeAliasCustomJvmPackageNameKt
+// IGNORE_BACKEND: ANY
 @file:JvmPackageName("a.b.c")
 package p
 

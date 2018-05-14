@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
+import org.jetbrains.kotlin.psi2ir.generators.STUB_EXPRESSION_BODY
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
@@ -192,7 +193,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
             return IrFieldImpl(
                 enumEntry.startOffset, enumEntry.endOffset, JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
                 fieldPropertyDescriptor,
-                IrExpressionBodyImpl(enumEntry.initializerExpression!!)
+                if (enumEntry.initializerExpression != null) IrExpressionBodyImpl(enumEntry.initializerExpression!!) else STUB_EXPRESSION_BODY
             ).also {
                 enumEntryFields.add(it)
             }

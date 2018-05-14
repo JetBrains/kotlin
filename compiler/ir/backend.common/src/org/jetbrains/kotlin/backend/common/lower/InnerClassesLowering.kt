@@ -89,7 +89,12 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
                 oldConstructorParameterToNew[oldValueParameter] = loweredConstructor.valueParameters[oldValueParameter.index + 1]
             }
 
-            val blockBody = irConstructor.body as? IrBlockBody ?: throw AssertionError("Unexpected constructor body: ${irConstructor.body}")
+            val constructorBody = irConstructor.body
+            if (constructorBody is IrSyntheticBody && constructorBody.kind == IrSyntheticBodyKind.STUB_BODY_FOR_LIGHT_CLASSES) {
+                return loweredConstructor.also { it.body = constructorBody }
+            }
+
+            val blockBody = constructorBody as? IrBlockBody ?: throw AssertionError("Unexpected constructor body: $constructorBody")
 
             val instanceInitializerIndex = blockBody.statements.indexOfFirst { it is IrInstanceInitializerCall }
             if (instanceInitializerIndex >= 0) {

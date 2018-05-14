@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: ANY
 // TopLevelDestructuringKt
+// IGNORE_BACKEND: ANY
 
 data class Pair(val x: Int, val y: Int)
 
