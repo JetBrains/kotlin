@@ -38,7 +38,8 @@ abstract class IrPropertyAccessorCallBase(
     valueArgumentsCount: Int,
     origin: IrStatementOrigin? = null,
     override val superQualifierSymbol: IrClassSymbol? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, valueArgumentsCount, origin),
+) :
+    IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, valueArgumentsCount, origin),
     IrCall {
 
     override val superQualifier: ClassDescriptor? get() = superQualifierSymbol?.descriptor

@@ -28,7 +28,9 @@ class IrInstanceInitializerCallImpl(
     endOffset: Int,
     override val classSymbol: IrClassSymbol,
     type: IrType
-) : IrTerminalExpressionBase(startOffset, endOffset, type), IrInstanceInitializerCall {
+) :
+    IrTerminalExpressionBase(startOffset, endOffset, type),
+    IrInstanceInitializerCall {
 
     @Deprecated("Creates unbound symbol")
     constructor(

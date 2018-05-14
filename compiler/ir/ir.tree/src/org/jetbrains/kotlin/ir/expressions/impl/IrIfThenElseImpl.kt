@@ -27,7 +27,9 @@ class IrIfThenElseImpl(
     endOffset: Int,
     type: IrType,
     override val origin: IrStatementOrigin? = null
-) : IrWhenBase(startOffset, endOffset, type) {
+) :
+    IrWhenBase(startOffset, endOffset, type) {
+
     override val branches: MutableList<IrBranch> = SmartList()
 
     constructor(

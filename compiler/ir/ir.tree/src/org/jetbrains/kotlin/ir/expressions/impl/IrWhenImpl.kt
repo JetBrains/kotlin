@@ -28,7 +28,8 @@ abstract class IrWhenBase(
     endOffset: Int,
     type: IrType,
     override val origin: IrStatementOrigin? = null
-) : IrExpressionBase(startOffset, endOffset, type),
+) :
+    IrExpressionBase(startOffset, endOffset, type),
     IrWhen {
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

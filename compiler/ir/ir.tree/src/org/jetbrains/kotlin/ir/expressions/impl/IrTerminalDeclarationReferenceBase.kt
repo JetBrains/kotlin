@@ -29,7 +29,8 @@ abstract class IrTerminalDeclarationReferenceBase<out S : IrSymbol, out D : Decl
     type: IrType,
     symbol: S,
     descriptor: D
-) : IrDeclarationReferenceBase<S, D>(startOffset, endOffset, type, symbol, descriptor),
+) :
+    IrDeclarationReferenceBase<S, D>(startOffset, endOffset, type, symbol, descriptor),
     IrDeclarationReference {
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {

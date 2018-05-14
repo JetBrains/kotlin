@@ -25,6 +25,8 @@ abstract class IrBreakContinueBase(
     endOffset: Int,
     type: IrType,
     override var loop: IrLoop
-) : IrTerminalExpressionBase(startOffset, endOffset, type), IrBreakContinue {
+) : IrTerminalExpressionBase(startOffset, endOffset, type),
+    IrBreakContinue {
+
     override var label: String? = null
 }

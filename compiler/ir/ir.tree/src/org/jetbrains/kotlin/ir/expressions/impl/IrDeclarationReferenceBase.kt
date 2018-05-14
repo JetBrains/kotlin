@@ -27,5 +27,6 @@ abstract class IrDeclarationReferenceBase<out S : IrSymbol, out D : DeclarationD
     type: IrType,
     override val symbol: S,
     override val descriptor: D
-) : IrExpressionBase(startOffset, endOffset, type),
+) :
+    IrExpressionBase(startOffset, endOffset, type),
     IrDeclarationReference

@@ -36,7 +36,8 @@ class IrGetFieldImpl(
     type: IrType,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null
-) : IrFieldExpressionBase(startOffset, endOffset, symbol, type, origin, superQualifierSymbol),
+) :
+    IrFieldExpressionBase(startOffset, endOffset, symbol, type, origin, superQualifierSymbol),
     IrGetField {
 
     @Deprecated("Creates unbound symbol")

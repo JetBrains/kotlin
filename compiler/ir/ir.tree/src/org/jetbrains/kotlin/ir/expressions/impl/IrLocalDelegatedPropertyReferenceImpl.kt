@@ -33,7 +33,8 @@ class IrLocalDelegatedPropertyReferenceImpl(
     override val getter: IrFunctionSymbol,
     override val setter: IrFunctionSymbol?,
     origin: IrStatementOrigin? = null
-) : IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, 0, origin),
+) :
+    IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, 0, origin),
     IrLocalDelegatedPropertyReference {
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

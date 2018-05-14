@@ -53,8 +53,8 @@ class IrFieldImpl(
             this(
                 startOffset, endOffset, origin, symbol,
                 symbol.descriptor.name, type, symbol.descriptor.visibility,
-                !symbol.descriptor.isVar,
-                symbol.descriptor.isEffectivelyExternal()
+                isFinal = !symbol.descriptor.isVar,
+                isExternal = symbol.descriptor.isEffectivelyExternal()
             )
 
     constructor(
