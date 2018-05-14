@@ -86,17 +86,24 @@ fun IrMemberAccessExpression.removeValueArgument(valueParameterDescriptor: Value
     removeValueArgument(valueParameterDescriptor.index)
 }
 
-inline fun <T : IrMemberAccessExpression> T.mapValueParameters(transform: (ValueParameterDescriptor) -> IrExpression?): T {
-    descriptor.valueParameters.forEach {
-        putValueArgument(it.index, transform(it))
+inline fun <T : IrMemberAccessExpression> T.mapTypeParameters(transform: (TypeParameterDescriptor) -> IrType) : T =
+    apply {
+        descriptor.typeParameters.forEach {
+            putTypeArgument(it.index, transform(it))
+        }
     }
-    return this
-}
 
-inline fun <T : IrMemberAccessExpression> T.mapValueParametersIndexed(transform: (Int, ValueParameterDescriptor) -> IrExpression?): T {
-    descriptor.valueParameters.forEach {
-        putValueArgument(it.index, transform(it.index, it))
+inline fun <T : IrMemberAccessExpression> T.mapValueParameters(transform: (ValueParameterDescriptor) -> IrExpression?): T =
+    apply {
+        descriptor.valueParameters.forEach {
+            putValueArgument(it.index, transform(it))
+        }
     }
-    return this
-}
+
+inline fun <T : IrMemberAccessExpression> T.mapValueParametersIndexed(transform: (Int, ValueParameterDescriptor) -> IrExpression?): T =
+    apply {
+        descriptor.valueParameters.forEach {
+            putValueArgument(it.index, transform(it.index, it))
+        }
+    }
 

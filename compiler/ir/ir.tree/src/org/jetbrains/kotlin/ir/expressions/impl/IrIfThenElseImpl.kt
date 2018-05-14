@@ -31,19 +31,4 @@ class IrIfThenElseImpl(
     IrWhenBase(startOffset, endOffset, type) {
 
     override val branches: MutableList<IrBranch> = SmartList()
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        condition: IrExpression,
-        thenBranch: IrExpression,
-        elseBranch: IrExpression? = null,
-        origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, type, origin) {
-        branches.add(IrBranchImpl(startOffset, endOffset, condition, thenBranch))
-        if (elseBranch != null) {
-            branches.add(IrBranchImpl.elseBranch(elseBranch))
-        }
-    }
 }
