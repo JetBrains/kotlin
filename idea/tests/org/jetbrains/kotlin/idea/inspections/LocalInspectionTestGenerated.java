@@ -604,6 +604,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/listOfNotNull.kt");
             }
 
+            @TestMetadata("listOfNotNullWIthComment.kt")
+            public void testListOfNotNullWIthComment() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/listOfNotNullWIthComment.kt");
+            }
+
             @TestMetadata("mapNotNull.kt")
             public void testMapNotNull() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapNotNull.kt");
