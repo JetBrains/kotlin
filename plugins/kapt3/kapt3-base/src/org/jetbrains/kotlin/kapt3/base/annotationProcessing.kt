@@ -1,32 +1,19 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt3
+package org.jetbrains.kotlin.kapt3.base
 
 import com.sun.tools.javac.comp.CompileStates.*
 import com.sun.tools.javac.main.JavaCompiler
-import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.processing.AnnotationProcessingError
 import com.sun.tools.javac.processing.JavacFiler
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
-import org.jetbrains.kotlin.kapt3.util.isJava9OrLater
-import org.jetbrains.kotlin.kapt3.util.putJavacOption
-import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
+import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
+import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
+import org.jetbrains.kotlin.kapt3.base.util.measureTimeMillisWithResult
 import java.io.File
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
@@ -34,7 +21,7 @@ import javax.lang.model.element.TypeElement
 import javax.tools.JavaFileObject
 import com.sun.tools.javac.util.List as JavacList
 
-fun KaptContext<*>.doAnnotationProcessing(
+fun KaptContext.doAnnotationProcessing(
         javaSourceFiles: List<File>,
         processors: List<Processor>,
         additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
@@ -44,7 +31,7 @@ fun KaptContext<*>.doAnnotationProcessing(
 
     val compilerAfterAP: JavaCompiler
     try {
-        if (isJava9OrLater) {
+        if (isJava9OrLater()) {
             val initProcessAnnotationsMethod = JavaCompiler::class.java.declaredMethods.single { it.name == "initProcessAnnotations" }
             initProcessAnnotationsMethod.invoke(compiler, wrappedProcessors, emptyList<JavaFileObject>(), emptyList<String>())
         }
@@ -59,7 +46,7 @@ fun KaptContext<*>.doAnnotationProcessing(
             val analyzedFiles = compiler.stopIfErrorOccurred(
                     CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources))
 
-            if (isJava9OrLater) {
+            if (isJava9OrLater()) {
                 val processAnnotationsMethod = compiler.javaClass.getMethod("processAnnotations", JavacList::class.java)
                 processAnnotationsMethod.invoke(compiler, analyzedFiles)
                 compiler
@@ -68,7 +55,7 @@ fun KaptContext<*>.doAnnotationProcessing(
                 compiler.processAnnotations(analyzedFiles)
             }
         } catch (e: AnnotationProcessingError) {
-            throw KaptError(KaptError.Kind.EXCEPTION, e.cause ?: e)
+            throw KaptBaseError(KaptBaseError.Kind.EXCEPTION, e.cause ?: e)
         }
 
         val log = compilerAfterAP.log
@@ -93,7 +80,7 @@ fun KaptContext<*>.doAnnotationProcessing(
         }
 
         if (log.nerrors > 0) {
-            throw KaptError(KaptError.Kind.ERROR_RAISED)
+            throw KaptBaseError(KaptBaseError.Kind.ERROR_RAISED)
         }
     } finally {
         processingEnvironment.close()
@@ -117,7 +104,7 @@ private class ProcessorWrapper(private val delegate: Processor) : Processor by d
     }
 }
 
-internal fun KaptContext<*>.parseJavaFiles(javaSourceFiles: List<File>): JavacList<JCTree.JCCompilationUnit> {
+fun KaptContext.parseJavaFiles(javaSourceFiles: List<File>): JavacList<JCTree.JCCompilationUnit> {
     val javaFileObjects = fileManager.getJavaFileObjectsFromFiles(javaSourceFiles)
 
     return compiler.stopIfErrorOccurred(CompileState.PARSE,
@@ -126,8 +113,8 @@ internal fun KaptContext<*>.parseJavaFiles(javaSourceFiles: List<File>): JavacLi
                                     compiler.parseFiles(javaFileObjects))))
 }
 
-private fun KaptContext<*>.initModulesIfNeeded(files: JavacList<JCTree.JCCompilationUnit>): JavacList<JCTree.JCCompilationUnit> {
-    if (isJava9OrLater) {
+private fun KaptContext.initModulesIfNeeded(files: JavacList<JCTree.JCCompilationUnit>): JavacList<JCTree.JCCompilationUnit> {
+    if (isJava9OrLater()) {
         val initModulesMethod = compiler.javaClass.getMethod("initModules", JavacList::class.java)
 
         @Suppress("UNCHECKED_CAST")

@@ -1,34 +1,77 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt3.stubs
+package org.jetbrains.kotlin.kapt3.base.stubs
 
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeScanner
-import org.jetbrains.kotlin.kapt3.stubs.KaptLineMappingCollector.FileInfo
-import org.jetbrains.kotlin.kapt3.util.getPackageNameJava9Aware
+import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.ObjectInputStream
 
 class KaptStubLineInformation {
     private val offsets = mutableMapOf<JCTree.JCCompilationUnit, FileInfo>()
     private val declarations = mutableMapOf<JCTree.JCCompilationUnit, List<JCTree>>()
 
+    companion object {
+        const val KAPT_METADATA_EXTENSION = ".kapt_metadata"
+        const val METADATA_VERSION = 1
+
+        fun parseFileInfo(file: JCTree.JCCompilationUnit): FileInfo {
+            val sourceUri = file.sourcefile
+                ?.toUri()
+                ?.takeIf { it.isAbsolute && !it.isOpaque && it.path != null && it.scheme?.toLowerCase() == "file" } ?: return FileInfo.EMPTY
+
+            val sourceFile = File(sourceUri).takeIf { it.exists() } ?: return FileInfo.EMPTY
+            val kaptMetadataFile = File(sourceFile.parentFile, sourceFile.nameWithoutExtension + KAPT_METADATA_EXTENSION)
+
+            if (!kaptMetadataFile.isFile) {
+                return FileInfo.EMPTY
+            }
+
+            return deserialize(kaptMetadataFile.readBytes())
+        }
+
+        private fun deserialize(data: ByteArray): FileInfo {
+            val lineInfo: LineInfoMap = mutableMapOf()
+            val signatureInfo = mutableMapOf<String, String>()
+
+            val ois = ObjectInputStream(ByteArrayInputStream(data))
+
+            val version = ois.readInt()
+            if (version != METADATA_VERSION) {
+                return FileInfo.EMPTY
+            }
+
+            val lineInfoCount = ois.readInt()
+            repeat(lineInfoCount) {
+                val fqName = ois.readUTF()
+                val path = ois.readUTF()
+                val isRelative = ois.readBoolean()
+                val pos = ois.readInt()
+
+                lineInfo[fqName] = KotlinPosition(path, isRelative, pos)
+            }
+
+            val signatureCount = ois.readInt()
+            repeat(signatureCount) {
+                val javacSignature = ois.readUTF()
+                val methodDesc = ois.readUTF()
+
+                signatureInfo[javacSignature] = methodDesc
+            }
+
+            return FileInfo(lineInfo, signatureInfo)
+        }
+    }
+
     fun getPositionInKotlinFile(file: JCTree.JCCompilationUnit, element: JCTree): KotlinPosition? {
         val declaration = findDeclarationFor(element, file) ?: return null
 
-        val fileInfo = offsets.getOrPut(file) { KaptLineMappingCollector.parseFileInfo(file) }
+        val fileInfo = offsets.getOrPut(file) { parseFileInfo(file) }
         val elementDescriptor = getKaptDescriptor(declaration, file, fileInfo) ?: return null
 
         return fileInfo.getPositionFor(elementDescriptor)

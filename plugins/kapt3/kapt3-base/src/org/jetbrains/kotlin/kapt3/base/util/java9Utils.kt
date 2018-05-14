@@ -14,32 +14,29 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.kapt3.util
+package org.jetbrains.kotlin.kapt3.base.util
 
-import com.intellij.openapi.util.SystemInfo
 import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Options
 import com.sun.tools.javac.util.List as JavacList
-import org.jetbrains.kotlin.kapt3.plus
+import org.jetbrains.kotlin.kapt3.base.plus
 
-internal val isJava9OrLater: Boolean
-    get() = SystemInfo.isJavaVersionAtLeast("9")
+fun isJava9OrLater(): Boolean = !System.getProperty("java.version").startsWith("1.")
 
-internal fun Options.putJavacOption(jdk8Name: String, jdk9Name: String, value: String) {
-    val option = if (isJava9OrLater) {
+fun Options.putJavacOption(jdk8Name: String, jdk9Name: String, value: String) {
+    val option = if (isJava9OrLater()) {
         Option.valueOf(jdk9Name)
-    }
-    else {
+    } else {
         Option.valueOf(jdk8Name)
     }
 
     put(option, value)
 }
 
-internal fun TreeMaker.TopLevelJava9Aware(packageClause: JCTree.JCExpression?, declarations: JavacList<JCTree>): JCTree.JCCompilationUnit {
-    return if (isJava9OrLater) {
+fun TreeMaker.TopLevelJava9Aware(packageClause: JCTree.JCExpression?, declarations: JavacList<JCTree>): JCTree.JCCompilationUnit {
+    return if (isJava9OrLater()) {
         val topLevelMethod = TreeMaker::class.java.declaredMethods.single { it.name == "TopLevel" }
         val packageDecl: JCTree? = packageClause?.let {
             val packageDeclMethod = TreeMaker::class.java.methods.single { it.name == "PackageDecl" }
@@ -47,17 +44,15 @@ internal fun TreeMaker.TopLevelJava9Aware(packageClause: JCTree.JCExpression?, d
         }
         val allDeclarations = if (packageDecl != null) JavacList.of(packageDecl) + declarations else declarations
         topLevelMethod.invoke(this, allDeclarations) as JCTree.JCCompilationUnit
-    }
-    else {
+    } else {
         TopLevel(JavacList.nil(), packageClause, declarations)
     }
 }
 
-internal fun JCTree.JCCompilationUnit.getPackageNameJava9Aware(): JCTree? {
-    return if (isJava9OrLater) {
+fun JCTree.JCCompilationUnit.getPackageNameJava9Aware(): JCTree? {
+    return if (isJava9OrLater()) {
         JCTree.JCCompilationUnit::class.java.getDeclaredMethod("getPackageName").invoke(this) as JCTree?
-    }
-    else {
+    } else {
         this.packageName
     }
 }

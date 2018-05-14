@@ -1,32 +1,17 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt3.javac
+package org.jetbrains.kotlin.kapt3.base.javac
 
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.*
 import com.sun.tools.javac.util.JCDiagnostic.DiagnosticType
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.kapt3.KaptContext
-import org.jetbrains.kotlin.kapt3.stubs.KaptStubLineInformation
-import org.jetbrains.kotlin.kapt3.stubs.KotlinPosition
-import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedWriter
-import org.jetbrains.kotlin.kapt3.util.isJava9OrLater
+import org.jetbrains.kotlin.kapt3.base.KaptContext
+import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
+import org.jetbrains.kotlin.kapt3.base.stubs.KotlinPosition
+import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import java.io.*
 import javax.tools.Diagnostic
 import javax.tools.JavaFileObject
@@ -35,14 +20,14 @@ import javax.tools.SimpleJavaFileObject
 import com.sun.tools.javac.util.List as JavacList
 
 class KaptJavaLog(
-        private val projectBasePath: String?,
-        context: Context,
-        errWriter: PrintWriter,
-        warnWriter: PrintWriter,
-        noticeWriter: PrintWriter,
-        val interceptorData: DiagnosticInterceptorData,
-        val mapDiagnosticLocations: Boolean
-    ) : Log(context, errWriter, warnWriter, noticeWriter) {
+    private val projectBaseDir: File?,
+    context: Context,
+    errWriter: PrintWriter,
+    warnWriter: PrintWriter,
+    noticeWriter: PrintWriter,
+    val interceptorData: DiagnosticInterceptorData,
+    private val mapDiagnosticLocations: Boolean
+) : Log(context, errWriter, warnWriter, noticeWriter) {
     private val stubLineInfo = KaptStubLineInformation()
     private val javacMessages = JavacMessages.instance(context)
 
@@ -183,7 +168,7 @@ class KaptJavaLog(
 
     private fun getKotlinSourceFile(pos: KotlinPosition): File? {
         return if (pos.isRelativePath) {
-            val basePath = this.projectBasePath
+            val basePath = this.projectBaseDir
             if (basePath != null) File(basePath, pos.path) else null
         }
         else {
@@ -232,21 +217,6 @@ class KaptJavaLog(
             "compiler.err.not.def.access.package.cant.access",
             "compiler.err.package.not.visible"
         )
-
-        internal fun preRegister(kaptContext: KaptContext<*>, messageCollector: MessageCollector, mapDiagnosticLocations: Boolean) {
-            val interceptorData = DiagnosticInterceptorData()
-            kaptContext.context.put(Log.logKey, Context.Factory<Log> { newContext ->
-                fun makeWriter(severity: CompilerMessageSeverity) = PrintWriter(MessageCollectorBackedWriter(messageCollector, severity))
-
-                val errWriter = makeWriter(ERROR)
-                val warnWriter = makeWriter(STRONG_WARNING)
-                val noticeWriter = makeWriter(WARNING)
-
-                KaptJavaLog(
-                    kaptContext.project.basePath, newContext, errWriter, warnWriter, noticeWriter,
-                    interceptorData, mapDiagnosticLocations)
-            })
-        }
     }
 
     class DiagnosticInterceptorData {
@@ -254,7 +224,7 @@ class KaptJavaLog(
     }
 }
 
-fun KaptContext<*>.kaptError(text: String): JCDiagnostic {
+fun KaptContext.kaptError(text: String): JCDiagnostic {
     return JCDiagnostic.Factory.instance(context).errorJava9Aware(null, null, "proc.messager", text)
 }
 
@@ -264,7 +234,7 @@ private fun JCDiagnostic.Factory.errorJava9Aware(
         key: String,
         vararg args: String
 ): JCDiagnostic {
-    return if (isJava9OrLater) {
+    return if (isJava9OrLater()) {
         val errorMethod = this::class.java.getDeclaredMethod(
                 "error",
                 JCDiagnostic.DiagnosticFlag::class.java,

@@ -1,32 +1,15 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt3.test
-
-import com.intellij.openapi.command.impl.DummyProject
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.kapt3.AptMode
-import org.jetbrains.kotlin.kapt3.KaptContext
-import org.jetbrains.kotlin.kapt3.KaptPaths
-import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
-import org.jetbrains.kotlin.kapt3.doAnnotationProcessing
-import org.jetbrains.kotlin.kapt3.util.KaptLogger
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.junit.Assert.*
+import org.jetbrains.kotlin.kapt3.base.KaptContext
+import org.jetbrains.kotlin.kapt3.base.KaptPaths
+import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
+import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
@@ -35,26 +18,9 @@ import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.TypeElement
 
-/*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 class JavaKaptContextTest {
     companion object {
-        private val TEST_DATA_DIR = File("plugins/kapt3/kapt3-compiler/testData/runner")
-        val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+        private val TEST_DATA_DIR = File("plugins/kapt3/kapt3-base/testData/runner")
 
         fun simpleProcessor() = object : AbstractProcessor() {
             override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
@@ -84,6 +50,7 @@ class JavaKaptContextTest {
     private fun doAnnotationProcessing(javaSourceFile: File, processor: Processor, outputDir: File) {
         KaptContext(
             KaptPaths(
+                projectBaseDir = javaSourceFile.parentFile,
                 compileClasspath = emptyList(),
                 annotationProcessingClasspath = emptyList(),
                 javaSourceRoots = emptyList(),
@@ -93,13 +60,7 @@ class JavaKaptContextTest {
                 incrementalDataOutputDir = outputDir
             ),
             withJdk = true,
-            aptMode = AptMode.STUBS_AND_APT,
-            logger = KaptLogger(isVerbose = true, messageCollector = messageCollector),
-            project = DummyProject.getInstance(),
-            bindingContext = BindingContext.EMPTY,
-            compiledClasses = emptyList(),
-            origins = emptyMap(),
-            generationState = null,
+            logger = WriterBackedKaptLogger(isVerbose = true),
             mapDiagnosticLocations = true,
             processorOptions = emptyMap()
         ).doAnnotationProcessing(listOf(javaSourceFile), listOf(processor))
@@ -117,7 +78,7 @@ class JavaKaptContextTest {
         }
     }
 
-    @Test(expected = KaptError::class)
+    @Test(expected = KaptBaseError::class)
     fun testException() {
         val exceptionMessage = "Here we are!"
 
@@ -131,19 +92,19 @@ class JavaKaptContextTest {
 
         try {
             doAnnotationProcessing(File(TEST_DATA_DIR, "Simple.java"), processor, TEST_DATA_DIR)
-        } catch (e: KaptError) {
-            assertEquals(KaptError.Kind.EXCEPTION, e.kind)
+        } catch (e: KaptBaseError) {
+            assertEquals(KaptBaseError.Kind.EXCEPTION, e.kind)
             assertEquals("Here we are!", e.cause!!.message)
             throw e
         }
     }
 
-    @Test(expected = KaptError::class)
+    @Test(expected = KaptBaseError::class)
     fun testParsingError() {
         try {
             doAnnotationProcessing(File(TEST_DATA_DIR, "ParseError.java"), simpleProcessor(), TEST_DATA_DIR)
-        } catch (e: KaptError) {
-            assertEquals(KaptError.Kind.ERROR_RAISED, e.kind)
+        } catch (e: KaptBaseError) {
+            assertEquals(KaptBaseError.Kind.ERROR_RAISED, e.kind)
             throw e
         }
     }

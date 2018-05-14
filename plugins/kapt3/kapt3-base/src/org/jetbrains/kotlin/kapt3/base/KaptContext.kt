@@ -1,54 +1,30 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt3
+package org.jetbrains.kotlin.kapt3.base
 
-import com.intellij.openapi.project.Project
 import com.sun.tools.javac.jvm.ClassReader
 import com.sun.tools.javac.main.JavaCompiler
-import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.util.Context
+import com.sun.tools.javac.util.Log
 import com.sun.tools.javac.util.Options
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.kapt3.javac.KaptJavaCompiler
-import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileManager
-import org.jetbrains.kotlin.kapt3.javac.KaptJavaLog
-import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
-import org.jetbrains.kotlin.kapt3.util.KaptLogger
-import org.jetbrains.kotlin.kapt3.util.isJava9OrLater
-import org.jetbrains.kotlin.kapt3.util.putJavacOption
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.utils.keysToMap
-import org.jetbrains.org.objectweb.asm.tree.ClassNode
+import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaCompiler
+import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaFileManager
+import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLog
+import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
+import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
+import org.jetbrains.kotlin.kapt3.base.util.putJavacOption
 import java.io.File
 import javax.tools.JavaFileManager
 
-class KaptContext<out GState : GenerationState?>(
+open class KaptContext(
     val paths: KaptPaths,
-    private val withJdk: Boolean,
-    aptMode: AptMode,
+    val withJdk: Boolean,
     val logger: KaptLogger,
-    val project: Project,
-    val bindingContext: BindingContext,
-    val compiledClasses: List<ClassNode>,
-    val origins: Map<Any, JvmDeclarationOrigin>,
-    val generationState: GState,
-    mapDiagnosticLocations: Boolean,
+    private val mapDiagnosticLocations: Boolean,
     processorOptions: Map<String, String>,
     javacOptions: Map<String, String> = emptyMap()
 ) : AutoCloseable {
@@ -57,14 +33,26 @@ class KaptContext<out GState : GenerationState?>(
     val fileManager: KaptJavaFileManager
     val options: Options
     val javaLog: KaptJavaLog
-    private val treeMaker: TreeMaker
+
+    protected open fun preregisterTreeMaker(context: Context) {}
+
+    private fun preregisterLog(context: Context) {
+        val interceptorData = KaptJavaLog.DiagnosticInterceptorData()
+        context.put(Log.logKey, Context.Factory<Log> { newContext ->
+            KaptJavaLog(
+                paths.projectBaseDir, newContext, logger.errorWriter, logger.warnWriter, logger.infoWriter,
+                interceptorData, mapDiagnosticLocations
+            )
+        })
+    }
 
     init {
-        KaptJavaLog.preRegister(this, logger.messageCollector, mapDiagnosticLocations)
+        preregisterLog(context)
         KaptJavaFileManager.preRegister(context)
-        if (aptMode != AptMode.APT_ONLY) {
-            KaptTreeMaker.preRegister(context, this)
-        }
+
+        @Suppress("LeakingThis")
+        preregisterTreeMaker(context)
+
         KaptJavaCompiler.preRegister(context)
 
         options = Options.instance(context).apply {
@@ -87,7 +75,7 @@ class KaptContext<out GState : GenerationState?>(
                 putJavacOption("BOOTCLASSPATH", "BOOT_CLASS_PATH", "") // No boot classpath
             }
 
-            if (isJava9OrLater) {
+            if (isJava9OrLater()) {
                 put("accessInternalAPI", "true")
             }
 
@@ -102,12 +90,12 @@ class KaptContext<out GState : GenerationState?>(
         }
 
         if (logger.isVerbose) {
-            logger.info("Javac options: " + options.keySet().keysToMap { key -> options[key] ?: "" })
+            logger.info("All Javac options: " + options.keySet().associateBy({ it }) { key -> options[key] ?: "" })
         }
 
         fileManager = context.get(JavaFileManager::class.java) as KaptJavaFileManager
 
-        if (isJava9OrLater) {
+        if (isJava9OrLater()) {
             for (option in Option.getJavacFileManagerOptions()) {
                 val value = options.get(option) ?: continue
                 fileManager.handleOptionJavac9(option, value)
@@ -120,13 +108,10 @@ class KaptContext<out GState : GenerationState?>(
         ClassReader.instance(context).saveParameterNames = true
 
         javaLog = compiler.log as KaptJavaLog
-        treeMaker = TreeMaker.instance(context)
     }
 
     override fun close() {
-        (treeMaker as? KaptTreeMaker)?.dispose()
         compiler.close()
         fileManager.close()
-        generationState?.destroy()
     }
 }

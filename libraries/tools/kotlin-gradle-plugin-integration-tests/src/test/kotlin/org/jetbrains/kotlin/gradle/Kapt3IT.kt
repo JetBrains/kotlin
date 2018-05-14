@@ -121,24 +121,6 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @Test
-    fun testArguments() {
-        Project("arguments", directoryPrefix = "kapt2").build("build") {
-            assertSuccessful()
-            assertKaptSuccessful()
-            assertContains(
-                "Options: {suffix=Customized, justColon=:, justEquals==, containsColon=a:b, " +
-                        "containsEquals=a=b, startsWithColon=:a, startsWithEquals==a, endsWithColon=a:, " +
-                        "endsWithEquals=a:, withSpace=a b c,"
-            )
-            assertContains("-Xmaxerrs=500, -Xlint:all=-Xlint:all") // Javac options test
-            assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
-            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
-            assertFileExists(javaClassesDir() + "example/TestClassCustomized.class")
-            assertContains("Annotation processor class names are set, skip AP discovery")
-        }
-    }
-
-    @Test
     fun testInheritedAnnotations() {
         Project("inheritedAnnotations", directoryPrefix = "kapt2").build("build") {
             assertSuccessful()
@@ -147,6 +129,24 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertFileExists("build/generated/source/kapt/main/example/AncestorClassGenerated.java")
             assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
             assertFileExists(javaClassesDir() + "example/AncestorClassGenerated.class")
+        }
+    }
+
+    @Test
+    fun testArguments() {
+        Project("arguments", directoryPrefix = "kapt2").build("build") {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertContains(
+                "AP options: {suffix=Customized, justColon=:, justEquals==, containsColon=a:b, " +
+                        "containsEquals=a=b, startsWithColon=:a, startsWithEquals==a, endsWithColon=a:, " +
+                        "endsWithEquals=a:, withSpace=a b c,"
+            )
+            assertContains("-Xmaxerrs=500, -Xlint:all=-Xlint:all") // Javac options test
+            assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            assertFileExists(javaClassesDir() + "example/TestClassCustomized.class")
+            assertContains("Annotation processor class names are set, skip AP discovery")
         }
     }
 
