@@ -44,16 +44,19 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     fun generatePropertyForPrimaryConstructorParameter(ktParameter: KtParameter, irValueParameter: IrValueParameter): IrDeclaration {
         val propertyDescriptor = getOrFail(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, ktParameter)
 
+        val irPropertyType = propertyDescriptor.type.toIrType()
         return IrPropertyImpl(
             ktParameter.startOffset, ktParameter.endOffset,
             IrDeclarationOrigin.DEFINED, false,
-            propertyDescriptor
+            propertyDescriptor,
+            irPropertyType
         ).also { irProperty ->
             irProperty.backingField =
                     generatePropertyBackingField(ktParameter, propertyDescriptor) {
                         IrExpressionBodyImpl(
                             IrGetValueImpl(
                                 ktParameter.startOffset, ktParameter.endOffset,
+                                irPropertyType,
                                 irValueParameter.symbol,
                                 IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
                             )
@@ -99,8 +102,10 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     private fun generateSimpleProperty(ktProperty: KtProperty, propertyDescriptor: PropertyDescriptor): IrProperty =
         IrPropertyImpl(
             ktProperty.startOffset, ktProperty.endOffset,
-            IrDeclarationOrigin.DEFINED, false,
-            propertyDescriptor
+            IrDeclarationOrigin.DEFINED,
+            false,
+            propertyDescriptor,
+            propertyDescriptor.type.toIrType()
         ).buildWithScope { irProperty ->
             irProperty.backingField =
                     if (propertyDescriptor.hasBackingField())

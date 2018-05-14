@@ -92,7 +92,9 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             irBlock(ktExpression.startOffset, ktExpression.endOffset, origin, irLValue.type) {
                 val temporary = irTemporary(irLValue.load())
                 val opCall = statementGenerator.pregenerateCall(opResolvedCall)
-                opCall.setExplicitReceiverValue(VariableLValue(startOffset, endOffset, temporary.symbol))
+                opCall.setExplicitReceiverValue(
+                    VariableLValue(context, startOffset, endOffset, temporary.symbol, temporary.type)
+                )
                 val irOpCall = CallGenerator(statementGenerator).generateCall(ktExpression, opCall, origin)
                 +irLValue.store(irOpCall)
                 +irGet(temporary.type, temporary.symbol)
@@ -118,30 +120,36 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 @Suppress("DEPRECATION")
                 if (descriptor.isDelegated)
                     DelegatedLocalPropertyLValue(
+                        context,
                         ktLeft.startOffset, ktLeft.endOffset,
-                        descriptor.type,
+                        descriptor.type.toIrType(),
                         descriptor.getter?.let { context.symbolTable.referenceDeclaredFunction(it) },
                         descriptor.setter?.let { context.symbolTable.referenceDeclaredFunction(it) },
                         origin
                     )
                 else
-                    VariableLValue(
-                        ktLeft.startOffset, ktLeft.endOffset,
-                        context.symbolTable.referenceVariable(descriptor),
-                        origin
-                    )
+                    createVariableValue(ktLeft, descriptor, origin)
             is PropertyDescriptor ->
                 generateAssignmentReceiverForProperty(descriptor, origin, ktLeft, resolvedCall)
             is ValueDescriptor ->
-                VariableLValue(
-                    ktLeft.startOffset, ktLeft.endOffset,
-                    context.symbolTable.referenceValue(descriptor),
-                    origin
-                )
+                createVariableValue(ktLeft, descriptor, origin)
             else ->
                 OnceExpressionValue(ktLeft.genExpr())
         }
     }
+
+    private fun createVariableValue(
+        ktExpression: KtExpression,
+        descriptor: ValueDescriptor,
+        origin: IrStatementOrigin
+    ) =
+        VariableLValue(
+            context,
+            ktExpression.startOffset, ktExpression.endOffset,
+            context.symbolTable.referenceValue(descriptor),
+            descriptor.type.toIrType(),
+            origin
+        )
 
     private fun createBackingFieldLValue(
         ktExpression: KtExpression,
@@ -150,8 +158,9 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         origin: IrStatementOrigin?
     ): BackingFieldLValue =
         BackingFieldLValue(
+            context,
             ktExpression.startOffset, ktExpression.endOffset,
-            descriptor.type,
+            descriptor.type.toIrType(),
             context.symbolTable.referenceField(descriptor),
             receiverValue, origin
         )
@@ -189,7 +198,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         ktExpression: KtExpression,
         descriptor: PropertyDescriptor,
         propertyReceiver: CallReceiver,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+        typeArgumentsMap: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin?,
         superQualifier: ClassDescriptor?
     ): PropertyLValueBase {
@@ -201,24 +210,32 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val setterDescriptor = descriptor.setter
         val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
 
+        val propertyIrType = descriptor.type.toIrType()
         return if (getterSymbol != null || setterSymbol != null) {
+            val typeArgumentsList =
+                typeArgumentsMap?.let { typeArguments ->
+                    descriptor.typeParameters.map { typeArguments[it]!!.toIrType() }
+                }
             AccessorPropertyLValue(
+                context,
                 scope,
                 ktExpression.startOffset, ktExpression.endOffset, origin,
-                descriptor.type,
+                propertyIrType,
                 getterSymbol,
                 getterDescriptor,
                 setterSymbol,
                 setterDescriptor,
-                typeArguments,
+                typeArgumentsList,
                 propertyReceiver,
                 superQualifierSymbol
             )
         } else
             FieldPropertyLValue(
+                context,
                 scope,
                 ktExpression.startOffset, ktExpression.endOffset, origin,
                 context.symbolTable.referenceField(descriptor),
+                propertyIrType,
                 propertyReceiver,
                 superQualifierSymbol
             )

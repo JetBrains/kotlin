@@ -38,3 +38,15 @@ fun IrType.makeNotNull() =
         )
     else
         this
+
+fun IrType.makeNullable() =
+    if (this is IrSimpleType && !this.hasQuestionMark)
+        IrSimpleTypeImpl(
+            classifier,
+            true,
+            arguments,
+            annotations,
+            Variance.INVARIANT
+        )
+    else
+        this
