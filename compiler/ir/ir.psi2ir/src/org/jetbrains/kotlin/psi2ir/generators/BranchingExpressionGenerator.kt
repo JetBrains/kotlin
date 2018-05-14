@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.buildStatement
+import org.jetbrains.kotlin.ir.builders.irIfThenMaybeElse
 import org.jetbrains.kotlin.ir.builders.whenComma
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -27,13 +29,13 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.intermediate.defaultLoad
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.psi2ir.intermediate.defaultLoad
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
 
 class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
+
     fun generateIfExpression(expression: KtIfExpression): IrExpression {
         val resultType = getInferredTypeWithImplicitCastsOrFail(expression).toIrType()
 
@@ -68,10 +70,10 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         resultType: IrType
     ): IrWhen {
         if (irBranches.size == 1) {
-            return IrIfThenElseImpl(
-                ktIf.startOffset, ktIf.endOffset, resultType,
-                irBranches[0].condition, irBranches[0].result, irElseResult
-            )
+            val irBranch0 = irBranches[0]
+            return buildStatement(ktIf.startOffset, ktIf.endOffset) {
+                irIfThenMaybeElse(resultType, irBranch0.condition, irBranch0.result, irElseResult)
+            }
         }
 
         val irWhen = IrWhenImpl(ktIf.startOffset, ktIf.endOffset, resultType, IrStatementOrigin.WHEN)

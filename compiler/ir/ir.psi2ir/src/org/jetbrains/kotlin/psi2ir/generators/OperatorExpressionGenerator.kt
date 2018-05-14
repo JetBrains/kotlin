@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -46,6 +47,14 @@ import java.lang.AssertionError
 
 class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
 
+    private fun createErrorExpression(ktExpression: KtExpression, text: String) =
+        IrErrorExpressionImpl(
+            ktExpression.startOffset,
+            ktExpression.endOffset,
+            context.irBuiltIns.nothingType,
+            text
+        )
+
     fun generatePrefixExpression(expression: KtPrefixExpression): IrExpression {
         val ktOperator = expression.operationReference.getReferencedNameElementType()
         val irOperator = getPrefixOperator(ktOperator)
@@ -57,7 +66,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 irOperator
             )
             in OPERATORS_DESUGARED_TO_CALLS -> generatePrefixOperatorAsCall(expression, irOperator)
-            else -> createDummyExpression(expression, ktOperator.toString())
+            else -> createErrorExpression(expression, ktOperator.toString())
         }
     }
 
@@ -72,7 +81,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 irOperator
             )
             IrStatementOrigin.EXCLEXCL -> generateExclExclOperator(expression, irOperator)
-            else -> createDummyExpression(expression, ktOperator.toString())
+            else -> createErrorExpression(expression, ktOperator.toString())
         }
     }
 
@@ -91,7 +100,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         }
 
         return IrTypeOperatorCallImpl(
-            expression.startOffset, expression.endOffset, resultType, irOperator, rhsType,
+            expression.startOffset, expression.endOffset, resultType.toIrType(), irOperator, rhsType.toIrType(),
             context.symbolTable.referenceClassifier(rhsType.constructor.declarationDescriptor!!),
             expression.left.genExpr()
         )
@@ -103,8 +112,9 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val againstType = getOrFail(BindingContext.TYPE, expression.typeReference)
 
         return IrTypeOperatorCallImpl(
-            expression.startOffset, expression.endOffset, context.builtIns.booleanType, irOperator,
-            againstType, context.symbolTable.referenceClassifier(againstType.constructor.declarationDescriptor!!),
+            expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType, irOperator,
+            againstType.toIrType(),
+            context.symbolTable.referenceClassifier(againstType.constructor.declarationDescriptor!!),
             expression.leftHandSide.genExpr()
         )
     }
@@ -128,19 +138,24 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             in IDENTITY_OPERATORS -> generateIdentityOperator(expression, irOperator)
             in IN_OPERATORS -> generateInOperator(expression, irOperator)
             in BINARY_BOOLEAN_OPERATORS -> generateBinaryBooleanOperator(expression, irOperator)
-            else -> createDummyExpression(expression, ktOperator.toString())
+            else -> createErrorExpression(expression, ktOperator.toString())
         }
     }
 
     private fun generateElvis(expression: KtBinaryExpression): IrExpression {
         val specialCallForElvis = getResolvedCall(expression)!!
-        val resultType = specialCallForElvis.resultingDescriptor.returnType!!
+        val resultType = specialCallForElvis.resultingDescriptor.returnType!!.toIrType()
         val irArgument0 = expression.left!!.genExpr()
         val irArgument1 = expression.right!!.genExpr()
 
-        return irBlock(expression, IrStatementOrigin.ELVIS, resultType) {
+        return irBlock(expression.startOffset, expression.endOffset, IrStatementOrigin.ELVIS, resultType) {
             val temporary = irTemporary(irArgument0, "elvis_lhs")
-            +irIfNull(resultType, irGet(temporary.symbol), irArgument1, irGet(temporary.symbol))
+            +irIfNull(
+                resultType,
+                irGet(temporary.type, temporary.symbol),
+                irArgument1,
+                irGet(temporary.type, temporary.symbol)
+            )
         }
     }
 
@@ -167,7 +182,9 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 irContainsCall
             IrStatementOrigin.NOT_IN ->
                 IrUnaryPrimitiveImpl(
-                    expression.startOffset, expression.endOffset, IrStatementOrigin.NOT_IN,
+                    expression.startOffset, expression.endOffset,
+                    context.irBuiltIns.booleanType,
+                    IrStatementOrigin.NOT_IN,
                     context.irBuiltIns.booleanNotSymbol,
                     irContainsCall
                 )
@@ -182,7 +199,9 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val irArgument1 = expression.right!!.genExpr()
 
         val irIdentityEquals = IrBinaryPrimitiveImpl(
-            expression.startOffset, expression.endOffset, irOperator,
+            expression.startOffset, expression.endOffset,
+            context.irBuiltIns.booleanType,
+            irOperator,
             context.irBuiltIns.eqeqeqSymbol,
             irArgument0, irArgument1
         )
@@ -192,7 +211,9 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 irIdentityEquals
             IrStatementOrigin.EXCLEQEQ ->
                 IrUnaryPrimitiveImpl(
-                    expression.startOffset, expression.endOffset, IrStatementOrigin.EXCLEQEQ,
+                    expression.startOffset, expression.endOffset,
+                    context.irBuiltIns.booleanType,
+                    IrStatementOrigin.EXCLEQEQ,
                     context.irBuiltIns.booleanNotSymbol,
                     irIdentityEquals
                 )
@@ -218,6 +239,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         val irEquals = IrBinaryPrimitiveImpl(
             expression.startOffset, expression.endOffset,
+            context.irBuiltIns.booleanType,
             irOperator,
             eqeqSymbol,
             expression.left!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo?.leftType, comparisonType),
@@ -230,6 +252,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             IrStatementOrigin.EXCLEQ ->
                 IrUnaryPrimitiveImpl(
                     expression.startOffset, expression.endOffset,
+                    context.irBuiltIns.booleanType,
                     IrStatementOrigin.EXCLEQ,
                     context.irBuiltIns.booleanNotSymbol,
                     irEquals
@@ -253,14 +276,18 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 context.irBuiltIns.ieee754equalsFunByOperandType[comparisonType]?.symbol
                         ?: context.irBuiltIns.eqeqSymbol
             IrBinaryPrimitiveImpl(
-                startOffset, endOffset, irOperator,
+                startOffset, endOffset,
+                context.irBuiltIns.booleanType,
+                irOperator,
                 eqeqSymbol,
                 arg1.promoteToPrimitiveNumericType(comparisonInfo.leftType, comparisonType),
                 arg2.promoteToPrimitiveNumericType(comparisonInfo.rightType, comparisonType)
             )
         } else {
             IrBinaryPrimitiveImpl(
-                startOffset, endOffset, irOperator,
+                startOffset, endOffset,
+                context.irBuiltIns.booleanType,
+                irOperator,
                 context.irBuiltIns.eqeqSymbol,
                 arg1, arg2
             )
@@ -281,7 +308,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             operandType == targetType || operandNNType == targetType ->
                 this
 
-            type.containsNull() ->
+        // TODO operandType may have inaccurate nullability
+            operandType.containsNull() ->
                 safeCallOnDispatchReceiver(this@OperatorExpressionGenerator, startOffset, endOffset) { dispatchReceiver ->
                     invokeConversionFunction(
                         startOffset, endOffset,
@@ -308,10 +336,9 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         IrCallImpl(
             startOffset,
             endOffset,
-            functionDescriptor.returnType!!,
+            functionDescriptor.returnType!!.toIrType(),
             context.symbolTable.referenceFunction(functionDescriptor.original),
             functionDescriptor,
-            typeArguments = null,
             origin = null, // TODO origin for widening conversions?
             superQualifierSymbol = null
         ).apply {
@@ -331,17 +358,21 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         return if (comparisonInfo != null) {
             IrBinaryPrimitiveImpl(
-                startOffset, endOffset, origin,
+                startOffset, endOffset,
+                context.irBuiltIns.booleanType,
+                origin,
                 getComparisonOperatorSymbol(origin, comparisonInfo.comparisonType),
                 expression.left!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo.leftType, comparisonInfo.comparisonType),
                 expression.right!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo.rightType, comparisonInfo.comparisonType)
             )
         } else {
             IrBinaryPrimitiveImpl(
-                startOffset, endOffset, origin,
+                startOffset, endOffset,
+                context.irBuiltIns.booleanType,
+                origin,
                 getComparisonOperatorSymbol(origin, context.irBuiltIns.int),
                 generateCall(getResolvedCall(expression)!!, expression, origin),
-                IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, 0)
+                IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, 0)
             )
         }
     }
@@ -367,11 +398,16 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val irArgument = ktArgument.genExpr()
         val ktOperator = expression.operationReference
 
-        val resultType = irArgument.type.makeNotNullable()
+        val resultType = irArgument.type.makeNotNull()
 
-        return irBlock(ktOperator, origin, resultType) {
+        return irBlock(ktOperator.startOffset, ktOperator.endOffset, origin, resultType) {
             val temporary = irTemporary(irArgument, "notnull")
-            +irIfNull(resultType, irGet(temporary.symbol), irThrowNpe(origin), irGet(temporary.symbol))
+            +irIfNull(
+                resultType,
+                irGet(temporary.type, temporary.symbol),
+                irThrowNpe(origin),
+                irGet(temporary.type, temporary.symbol)
+            )
         }
     }
 
