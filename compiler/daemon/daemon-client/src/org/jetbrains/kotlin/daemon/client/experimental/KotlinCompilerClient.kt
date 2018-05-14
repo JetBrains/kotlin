@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.daemon.client.experimental
 
 import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -21,6 +22,7 @@ import java.io.File
 import java.io.PrintStream
 import java.io.Serializable
 import java.net.SocketException
+import java.nio.channels.ClosedChannelException
 import java.rmi.ConnectException
 import java.rmi.ConnectIOException
 import java.rmi.UnmarshalException
@@ -104,22 +106,27 @@ object KotlinCompilerClient {
                 // the newJVMOptions could be checked here for additional parameters, if needed
                 log.info("trying registerClient")
                 println("trying registerClient")
-                registerClient(clientAliveFlagFile.absolutePath)
+                try {
+                    registerClient(clientAliveFlagFile.absolutePath)
+                } catch (e: Throwable) {
+                    return@async null
+                }
                 reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
                 if (!leaseSession)
                     CompileServiceSession(this@leaseImpl, CompileService.NO_SESSION)
                 else
-                    leaseCompileSession(sessionAliveFlagFile?.absolutePath)
+                    try {
+                        leaseCompileSession(sessionAliveFlagFile?.absolutePath)
+                    } catch (e: Throwable) {
+                        return@async null
+                    }
                         .takeUnless { it is CompileService.CallResult.Dying }
                         ?.let {
                             CompileServiceSession(this@leaseImpl, it.get())
                         }
             }
 
-            log.info("++cur: ${Thread.currentThread().name}")
-
             ensureServerHostnameIsSetUp()
-            log.info("cur: ${Thread.currentThread().name}")
             val (service, newJVMOptions) =
                     tryFindSuitableDaemonOrNewOpts(
                         File(daemonOptions.runFilesPath),
@@ -127,15 +134,12 @@ object KotlinCompilerClient {
                         daemonJVMOptions,
                         { cat, msg -> async { reportingTargets.report(cat, msg) } }).await()
             if (service != null) {
-                log.info("service != null => service.connectToServer()")
 //                service.connectToServer()
                 service.leaseImpl().await()
             } else {
-                log.info("service == null <==> no suitable daemons found")
                 if (!isLastAttempt && autostart) {
                     log.info("starting daemon...")
                     if (startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)) {
-                        log.info("daemon successfully started!!!")
                         reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
                     }
                 }
@@ -155,11 +159,11 @@ object KotlinCompilerClient {
         )?.shutdown()
     }
 
-    fun leaseCompileSession(compilerService: CompileServiceClientSide, aliveFlagPath: String?): Deferred<Int> =
-        async { compilerService.leaseCompileSession(aliveFlagPath).get() }
+    suspend fun leaseCompileSession(compilerService: CompileServiceClientSide, aliveFlagPath: String?): Int =
+        compilerService.leaseCompileSession(aliveFlagPath).get()
 
-    fun releaseCompileSession(compilerService: CompileServiceClientSide, sessionId: Int) =
-        async { compilerService.releaseCompileSession(sessionId) }
+    suspend fun releaseCompileSession(compilerService: CompileServiceClientSide, sessionId: Int) =
+        compilerService.releaseCompileSession(sessionId)
 
     suspend fun compile(
         compilerService: CompileServiceClientSide,
@@ -177,7 +181,6 @@ object KotlinCompilerClient {
             outputsCollector,
             findCallbackServerSocket()
         )
-        log.info("[BasicCompilerServicesWithResultsFacadeServerServerSide] services.runServer()")
         services.runServer()
         compilerService.compile(
             sessionId,
@@ -229,7 +232,7 @@ object KotlinCompilerClient {
 
     @JvmStatic
     fun main(vararg args: String) {
-        runBlocking {
+        runBlocking(Unconfined) {
             val compilerId = CompilerId()
             val daemonOptions = configureDaemonOptions()
             val daemonLaunchingOptions = configureDaemonJVMOptions(
@@ -386,6 +389,8 @@ object KotlinCompilerClient {
                     null to e
                 } catch (e: RuntimeException) {
                     null to e
+                } catch (e: ClosedChannelException) {
+                    null to e
                 }
 
                 if (res != null) return res
@@ -422,7 +427,7 @@ object KotlinCompilerClient {
         val timestampMarker = createTempFile("kotlin-daemon-client-tsmarker", directory = registryDir)
         val aliveWithMetadata = try {
             log.info("walkDaemonsAsync...")
-            walkDaemonsAsync(registryDir, compilerId, timestampMarker, report = report).await().also {
+            walkDaemonsAsync(registryDir, compilerId, timestampMarker, report = report).also {
                 log.info(
                     "daemons (${it.size}): ${it.map { "daemon(params : " + it.jvmOptions.jvmParams.joinToString(", ") + ")" }.joinToString(
                         ", ", "[", "]"

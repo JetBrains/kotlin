@@ -34,6 +34,7 @@ import java.io.PrintStream
 import java.lang.management.ManagementFactory
 import java.net.URL
 import java.net.URLClassLoader
+import java.nio.channels.ClosedChannelException
 import java.nio.charset.Charset
 import java.rmi.ConnectException
 import java.rmi.ConnectIOException
@@ -805,7 +806,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     private object ParallelStartParams {
-        const val threads = 10
+        const val threads = 32
         const val performCompilation = false
         const val connectionFailedErr = -100
     }
@@ -839,16 +840,19 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                 leaseSession = true
                             )
 //                        println("0      I'm working in thread ${Thread.currentThread().name}")
-                        daemonInfos[threadNo] = compileServiceSession?.compileService?.getDaemonInfo() to
-                                compileServiceSession?.sessionId
+                        daemonInfos[threadNo] = try {
+                            compileServiceSession?.compileService?.getDaemonInfo()
+                        } catch (e: ClosedChannelException) {
+                            null
+                        } to compileServiceSession?.sessionId
 
                         resultCodes[threadNo] = when {
                             compileServiceSession?.compileService == null -> {
-                                println("not-compile!")
+                                println("[$threadNo] not-compile!")
                                 ParallelStartParams.connectionFailedErr
                             }
                             ParallelStartParams.performCompilation -> {
-                                println("compile!")
+                                println("[$threadNo] compile!")
                                 val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
                                 KotlinCompilerClient.compile(
                                     compileServiceSession.compileService,
@@ -858,7 +862,10 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                     PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true)
                                 )
                             }
-                            else -> 0 // compilation skipped, assuming - successful
+                            else -> {
+                                println("[$threadNo] compilation skipped, assuming - successful!")
+                                0 // compilation skipped, assuming - successful
+                            }
                         }
                     }
                 }
@@ -964,7 +971,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     fun testDaemonCallbackConnectionProblems() {
-        return
+        TODO("test is ignored!")
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             runBlocking {
                 val daemonOptions = makeTestDaemonOptions(getTestName(true))

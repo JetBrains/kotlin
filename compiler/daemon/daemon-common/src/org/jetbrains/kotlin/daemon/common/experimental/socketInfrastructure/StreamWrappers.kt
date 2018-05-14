@@ -4,6 +4,7 @@ import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
 import kotlinx.coroutines.experimental.CompletableDeferred
+import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.actor
@@ -118,6 +119,9 @@ class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logg
         val obj = CompletableDeferred<Any?>()
         readActor.send(SerObjectQuery(obj))
         val result = obj.await()
+        if (result is Server.ServerDownMessage<*>) {
+            throw IOException("connection closed by server")
+        }
         result
     }
 

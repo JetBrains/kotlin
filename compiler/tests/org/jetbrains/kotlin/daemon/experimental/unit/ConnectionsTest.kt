@@ -114,7 +114,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
             report = { _, msg -> log.info(msg) },
             useRMI = true,
             useSockets = true
-        ).await().toList()
+        ).toList()
     }
 
     private fun getOldDaemonsOrRMIWrappers() = runBlocking {

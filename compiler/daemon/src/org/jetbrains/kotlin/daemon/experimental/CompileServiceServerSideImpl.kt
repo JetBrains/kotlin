@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteAnnotationsFileUpdaterAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteArtifactChangesProviderAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteChangesRegistryAsync
+import org.jetbrains.kotlin.daemon.nowSeconds
 import org.jetbrains.kotlin.daemon.report.experimental.CompileServicesFacadeMessageCollector
 import org.jetbrains.kotlin.daemon.report.experimental.DaemonMessageReporterAsync
 import org.jetbrains.kotlin.daemon.report.experimental.RemoteICReporterAsync
@@ -69,9 +70,6 @@ import kotlin.concurrent.read
 import kotlin.concurrent.schedule
 import kotlin.concurrent.write
 
-fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
-
-
 interface EventManager {
     suspend fun onCompilationFinished(f: suspend () -> Unit)
 }
@@ -89,28 +87,6 @@ private class EventManagerImpl : EventManager {
     }
 }
 
-typealias AnyMessage = Server.AnyMessage<CompileServiceServerSide>
-typealias Message = Server.Message<CompileServiceServerSide>
-typealias EndConnectionMessage = Server.EndConnectionMessage<CompileServiceServerSide>
-
-
-//class CoroutineTimer {
-//    private fun periodicTask(periodTime: Int, block: suspend () -> Unit): suspend () -> Unit = {
-//        while (true) {
-//            block()
-//            delay(periodTime)
-//        }
-//    }
-//
-//    suspend fun schedule(delayTime: Int, block: suspend () -> Unit) {
-//        delay(delayTime)
-//        block()
-//    }
-//
-//    suspend fun schedule(delayTime: Int, periodTime: Int, block: suspend () -> Unit) {
-//        schedule(delayTime, periodicTask(periodTime, block))
-//    }
-//}
 class CompileServiceServerSideImpl(
     override val serverSocketWithPort: ServerSocketWrapper,
     val compiler: CompilerSelector,
@@ -855,7 +831,6 @@ class CompileServiceServerSideImpl(
     private fun periodicSeldomCheck() {
         async {
             ifAliveUnit(minAliveness = Aliveness.Alive, info = "periodicSeldomCheck") {
-
                 // compiler changed (seldom check) - shutdown
                 if (classpathWatcher.isChanged) {
                     log.info("Compiler changed.")
@@ -868,7 +843,7 @@ class CompileServiceServerSideImpl(
 
     // TODO: handover should include mechanism for client to switch to a new daemon then previous "handed over responsibilities" and shot down
     private fun initiateElections() {
-        async {
+        runBlocking(Unconfined) {
             ifAliveUnit(info = "initiateElections") {
                 log.info("initiate elections")
                 val aliveWithOpts = walkDaemonsAsync(
@@ -878,7 +853,7 @@ class CompileServiceServerSideImpl(
                     filter = { _, p -> p != port },
                     report = { _, msg -> log.info(msg) },
                     useRMI = false
-                ).await()
+                )
                 log.info("aliveWithOpts : ${aliveWithOpts.map { it.daemon.javaClass.name }}")
                 val comparator = compareByDescending<DaemonWithMetadataAsync, DaemonJVMOptions>(
                     DaemonJVMOptionsMemoryComparator(),
@@ -909,7 +884,9 @@ class CompileServiceServerSideImpl(
                                         registerClientImpl(clientAliveFile)
                                     }
                                 }
+                                log.info("other : CLIENTS_OK")
                                 daemon.scheduleShutdown(true)
+                                log.info("other : SHUTDOWN_OK")
                             } catch (e: Throwable) {
                                 log.info("Cannot connect to a daemon, assuming dying ('${runFile.canonicalPath}'): ${e.message}")
                             }
@@ -976,7 +953,7 @@ class CompileServiceServerSideImpl(
             currentSessionId == state.sessions.lastSessionId
         ) {
             log.info("currentCompilationsCount == compilationsCounter.get()")
-            async {
+            runBlocking(Unconfined) {
                 ifAliveExclusiveUnit(minAliveness = Aliveness.LastSession, info = "initiate elections - shutdown") {
                     log.info("Execute delayed shutdown!!!")
                     log.fine("Execute delayed shutdown")
@@ -1019,7 +996,7 @@ class CompileServiceServerSideImpl(
     }
 
     private fun gracefulShutdownImpl() {
-        async {
+        runBlocking(Unconfined) {
             ifAliveExclusiveUnit(minAliveness = Aliveness.LastSession, info = "gracefulShutdown") {
                 shutdownIfIdle()
             }

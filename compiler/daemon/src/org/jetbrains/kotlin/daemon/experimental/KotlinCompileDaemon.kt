@@ -107,7 +107,7 @@ object KotlinCompileDaemon {
 
         runBlocking {
 
-            var serverRun: Deferred<Unit>? = null
+            var serverRun: Deferred<Unit>?
 
             try {
 
