@@ -12,7 +12,7 @@ configurePublishing(project)
 
 project.ext["jpsLibraryPath"] = rootProject.distLibDir
 
-def junit5Version = "5.2.0"
+def junit5Version = "5.0.0"
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
