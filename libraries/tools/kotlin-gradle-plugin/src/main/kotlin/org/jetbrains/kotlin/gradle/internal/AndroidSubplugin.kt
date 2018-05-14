@@ -46,12 +46,7 @@ class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
     }
 
     private fun addAndroidExtensionsRuntimeIfNeeded(project: Project) {
-        val kotlinPluginWrapper = project.plugins.findPlugin(KotlinAndroidPluginWrapper::class.java) ?: run {
-            project.logger.error("'kotlin-android' plugin should be enabled before 'kotlin-android-extensions'")
-            return
-        }
-
-        val kotlinPluginVersion = kotlinPluginWrapper.kotlinPluginVersion
+        val kotlinPluginVersion = project.getKotlinPluginVersion() ?: return
 
         project.configurations.all { configuration ->
             val name = configuration.name
