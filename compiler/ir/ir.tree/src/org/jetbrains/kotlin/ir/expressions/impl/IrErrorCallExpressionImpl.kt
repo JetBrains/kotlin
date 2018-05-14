@@ -28,7 +28,10 @@ class IrErrorCallExpressionImpl(
     endOffset: Int,
     type: IrType,
     override val description: String
-) : IrExpressionBase(startOffset, endOffset, type), IrErrorCallExpression {
+) :
+    IrExpressionBase(startOffset, endOffset, type),
+    IrErrorCallExpression {
+
     override var explicitReceiver: IrExpression? = null
     override val arguments: MutableList<IrExpression> = SmartList()
 

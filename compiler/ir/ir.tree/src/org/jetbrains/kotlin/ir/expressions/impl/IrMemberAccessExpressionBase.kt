@@ -30,7 +30,8 @@ abstract class IrMemberAccessExpressionBase(
     final override val typeArgumentsCount: Int,
     final override val valueArgumentsCount: Int,
     final override val origin: IrStatementOrigin? = null
-) : IrExpressionBase(startOffset, endOffset, type),
+) :
+    IrExpressionBase(startOffset, endOffset, type),
     IrMemberAccessExpression {
 
     override var dispatchReceiver: IrExpression? = null

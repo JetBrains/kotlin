@@ -29,7 +29,15 @@ abstract class IrCallWithIndexedArgumentsBase(
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
     origin: IrStatementOrigin? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, valueArgumentsCount, origin) {
+) :
+    IrMemberAccessExpressionBase(
+        startOffset,
+        endOffset,
+        type,
+        typeArgumentsCount,
+        valueArgumentsCount,
+        origin
+    ) {
 
     private val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
 
