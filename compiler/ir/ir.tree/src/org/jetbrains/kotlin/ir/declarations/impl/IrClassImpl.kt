@@ -46,7 +46,12 @@ class IrClassImpl(
 ) : IrDeclarationBase(startOffset, endOffset, origin),
     IrClass {
 
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, symbol: IrClassSymbol) :
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrClassSymbol
+    ) :
             this(
                 startOffset, endOffset, origin, symbol,
                 symbol.descriptor.name, symbol.descriptor.kind,
@@ -57,7 +62,12 @@ class IrClassImpl(
                 isExternal = symbol.descriptor.isEffectivelyExternal()
             )
 
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor) :
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: ClassDescriptor
+    ) :
             this(startOffset, endOffset, origin, IrClassSymbolImpl(descriptor))
 
     constructor(

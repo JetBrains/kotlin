@@ -38,10 +38,16 @@ class IrFileImpl(
     IrElementBase(0, fileEntry.maxOffset),
     IrFile {
 
-    constructor(fileEntry: SourceManager.FileEntry, symbol: IrFileSymbol) :
+    constructor(
+        fileEntry: SourceManager.FileEntry,
+        symbol: IrFileSymbol
+    ) :
             this(fileEntry, symbol, symbol.descriptor.fqName)
 
-    constructor(fileEntry: SourceManager.FileEntry, packageFragmentDescriptor: PackageFragmentDescriptor) :
+    constructor(
+        fileEntry: SourceManager.FileEntry,
+        packageFragmentDescriptor: PackageFragmentDescriptor
+    ) :
             this(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName)
 
     constructor(

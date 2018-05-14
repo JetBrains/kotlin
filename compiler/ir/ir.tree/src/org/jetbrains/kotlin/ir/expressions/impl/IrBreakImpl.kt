@@ -26,7 +26,9 @@ class IrBreakImpl(
     endOffset: Int,
     type: IrType,
     loop: IrLoop
-) : IrBreakContinueBase(startOffset, endOffset, type, loop), IrBreak {
+) : IrBreakContinueBase(startOffset, endOffset, type, loop),
+    IrBreak {
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitBreak(this, data)
 }

@@ -30,14 +30,16 @@ class IrGetValueImpl(
     type: IrType,
     symbol: IrValueSymbol,
     override val origin: IrStatementOrigin? = null
-) : IrGetValue,
+) :
     IrTerminalDeclarationReferenceBase<IrValueSymbol, ValueDescriptor>(
         startOffset,
         endOffset,
         type,
         symbol,
         symbol.descriptor
-    ) {
+    ),
+    IrGetValue {
+
     @Deprecated("Creates unbound reference")
     constructor(
         startOffset: Int,
