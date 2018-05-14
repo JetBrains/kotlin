@@ -53,6 +53,9 @@ val NULLABILITY_ANNOTATIONS = NULLABLE_ANNOTATIONS + JAVAX_NONNULL_ANNOTATION + 
 val COMPATQUAL_NULLABLE_ANNOTATION = FqName("org.checkerframework.checker.nullness.compatqual.NullableDecl")
 val COMPATQUAL_NONNULL_ANNOTATION = FqName("org.checkerframework.checker.nullness.compatqual.NonNullDecl")
 
+val ANDROIDX_RECENTLY_NULLABLE_ANNOTATION = FqName("androidx.annotation.RecentlyNullable")
+val ANDROIDX_RECENTLY_NON_NULL_ANNOTATION = FqName("androidx.annotation.RecentlyNonNull")
+
 val READ_ONLY_ANNOTATIONS = listOf(
     JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION,
     JvmAnnotationNames.READONLY_ANNOTATION
