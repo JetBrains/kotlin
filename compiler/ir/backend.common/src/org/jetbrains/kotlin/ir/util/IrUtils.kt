@@ -270,3 +270,10 @@ fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
 
     return realOverrides.singleOrNull { it.modality != Modality.ABSTRACT }
 }
+
+val IrClass.isAnnotationClass get() = kind == ClassKind.ANNOTATION_CLASS
+val IrClass.isEnumClass get() = kind == ClassKind.ENUM_CLASS
+val IrClass.isEnumEntry get() = kind == ClassKind.ENUM_ENTRY
+val IrClass.isInterface get() = kind == ClassKind.INTERFACE
+val IrClass.isClass get() = kind == ClassKind.CLASS
+val IrClass.isObject get() = kind == ClassKind.OBJECT
