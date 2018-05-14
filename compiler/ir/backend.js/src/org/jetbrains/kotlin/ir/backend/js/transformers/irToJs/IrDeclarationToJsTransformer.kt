@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
@@ -34,5 +31,9 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
                 JsIntLiteral(1)
             )
         return jsAssignment(JsNameRef(fieldName, JsThisRef()), initExpression).makeStmt()
+    }
+
+    override fun visitVariable(declaration: IrVariable, context: JsGenerationContext): JsStatement {
+        return declaration.accept(IrElementToJsStatementTransformer(), context)
     }
 }

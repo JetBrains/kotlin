@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.backend.js.utils.createValueParameter
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -23,28 +23,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
 object JsSymbolBuilder {
-    fun buildValueParameter(
-        containingSymbol: IrSimpleFunctionSymbol,
-        index: Int,
-        type: KotlinType,
-        name: String? = null,
-        hasDefault: Boolean = false
-    ) =
-        IrValueParameterSymbolImpl(
-            ValueParameterDescriptorImpl(
-                containingSymbol.descriptor,
-                null,
-                index,
-                Annotations.EMPTY,
-                Name.identifier(name ?: "param$index"),
-                type,
-                hasDefault,
-                false,
-                false,
-                null,
-                SourceElement.NO_SOURCE
-            )
-        )
+    fun buildValueParameter(containingSymbol: IrSimpleFunctionSymbol, index: Int, type: KotlinType, name: String? = null) =
+        IrValueParameterSymbolImpl(createValueParameter(containingSymbol.descriptor, index, name ?: "param$index", type))
 
     fun buildSimpleFunction(
         containingDeclaration: DeclarationDescriptor,

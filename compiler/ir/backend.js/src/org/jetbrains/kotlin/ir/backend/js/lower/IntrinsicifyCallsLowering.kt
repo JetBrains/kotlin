@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -30,11 +33,16 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
     private val memberToTransformer: Map<SimpleMemberKey, (IrCall) -> IrCall>
     private val memberToIrFunction: Map<SimpleMemberKey, IrSimpleFunction>
     private val symbolToIrFunction: Map<IrFunctionSymbol, IrSimpleFunction>
+    private val nameToIrTransformer: Map<Name, (IrCall) -> IrCall>
+
+    val kCallable = context.builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kCallable.toSafe())
+    val kProperty = context.builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kProperty.asSingleFqName())
 
     init {
         memberToIrFunction = mutableMapOf()
         symbolToIrFunction = mutableMapOf()
         memberToTransformer = mutableMapOf()
+        nameToIrTransformer = mutableMapOf()
 
         val primitiveNumbers = context.irBuiltIns.run { listOf(int, short, byte, float, double) }
 
@@ -103,6 +111,25 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 }
             }
         }
+
+        nameToIrTransformer.run {
+            addWithPredicate(
+                Name.special(Namer.KCALLABLE_GET_NAME),
+                { call -> call.symbol.owner.dispatchReceiverParameter?.run { DescriptorUtils.isSubtypeOfClass(type, kCallable) } ?: false },
+                { call -> irCall(call, context.intrinsics.jsName.symbol, dispatchReceiverAsFirstArgument = true) })
+
+            addWithPredicate(
+                Name.identifier(Namer.KPROPERTY_GET),
+                { call -> call.symbol.owner.dispatchReceiverParameter?.run { DescriptorUtils.isSubtypeOfClass(type, kProperty) } ?: false },
+                { call -> irCall(call, context.intrinsics.jsPropertyGet.symbol, dispatchReceiverAsFirstArgument = true)}
+            )
+
+            addWithPredicate(
+                Name.identifier(Namer.KPROPERTY_SET),
+                { call -> call.symbol.owner.dispatchReceiverParameter?.run { DescriptorUtils.isSubtypeOfClass(type, kProperty) } ?: false},
+                { call -> irCall(call, context.intrinsics.jsPropertySet.symbol, dispatchReceiverAsFirstArgument = true)}
+            )
+        }
     }
 
     override fun lower(irFile: IrFile) {
@@ -132,7 +159,12 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                                 return it(call)
                             }
                         }
+
+                        nameToIrTransformer[symbol.owner.name]?.let {
+                            return it(call)
+                        }
                     }
+
                 }
 
                 return call
@@ -195,5 +227,11 @@ private fun <V> MutableMap<IrFunctionSymbol, V>.add(from: Map<SimpleType, IrSimp
 private fun <V> MutableMap<IrFunctionSymbol, V>.add(from: IrFunctionSymbol, to: V) {
     put(from, to)
 }
+
+private fun <K> MutableMap<K, (IrCall) -> IrCall>.addWithPredicate(from: K, predicate: (IrCall) -> Boolean, action: (IrCall) -> IrCall) {
+    put(from) { call: IrCall -> select({ predicate(call) }, { action(call) }, { call }) }
+}
+
+private inline fun <T> select(crossinline predicate: () -> Boolean, crossinline ifTrue: () -> T, crossinline ifFalse: () -> T): T = if (predicate()) ifTrue() else ifFalse()
 
 private data class SimpleMemberKey(val klass: KotlinType, val name: Name)
