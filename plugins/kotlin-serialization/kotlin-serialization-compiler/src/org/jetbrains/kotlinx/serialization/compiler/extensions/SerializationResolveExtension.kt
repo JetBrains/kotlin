@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
@@ -70,6 +71,7 @@ class SerializationResolveExtension : SyntheticResolveExtension {
     override fun generateSyntheticMethods(
         thisDescriptor: ClassDescriptor,
         name: Name,
+        bindingContext: BindingContext,
         fromSupertypes: List<SimpleFunctionDescriptor>,
         result: MutableCollection<SimpleFunctionDescriptor>
     ) {
@@ -80,6 +82,7 @@ class SerializationResolveExtension : SyntheticResolveExtension {
     override fun generateSyntheticProperties(
         thisDescriptor: ClassDescriptor,
         name: Name,
+        bindingContext: BindingContext,
         fromSupertypes: ArrayList<PropertyDescriptor>,
         result: MutableSet<PropertyDescriptor>
     ) {
