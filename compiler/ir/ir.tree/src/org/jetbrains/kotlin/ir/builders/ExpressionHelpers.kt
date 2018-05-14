@@ -85,14 +85,33 @@ fun IrBuilderWithScope.irReturn(value: IrExpression) =
         value
     )
 
-fun IrBuilderWithScope.irReturnTrue() =
-    irReturn(IrConstImpl(startOffset, endOffset, context.irBuiltIns.booleanType, IrConstKind.Boolean, true))
+fun IrBuilderWithScope.irBoolean(value: Boolean) =
+    IrConstImpl(startOffset, endOffset, context.irBuiltIns.booleanType, IrConstKind.Boolean, value)
 
-fun IrBuilderWithScope.irReturnFalse() =
-    irReturn(IrConstImpl(startOffset, endOffset, context.irBuiltIns.booleanType, IrConstKind.Boolean, false))
+fun IrBuilderWithScope.irTrue() = irBoolean(true)
+fun IrBuilderWithScope.irFalse() = irBoolean(false)
+fun IrBuilderWithScope.irReturnTrue() = irReturn(irTrue())
+fun IrBuilderWithScope.irReturnFalse() = irReturn(irFalse())
+
+fun IrBuilderWithScope.irElseBranch(expression: IrExpression) =
+    IrElseBranchImpl(startOffset, endOffset, irTrue(), expression)
+
+fun IrBuilderWithScope.irIfThen(type: IrType, condition: IrExpression, thenPart: IrExpression) =
+    IrIfThenElseImpl(startOffset, endOffset, type).apply {
+        branches.add(IrBranchImpl(startOffset, endOffset, condition, thenPart))
+    }
 
 fun IrBuilderWithScope.irIfThenElse(type: IrType, condition: IrExpression, thenPart: IrExpression, elsePart: IrExpression) =
-    IrIfThenElseImpl(startOffset, endOffset, type, condition, thenPart, elsePart)
+    IrIfThenElseImpl(startOffset, endOffset, type).apply {
+        branches.add(IrBranchImpl(startOffset, endOffset, condition, thenPart))
+        branches.add(irElseBranch(elsePart))
+    }
+
+fun IrBuilderWithScope.irIfThenMaybeElse(type: IrType, condition: IrExpression, thenPart: IrExpression, elsePart: IrExpression?) =
+    if (elsePart != null)
+        irIfThenElse(type, condition, thenPart, elsePart)
+    else
+        irIfThen(type, condition, thenPart)
 
 fun IrBuilderWithScope.irIfNull(type: IrType, subject: IrExpression, thenPart: IrExpression, elsePart: IrExpression) =
     irIfThenElse(type, irEqualsNull(subject), thenPart, elsePart)
@@ -101,10 +120,10 @@ fun IrBuilderWithScope.irThrowNpe(origin: IrStatementOrigin) =
     IrNullaryPrimitiveImpl(startOffset, endOffset, context.irBuiltIns.nothingType, origin, context.irBuiltIns.throwNpeSymbol)
 
 fun IrBuilderWithScope.irIfThenReturnTrue(condition: IrExpression) =
-    IrIfThenElseImpl(startOffset, endOffset, context.irBuiltIns.unitType, condition, irReturnTrue())
+    irIfThen(context.irBuiltIns.unitType, condition, irReturnTrue())
 
 fun IrBuilderWithScope.irIfThenReturnFalse(condition: IrExpression) =
-    IrIfThenElseImpl(startOffset, endOffset, context.irBuiltIns.unitType, condition, irReturnFalse())
+    irIfThen(context.irBuiltIns.unitType, condition, irReturnFalse())
 
 fun IrBuilderWithScope.irGet(type: IrType, variable: IrValueSymbol) =
     IrGetValueImpl(startOffset, endOffset, type, variable)
