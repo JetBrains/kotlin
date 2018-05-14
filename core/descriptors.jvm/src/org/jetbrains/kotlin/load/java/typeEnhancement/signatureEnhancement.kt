@@ -168,9 +168,10 @@ class SignatureEnhancement(
             || returnTypeEnhancement.wereChanges || valueParameterEnhancements.any { it.wereChanges }
         ) {
             @Suppress("UNCHECKED_CAST")
-            return this.enhance(receiverTypeEnhancement?.type,
-                                valueParameterEnhancements.map { ValueParameterData(it.type, it.hasDefaultValue) },
-                                returnTypeEnhancement.type
+            return this.enhance(
+                receiverTypeEnhancement?.type,
+                valueParameterEnhancements.map { ValueParameterData(it.type, it.hasDefaultValue) },
+                returnTypeEnhancement.type
             ) as D
         }
 
