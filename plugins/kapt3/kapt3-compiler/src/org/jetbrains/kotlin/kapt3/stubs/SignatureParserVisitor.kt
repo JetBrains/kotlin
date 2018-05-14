@@ -24,8 +24,8 @@ import org.jetbrains.org.objectweb.asm.signature.SignatureVisitor
 import java.util.*
 import org.jetbrains.kotlin.kapt3.stubs.ElementKind.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
-import org.jetbrains.kotlin.kapt3.mapJList
-import org.jetbrains.kotlin.kapt3.mapJListIndexed
+import org.jetbrains.kotlin.kapt3.base.mapJList
+import org.jetbrains.kotlin.kapt3.base.mapJListIndexed
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import com.sun.tools.javac.util.List as JavacList

@@ -16,19 +16,20 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
-import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.GenerationUtils
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.AptMode.STUBS_AND_APT
+import org.jetbrains.kotlin.kapt3.base.KaptContext
+import org.jetbrains.kotlin.kapt3.base.KaptPaths
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
-import org.jetbrains.kotlin.kapt3.util.KaptLogger
+import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -130,10 +131,11 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
 
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *javaSources)
 
-        val kapt3Extension = Kapt3ExtensionForTests(processors, javaSources.toList(), sourceOutputDir, this.options,
+        val project = myEnvironment.project
+        val kapt3Extension = Kapt3ExtensionForTests(project, processors, javaSources.toList(), sourceOutputDir, this.options,
                                                     stubsOutputDir = stubsDir, incrementalDataOutputDir = incrementalDataDir)
 
-        AnalysisHandlerExtension.registerExtension(myEnvironment.project, kapt3Extension)
+        AnalysisHandlerExtension.registerExtension(project, kapt3Extension)
 
         try {
             loadMultiFiles(files)
@@ -153,6 +155,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
     }
 
     protected class Kapt3ExtensionForTests(
+            project: Project,
             private val processors: List<Processor>,
             javaSourceRoots: List<File>,
             outputDir: File,
@@ -161,10 +164,11 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             incrementalDataOutputDir: File
     ) : AbstractKapt3Extension(
         KaptPaths(
+            project.basePath?.let(::File),
             PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
             emptyList(), javaSourceRoots, outputDir, outputDir, stubsOutputDir, incrementalDataOutputDir
         ), options, emptyMap(), emptyList(), STUBS_AND_APT, System.currentTimeMillis(),
-        KaptLogger(true), correctErrorTypes = true, mapDiagnosticLocations = true,
+        MessageCollectorBackedKaptLogger(true), correctErrorTypes = true, mapDiagnosticLocations = true,
         compilerConfiguration = CompilerConfiguration.EMPTY
     ) {
         internal var savedStubs: String? = null
@@ -172,7 +176,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
 
         override fun loadProcessors() = processors
 
-        override fun saveStubs(kaptContext: KaptContext<*>, stubs: List<KaptStub>) {
+        override fun saveStubs(kaptContext: KaptContext, stubs: List<KaptStub>) {
             if (this.savedStubs != null) {
                 error("Stubs are already saved")
             }
@@ -186,7 +190,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
         }
 
         override fun saveIncrementalData(
-                kaptContext: KaptContext<GenerationState>,
+                kaptContext: KaptContextForStubGeneration,
                 messageCollector: MessageCollector,
                 converter: ClassFileToSourceStubConverter
         ) {
