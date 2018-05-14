@@ -56,8 +56,10 @@ class AppleConfigurablesImpl(
         properties.getProperty("useFixedXcodeVersion")?.let { requiredXcodeVersion ->
             val currentXcodeVersion = xcode.version
 
-            if (currentXcodeVersion != requiredXcodeVersion) {
-                error("expected Xcode version $requiredXcodeVersion, got $currentXcodeVersion")
+            if (properties.getProperty("ignoreXcodeVersionCheck") != "true" &&
+                    currentXcodeVersion != requiredXcodeVersion) {
+                error("expected Xcode version $requiredXcodeVersion, got $currentXcodeVersion, consider updating " +
+                        "Xcode or use \"ignoreXcodeVersionCheck\" variable in konan.properties")
             }
         }
 

@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-KONAN_TOOLCHAIN_VERSION=4
-SDKS="macosx iphoneos iphonesimulator"
+KONAN_TOOLCHAIN_VERSION=5
+SDKS="macosx iphoneos iphonesimulator watchos watchsimulator"
 TARBALL_macosx=target-sysroot-$KONAN_TOOLCHAIN_VERSION-macos_x64
 TARBALL_iphoneos=target-sysroot-$KONAN_TOOLCHAIN_VERSION-ios_arm64
 TARBALL_iphonesimulator=target-sysroot-$KONAN_TOOLCHAIN_VERSION-ios_x64
+TARBALL_watchos=target-sysroot-$KONAN_TOOLCHAIN_VERSION-watchos_arm32
+TARBALL_watchsimulator=target-sysroot-$KONAN_TOOLCHAIN_VERSION-watchos_x64
 TARBALL_xcode=target-toolchain-$KONAN_TOOLCHAIN_VERSION-macos_x64
 OUT=`pwd`
 
