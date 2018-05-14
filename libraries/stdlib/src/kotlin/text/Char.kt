@@ -38,7 +38,6 @@ public fun Char.equals(other: Char, ignoreCase: Boolean = false): Boolean {
  */
 public fun Char.isSurrogate(): Boolean = this in Char.MIN_SURROGATE..Char.MAX_SURROGATE
 
-
 /**
  * Minimum value for character
  * @see <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html">
