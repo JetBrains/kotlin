@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
-    CLASS CLASS name:Inner modality:OPEN visibility:public flags:
+    CLASS CLASS name:Inner modality:OPEN visibility:public flags:inner
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.Inner flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
@@ -81,7 +81,7 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host.test.<no name provided> flags:
               superClasses:
-                CLASS CLASS name:Inner modality:OPEN visibility:public flags:
+                CLASS CLASS name:Inner modality:OPEN visibility:public flags:inner
               CONSTRUCTOR visibility:public <> () returnType:Host.test.<no name provided> flags:primary
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'constructor Inner(Int)'

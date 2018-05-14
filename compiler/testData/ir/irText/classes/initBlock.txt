@@ -123,7 +123,7 @@ FILE fqName:<root> fileName:/initBlock.kt
       BLOCK_BODY
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value=1
-    CLASS CLASS name:TestInner modality:FINAL visibility:public flags:
+    CLASS CLASS name:TestInner modality:FINAL visibility:public flags:inner
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test5.TestInner flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:

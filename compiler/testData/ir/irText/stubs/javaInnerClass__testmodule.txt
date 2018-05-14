@@ -9,7 +9,7 @@ MODULE_FRAGMENT name:<test-module>
         FIELD IR_EXTERNAL_DECLARATION_STUB name:x type:kotlin.Int visibility:public flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:bar visibility:public modality:OPEN <> ($this:J) returnType:Unit flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J flags:
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:JInner modality:OPEN visibility:public flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:JInner modality:OPEN visibility:public flags:inner
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J.JInner flags:
         superClasses:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:

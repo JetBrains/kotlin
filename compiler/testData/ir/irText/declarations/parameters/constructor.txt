@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/constructor.kt
           RETURN type=kotlin.Nothing from='<get-y>(): String'
             GET_FIELD 'y: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
-    CLASS CLASS name:TestInner modality:FINAL visibility:public flags:
+    CLASS CLASS name:TestInner modality:FINAL visibility:public flags:inner
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2.TestInner<Z> flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:

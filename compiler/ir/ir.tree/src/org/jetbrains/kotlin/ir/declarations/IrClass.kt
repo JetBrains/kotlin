@@ -34,6 +34,7 @@ interface IrClass : IrSymbolDeclaration<IrClassSymbol>, IrDeclarationContainer, 
     val visibility: Visibility
     val modality: Modality
     val isCompanion: Boolean
+    val isInner: Boolean
     val isData: Boolean
     val isExternal: Boolean
 
