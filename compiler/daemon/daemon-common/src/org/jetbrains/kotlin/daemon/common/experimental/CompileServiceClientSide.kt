@@ -7,8 +7,6 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
@@ -150,11 +148,9 @@ class CompileServiceClientSideImpl(
     override suspend fun shutdown(): CallResult<Nothing> {
         val id = sendMessage(ShutdownMessage())
         log.info("ShutdownMessage_id = $id")
-        val res = readMessage<CallResult<*>>(id)
+        val res = readMessage<CallResult<Nothing>>(id)
         log.info("ShutdownMessage_res : $res")
-        val resAs = res as CallResult<Nothing>
-        log.info("resAs : ${resAs}")
-        return resAs
+        return res
     }
 
     override suspend fun scheduleShutdown(graceful: Boolean): CallResult<Boolean> {

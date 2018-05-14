@@ -56,14 +56,14 @@ interface Server<out T : ServerBase> : ServerBase {
         keepAlivePool: ThreadPoolDispatcher
     ): Deferred<State> = async(readerPool) {
         val (input, output) = client.openIO(log)
-//        if (!serverHandshake(input, output, log)) {
-//            log.info_and_print("failed to establish connection with client (handshake failed)")
-//            return@async Server.State.UNVERIFIED
-//        }
-//        if (!securityCheck(input)) {
-//            log.info_and_print("failed to check securitay")
-//            return@async Server.State.UNVERIFIED
-//        }
+        if (!serverHandshake(input, output, log)) {
+            log.info_and_print("failed to establish connection with client (handshake failed)")
+            return@async Server.State.UNVERIFIED
+        }
+        if (!securityCheck(input)) {
+            log.info_and_print("failed to check securitay")
+            return@async Server.State.UNVERIFIED
+        }
         log.info_and_print("   client verified ($client)")
         clients[client] = ClientInfo(client, input, output)
         log.info_and_print("   ($client)client in clients($clients)")
@@ -153,7 +153,7 @@ interface Server<out T : ServerBase> : ServerBase {
     fun runServer(): Deferred<Unit> {
         log.info_and_print("binding to address(${serverSocketWithPort.port})")
         val serverSocket = serverSocketWithPort.socket
-        val readerPool = newFixedThreadPoolContext(nThreads = 10, name = "readerPool")
+        val readerPool = newFixedThreadPoolContext(nThreads = 4, name = "readerPool")
         val keepAlivePool = newFixedThreadPoolContext(nThreads = 10, name = "keepAlivePool")
         return async(CommonPool) {
             serverSocket.use {

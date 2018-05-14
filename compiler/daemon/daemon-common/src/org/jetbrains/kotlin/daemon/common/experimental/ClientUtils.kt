@@ -40,7 +40,7 @@ private suspend fun <T, R : Any> List<T>.mapNotNullAsync(transform: suspend (T) 
 // TODO: consider using compiler jar signature (checksum) as a CompilerID (plus java version, plus ???) instead of classpath checksum
 //    would allow to use same compiler from taken different locations
 //    reqs: check that plugins (or anything els) should not be part of the CP
-fun walkDaemonsAsync(
+suspend fun walkDaemonsAsync(
     registryDir: File,
     compilerId: CompilerId,
     fileToCompareTimestamp: File,
@@ -48,13 +48,12 @@ fun walkDaemonsAsync(
     report: (DaemonReportCategory, String) -> Unit = { _, _ -> },
     useRMI: Boolean = true,
     useSockets: Boolean = true
-): Deferred<List<DaemonWithMetadataAsync>> {
+): List<DaemonWithMetadataAsync> {//Deferred<List<DaemonWithMetadataAsync>> {
     // : Sequence<DaemonWithMetadataAsync>
     val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
     val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
     log.info("\nssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss\n")
-    return async {
-        registryDir.walk().toList() // list, since walk returns Sequence and Sequence.map{...} is not inline => coroutines dont work
+    return registryDir.walk().toList() // list, since walk returns Sequence and Sequence.map{...} is not inline => coroutines dont work
             .map { Pair(it, portExtractor(it.name)) }
             .filter { (file, port) -> port != null && filter(file, port) }
             .mapNotNull { (file, port) ->
@@ -120,7 +119,7 @@ fun walkDaemonsAsync(
                 }
             }
     }
-}
+//}
 
 private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceClientSide? {
     try {
@@ -150,22 +149,24 @@ private suspend fun tryConnectToDaemonBySockets(
     file: File,
     report: (DaemonReportCategory, String) -> Unit
 ): CompileServiceClientSide? {
-    try {
-        log.info("tryConnectToDaemonBySockets(port = $port)")
-        val daemon = CompileServiceClientSideImpl(
-            port,
-            LoopbackNetworkInterface.loopbackInetAddressName,
-            file
-        )
-        log.info("daemon($port) = $daemon")
-        log.info("daemon($port) connecting to server...")
-        daemon.connectToServer()
-        log.info("OK - daemon($port) connected to server!!!")
-        return daemon
-    } catch (e: Throwable) {
-        report(DaemonReportCategory.INFO, "kcannot find or connect to socket")
+    return CompileServiceClientSideImpl(
+        port,
+        LoopbackNetworkInterface.loopbackInetAddressName,
+        file
+    ).let { daemon ->
+        try {
+            log.info("tryConnectToDaemonBySockets(port = $port)")
+            log.info("daemon($port) = $daemon")
+            log.info("daemon($port) connecting to server...")
+            daemon.connectToServer()
+            log.info("OK - daemon($port) connected to server!!!")
+            daemon
+        } catch (e: Throwable) {
+            report(DaemonReportCategory.INFO, "kcannot find or connect to socket")
+            daemon.close()
+            null
+        }
     }
-    return null
 }
 
 private suspend fun tryConnectToDaemonAsync(
@@ -177,7 +178,4 @@ private suspend fun tryConnectToDaemonAsync(
 ): CompileServiceClientSide? =
     useSockets.takeIf { it }?.let { tryConnectToDaemonBySockets(port, file, report) }
             ?: (useRMI.takeIf { it }?.let { tryConnectToDaemonByRMI(port, report) })
-
-private const val validFlagFileKeywordChars = "abcdefghijklmnopqrstuvwxyz0123456789-_"
-
 

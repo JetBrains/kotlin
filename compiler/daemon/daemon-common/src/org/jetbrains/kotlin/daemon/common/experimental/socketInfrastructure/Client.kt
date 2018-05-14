@@ -5,12 +5,12 @@ import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.channels.*
 import org.jetbrains.kotlin.daemon.common.experimental.KEEPALIVE_PERIOD
 import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
+import sun.net.ConnectionResetException
 import java.beans.Transient
 import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
-import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
 
@@ -53,16 +53,16 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
     abstract suspend fun clientHandshake(input: ByteReadChannelWrapper, output: ByteWriteChannelWrapper, log: Logger): Boolean
 
     override fun close() {
-        try {
-            runBlockingWithTimeout {
-                sendMessage(Server.EndConnectionMessage())
-            }
-        } catch (e: Throwable) {
-            log.info_and_print(e.message)
-        } finally {
-            socket?.close()
-        }
-//        socket?.close()
+//        try {
+//            runBlockingWithTimeout {
+//                sendMessage(Server.EndConnectionMessage())
+//            }
+//        } catch (e: Throwable) {
+//            log.info_and_print(e.message)
+//        } finally {
+//            socket?.close()
+//        }
+        socket?.close()
     }
 
     public class MessageReply<T : Any>(val messageId: Int, val reply: T?) : Serializable
@@ -153,6 +153,7 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
         }
 
         class NextObjectQuery
+
         val nextObjectQuery = NextObjectQuery()
         val objectReaderActor = actor<NextObjectQuery>(capacity = Channel.UNLIMITED) {
             consumeEach {
@@ -185,12 +186,6 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
                 expectedMessages.clear()
                 receivedMessages.clear()
             }
-
-//            async(newSingleThreadContext("readerThread")) {
-//                while (true) {
-//
-//                }
-//            }
 
             consumeEach { query ->
                 when (query) {
@@ -239,18 +234,16 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
             log.info_and_print("OK serv.openIO() |port=$serverPort|")
             input = it.input
             output = it.output
-//            if (!clientHandshake(input, output, log)) {
-//                log.info_and_print("failed handshake($serverPort)")
-//                close()
-//                throw ConnectionResetException("failed to establish connection with server (handshake failed)")
-//            }
-//            if (!authorizeOnServer(output)) {
-//                log.info_and_print("failed authorization($serverPort)")
-//                close()
-//                throw ConnectionResetException("failed to establish connection with server (authorization failed)")
-//            }
+            if (!clientHandshake(input, output, log)) {
+                log.info_and_print("failed handshake($serverPort)")
+                throw ConnectionResetException("failed to establish connection with server (handshake failed)")
+            }
+            if (!authorizeOnServer(output)) {
+                log.info_and_print("failed authorization($serverPort)")
+                throw ConnectionResetException("failed to establish connection with server (authorization failed)")
+            }
 
-//            startKeepAlives()
+            startKeepAlives()
         }
 
     }
@@ -266,21 +259,21 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
         }
 
         async(newSingleThreadContext("keep_alive")) {
-//            println("[$serverPort] _____START______")
+            //            println("[$serverPort] _____START______")
             delay(KEEPALIVE_PERIOD * 4)
             while (serverAlive.get()) {
                 runWithTimeout(timeout = KEEPALIVE_PERIOD / 2) {
                     val id = sendMessage(keepAliveMessage)
                     try {
                         readMessage<Server.KeepAliveAcknowledgement<ServerType>>(id).also {
-//                            println("[$serverPort] received KeepAlive => OK")
+                            //                            println("[$serverPort] received KeepAlive => OK")
                         }
                     } catch (e: IOException) {
 //                        println("[$serverPort] IOException => StopAllRequests")
                         stopKeepAlives()
                     }
                 } ?: stopKeepAlives().let {
-//                    println("[$serverPort] timeout => StopAllRequests")
+                    //                    println("[$serverPort] timeout => StopAllRequests")
                 }
                 delay(KEEPALIVE_PERIOD)
             }
