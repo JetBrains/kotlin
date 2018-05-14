@@ -34,7 +34,9 @@ interface IrClass : IrSymbolDeclaration<IrClassSymbol>, IrDeclarationContainer, 
     val visibility: Visibility
     val modality: Modality
     val isCompanion: Boolean
+    val isInner: Boolean
     val isData: Boolean
+    val isExternal: Boolean
 
     // NB type parameters can't be top-level classifiers in supetypes of a class
     val superClasses: MutableList<IrClassSymbol>

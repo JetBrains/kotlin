@@ -35,7 +35,7 @@ public abstract class KotlinStatementsSurrounder implements Surrounder {
             return false;
         }
 
-        if (elements.length == 1 || elements[0] instanceof KtExpression) {
+        if (elements.length == 1 && elements[0] instanceof KtExpression) {
             if (!isApplicableWhenUsedAsExpression() && KotlinSurrounderUtils.isUsedAsExpression((KtExpression) elements[0])) {
                 return false;
             }

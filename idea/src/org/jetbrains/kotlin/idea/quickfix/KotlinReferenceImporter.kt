@@ -47,6 +47,8 @@ class KotlinReferenceImporter : ReferenceImporter {
 
         val nameExpression = file.findElementAt(offset)?.parent as? KtSimpleNameExpression ?: return false
 
+        if (!CodeInsightSettings.getInstance().ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY) return false
+
         val importFix: ImportFixBase<out KtExpression>? = findImportFixAt(editor, file, offset)
         if (importFix != null && !importFix.isOutdated()) {
             val addImportAction = importFix.createAction(file.project, editor, nameExpression)

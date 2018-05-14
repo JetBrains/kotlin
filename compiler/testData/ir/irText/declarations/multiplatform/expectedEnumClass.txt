@@ -54,7 +54,7 @@ FILE fqName:<root> fileName:/expectedEnumClass.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:MyEnum flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:MyEnum flags:
+    CONSTRUCTOR visibility:private <> () returnType:MyEnum flags:primary
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: MyEnum
@@ -110,3 +110,4 @@ FILE fqName:<root> fileName:/expectedEnumClass.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:MyEnum flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       SYNTHETIC_BODY kind=ENUM_VALUEOF
+

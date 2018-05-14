@@ -3,18 +3,18 @@ FILE fqName:<root> fileName:/outerClassInstanceReference.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Outer flags:
+    CONSTRUCTOR visibility:public <> () returnType:Outer flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     FUN name:outer visibility:public modality:FINAL <> ($this:Outer) returnType:Unit flags:
       $this: VALUE_PARAMETER name:<this> type:Outer flags:
       BLOCK_BODY
-    CLASS CLASS name:Inner modality:FINAL visibility:public flags:
+    CLASS CLASS name:Inner modality:FINAL visibility:public flags:inner
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.Inner flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:public <> ($this:Outer) returnType:Outer.Inner flags:
+      CONSTRUCTOR visibility:public <> ($this:Outer) returnType:Outer.Inner flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Outer flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

@@ -25,8 +25,7 @@ internal class QUnitAdapter : FrameworkAdapter {
     override fun test(name: String, ignored: Boolean, testFn: () -> Unit) {
         if (ignored or ignoredSuite) {
             QUnit.skip(name, wrapTest(testFn))
-        }
-        else {
+        } else {
             QUnit.test(name, wrapTest(testFn))
         }
     }

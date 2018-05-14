@@ -174,6 +174,10 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         doTestMemberInplaceRename("`object`")
     }
 
+    fun testNoTextUsagesForLocalVar() {
+        doTestMemberInplaceRename("w")
+    }
+
     private fun doTestImplicitLambdaParameter(newName: String) {
         configureByFile(getTestName(false) + ".kt")
 

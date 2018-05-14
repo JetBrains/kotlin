@@ -29,6 +29,11 @@ public class ForeignAnnotationsNoAnnotationInClasspathTestGenerated extends Abst
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotations/tests"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("androidRecently.kt")
+    public void testAndroidRecently() throws Exception {
+        runTest("compiler/testData/foreignAnnotations/tests/androidRecently.kt");
+    }
+
     @TestMetadata("android_support.kt")
     public void testAndroid_support() throws Exception {
         runTest("compiler/testData/foreignAnnotations/tests/android_support.kt");

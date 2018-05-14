@@ -6,7 +6,7 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="181.1" until-build="181.*"/>
+  <idea-version since-build="181.4668.68.32.4763614" until-build="181.*"/>
 
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.modules.androidstudio</depends>
@@ -55,12 +55,6 @@
     <component>
       <interface-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</interface-class>
       <implementation-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.scratch.ui.ScratchFileHook</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.scratch.ScratchFileModuleInfoProvider</implementation-class>
     </component>
   </project-components>
 
@@ -352,12 +346,16 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.ProbablyNothingCallableNames"
                     serviceImplementation="org.jetbrains.kotlin.idea.project.ProbablyNothingCallableNamesImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"/>
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>
     <internalFileTemplate name="Kotlin Class"/>
     <internalFileTemplate name="Kotlin Enum"/>
     <internalFileTemplate name="Kotlin Interface"/>
+    <internalFileTemplate name="Kotlin Script"/>
 
     <gotoSymbolContributor implementation="org.jetbrains.kotlin.idea.goto.KotlinGotoSymbolContributor"/>
     <gotoClassContributor implementation="org.jetbrains.kotlin.idea.goto.KotlinGotoClassContributor"/>
@@ -2827,6 +2825,15 @@
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.RedundantAsyncInspection"
+                     displayName="Redundant async call"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 

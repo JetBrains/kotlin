@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.kind
-import org.jetbrains.kotlin.ir.backend.js.utils.name
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -71,7 +69,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression =
         context.getNameForSymbol(expression.symbol).makeRef()
 
-    override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext) = when (expression.symbol.kind) {
+    override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext) = when (expression.symbol.owner.kind) {
         ClassKind.OBJECT -> {
             // TODO:
             if (expression.type.isUnit()) JsNullLiteral()
@@ -120,7 +118,9 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val jsExtensionReceiver = expression.extensionReceiver?.accept(this, context)
         val arguments = translateCallArguments(expression, context)
 
-        if (dispatchReceiver != null && dispatchReceiver.type.isFunctionTypeOrSubtype && symbol.name == OperatorNameConventions.INVOKE) {
+        if (dispatchReceiver != null &&
+            dispatchReceiver.type.isFunctionTypeOrSubtype && symbol.owner.name == OperatorNameConventions.INVOKE
+        ) {
             return JsInvocation(jsDispatchReceiver!!, arguments)
         }
 

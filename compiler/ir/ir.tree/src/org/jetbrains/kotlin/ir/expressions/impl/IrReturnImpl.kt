@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -30,7 +31,7 @@ class IrReturnImpl(
     startOffset: Int,
     endOffset: Int,
     type: KotlinType,
-    override val returnTargetSymbol: IrFunctionSymbol,
+    override val returnTargetSymbol: IrReturnTargetSymbol,
     override var value: IrExpression
 ) : IrExpressionBase(startOffset, endOffset, type), IrReturn {
     constructor(startOffset: Int, endOffset: Int, returnTargetSymbol: IrFunctionSymbol, value: IrExpression) :

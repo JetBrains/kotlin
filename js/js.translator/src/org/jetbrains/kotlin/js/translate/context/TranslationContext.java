@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -872,9 +873,12 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsExpression declareConstantValue(@NotNull DeclarationDescriptor descriptor, @NotNull JsExpression value) {
+    public JsExpression declareConstantValue(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull KtSimpleNameExpression expression,
+            @NotNull JsExpression value) {
         if (!isPublicInlineFunction() && isFromCurrentModule(descriptor)) {
-            return getQualifiedReference(descriptor);
+            return ReferenceTranslator.translateSimpleName(expression, this);
         }
 
         // Tag shouldn't be null if we cannot reference this descriptor locally.

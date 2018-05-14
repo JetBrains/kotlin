@@ -132,7 +132,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
 
             val root = output.firstChild as Element
             val outputType = root.getAttribute("type")
-            val content = StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS)
+            val content = StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS).trim('\n')
 
             LOG.printDebugMessage("REPL output: $outputType $content")
 

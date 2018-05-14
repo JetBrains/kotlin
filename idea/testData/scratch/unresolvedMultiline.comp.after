@@ -1,3 +1,7 @@
 foo.forEach {    // ERROR: Unresolved reference: foo; Cannot choose among the following candidates wi...
     1 + 1
 }
+
+fun goo(a: String) {    // ERROR: Unresolved reference: goo
+    super.goo(a)
+}

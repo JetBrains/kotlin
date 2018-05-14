@@ -15,8 +15,7 @@ internal class JasmineLikeAdapter : FrameworkAdapter {
     override fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
         if (ignored) {
             xdescribe(name, suiteFn)
-        }
-        else {
+        } else {
             describe(name, suiteFn)
         }
     }
@@ -24,8 +23,7 @@ internal class JasmineLikeAdapter : FrameworkAdapter {
     override fun test(name: String, ignored: Boolean, testFn: () -> Unit) {
         if (ignored) {
             xit(name, testFn)
-        }
-        else {
+        } else {
             it(name, testFn)
         }
     }

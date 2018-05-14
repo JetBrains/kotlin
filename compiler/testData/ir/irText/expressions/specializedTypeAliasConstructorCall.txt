@@ -6,13 +6,13 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
       superClassifiers:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (value:T) returnType:Cell<T> flags:
+    CONSTRUCTOR visibility:public <> (value:T) returnType:Cell<T> flags:primary
       VALUE_PARAMETER name:value index:0 type:T flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Cell'
     PROPERTY name:value type:T visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:value type:T visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:value type:T visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Cell<T>) returnType:T flags:
@@ -41,3 +41,4 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
         CALL 'constructor Cell(Int)' type=Cell<kotlin.Int> origin=null
           <T>: Int
           value: CONST Int type=kotlin.Int value=42
+

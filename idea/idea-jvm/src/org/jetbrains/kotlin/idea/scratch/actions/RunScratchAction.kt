@@ -20,12 +20,14 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.compiler.CompilerManager
+import com.intellij.openapi.project.DumbService
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
 import org.jetbrains.kotlin.idea.scratch.printDebugMessage
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
+import org.jetbrains.kotlin.idea.scratch.LOG as log
 
 class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
     KotlinBundle.message("scratch.run.button"),
@@ -45,7 +47,7 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
 
         val handler = provider.getOutputHandler()
 
-        org.jetbrains.kotlin.idea.scratch.LOG.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun, isRepl = $isRepl")
+        log.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun, isRepl = $isRepl")
 
         val module = scratchPanel.getModule()
         if (module == null) {
@@ -54,7 +56,7 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
             return
         }
 
-        val runnable = r@ {
+        val runnable = r@{
             val executor = if (isRepl) provider.createReplExecutor(scratchFile) else provider.createCompilingExecutor(scratchFile)
             if (executor == null) {
                 handler.error(scratchFile, "Couldn't run ${psiFile.name}")
@@ -72,12 +74,31 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
                 }
             })
 
-            executor.execute()
+            try {
+                executor.execute()
+            } catch (ex: Throwable) {
+                handler.error(scratchFile, "Exception occurs during Run Scratch Action")
+                handler.onFinish(scratchFile)
+
+                e.presentation.isEnabled = true
+
+                log.error(ex)
+                return@r
+            }
         }
 
         if (isMakeBeforeRun) {
-            CompilerManager.getInstance(project)
-                .make(module) { aborted, errors, _, _ -> if (!aborted && errors == 0) runnable() }
+            CompilerManager.getInstance(project).make(module) { aborted, errors, _, _ ->
+                if (!aborted && errors == 0) {
+                    if (DumbService.isDumb(project)) {
+                        DumbService.getInstance(project).smartInvokeLater {
+                            runnable()
+                        }
+                    } else {
+                        runnable()
+                    }
+                }
+            }
         } else {
             runnable()
         }

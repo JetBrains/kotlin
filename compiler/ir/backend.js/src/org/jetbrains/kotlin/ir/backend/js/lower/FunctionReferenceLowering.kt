@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.descriptors.JsSymbolBuilder
 import org.jetbrains.kotlin.ir.backend.js.descriptors.initialize
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -27,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 
 // TODO replace with DeclarationContainerLowerPass && do flatTransform
@@ -79,6 +77,21 @@ class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         }
     }
 
+    private fun createClosureGetterName(declaration: IrFunction) = createHelperFunctionName(declaration, "KreferenceGet")
+    private fun createClosureInstanceName(declaration: IrFunction) = createHelperFunctionName(declaration, "KreferenceClosure")
+
+    private fun createHelperFunctionName(declaration: IrFunction, suffix: String): String {
+        val nameBuilder = StringBuilder()
+        if (declaration is IrConstructor) {
+            nameBuilder.append(declaration.descriptor.constructedClass.fqNameSafe)
+            nameBuilder.append('_')
+        }
+        nameBuilder.append(declaration.descriptor.name)
+        nameBuilder.append('_')
+        nameBuilder.append(suffix)
+        return nameBuilder.toString()
+    }
+
     private fun lowerKFunctionReference(declaration: IrFunction, functionType: KotlinType): List<IrFunction> {
         // TODO: property reference
 
@@ -101,7 +114,7 @@ class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         // The `getter` function takes only parameters which have to be closured
         val getterValueParameters = declaration.valueParameters.dropLast(kFunctionValueParamsCount)
-        val getterName = "${declaration.descriptor.name}_KreferenceGet"
+        val getterName = createClosureGetterName(declaration)
 
         val refGetSymbol =
             JsSymbolBuilder.buildSimpleFunction(declaration.descriptor.containingDeclaration, getterName).apply {
@@ -117,7 +130,7 @@ class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             }
         }
 
-        val closureName = "${declaration.descriptor.name}_KreferenceClosure"
+        val closureName = createClosureInstanceName(declaration)
         val refClosureSymbol = JsSymbolBuilder.buildSimpleFunction(refGetSymbol.descriptor, closureName)
 
         // the params which are passed to closure

@@ -3,13 +3,13 @@ FILE fqName:<root> fileName:/initVal.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestInitValFromParameter flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:TestInitValFromParameter flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:TestInitValFromParameter flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitValFromParameter'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestInitValFromParameter) returnType:Int flags:
@@ -35,12 +35,12 @@ FILE fqName:<root> fileName:/initVal.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestInitValInClass flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:TestInitValInClass flags:
+    CONSTRUCTOR visibility:public <> () returnType:TestInitValInClass flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitValInClass'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestInitValInClass) returnType:Int flags:
@@ -66,12 +66,12 @@ FILE fqName:<root> fileName:/initVal.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestInitValInInitBlock flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:TestInitValInInitBlock flags:
+    CONSTRUCTOR visibility:public <> () returnType:TestInitValInInitBlock flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitValInInitBlock'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestInitValInInitBlock) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:TestInitValInInitBlock flags:
         BLOCK_BODY

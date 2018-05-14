@@ -35,7 +35,7 @@ class KotlinCompletionCharFilter() : CharFilter() {
     override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
         if (lookup.psiFile !is KtFile) return null
         if (!lookup.isCompletion) return null
-        val isAutopopup = CompletionService.getCompletionService().currentCompletion!!.isAutopopupCompletion
+        val isAutopopup = CompletionService.getCompletionService().currentCompletion?.isAutopopupCompletion ?: return null
 
         if (Character.isJavaIdentifierPart(c) || c == '@') {
             return CharFilter.Result.ADD_TO_PREFIX

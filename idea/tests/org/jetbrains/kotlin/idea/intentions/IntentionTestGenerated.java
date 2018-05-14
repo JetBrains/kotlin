@@ -2545,6 +2545,46 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 public void testWithAnnotation() throws Exception {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/withAnnotation.kt");
                 }
+
+                @TestMetadata("withInternalLoop.kt")
+                public void testWithInternalLoop() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/withInternalLoop.kt");
+                }
+
+                @TestMetadata("withInternalLoopOnly.kt")
+                public void testWithInternalLoopOnly() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/withInternalLoopOnly.kt");
+                }
+
+                @TestMetadata("withLoop.kt")
+                public void testWithLoop() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/withLoop.kt");
+                }
+
+                @TestMetadata("withLoopDeep.kt")
+                public void testWithLoopDeep() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/withLoopDeep.kt");
+                }
+
+                @TestMetadata("withLoopDeepAndComments.kt")
+                public void testWithLoopDeepAndComments() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/withLoopDeepAndComments.kt");
+                }
+
+                @TestMetadata("withLoopExistingLabel.kt")
+                public void testWithLoopExistingLabel() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/withLoopExistingLabel.kt");
+                }
+
+                @TestMetadata("withLoopOriginal.kt")
+                public void testWithLoopOriginal() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/withLoopOriginal.kt");
+                }
+
+                @TestMetadata("withLoopThen.kt")
+                public void testWithLoopThen() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/withLoopThen.kt");
+                }
             }
 
             @TestMetadata("idea/testData/intentions/branched/ifWhen/whenToIf")
@@ -3203,6 +3243,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
                 public void testAllFilesPresentInMerge() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/when/merge"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("hasCommentBetweenWhen.kt")
+                public void testHasCommentBetweenWhen() throws Exception {
+                    runTest("idea/testData/intentions/branched/when/merge/hasCommentBetweenWhen.kt");
+                }
+
+                @TestMetadata("hasSemicolonBetweenWhen.kt")
+                public void testHasSemicolonBetweenWhen() throws Exception {
+                    runTest("idea/testData/intentions/branched/when/merge/hasSemicolonBetweenWhen.kt");
                 }
 
                 @TestMetadata("mergeBlockWithBlock.kt")
@@ -3998,80 +4048,72 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ConvertArrayParameterToVararg extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInConvertArrayParameterToVararg() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertArrayParameterToVararg"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("arrayGenericType.kt")
         public void testArrayGenericType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/arrayGenericType.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertArrayParameterToVararg/arrayGenericType.kt");
         }
 
         @TestMetadata("arrayInt.kt")
         public void testArrayInt() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/arrayInt.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertArrayParameterToVararg/arrayInt.kt");
         }
 
         @TestMetadata("arrayString.kt")
         public void testArrayString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/arrayString.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertArrayParameterToVararg/arrayString.kt");
         }
 
         @TestMetadata("inConstructor.kt")
         public void testInConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/inConstructor.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertArrayParameterToVararg/inConstructor.kt");
         }
 
         @TestMetadata("inLambda.kt")
         public void testInLambda() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/inLambda.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertArrayParameterToVararg/inLambda.kt");
         }
 
         @TestMetadata("intArray.kt")
         public void testIntArray() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/intArray.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertArrayParameterToVararg/intArray.kt");
         }
 
         @TestMetadata("longArray.kt")
         public void testLongArray() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/longArray.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertArrayParameterToVararg/longArray.kt");
         }
 
         @TestMetadata("starProjection.kt")
         public void testStarProjection() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/starProjection.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertArrayParameterToVararg/starProjection.kt");
         }
 
         @TestMetadata("vararg.kt")
         public void testVararg() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/vararg.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertArrayParameterToVararg/vararg.kt");
         }
 
         @TestMetadata("withContravariant.kt")
         public void testWithContravariant() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/withContravariant.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertArrayParameterToVararg/withContravariant.kt");
         }
 
         @TestMetadata("withCovariance.kt")
         public void testWithCovariance() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/withCovariance.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertArrayParameterToVararg/withCovariance.kt");
         }
 
         @TestMetadata("withDefaultValue.kt")
         public void testWithDefaultValue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/withDefaultValue.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertArrayParameterToVararg/withDefaultValue.kt");
         }
     }
 
@@ -7460,50 +7502,47 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ConvertVarargParameterToArray extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInConvertVarargParameterToArray() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertVarargParameterToArray"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("genericType.kt")
         public void testGenericType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/genericType.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertVarargParameterToArray/genericType.kt");
         }
 
         @TestMetadata("inConstructor.kt")
         public void testInConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/inConstructor.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertVarargParameterToArray/inConstructor.kt");
         }
 
         @TestMetadata("int.kt")
         public void testInt() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/int.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertVarargParameterToArray/int.kt");
         }
 
         @TestMetadata("long.kt")
         public void testLong() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/long.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertVarargParameterToArray/long.kt");
         }
 
         @TestMetadata("noVararg.kt")
         public void testNoVararg() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/noVararg.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertVarargParameterToArray/noVararg.kt");
         }
 
         @TestMetadata("string.kt")
         public void testString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/string.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertVarargParameterToArray/string.kt");
         }
 
         @TestMetadata("withDefaultValue.kt")
         public void testWithDefaultValue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/withDefaultValue.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/convertVarargParameterToArray/withDefaultValue.kt");
         }
     }
 
@@ -14535,6 +14574,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/specifyTypeExplicitly/loopParameter.kt");
         }
 
+        @TestMetadata("overriddenAsNull.kt")
+        public void testOverriddenAsNull() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/overriddenAsNull.kt");
+        }
+
         @TestMetadata("overrideNotNullFunction.kt")
         public void testOverrideNotNullFunction() throws Exception {
             runTest("idea/testData/intentions/specifyTypeExplicitly/overrideNotNullFunction.kt");
@@ -15307,6 +15351,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/getImplicitReceiver.kt");
         }
 
+        @TestMetadata("getReservedWord1.kt")
+        public void testGetReservedWord1() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/getReservedWord1.kt");
+        }
+
+        @TestMetadata("getReservedWord2.kt")
+        public void testGetReservedWord2() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/getReservedWord2.kt");
+        }
+
         @TestMetadata("getSafeCall.kt")
         public void testGetSafeCall() throws Exception {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/getSafeCall.kt");
@@ -15365,6 +15419,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("setImplicitReceiver.kt")
         public void testSetImplicitReceiver() throws Exception {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/setImplicitReceiver.kt");
+        }
+
+        @TestMetadata("setReservedWord1.kt")
+        public void testSetReservedWord1() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/setReservedWord1.kt");
+        }
+
+        @TestMetadata("setReservedWord2.kt")
+        public void testSetReservedWord2() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/setReservedWord2.kt");
         }
 
         @TestMetadata("setSafeCall.kt")

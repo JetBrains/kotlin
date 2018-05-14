@@ -6,13 +6,13 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
       superClassifiers:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:T) returnType:Outer<T> flags:
+    CONSTRUCTOR visibility:public <> (x:T) returnType:Outer<T> flags:primary
       VALUE_PARAMETER name:x index:0 type:T flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     PROPERTY name:x type:T visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:T visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:T visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Outer<T>) returnType:T flags:
@@ -21,18 +21,18 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
           RETURN type=kotlin.Nothing from='<get-x>(): T'
             GET_FIELD 'x: T' type=T origin=null
               receiver: GET_VAR 'this@Outer: Outer<T>' type=Outer<T> origin=null
-    CLASS CLASS name:Inner modality:OPEN visibility:public flags:
+    CLASS CLASS name:Inner modality:OPEN visibility:public flags:inner
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer<T>.Inner flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:public <> ($this:Outer<T>, y:kotlin.Int) returnType:Outer<T>.Inner flags:
+      CONSTRUCTOR visibility:public <> ($this:Outer<T>, y:kotlin.Int) returnType:Outer<T>.Inner flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Outer<T> flags:
         VALUE_PARAMETER name:y index:0 type:kotlin.Int flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
       PROPERTY name:y type:kotlin.Int visibility:public modality:FINAL flags:val
-        FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public
+        FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public flags:final
           EXPRESSION_BODY
             GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Outer<T>.Inner) returnType:Int flags:
@@ -75,15 +75,15 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.<no name provided> flags:
             superClasses:
-              CLASS CLASS name:Inner modality:OPEN visibility:public flags:
-            CONSTRUCTOR visibility:public <> () returnType:test.<no name provided> flags:
+              CLASS CLASS name:Inner modality:OPEN visibility:public flags:inner
+            CONSTRUCTOR visibility:public <> () returnType:test.<no name provided> flags:primary
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Inner(Int)'
                   $this: GET_VAR 'this@test: Outer<Int>' type=Outer<kotlin.Int> origin=null
                   y: CONST Int type=kotlin.Int value=42
                 INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
             PROPERTY name:xx type:kotlin.Int visibility:public modality:FINAL flags:val
-              FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:public
+              FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:public flags:final
                 EXPRESSION_BODY
                   CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
                     $this: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY

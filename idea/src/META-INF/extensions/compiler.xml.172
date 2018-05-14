@@ -44,9 +44,6 @@
                         interface="org.jetbrains.kotlin.idea.completion.CompletionInformationProvider" />
         <extensionPoint qualifiedName="org.jetbrains.kotlin.moduleBuilder"
                         interface="com.intellij.ide.util.projectWizard.ModuleBuilder"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.defaultScriptDependenciesProvider"
-                        interface="org.jetbrains.kotlin.idea.core.script.DefaultScriptDependenciesProvider"
-                        area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.renameHandler"
                         interface="com.intellij.refactoring.rename.RenameHandler"/>
     </extensionPoints>

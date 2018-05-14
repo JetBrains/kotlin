@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Host flags:
+    CONSTRUCTOR visibility:public <> () returnType:Host flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
@@ -71,3 +71,4 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+

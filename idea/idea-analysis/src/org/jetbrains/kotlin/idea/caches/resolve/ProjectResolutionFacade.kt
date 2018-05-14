@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.load.java.structure.JavaClass

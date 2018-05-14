@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/justLambda.kt
   PROPERTY name:test1 type:() -> kotlin.Int visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:() -> kotlin.Int visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:() -> kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         BLOCK type=() -> kotlin.Int origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Int flags:
@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/justLambda.kt
         RETURN type=kotlin.Nothing from='<get-test1>(): () -> Int'
           GET_FIELD 'test1: () -> Int' type=() -> kotlin.Int origin=null
   PROPERTY name:test2 type:() -> kotlin.Unit visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:() -> kotlin.Unit visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:() -> kotlin.Unit visibility:public flags:final
       EXPRESSION_BODY
         BLOCK type=() -> kotlin.Unit origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Unit flags:

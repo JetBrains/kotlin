@@ -4,7 +4,7 @@ MODULE_FRAGMENT name:<test-module>
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:JEnum flags:
       superClasses:
         UNBOUND: class Enum<E : kotlin.Enum<E>> : kotlin.Comparable<E>, java.io.Serializable
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:JEnum flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:JEnum flags:primary
       ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:ONE
       ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:THREE
       ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:TWO

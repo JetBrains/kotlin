@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/enum.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum1 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:TestEnum1 flags:
+    CONSTRUCTOR visibility:private <> () returnType:TestEnum1 flags:primary
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: TestEnum1
@@ -61,14 +61,14 @@ FILE fqName:<root> fileName:/enum.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum2 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum2 flags:
+    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum2 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: TestEnum2
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum2'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestEnum2) returnType:Int flags:
@@ -135,7 +135,7 @@ FILE fqName:<root> fileName:/enum.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum3 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:TestEnum3 flags:
+    CONSTRUCTOR visibility:private <> () returnType:TestEnum3 flags:primary
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: TestEnum3
@@ -146,7 +146,7 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum3.TEST flags:
         superClasses:
           CLASS ENUM_CLASS name:TestEnum3 modality:FINAL visibility:public flags:
-        CONSTRUCTOR visibility:private <> () returnType:TestEnum3.TEST flags:
+        CONSTRUCTOR visibility:private <> () returnType:TestEnum3.TEST flags:primary
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor TestEnum3()'
             INSTANCE_INITIALIZER_CALL classDescriptor='TEST'
@@ -248,14 +248,14 @@ FILE fqName:<root> fileName:/enum.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum4 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum4 flags:
+    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum4 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: TestEnum4
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum4'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestEnum4) returnType:Int flags:
@@ -270,7 +270,7 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum4.TEST1 flags:
         superClasses:
           CLASS ENUM_CLASS name:TestEnum4 modality:FINAL visibility:public flags:
-        CONSTRUCTOR visibility:private <> () returnType:TestEnum4.TEST1 flags:
+        CONSTRUCTOR visibility:private <> () returnType:TestEnum4.TEST1 flags:primary
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor TestEnum4(Int)'
               x: CONST Int type=kotlin.Int value=1
@@ -333,13 +333,13 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum4.TEST2 flags:
         superClasses:
           CLASS ENUM_CLASS name:TestEnum4 modality:FINAL visibility:public flags:
-        CONSTRUCTOR visibility:private <> () returnType:TestEnum4.TEST2 flags:
+        CONSTRUCTOR visibility:private <> () returnType:TestEnum4.TEST2 flags:primary
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor TestEnum4(Int)'
               x: CONST Int type=kotlin.Int value=2
             INSTANCE_INITIALIZER_CALL classDescriptor='TEST2'
         PROPERTY name:z type:kotlin.Int visibility:public modality:FINAL flags:val
-          FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:public
+          FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:public flags:final
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:TestEnum4.TEST2) returnType:Int flags:
             $this: VALUE_PARAMETER name:<this> type:TestEnum4.TEST2 flags:
             BLOCK_BODY
@@ -455,7 +455,7 @@ FILE fqName:<root> fileName:/enum.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum5 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum5 flags:
+    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum5 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
@@ -464,7 +464,7 @@ FILE fqName:<root> fileName:/enum.kt
           <E : Enum<E>>: TestEnum5
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum5'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestEnum5) returnType:Int flags:

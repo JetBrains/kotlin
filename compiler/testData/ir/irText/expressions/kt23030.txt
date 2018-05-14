@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/kt23030.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:C flags:
+    CONSTRUCTOR visibility:public <> () returnType:C flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
@@ -141,3 +141,4 @@ FILE fqName:<root> fileName:/kt23030.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+

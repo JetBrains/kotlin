@@ -289,10 +289,21 @@ fun getSomething() = 10
     }
 
     @Test
-    fun testMultiplatformAndroidCompile() {
-        val project = Project("multiplatformAndroidProject", gradleVersion)
+    fun testMultiplatformAndroidCompile() = with(Project("multiplatformAndroidProject", gradleVersion)) {
+        setupWorkingDir()
 
-        project.build("build") {
+        if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+            // Check that the common module is not added to the deprecated configuration 'compile' (KT-23719):
+            gradleBuildScript("libAndroid").appendText(
+                """${'\n'}
+                configurations.compile.dependencies.all { aDependencyExists ->
+                    throw GradleException("Check failed")
+                }
+                """.trimIndent()
+            )
+        }
+
+        build("build") {
             assertSuccessful()
             assertTasksExecuted(
                 ":lib:compileKotlinCommon",

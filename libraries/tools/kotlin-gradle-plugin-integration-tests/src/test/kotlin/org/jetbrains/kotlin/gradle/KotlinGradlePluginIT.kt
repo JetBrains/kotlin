@@ -209,6 +209,28 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
+    fun testManyClassesIC() {
+        val project = Project("manyClasses")
+        val options = defaultBuildOptions().copy(incremental = true)
+
+        project.setupWorkingDir()
+        val classesKt = project.projectFile("classes.kt")
+        classesKt.writeText((0..1024).joinToString("\n") { "class Class$it { fun f() = $it }" })
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertNoWarnings()
+        }
+
+        val dummyKt = project.projectFile("dummy.kt")
+        dummyKt.modify { "$it " }
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(dummyKt))
+        }
+    }
+
+    @Test
     fun testSimpleMultiprojectIncremental() {
         val incremental = defaultBuildOptions().copy(incremental = true)
 
@@ -771,4 +793,18 @@ class KotlinGradleIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun testModuleNameFiltering() = with(Project("typeAlias")) { // Use a Project with a top-level typealias
+        setupWorkingDir()
+
+        gradleBuildScript().appendText("\n" + """archivesBaseName = 'a/really\\tricky\n\rmodule\tname'""")
+        build("classes") {
+            assertSuccessful()
+
+            val metaInfDir = File(projectDir, kotlinClassesDir() + "META-INF")
+            assertNotNull(metaInfDir.listFiles().singleOrNull { it.name.endsWith(".kotlin_module") })
+        }
+    }
+
 }

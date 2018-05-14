@@ -25,5 +25,7 @@ interface IrConstructor : IrFunction, IrSymbolDeclaration<IrConstructorSymbol> {
         get() = IrDeclarationKind.CONSTRUCTOR
 
     override val descriptor: ClassConstructorDescriptor
+
+    val isPrimary: Boolean
 }
 
