@@ -207,9 +207,8 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
     }
 
     private fun ScratchFile.findExpression(psiElement: PsiElement): ScratchExpression? {
-        val lineStart = psiElement.getLineNumber(true)
-        val lineEnd = psiElement.getLineNumber(false)
-        return getExpressions().firstOrNull { it.lineStart == lineStart || it.lineEnd == lineEnd }
+        val elementLine = psiElement.getLineNumber()
+        return getExpressions().firstOrNull { elementLine in it.lineStart..it.lineEnd }
     }
 
     private fun ScratchFile.findExpression(lineStart: Int, lineEnd: Int): ScratchExpression? {
