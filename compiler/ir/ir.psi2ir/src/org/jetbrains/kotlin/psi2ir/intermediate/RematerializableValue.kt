@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.types.KotlinType
 
 class RematerializableValue(val irExpression: IrExpressionWithCopy) : IntermediateValue {
+
     override val type: IrType get() = irExpression.type
 
     override fun load(): IrExpression = irExpression.copy()

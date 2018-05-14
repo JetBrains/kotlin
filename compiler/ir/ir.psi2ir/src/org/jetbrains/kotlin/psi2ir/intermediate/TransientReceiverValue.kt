@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.types.KotlinType
 
 class TransientReceiverValue(override val type: IrType) : IntermediateValue {
+
     override fun load(): IrExpression {
         throw AssertionError("Transient receiver should not be instantiated")
     }

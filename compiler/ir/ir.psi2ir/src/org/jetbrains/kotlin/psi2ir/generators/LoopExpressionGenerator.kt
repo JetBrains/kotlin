@@ -162,7 +162,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         val iteratorCall = statementGenerator.pregenerateCall(iteratorResolvedCall)
         val irIteratorCall = callGenerator.generateCall(ktLoopRange, iteratorCall, IrStatementOrigin.FOR_LOOP_ITERATOR)
         val irIterator = scope.createTemporaryVariable(irIteratorCall, "iterator", origin = IrDeclarationOrigin.FOR_LOOP_ITERATOR)
-        val iteratorValue = VariableLValue(irIterator)
+        val iteratorValue = VariableLValue(context, irIterator)
         irForBlock.statements.add(irIterator)
 
         val irInnerWhile = IrWhileLoopImpl(startOffset, endOffset, context.irBuiltIns.unitType, IrStatementOrigin.FOR_LOOP_INNER_WHILE)
@@ -196,7 +196,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
             statementGenerator.declareComponentVariablesInBlock(
                 ktLoopDestructuringDeclaration,
                 irInnerBody,
-                VariableLValue(irLoopParameter)
+                VariableLValue(context, irLoopParameter)
             )
         }
 
