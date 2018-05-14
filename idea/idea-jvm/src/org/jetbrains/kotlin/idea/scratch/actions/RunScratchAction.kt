@@ -56,12 +56,12 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
             return
         }
 
-        val runnable = r@{
+        fun executeScratch() {
             val executor = if (isRepl) provider.createReplExecutor(scratchFile) else provider.createCompilingExecutor(scratchFile)
             if (executor == null) {
                 handler.error(scratchFile, "Couldn't run ${psiFile.name}")
                 handler.onFinish(scratchFile)
-                return@r
+                return
             }
 
             e.presentation.isEnabled = false
@@ -83,7 +83,6 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
                 e.presentation.isEnabled = true
 
                 log.error(ex)
-                return@r
             }
         }
 
@@ -92,15 +91,15 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
                 if (!aborted && errors == 0) {
                     if (DumbService.isDumb(project)) {
                         DumbService.getInstance(project).smartInvokeLater {
-                            runnable()
+                            executeScratch()
                         }
                     } else {
-                        runnable()
+                        executeScratch()
                     }
                 }
             }
         } else {
-            runnable()
+            executeScratch()
         }
     }
 }
