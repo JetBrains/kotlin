@@ -10,8 +10,6 @@ ext.jvmTarget = "1.8"
 
 project.ext["jpsLibraryPath"] = rootProject.distLibDir
 
-def junit5Version = "5.2.0"
-
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
     compile project(':kotlin-test:kotlin-test-jvm')
