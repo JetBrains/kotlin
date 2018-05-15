@@ -28,14 +28,16 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.process.CommandLineArgumentProvider
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.File
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.ObjectOutputStream
 import java.util.*
 
@@ -69,6 +71,9 @@ abstract class KaptVariantData<T>(val variantData: T) {
             project: Project,
             kaptTask: KaptTask,
             javaTask: AbstractCompile)
+
+    open val annotationProcessorOptionProviders: List<*>
+        get() = emptyList<Any>()
 }
 
 // Subplugin for the Kotlin Gradle plugin
@@ -226,9 +231,20 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         kotlinSourcesOutputDir.mkdirs()
 
-        val apOptions =
-                (kaptExtension.getAdditionalArguments(project, kaptVariantData?.variantData, androidPlugin) + androidOptions)
-                        .map { SubpluginOption(it.key, it.value) } +
+        val apOptionsFromProviders =
+            if (isGradleVersionAtLeast(4, 6))
+                kaptVariantData?.annotationProcessorOptionProviders
+                    ?.flatMap { (it as CommandLineArgumentProvider).asArguments().map { "" to it.removePrefix("-A") } }
+                    .orEmpty()
+            else
+                emptyList()
+
+        val apOptionsPairsList: List<Pair<String, String>> =
+            kaptExtension.getAdditionalArguments(project, kaptVariantData?.variantData, androidPlugin).toList() +
+                    androidOptions.toList() +
+                    apOptionsFromProviders
+
+        val apOptions = apOptionsPairsList.map { SubpluginOption(it.first, it.second) } +
                 FilesSubpluginOption("kapt.kotlin.generated", listOf(kotlinSourcesOutputDir))
 
         pluginOptions += CompositeSubpluginOption("apoptions", encodeList(apOptions.associate { it.key to it.value }), apOptions)
@@ -312,12 +328,15 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         if (kaptVariantData != null) {
             kaptVariantData.registerGeneratedJavaSource(project, kaptTask, javaCompile)
-        }
-        else {
+        } else {
             registerGeneratedJavaSource(kaptTask, javaCompile)
         }
 
         kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
+
+        kaptVariantData?.annotationProcessorOptionProviders?.let {
+            kaptTask.annotationProcessorOptionProviders.add(it)
+        }
 
         buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "apt")
 
@@ -366,6 +385,15 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             newCompilerArgs.add("-proc:none")
             @Suppress("UNCHECKED_CAST")
             options.compilerArgs = newCompilerArgs as List<String>
+
+            if (isGradleVersionAtLeast(4, 6)) {
+                // Filter out the argument providers that are related to annotation processing and therefore already used by Kapt.
+                // This is done to avoid outputs intersections between Kapt and and javaCompile and make the up-to-date check for
+                // javaCompile more granular as it does not perform annotation processing:
+                if (kaptVariantData != null) {
+                    options.compilerArgumentProviders.removeAll(kaptVariantData.annotationProcessorOptionProviders)
+                }
+            }
         }
     }
 

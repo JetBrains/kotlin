@@ -128,6 +128,15 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
             variantData.registerExternalAptJavaOutput(kaptSourceOutput)
             variantData.dataBindingDependencyArtifactsIfSupported?.let { kaptTask.dependsOn(it) }
         }
+
+        override val annotationProcessorOptionProviders: List<*>
+            get() = try {
+                // Public API added in Android Gradle Plugin 3.2.0-alpha15:
+                val apOptions = variantData.javaCompileOptions.annotationProcessorOptions
+                apOptions.javaClass.getMethod("getCompilerArgumentProviders").invoke(apOptions) as List<*>
+            } catch (e: NoSuchMethodException) {
+                emptyList<Any>()
+            }
     }
 
     //TODO A public API is expected for this purpose. Once it is available, use the public API
