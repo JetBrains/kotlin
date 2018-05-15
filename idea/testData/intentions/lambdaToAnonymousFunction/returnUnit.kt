@@ -3,8 +3,8 @@ fun unit(f: (Int) -> Unit) {}
 fun foo(i: Int) {}
 
 fun test() {
-    unit {
+    unit {<caret>
         foo(it)
         foo(it)
-    }<caret>
+    }
 }

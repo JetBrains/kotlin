@@ -1,7 +1,7 @@
 fun foo(f: (Int) -> String) {}
 
 fun test() {
-    foo {
+    foo {<caret>
         if (it == 1) {
             return@foo "1"
         } else if (it == 2) {
@@ -9,5 +9,5 @@ fun test() {
         } else {
             return@foo "$it"
         }
-    }<caret>
+    }
 }

@@ -9704,6 +9704,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/lambdaToAnonymousFunction/implicitParameterName.kt");
         }
 
+        @TestMetadata("incorrectOffset.kt")
+        public void testIncorrectOffset() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/incorrectOffset.kt");
+        }
+
         @TestMetadata("namedArgument.kt")
         public void testNamedArgument() throws Exception {
             runTest("idea/testData/intentions/lambdaToAnonymousFunction/namedArgument.kt");

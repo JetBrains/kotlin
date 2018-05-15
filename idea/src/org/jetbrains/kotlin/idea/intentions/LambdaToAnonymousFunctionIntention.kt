@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -32,7 +33,9 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
         if (element.getStrictParentOfType<KtValueArgument>() == null) return false
         val descriptor = element.functionLiteral.descriptor as? AnonymousFunctionDescriptor ?: return false
-        return descriptor.valueParameters.none { it.name.isSpecial }
+        if (descriptor.valueParameters.any { it.name.isSpecial }) return false
+        val lastElement = element.functionLiteral.arrow ?: element.functionLiteral.lBrace
+        return caretOffset <= lastElement.endOffset
     }
 
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
