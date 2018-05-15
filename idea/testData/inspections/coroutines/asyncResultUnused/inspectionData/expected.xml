@@ -1,0 +1,11 @@
+<problems>
+    <problem>
+        <file>simple.kt</file>
+        <line>30</line>
+        <module>light_idea_test_case</module>
+        <package>&lt;default&gt;</package>
+        <entry_point TYPE="file" FQNAME="temp:///src/simple.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Result of 'async' is not used</problem_class>
+        <description>Result of 'async' is never used</description>
+    </problem>
+</problems>
