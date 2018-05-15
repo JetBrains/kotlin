@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.util.ScopedTypeParametersResolver
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isError
@@ -37,26 +37,25 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.types.upperIfFlexible
 
-fun insertImplicitCasts(builtIns: KotlinBuiltIns, element: IrElement, symbolTable: SymbolTable) {
-    element.transformChildren(InsertImplicitCasts(builtIns, symbolTable), null)
+fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
+    element.transformChildren(InsertImplicitCasts(context), null)
 }
 
-class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symbolTable: SymbolTable) : IrElementTransformerVoid() {
+class InsertImplicitCasts(context: GeneratorContext) : IrElementTransformerVoid() {
 
-    private val typeParameterResolver = ScopedTypeParametersResolver()
+    private val builtIns = context.builtIns
+    private val irBuiltIns = context.irBuiltIns
+    private val symbolTable = context.symbolTable
+
+    private val typeTranslator = TypeTranslator(context.moduleDescriptor, symbolTable)
+    private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     private inline fun <T> runInTypeParameterScope(typeParametersContainer: IrTypeParametersContainer, fn: () -> T): T {
-        typeParameterResolver.enterTypeParameterScope(typeParametersContainer)
+        typeTranslator.enterScope(typeParametersContainer)
         val result = fn()
-        typeParameterResolver.leaveTypeParameterScope()
+        typeTranslator.leaveScope()
         return result
     }
-
-    private fun resolveScopedTypeParameter(classifier: ClassifierDescriptor): IrTypeParameterSymbol? =
-        if (classifier is TypeParameterDescriptor)
-            typeParameterResolver.resolveScopedTypeParameter(classifier)
-        else
-            null
 
     override fun visitCallableReference(expression: IrCallableReference): IrExpression =
         expression.transformPostfix {
@@ -188,13 +187,16 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
         expression = expression.cast(expectedType)
     }
 
+    private fun IrExpression.cast(irType: IrType): IrExpression =
+        cast(irType.originalKotlinType)
+
     private fun IrExpression.cast(expectedType: KotlinType?): IrExpression {
         if (expectedType == null) return this
         if (expectedType.isError) return this
 
         val notNullableExpectedType = expectedType.makeNotNullable()
 
-        val valueType = this.type
+        val valueType = this.type.originalKotlinType!!
 
         return when {
             KotlinBuiltIns.isUnit(expectedType) ->
@@ -225,29 +227,28 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
         targetType: KotlinType,
         typeOperator: IrTypeOperator
     ): IrExpression {
-        val typeDescriptor = targetType.constructor.declarationDescriptor
-                ?: throw AssertionError("No declaration for target type: $targetType")
-
+        val irType = targetType.toIrType()
         return IrTypeOperatorCallImpl(
             startOffset,
             endOffset,
-            targetType,
+            irType,
             typeOperator,
-            targetType,
-            resolveScopedTypeParameter(typeDescriptor) ?: symbolTable.referenceClassifier(typeDescriptor),
+            irType, irType.classifierOrFail,
             this
         )
     }
 
     private fun IrExpression.coerceToUnit(): IrExpression {
-        val valueType = this.type
+        val valueType = this.type.originalKotlinType!!
 
         return if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, builtIns.unitType))
             this
         else
             IrTypeOperatorCallImpl(
-                startOffset, endOffset, builtIns.unitType,
-                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, builtIns.unitType, symbolTable.referenceClass(builtIns.unit),
+                startOffset, endOffset,
+                irBuiltIns.unitType,
+                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+                irBuiltIns.unitType, irBuiltIns.unitType.classifierOrFail,
                 this
             )
     }
