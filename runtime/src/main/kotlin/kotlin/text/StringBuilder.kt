@@ -65,6 +65,12 @@ private external fun String.toUtf8OrThrowImpl(start: Int, size: Int) : ByteArray
 @SymbolName("Kotlin_String_fromCharArray")
 external fun fromCharArray(array: CharArray, start: Int, size: Int) : String
 
+@SymbolName("Kotlin_StringBuilder_insertString")
+private external fun insertString(array: CharArray, start: Int, value: String): Int
+
+@SymbolName("Kotlin_StringBuilder_insertInt")
+private external fun insertInt(array: CharArray, start: Int, value: Int): Int
+
 /**
  * Builds new string by populating newly created [StringBuilder] using provided [builderAction]
  * and then converting it to [String].
@@ -253,8 +259,15 @@ class StringBuilder private constructor (
         return this
     }
 
-    fun insert(index: Int, string: String): StringBuilder = insert(index, string.toCharArray())
+    fun insert(index: Int, string: String): StringBuilder {
+        checkInsertIndex(index)
+        ensureExtraCapacity(string.length)
+        array.copyRangeTo(array, index, length, index + string.length)
+        length += insertString(array, index, string)
+        return this
+    }
 
+    // TODO: optimize those!
     fun insert(index: Int, value: Boolean) = insert(index, value.toString())
     fun insert(index: Int, value: Byte)    = insert(index, value.toString())
     fun insert(index: Int, value: Short)   = insert(index, value.toString())
@@ -296,12 +309,21 @@ class StringBuilder private constructor (
         return this
     }
 
-    fun append(it: String): StringBuilder = append(it.toCharArray())
+    fun append(it: String): StringBuilder {
+        ensureExtraCapacity(it.length)
+        length += insertString(array, length, it)
+        return this
+    }
 
+    // TODO: optimize those!
     fun append(it: Boolean) = append(it.toString())
     fun append(it: Byte) = append(it.toString())
     fun append(it: Short) = append(it.toString())
-    fun append(it: Int) = append(it.toString())
+    fun append(it: Int): StringBuilder {
+        ensureExtraCapacity(11)
+        length += insertInt(array, length, it)
+        return this
+    }
     fun append(it: Long) = append(it.toString())
     fun append(it: Float) = append(it.toString())
     fun append(it: Double) = append(it.toString())

@@ -840,6 +840,30 @@ OBJ_GETTER(Kotlin_String_plusImpl, KString thiz, KString other) {
   RETURN_OBJ(result->obj());
 }
 
+KInt Kotlin_StringBuilder_insertString(KRef builder, KInt position, KString fromString) {
+  auto toArray = builder->array();
+  RuntimeAssert(toArray->count_ >= fromString->count_ + position, "must be true");
+  memcpy(CharArrayAddressOfElementAt(toArray, position),
+         CharArrayAddressOfElementAt(fromString, 0),
+         fromString->count_ * sizeof(KChar));
+  return fromString->count_;
+}
+
+KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt value) {
+  auto toArray = builder->array();
+  RuntimeAssert(toArray->count_ >= 11 + position, "must be true");
+  char cstring[12];
+  auto length = konan::snprintf(cstring, sizeof(cstring), "%d", value);
+  auto* from = &cstring[0];
+  auto* to = CharArrayAddressOfElementAt(toArray, position);
+  auto* end = from + length;
+  while (from != end) {
+    *to++ = *from++;
+  }
+  return length;
+}
+
+
 KBoolean Kotlin_String_equals(KString thiz, KConstRef other) {
   if (other == nullptr || other->type_info() != theStringTypeInfo) return false;
   // Important, due to literal internalization.
