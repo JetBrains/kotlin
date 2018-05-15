@@ -62,6 +62,19 @@ internal fun GradleImportingTestCase.getSourceRootInfos(moduleName: String): Lis
 }
 
 class GradleFacetImportTest : GradleImportingTestCase() {
+    private var isCreateEmptyContentRootDirectories = true
+
+    override fun setUp() {
+        super.setUp()
+        isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
+        currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
+    }
+
+    override fun tearDown() {
+        currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
+        super.tearDown()
+    }
+
     @Test
     fun testJvmImport() {
         createProjectSubFile(
