@@ -55,9 +55,9 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
         handlers.forEach { it.onStart(file) }
 
         val module = file.getModule() ?: return error("Module should be selected")
-        val psiFile = file.getPsiFile() ?: return error("Couldn't find psiFile for current editor")
+        val psiFile = file.getPsiFile() as? KtFile ?: return error("Couldn't find KtFile for current editor")
 
-        if (!checkForErrors(psiFile as KtFile)) {
+        if (!checkForErrors(psiFile)) {
             return error("Compilation Error")
         }
 
