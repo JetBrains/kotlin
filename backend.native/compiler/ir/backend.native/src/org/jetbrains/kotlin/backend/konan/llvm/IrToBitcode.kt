@@ -1168,7 +1168,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val location = codegen.generateLocationInfo(locationInfo)
         val file = (currentCodeContext.fileScope() as FileScope).file.file()
         return when (element) {
-            is IrVariable -> debugInfoLocalVariableLocation(
+            is IrVariable -> if (element.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE) debugInfoLocalVariableLocation(
                     builder       = context.debugInfo.builder,
                     functionScope = locationInfo.scope,
                     diType        = element.descriptor.type.diType(context, codegen.llvmTargetData),
@@ -1176,6 +1176,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     file          = file,
                     line          = locationInfo.line,
                     location      = location)
+                    else null
             is IrValueParameter -> debugInfoParameterLocation(
                     builder       = context.debugInfo.builder,
                     functionScope = locationInfo.scope,
