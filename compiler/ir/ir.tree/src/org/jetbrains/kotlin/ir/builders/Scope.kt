@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -42,7 +43,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
     private var lastTemporaryIndex: Int = 0
     private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
 
-    fun createDescriptorForTemporaryVariable(
+    private fun createDescriptorForTemporaryVariable(
         type: KotlinType,
         nameHint: String? = null,
         isMutable: Boolean = false
@@ -59,12 +60,18 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         nameHint: String? = null,
         isMutable: Boolean = false,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
-    ): IrVariable =
-        IrVariableImpl(
+    ): IrVariable {
+        val originalKotlinType = irExpression.type.originalKotlinType ?: throw AssertionError("No originalKotlinType for $irExpression")
+        return IrVariableImpl(
             irExpression.startOffset, irExpression.endOffset, origin,
-            createDescriptorForTemporaryVariable(irExpression.type, nameHint, isMutable),
+            createDescriptorForTemporaryVariable(
+                originalKotlinType,
+                nameHint, isMutable
+            ),
+            irExpression.type,
             irExpression
         )
+    }
 }
 
 @Suppress("DeprecatedCallableAddReplaceWith")
