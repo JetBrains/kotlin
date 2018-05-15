@@ -25,26 +25,6 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtPropertyImpl
 
-class JavaFieldToKotlinPropertyConversion : TransformerBasedConversion() {
-    override fun visitElement(element: JKTreeElement) {
-        element.acceptChildren(this, null)
-    }
-
-    override fun visitUniverseClass(universeClass: JKUniverseClass) {
-        somethingChanged = true
-        universeClass.declarationList.declarations = universeClass.declarationList.declarations.map {
-            if (it is JKJavaField) JKKtPropertyImpl(
-                it.modifierList,
-                it.type,
-                it.name,
-                it.initializer,
-                JKBlockImpl(),
-                JKBlockImpl()
-            ) else it
-        }
-    }
-}
-
 class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
     override fun visitElement(element: JKTreeElement) {
         element.acceptChildren(this, null)
