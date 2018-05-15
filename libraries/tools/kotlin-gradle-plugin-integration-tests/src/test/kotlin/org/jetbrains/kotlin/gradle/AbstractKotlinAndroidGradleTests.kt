@@ -16,7 +16,68 @@ class KotlinAndroidGradleIT :
 class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(androidGradlePluginVersion = "2.3.+")
 
 // TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
-class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtLeast("4.5"), "3.2.0-alpha06")
+class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtLeast("4.6"), "3.2.0-alpha15") {
+
+    @Test
+    fun testKaptUsingApOptionProvidersAsNestedInputOutput() = with(Project("AndroidProject", gradleVersion)) {
+        setupWorkingDir()
+
+        gradleBuildScript(subproject = "Android").appendText(
+            """
+
+            apply plugin: 'kotlin-kapt'
+
+            class MyNested implements org.gradle.process.CommandLineArgumentProvider {
+                String value = ""
+
+                @InputFile
+                File inputFile = null
+
+                @Override
+                Iterable<String> asArguments() { return [value] }
+            }
+
+            def nested = new MyNested()
+            nested.value = '123'
+            nested.inputFile = file("${'$'}projectDir/in.txt")
+
+            android.applicationVariants.all {
+                it.javaCompileOptions.annotationProcessorOptions.compilerArgumentProviders.add(nested)
+            }
+            """.trimIndent()
+        )
+
+        File(projectDir, "Android/in.txt").appendText("1234")
+
+        val kaptTasks = listOf(":Android:kaptFlavor1DebugKotlin")
+        val javacTasks = listOf(":Android:compileFlavor1DebugJavaWithJavac")
+
+        val buildTasks = (kaptTasks + javacTasks).toTypedArray()
+
+        build(*buildTasks) {
+            assertSuccessful()
+            assertTasksExecuted(kaptTasks + javacTasks)
+        }
+
+        File(projectDir, "Android/in.txt").appendText("5678")
+
+        build(*buildTasks) {
+            assertSuccessful()
+            assertTasksExecuted(kaptTasks)
+            assertTasksUpToDate(javacTasks)
+        }
+
+        gradleBuildScript(subproject = "Android").modify {
+            it.replace("nested.value = '123'", "nested.value = '456'")
+        }
+
+        build(*buildTasks) {
+            assertSuccessful()
+            assertTasksExecuted(kaptTasks)
+            assertTasksUpToDate(javacTasks)
+        }
+    }
+}
 
 class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtLeast("4.1"), "3.0.0")
 

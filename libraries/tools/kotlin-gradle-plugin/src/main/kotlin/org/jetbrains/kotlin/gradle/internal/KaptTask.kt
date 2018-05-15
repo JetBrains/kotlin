@@ -56,6 +56,9 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
     @get:OutputDirectory
     lateinit var kotlinSourcesDestinationDir: File
 
+    @get:Nested
+    internal val annotationProcessorOptionProviders: MutableList<Any> = mutableListOf()
+
     override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
