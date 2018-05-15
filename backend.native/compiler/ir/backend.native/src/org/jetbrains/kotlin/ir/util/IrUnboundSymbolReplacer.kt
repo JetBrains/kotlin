@@ -354,7 +354,7 @@ private class IrUnboundSymbolReplacer(
         }
     }
 
-    private val returnTargetStack = mutableListOf<IrFunctionSymbol>()
+    private val returnTargetStack = mutableListOf<IrReturnTargetSymbol>()
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         returnTargetStack.push(declaration.symbol)
