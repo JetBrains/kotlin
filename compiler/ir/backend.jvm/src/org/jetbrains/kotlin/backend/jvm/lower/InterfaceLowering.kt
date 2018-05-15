@@ -31,9 +31,11 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -60,10 +62,12 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
 
         irClass.declarations.filterIsInstance<IrFunction>().forEach {
             val descriptor = it.descriptor
-            if (descriptor.modality != Modality.ABSTRACT) {
+            if (it.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER) {
+                members.add(it) //just copy $default to DefaultImpls
+            } else if (descriptor.modality != Modality.ABSTRACT) {
                 val functionDescriptorImpl =
                     createDefaultImplFunDescriptor(defaultImplsDescriptor, descriptor, interfaceDescriptor, state.typeMapper)
-                members.add(functionDescriptorImpl.createFunctionAndMapVariables(it))
+                members.add(functionDescriptorImpl.createFunctionAndMapVariables(it, it.visibility))
                 it.body = null
             }
         }
@@ -142,8 +146,15 @@ internal fun createStaticFunctionWithReceivers(
     return newFunction
 }
 
-internal fun FunctionDescriptor.createFunctionAndMapVariables(oldFunction: IrFunction) =
-    IrFunctionImpl(oldFunction.startOffset, oldFunction.endOffset, oldFunction.origin, this, oldFunction.body).apply {
+internal fun FunctionDescriptor.createFunctionAndMapVariables(
+    oldFunction: IrFunction,
+    visibility: Visibility
+) =
+    IrFunctionImpl(
+        oldFunction.startOffset, oldFunction.endOffset, oldFunction.origin, IrSimpleFunctionSymbolImpl(this),
+        visibility = visibility
+    ).apply {
+        body = oldFunction.body
         createParameterDeclarations()
         val mapping: Map<ValueDescriptor, IrValueParameter> =
             (

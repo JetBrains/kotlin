@@ -71,13 +71,15 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
     }
 
     private fun calculateMethodFlags(isStatic: Boolean): Int {
+        if (irFunction.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER) {
+            return Opcodes.ACC_PUBLIC or Opcodes.ACC_SYNTHETIC.let {
+                if (irFunction is IrConstructor) it else it or Opcodes.ACC_BRIDGE or Opcodes.ACC_STATIC
+            }
+        }
+
         var flags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, state).or(if (isStatic) Opcodes.ACC_STATIC else 0).xor(
             if (classCodegen.irClass.isAnnotationClass) Opcodes.ACC_FINAL else 0/*TODO*/
         ).or(if (descriptor is JvmDescriptorWithExtraFlags) descriptor.extraFlags else 0)
-
-        if (irFunction.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER) {
-            flags = flags.xor(AsmUtil.getVisibilityAccessFlag(descriptor)).or(Opcodes.ACC_PUBLIC)
-        }
 
         if (classCodegen.irClass.isJvmInterface && InitializersLowering.clinitName == irFunction.name) {
             //reset abstract flag for <clinit>
