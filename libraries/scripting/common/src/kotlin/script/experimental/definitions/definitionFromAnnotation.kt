@@ -22,7 +22,7 @@ open class ScriptDefinitionFromAnnotatedBaseClass(val environment: ScriptingEnvi
             ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting baseClass parameter in the scripting environment")
 
     private val mainAnnotation = baseClass.findAnnotation<KotlinScript>()
-            ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript on the $baseClass")
+            ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript annotation on the $baseClass")
 
     private val explicitDefinition: ScriptDefinition? =
         baseClass.findAnnotation<KotlinScriptDefinition>()?.definition.takeIf { it != this::class }?.let { it.instantiateScriptHandler() }

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.ScriptDefinitionsSource
@@ -26,26 +24,23 @@ import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseC
 internal const val SCRIPT_DEFINITION_MARKERS_PATH = "META-INF/kotlin/script/templates/"
 
 class ScriptDefinitionsFromClasspathDiscoverySource(
-    private val configuration: CompilerConfiguration,
+    private val classpath: List<File>,
     private val defaultScriptDefinitionClasspath: List<File>,
-    private val scriptDefinitionParentClassloader: ClassLoader,
     private val messageCollector: MessageCollector
 ) : ScriptDefinitionsSource {
 
     override val definitions: Sequence<KotlinScriptDefinition> = run {
         discoverScriptTemplatesInClasspath(
-            configuration.jvmClasspathRoots,
+            classpath,
             defaultScriptDefinitionClasspath,
-            scriptDefinitionParentClassloader,
             messageCollector
         )
     }
 }
 
-private fun discoverScriptTemplatesInClasspath(
+internal fun discoverScriptTemplatesInClasspath(
     classpath: Iterable<File>,
     defaultScriptDefinitionClasspath: List<File>,
-    scriptDefinitionParentClassloader: ClassLoader,
     messageCollector: MessageCollector
 ): Sequence<LazyScriptDefinitionFromDiscoveredClass> = buildSequence {
     for (dep in classpath) {
@@ -73,7 +68,7 @@ private fun discoverScriptTemplatesInClasspath(
                                         LazyScriptDefinitionFromDiscoveredClass(
                                             jar.getInputStream(templateClass).readBytes(),
                                             templateClassName, listOf(dep) + jar.extractClasspath(defaultScriptDefinitionClasspath),
-                                            scriptDefinitionParentClassloader, messageCollector
+                                            messageCollector
                                         )
                                     )
                                 }
@@ -100,7 +95,7 @@ private fun discoverScriptTemplatesInClasspath(
                                     LazyScriptDefinitionFromDiscoveredClass(
                                         templateClass.readBytes(),
                                         it.name, listOf(dep) + defaultScriptDefinitionClasspath,
-                                        scriptDefinitionParentClassloader, messageCollector
+                                        messageCollector
                                     )
                                 )
                             }

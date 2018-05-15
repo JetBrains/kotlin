@@ -55,9 +55,8 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
             configuration.add(
                 JVMConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES,
                 ScriptDefinitionsFromClasspathDiscoverySource(
-                    configuration,
+                    configuration.jvmClasspathRoots,
                     emptyList(),
-                    Thread.currentThread().contextClassLoader, // TODO: consider isolation here
                     messageCollector
                 )
             )

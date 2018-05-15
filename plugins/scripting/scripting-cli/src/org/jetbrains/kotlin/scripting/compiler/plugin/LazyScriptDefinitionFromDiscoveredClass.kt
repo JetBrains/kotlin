@@ -29,12 +29,13 @@ class LazyScriptDefinitionFromDiscoveredClass(
     classBytes: ByteArray,
     private val className: String,
     private val classpath: List<File>,
-    private val parentClassloader: ClassLoader,
     private val messageCollector: MessageCollector
 ) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
     private val annotationsFromAsm = loadAnnotationsFromClass(classBytes)
 
     private val classloader by lazy {
+        // should use this cl to allow smooth interop with classes explicitly mentioned here, see e.g. scriptDefinition body
+        val parentClassloader = LazyScriptDefinitionFromDiscoveredClass::class.java.classLoader
         if (classpath.isEmpty()) parentClassloader
         else URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), parentClassloader)
     }
