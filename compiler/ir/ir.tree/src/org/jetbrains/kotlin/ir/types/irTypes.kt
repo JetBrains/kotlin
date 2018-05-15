@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -17,7 +18,7 @@ fun IrType.withHasQuestionMark(hasQuestionMark: Boolean): IrType =
             if (this.hasQuestionMark == hasQuestionMark)
                 this
             else
-                IrSimpleTypeImpl(classifier, hasQuestionMark, arguments, annotations)
+                IrSimpleTypeImpl(originalKotlinType, classifier, hasQuestionMark, arguments, annotations)
         else -> this
     }
 
@@ -30,6 +31,7 @@ val IrType.classifierOrNull: IrClassifierSymbol?
 fun IrType.makeNotNull() =
     if (this is IrSimpleType && this.hasQuestionMark)
         IrSimpleTypeImpl(
+            originalKotlinType,
             classifier,
             false,
             arguments,
@@ -42,6 +44,7 @@ fun IrType.makeNotNull() =
 fun IrType.makeNullable() =
     if (this is IrSimpleType && !this.hasQuestionMark)
         IrSimpleTypeImpl(
+            originalKotlinType,
             classifier,
             true,
             arguments,
