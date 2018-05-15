@@ -96,33 +96,47 @@ task bench(type:DefaultTask) {
         def average = "none"
         def absoluteAverage = "none"
         jvmReport.report
-                .sort { konanReport.report[it.key] / it.value }
+                .sort { konanReport.report[it.key].mean / it.value.mean }
                 .each { k, v ->
             def konanValue = konanReport.report[k]
-            def ratio = String.format('%.2f', konanValue / v)
-            def formattedKonanValue = String.format('%.2f', konanValue / 1000)
+            def ratio = konanValue.mean / v.mean
+            def minRatio = (konanValue.mean - konanValue.stdDev) / (v.mean + v.stdDev)
+            def maxRatio = (konanValue.mean + konanValue.stdDev) / (v.mean - v.stdDev)
+            def ratioStdDev = Math.min(Math.abs(minRatio - ratio), Math.abs(maxRatio - ratio))
+            def formattedKonanValue = String.format('%.4f us +- %.4f us', konanValue.mean / 1000, konanValue.stdDev / 1000)
+            def formattedRatio = String.format('%.2f +- %.2f', ratio, ratioStdDev)
             if (k == 'RingAverage') {
-                average = ratio
+                average = formattedRatio
                 absoluteAverage = formattedKonanValue
+            } else {
+                println("$k : absolute = $formattedKonanValue, ratio = $formattedRatio")
             }
-            println("$k : absolute = $formattedKonanValue us, ratio = $ratio")
             if (System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") != null)
                 println("##teamcity[buildStatisticValue key='$k' value='$ratio']")
         }
 
         println()
-        println("Average Ring score: absolute = $absoluteAverage us, ratio = $average")
+        println("Average Ring score: absolute = $absoluteAverage, ratio = $average")
     }
 }
 
+class Results {
+    def Double mean
+    def Double stdDev
+
+    Results(Double mean, Double stdDev) {
+        this.mean = mean
+        this.stdDev = stdDev
+    }
+}
 
 class Report {
-    def Map<String, Double> report = new TreeMap()
+    def Map<String, Results> report = new TreeMap()
 
     Report(File path) {
-        path.readLines().drop(3).findAll { it.split(':').length == 2 }.each {
+        path.readLines().drop(3).findAll { it.split(':').length == 3 }.each {
             def p = it.split(':')
-            report.put(p[0].trim(), Double.parseDouble(p[1].trim()))
+            report.put(p[0].trim(), new Results(Double.parseDouble(p[1].trim()), Double.parseDouble(p[2].trim())))
         }
     }
 }

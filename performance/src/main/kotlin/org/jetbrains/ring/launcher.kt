@@ -24,9 +24,11 @@ val BENCHMARK_SIZE = 100
 //-----------------------------------------------------------------------------//
 
 class Launcher(val numWarmIterations: Int) {
-    val results = mutableMapOf<String, Long>()
+    class Results(val mean: Double, val variance: Double)
 
-    fun launch(benchmark: () -> Any?): Long {                          // If benchmark runs too long - use coeff to speed it up.
+    val results = mutableMapOf<String, Results>()
+
+    fun launch(benchmark: () -> Any?): Results {                          // If benchmark runs too long - use coeff to speed it up.
         var i = numWarmIterations
 
         while (i-- > 0) benchmark()
@@ -41,20 +43,27 @@ class Launcher(val numWarmIterations: Int) {
                 }
                 cleanup()
             }
-            if (time >= 200L * 1_000_000) // 200ms
+            if (time >= 100L * 1_000_000) // 100ms
                 break
             autoEvaluatedNumberOfMeasureIteration *= 2
         }
 
-        i = autoEvaluatedNumberOfMeasureIteration
-        val time = measureNanoTime {
-            while (i-- > 0) {
-                benchmark()
+        val attempts = 10
+        val samples = DoubleArray(attempts)
+        for (k in samples.indices) {
+            i = autoEvaluatedNumberOfMeasureIteration
+            val time = measureNanoTime {
+                while (i-- > 0) {
+                    benchmark()
+                }
+                cleanup()
             }
-            cleanup()
+            samples[k] = time * 1.0 / autoEvaluatedNumberOfMeasureIteration
         }
+        val mean = samples.sum() / attempts
+        val variance = samples.indices.sumByDouble { (samples[it] - mean) * (samples[it] - mean) } / attempts
 
-        return time / autoEvaluatedNumberOfMeasureIteration
+        return Results(mean, variance)
     }
 
     //-------------------------------------------------------------------------//
@@ -101,17 +110,18 @@ class Launcher(val numWarmIterations: Int) {
     //-------------------------------------------------------------------------//
 
     fun printResultsNormalized() {
-        var total = 0.0
+        var totalMean = 0.0
+        var totalVariance = 0.0
         results.asSequence().sortedBy { it.key }.forEach {
-            val norma     = it.value.toDouble()
             val niceName  = it.key.padEnd(50, ' ')
-            val niceNorma = norma.toString(9)
-            println("$niceName : $niceNorma")
+            println("$niceName : ${it.value.mean.toString(9)} : ${kotlin.math.sqrt(it.value.variance).toString(9)}")
 
-            total += norma
+            totalMean += it.value.mean
+            totalVariance += it.value.variance
         }
-        val average = total / results.size
-        println("\nRingAverage: ${average.toString(9)}")
+        val averageMean = totalMean / results.size
+        val averageStdDev = kotlin.math.sqrt(totalVariance) / results.size
+        println("\nRingAverage: ${averageMean.toString(9)} : ${averageStdDev.toString(9)}")
     }
 
     //-------------------------------------------------------------------------//
