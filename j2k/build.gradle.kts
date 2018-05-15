@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 plugins {
     kotlin("jvm")
@@ -76,3 +77,17 @@ test.apply {
 val cleanTest by tasks
 cleanTest.dependsOn(cleanTestForWebDemo)
 
+configureFreeCompilerArg(true, "-Xeffect-system")
+configureFreeCompilerArg(true, "-Xnew-inference")
+
+fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
+    if (isEnabled) {
+        allprojects {
+            tasks.withType<KotlinCompile<*>> {
+                kotlinOptions {
+                    freeCompilerArgs += listOf(compilerArgument)
+                }
+            }
+        }
+    }
+}
