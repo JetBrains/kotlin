@@ -96,13 +96,12 @@ class JKJavaFieldAccessExpressionImpl(override var identifier: JKFieldReference)
 }
 
 class JKJavaNewExpressionImpl(
-    override var identifier: JKClassReference, override var arguments: JKExpressionList
-) : JKJavaNewExpression, JKElementBase() {
+    override val constructorSymbol: JKSymbol<JKMethod>,
+    arguments: JKExpressionList
+) : JKJavaNewExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewExpression(this, data)
 
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        identifier.accept(visitor, data)
-    }
+    override var arguments by child(arguments)
 }
 
 class JKJavaNewEmptyArrayImpl(override var initializer: List<JKLiteralExpression?>) : JKJavaNewEmptyArray, JKElementBase() {
@@ -139,4 +138,18 @@ class JKJavaArrayTypeImpl(override val type: JKType) : JKJavaArrayType, JKElemen
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
 
     }
+}
+
+class JKReturnStatementImpl(expression: JKExpression) : JKBranchElementBase(), JKReturnStatement {
+    // TODO accept
+    override val expression by child(expression)
+}
+
+class JKJavaAssignmentExpressionImpl(
+    lExpression: JKExpression,
+    rExpression: JKExpression/*,
+    TODO operation:? */
+) : JKBranchElementBase(), JKJavaAssignmentExpression {
+    override var lExpression: JKExpression by child(lExpression)
+    override var rExpression: JKExpression by child(rExpression)
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
+import org.jetbrains.kotlin.j2k.tree.impl.JKBindableSymbol
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.utils.Printer
 
@@ -73,26 +74,17 @@ private class DebugTreePrinter : JKVisitorVoid {
         printer.println("]")
     }
 
-    override fun visitMethodReference(methodReference: JKMethodReference) {
-        printer.println(methodReference.classNameWithoutJK())
-        printer.println(methodReference.target.parent.let { (it as? JKClass)?.name?.name ?: "null" }, "@", methodReference.target.name.name)
-    }
-
-    override fun visitFieldReference(fieldReference: JKFieldReference) {
-        printer.println(fieldReference.classNameWithoutJK())
-        printer.println(fieldReference.target.parent.let { (it as? JKClass)?.name?.name ?: "null" }, "@", fieldReference.target.name.name)
-    }
-
-    override fun visitClassReference(classReference: JKClassReference) {
-        printer.println(classReference.classNameWithoutJK())
-        printer.println(classReference.target.name.name)
-    }
-
     override fun visitType(type: JKType) {
         printer.println(type.classNameWithoutJK(), " \"")
         printer.indented {
-            if (type is JKClassType)
-                printer.println(type.classReference.target.name.name)
+            if (type is JKClassType) {
+                if ((type.classReference as? JKBindableSymbol)?.isBound == true) {
+                    printer.println(type.classReference?.element?.name?.value)
+
+                } else {
+                    printer.println("Unbound")
+                }
+            }
         }
         printer.println("\"")
     }

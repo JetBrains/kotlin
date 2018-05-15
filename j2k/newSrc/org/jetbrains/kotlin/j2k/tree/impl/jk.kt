@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.j2k.tree.impl
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.JKReference.JKReferenceType
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+import com.intellij.psi.PsiElement
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -72,6 +72,7 @@ abstract class JKBranchElementBase : JKElementBase(), JKMutableBranchElement {
 
     protected var childNum = 0
     protected fun <T : JKTreeElement, U : T> child(v: U): ReadWriteProperty<JKMutableBranchElement, T> {
+        children.add(childNum, v)
         return JKChild(childNum++)
     }
 
@@ -88,6 +89,10 @@ abstract class JKElementListBase: JKElementBase(), JKMutableBranchElement {
     protected inline fun <reified T : JKTreeElement> children(v: List<T>): JKListChild<T> {
         children.addAll(v)
         return JKListChild()
+    }
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        children.forEach { it.accept(visitor, data) }
     }
 }
 
@@ -110,7 +115,7 @@ class JKClassImpl(modifierList: JKModifierList, name: JKNameIdentifier, override
 }
 
 
-class JKNameIdentifierImpl(override val name: String) : JKNameIdentifier, JKElementBase() {}
+class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKElementBase() {}
 
 class JKModifierListImpl(modifiers: List<JKModifier> = emptyList()) : JKModifierList, JKElementListBase() {
     override var modifiers: List<JKModifier> by children(modifiers)
@@ -192,7 +197,7 @@ class JKTypeCastExpressionImpl(override var expression: JKExpression, override v
 }
 
 class JKClassTypeImpl(
-    override val classReference: JKClassReference,
+    override val classReference: JKSymbol<JKClass>?,
     override val parameters: List<JKType>,
     override val nullability: Nullability = Nullability.Default
 ) : JKClassType, JKElementBase() {
@@ -204,28 +209,21 @@ class JKClassTypeImpl(
     }
 }
 
-class JKFieldReferenceImpl(override val target: JKField, override val referenceType: JKReferenceType) : JKFieldReference, JKElementBase() {
+
+abstract class JKReferenceBase<T : JKReferenceTarget>(val resolve: () -> PsiElement?) : JKElementBase(), JKReference {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitReference(this, data)
+
+    override var target: T? = null
+}
+
+class JKFieldReferenceImpl(resolve: () -> PsiElement?) : JKFieldReference, JKReferenceBase<JKField>(resolve) {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitFieldReference(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
 }
 
-class JKClassReferenceImpl(override val target: JKClass, override val referenceType: JKReferenceType) : JKClassReference,
-    JKElementBase() {
+class JKClassReferenceImpl(resolve: () -> PsiElement?) : JKClassReference, JKReferenceBase<JKClass>(resolve) {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClassReference(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
 }
 
-class JKMethodReferenceImpl(override val target: JKMethod, override val referenceType: JKReferenceType) : JKMethodReference,
-    JKElementBase() {
+class JKMethodReferenceImpl(resolve: () -> PsiElement?) : JKMethodReference, JKReferenceBase<JKMethod>(resolve) {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitMethodReference(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
 }
