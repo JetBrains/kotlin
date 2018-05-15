@@ -8149,6 +8149,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/function"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("complexInheritance.kt")
+            public void testComplexInheritance() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/function/complexInheritance.kt");
+            }
+
             @TestMetadata("covariantOverride.kt")
             public void testCovariantOverride() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/function/covariantOverride.kt");
@@ -8197,6 +8202,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("funInTrait.kt")
             public void testFunInTrait() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/function/funInTrait.kt");
+            }
+
+            @TestMetadata("funInTraitChain.kt")
+            public void testFunInTraitChain() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/function/funInTraitChain.kt");
             }
 
             @TestMetadata("innerExtentionFunction.kt")
@@ -13316,6 +13326,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/constructor.kt");
             }
 
+            @TestMetadata("delegatedExpectedInterface.kt")
+            public void testDelegatedExpectedInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/delegatedExpectedInterface.kt");
+            }
+
             @TestMetadata("function.kt")
             public void testFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/function.kt");
@@ -13331,6 +13346,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromExpectedClass.kt");
             }
 
+            @TestMetadata("inheritedFromExpectedInterface.kt")
+            public void testInheritedFromExpectedInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromExpectedInterface.kt");
+            }
+
             @TestMetadata("inheritedFromExpectedMethod.kt")
             public void testInheritedFromExpectedMethod() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromExpectedMethod.kt");
@@ -13339,6 +13359,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("inheritedInExpectedDeclarations.kt")
             public void testInheritedInExpectedDeclarations() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedInExpectedDeclarations.kt");
+            }
+
+            @TestMetadata("inheritedViaAnotherInterfaceIndirectly.kt")
+            public void testInheritedViaAnotherInterfaceIndirectly() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedViaAnotherInterfaceIndirectly.kt");
             }
 
             @TestMetadata("inlineFunctionWithDefaultLambda.kt")
@@ -13354,6 +13379,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("kt23239.kt")
             public void testKt23239() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/kt23239.kt");
+            }
+
+            @TestMetadata("superCall.kt")
+            public void testSuperCall() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/superCall.kt");
             }
         }
     }

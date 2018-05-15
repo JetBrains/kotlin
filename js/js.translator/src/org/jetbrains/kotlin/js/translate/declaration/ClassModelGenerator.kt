@@ -24,12 +24,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.prototypeOf
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import org.jetbrains.kotlin.js.translate.utils.generateDelegateCall
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -85,9 +82,10 @@ class ClassModelGenerator(val context: TranslationContext) {
     // However, D inherits `foo` without suffix (i.e. it corresponds to I's dispatcher function).
     // We must copy B.foo to D.foo$default and then I.foo to D.foo
     private fun tryCopyWhenImplementingInterfaceWithDefaultArgs(member: FunctionDescriptor, model: JsClassModel): Boolean {
-        val fromInterface = member.overriddenDescriptors.firstOrNull { it.hasOwnParametersWithDefaultValue() } ?: return false
+        val fromInterface = member.overriddenDescriptors.firstOrNull { it.hasOrInheritsParametersWithDefaultValue() } ?: return false
         if (!DescriptorUtils.isInterface(fromInterface.containingDeclaration)) return false
         val fromClass = member.overriddenDescriptors.firstOrNull { !DescriptorUtils.isInterface(it.containingDeclaration) } ?: return false
+        if (fromClass.hasOrInheritsParametersWithDefaultValue()) return false
 
         val targetClass = member.containingDeclaration as ClassDescriptor
         val fromInterfaceName = context.getNameForDescriptor(fromInterface).ident
