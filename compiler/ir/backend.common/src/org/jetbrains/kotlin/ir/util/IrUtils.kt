@@ -27,9 +27,11 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -277,3 +279,10 @@ val IrClass.isEnumEntry get() = kind == ClassKind.ENUM_ENTRY
 val IrClass.isInterface get() = kind == ClassKind.INTERFACE
 val IrClass.isClass get() = kind == ClassKind.CLASS
 val IrClass.isObject get() = kind == ClassKind.OBJECT
+
+val IrDeclaration.parentAsClass get() = parent as IrClass
+
+fun IrAnnotationContainer.hasAnnotation(name: FqName) =
+    annotations.any {
+        it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
+    }

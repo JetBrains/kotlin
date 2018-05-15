@@ -69,6 +69,7 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
                     createDefaultImplFunDescriptor(defaultImplsDescriptor, descriptor, interfaceDescriptor, state.typeMapper)
                 members.add(functionDescriptorImpl.createFunctionAndMapVariables(it, it.visibility))
                 it.body = null
+                //TODO reset modality to abstract
             }
         }
 
