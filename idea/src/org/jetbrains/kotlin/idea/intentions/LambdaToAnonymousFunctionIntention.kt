@@ -9,10 +9,12 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.moveInsideParentheses
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -25,6 +27,7 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
     "Convert to anonymous function",
     "Convert lambda expression to anonymous function"
 ), LowPriorityAction {
+    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE_TYPES
 
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
         if (element.getStrictParentOfType<KtValueArgument>() == null) return false
@@ -47,11 +50,11 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
             KtPsiFactory.CallableBuilder(KtPsiFactory.CallableBuilder.Target.FUNCTION).apply {
                 typeParams()
                 descriptor.extensionReceiverParameter?.type?.let {
-                    receiver(it.toString())
+                    receiver(typeSourceCode.renderType(it))
                 }
                 name("")
                 for (parameter in descriptor.valueParameters) {
-                    param(parameter.name.asString(), parameter.type.toString())
+                    param(parameter.name.asString(), typeSourceCode.renderType(parameter.type))
                 }
                 descriptor.returnType?.takeIf { !it.isUnit() }?.let {
                     val lastStatement = bodyExpression.statements.lastOrNull()
@@ -61,13 +64,14 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
                             lastStatement.replace(psiFactory.createExpressionByPattern("return $0", lastStatement))
                         }
                     }
-                    returnType(it.toString())
+                    returnType(typeSourceCode.renderType(it))
                 } ?: noReturnType()
                 blockBody(" " + bodyExpression.text)
             }.asString()
         )
 
         val resultingFunction = element.replaced(anonymousFunction)
+        ShortenReferences.DEFAULT.process(resultingFunction)
         (resultingFunction.parent as? KtLambdaArgument)?.also { it.moveInsideParentheses(it.analyze(BodyResolveMode.PARTIAL)) }
     }
 }
