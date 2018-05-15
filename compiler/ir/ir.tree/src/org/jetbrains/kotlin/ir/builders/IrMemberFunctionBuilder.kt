@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.putDefault
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.types.IrType
 
 // This class can be used by kotlin-native.
 @Suppress("unused")
@@ -33,6 +34,7 @@ class IrMemberFunctionBuilder(
     context: IrGeneratorContext,
     val irClass: IrClass,
     val function: FunctionDescriptor,
+    val returnType: IrType,
     val origin: IrDeclarationOrigin,
     startOffset: Int = UNDEFINED_OFFSET,
     endOffset: Int = UNDEFINED_OFFSET
@@ -40,7 +42,7 @@ class IrMemberFunctionBuilder(
     lateinit var irFunction: IrFunction
 
     inline fun addToClass(body: IrMemberFunctionBuilder.(IrFunction) -> Unit): IrFunction {
-        irFunction = IrFunctionImpl(startOffset, endOffset, origin, function)
+        irFunction = IrFunctionImpl(startOffset, endOffset, origin, function, returnType)
         body(irFunction)
         irFunction.body = doBuild()
         irClass.declarations.add(irFunction)
