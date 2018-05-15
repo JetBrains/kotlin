@@ -69,7 +69,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
     private fun getDeclaration(descriptor: ClassifierDescriptor, project: Project): PsiElement? {
         if (descriptor is FunctionClassDescriptor) {
             val psiFactory = KtPsiFactory(project)
-            val syntheticClass = psiFactory.createClass(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(descriptor))
+            val syntheticClass = psiFactory.createClass(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(descriptor))
             return psiFactory.createAnalyzableFile("${descriptor.name.asString()}.kt", "", element!!).add(syntheticClass)
         }
         return DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
@@ -114,12 +114,12 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
 
                     if (receiverType != null) {
                         if (isExtension) {
-                            val receiverTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)
+                            val receiverTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(receiverType)
                             val isFunctionType = receiverType.constructor.declarationDescriptor is FunctionClassDescriptor
                             append(if (isFunctionType) "($receiverTypeText)" else receiverTypeText).append('.')
                         } else {
                             receiverType.constructor.declarationDescriptor?.let {
-                                append(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderClassifierName(it)).append('.')
+                                append(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderClassifierName(it)).append('.')
                             }
                         }
                     }

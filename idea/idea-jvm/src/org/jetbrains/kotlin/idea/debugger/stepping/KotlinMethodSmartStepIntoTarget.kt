@@ -26,7 +26,7 @@ class KotlinMethodSmartStepTarget(
     }
 
     companion object {
-        private val renderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+        private val renderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
             withoutReturnType = true
             renderAccessors = true

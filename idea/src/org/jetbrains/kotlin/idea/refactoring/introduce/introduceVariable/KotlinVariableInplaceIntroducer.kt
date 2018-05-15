@@ -86,7 +86,7 @@ class KotlinVariableInplaceIntroducer(
             }
 
             if (expressionType != null && !noTypeInference) {
-                val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(expressionType)
+                val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(expressionType)
                 expressionTypeCheckBox = NonFocusableCheckBox("Specify type explicitly").apply {
                     isSelected = false
                     setMnemonic('t')

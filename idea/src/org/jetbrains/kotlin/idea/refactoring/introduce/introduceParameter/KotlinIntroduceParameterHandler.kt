@@ -237,7 +237,7 @@ open class KotlinIntroduceParameterHandler(
         if (expressionType.isUnit() || expressionType.isNothing()) {
             val message = KotlinRefactoringBundle.message(
                     "cannot.introduce.parameter.of.0.type",
-                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(expressionType)
+                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(expressionType)
             )
             showErrorHint(project, editor, message, INTRODUCE_PARAMETER)
             return
@@ -308,16 +308,16 @@ open class KotlinIntroduceParameterHandler(
                     val introduceParameterDescriptor =
                             helper.configure(
                                     IntroduceParameterDescriptor(
-                                            originalRange = originalExpression.toRange(),
-                                            callable = targetParent,
-                                            callableDescriptor = functionDescriptor,
-                                            newParameterName = suggestedNames.first().quoteIfNeeded(),
-                                            newParameterTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(replacementType),
-                                            argumentValue = originalExpression,
-                                            withDefaultValue = false,
-                                            parametersUsages = parametersUsages,
-                                            occurrencesToReplace = occurrencesToReplace,
-                                            occurrenceReplacer = replacer@ {
+                                        originalRange = originalExpression.toRange(),
+                                        callable = targetParent,
+                                        callableDescriptor = functionDescriptor,
+                                        newParameterName = suggestedNames.first().quoteIfNeeded(),
+                                        newParameterTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(replacementType),
+                                        argumentValue = originalExpression,
+                                        withDefaultValue = false,
+                                        parametersUsages = parametersUsages,
+                                        occurrencesToReplace = occurrencesToReplace,
+                                        occurrenceReplacer = replacer@ {
                                                 val expressionToReplace = it.elements.single() as KtExpression
                                                 val replacingExpression = psiFactory.createExpression(newParameterName)
                                                 val substringInfo = expressionToReplace.extractableSubstringInfo

@@ -80,7 +80,7 @@ class KotlinIntroduceParameterDialog private constructor(
     )
 
     private val typeNameSuggestions = typeSuggestions
-            .map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }
+            .map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(it) }
             .toTypedArray()
 
     private val nameField = NameSuggestionsField(nameSuggestions, project, KotlinFileType.INSTANCE)

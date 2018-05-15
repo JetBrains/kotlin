@@ -62,7 +62,7 @@ fun getPropertiesToUseInGeneratedMember(classOrObject: KtClassOrObject): List<Kt
     }
 }
 
-private val MEMBER_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+private val MEMBER_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
     modifiers = emptySet()
     startFromName = true
     parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE

@@ -42,7 +42,7 @@ class ChangeAccessorTypeFix(element: KtPropertyAccessor) : KotlinQuickFixAction<
     override fun getText(): String {
         val element = element ?: return ""
         val type = getType() ?: return familyName
-        val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+        val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type)
         val target = if (element.isGetter) "getter" else "setter parameter"
         return "Change $target type to $renderedType"
     }

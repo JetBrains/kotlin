@@ -94,7 +94,7 @@ private fun KotlinType.renderSingle(typeParameterNameMap: Map<TypeParameterDescr
             .mapKeys { it.key.typeConstructor }
 
     val typeToRender = TypeSubstitutor.create(substitution).substitute(this, Variance.INVARIANT)!!
-    val renderer = if (fq) IdeDescriptorRenderers.SOURCE_CODE else IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES
+    val renderer = if (fq) IdeDescriptorRenderers.SOURCE_CODE else IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS
     return renderer.renderType(typeToRender)
 }
 

@@ -47,7 +47,7 @@ class OverridesCompletion(
     private val collector: LookupElementsCollector,
     private val lookupElementFactory: BasicLookupElementFactory
 ) {
-    private val PRESENTATION_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+    private val PRESENTATION_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
         modifiers = emptySet()
         includeAdditionalModifiers = false
     }

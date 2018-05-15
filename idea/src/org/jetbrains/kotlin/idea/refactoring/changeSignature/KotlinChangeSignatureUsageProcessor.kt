@@ -196,7 +196,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                             result.add(
                                     object : UnresolvableCollisionUsageInfo(callElement, null) {
                                         override fun getDescription(): String {
-                                            val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callerDescriptor)
+                                            val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(callerDescriptor)
                                             return "There is already a variable '$currentName' in $signature. It will conflict with the new parameter."
                                         }
                                     }
@@ -615,7 +615,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             callerDescriptor: DeclarationDescriptor) {
         val valueParameters = caller.getValueParameters()
         val existingParameters = valueParameters.associateBy { it.name }
-        val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callerDescriptor)
+        val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(callerDescriptor)
         for (parameterInfo in changeInfo.getNonReceiverParameters()) {
             if (!(parameterInfo.isNewParameter)) continue
 

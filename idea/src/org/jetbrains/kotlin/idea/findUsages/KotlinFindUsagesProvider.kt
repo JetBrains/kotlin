@@ -72,7 +72,7 @@ class KotlinFindUsagesProvider : FindUsagesProvider {
             is KtFunction -> {
                 val name = element.name ?: ""
                 val descriptor = element.unsafeResolveToDescriptor() as FunctionDescriptor
-                val renderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES
+                val renderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS
                 val paramsDescription = descriptor.valueParameters.joinToString(prefix = "(", postfix = ")") { renderer.renderType(it.type) }
                 val returnType = descriptor.returnType
                 val returnTypeDescription = if (returnType != null && !returnType.isUnit()) renderer.renderType(returnType) else null
