@@ -15,6 +15,7 @@ import kotlinx.metadata.impl.PackageWriter
 import kotlinx.metadata.impl.accept
 import kotlinx.metadata.jvm.impl.writeProtoBufData
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 /**
@@ -47,7 +48,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         /**
          * A [KmClassVisitor] that generates the metadata of a Kotlin class.
          */
-        class Writer : ClassWriter() {
+        class Writer : ClassWriter(JvmStringTable()) {
             /**
              * Returns the metadata of the class that was written with this writer.
              *
@@ -96,7 +97,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         /**
          * A [KmPackageVisitor] that generates the metadata of a Kotlin file facade.
          */
-        class Writer : PackageWriter() {
+        class Writer : PackageWriter(JvmStringTable()) {
             /**
              * Returns the metadata of the file facade that was written with this writer.
              *
@@ -161,7 +162,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
          * call [Writer.visitFunction] and [Writer.visitEnd] on a newly created instance of this writer. If these methods are not called,
          * the resulting metadata will represent a _non-lambda_ synthetic class.
          */
-        class Writer : LambdaWriter() {
+        class Writer : LambdaWriter(JvmStringTable()) {
             /**
              * Returns the metadata of the synthetic class that was written with this writer.
              *
@@ -264,7 +265,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         /**
          * A [KmPackageVisitor] that generates the metadata of a multi-file class part.
          */
-        class Writer : PackageWriter() {
+        class Writer : PackageWriter(JvmStringTable()) {
             /**
              * Returns the metadata of the multi-file class part that was written with this writer.
              *

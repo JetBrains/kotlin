@@ -23,8 +23,6 @@ interface MetadataExtensions {
 
     fun readTypeExtensions(v: KmTypeVisitor, proto: ProtoBuf.Type, strings: NameResolver)
 
-    fun createStringTable(): StringTable
-
     fun writeFunctionExtensions(type: KmExtensionType, proto: ProtoBuf.Function.Builder, strings: StringTable): KmFunctionExtensionVisitor?
 
     fun writePropertyExtensions(type: KmExtensionType, proto: ProtoBuf.Property.Builder, strings: StringTable): KmPropertyExtensionVisitor?
@@ -40,13 +38,14 @@ interface MetadataExtensions {
     fun writeTypeExtensions(type: KmExtensionType, proto: ProtoBuf.Type.Builder, strings: StringTable): KmTypeExtensionVisitor?
 
     companion object {
-        val INSTANCE: MetadataExtensions by lazy {
-            ServiceLoader.load(MetadataExtensions::class.java).toList().firstOrNull()
-                    ?: error(
-                        "No MetadataExtensions instances found in the classpath. Please ensure that the META-INF/services/ " +
-                                "is not stripped from your application and that the Java virtual machine is not running " +
-                                "under a security manager"
-                    )
+        val INSTANCES: List<MetadataExtensions> by lazy {
+            ServiceLoader.load(MetadataExtensions::class.java).toList().also {
+                if (it.isEmpty()) error(
+                    "No MetadataExtensions instances found in the classpath. Please ensure that the META-INF/services/ " +
+                            "is not stripped from your application and that the Java virtual machine is not running " +
+                            "under a security manager"
+                )
+            }
         }
     }
 }

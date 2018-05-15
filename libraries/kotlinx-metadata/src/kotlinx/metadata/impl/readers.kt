@@ -18,7 +18,7 @@ class ReadContext(
     internal val versionRequirements: VersionRequirementTable,
     private val parent: ReadContext? = null
 ) {
-    internal val extensions = MetadataExtensions.INSTANCE
+    internal val extensions = MetadataExtensions.INSTANCES
     private val typeParameterNameToId = mutableMapOf<Int, Int>()
 
     operator fun get(index: Int): String =
@@ -137,7 +137,9 @@ private fun ProtoBuf.Constructor.accept(v: KmConstructorVisitor, c: ReadContext)
         v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(it, c) }
     }
 
-    c.extensions.readConstructorExtensions(v, this, c.strings, c.types)
+    for (extension in c.extensions) {
+        extension.readConstructorExtensions(v, this, c.strings, c.types)
+    }
 
     v.visitEnd()
 }
@@ -169,7 +171,9 @@ private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
         v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(it, c) }
     }
 
-    c.extensions.readFunctionExtensions(v, this, c.strings, c.types)
+    for (extension in c.extensions) {
+        extension.readFunctionExtensions(v, this, c.strings, c.types)
+    }
 
     v.visitEnd()
 }
@@ -198,7 +202,9 @@ private fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
         v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(it, c) }
     }
 
-    c.extensions.readPropertyExtensions(v, this, c.strings, c.types)
+    for (extension in c.extensions) {
+        extension.readPropertyExtensions(v, this, c.strings, c.types)
+    }
 
     v.visitEnd()
 }
@@ -259,7 +265,9 @@ private fun ProtoBuf.TypeParameter.accept(v: KmTypeParameterVisitor, c: ReadCont
         v.visitUpperBound(upperBound.typeFlags)?.let { upperBound.accept(it, c) }
     }
 
-    c.extensions.readTypeParameterExtensions(v, this, c.strings)
+    for (extension in c.extensions) {
+        extension.readTypeParameterExtensions(v, this, c.strings)
+    }
 
     v.visitEnd()
 }
@@ -311,7 +319,9 @@ private fun ProtoBuf.Type.accept(v: KmTypeVisitor, c: ReadContext) {
         )?.let { upperBound.accept(it, c) }
     }
 
-    c.extensions.readTypeExtensions(v, this, c.strings)
+    for (extension in c.extensions) {
+        extension.readTypeExtensions(v, this, c.strings)
+    }
 
     v.visitEnd()
 }

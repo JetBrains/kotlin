@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
-import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.metadata.serialization.StringTable
 
 internal class JvmMetadataExtensions : MetadataExtensions {
@@ -68,8 +67,6 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         }
         ext.visitEnd()
     }
-
-    override fun createStringTable(): StringTable = JvmStringTable()
 
     override fun writeFunctionExtensions(
         type: KmExtensionType, proto: ProtoBuf.Function.Builder, strings: StringTable
