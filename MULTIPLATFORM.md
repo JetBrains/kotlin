@@ -326,9 +326,9 @@ default phases except `Target Dependencies`.
 6. Add a new `Run Script` build phase and put the following code into the script field:
 
     ```
-    "$SRCROOT/../gradlew" -p "$SRCROOT" "$KONAN_TASK"          \
-    -Pkonan.configuration.build.dir="$CONFIGURATION_BUILD_DIR" \
-    -Pkonan.debugging.symbols="$DEBUGGING_SYMBOLS"             \
+    "$SRCROOT/../gradlew" -p "$SRCROOT/../greeting/ios" "$KONAN_TASK" \
+    -Pkonan.configuration.build.dir="$CONFIGURATION_BUILD_DIR"        \
+    -Pkonan.debugging.symbols="$DEBUGGING_SYMBOLS"                    \
     -Pkonan.optimizations.enable="$KONAN_ENABLE_OPTIMIZATIONS"
     ```
 
