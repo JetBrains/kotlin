@@ -21,8 +21,15 @@ class Kapt3Incremental : KaptIncrementalBaseIT(shouldUseStubs = false, useKapt3 
         project.projectFile("test.kt").modify { "\n$it" }
         project.build("build") {
             assertSuccessful()
-            assertTasksExecuted(":kaptGenerateStubsKotlin", ":compileJava", ":compileKotlin")
+            assertTasksExecuted(":kaptGenerateStubsKotlin", ":compileKotlin")
             assertTasksUpToDate(":kaptKotlin")
+
+            // compileJava is up-to-date with Gradle >= 4.3, executed otherwise
+            if (project.testGradleVersionAtLeast("4.3")) {
+                assertTasksUpToDate(":compileJava")
+            } else {
+                assertTasksExecuted(":compileJava")
+            }
         }
     }
 }
