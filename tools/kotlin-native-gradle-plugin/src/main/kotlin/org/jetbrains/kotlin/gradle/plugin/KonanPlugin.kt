@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.*
-import org.gradle.api.artifacts.PublishArtifact
-import org.gradle.api.attributes.Usage
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.file.FileCollection
@@ -26,16 +24,13 @@ import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.plugins.AppliedPlugin
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.internal.PublicationInternal
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
-import org.gradle.language.cpp.internal.NativeVariant
-import org.gradle.language.nativeplatform.internal.Names
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
+import org.jetbrains.kotlin.gradle.plugin.model.KonanToolingModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -43,7 +38,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.customerDistribution
 import org.jetbrains.kotlin.konan.util.*
 import java.io.File
-import java.util.*
 import javax.inject.Inject
 
 /**

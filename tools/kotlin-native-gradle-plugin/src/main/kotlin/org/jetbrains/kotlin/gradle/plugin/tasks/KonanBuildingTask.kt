@@ -20,6 +20,7 @@ import org.gradle.api.tasks.Console
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -27,6 +28,7 @@ import java.io.File
 abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildingSpec {
 
     internal abstract val toolRunner: KonanToolRunner
+    internal abstract fun toModelArtifact(): KonanModelArtifact
 
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         dependsOn(project.konanCompilerDownloadTask)

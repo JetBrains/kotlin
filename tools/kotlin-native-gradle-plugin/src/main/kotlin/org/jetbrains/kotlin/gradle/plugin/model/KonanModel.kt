@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.model
 
+import org.jetbrains.kotlin.gradle.plugin.tasks.Produce
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 import java.io.Serializable
 
 /**
@@ -23,10 +26,22 @@ import java.io.Serializable
  * This model is shared with the client processes such as an IDE.
  */
 interface KonanModel : Serializable {
-    val artifacts: List<KonanArtifact>
+    val konanHome: String
+    val konanVersion: String
+
+    val artifacts: List<KonanModelArtifact>
 }
 
-interface KonanArtifact : Serializable {
+/**
+ * A representation of a single binary produced by Kotlin/Native for a cetrain target.
+ */
+interface KonanModelArtifact : Serializable {
     val name: String
-    val path: String
+    val type: Produce
+    val targetPlatform: KonanTarget
+    val file: File
+    val buildTaskName: String
+    val srcDirs: List<File>
+    val srcFiles: List<File>
+    val libraries: List<File>
 }

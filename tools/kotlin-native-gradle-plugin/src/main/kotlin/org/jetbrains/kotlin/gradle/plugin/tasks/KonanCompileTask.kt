@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.tasks
 
-import org.gradle.api.artifacts.FileCollectionDependency
+import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
+import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifactImpl
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.File
 
 enum class Produce(val cliOption: String, val kind: CompilerOutputKind) {
@@ -58,13 +59,21 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     internal val commonSrcFiles_ = mutableSetOf<FileCollection>()
     val commonSrcFiles: Collection<FileCollection>
-        @InputFiles get() = if (enableMultiplatform) commonSrcFiles_ else emptyList()
+        @Internal get() = if (enableMultiplatform) commonSrcFiles_ else emptyList()
 
     // Other compilation parameters -------------------------------------------
 
     protected val srcFiles_ = mutableSetOf<FileCollection>()
     val srcFiles: Collection<FileCollection>
-        @InputFiles get() = srcFiles_.takeIf { !it.isEmpty() } ?: listOf(project.konanDefaultSrcFiles)
+        @Internal get() = srcFiles_.takeIf { !it.isEmpty() } ?: listOf(project.konanDefaultSrcFiles)
+
+    val allSources: Collection<FileCollection>
+        @InputFiles get() = listOf(srcFiles, commonSrcFiles).flatten()
+
+    private val allSourceFiles: List<File>
+        @Internal get() = allSources
+                .flatMap { it.files }
+                .filter { it.name.endsWith(".kt") }
 
     @InputFiles val nativeLibraries = mutableSetOf<FileCollection>()
 
@@ -130,9 +139,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
         addAll(extraOpts)
 
-        listOf(srcFiles, commonSrcFiles).forEach {
-            it.flatMap { it.files }.filter { it.name.endsWith(".kt") }.mapTo(this) { it.canonicalPath }
-        }
+        allSourceFiles.mapTo(this) { it.canonicalPath }
     }
 
     // region DSL.
@@ -212,6 +219,19 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     override fun measureTime(flag: Boolean) {
         measureTime = flag
     }
+    // endregion
+
+    // region IDE model
+    override fun toModelArtifact(): KonanModelArtifact = KonanModelArtifactImpl(
+            artifactName,
+            artifact,
+            produce,
+            konanTarget,
+            name,
+            allSources.filter { it is ConfigurableFileTree }.map { (it as ConfigurableFileTree).dir },
+            allSourceFiles,
+            libraries.asFiles()
+    )
     // endregion
 }
 

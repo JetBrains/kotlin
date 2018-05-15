@@ -113,7 +113,7 @@ open class KonanGenerateCMakeTask : DefaultTask() {
                 .joinToString(" ")
 
     private val KonanCompileTask.cMakeSources: String
-        get() = srcFiles.flatMap { it.asCMakeSourceList }.joinToString(" ")
+        get() = allSources.flatMap { it.asCMakeSourceList }.joinToString(" ")
 
     private val KonanCompileTask.cMakeLibraries: String
         get() = mutableListOf<String>().apply {

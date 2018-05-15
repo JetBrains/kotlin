@@ -23,8 +23,9 @@ import org.gradle.api.tasks.*
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KonanInteropSpec.IncludeDirectoriesSpec
+import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
+import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifactImpl
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.File
 
 /**
@@ -151,6 +152,19 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
         linkFiles.add(files)
     }
 
+    // endregion
+
+    // region IDE model
+    override fun toModelArtifact(): KonanModelArtifact = KonanModelArtifactImpl(
+            artifactName,
+            artifact,
+            Produce.LIBRARY,
+            konanTarget,
+            name,
+            listOfNotNull(defFile.parentFile),
+            listOf(defFile),
+            libraries.asFiles()
+    )
     // endregion
 }
 

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.Named
+import java.io.Serializable
 
 enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSuffix: String,
                   val staticPrefix: String, val staticSuffix: String) {
@@ -39,7 +40,7 @@ enum class Architecture(val bitness: Int) {
     WASM32(32);
 }
 
-sealed class KonanTarget(override val name: String, val family: Family, val architecture: Architecture) : Named {
+sealed class KonanTarget(override val name: String, val family: Family, val architecture: Architecture) : Named, Serializable {
     object ANDROID_ARM32 :  KonanTarget( "android_arm32",   Family.ANDROID, Architecture.ARM32)
     object ANDROID_ARM64 :  KonanTarget( "android_arm64",   Family.ANDROID, Architecture.ARM64)
     object IOS_ARM64 :      KonanTarget( "ios_arm64",       Family.IOS,     Architecture.ARM64)
