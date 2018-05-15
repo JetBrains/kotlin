@@ -69,9 +69,17 @@ fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
     return DFS.ifAny(
         listOf(this),
         { current -> current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
-        { it.declaresDefaultValue() || it.isActualParameterWithAnyExpectedDefault }
+        { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault }
     )
 }
+
+fun FunctionDescriptor.hasOrInheritsParametersWithDefaultValue(): Boolean = DFS.ifAny(
+    listOf(this),
+    { current -> current.overriddenDescriptors.map { it.original } },
+    { it.hasOwnParametersWithDefaultValue() }
+)
+
+fun FunctionDescriptor.hasOwnParametersWithDefaultValue() = original.valueParameters.any { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault }
 
 private fun ValueParameterDescriptor.checkExpectedParameter(checker: (ValueParameterDescriptor) -> Boolean): Boolean {
     val function = containingDeclaration

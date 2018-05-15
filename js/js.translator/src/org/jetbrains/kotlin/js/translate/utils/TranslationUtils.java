@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.components.ArgumentsUtilsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
@@ -405,10 +406,10 @@ public final class TranslationUtils {
     }
 
     public static boolean isOverridableFunctionWithDefaultParameters(@NotNull FunctionDescriptor descriptor) {
-        return DescriptorUtilsKt.hasOrInheritsParametersWithDefaultValue(descriptor) &&
-               !(descriptor instanceof ConstructorDescriptor) &&
-               descriptor.getContainingDeclaration() instanceof ClassDescriptor &&
-               ModalityKt.isOverridable(descriptor);
+        return ArgumentsUtilsKt.hasOrInheritsParametersWithDefaultValue(descriptor) &&
+                !(descriptor instanceof ConstructorDescriptor) &&
+                descriptor.getContainingDeclaration() instanceof ClassDescriptor &&
+                ModalityKt.isOverridable(descriptor);
     }
 
     @NotNull
