@@ -43,10 +43,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -125,26 +122,26 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
         }
     }
 
-    private enum class SuspendFunctionKind {
-        NO_SUSPEND_CALLS,
-        DELEGATING,
-        NEEDS_STATE_MACHINE
+    private sealed class SuspendFunctionKind {
+        object NO_SUSPEND_CALLS : SuspendFunctionKind()
+        class DELEGATING(val delegatingCall: IrCall) : SuspendFunctionKind()
+        object NEEDS_STATE_MACHINE : SuspendFunctionKind()
     }
 
     private fun transformSuspendFunction(irFunction: IrFunction, functionReference: IrFunctionReference?): List<IrDeclaration>? {
         val suspendFunctionKind = getSuspendFunctionKind(irFunction)
         return when (suspendFunctionKind) {
-            SuspendFunctionKind.NO_SUSPEND_CALLS -> {
-                removeReturnIfSuspendedCall(irFunction)
+            is SuspendFunctionKind.NO_SUSPEND_CALLS -> {
                 null                                                            // No suspend function calls - just an ordinary function.
             }
 
-            SuspendFunctionKind.DELEGATING -> {                                 // Calls another suspend function at the end.
-                removeReturnIfSuspendedCall(irFunction)
+            is SuspendFunctionKind.DELEGATING -> {                              // Calls another suspend function at the end.
+                removeReturnIfSuspendedCallAndSimplifyDelegatingCall(
+                        irFunction, suspendFunctionKind.delegatingCall)
                 null                                                            // No need in state machine.
             }
 
-            SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
+            is SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
                 val coroutine = buildCoroutine(irFunction, functionReference)   // Coroutine implementation.
                 if (suspendLambdas.contains(irFunction.descriptor))             // Suspend lambdas are called through factory method <create>,
                     listOf(coroutine)                                           // thus we can eliminate original body.
@@ -209,7 +206,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
         return when {
             numberOfSuspendCalls == 0   -> SuspendFunctionKind.NO_SUSPEND_CALLS
             numberOfSuspendCalls == 1
-                    && suspendCallAtEnd -> SuspendFunctionKind.DELEGATING
+                    && suspendCallAtEnd -> SuspendFunctionKind.DELEGATING(lastCall!!)
             else                        -> SuspendFunctionKind.NEEDS_STATE_MACHINE
         }
     }
@@ -218,16 +215,17 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
     private val getContinuationSymbol = symbols.getContinuation
     private val returnIfSuspendedDescriptor = context.getInternalFunctions("returnIfSuspended").single()
 
-    private fun removeReturnIfSuspendedCall(irFunction: IrFunction) {
-        irFunction.transformChildrenVoid(object: IrElementTransformerVoid() {
-            override fun visitCall(expression: IrCall): IrExpression {
-                expression.transformChildrenVoid(this)
-
-                if (expression.descriptor.original == returnIfSuspendedDescriptor)
-                    return expression.getValueArgument(0)!!
-                return expression
-            }
-        })
+    private fun removeReturnIfSuspendedCallAndSimplifyDelegatingCall(irFunction: IrFunction, delegatingCall: IrCall) {
+        val returnValue =
+                if (delegatingCall.descriptor.original == returnIfSuspendedDescriptor)
+                    delegatingCall.getValueArgument(0)!!
+                else delegatingCall
+        context.createIrBuilder(irFunction.symbol).run {
+            val statements = (irFunction.body as IrBlockBody).statements
+            val lastStatement = statements.last()
+            assert (lastStatement == delegatingCall || lastStatement is IrReturn) { "Unexpected statement $lastStatement" }
+            statements[statements.size - 1] = irReturn(returnValue)
+        }
     }
 
     private fun buildCoroutine(irFunction: IrFunction, functionReference: IrFunctionReference?): IrClass {
