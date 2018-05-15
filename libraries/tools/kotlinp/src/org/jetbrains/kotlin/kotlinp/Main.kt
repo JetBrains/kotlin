@@ -11,14 +11,17 @@ import java.io.IOException
 object Main {
     private fun run(args: Array<String>) {
         val paths = arrayListOf<String>()
+        var verbose = false
 
         var i = 0
         while (true) {
             val arg = args.getOrNull(i++) ?: break
 
-            if ("-help" == arg || "-h" == arg) {
+            if (arg == "-help" || arg == "-h") {
                 printUsageAndExit()
-            } else if ("-version" == arg) {
+            } else if (arg == "-verbose") {
+                verbose = true
+            } else if (arg == "-version") {
                 printVersionAndExit()
             } else if (arg.startsWith("-")) {
                 throw KotlinpException("unsupported argument: $arg")
@@ -27,14 +30,16 @@ object Main {
             }
         }
 
+        val kotlinp = Kotlinp(KotlinpSettings(verbose))
+
         for (path in paths) {
             val file = File(path)
             if (!file.exists()) throw KotlinpException("file does not exist: $path")
 
             val text = try {
                 when (file.extension) {
-                    "class" -> Kotlinp.renderClassFile(Kotlinp.readClassFile(file))
-                    "kotlin_module" -> Kotlinp.renderModuleFile(Kotlinp.readModuleFile(file))
+                    "class" -> kotlinp.renderClassFile(kotlinp.readClassFile(file))
+                    "kotlin_module" -> kotlinp.renderModuleFile(kotlinp.readModuleFile(file))
                     else -> throw KotlinpException("only .class and .kotlin_module files are supported")
                 }
             } catch (e: IOException) {
@@ -65,6 +70,7 @@ object Main {
 
 Usage: kotlinp <options> <classes>
 where possible options include:
+  -verbose                   Display information in more detail, minimizing ambiguities but worsening readability
   -version                   Display Kotlin version
   -help (-h)                 Print a synopsis of options
 """

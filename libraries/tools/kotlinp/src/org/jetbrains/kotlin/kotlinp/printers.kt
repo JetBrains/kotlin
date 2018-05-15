@@ -12,7 +12,7 @@ private object SpecialCharacters {
     const val TYPE_ALIAS_MARKER = '^'
 }
 
-private fun visitFunction(sb: StringBuilder, flags: Flags, name: String): KmFunctionVisitor =
+private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: Flags, name: String): KmFunctionVisitor =
     object : KmFunctionVisitor() {
         val typeParams = mutableListOf<String>()
         val params = mutableListOf<String>()
@@ -27,7 +27,7 @@ private fun visitFunction(sb: StringBuilder, flags: Flags, name: String): KmFunc
         override fun visitTypeParameter(
             flags: Flags, name: String, id: Int, variance: KmVariance
         ): KmTypeParameterVisitor? =
-            printTypeParameter(flags, name, id, variance) { typeParams.add(it) }
+            printTypeParameter(settings, flags, name, id, variance) { typeParams.add(it) }
 
         override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor? =
             printValueParameter(flags, name) { params.add(it) }
@@ -74,7 +74,9 @@ private fun visitFunction(sb: StringBuilder, flags: Flags, name: String): KmFunc
         }
     }
 
-private fun visitProperty(sb: StringBuilder, flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
+private fun visitProperty(
+    settings: KotlinpSettings, sb: StringBuilder, flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags
+): KmPropertyVisitor =
     object : KmPropertyVisitor() {
         val typeParams = mutableListOf<String>()
         var receiverParameterType: String? = null
@@ -91,7 +93,7 @@ private fun visitProperty(sb: StringBuilder, flags: Flags, name: String, getterF
             printType(flags) { receiverParameterType = it }
 
         override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
-            printTypeParameter(flags, name, id, variance) { typeParams.add(it) }
+            printTypeParameter(settings, flags, name, id, variance) { typeParams.add(it) }
 
         override fun visitSetterParameter(flags: Flags, name: String): KmValueParameterVisitor? =
             printValueParameter(flags, name) { setterParameter = it }
@@ -211,7 +213,7 @@ private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisi
         }
     }
 
-private fun visitTypeAlias(sb: StringBuilder, flags: Flags, name: String): KmTypeAliasVisitor =
+private fun visitTypeAlias(settings: KotlinpSettings, sb: StringBuilder, flags: Flags, name: String): KmTypeAliasVisitor =
     object : KmTypeAliasVisitor() {
         val annotations = mutableListOf<KmAnnotation>()
         val typeParams = mutableListOf<String>()
@@ -220,7 +222,7 @@ private fun visitTypeAlias(sb: StringBuilder, flags: Flags, name: String): KmTyp
         var versionRequirement: String? = null
 
         override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
-            printTypeParameter(flags, name, id, variance) { typeParams.add(it) }
+            printTypeParameter(settings, flags, name, id, variance) { typeParams.add(it) }
 
         override fun visitUnderlyingType(flags: Flags): KmTypeVisitor? =
             printType(flags) { underlyingType = it }
@@ -353,7 +355,7 @@ private fun printType(flags: Flags, output: (String) -> Unit): KmTypeVisitor =
     }
 
 private fun printTypeParameter(
-    flags: Flags, name: String, id: Int, variance: KmVariance, output: (String) -> Unit
+    settings: KotlinpSettings, flags: Flags, name: String, id: Int, variance: KmVariance, output: (String) -> Unit
 ): KmTypeParameterVisitor =
     object : KmTypeParameterVisitor() {
         val bounds = mutableListOf<String>()
@@ -380,7 +382,10 @@ private fun printTypeParameter(
                 if (variance != KmVariance.INVARIANT) {
                     append(variance.name.toLowerCase()).append(" ")
                 }
-                append("T#$id /* $name */")
+                append("T#$id")
+                if (settings.isVerbose) {
+                    append(" /* $name */")
+                }
                 if (bounds.isNotEmpty()) {
                     bounds.joinTo(this, separator = " & ", prefix = " : ")
                 }
@@ -506,7 +511,7 @@ interface AbstractPrinter<in T : KotlinClassMetadata> {
     fun print(klass: T): String
 }
 
-class ClassPrinter : KmClassVisitor(), AbstractPrinter<KotlinClassMetadata.Class> {
+class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), AbstractPrinter<KotlinClassMetadata.Class> {
     private val sb = StringBuilder()
     private val result = StringBuilder()
 
@@ -540,7 +545,7 @@ class ClassPrinter : KmClassVisitor(), AbstractPrinter<KotlinClassMetadata.Class
     }
 
     override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
-        printTypeParameter(flags, name, id, variance) { typeParams.add(it) }
+        printTypeParameter(settings, flags, name, id, variance) { typeParams.add(it) }
 
     override fun visitSupertype(flags: Flags): KmTypeVisitor? =
         printType(flags) { supertypes.add(it) }
@@ -549,13 +554,13 @@ class ClassPrinter : KmClassVisitor(), AbstractPrinter<KotlinClassMetadata.Class
         visitConstructor(sb, flags)
 
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
-        visitFunction(sb, flags, name)
+        visitFunction(settings, sb, flags, name)
 
     override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
-        visitProperty(sb, flags, name, getterFlags, setterFlags)
+        visitProperty(settings, sb, flags, name, getterFlags, setterFlags)
 
     override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? =
-        visitTypeAlias(sb, flags, name)
+        visitTypeAlias(settings, sb, flags, name)
 
     override fun visitCompanionObject(name: String) {
         sb.appendln()
@@ -586,7 +591,7 @@ class ClassPrinter : KmClassVisitor(), AbstractPrinter<KotlinClassMetadata.Class
     }
 }
 
-abstract class PackagePrinter : KmPackageVisitor() {
+abstract class PackagePrinter(private val settings: KotlinpSettings) : KmPackageVisitor() {
     internal val sb = StringBuilder().apply {
         appendln("package {")
     }
@@ -596,29 +601,29 @@ abstract class PackagePrinter : KmPackageVisitor() {
     }
 
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
-        visitFunction(sb, flags, name)
+        visitFunction(settings, sb, flags, name)
 
     override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
-        visitProperty(sb, flags, name, getterFlags, setterFlags)
+        visitProperty(settings, sb, flags, name, getterFlags, setterFlags)
 
     override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? =
-        visitTypeAlias(sb, flags, name)
+        visitTypeAlias(settings, sb, flags, name)
 }
 
-class FileFacadePrinter : PackagePrinter(), AbstractPrinter<KotlinClassMetadata.FileFacade> {
+class FileFacadePrinter(settings: KotlinpSettings) : PackagePrinter(settings), AbstractPrinter<KotlinClassMetadata.FileFacade> {
     override fun print(klass: KotlinClassMetadata.FileFacade): String {
         klass.accept(this)
         return sb.toString()
     }
 }
 
-class LambdaPrinter : KmLambdaVisitor(), AbstractPrinter<KotlinClassMetadata.SyntheticClass> {
+class LambdaPrinter(private val settings: KotlinpSettings) : KmLambdaVisitor(), AbstractPrinter<KotlinClassMetadata.SyntheticClass> {
     private val sb = StringBuilder().apply {
         appendln("lambda {")
     }
 
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
-        visitFunction(sb, flags, name)
+        visitFunction(settings, sb, flags, name)
 
     override fun visitEnd() {
         sb.appendln("}")
@@ -630,7 +635,9 @@ class LambdaPrinter : KmLambdaVisitor(), AbstractPrinter<KotlinClassMetadata.Syn
     }
 }
 
-class MultiFileClassPartPrinter : PackagePrinter(), AbstractPrinter<KotlinClassMetadata.MultiFileClassPart> {
+class MultiFileClassPartPrinter(
+    settings: KotlinpSettings
+) : PackagePrinter(settings), AbstractPrinter<KotlinClassMetadata.MultiFileClassPart> {
     override fun print(klass: KotlinClassMetadata.MultiFileClassPart): String {
         sb.appendln("  // facade: ${klass.facadeClassName}")
         klass.accept(this)

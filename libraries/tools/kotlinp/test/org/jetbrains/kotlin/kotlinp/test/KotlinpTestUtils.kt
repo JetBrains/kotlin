@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.kotlinp.Kotlinp
+import org.jetbrains.kotlin.kotlinp.KotlinpSettings
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -24,24 +25,26 @@ fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, co
     val read = StringBuilder()
     val readWriteRead = StringBuilder()
 
+    val kotlinp = Kotlinp(KotlinpSettings(isVerbose = true))
+
     compile(file, disposable, tmpdir) { outputFile ->
         when (outputFile.extension) {
             "kotlin_module" -> {
-                val moduleFile = Kotlinp.readModuleFile(outputFile)!!
+                val moduleFile = kotlinp.readModuleFile(outputFile)!!
                 val moduleFile2 = transformModuleFile(moduleFile)
 
                 for ((sb, moduleFileToRender) in listOf(read to moduleFile, readWriteRead to moduleFile2)) {
                     sb.appendFileName(outputFile.relativeTo(tmpdir))
-                    sb.append(Kotlinp.renderModuleFile(moduleFileToRender))
+                    sb.append(kotlinp.renderModuleFile(moduleFileToRender))
                 }
             }
             "class" -> {
-                val classFile = Kotlinp.readClassFile(outputFile)!!
+                val classFile = kotlinp.readClassFile(outputFile)!!
                 val classFile2 = transformClassFile(classFile)
 
                 for ((sb, classFileToRender) in listOf(read to classFile, readWriteRead to classFile2)) {
                     sb.appendFileName(outputFile.relativeTo(tmpdir))
-                    sb.append(Kotlinp.renderClassFile(classFileToRender))
+                    sb.append(kotlinp.renderClassFile(classFileToRender))
                 }
             }
             else -> fail("Unknown file: $outputFile")
