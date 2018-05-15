@@ -10,9 +10,12 @@ import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class IrTypeBase(
+    val kotlinType: KotlinType?,
     override val annotations: List<IrCall>,
     override val variance: Variance
 ) : IrType, IrTypeProjection {
@@ -22,11 +25,17 @@ abstract class IrTypeBase(
 }
 
 class IrErrorTypeImpl(
+    kotlinType: KotlinType?,
     annotations: List<IrCall>,
     variance: Variance
-) : IrTypeBase(annotations, variance), IrErrorType
+) : IrTypeBase(kotlinType, annotations, variance), IrErrorType
 
 class IrDynamicTypeImpl(
+    kotlinType: KotlinType?,
     annotations: List<IrCall>,
     variance: Variance
-) : IrTypeBase(annotations, variance), IrDynamicType, IrTypeProjection
+) : IrTypeBase(kotlinType, annotations, variance), IrDynamicType, IrTypeProjection
+
+
+val IrType.originalKotlinType: KotlinType?
+    get() = safeAs<IrTypeBase>()?.kotlinType

@@ -47,9 +47,9 @@ class TypeTranslator(
         val ktTypeUpper = approximateCapturedTypes(ktType0).upper
 
         when {
-            ktTypeUpper.isError -> return IrErrorTypeImpl(translateTypeAnnotations(ktTypeUpper.annotations), variance)
+            ktTypeUpper.isError -> return IrErrorTypeImpl(ktTypeUpper, translateTypeAnnotations(ktTypeUpper.annotations), variance)
             ktTypeUpper.isFlexible() -> return translateType(ktTypeUpper.upperIfFlexible(), variance)
-            ktTypeUpper.isDynamic() -> return IrDynamicTypeImpl(translateTypeAnnotations(ktTypeUpper.annotations), variance)
+            ktTypeUpper.isDynamic() -> return IrDynamicTypeImpl(ktTypeUpper, translateTypeAnnotations(ktTypeUpper.annotations), variance)
         }
 
         val ktTypeConstructor = ktTypeUpper.constructor
@@ -58,6 +58,7 @@ class TypeTranslator(
         return when (ktTypeDescriptor) {
             is TypeParameterDescriptor ->
                 IrSimpleTypeImpl(
+                    ktTypeUpper,
                     resolveTypeParameter(ktTypeDescriptor),
                     ktTypeUpper.isMarkedNullable,
                     emptyList(),
@@ -67,6 +68,7 @@ class TypeTranslator(
 
             is ClassDescriptor ->
                 IrSimpleTypeImpl(
+                    ktTypeUpper,
                     symbolTable.referenceClass(ktTypeDescriptor),
                     ktTypeUpper.isMarkedNullable,
                     translateTypeArguments(ktTypeUpper.arguments),
