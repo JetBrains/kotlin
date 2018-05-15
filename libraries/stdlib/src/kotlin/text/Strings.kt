@@ -151,7 +151,7 @@ public inline fun String.trimEnd(): String = (this as CharSequence).trimEnd().to
  *
  * @param length the desired string length.
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
- * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
+ * @return Returns a char sequence of length at least [length] consisting of `this` char sequence prepended with [padChar] as many times
  * as are necessary to reach that length.
  */
 public fun CharSequence.padStart(length: Int, padChar: Char = ' '): CharSequence {
@@ -172,7 +172,7 @@ public fun CharSequence.padStart(length: Int, padChar: Char = ' '): CharSequence
  *
  * @param length the desired string length.
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
- * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
+ * @return Returns a string of length at least [length] consisting of `this` string prepended with [padChar] as many times
  * as are necessary to reach that length.
  */
 public fun String.padStart(length: Int, padChar: Char = ' '): String =
@@ -184,7 +184,7 @@ public fun String.padStart(length: Int, padChar: Char = ' '): String =
  *
  * @param length the desired string length.
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
- * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
+ * @return Returns a char sequence of length at least [length] consisting of `this` char sequence appended with [padChar] as many times
  * as are necessary to reach that length.
  */
 public fun CharSequence.padEnd(length: Int, padChar: Char = ' '): CharSequence {
@@ -205,7 +205,7 @@ public fun CharSequence.padEnd(length: Int, padChar: Char = ' '): CharSequence {
  *
  * @param length the desired string length.
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
- * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
+ * @return Returns a string of length at least [length] consisting of `this` string appended with [padChar] as many times
  * as are necessary to reach that length.
  */
 public fun String.padEnd(length: Int, padChar: Char = ' '): String =
@@ -794,7 +794,7 @@ public fun CharSequence.commonSuffixWith(other: CharSequence, ignoreCase: Boolea
  * starting from the specified [startIndex] and optionally ignoring the case.
  *
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
- * @returns An index of the first occurrence of matched character from [chars] or -1 if none of [chars] are found.
+ * @return An index of the first occurrence of matched character from [chars] or -1 if none of [chars] are found.
  *
  */
 public fun CharSequence.indexOfAny(chars: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
@@ -817,7 +817,7 @@ public fun CharSequence.indexOfAny(chars: CharArray, startIndex: Int = 0, ignore
  *
  * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
- * @returns An index of the last occurrence of matched character from [chars] or -1 if none of [chars] are found.
+ * @return An index of the last occurrence of matched character from [chars] or -1 if none of [chars] are found.
  *
  */
 public fun CharSequence.lastIndexOfAny(chars: CharArray, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
@@ -888,7 +888,7 @@ private fun CharSequence.findAnyOf(strings: Collection<String>, startIndex: Int,
  * starting from the specified [startIndex] and optionally ignoring the case.
  *
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @returns A pair of an index of the first occurrence of matched string from [strings] and the string matched
+ * @return A pair of an index of the first occurrence of matched string from [strings] and the string matched
  * or `null` if none of [strings] are found.
  *
  * To avoid ambiguous results when strings in [strings] have characters in common, this method proceeds from
@@ -904,7 +904,7 @@ public fun CharSequence.findAnyOf(strings: Collection<String>, startIndex: Int =
  *
  * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @returns A pair of an index of the last occurrence of matched string from [strings] and the string matched or `null` if none of [strings] are found.
+ * @return A pair of an index of the last occurrence of matched string from [strings] and the string matched or `null` if none of [strings] are found.
  *
  * To avoid ambiguous results when strings in [strings] have characters in common, this method proceeds from
  * the end toward the beginning of this string, and finds at each position the first element in [strings]
@@ -918,7 +918,7 @@ public fun CharSequence.findLastAnyOf(strings: Collection<String>, startIndex: I
  * starting from the specified [startIndex] and optionally ignoring the case.
  *
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @returns An index of the first occurrence of matched string from [strings] or -1 if none of [strings] are found.
+ * @return An index of the first occurrence of matched string from [strings] or -1 if none of [strings] are found.
  *
  * To avoid ambiguous results when strings in [strings] have characters in common, this method proceeds from
  * the beginning to the end of this string, and finds at each position the first element in [strings]
@@ -933,7 +933,7 @@ public fun CharSequence.indexOfAny(strings: Collection<String>, startIndex: Int 
  *
  * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @returns An index of the last occurrence of matched string from [strings] or -1 if none of [strings] are found.
+ * @return An index of the last occurrence of matched string from [strings] or -1 if none of [strings] are found.
  *
  * To avoid ambiguous results when strings in [strings] have characters in common, this method proceeds from
  * the end toward the beginning of this string, and finds at each position the first element in [strings]
@@ -949,7 +949,7 @@ public fun CharSequence.lastIndexOfAny(strings: Collection<String>, startIndex: 
  * Returns the index within this string of the first occurrence of the specified character, starting from the specified [startIndex].
  *
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
- * @returns An index of the first occurrence of [char] or -1 if none is found.
+ * @return An index of the first occurrence of [char] or -1 if none is found.
  */
 public fun CharSequence.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase || this !is String)
@@ -963,7 +963,7 @@ public fun CharSequence.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boo
  * starting from the specified [startIndex].
  *
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @returns An index of the first occurrence of [string] or `-1` if none is found.
+ * @return An index of the first occurrence of [string] or `-1` if none is found.
  */
 public fun CharSequence.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase || this !is String)
@@ -978,7 +978,7 @@ public fun CharSequence.indexOf(string: String, startIndex: Int = 0, ignoreCase:
  *
  * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
- * @returns An index of the first occurrence of [char] or -1 if none is found.
+ * @return An index of the first occurrence of [char] or -1 if none is found.
  */
 public fun CharSequence.lastIndexOf(char: Char, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
     return if (ignoreCase || this !is String)
@@ -993,7 +993,7 @@ public fun CharSequence.lastIndexOf(char: Char, startIndex: Int = lastIndex, ign
  *
  * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @returns An index of the first occurrence of [string] or -1 if none is found.
+ * @return An index of the first occurrence of [string] or -1 if none is found.
  */
 public fun CharSequence.lastIndexOf(string: String, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
     return if (ignoreCase || this !is String)
