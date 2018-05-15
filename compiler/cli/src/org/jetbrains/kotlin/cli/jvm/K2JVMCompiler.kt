@@ -216,7 +216,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun getPerformanceManager(): CommonCompilerPerformanceManager = performanceManager
 
     private fun loadPlugins(paths: KotlinPaths?, arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration): ExitCode {
-        val pluginClasspaths = arguments.pluginClasspaths?.toMutableList() ?: ArrayList()
+        var pluginClasspaths = arguments.pluginClasspaths?.asIterable() ?: emptyArray()
         val pluginOptions = arguments.pluginOptions?.toMutableList() ?: ArrayList()
 
         if (!arguments.disableDefaultScriptingPlugin) {
@@ -236,7 +236,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     val jars = arrayOf(KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR)
                         .mapNotNull { File(libPath, it).takeIf { it.exists() }?.canonicalPath }
                     if (jars.size == 3) {
-                        pluginClasspaths.addAll(jars)
+                        pluginClasspaths = jars + pluginClasspaths
                     }
                 }
             }
