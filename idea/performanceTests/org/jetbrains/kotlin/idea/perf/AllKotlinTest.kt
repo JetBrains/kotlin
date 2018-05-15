@@ -25,15 +25,14 @@ import java.io.StringWriter
 
 abstract class AllKotlinTest : DaemonAnalyzerTestCase() {
 
-    private val rootProjectFile: File = File(".").absoluteFile
+    private val rootProjectFile: File = File("../perfTestProject").absoluteFile
     private val statsFile: File = File("build/stats.csv").absoluteFile
-    private val tmp by lazy { createTempDirectory() }
+    private val tmp = rootProjectFile
 
     override fun setUpProject() {
 
-        println("Copying project to $tmp")
+        println("Using project in $tmp")
 
-        rootProjectFile.copyRecursively(tmp)
         tmp.resolve(".idea").deleteRecursively()
 
         (ApplicationManager.getApplication() as ApplicationEx).doNotSave()
