@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 plugins {
     kotlin("jvm")
@@ -85,4 +86,18 @@ test.apply {
     dependsOn(testForWebDemo)
 }
 
+configureFreeCompilerArg(true, "-Xeffect-system")
+configureFreeCompilerArg(true, "-Xnew-inference")
+
+fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
+    if (isEnabled) {
+        allprojects {
+            tasks.withType<KotlinCompile<*>> {
+                kotlinOptions {
+                    freeCompilerArgs += listOf(compilerArgument)
+                }
+            }
+        }
+    }
+}
 ideaPlugin()
