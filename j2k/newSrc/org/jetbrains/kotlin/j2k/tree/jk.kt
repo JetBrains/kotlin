@@ -50,30 +50,26 @@ interface JKAccessModifier : JKModifier
 interface JKModalityModifier : JKModifier
 
 interface JKReference : JKTreeElement {
-    val target: JKReferenceTarget
-    val referenceType: JKReferenceType
-
-    enum class JKReferenceType {
-        U2U, U2M, M2U
-    }
+    val target: JKReferenceTarget?
+    val isBound get() = target != null
 }
 
 interface JKMethodReference : JKReference {
-    override val target: JKMethod
+    override val target: JKMethod?
 }
 
 interface JKFieldReference : JKReference {
-    override val target: JKField
+    override val target: JKField?
 }
 
 interface JKClassReference : JKReference {
-    override val target: JKClass
+    override val target: JKClass?
 }
 
 interface JKType : JKTreeElement
 
 interface JKClassType : JKType {
-    val classReference: JKClassReference
+    val classReference: JKSymbol<JKClass>?
     val nullability: Nullability
     val parameters: List<JKType>
 }
@@ -89,7 +85,7 @@ interface JKBlock : JKTreeElement {
 interface JKIdentifier : JKTreeElement
 
 interface JKNameIdentifier : JKIdentifier {
-    val name: String
+    val value: String
 }
 
 interface JKExpression : JKTreeElement

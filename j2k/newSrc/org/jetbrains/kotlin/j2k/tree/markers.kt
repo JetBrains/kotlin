@@ -58,3 +58,7 @@ interface JKField : JKDeclaration, JKModifierListOwner {
     val type: JKType
     val name: JKNameIdentifier
 }
+
+interface JKSymbol<E : JKElement> {
+    val element: E
+}

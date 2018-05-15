@@ -26,7 +26,10 @@ interface JKJavaMethod : JKUniverseDeclaration, JKMethod {
 
 interface JKJavaForLoop : JKLoop
 
-interface JKJavaAssignmentExpression : JKExpression
+interface JKJavaAssignmentExpression : JKExpression {
+    var lExpression: JKExpression
+    var rExpression: JKExpression
+}
 
 interface JKJavaPrimitiveType : JKType {
     val name: String
@@ -41,7 +44,7 @@ interface JKJavaMethodCallExpression : JKMethodCallExpression
 interface JKJavaFieldAccessExpression : JKFieldAccessExpression
 
 interface JKJavaNewExpression : JKExpression {
-    val identifier: JKClassReference
+    val constructorSymbol: JKSymbol<JKMethod>
     val arguments: JKExpressionList
 }
 
@@ -70,3 +73,7 @@ interface JKJavaNewArray : JKExpression {
 }
 
 interface JKJavaLiteralExpression : JKLiteralExpression
+
+interface JKReturnStatement : JKStatement {
+    val expression: JKExpression
+}

@@ -44,7 +44,7 @@ class NewCodeBuilder {
         override fun visitUniverseClass(universeClass: JKUniverseClass, data: Unit) {
             printer.print(classKindString(universeClass.classKind))
             builder.append(" ")
-            printer.print(universeClass.name.name)
+            printer.print(universeClass.name.value)
             if (universeClass.declarationList.declarations.isNotEmpty()) {
                 printer.println("{")
                 printer.pushIndent()
