@@ -23,6 +23,10 @@ import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginProjectRe
 
 interface NoArgModel : AnnotationBasedPluginModel {
     val invokeInitializers: Boolean
+
+    override fun copy(): NoArgModel {
+        return NoArgModelImpl(annotations.toList(), presets.toList(), invokeInitializers)
+    }
 }
 
 class NoArgModelImpl(

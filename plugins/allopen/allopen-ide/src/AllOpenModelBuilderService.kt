@@ -21,7 +21,11 @@ import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginModel
 import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginModelBuilderService
 import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginProjectResolverExtension
 
-interface AllOpenModel : AnnotationBasedPluginModel
+interface AllOpenModel : AnnotationBasedPluginModel {
+    override fun copy(): AllOpenModel {
+        return AllOpenModelImpl(annotations.toList(), presets.toList())
+    }
+}
 
 class AllOpenModelImpl(
         override val annotations: List<String>,

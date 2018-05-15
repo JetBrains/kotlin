@@ -21,7 +21,11 @@ import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginModel
 import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginModelBuilderService
 import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginProjectResolverExtension
 
-interface SamWithReceiverModel : AnnotationBasedPluginModel
+interface SamWithReceiverModel : AnnotationBasedPluginModel {
+    override fun copy(): SamWithReceiverModel {
+        return SamWithReceiverModelImpl(annotations.toList(), presets.toList())
+    }
+}
 
 class SamWithReceiverModelImpl(
         override val annotations: List<String>,
