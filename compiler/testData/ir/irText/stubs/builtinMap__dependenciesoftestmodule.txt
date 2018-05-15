@@ -2564,16 +2564,16 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         UNBOUND: class Any
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance:out upperBounds:[kotlin.Any?]
-      FUN IR_EXTERNAL_DECLARATION_STUB name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, key:K, defaultValue:@kotlin.UnsafeVariance V) returnType:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, key:K, defaultValue:V) returnType:V flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:defaultValue index:1 type:@kotlin.UnsafeVariance V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:defaultValue index:1 type:V flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:containsKey visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:Boolean flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:containsValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, value:@kotlin.UnsafeVariance V) returnType:Boolean flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, value:V) returnType:Boolean flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:@kotlin.UnsafeVariance V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:V flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Boolean flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:V? flags:
@@ -2644,7 +2644,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:1 type:V flags:
       FUN FAKE_OVERRIDE name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, key:K, defaultValue:V) returnType:V flags:
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, key:K, defaultValue:@kotlin.UnsafeVariance V) returnType:V flags:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, key:K, defaultValue:V) returnType:V flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:defaultValue index:1 type:V flags:
@@ -2667,7 +2667,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
       FUN FAKE_OVERRIDE name:containsValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, value:V) returnType:Boolean flags:
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:containsValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, value:@kotlin.UnsafeVariance V) returnType:Boolean flags:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:containsValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, value:V) returnType:Boolean flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:V flags:
       FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:V? flags:
