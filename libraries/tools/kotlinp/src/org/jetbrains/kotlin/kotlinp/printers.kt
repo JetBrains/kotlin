@@ -12,7 +12,7 @@ private object SpecialCharacters {
     const val TYPE_ALIAS_MARKER = '^'
 }
 
-private fun visitFunction(sb: StringBuilder, flags: Int, name: String): KmFunctionVisitor =
+private fun visitFunction(sb: StringBuilder, flags: Flags, name: String): KmFunctionVisitor =
     object : KmFunctionVisitor() {
         val typeParams = mutableListOf<String>()
         val params = mutableListOf<String>()
@@ -21,18 +21,18 @@ private fun visitFunction(sb: StringBuilder, flags: Int, name: String): KmFuncti
         var versionRequirement: String? = null
         var jvmDesc: String? = null
 
-        override fun visitReceiverParameterType(flags: Int): KmTypeVisitor? =
+        override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             printType(flags) { receiverParameterType = it }
 
         override fun visitTypeParameter(
-            flags: Int, name: String, id: Int, variance: KmVariance
+            flags: Flags, name: String, id: Int, variance: KmVariance
         ): KmTypeParameterVisitor? =
             printTypeParameter(flags, name, id, variance) { typeParams.add(it) }
 
-        override fun visitValueParameter(flags: Int, name: String): KmValueParameterVisitor? =
+        override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor? =
             printValueParameter(flags, name) { params.add(it) }
 
-        override fun visitReturnType(flags: Int): KmTypeVisitor? =
+        override fun visitReturnType(flags: Flags): KmTypeVisitor? =
             printType(flags) { returnType = it }
 
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
@@ -74,7 +74,7 @@ private fun visitFunction(sb: StringBuilder, flags: Int, name: String): KmFuncti
         }
     }
 
-private fun visitProperty(sb: StringBuilder, flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor =
+private fun visitProperty(sb: StringBuilder, flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
     object : KmPropertyVisitor() {
         val typeParams = mutableListOf<String>()
         var receiverParameterType: String? = null
@@ -87,16 +87,16 @@ private fun visitProperty(sb: StringBuilder, flags: Int, name: String, getterFla
         var jvmSetterDesc: String? = null
         var jvmSyntheticMethodForAnnotationsDesc: String? = null
 
-        override fun visitReceiverParameterType(flags: Int): KmTypeVisitor? =
+        override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             printType(flags) { receiverParameterType = it }
 
-        override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
+        override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
             printTypeParameter(flags, name, id, variance) { typeParams.add(it) }
 
-        override fun visitSetterParameter(flags: Int, name: String): KmValueParameterVisitor? =
+        override fun visitSetterParameter(flags: Flags, name: String): KmValueParameterVisitor? =
             printValueParameter(flags, name) { setterParameter = it }
 
-        override fun visitReturnType(flags: Int): KmTypeVisitor? =
+        override fun visitReturnType(flags: Flags): KmTypeVisitor? =
             printType(flags) { returnType = it }
 
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
@@ -141,7 +141,7 @@ private fun visitProperty(sb: StringBuilder, flags: Int, name: String, getterFla
             }
             sb.append("  ")
             sb.appendFlags(flags, PROPERTY_FLAGS_MAP)
-            sb.append(if (Flags.Property.IS_VAR(flags)) "var " else "val ")
+            sb.append(if (Flag.Property.IS_VAR(flags)) "var " else "val ")
             if (typeParams.isNotEmpty()) {
                 typeParams.joinTo(sb, prefix = "<", postfix = ">")
                 sb.append(" ")
@@ -153,16 +153,16 @@ private fun visitProperty(sb: StringBuilder, flags: Int, name: String, getterFla
             if (returnType != null) {
                 sb.append(": ").append(returnType)
             }
-            if (Flags.Property.HAS_CONSTANT(flags)) {
+            if (Flag.Property.HAS_CONSTANT(flags)) {
                 sb.append(" /* = ... */")
             }
             sb.appendln()
-            if (Flags.Property.HAS_GETTER(flags)) {
+            if (Flag.Property.HAS_GETTER(flags)) {
                 sb.append("    ")
                 sb.appendFlags(getterFlags, PROPERTY_ACCESSOR_FLAGS_MAP)
                 sb.appendln("get")
             }
-            if (Flags.Property.HAS_SETTER(flags)) {
+            if (Flag.Property.HAS_SETTER(flags)) {
                 sb.append("    ")
                 sb.appendFlags(setterFlags, PROPERTY_ACCESSOR_FLAGS_MAP)
                 sb.append("set")
@@ -174,13 +174,13 @@ private fun visitProperty(sb: StringBuilder, flags: Int, name: String, getterFla
         }
     }
 
-private fun visitConstructor(sb: StringBuilder, flags: Int): KmConstructorVisitor =
+private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisitor =
     object : KmConstructorVisitor() {
         val params = mutableListOf<String>()
         var versionRequirement: String? = null
         var jvmDesc: String? = null
 
-        override fun visitValueParameter(flags: Int, name: String): KmValueParameterVisitor? =
+        override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor? =
             printValueParameter(flags, name) { params.add(it) }
 
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
@@ -211,7 +211,7 @@ private fun visitConstructor(sb: StringBuilder, flags: Int): KmConstructorVisito
         }
     }
 
-private fun visitTypeAlias(sb: StringBuilder, flags: Int, name: String): KmTypeAliasVisitor =
+private fun visitTypeAlias(sb: StringBuilder, flags: Flags, name: String): KmTypeAliasVisitor =
     object : KmTypeAliasVisitor() {
         val annotations = mutableListOf<KmAnnotation>()
         val typeParams = mutableListOf<String>()
@@ -219,13 +219,13 @@ private fun visitTypeAlias(sb: StringBuilder, flags: Int, name: String): KmTypeA
         var expandedType: String? = null
         var versionRequirement: String? = null
 
-        override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
+        override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
             printTypeParameter(flags, name, id, variance) { typeParams.add(it) }
 
-        override fun visitUnderlyingType(flags: Int): KmTypeVisitor? =
+        override fun visitUnderlyingType(flags: Flags): KmTypeVisitor? =
             printType(flags) { underlyingType = it }
 
-        override fun visitExpandedType(flags: Int): KmTypeVisitor? =
+        override fun visitExpandedType(flags: Flags): KmTypeVisitor? =
             printType(flags) { expandedType = it }
 
         override fun visitAnnotation(annotation: KmAnnotation) {
@@ -259,7 +259,7 @@ private fun visitTypeAlias(sb: StringBuilder, flags: Int, name: String): KmTypeA
         }
     }
 
-private fun printType(flags: Int, output: (String) -> Unit): KmTypeVisitor =
+private fun printType(flags: Flags, output: (String) -> Unit): KmTypeVisitor =
     object : KmTypeVisitor() {
         var classifier: String? = null
         val arguments = mutableListOf<String>()
@@ -281,10 +281,10 @@ private fun printType(flags: Int, output: (String) -> Unit): KmTypeVisitor =
             classifier = "$name${SpecialCharacters.TYPE_ALIAS_MARKER}"
         }
 
-        override fun visitAbbreviatedType(flags: Int): KmTypeVisitor? =
+        override fun visitAbbreviatedType(flags: Flags): KmTypeVisitor? =
             printType(flags) { abbreviatedType = it }
 
-        override fun visitArgument(flags: Int, variance: KmVariance): KmTypeVisitor? =
+        override fun visitArgument(flags: Flags, variance: KmVariance): KmTypeVisitor? =
             printType(flags) { argumentTypeString ->
                 arguments += buildString {
                     if (variance != KmVariance.INVARIANT) {
@@ -298,10 +298,10 @@ private fun printType(flags: Int, output: (String) -> Unit): KmTypeVisitor =
             arguments += "*"
         }
 
-        override fun visitOuterType(flags: Int): KmTypeVisitor? =
+        override fun visitOuterType(flags: Flags): KmTypeVisitor? =
             printType(flags) { outerType = it }
 
-        override fun visitFlexibleTypeUpperBound(flags: Int, typeFlexibilityId: String?): KmTypeVisitor? =
+        override fun visitFlexibleTypeUpperBound(flags: Flags, typeFlexibilityId: String?): KmTypeVisitor? =
             if (typeFlexibilityId == JvmTypeExtensionVisitor.PLATFORM_TYPE_ID) {
                 printType(flags) { platformTypeUpperBound = it }
             } else null
@@ -336,7 +336,7 @@ private fun printType(flags: Int, output: (String) -> Unit): KmTypeVisitor =
                 if (arguments.isNotEmpty()) {
                     arguments.joinTo(this, prefix = "<", postfix = ">")
                 }
-                if (Flags.Type.IS_NULLABLE(flags)) {
+                if (Flag.Type.IS_NULLABLE(flags)) {
                     append("?")
                 }
                 if (abbreviatedType != null) {
@@ -352,12 +352,14 @@ private fun printType(flags: Int, output: (String) -> Unit): KmTypeVisitor =
         }
     }
 
-private fun printTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance, output: (String) -> Unit): KmTypeParameterVisitor =
+private fun printTypeParameter(
+    flags: Flags, name: String, id: Int, variance: KmVariance, output: (String) -> Unit
+): KmTypeParameterVisitor =
     object : KmTypeParameterVisitor() {
         val bounds = mutableListOf<String>()
         val jvmAnnotations = mutableListOf<KmAnnotation>()
 
-        override fun visitUpperBound(flags: Int): KmTypeVisitor? =
+        override fun visitUpperBound(flags: Flags): KmTypeVisitor? =
             printType(flags) { bounds += it }
 
         override fun visitExtensions(type: KmExtensionType): KmTypeParameterExtensionVisitor? {
@@ -386,15 +388,15 @@ private fun printTypeParameter(flags: Int, name: String, id: Int, variance: KmVa
         }
     }
 
-private fun printValueParameter(flags: Int, name: String, output: (String) -> Unit): KmValueParameterVisitor =
+private fun printValueParameter(flags: Flags, name: String, output: (String) -> Unit): KmValueParameterVisitor =
     object : KmValueParameterVisitor() {
         var varargElementType: String? = null
         var type: String? = null
 
-        override fun visitType(flags: Int): KmTypeVisitor? =
+        override fun visitType(flags: Flags): KmTypeVisitor? =
             printType(flags) { type = it }
 
-        override fun visitVarargElementType(flags: Int): KmTypeVisitor? =
+        override fun visitVarargElementType(flags: Flags): KmTypeVisitor? =
             printType(flags) { varargElementType = it }
 
         override fun visitEnd() {
@@ -405,7 +407,7 @@ private fun printValueParameter(flags: Int, name: String, output: (String) -> Un
                 } else {
                     append(name).append(": ").append(type)
                 }
-                if (Flags.ValueParameter.DECLARES_DEFAULT_VALUE(flags)) {
+                if (Flag.ValueParameter.DECLARES_DEFAULT_VALUE(flags)) {
                     append(" /* = ... */")
                 }
             })
@@ -491,7 +493,7 @@ private fun printVersionRequirement(output: (String) -> Unit): KmVersionRequirem
         }
     }
 
-private fun StringBuilder.appendFlags(flags: Int, map: Map<MetadataFlag, String>) {
+private fun StringBuilder.appendFlags(flags: Flags, map: Map<Flag, String>) {
     for ((modifier, string) in map) {
         if (modifier(flags)) {
             append(string)
@@ -508,13 +510,13 @@ class ClassPrinter : KmClassVisitor(), AbstractPrinter<KotlinClassMetadata.Class
     private val sb = StringBuilder()
     private val result = StringBuilder()
 
-    private var flags: Int? = null
+    private var flags: Flags? = null
     private var name: ClassName? = null
     private val typeParams = mutableListOf<String>()
     private val supertypes = mutableListOf<String>()
     private var versionRequirement: String? = null
 
-    override fun visit(flags: Int, name: ClassName) {
+    override fun visit(flags: Flags, name: ClassName) {
         this.flags = flags
         this.name = name
     }
@@ -537,22 +539,22 @@ class ClassPrinter : KmClassVisitor(), AbstractPrinter<KotlinClassMetadata.Class
         result.appendln("}")
     }
 
-    override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
+    override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
         printTypeParameter(flags, name, id, variance) { typeParams.add(it) }
 
-    override fun visitSupertype(flags: Int): KmTypeVisitor? =
+    override fun visitSupertype(flags: Flags): KmTypeVisitor? =
         printType(flags) { supertypes.add(it) }
 
-    override fun visitConstructor(flags: Int): KmConstructorVisitor? =
+    override fun visitConstructor(flags: Flags): KmConstructorVisitor? =
         visitConstructor(sb, flags)
 
-    override fun visitFunction(flags: Int, name: String): KmFunctionVisitor? =
+    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
         visitFunction(sb, flags, name)
 
-    override fun visitProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor? =
+    override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
         visitProperty(sb, flags, name, getterFlags, setterFlags)
 
-    override fun visitTypeAlias(flags: Int, name: String): KmTypeAliasVisitor? =
+    override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? =
         visitTypeAlias(sb, flags, name)
 
     override fun visitCompanionObject(name: String) {
@@ -593,13 +595,13 @@ abstract class PackagePrinter : KmPackageVisitor() {
         sb.appendln("}")
     }
 
-    override fun visitFunction(flags: Int, name: String): KmFunctionVisitor? =
+    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
         visitFunction(sb, flags, name)
 
-    override fun visitProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor? =
+    override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
         visitProperty(sb, flags, name, getterFlags, setterFlags)
 
-    override fun visitTypeAlias(flags: Int, name: String): KmTypeAliasVisitor? =
+    override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? =
         visitTypeAlias(sb, flags, name)
 }
 
@@ -615,7 +617,7 @@ class LambdaPrinter : KmLambdaVisitor(), AbstractPrinter<KotlinClassMetadata.Syn
         appendln("lambda {")
     }
 
-    override fun visitFunction(flags: Int, name: String): KmFunctionVisitor? =
+    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
         visitFunction(sb, flags, name)
 
     override fun visitEnd() {
@@ -679,84 +681,84 @@ class ModuleFilePrinter : KmModuleVisitor() {
 }
 
 private val VISIBILITY_FLAGS_MAP = mapOf(
-    Flags.IS_INTERNAL to "internal",
-    Flags.IS_PRIVATE to "private",
-    Flags.IS_PRIVATE_TO_THIS to "private",
-    Flags.IS_PROTECTED to "protected",
-    Flags.IS_PUBLIC to "public",
-    Flags.IS_LOCAL to "local"
+    Flag.IS_INTERNAL to "internal",
+    Flag.IS_PRIVATE to "private",
+    Flag.IS_PRIVATE_TO_THIS to "private",
+    Flag.IS_PROTECTED to "protected",
+    Flag.IS_PUBLIC to "public",
+    Flag.IS_LOCAL to "local"
 )
 
 private val COMMON_FLAGS_MAP = VISIBILITY_FLAGS_MAP + mapOf(
-    Flags.IS_FINAL to "final",
-    Flags.IS_OPEN to "open",
-    Flags.IS_ABSTRACT to "abstract",
-    Flags.IS_SEALED to "sealed"
+    Flag.IS_FINAL to "final",
+    Flag.IS_OPEN to "open",
+    Flag.IS_ABSTRACT to "abstract",
+    Flag.IS_SEALED to "sealed"
 )
 
 private val CLASS_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
-    Flags.Class.IS_INNER to "inner",
-    Flags.Class.IS_DATA to "data",
-    Flags.Class.IS_EXTERNAL to "external",
-    Flags.Class.IS_EXPECT to "expect",
-    Flags.Class.IS_INLINE to "inline",
+    Flag.Class.IS_INNER to "inner",
+    Flag.Class.IS_DATA to "data",
+    Flag.Class.IS_EXTERNAL to "external",
+    Flag.Class.IS_EXPECT to "expect",
+    Flag.Class.IS_INLINE to "inline",
 
-    Flags.Class.IS_CLASS to "class",
-    Flags.Class.IS_INTERFACE to "interface",
-    Flags.Class.IS_ENUM_CLASS to "enum class",
-    Flags.Class.IS_ENUM_ENTRY to "enum entry",
-    Flags.Class.IS_ANNOTATION_CLASS to "annotation class",
-    Flags.Class.IS_OBJECT to "object",
-    Flags.Class.IS_COMPANION_OBJECT to "companion object"
+    Flag.Class.IS_CLASS to "class",
+    Flag.Class.IS_INTERFACE to "interface",
+    Flag.Class.IS_ENUM_CLASS to "enum class",
+    Flag.Class.IS_ENUM_ENTRY to "enum entry",
+    Flag.Class.IS_ANNOTATION_CLASS to "annotation class",
+    Flag.Class.IS_OBJECT to "object",
+    Flag.Class.IS_COMPANION_OBJECT to "companion object"
 )
 
 private val CONSTRUCTOR_FLAGS_MAP = VISIBILITY_FLAGS_MAP + mapOf(
-    Flags.Constructor.IS_PRIMARY to "/* primary */"
+    Flag.Constructor.IS_PRIMARY to "/* primary */"
 )
 
 private val FUNCTION_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
-    Flags.Function.IS_DECLARATION to "",
-    Flags.Function.IS_FAKE_OVERRIDE to "/* fake override */",
-    Flags.Function.IS_DELEGATION to "/* delegation */",
-    Flags.Function.IS_SYNTHESIZED to "/* synthesized */",
+    Flag.Function.IS_DECLARATION to "",
+    Flag.Function.IS_FAKE_OVERRIDE to "/* fake override */",
+    Flag.Function.IS_DELEGATION to "/* delegation */",
+    Flag.Function.IS_SYNTHESIZED to "/* synthesized */",
 
-    Flags.Function.IS_OPERATOR to "operator",
-    Flags.Function.IS_INFIX to "infix",
-    Flags.Function.IS_INLINE to "inline",
-    Flags.Function.IS_TAILREC to "tailrec",
-    Flags.Function.IS_EXTERNAL to "external",
-    Flags.Function.IS_SUSPEND to "suspend",
-    Flags.Function.IS_EXPECT to "expect"
+    Flag.Function.IS_OPERATOR to "operator",
+    Flag.Function.IS_INFIX to "infix",
+    Flag.Function.IS_INLINE to "inline",
+    Flag.Function.IS_TAILREC to "tailrec",
+    Flag.Function.IS_EXTERNAL to "external",
+    Flag.Function.IS_SUSPEND to "suspend",
+    Flag.Function.IS_EXPECT to "expect"
 )
 
 private val PROPERTY_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
-    Flags.Property.IS_DECLARATION to "",
-    Flags.Property.IS_FAKE_OVERRIDE to "/* fake override */",
-    Flags.Property.IS_DELEGATION to "/* delegation */",
-    Flags.Property.IS_SYNTHESIZED to "/* synthesized */",
+    Flag.Property.IS_DECLARATION to "",
+    Flag.Property.IS_FAKE_OVERRIDE to "/* fake override */",
+    Flag.Property.IS_DELEGATION to "/* delegation */",
+    Flag.Property.IS_SYNTHESIZED to "/* synthesized */",
 
-    Flags.Property.IS_CONST to "const",
-    Flags.Property.IS_LATEINIT to "lateinit",
-    Flags.Property.IS_EXTERNAL to "external",
-    Flags.Property.IS_DELEGATED to "/* delegated */",
-    Flags.Property.IS_EXPECT to "expect"
+    Flag.Property.IS_CONST to "const",
+    Flag.Property.IS_LATEINIT to "lateinit",
+    Flag.Property.IS_EXTERNAL to "external",
+    Flag.Property.IS_DELEGATED to "/* delegated */",
+    Flag.Property.IS_EXPECT to "expect"
 )
 
 private val PROPERTY_ACCESSOR_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
-    Flags.PropertyAccessor.IS_NOT_DEFAULT to "/* non-default */",
-    Flags.PropertyAccessor.IS_EXTERNAL to "external",
-    Flags.PropertyAccessor.IS_INLINE to "inline"
+    Flag.PropertyAccessor.IS_NOT_DEFAULT to "/* non-default */",
+    Flag.PropertyAccessor.IS_EXTERNAL to "external",
+    Flag.PropertyAccessor.IS_INLINE to "inline"
 )
 
 private val VALUE_PARAMETER_FLAGS_MAP = mapOf(
-    Flags.ValueParameter.IS_CROSSINLINE to "crossinline",
-    Flags.ValueParameter.IS_NOINLINE to "noinline"
+    Flag.ValueParameter.IS_CROSSINLINE to "crossinline",
+    Flag.ValueParameter.IS_NOINLINE to "noinline"
 )
 
 private val TYPE_PARAMETER_FLAGS_MAP = mapOf(
-    Flags.TypeParameter.IS_REIFIED to "reified"
+    Flag.TypeParameter.IS_REIFIED to "reified"
 )
 
 private val TYPE_FLAGS_MAP = mapOf(
-    Flags.Type.IS_SUSPEND to "suspend"
+    Flag.Type.IS_SUSPEND to "suspend"
 )

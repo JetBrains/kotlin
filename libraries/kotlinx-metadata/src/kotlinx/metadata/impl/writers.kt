@@ -25,13 +25,13 @@ class WriteContext {
 }
 
 private fun writeTypeParameter(
-    c: WriteContext, flags: Int, name: String, id: Int, variance: KmVariance,
+    c: WriteContext, flags: Flags, name: String, id: Int, variance: KmVariance,
     output: (ProtoBuf.TypeParameter.Builder) -> Unit
 ): KmTypeParameterVisitor =
     object : KmTypeParameterVisitor() {
         private val t = ProtoBuf.TypeParameter.newBuilder()
 
-        override fun visitUpperBound(flags: Int): KmTypeVisitor? =
+        override fun visitUpperBound(flags: Flags): KmTypeVisitor? =
             writeType(c, flags) { t.addUpperBound(it) }
 
         override fun visitExtensions(type: KmExtensionType): KmTypeParameterExtensionVisitor? =
@@ -40,7 +40,7 @@ private fun writeTypeParameter(
         override fun visitEnd() {
             t.name = c[name]
             t.id = id
-            val reified = Flags.TypeParameter.IS_REIFIED(flags)
+            val reified = Flag.TypeParameter.IS_REIFIED(flags)
             if (reified != ProtoBuf.TypeParameter.getDefaultInstance().reified) {
                 t.reified = reified
             }
@@ -53,7 +53,7 @@ private fun writeTypeParameter(
         }
     }
 
-private fun writeType(c: WriteContext, flags: Int, output: (ProtoBuf.Type.Builder) -> Unit): KmTypeVisitor =
+private fun writeType(c: WriteContext, flags: Flags, output: (ProtoBuf.Type.Builder) -> Unit): KmTypeVisitor =
     object : KmTypeVisitor() {
         private val t = ProtoBuf.Type.newBuilder()
 
@@ -71,7 +71,7 @@ private fun writeType(c: WriteContext, flags: Int, output: (ProtoBuf.Type.Builde
             })
         }
 
-        override fun visitArgument(flags: Int, variance: KmVariance): KmTypeVisitor? =
+        override fun visitArgument(flags: Flags, variance: KmVariance): KmTypeVisitor? =
             writeType(c, flags) { argument ->
                 t.addArgument(ProtoBuf.Type.Argument.newBuilder().apply {
                     if (variance == KmVariance.IN) {
@@ -87,13 +87,13 @@ private fun writeType(c: WriteContext, flags: Int, output: (ProtoBuf.Type.Builde
             t.typeParameter = id
         }
 
-        override fun visitAbbreviatedType(flags: Int): KmTypeVisitor? =
+        override fun visitAbbreviatedType(flags: Flags): KmTypeVisitor? =
             writeType(c, flags) { t.abbreviatedType = it.build() }
 
-        override fun visitOuterType(flags: Int): KmTypeVisitor? =
+        override fun visitOuterType(flags: Flags): KmTypeVisitor? =
             writeType(c, flags) { t.outerType = it.build() }
 
-        override fun visitFlexibleTypeUpperBound(flags: Int, typeFlexibilityId: String?): KmTypeVisitor? =
+        override fun visitFlexibleTypeUpperBound(flags: Flags, typeFlexibilityId: String?): KmTypeVisitor? =
             writeType(c, flags) {
                 if (typeFlexibilityId != null) {
                     t.flexibleTypeCapabilitiesId = c[typeFlexibilityId]
@@ -105,7 +105,7 @@ private fun writeType(c: WriteContext, flags: Int, output: (ProtoBuf.Type.Builde
             c.extensions.writeTypeExtensions(type, t, c.strings)
 
         override fun visitEnd() {
-            if (Flags.Type.IS_NULLABLE(flags)) {
+            if (Flag.Type.IS_NULLABLE(flags)) {
                 t.nullable = true
             }
             val flagsToWrite = flags shr 1
@@ -116,11 +116,11 @@ private fun writeType(c: WriteContext, flags: Int, output: (ProtoBuf.Type.Builde
         }
     }
 
-private fun writeConstructor(c: WriteContext, flags: Int, output: (ProtoBuf.Constructor.Builder) -> Unit): KmConstructorVisitor =
+private fun writeConstructor(c: WriteContext, flags: Flags, output: (ProtoBuf.Constructor.Builder) -> Unit): KmConstructorVisitor =
     object : KmConstructorVisitor() {
         val t = ProtoBuf.Constructor.newBuilder()
 
-        override fun visitValueParameter(flags: Int, name: String): KmValueParameterVisitor? =
+        override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor? =
             writeValueParameter(c, flags, name) { t.addValueParameter(it.build()) }
 
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
@@ -137,20 +137,20 @@ private fun writeConstructor(c: WriteContext, flags: Int, output: (ProtoBuf.Cons
         }
     }
 
-private fun writeFunction(c: WriteContext, flags: Int, name: String, output: (ProtoBuf.Function.Builder) -> Unit): KmFunctionVisitor =
+private fun writeFunction(c: WriteContext, flags: Flags, name: String, output: (ProtoBuf.Function.Builder) -> Unit): KmFunctionVisitor =
     object : KmFunctionVisitor() {
         val t = ProtoBuf.Function.newBuilder()
 
-        override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
+        override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
             writeTypeParameter(c, flags, name, id, variance) { t.addTypeParameter(it) }
 
-        override fun visitReceiverParameterType(flags: Int): KmTypeVisitor? =
+        override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             writeType(c, flags) { t.receiverType = it.build() }
 
-        override fun visitValueParameter(flags: Int, name: String): KmValueParameterVisitor? =
+        override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor? =
             writeValueParameter(c, flags, name) { t.addValueParameter(it) }
 
-        override fun visitReturnType(flags: Int): KmTypeVisitor? =
+        override fun visitReturnType(flags: Flags): KmTypeVisitor? =
             writeType(c, flags) { t.returnType = it.build() }
 
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
@@ -172,20 +172,20 @@ private fun writeFunction(c: WriteContext, flags: Int, name: String, output: (Pr
     }
 
 private fun writeProperty(
-    c: WriteContext, flags: Int, name: String, getterFlags: Int, setterFlags: Int, output: (ProtoBuf.Property.Builder) -> Unit
+    c: WriteContext, flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags, output: (ProtoBuf.Property.Builder) -> Unit
 ): KmPropertyVisitor = object : KmPropertyVisitor() {
     val t = ProtoBuf.Property.newBuilder()
 
-    override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
+    override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
         writeTypeParameter(c, flags, name, id, variance) { t.addTypeParameter(it) }
 
-    override fun visitReceiverParameterType(flags: Int): KmTypeVisitor? =
+    override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
         writeType(c, flags) { t.receiverType = it.build() }
 
-    override fun visitSetterParameter(flags: Int, name: String): KmValueParameterVisitor? =
+    override fun visitSetterParameter(flags: Flags, name: String): KmValueParameterVisitor? =
         writeValueParameter(c, flags, name) { t.setterValueParameter = it.build() }
 
-    override fun visitReturnType(flags: Int): KmTypeVisitor? =
+    override fun visitReturnType(flags: Flags): KmTypeVisitor? =
         writeType(c, flags) { t.returnType = it.build() }
 
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
@@ -207,15 +207,15 @@ private fun writeProperty(
 }
 
 private fun writeValueParameter(
-    c: WriteContext, flags: Int, name: String,
+    c: WriteContext, flags: Flags, name: String,
     output: (ProtoBuf.ValueParameter.Builder) -> Unit
 ): KmValueParameterVisitor = object : KmValueParameterVisitor() {
     val t = ProtoBuf.ValueParameter.newBuilder()
 
-    override fun visitType(flags: Int): KmTypeVisitor? =
+    override fun visitType(flags: Flags): KmTypeVisitor? =
         writeType(c, flags) { t.type = it.build() }
 
-    override fun visitVarargElementType(flags: Int): KmTypeVisitor? =
+    override fun visitVarargElementType(flags: Flags): KmTypeVisitor? =
         writeType(c, flags) { t.varargElementType = it.build() }
 
     override fun visitEnd() {
@@ -228,18 +228,18 @@ private fun writeValueParameter(
 }
 
 private fun writeTypeAlias(
-    c: WriteContext, flags: Int, name: String,
+    c: WriteContext, flags: Flags, name: String,
     output: (ProtoBuf.TypeAlias.Builder) -> Unit
 ): KmTypeAliasVisitor = object : KmTypeAliasVisitor() {
     val t = ProtoBuf.TypeAlias.newBuilder()
 
-    override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
+    override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
         writeTypeParameter(c, flags, name, id, variance) { t.addTypeParameter(it) }
 
-    override fun visitUnderlyingType(flags: Int): KmTypeVisitor? =
+    override fun visitUnderlyingType(flags: Flags): KmTypeVisitor? =
         writeType(c, flags) { t.underlyingType = it.build() }
 
-    override fun visitExpandedType(flags: Int): KmTypeVisitor? =
+    override fun visitExpandedType(flags: Flags): KmTypeVisitor? =
         writeType(c, flags) { t.expandedType = it.build() }
 
     override fun visitAnnotation(annotation: KmAnnotation) {
@@ -351,7 +351,7 @@ private fun writeEffectExpression(c: WriteContext, output: (ProtoBuf.Expression.
     object : KmEffectExpressionVisitor() {
         val t = ProtoBuf.Expression.newBuilder()
 
-        override fun visit(flags: Int, parameterIndex: Int?) {
+        override fun visit(flags: Flags, parameterIndex: Int?) {
             if (flags != ProtoBuf.Expression.getDefaultInstance().flags) {
                 t.flags = flags
             }
@@ -370,7 +370,7 @@ private fun writeEffectExpression(c: WriteContext, output: (ProtoBuf.Expression.
             }
         }
 
-        override fun visitIsInstanceType(flags: Int): KmTypeVisitor? =
+        override fun visitIsInstanceType(flags: Flags): KmTypeVisitor? =
             writeType(c, flags) { t.isInstanceType = it.build() }
 
         override fun visitAndArgument(): KmEffectExpressionVisitor? =
@@ -388,29 +388,29 @@ open class ClassWriter : KmClassVisitor() {
     val t = ProtoBuf.Class.newBuilder()!!
     val c = WriteContext()
 
-    override fun visit(flags: Int, name: ClassName) {
+    override fun visit(flags: Flags, name: ClassName) {
         if (flags != ProtoBuf.Class.getDefaultInstance().flags) {
             t.flags = flags
         }
         t.fqName = c.getClassName(name)
     }
 
-    override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
+    override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
         writeTypeParameter(c, flags, name, id, variance) { t.addTypeParameter(it) }
 
-    override fun visitSupertype(flags: Int): KmTypeVisitor? =
+    override fun visitSupertype(flags: Flags): KmTypeVisitor? =
         writeType(c, flags) { t.addSupertype(it) }
 
-    override fun visitConstructor(flags: Int): KmConstructorVisitor? =
+    override fun visitConstructor(flags: Flags): KmConstructorVisitor? =
         writeConstructor(c, flags) { t.addConstructor(it) }
 
-    override fun visitFunction(flags: Int, name: String): KmFunctionVisitor? =
+    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
         writeFunction(c, flags, name) { t.addFunction(it) }
 
-    override fun visitProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor? =
+    override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
         writeProperty(c, flags, name, getterFlags, setterFlags) { t.addProperty(it) }
 
-    override fun visitTypeAlias(flags: Int, name: String): KmTypeAliasVisitor? =
+    override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? =
         writeTypeAlias(c, flags, name) { t.addTypeAlias(it) }
 
     override fun visitCompanionObject(name: String) {
@@ -445,13 +445,13 @@ open class PackageWriter : KmPackageVisitor() {
     val t = ProtoBuf.Package.newBuilder()!!
     val c = WriteContext()
 
-    override fun visitFunction(flags: Int, name: String): KmFunctionVisitor? =
+    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
         writeFunction(c, flags, name) { t.addFunction(it) }
 
-    override fun visitProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor? =
+    override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
         writeProperty(c, flags, name, getterFlags, setterFlags) { t.addProperty(it) }
 
-    override fun visitTypeAlias(flags: Int, name: String): KmTypeAliasVisitor? =
+    override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? =
         writeTypeAlias(c, flags, name) { t.addTypeAlias(it) }
 
     override fun visitEnd() {
@@ -465,6 +465,6 @@ open class LambdaWriter : KmLambdaVisitor() {
     var t: ProtoBuf.Function.Builder? = null
     val c = WriteContext()
 
-    override fun visitFunction(flags: Int, name: String): KmFunctionVisitor? =
+    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
         writeFunction(c, flags, name) { t = it }
 }

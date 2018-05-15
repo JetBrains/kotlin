@@ -31,7 +31,7 @@ Let's assume we've obtained an instance of `KotlinClassMetadata.Class`; other ki
 
 ```kotlin
 metadata.accept(object : KmClassVisitor() {
-    override fun visitFunction(flags: Int, name: String): KmFunctionVisitor? {
+    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
         // This will be called for each function in the class. "name" is the
         // function name, and "flags" represent modifier flags (see below)
 
@@ -47,14 +47,14 @@ Please refer to [`MetadataSmokeTest.listInlineFunctions`](test/kotlinx/metadata/
 
 ## Flags
 
-Numerous `visit*` methods are declared with the parameter named `flags`. These flags represent modifiers or other boolean attributes of a declaration or a type. To check if a certain flag is present, call one of the flags in [`Flags`](../src/kotlinx/metadata/Flags.kt) on the given integer value. The set of applicable flags is documented in each `visit*` method. For example, for functions, this is common declaration flags (visibility, modality) plus `Flags.Function` flags:
+Numerous `visit*` methods take the parameter named `flags`. These flags represent modifiers or other boolean attributes of a declaration or a type. To check if a certain flag is present, call one of the flags in [`Flag`](../src/kotlinx/metadata/Flag.kt) on the given integer value. The set of applicable flags is documented in each `visit*` method. For example, for functions, this is common declaration flags (visibility, modality) plus `Flag.Function` flags:
 
 ```kotlin
-override fun visitFunction(flags: Int, name: String): KmFunctionVisitor? {
-    if (Flags.IS_PUBLIC(flags)) {
+override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
+    if (Flag.IS_PUBLIC(flags)) {
         println("function $name is public")
     }
-    if (Flags.Function.IS_SUSPEND(flags)) {
+    if (Flag.Function.IS_SUSPEND(flags)) {
         println("function $name has the 'suspend' modifier")
     }
     ...
@@ -92,11 +92,11 @@ When using metadata writers from Kotlin source code, it's very convenient to use
 // Writing metadata of a class
 val header = KotlinClassMetadata.Class.Writer().run {
     // Visiting the name and the modifiers on the class.
-    // Flags are constructed by invoking "Flags(...)"
-    visit(Flags(Flags.IS_PUBLIC), "MyClass")
+    // Flags are constructed by invoking "flagsOf(...)"
+    visit(flagsOf(Flag.IS_PUBLIC), "MyClass")
     
     // Adding one public primary constructor
-    visitConstructor(Flags(Flags.IS_PUBLIC, Flags.Constructor.IS_PRIMARY))!!.run {
+    visitConstructor(flagsOf(Flag.IS_PUBLIC, Flag.Constructor.IS_PRIMARY))!!.run {
         // Visiting JVM signature (for example, to be used by kotlin-reflect)
         (visitExtensions(JvmConstructorExtensionVisitor.TYPE) as JvmConstructorExtensionVisitor).run {
             visit("<init>()V")

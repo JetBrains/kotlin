@@ -38,14 +38,14 @@ class MetadataSmokeTest {
 
         val klass = KotlinClassMetadata.read(L::class.java.readMetadata()) as KotlinClassMetadata.Class
         klass.accept(object : KmClassVisitor() {
-            override fun visitFunction(flags: Int, name: String): KmFunctionVisitor? {
+            override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
                 return object : KmFunctionVisitor() {
                     override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? {
                         if (type != JvmFunctionExtensionVisitor.TYPE) return null
 
                         return object : JvmFunctionExtensionVisitor() {
                             override fun visit(desc: String?) {
-                                if (Flags.Function.IS_INLINE(flags) && desc != null) {
+                                if (Flag.Function.IS_INLINE(flags) && desc != null) {
                                     inlineFunctions += desc
                                 }
                             }
@@ -69,14 +69,14 @@ class MetadataSmokeTest {
         //     }
 
         val header = KotlinClassMetadata.Class.Writer().run {
-            visit(Flags(Flags.IS_PUBLIC), "Hello")
-            visitConstructor(Flags(Flags.IS_PUBLIC, Flags.Constructor.IS_PRIMARY))!!.run {
+            visit(flagsOf(Flag.IS_PUBLIC), "Hello")
+            visitConstructor(flagsOf(Flag.IS_PUBLIC, Flag.Constructor.IS_PRIMARY))!!.run {
                 (visitExtensions(JvmConstructorExtensionVisitor.TYPE) as JvmConstructorExtensionVisitor).run {
                     visit("<init>()V")
                 }
                 visitEnd()
             }
-            visitFunction(Flags(Flags.IS_PUBLIC, Flags.Function.IS_DECLARATION), "hello")!!.run {
+            visitFunction(flagsOf(Flag.IS_PUBLIC, Flag.Function.IS_DECLARATION), "hello")!!.run {
                 visitReturnType(0)!!.run {
                     visitClass("kotlin/String")
                     visitEnd()

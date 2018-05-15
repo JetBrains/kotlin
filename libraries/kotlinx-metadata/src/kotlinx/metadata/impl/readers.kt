@@ -9,8 +9,8 @@ import kotlinx.metadata.*
 import kotlinx.metadata.impl.extensions.MetadataExtensions
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
-import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.metadata.deserialization.Flags as F
 
 class ReadContext(
     internal val strings: NameResolver,
@@ -104,8 +104,8 @@ private fun KmDeclarationContainerVisitor.visitDeclarations(
 
     for (property in properties) {
         val flags = property.flags
-        val defaultAccessorFlags = Flags.getAccessorFlags(
-            Flags.HAS_ANNOTATIONS.get(flags), Flags.VISIBILITY.get(flags), Flags.MODALITY.get(flags), false, false, false
+        val defaultAccessorFlags = F.getAccessorFlags(
+            F.HAS_ANNOTATIONS.get(flags), F.VISIBILITY.get(flags), F.MODALITY.get(flags), false, false, false
         )
         visitProperty(
             flags,
@@ -242,7 +242,7 @@ private fun ProtoBuf.ValueParameter.accept(v: KmValueParameterVisitor, c: ReadCo
 }
 
 private inline fun ProtoBuf.TypeParameter.accept(
-    visit: (flags: Int, name: String, id: Int, variance: KmVariance) -> KmTypeParameterVisitor?,
+    visit: (flags: Flags, name: String, id: Int, variance: KmVariance) -> KmTypeParameterVisitor?,
     c: ReadContext
 ) {
     val variance = when (variance!!) {
@@ -405,9 +405,9 @@ private fun ProtoBuf.Expression.accept(v: KmEffectExpressionVisitor, c: ReadCont
     v.visitEnd()
 }
 
-private val ProtoBuf.Type.typeFlags: Int
+private val ProtoBuf.Type.typeFlags: Flags
     get() = (if (nullable) 1 shl 0 else 0) +
             (flags shl 1)
 
-private val ProtoBuf.TypeParameter.typeParameterFlags: Int
+private val ProtoBuf.TypeParameter.typeParameterFlags: Flags
     get() = if (reified) 1 else 0

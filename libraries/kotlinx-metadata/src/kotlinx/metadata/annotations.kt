@@ -8,7 +8,7 @@ package kotlinx.metadata
 /**
  * Represents an annotation, written to the Kotlin metadata. Note that not all annotations are written to metadata on all platforms.
  * For example, on JVM most of the annotations are written directly on the corresponding declarations in the class file,
- * and entries in the metadata only have a flag ([Flags.HAS_ANNOTATIONS]) to signal if they do have annotations in the bytecode.
+ * and entries in the metadata only have a flag ([Flag.HAS_ANNOTATIONS]) to signal if they do have annotations in the bytecode.
  * On JVM, only annotations on type parameters and types are serialized to the Kotlin metadata.
  *
  * @param className the fully qualified name of the annotation class
