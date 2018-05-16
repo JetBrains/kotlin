@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.jetbrains.intellij:plugin-repository-rest-client:0.1.15'
+        classpath 'org.jetbrains.intellij:plugin-repository-rest-client:0.4.28'
     }
 }
 
