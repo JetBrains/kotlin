@@ -5,6 +5,9 @@
 
 package kotlinx.metadata.jvm
 
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+
 /**
  * A mirror to the [Metadata] annotation on a JVM class file, containing the metadata of Kotlin declarations declared in the class file.
  * Properties of this class correspond to the properties of [Metadata], but the names are not shortened because there's no restriction
@@ -142,7 +145,7 @@ class KotlinClassHeader(
          * @see metadataVersion
          */
         @JvmField
-        val COMPATIBLE_METADATA_VERSION = intArrayOf(1, 1, 10)
+        val COMPATIBLE_METADATA_VERSION = JvmMetadataVersion.INSTANCE.toArray().copyOf()
 
         /**
          * The latest bytecode version supported by this version of the library.
@@ -150,6 +153,6 @@ class KotlinClassHeader(
          * @see bytecodeVersion
          */
         @JvmField
-        val COMPATIBLE_BYTECODE_VERSION = intArrayOf(1, 0, 2)
+        val COMPATIBLE_BYTECODE_VERSION = JvmBytecodeBinaryVersion.INSTANCE.toArray().copyOf()
     }
 }

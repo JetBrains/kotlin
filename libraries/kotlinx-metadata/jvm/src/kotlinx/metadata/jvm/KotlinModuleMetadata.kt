@@ -5,9 +5,8 @@
 
 package kotlinx.metadata.jvm
 
-import kotlinx.metadata.KmAnnotation
-import kotlinx.metadata.ClassName
 import kotlinx.metadata.InconsistentKotlinMetadataException
+import kotlinx.metadata.KmAnnotation
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
@@ -22,10 +21,9 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
  * @property bytes the byte array representing the contents of a `.kotlin_module` file
  */
 class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePrivate") val bytes: ByteArray) {
-    internal val data: ModuleMapping = ModuleMapping.loadModuleMapping(bytes, javaClass.name, isVersionCompatible = { version ->
-        // We only support metadata of version 1.1.* (this is Kotlin from 1.0 until today)
-        version.getOrNull(0) == 1 && version.getOrNull(1) == 1
-    }, skipMetadataVersionCheck = false, isJvmPackageNameSupported = true)
+    internal val data: ModuleMapping = ModuleMapping.loadModuleMapping(
+        bytes, javaClass.name, skipMetadataVersionCheck = false, isJvmPackageNameSupported = true
+    )
 
     /**
      * A [KmModuleVisitor] that generates the metadata of a Kotlin JVM module file.

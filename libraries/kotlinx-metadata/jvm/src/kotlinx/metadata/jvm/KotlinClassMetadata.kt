@@ -14,6 +14,7 @@ import kotlinx.metadata.impl.LambdaWriter
 import kotlinx.metadata.impl.PackageWriter
 import kotlinx.metadata.impl.accept
 import kotlinx.metadata.jvm.impl.writeProtoBufData
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
@@ -312,8 +313,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         @JvmStatic
         fun read(header: KotlinClassHeader): KotlinClassMetadata? {
             // We only support metadata of version 1.1.* (this is Kotlin from 1.0 until today)
-            val version = header.metadataVersion
-            if (version.getOrNull(0) != 1 || version.getOrNull(1) != 1) return null
+            if (!JvmMetadataVersion(*header.metadataVersion).isCompatible()) return null
 
             return try {
                 when (header.kind) {
