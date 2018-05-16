@@ -3,29 +3,27 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli
+package org.jetbrains.kotlin.importsDumper
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.TestDataPath
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.AbstractCliTest.*
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestMetadata
 import java.io.File
 
-@TestMetadata("compiler/testData/importsProducer")
+@TestMetadata("plugins/imports-dumper/testData")
 @TestDataPath("\$PROJECT_ROOT")
-class ImportsProducerTest : TestCaseWithTmpdir() {
+class ImportsDumperTest : TestCaseWithTmpdir() {
 
-    @TestMetadata("simpleCase/importsProducer.args")
-    fun testImportsProducer() {
-        doTest("compiler/testData/importsProducer/simpleCase")
+    fun testSimple() {
+        doTest("plugins/imports-dumper/testData/simpleCase")
     }
 
-    fun doTest(testDataDirPath: String) {
+    private fun doTest(testDataDirPath: String) {
         System.setProperty("java.awt.headless", "true")
         val testDataDir = File(testDataDirPath)
         val expectedDumpFile = testDataDir.resolve(testDataDir.name + ".dump")
@@ -33,7 +31,7 @@ class ImportsProducerTest : TestCaseWithTmpdir() {
         val actualDumpFile = tmpdir.resolve(testDataDir.name + ".dump")
 
         // Check CLI-output of compiler
-        val actualOutput = invokeImportsProducerAndGrabOutput(testDataDir, tmpdir, actualDumpFile)
+        val actualOutput = invokeImportsDumperAndGrabOutput(testDataDir, tmpdir, actualDumpFile)
         KotlinTestUtils.assertEqualsToFile(expectedOutputFile, actualOutput)
 
         // Check imports dump
@@ -45,26 +43,26 @@ class ImportsProducerTest : TestCaseWithTmpdir() {
         KotlinTestUtils.assertEqualsToFile(expectedDumpFile, actualRelativizedDump)
     }
 
-    private fun invokeImportsProducerAndGrabOutput(testDataDir: File, tmpDir: File, actualDumpFile: File): String {
+    private fun invokeImportsDumperAndGrabOutput(testDataDir: File, tmpDir: File, actualDumpFile: File): String {
+        val importsDumperJarInDist = File("dist/kotlinc/lib/kotlin-imports-dumper-compiler-plugin.jar")
+        if (!importsDumperJarInDist.exists()) {
+            TestCase.fail(".jar for imports dumper isn't found, searched: ${importsDumperJarInDist.absolutePath}")
+        }
+
         val compiler = K2JVMCompiler()
         val (output, exitCode) = executeCompilerGrabOutput(
             compiler,
             listOf(
                 testDataDir.absolutePath,
-                DESTINATION_COMPILER_ARGUMENT,
+                "-d",
                 tmpDir.path,
-                OUTPUT_IMPORTS_COMPILER_ARGUMENT + "=" + actualDumpFile.path
+                "-Xplugin=${importsDumperJarInDist.path}",
+                "-P",
+                "plugin:${ImportsDumperCommandLineProcessor.PLUGIN_ID}:${ImportsDumperCliOptions.DESTINATION.name}=${actualDumpFile.path}"
             )
         )
 
-//        TestCase.assertEquals("Imports dumper should return ExitCode.OK", ExitCode.OK, exitCode)
-
         return getNormalizedCompilerOutput(output, exitCode, testDataDir.path)
-    }
-
-    companion object {
-        const val DESTINATION_COMPILER_ARGUMENT = "-d"
-        const val OUTPUT_IMPORTS_COMPILER_ARGUMENT = "-Xoutput-imports"
     }
 }
 

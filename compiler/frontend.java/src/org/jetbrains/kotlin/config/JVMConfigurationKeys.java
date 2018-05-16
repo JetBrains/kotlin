@@ -137,9 +137,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<List<String>> ADDITIONAL_JAVA_MODULES =
             CompilerConfigurationKey.create("additional Java modules");
 
-    public static final CompilerConfigurationKey<String> OUTPUT_IMPORTS =
-            CompilerConfigurationKey.create("output imports");
-
     public static final CompilerConfigurationKey<Boolean> ENABLE_JVM_DEFAULT =
             CompilerConfigurationKey.create("Allow to use '@JvmDefault'");
 }

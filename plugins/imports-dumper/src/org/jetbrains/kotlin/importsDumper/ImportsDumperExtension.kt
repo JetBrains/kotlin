@@ -3,18 +3,14 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.jvm.compiler
+package org.jetbrains.kotlin.importsDumper
 
-import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import kotlinx.serialization.internal.StringSerializer
 import kotlinx.serialization.json.JSON
 import kotlinx.serialization.list
 import kotlinx.serialization.map
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -23,14 +19,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import java.io.File
 
-class ImportsProducerComponentRegistrar : ComponentRegistrar {
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        val destinationPath = configuration[JVMConfigurationKeys.OUTPUT_IMPORTS] ?: return
-        AnalysisHandlerExtension.registerExtension(project, ImportsProducerExtension(destinationPath))
-    }
-}
-
-class ImportsProducerExtension(destinationPath: String) : AnalysisHandlerExtension {
+class ImportsDumperExtension(destinationPath: String) : AnalysisHandlerExtension {
     private val destination: File = File(destinationPath)
 
     override fun doAnalysis(

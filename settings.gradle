@@ -89,6 +89,7 @@ include ":kotlin-build-common",
         ":noarg-ide-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin",
         ":sam-with-receiver-ide-plugin",
+        ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-source-sections-compiler-plugin",
         ":plugins:uast-kotlin",
         ":plugins:uast-kotlin-idea",
@@ -271,6 +272,7 @@ project(':examples:scripting-jvm-simple-script-host').projectDir = "$rootDir/lib
 project(':examples:scripting-jvm-maven-deps').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps/script" as File
 project(':examples:scripting-jvm-maven-deps-host').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps/host" as File
 project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate-all-tests" as File
+project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins/imports-dumper" as File
 
 // plugin markers:
 project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")
