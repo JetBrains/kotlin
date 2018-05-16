@@ -5,4 +5,4 @@ class GClass<T> {
 }
 
 val g = GClass<Int>()
-g.foo(1)    // RESULT: 1
+g.foo(1)                  // RESULT: 1
