@@ -3,6 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:JvmName("ClassNameKt")
 package kotlinx.metadata
 
 /**

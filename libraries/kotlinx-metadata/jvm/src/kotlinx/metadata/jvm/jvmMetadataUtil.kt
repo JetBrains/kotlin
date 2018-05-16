@@ -3,6 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:JvmName("JvmMetadataUtil")
 package kotlinx.metadata.jvm
 
 import kotlinx.metadata.ClassName
