@@ -35,7 +35,7 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.compatibility.projectDisposableEx
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
-import org.jetbrains.kotlin.idea.scratch.output.InlayScratchOutputHandler
+import org.jetbrains.kotlin.idea.scratch.output.InlayScratchFileRenderer
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -129,7 +129,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
                 doc.getLineStartOffset(line),
                 doc.getLineEndOffset(line)
             ).map { it.renderer }
-                .filterIsInstance<InlayScratchOutputHandler.ScratchFileRenderer>()
+                .filterIsInstance<InlayScratchFileRenderer>()
                 .forEach {
                     val str = it.toString()
                     val offset = doc.getLineEndOffset(line); actualOutput.insert(offset, "    // $str")
