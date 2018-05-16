@@ -84,9 +84,9 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
         val deprecation = 0 //TODO
         val bridgeFlag = 0 //TODO
         val modalityFlag = when ((irFunction as? IrSimpleFunction)?.modality) {
-            Modality.FINAL -> if (!classCodegen.irClass.isAnnotationClass) Opcodes.ACC_FINAL else 0
+            Modality.FINAL -> if (!classCodegen.irClass.isAnnotationClass) Opcodes.ACC_FINAL else Opcodes.ACC_ABSTRACT
             Modality.ABSTRACT -> Opcodes.ACC_ABSTRACT
-            else -> if (classCodegen.irClass.isJvmInterface) Opcodes.ACC_ABSTRACT else 0 //TODO transform interface modality on lowering to DefaultImpls
+            else -> if (classCodegen.irClass.isJvmInterface && irFunction.body == null) Opcodes.ACC_ABSTRACT else 0 //TODO transform interface modality on lowering to DefaultImpls
         }
         val nativeFlag = if (irFunction.isExternal) Opcodes.ACC_NATIVE else 0
 
