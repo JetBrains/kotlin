@@ -632,6 +632,8 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 }
 
 internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompile, logger: Logger) {
+    kotlinTask.javaOutputDir = javaTask.destinationDir
+
     // Gradle Java IC in older Gradle versions (before 2.14) cannot check .class directories updates.
     // To make it work, reset the up-to-date status of compileJava with this flag.
     kotlinTask.anyClassesCompiled = false

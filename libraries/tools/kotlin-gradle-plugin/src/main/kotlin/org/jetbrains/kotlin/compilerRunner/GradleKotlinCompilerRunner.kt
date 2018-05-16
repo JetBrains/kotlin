@@ -361,6 +361,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 for (task in project.tasks.withType(KotlinCompile::class.java)) {
                     val module = IncrementalModuleEntry(project.path, task.moduleName, project.buildDir, task.buildHistoryFile)
                     dirToModule[task.destinationDir] = module
+                    task.javaOutputDir?.let { dirToModule[it] = module }
                     nameToModules.getOrPut(module.name) { HashSet() }.add(module)
                 }
             }
