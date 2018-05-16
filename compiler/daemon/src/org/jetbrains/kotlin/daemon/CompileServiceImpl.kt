@@ -48,8 +48,7 @@ import org.jetbrains.kotlin.daemon.report.RemoteICReporter
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
-import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
-import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryImpl
+import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -524,9 +523,7 @@ class CompileServiceImpl(
                                           workingDir,
                                           enabled = true)
 
-        val modulesApiHistory = incrementalCompilationOptions.run {
-            ModulesApiHistoryImpl(modulesInfo)
-        }
+        val modulesApiHistory = ModulesApiHistoryJvm(incrementalCompilationOptions.modulesInfo)
 
         val compiler = IncrementalJvmCompilerRunner(
             workingDir,

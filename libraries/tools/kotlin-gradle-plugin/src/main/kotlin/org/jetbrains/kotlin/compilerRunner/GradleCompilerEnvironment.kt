@@ -25,14 +25,14 @@ internal open class GradleCompilerEnvironment(
 }
 
 internal class GradleIncrementalCompilerEnvironment(
-    compilerClasspath: List<File>,
-    val changedFiles: ChangedFiles,
-    val workingDir: File,
-    messageCollector: GradleMessageCollector,
-    outputItemsCollector: OutputItemsCollector,
-    compilerArgs: CommonCompilerArguments,
-    val buildHistoryFile: File,
-    val kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
-    val usePreciseJavaTracking: Boolean = false,
-    val localStateDirs: List<File> = emptyList()
+        compilerClasspath: List<File>,
+        val changedFiles: ChangedFiles,
+        val workingDir: File,
+        messageCollector: GradleMessageCollector,
+        outputItemsCollector: OutputItemsCollector,
+        compilerArgs: CommonCompilerArguments,
+        val buildHistoryFile: File,
+        val kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
+        val usePreciseJavaTracking: Boolean = false,
+        val localStateDirs: List<File> = emptyList()
 ) : GradleCompilerEnvironment(compilerClasspath, messageCollector, outputItemsCollector, compilerArgs)
