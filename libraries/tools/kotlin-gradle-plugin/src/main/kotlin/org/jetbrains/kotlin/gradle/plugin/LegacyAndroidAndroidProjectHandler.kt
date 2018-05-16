@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.gradle.internal.registerGeneratedJavaSource
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.checkedReflection
-import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProviderAndroidWrapper
 import java.io.File
 
 internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools)
@@ -99,36 +97,11 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
                                                       javaSourceDirectory: File) =
             variantData.addJavaSourceFoldersToModel(javaSourceDirectory)
 
-    override fun configureMultiProjectIc(project: Project, variantData: BaseVariantData<out BaseVariantOutputData>, javaTask: AbstractCompile, kotlinTask: KotlinCompile, kotlinAfterJavaTask: KotlinCompile?) {
-        if ((kotlinAfterJavaTask ?: kotlinTask).incremental) {
-            val artifactFile = project.tryGetSingleArtifact(variantData)
-            val artifactDifferenceRegistryProvider = ArtifactDifferenceRegistryProviderAndroidWrapper(
-                    artifactDifferenceRegistryProvider,
-                    { AndroidGradleWrapper.getJarToAarMapping(variantData) }
-            )
-            configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
-                                                        artifactDifferenceRegistryProvider, artifactFile)
-        }
-    }
-
     override fun getTestedVariantData(variantData: BaseVariantData<*>): BaseVariantData<*>? =
             ((variantData as? TestVariantData)?.testedVariantData as? BaseVariantData<*>)
 
     override fun getResDirectories(variantData: BaseVariantData<out BaseVariantOutputData>): List<File> {
         return variantData.mergeResourcesTask?.rawInputFolders?.toList() ?: emptyList()
-    }
-
-    private fun Project.tryGetSingleArtifact(variantData: BaseVariantData<*>): File? {
-        val log = logger
-        log.kotlinDebug { "Trying to determine single artifact for project $path" }
-
-        val outputs = variantData.outputs
-        if (outputs.size != 1) {
-            log.kotlinDebug { "Output count != 1 for variant: ${outputs.map { it.outputFile.relativeTo(rootDir).path }.joinToString()}" }
-            return null
-        }
-
-        return variantData.outputs.first().outputFile
     }
 
     private val BaseVariantData<*>.sourceProviders: List<SourceProvider>

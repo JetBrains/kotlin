@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.daemon.common
 
-import java.io.File
 import java.rmi.RemoteException
 
 interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
@@ -29,14 +28,4 @@ interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
 
     @Throws(RemoteException::class)
     fun revert()
-
-    // ChangesRegistry
-    @Throws(RemoteException::class)
-    fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData)
-
-    @Throws(RemoteException::class)
-    fun unknownChanges(timestamp: Long)
-
-    @Throws(RemoteException::class)
-    fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>?
 }
