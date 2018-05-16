@@ -5,3 +5,9 @@ foo.forEach {           // ERROR: Unresolved reference: foo; Cannot choose among
 fun goo(a: String) {    // ERROR: Unresolved reference: goo
     super.goo(a)
 }
+/** Unresolved reference: foo */
+/** Cannot choose among the following candidates without completing type inference:
+@HidesMembers public inline fun <T> Iterable<???>.forEach(action: (???) -> Unit): Unit defined in kotlin.collections
+@HidesMembers public inline fun <K, V> Map<out ???, ???>.forEach(action: (Map.Entry<???, ???>) -> Unit): Unit defined in kotlin.collections */
+/** Unresolved reference: goo */
+/** Compilation Error */

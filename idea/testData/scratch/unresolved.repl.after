@@ -1,1 +1,6 @@
-foo()    // ERROR: error: unresolved reference: foo
+foo()                                   // ERROR: error: unresolved reference: foo
+/** error: unresolved reference: foo
+
+foo()
+
+^ */
