@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.scratch.output
 
-import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
@@ -35,7 +34,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
         val inlayText = StringUtil.shortenTextWithEllipsis(output.text.substringBefore("\n"), 50, 0)
         if (inlayText != output.text) {
-            ScratchToolWindow.addMessageToToolWindow(file.project, output.text, ConsoleViewContentType.NORMAL_OUTPUT)
+            ToolWindowScratchOutputHandler.handle(file, expression, output)
         }
 
         createInlay(file, expression.lineStart, inlayText, output.type)
@@ -46,7 +45,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     }
 
     override fun error(file: ScratchFile, message: String) {
-        ScratchToolWindow.addMessageToToolWindow(file.project, message, ConsoleViewContentType.ERROR_OUTPUT)
+        ToolWindowScratchOutputHandler.error(file, message)
     }
 
     override fun onFinish(file: ScratchFile) {
@@ -55,7 +54,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
 
     override fun clear(file: ScratchFile) {
         clearInlays(file.editor)
-        ScratchToolWindow.clearToolWindow(file.project)
+        ToolWindowScratchOutputHandler.clear(file)
     }
 
     private fun createInlay(file: ScratchFile, line: Int, inlayText: String, outputType: ScratchOutputType) {
