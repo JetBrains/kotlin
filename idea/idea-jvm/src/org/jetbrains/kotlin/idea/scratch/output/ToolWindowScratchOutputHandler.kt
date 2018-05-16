@@ -30,28 +30,6 @@ import com.intellij.openapi.wm.ToolWindowManager
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 
-class ScratchToolWindowFactory : ToolWindowFactory {
-    companion object {
-        val ID = "Scratch Output"
-    }
-
-    override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val consoleView = ConsoleViewImpl(project, true)
-        toolWindow.isToHideOnEmptyContent = true
-        toolWindow.icon = ScratchFileType.INSTANCE.icon
-
-        val contentManager = toolWindow.contentManager
-        val content = contentManager.factory.createContent(consoleView.component, null, false)
-        contentManager.addContent(content)
-        val editor = consoleView.editor
-        if (editor is EditorEx) {
-            editor.isRendererMode = true
-        }
-
-        Disposer.register(project, consoleView)
-    }
-}
-
 object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
@@ -118,5 +96,27 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
         val window = toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
         ScratchToolWindowFactory().createToolWindowContent(project, window)
         return window
+    }
+}
+
+private class ScratchToolWindowFactory : ToolWindowFactory {
+    companion object {
+        const val ID = "Scratch Output"
+    }
+
+    override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+        val consoleView = ConsoleViewImpl(project, true)
+        toolWindow.isToHideOnEmptyContent = true
+        toolWindow.icon = ScratchFileType.INSTANCE.icon
+
+        val contentManager = toolWindow.contentManager
+        val content = contentManager.factory.createContent(consoleView.component, null, false)
+        contentManager.addContent(content)
+        val editor = consoleView.editor
+        if (editor is EditorEx) {
+            editor.isRendererMode = true
+        }
+
+        Disposer.register(project, consoleView)
     }
 }
