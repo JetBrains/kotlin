@@ -22,7 +22,7 @@ import com.intellij.util.indexing.ID
 import com.intellij.util.indexing.ScalarIndexExtension
 import com.intellij.util.io.DataInputOutputUtil
 import com.intellij.util.io.KeyDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import java.io.DataInput
 import java.io.DataOutput
 

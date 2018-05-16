@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.text.MessageFormat
