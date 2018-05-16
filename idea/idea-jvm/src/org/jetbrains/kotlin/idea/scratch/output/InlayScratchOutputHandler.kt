@@ -33,7 +33,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
         val inlayText = StringUtil.shortenTextWithEllipsis(output.text.substringBefore("\n"), 50, 0)
-        if (inlayText != output.text) {
+        if (inlayText != output.text && output.type != ScratchOutputType.ERROR) {
             ToolWindowScratchOutputHandler.handle(file, expression, output)
         }
 
