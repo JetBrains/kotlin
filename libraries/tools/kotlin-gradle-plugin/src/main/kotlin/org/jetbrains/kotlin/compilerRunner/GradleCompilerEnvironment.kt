@@ -6,8 +6,6 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import org.jetbrains.kotlin.incremental.ChangedFiles
-import org.jetbrains.kotlin.incremental.ICReporter
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import java.io.File
 import java.net.URL
 
@@ -27,18 +25,14 @@ internal open class GradleCompilerEnvironment(
 }
 
 internal class GradleIncrementalCompilerEnvironment(
-        compilerClasspath: List<File>,
-        val changedFiles: ChangedFiles,
-        val reporter: ICReporter,
-        val workingDir: File,
-        messageCollector: GradleMessageCollector,
-        outputItemsCollector: OutputItemsCollector,
-        compilerArgs: CommonCompilerArguments,
-        val kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
-        val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null,
-        val artifactFile: File? = null,
-        val buildHistoryFile: File? = null,
-        val friendBuildHistoryFile: File? = null,
-        val usePreciseJavaTracking: Boolean = false,
-        val localStateDirs: List<File> = emptyList()
+    compilerClasspath: List<File>,
+    val changedFiles: ChangedFiles,
+    val workingDir: File,
+    messageCollector: GradleMessageCollector,
+    outputItemsCollector: OutputItemsCollector,
+    compilerArgs: CommonCompilerArguments,
+    val buildHistoryFile: File,
+    val kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
+    val usePreciseJavaTracking: Boolean = false,
+    val localStateDirs: List<File> = emptyList()
 ) : GradleCompilerEnvironment(compilerClasspath, messageCollector, outputItemsCollector, compilerArgs)

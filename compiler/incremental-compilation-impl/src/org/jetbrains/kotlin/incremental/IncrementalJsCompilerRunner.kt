@@ -67,9 +67,7 @@ class IncrementalJsCompilerRunner(
         workingDir,
         "caches-js",
         cacheVersions,
-        reporter,
-        artifactChangesProvider = null,
-        changesRegistry = null
+        reporter
 ) {
     override fun isICEnabled(): Boolean =
         IncrementalCompilation.isEnabled() && IncrementalCompilation.isEnabledForJs()
