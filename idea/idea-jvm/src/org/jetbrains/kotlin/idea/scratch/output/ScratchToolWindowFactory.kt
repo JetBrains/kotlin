@@ -18,18 +18,17 @@ package org.jetbrains.kotlin.idea.scratch.output
 
 import com.intellij.execution.impl.ConsoleViewImpl
 import com.intellij.execution.ui.ConsoleViewContentType
+import com.intellij.ide.scratch.ScratchFileType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.ex.EditorEx
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.FileEditorManagerEvent
-import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
+import org.jetbrains.kotlin.idea.scratch.ScratchExpression
+import org.jetbrains.kotlin.idea.scratch.ScratchFile
 
 class ScratchToolWindowFactory : ToolWindowFactory {
     companion object {
@@ -39,6 +38,7 @@ class ScratchToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val consoleView = ConsoleViewImpl(project, true)
         toolWindow.isToHideOnEmptyContent = true
+        toolWindow.icon = ScratchFileType.INSTANCE.icon
 
         val contentManager = toolWindow.contentManager
         val content = contentManager.factory.createContent(consoleView.component, null, false)
@@ -49,29 +49,24 @@ class ScratchToolWindowFactory : ToolWindowFactory {
         }
 
         Disposer.register(project, consoleView)
-        project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, getFileEditorManagerListener(toolWindow))
-    }
-
-    private fun getFileEditorManagerListener(toolWindow: ToolWindow): FileEditorManagerListener {
-        return object : FileEditorManagerListener {
-            override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
-                toolWindow.setAvailable(false, {})
-            }
-
-            override fun selectionChanged(event: FileEditorManagerEvent) {
-                toolWindow.setAvailable(false, {})
-            }
-        }
     }
 }
 
-object ScratchToolWindow {
+object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
 
-    fun addMessageToToolWindow(
-        project: Project,
-        message: String,
-        type: ConsoleViewContentType
-    ) {
+    override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
+        printToConsole(file.project) {
+            print(output.text, output.type.convert())
+        }
+    }
+
+    override fun error(file: ScratchFile, message: String) {
+        printToConsole(file.project) {
+            print(message, ConsoleViewContentType.ERROR_OUTPUT)
+        }
+    }
+
+    private fun printToConsole(project: Project, print: ConsoleViewImpl.() -> Unit) {
         if (ApplicationManager.getApplication().isUnitTestMode) return
 
         ApplicationManager.getApplication().invokeLater {
@@ -80,7 +75,8 @@ object ScratchToolWindow {
             for (content in contents) {
                 val component = content.component
                 if (component is ConsoleViewImpl) {
-                    component.print("$message\n", type)
+                    component.print()
+                    component.print("\n", ConsoleViewContentType.NORMAL_OUTPUT)
                 }
             }
             toolWindow.setAvailable(true, null)
@@ -88,11 +84,11 @@ object ScratchToolWindow {
         }
     }
 
-    fun clearToolWindow(project: Project) {
+    override fun clear(file: ScratchFile) {
         if (ApplicationManager.getApplication().isUnitTestMode) return
 
         ApplicationManager.getApplication().invokeLater {
-            val toolWindow = getToolWindow(project) ?: return@invokeLater
+            val toolWindow = getToolWindow(file.project) ?: return@invokeLater
             val contents = toolWindow.contentManager.contents
             for (content in contents) {
                 val component = content.component
@@ -103,6 +99,12 @@ object ScratchToolWindow {
             toolWindow.setAvailable(false, null)
             toolWindow.hide(null)
         }
+    }
+
+    private fun ScratchOutputType.convert() = when (this) {
+        ScratchOutputType.OUTPUT -> ConsoleViewContentType.SYSTEM_OUTPUT
+        ScratchOutputType.RESULT -> ConsoleViewContentType.NORMAL_OUTPUT
+        ScratchOutputType.ERROR -> ConsoleViewContentType.ERROR_OUTPUT
     }
 
     private fun getToolWindow(project: Project): ToolWindow? {
