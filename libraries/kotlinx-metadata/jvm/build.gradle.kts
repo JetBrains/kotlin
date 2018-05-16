@@ -6,6 +6,9 @@ plugins {
     kotlin("jvm")
 }
 
+// Change this version before publishing
+version = "0.1-SNAPSHOT"
+
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
@@ -56,9 +59,6 @@ sourcesJar {
 }
 
 javadocJar()
-
-// Change this version before publishing
-version = "0.1-SNAPSHOT"
 // publish()
 
 projectTest {
