@@ -20,6 +20,7 @@ import com.intellij.execution.impl.ConsoleViewImpl
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.ide.scratch.ScratchFileType
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -27,26 +28,34 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+            return testPrint(file, output.text)
+        }
+
         printToConsole(file.project) {
             print(output.text, output.type.convert())
         }
     }
 
     override fun error(file: ScratchFile, message: String) {
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+            return testPrint(file, message)
+        }
+
         printToConsole(file.project) {
             print(message, ConsoleViewContentType.ERROR_OUTPUT)
         }
     }
 
     private fun printToConsole(project: Project, print: ConsoleViewImpl.() -> Unit) {
-        if (ApplicationManager.getApplication().isUnitTestMode) return
-
         ApplicationManager.getApplication().invokeLater {
             val toolWindow = getToolWindow(project) ?: createToolWindow(project)
             val contents = toolWindow.contentManager.contents
@@ -96,6 +105,19 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
         val window = toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
         ScratchToolWindowFactory().createToolWindowContent(project, window)
         return window
+    }
+
+    @TestOnly
+    private fun testPrint(file: ScratchFile, output: String) {
+        ApplicationManager.getApplication().invokeLater {
+            WriteCommandAction.runWriteCommandAction(file.project) {
+                val psiFile = file.getPsiFile()!!
+                psiFile.addAfter(
+                    KtPsiFactory(file.project).createComment("/** $output */"),
+                    psiFile.lastChild
+                )
+            }
+        }
     }
 }
 
