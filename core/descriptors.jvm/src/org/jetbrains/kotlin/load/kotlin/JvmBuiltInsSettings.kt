@@ -137,7 +137,6 @@ open class JvmBuiltInsSettings(
                 setOwner(classDescriptor)
                 setDispatchReceiverParameter(classDescriptor.thisAsReceiverParameter)
                 setPreserveSourceElement()
-                setSubstitution(UnsafeVarianceTypeSubstitution(moduleDescriptor.builtIns))
 
                 val memberStatus = additionalMember.getJdkMethodStatus()
                 when (memberStatus) {

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.utils.DO_NOTHING_3
 interface TypeHolder<out D : TypeHolder<D>> {
     val type: KotlinType
     val arguments: List<TypeHolderArgument<D>?>
-    val flexibleBounds: Pair<D, D>? get() = null
 }
 
 interface TypeHolderArgument<out D : TypeHolder<D>> {
@@ -34,20 +33,16 @@ interface TypeHolderArgument<out D : TypeHolder<D>> {
 }
 
 fun <D : TypeHolder<D>> D.checkTypePosition(
-        position: Variance,
-        reportError: (TypeParameterDescriptor, D, Variance) -> Unit = DO_NOTHING_3,
-        customVariance: (TypeParameterDescriptor) -> Variance? = { null }
+    position: Variance,
+    reportError: (TypeParameterDescriptor, D, Variance) -> Unit = DO_NOTHING_3,
+    customVariance: (TypeParameterDescriptor) -> Variance? = { null }
 ): Boolean {
-    flexibleBounds?.let {
-        return it.first.checkTypePosition(position, reportError, customVariance) and
-                    it.second.checkTypePosition(position, reportError, customVariance)
-    }
-
     val classifierDescriptor = type.constructor.declarationDescriptor
     if (classifierDescriptor is TypeParameterDescriptor) {
         val declarationVariance = customVariance(classifierDescriptor) ?: classifierDescriptor.variance
         if (!declarationVariance.allowsPosition(position)
-            && !type.annotations.hasAnnotation(org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES.unsafeVariance)) {
+            && !type.annotations.hasAnnotation(org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES.unsafeVariance)
+        ) {
             reportError(classifierDescriptor, this, position)
         }
         return declarationVariance.allowsPosition(position)
