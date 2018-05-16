@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 abstract class AbstractResultUnusedChecker(
-    private val expressionChecker: (KtExpression) -> Boolean,
-    private val callChecker: (ResolvedCall<*>) -> Boolean
+    private val expressionChecker: (KtExpression, AbstractResultUnusedChecker) -> Boolean,
+    private val callChecker: (ResolvedCall<*>, AbstractResultUnusedChecker) -> Boolean
 ) : AbstractKotlinInspection() {
     protected fun check(expression: KtExpression): Boolean {
         // Check whatever possible by PSI
-        if (!expressionChecker(expression)) return false
+        if (!expressionChecker(expression, this)) return false
         var parent: PsiElement? = expression.parent
         while (parent != null) {
             if (parent is KtBlockExpression || parent is KtFunction || parent is KtFile) break
@@ -32,6 +32,6 @@ abstract class AbstractResultUnusedChecker(
         val context = expression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         if (expression.isUsedAsExpression(context)) return false
         val resolvedCall = expression.getResolvedCall(context) ?: return false
-        return callChecker(resolvedCall)
+        return callChecker(resolvedCall, this)
     }
 }
