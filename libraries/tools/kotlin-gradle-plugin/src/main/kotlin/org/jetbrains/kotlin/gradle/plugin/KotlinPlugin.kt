@@ -23,6 +23,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.internal.*
@@ -358,6 +359,7 @@ internal abstract class AbstractKotlinPlugin(
 
         configureSourceSetDefaults(project, javaBasePlugin, javaPluginConvention)
         configureDefaultVersionsResolutionStrategy(project)
+        configureClassInspectionForIC(project)
     }
 
     open protected fun configureSourceSetDefaults(
@@ -389,6 +391,24 @@ internal abstract class AbstractKotlinPlugin(
                 }
             }
         }
+    }
+
+    private fun configureClassInspectionForIC(project: Project) {
+        val classesTask = project.tasks.findByName(JavaPlugin.CLASSES_TASK_NAME)
+        val jarTask = project.tasks.findByName(JavaPlugin.JAR_TASK_NAME)
+
+        if (classesTask == null || jarTask !is Jar) {
+            project.logger.info(
+                "Could not configure class inspection task " +
+                        "(classes task = ${classesTask?.javaClass?.canonicalName}, " +
+                        "jar task = ${classesTask?.javaClass?.canonicalName}"
+            )
+            return
+        }
+        val inspectTask = project.tasks.create("inspectClassesForKotlinIC", InspectClassesForMultiModuleIC::class.java)
+        inspectTask.jarTask = jarTask
+        inspectTask.dependsOn(classesTask)
+        jarTask.dependsOn(inspectTask)
     }
 }
 

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.IncrementalModuleEntry
 import org.jetbrains.kotlin.daemon.common.IncrementalModuleInfo
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.incremental.*
 import java.io.ByteArrayOutputStream
@@ -356,17 +357,25 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
             val dirToModule = HashMap<File, IncrementalModuleEntry>()
             val nameToModules = HashMap<String, HashSet<IncrementalModuleEntry>>()
+            val jarToClassListFile = HashMap<File, File>()
 
             for (project in gradle.rootProject.allprojects) {
-                for (task in project.tasks.withType(KotlinCompile::class.java)) {
-                    val module = IncrementalModuleEntry(project.path, task.moduleName, project.buildDir, task.buildHistoryFile)
-                    dirToModule[task.destinationDir] = module
-                    task.javaOutputDir?.let { dirToModule[it] = module }
-                    nameToModules.getOrPut(module.name) { HashSet() }.add(module)
+                for (task in project.tasks) {
+                    when (task) {
+                        is KotlinCompile -> {
+                            val module = IncrementalModuleEntry(project.path, task.moduleName, project.buildDir, task.buildHistoryFile)
+                            dirToModule[task.destinationDir] = module
+                            task.javaOutputDir?.let { dirToModule[it] = module }
+                            nameToModules.getOrPut(module.name) { HashSet() }.add(module)
+                        }
+                        is InspectClassesForMultiModuleIC -> {
+                            jarToClassListFile[File(task.archivePath)] = task.classesListFile
+                        }
+                    }
                 }
             }
 
-            return IncrementalModuleInfo(gradle.rootProject.projectDir, dirToModule, nameToModules)
+            return IncrementalModuleInfo(gradle.rootProject.projectDir, dirToModule, nameToModules, jarToClassListFile)
                 .also {
                     cachedGradle = WeakReference(gradle)
                     cachedModulesInfo = it

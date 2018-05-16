@@ -21,10 +21,8 @@ object EmptyModulesApiHistory : ModulesApiHistory {
         Either.Error("Multi-module IC is not configured")
 }
 
-class ModulesApiHistoryImpl(
-    private val modulesInfo: IncrementalModuleInfo
-) : ModulesApiHistory {
-    private val projectRootPath = Paths.get(modulesInfo.projectRoot.absolutePath)
+open class ModulesApiHistoryJvm(protected val modulesInfo: IncrementalModuleInfo) : ModulesApiHistory {
+    protected val projectRootPath: Path = Paths.get(modulesInfo.projectRoot.absolutePath)
     private val dirToHistoryFileCache = HashMap<File, File?>()
 
     override fun historyFilesForChangedFiles(changedFiles: Set<File>): Either<Set<File>> {
@@ -46,9 +44,9 @@ class ModulesApiHistoryImpl(
         }
 
         for (jar in jarFiles) {
-            val historyEither = getBuildHistoryForJar(jar)
+            val historyEither = getBuildHistoryFilesForJar(jar)
             when (historyEither) {
-                is Either.Success<File> -> result.add(historyEither.value)
+                is Either.Success<Set<File>> -> result.addAll(historyEither.value)
                 is Either.Error -> return historyEither
             }
         }
@@ -78,9 +76,26 @@ class ModulesApiHistoryImpl(
             }
         }
 
-    private fun getBuildHistoryForJar(jar: File): Either<File> =
-        Either.Error("Cannot get changes for jar $jar")
+    protected open fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>> {
+        val classListFile = modulesInfo.jarToClassListFile[jar] ?: return Either.Error("Unknown jar: $jar")
+        if (!classListFile.isFile) return Either.Error("Class list file does not exist $classListFile")
 
-    private fun Path.isParentOf(path: Path) = path.startsWith(this)
-    private fun Path.isParentOf(file: File) = this.isParentOf(Paths.get(file.absolutePath))
+        val classFiles = try {
+            classListFile.readText().split(File.pathSeparator).map(::File)
+        } catch (t: Throwable) {
+            return Either.Error("Could not read class list for $jar from $classListFile: $t")
+        }
+
+        val classFileDirs = classFiles.groupBy { it.parentFile }
+        val result = HashSet<File>()
+        for ((dir, files) in classFileDirs) {
+            val buildHistory = getBuildHistoryForDir(dir)
+                    ?: return Either.Error("Could not get build history for class files: ${files.joinToString()}")
+            result.add(buildHistory)
+        }
+        return Either.Success(result)
+    }
 }
+
+private fun Path.isParentOf(path: Path) = path.startsWith(this)
+private fun Path.isParentOf(file: File) = this.isParentOf(Paths.get(file.absolutePath))
