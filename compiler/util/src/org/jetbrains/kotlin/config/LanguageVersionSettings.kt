@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.config
 
+import org.jetbrains.kotlin.config.LanguageFeature.Kind.*
 import org.jetbrains.kotlin.config.LanguageVersion.*
 import org.jetbrains.kotlin.utils.DescriptionAware
 import java.util.*
@@ -14,8 +15,7 @@ enum class LanguageFeature(
     val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
     val hintUrl: String? = null,
     val defaultState: State = State.ENABLED,
-    val forcesPreReleaseBinaries: Boolean = false,
-    val enabledInProgressiveMode: Boolean = false
+    val kind: Kind = OTHER // NB: default value OTHER doesn't forces pre-releaseness (see KDoc)
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
     TypeAliases(KOTLIN_1_1),
@@ -58,23 +58,23 @@ enum class LanguageFeature(
     DefaultMethodsCallFromJava6TargetError(KOTLIN_1_2),
 
     BooleanElvisBoundSmartCasts(KOTLIN_1_3),
-    RestrictionOfValReassignmentViaBackingField(KOTLIN_1_3, enabledInProgressiveMode = true),
-    NestedClassesInEnumEntryShouldBeInner(KOTLIN_1_3, enabledInProgressiveMode = true),
-    ProhibitDataClassesOverridingCopy(KOTLIN_1_3, enabledInProgressiveMode = true),
-    RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes(KOTLIN_1_3, enabledInProgressiveMode = true),
-    ProhibitInnerClassesOfGenericClassExtendingThrowable(KOTLIN_1_3, enabledInProgressiveMode = true),
-    ProperVisibilityForCompanionObjectInstanceField(KOTLIN_1_3, enabledInProgressiveMode = true),
-    ProperForInArrayLoopRangeVariableAssignmentSemantic(KOTLIN_1_3, enabledInProgressiveMode = true),
+    RestrictionOfValReassignmentViaBackingField(KOTLIN_1_3, kind = BUG_FIX),
+    NestedClassesInEnumEntryShouldBeInner(KOTLIN_1_3, kind = BUG_FIX),
+    ProhibitDataClassesOverridingCopy(KOTLIN_1_3, kind = BUG_FIX),
+    RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes(KOTLIN_1_3, kind = BUG_FIX),
+    ProhibitInnerClassesOfGenericClassExtendingThrowable(KOTLIN_1_3, kind = BUG_FIX),
+    ProperVisibilityForCompanionObjectInstanceField(KOTLIN_1_3, kind = BUG_FIX),
+    ProperForInArrayLoopRangeVariableAssignmentSemantic(KOTLIN_1_3, kind = BUG_FIX),
     NestedClassesInAnnotations(KOTLIN_1_3),
-    JvmStaticInInterface(KOTLIN_1_3, forcesPreReleaseBinaries = true),
-    ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion(KOTLIN_1_3, enabledInProgressiveMode = true),
-    ProhibitNonConstValuesAsVarargsInAnnotations(KOTLIN_1_3, enabledInProgressiveMode = true),
-    ReleaseCoroutines(KOTLIN_1_3, forcesPreReleaseBinaries = true),
+    JvmStaticInInterface(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
+    ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion(KOTLIN_1_3, kind = BUG_FIX),
+    ProhibitNonConstValuesAsVarargsInAnnotations(KOTLIN_1_3, kind = BUG_FIX),
+    ReleaseCoroutines(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
     ReadDeserializedContracts(KOTLIN_1_3),
     UseReturnsEffect(KOTLIN_1_3),
     UseCallsInPlaceEffect(KOTLIN_1_3),
-    AllowContractsForCustomFunctions(KOTLIN_1_3, forcesPreReleaseBinaries = true),
-    ProhibitLocalAnnotations(KOTLIN_1_3, enabledInProgressiveMode = true),
+    AllowContractsForCustomFunctions(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
+    ProhibitLocalAnnotations(KOTLIN_1_3, kind = BUG_FIX),
 
     StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
     ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED),
@@ -91,7 +91,7 @@ enum class LanguageFeature(
 
     NewInference(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
 
-    InlineClasses(sinceVersion = null, defaultState = State.DISABLED, forcesPreReleaseBinaries = true),
+    InlineClasses(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
 
     ;
 
@@ -106,6 +106,62 @@ enum class LanguageFeature(
         ENABLED_WITH_WARNING("Enabled with warning"),
         ENABLED_WITH_ERROR("Disabled"), // TODO: consider dropping this and using DISABLED instead
         DISABLED("Disabled");
+    }
+
+    /**
+     * # [enabledInProgressiveMode]
+     * If 'true', then enabling this feature (e.g. by '-XXLanguage:', or dedicated '-X'-flag)
+     * will force generation of pre-release binaries (given that [sinceVersion] > [LanguageVersion.LATEST_STABLE]).
+     * Use it for features that involve generation of non-trivial low-level code with non-finalized design.
+     *
+     * Note that [forcesPreReleaseBinaries] makes sense only for features with [sinceVersion] > [LanguageVersion.LATEST_STABLE].
+     *
+     * Please, DO NOT use features that force pre-release binaries in the Kotlin project, as that would
+     * generate 'kotlin-compiler' as pre-release.
+     *
+     *
+     * # [forcesPreReleaseBinaries]
+     * If 'true', then this feature will be automatically enabled under '-Xprogressive' mode.
+     *
+     * Restrictions for using this flag for particular feature follow from restrictions of the progressive mode:
+     * - enabling it *must not* break compatibility with non-progressive compiler, i.e. code written under progressive
+     *   should compile successfully by non-progressive compiler with the same language version settings.
+     *   Example: making some "red" code "green" is not fine, because non-progressive compilers won't be able to compile
+     *   such code
+     *
+     * - changes in language semantics should not be "silent": user must receive some message from the compiler
+     *   about all affected code. Exceptions are possible on case-by-case basis.
+     *   Example: silently changing semantics of generated low-level code is not fine, but deprecating some language
+     *   construction immediately instead of a going through complete deprecation cycle is fine.
+     *
+     * NB: Currently, [enabledInProgressiveMode] makes sense only for features with [sinceVersion] > [LanguageVersion.LATEST_STABLE]
+     */
+    enum class Kind(val enabledInProgressiveMode: Boolean, val forcesPreReleaseBinaries: Boolean) {
+        /**
+         * Simple bug fix which just forbids some language constructions.
+         * Rule of thumb: it turns "green code" into "red".
+         *
+         * Note that, some actual bug fixes can affect overload resolution/inference, silently changing semantics of
+         * users' code -- DO NOT use Kind.BUG_FIX for them!
+         */
+        BUG_FIX(true, false),
+
+        /**
+         * Enables support of some new and *unstable* construction in language.
+         * Rule of thumb: it turns "red" code into "green", and we want to strongly demotivate people from manually enabling
+         * that feature in production.
+         */
+        UNSTABLE_FEATURE(false, true),
+
+        /**
+         * A new feature in the language which has no impact on the binary output of the compiler, and therefore
+         * does not cause pre-release binaries to be generated.
+         * Rule of thumb: it turns "red" code into "green" and the old compilers can correctly use the binaries
+         * produced by the new compiler.
+         *
+         * NB. OTHER is not a conservative fallback, as it doesn't imply generation of pre-release binaries
+         */
+        OTHER(false, false),
     }
 
     companion object {
@@ -217,5 +273,5 @@ fun LanguageVersion.isPreRelease(): Boolean {
 
 fun LanguageFeature.forcesPreReleaseBinariesIfEnabled(): Boolean {
     val isFeatureNotReleasedYet = sinceVersion?.isStable != true
-    return isFeatureNotReleasedYet && forcesPreReleaseBinaries
+    return isFeatureNotReleasedYet && kind.forcesPreReleaseBinaries
 }
