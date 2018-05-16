@@ -40,7 +40,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
         createInlay(file, expression.lineStart, inlayText, output.type)
 
         if (output.type == ScratchOutputType.ERROR) {
-            error(file, output.text)
+            ToolWindowScratchOutputHandler.handle(file, expression, output)
         }
     }
 

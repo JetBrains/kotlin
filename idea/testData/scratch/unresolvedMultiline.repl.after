@@ -5,7 +5,7 @@ foo.forEach {                                               // ERROR: error: unr
 fun goo(a: String) {                                        // ERROR: error: unresolved reference: goo
     super.goo(a)
 }
-/** error: unresolved reference: foo
+/** unresolvedMultiline.kts:1 error: unresolved reference: foo
 
 foo.forEach {
 
@@ -18,7 +18,7 @@ error: cannot choose among the following candidates without completing type infe
 foo.forEach {
 
 ^ */
-/** error: unresolved reference: goo
+/** unresolvedMultiline.kts:5 error: unresolved reference: goo
 
 super.goo(a)
 
