@@ -1,8 +1,8 @@
-foo.forEach {                                               // ERROR: error: unresolved reference: foo
+foo.forEach {                                               // ERROR: error: unresolved reference: foo...
     1 + 1
 }
 
-fun goo(a: String) {                                        // ERROR: error: unresolved reference: goo
+fun goo(a: String) {                                        // ERROR: error: unresolved reference: goo...
     super.goo(a)
 }
 /** unresolvedMultiline.kts:1 error: unresolved reference: foo

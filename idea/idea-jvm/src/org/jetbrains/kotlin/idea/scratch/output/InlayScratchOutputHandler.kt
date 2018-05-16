@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 
 object InlayScratchOutputHandler : ScratchOutputHandler {
+    private const val maxLineLength = 120
     private const val maxInsertOffset = 60
     private const val minSpaceCount = 4
 
@@ -32,12 +33,9 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     }
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
-        val inlayText = StringUtil.shortenTextWithEllipsis(output.text.substringBefore("\n"), 50, 0)
-        if (inlayText != output.text && output.type != ScratchOutputType.ERROR) {
-            ToolWindowScratchOutputHandler.handle(file, expression, output)
-        }
+        if (output.text.isBlank()) return
 
-        createInlay(file, expression.lineStart, inlayText, output.type)
+        createInlay(file, expression, output)
 
         if (output.type == ScratchOutputType.ERROR) {
             ToolWindowScratchOutputHandler.handle(file, expression, output)
@@ -57,29 +55,42 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
         ToolWindowScratchOutputHandler.clear(file)
     }
 
-    private fun createInlay(file: ScratchFile, line: Int, inlayText: String, outputType: ScratchOutputType) {
+    private fun createInlay(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
         UIUtil.invokeLaterIfNeeded {
             val editor = file.editor.editor
+            val line = expression.lineStart
 
             val lineStartOffset = editor.document.getLineStartOffset(line)
             val lineEndOffset = editor.document.getLineEndOffset(line)
             val lineLength = lineEndOffset - lineStartOffset
             var spaceCount = maxLineLength(file) - lineLength + minSpaceCount
 
-            while(spaceCount + lineLength > maxInsertOffset && spaceCount > minSpaceCount) spaceCount--
+            while (spaceCount + lineLength > maxInsertOffset && spaceCount > minSpaceCount) spaceCount--
+
+            fun addInlay(text: String) {
+                val textBeforeNewLine = if (StringUtil.containsLineBreak(text)) text.substringBefore("\n") + "..." else text
+                val shortText = StringUtil.shortenTextWithEllipsis(textBeforeNewLine, maxLineLength - spaceCount - lineLength, 0)
+                if (shortText != text) {
+                    printToToolWindow(file, expression, output)
+                }
+                editor.inlayModel.addInlineElement(lineEndOffset, InlayScratchFileRenderer(" ".repeat(spaceCount) + shortText, output.type))
+            }
 
             val existing = editor.inlayModel
                 .getInlineElementsInRange(lineEndOffset, lineEndOffset)
                 .singleOrNull { it.renderer is InlayScratchFileRenderer }
             if (existing != null) {
                 existing.dispose()
-                editor.inlayModel.addInlineElement(
-                    lineEndOffset,
-                    InlayScratchFileRenderer((existing.renderer as InlayScratchFileRenderer).text + "; " + inlayText, outputType)
-                )
+                addInlay(((existing.renderer as InlayScratchFileRenderer).text + "; " + output.text).drop(spaceCount))
             } else {
-                editor.inlayModel.addInlineElement(lineEndOffset, InlayScratchFileRenderer(" ".repeat(spaceCount) + inlayText, outputType))
+                addInlay(output.text)
             }
+        }
+    }
+
+    private fun printToToolWindow(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
+        if (output.type != ScratchOutputType.ERROR) {
+            ToolWindowScratchOutputHandler.handle(file, expression, output)
         }
     }
 
@@ -99,5 +110,4 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
                 .forEach { Disposer.dispose(it) }
         }
     }
-
 }

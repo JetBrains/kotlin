@@ -1,3 +1,15 @@
 val a = "a".repeat(100)
-a                                                           // RESULT: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...
+a                                    // RESULT: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...
+val b = "0123456789\n".repeat(10)
+b                                    // RESULT: 0123456789...
 /** veryLongOutput.kts:2 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */
+/** veryLongOutput.kts:4 0123456789
+0123456789
+0123456789
+0123456789
+0123456789
+0123456789
+0123456789
+0123456789
+0123456789
+0123456789 */
