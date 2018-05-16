@@ -33,7 +33,7 @@ import java.io.File
 
 abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {
-        val ENTRY_POINT_ANNOTATION = "test.anno.EntryPoint"
+        const val ENTRY_POINT_ANNOTATION = "test.anno.EntryPoint"
     }
 
     override fun setUp() {
