@@ -16,13 +16,12 @@
 
 package example
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.JetBrainsSubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 
 class ExampleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
 

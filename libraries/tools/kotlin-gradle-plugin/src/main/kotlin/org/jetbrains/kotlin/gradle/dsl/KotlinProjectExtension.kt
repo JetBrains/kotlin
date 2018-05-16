@@ -19,23 +19,39 @@ package org.jetbrains.kotlin.gradle.dsl
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.*
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinExtendedSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinJavaSourceSetContainer
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinOnlySourceSetContainer
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetContainer
 import kotlin.reflect.KClass
 
-internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProjectExtension>) {
+internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinBaseProjectExtension>) {
     val kotlinExt = extensions.create("kotlin", extensionClass.java)
     DslObject(kotlinExt).extensions.create("experimental", ExperimentalExtension::class.java)
 }
 
+internal val Project.kotlinBaseExtension: KotlinBaseProjectExtension
+    get() = extensions.getByType(KotlinBaseProjectExtension::class.java)
+
 internal val Project.kotlinExtension: KotlinProjectExtension
     get() = extensions.getByType(KotlinProjectExtension::class.java)
 
-open class KotlinProjectExtension {
+open class KotlinBaseProjectExtension {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
 
     open val sourceSets: KotlinSourceSetContainer<out KotlinSourceSet>
         get() = DslObject(this).extensions.getByType(KotlinSourceSetContainer::class.java)
+}
+
+open class KotlinProjectExtension : KotlinBaseProjectExtension() {
+    override val sourceSets: KotlinSourceSetContainer<out KotlinExtendedSourceSet>
+        get() =
+        // unchecked because there's no common supertype with KotlinExtendedSourceSet type argument upper bound,
+        // while we need to get the sourceSets as having KotlinExtendedSourceSet in several places
+            @Suppress("UNCHECKED_CAST")
+            (DslObject(this).extensions.getByType(KotlinSourceSetContainer::class.java)
+                    as KotlinSourceSetContainer<out KotlinExtendedSourceSet>)
 }
 
 open class KotlinJvmProjectExtension : KotlinProjectExtension() {
@@ -45,12 +61,12 @@ open class KotlinJvmProjectExtension : KotlinProjectExtension() {
      * */
     var copyClassesToJavaOutput = false
 
-    override val sourceSets: KotlinSourceSetContainer<KotlinJavaSourceSet>
+    override val sourceSets: KotlinJavaSourceSetContainer
         get() = DslObject(this).extensions.getByType(KotlinJavaSourceSetContainer::class.java)
 }
 
 open class KotlinOnlyProjectExtension: KotlinProjectExtension() {
-    override val sourceSets: KotlinSourceSetContainer<KotlinOnlySourceSet>
+    override val sourceSets: KotlinOnlySourceSetContainer
         get() = DslObject(this).extensions.getByType(KotlinOnlySourceSetContainer::class.java)
 }
 

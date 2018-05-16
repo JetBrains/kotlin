@@ -41,7 +41,7 @@ abstract class KotlinSourceSetContainer<T : KotlinSourceSet> internal constructo
         return result
     }
 
-    final override fun provideSourceSet(displayName: String): KotlinSourceSet =
+    final override fun provideSourceSet(displayName: String): T =
         maybeCreate(displayName)
 }
 

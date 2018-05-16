@@ -18,8 +18,6 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.ConventionMapping
 import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
-import org.gradle.api.internal.java.JavaLibrary
-import org.gradle.api.internal.java.JavaLibraryPlatform
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.model.ObjectFactory
@@ -34,7 +32,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinExtendedSourceSet
 import java.io.File
 import javax.inject.Inject
 
@@ -42,6 +40,7 @@ class KotlinBasePlugin @Inject constructor(
     private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     private val objectFactory: ObjectFactory
 ) : Plugin<Project> {
+
     override fun apply(project: Project) {
         with(project.pluginManager) {
             apply(BasePlugin::class.java)
@@ -113,7 +112,7 @@ class KotlinBasePlugin @Inject constructor(
         publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
     }
 
-    private fun definePathsForSourceSet(sourceSet: KotlinSourceSet, outputConventionMapping: ConventionMapping, project: Project) {
+    private fun definePathsForSourceSet(sourceSet: KotlinExtendedSourceSet, outputConventionMapping: ConventionMapping, project: Project) {
         outputConventionMapping.map("resourcesDir") {
             val classesDirName = "resources/" + sourceSet.name
             File(project.buildDir, classesDirName)
@@ -122,7 +121,7 @@ class KotlinBasePlugin @Inject constructor(
         sourceSet.resources.srcDir("src/" + sourceSet.name + "/resources")
     }
 
-    private fun createProcessResourcesTask(sourceSet: KotlinSourceSet, resourceSet: SourceDirectorySet, target: Project) {
+    private fun createProcessResourcesTask(sourceSet: KotlinExtendedSourceSet, resourceSet: SourceDirectorySet, target: Project) {
         //TODO replace maybeCreate with create, as there won't be Java plugin
         val resourcesTask = target.tasks.maybeCreate(sourceSet.processResourcesTaskName, ProcessResources::class.java)
         resourcesTask.description = "Processes $resourceSet."
@@ -130,7 +129,7 @@ class KotlinBasePlugin @Inject constructor(
         resourcesTask.from(resourceSet)
     }
 
-    private fun createLifecycleTask(sourceSet: KotlinSourceSet, target: Project) {
+    private fun createLifecycleTask(sourceSet: KotlinExtendedSourceSet, target: Project) {
         sourceSet.compiledBy(sourceSet.classesTaskName)
 
         //TODO replace maybeCreate with create
@@ -142,7 +141,7 @@ class KotlinBasePlugin @Inject constructor(
         classesTask.dependsOn(sourceSet.processResourcesTaskName)
     }
 
-    private fun defineConfigurationsForSourceSet(sourceSet: KotlinSourceSet, configurations: ConfigurationContainer) {
+    private fun defineConfigurationsForSourceSet(sourceSet: KotlinExtendedSourceSet, configurations: ConfigurationContainer) {
         val compileConfigurationName = sourceSet.compileConfigurationName
         val implementationConfigurationName = sourceSet.implementationConfigurationName
         val runtimeConfigurationName = sourceSet.runtimeConfigurationName

@@ -20,12 +20,12 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.internal.AbstractTask
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.JetBrainsSubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 
 class AllOpenGradleSubplugin : Plugin<Project> {
     companion object {

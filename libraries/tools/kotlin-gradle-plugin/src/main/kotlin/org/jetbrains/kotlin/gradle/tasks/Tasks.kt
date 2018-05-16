@@ -152,8 +152,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         get() = (classpath + additionalClasspath)
                 .filterTo(LinkedHashSet(), File::exists)
 
-    private val kotlinExt: KotlinProjectExtension
-            get() = project.extensions.findByType(KotlinProjectExtension::class.java)!!
+    @get:Classpath @get:InputFiles
+    internal val pluginClasspath get() = pluginOptions.classpath
+
+    private val kotlinExt: KotlinBaseProjectExtension
+            get() = project.extensions.findByType(KotlinBaseProjectExtension::class.java)!!
 
     private lateinit var destinationDirProvider: Lazy<File>
 

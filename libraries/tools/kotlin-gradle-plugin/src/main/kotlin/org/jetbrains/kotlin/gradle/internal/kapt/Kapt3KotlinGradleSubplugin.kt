@@ -13,7 +13,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
@@ -25,11 +24,16 @@ import org.jetbrains.kotlin.gradle.tasks.isWorkerAPISupported
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.ByteArrayOutputStream
 import java.io.File
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinJavaSourceSet
+import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.ObjectOutputStream
 import java.util.*
 
@@ -344,9 +348,12 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.kotlinSourcesDestinationDir = kotlinSourcesOutputDir
         kaptTask.classesDir = classesOutputDir
 
-        kotlinSourceSet?.output?.apply {
-            if (tryAddClassesDir { project.files(classesOutputDir).builtBy(kaptTask) }) {
-                kotlinCompile.attachClassesDir { classesOutputDir }
+        kotlinSourceSet?.run {
+            this as KotlinJavaSourceSet
+            output.apply {
+                if (tryAddClassesDir { project.files(classesOutputDir).builtBy(kaptTask) }) {
+                    kotlinCompile.attachClassesDir { classesOutputDir }
+                }
             }
         }
 
