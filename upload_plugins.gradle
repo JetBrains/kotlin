@@ -36,13 +36,7 @@ task uploadPlugins() << {
 
     files.each { file ->
         println("Uploading ${file.name}")
-        try {
-            repo.uploadPlugin(6954, file, channel)
-        }
-        catch (org.jetbrains.intellij.pluginRepository.exceptions.UploadFailedException ex) {
-            println("Error on uploading: ${ex}")
-            throw ex
-        }
+        repo.uploadPlugin(6954, file, channel)
     }
 }
 
