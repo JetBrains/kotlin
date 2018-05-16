@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin.android
@@ -19,259 +8,199 @@ package org.jetbrains.kotlin.gradle.plugin.android
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.api.ApkVariant
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.VariantManager
 import com.android.build.gradle.internal.variant.BaseVariantData
-import com.android.builder.model.SourceProvider
 import org.gradle.api.file.ConfigurableFileTree
-import org.gradle.api.internal.DefaultDomainObjectSet
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.gradle.api.tasks.util.PatternFilterable
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
+import java.io.File
+import java.lang.reflect.Field
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 
-class AndroidGradleWrapper {
-  static def getRuntimeJars(BasePlugin basePlugin, BaseExtension baseExtension) {
-    if (basePlugin.getMetaClass().getMetaMethod("getRuntimeJarList")) {
-      return basePlugin.getRuntimeJarList()
-    }
-    else if (baseExtension.getMetaClass().getMetaMethod("getBootClasspath")) {
-        return baseExtension.getBootClasspath()
-    }
-    else {
-      return basePlugin.getBootClasspath()
-    }
-  }
-
-  static def srcDir(Object androidSourceSet, Object kotlinDirSet) {
-    androidSourceSet.getJava().srcDir(kotlinDirSet)
-  }
-
-  static PatternFilterable getResourceFilter(Object androidSourceSet) {
-    def resources = androidSourceSet.getResources()
-    if (resources != null) {
-      return resources.getFilter()
-    }
-    return null
-  }
-
-  @NotNull
-  static String getVariantName(Object variant) {
-    return variant.getBuildType().getName()
-  }
-
-  @Nullable
-  private static getJackOptions(@NotNull Object variantData) {
-    def variantConfiguration = variantData.variantConfiguration
-    if (variantConfiguration.getMetaClass().getMetaMethod("getJackOptions")) {
-      return variantConfiguration.getJackOptions()
-    }
-    return null
-  }
-
-  static boolean isJackEnabled(@NotNull Object variantData) {
-    return getJackOptions(variantData)?.enabled ?: false
-  }
-
-  @Nullable
-  static AbstractCompile getJavaTask(@NotNull Object variantData) {
-    return getJavaCompile(variantData)
-  }
-
-  @Nullable
-  private static AbstractCompile getJavacTask(@NotNull Object baseVariantData) {
-    if (baseVariantData.getMetaClass().getMetaProperty("javacTask")) {
-      return baseVariantData.javacTask
-    }
-    return null
-  }
-
-  @Nullable
-  private static AbstractCompile getJavaCompile(@NotNull Object baseVariantData) {
-    if (baseVariantData.getMetaClass().getMetaProperty("javaCompileTask")) {
-      return baseVariantData.javaCompileTask
-    }
-    else if (baseVariantData.getMetaClass().getMetaProperty("javaCompilerTask")) {
-      return baseVariantData.javaCompilerTask
-    }
-    return null
-  }
-
-  @NotNull
-  static Set<File> getJavaSrcDirs(Object androidSourceSet) {
-    return androidSourceSet.getJava().getSrcDirs()
-  }
-
-  static def setNoJdk(Object kotlinOptionsExtension) {
-    kotlinOptionsExtension.noJdk = true
-  }
-
-  @NotNull
-  static List<String> getProductFlavorsNames(ApkVariant variant) {
-      return variant.getProductFlavors().iterator().collect { it.getName() }
-  }
-
-  @NotNull
-  static List<AndroidSourceSet> getProductFlavorsSourceSets(BaseExtension extension) {
-      return extension.productFlavors.iterator().collect { extension.sourceSets.findByName(it.name) }
-  }
-
-  @Nullable
-  static Map<String, String> getAnnotationProcessorOptionsFromAndroidVariant(@Nullable Object variantData) {
-    if (!(variantData instanceof BaseVariantData)) {
-      throw new IllegalArgumentException("BaseVariantData instance expected")
+object AndroidGradleWrapper {
+    fun getRuntimeJars(basePlugin: BasePlugin, baseExtension: BaseExtension): Any? {
+        return basePlugin("getRuntimeJarList") ?: baseExtension("getBootClasspath") ?: basePlugin("getBootClasspath")
     }
 
-    def variantConfiguration = variantData.variantConfiguration
-    if (variantConfiguration.getMetaClass().getMetaMethod("getJavaCompileOptions")) {
-      def javaCompileOptions = variantConfiguration.getJavaCompileOptions()
-
-      if (javaCompileOptions.getMetaClass().getMetaMethod("getAnnotationProcessorOptions")) {
-        return javaCompileOptions.getAnnotationProcessorOptions().getArguments()
-      }
+    fun isJackEnabled(variantData: Any): Boolean {
+        val variantConfiguration = variantData("getVariantConfiguration")
+        return (variantConfiguration("getUseJack") ?: variantConfiguration("getJackOptions")("isEnabled")) as? Boolean ?: false
     }
 
-    return null
-  }
-
-  @NotNull
-  static DefaultDomainObjectSet<TestVariant> getTestVariants(BaseExtension extension) {
-    if (extension.getMetaClass().getMetaMethod("getTestVariants")) {
-      return extension.getTestVariants()
-    }
-    return Collections.emptyList()
-  }
-
-  @NotNull
-  static List<File> getRClassFolder(BaseVariant variant) {
-    def list = new ArrayList<File>()
-    if (variant.getMetaClass().getMetaMethod("getProcessResources")) {
-      list.add(variant.getProcessResources().getSourceOutputDir())
-    }
-    else {
-      for (Object variantOutput : variant.getOutputs()) {
-        list.add(variantOutput.processResources.sourceOutputDir)
-      }
-    }
-    return list
-  }
-
-  static VariantManager getVariantDataManager(BasePlugin plugin) {
-    return plugin.getVariantManager()
-  }
-
-  static List<File> getJavaSources(BaseVariantData variantData) {
-    def result = new LinkedHashSet<File>()
-
-    // user sources
-    List<SourceProvider> providers = variantData.variantConfiguration.getSortedSourceProviders()
-    for (SourceProvider provider : providers) {
-      result.addAll((provider as AndroidSourceSet).getJava().getSrcDirs())
+    fun getJavaTask(variantData: Any): AbstractCompile? {
+        return getJavaCompile(variantData)
     }
 
-    // generated sources
-    def getJavaSourcesMethod = variantData.getMetaClass().getMetaMethod("getJavaSources")
-    if (getJavaSourcesMethod.returnType.metaClass == Object[].metaClass) {
-      result.addAll(variantData.getJavaSources().findAll { it instanceof File })
-    }
-    else if (getJavaSourcesMethod.returnType.metaClass == List.metaClass) {
-      def fileTrees = variantData.getJavaSources().findAll { it instanceof ConfigurableFileTree }
-      result.addAll(fileTrees.collect { it.getDir() })
-    }
-    else {
-      if (variantData.scope.getGenerateRClassTask() != null) {
-        result.add(variantData.scope.getRClassSourceOutputDir())
-      }
-
-      if (variantData.scope.getGenerateBuildConfigTask() != null) {
-        result.add(variantData.scope.getBuildConfigSourceOutputDir())
-      }
-
-      if (variantData.scope.getAidlCompileTask() != null) {
-        result.add(variantData.scope.getAidlSourceOutputDir())
-      }
-
-      if (variantData.scope.getGlobalScope().getExtension().getDataBinding().isEnabled()) {
-        result.add(variantData.scope.getClassOutputForDataBinding())
-      }
-
-      if (!variantData.variantConfiguration.getRenderscriptNdkModeEnabled()
-              && variantData.scope.getRenderscriptCompileTask() != null) {
-        result.add(variantData.scope.getRenderscriptSourceOutputDir())
-      }
+    private fun getJavaCompile(baseVariantData: Any): AbstractCompile? {
+        return (baseVariantData["javaCompileTask"] ?: baseVariantData["javaCompilerTask"]) as? AbstractCompile
     }
 
-    def getExtraSourcesMethod = variantData.getMetaClass().getMetaMethod("getExtraGeneratedSourceFolders")
-    if (getExtraSourcesMethod.returnType.metaClass == List.metaClass) {
-      def folders = variantData.getExtraGeneratedSourceFolders()
-      if (folders != null) {
-        result.addAll(folders)
-      }
-    }
-
-    return result.toList()
-  }
-
-  @NotNull
-  static Map<File, File> getJarToAarMapping(BaseVariantData variantData) {
-    def jarToLibraryArtifactMap = new HashMap<File, File>()
-
-    def libraries = getVariantLibraryDependencies(variantData)
-    if (libraries == null) return jarToLibraryArtifactMap
-
-    for (lib in libraries) {
-      Object bundle = getLibraryArtifactFile(lib)
-      jarToLibraryArtifactMap[lib.jarFile] = bundle
-
-      // local dependencies are detected as changed by gradle, because they are seem to be
-      // rewritten every time when bundle changes
-      // when local dep will actually change, record for bundle will be removed from registry
-      for (localDep in lib.localJars) {
-        if (localDep instanceof File) {
-          // android tools 2.2
-          jarToLibraryArtifactMap[localDep] = bundle
+    fun getAnnotationProcessorOptionsFromAndroidVariant(variantData: Any?): Map<String, String>? {
+        if (variantData !is BaseVariantData<*>) {
+            throw IllegalArgumentException("BaseVariantData instance expected")
         }
-        else if (localDep.metaClass.getMetaMethod("jarFile") != null) {
-          // android tools < 2.2
-          jarToLibraryArtifactMap[localDep.jarFile] = bundle
+
+        val compileOptions = variantData("getVariantConfiguration")("getJavaCompileOptions") ?: return null
+
+        @Suppress("UNCHECKED_CAST")
+        return compileOptions("getAnnotationProcessorOptions")("getArguments") as? Map<String, String>
+    }
+
+    fun getVariantDataManager(plugin: BasePlugin): VariantManager {
+        return plugin("getVariantManager") as VariantManager
+    }
+
+
+    fun getJavaSources(variantData: BaseVariantData<*>): List<File> {
+        val result = LinkedHashSet<File>()
+
+        // user sources
+        for (provider in variantData.variantConfiguration.sortedSourceProviders) {
+            result.addAll((provider as AndroidSourceSet).java.srcDirs)
         }
-      }
+
+        // generated sources
+        val javaSources = variantData("getJavaSources")
+        if (javaSources is Array<*>) {
+            result += javaSources.filterIsInstance<File>()
+        } else if (javaSources is List<*>) {
+            val fileTrees = javaSources.filterIsInstance<ConfigurableFileTree>()
+            result += fileTrees.map { it.dir }
+        } else {
+            if (variantData.scope.generateRClassTask != null) {
+                result += variantData.scope.rClassSourceOutputDir
+            }
+
+            if (variantData.scope.generateBuildConfigTask != null) {
+                result += variantData.scope.buildConfigSourceOutputDir
+            }
+
+            if (variantData.scope.aidlCompileTask != null) {
+                result += variantData.scope.aidlSourceOutputDir
+            }
+
+            if (variantData.scope.globalScope.extension.dataBinding.isEnabled) {
+                result += variantData.scope.classOutputForDataBinding
+            }
+
+            if (!variantData.variantConfiguration.renderscriptNdkModeEnabled && variantData.scope.renderscriptCompileTask != null) {
+                result += variantData.scope.renderscriptSourceOutputDir
+            }
+        }
+
+        val extraSources = variantData("getExtraGeneratedSourceFolders") as? List<*>
+        if (extraSources != null) {
+            result += extraSources.filterIsInstance<File>()
+        }
+
+        return result.toList()
     }
 
-    return jarToLibraryArtifactMap
-  }
+    fun getJarToAarMapping(variantData: BaseVariantData<*>): Map<File, File> {
+        val jarToLibraryArtifactMap = hashMapOf<File, File>()
 
-  private static def getLibraryArtifactFile(Object lib) {
-    if (lib.class.name == "com.android.builder.dependency.level2.AndroidDependency") {
-      // android tools >= 2.3
-      return lib.artifactFile
-    } else {
-      // android tools <= 2.2
-      return lib.bundle
+        val libraries = getVariantLibraryDependencies(variantData) ?: return jarToLibraryArtifactMap
+
+        for (lib in libraries) {
+            lib ?: continue
+            val bundle = getLibraryArtifactFile(lib) ?: continue
+            val libJarFile = lib("getJarFile") as? File ?: continue
+
+            jarToLibraryArtifactMap[libJarFile] = bundle
+
+            @Suppress("UNCHECKED_CAST")
+            val localJarsForLib = lib("getLocalJars") as? List<*> ?: emptyList<Any>()
+
+            // local dependencies are detected as changed by gradle, because they are seem to be
+            // rewritten every time when bundle changes
+            // when local dep will actually change, record for bundle will be removed from registry
+            for (localDep in localJarsForLib) {
+                if (localDep is File) {
+                    // android tools 2.2
+                    jarToLibraryArtifactMap[localDep] = bundle
+                } else {
+                    // android tools < 2.2
+                    val jarFile = localDep("getJarFile") as? File ?: continue
+                    jarToLibraryArtifactMap[jarFile] = bundle
+                }
+            }
+        }
+
+        return jarToLibraryArtifactMap
     }
-  }
 
-  @Nullable
-  private static Iterable<Object> getVariantLibraryDependencies(BaseVariantData variantData) {
-    def variantDependency = variantData.variantDependency
-
-    if (variantDependency.metaClass.getMetaMethod("getAndroidDependencies") != null) {
-      // android tools < 2.2
-      return variantDependency.getAndroidDependencies() as Iterable<Object>
+    private fun getLibraryArtifactFile(lib: Any): File? {
+        return if (lib.javaClass.name == "com.android.builder.dependency.level2.AndroidDependency") {
+            // android tools >= 2.3
+            lib("getArtifactFile") as? File
+        } else {
+            // android tools <= 2.2
+            lib("getBundle") as? File
+        }
     }
 
-    def getCompileDependencies = variantDependency.metaClass.getMetaMethod("getCompileDependencies")
-    if (getCompileDependencies != null) {
-      def compileDependencies = variantDependency.getCompileDependencies()
-      if (compileDependencies.metaClass.getMetaMethod("getDirectAndroidDependencies") != null) {
-        return compileDependencies.getDirectAndroidDependencies() // android >= 2.3
-      } else if (compileDependencies.metaClass.getMetaMethod("getAndroidDependencies")) {
-        return compileDependencies.getAndroidDependencies() // android 2.2
-      }
+    private fun getVariantLibraryDependencies(variantData: BaseVariantData<*>): Iterable<*>? {
+        val variantDependency = variantData.variantDependency
+
+        variantDependency("getAndroidDependencies")?.let {
+            // android tools < 2.2
+            return it as Iterable<*>
+        }
+
+        val compileDependencies = variantDependency("getCompileDependencies") ?: return null
+        val result = compileDependencies("getDirectAndroidDependencies") // android >= 2.3
+                ?: compileDependencies("getAndroidDependencies") // android 2.2
+
+        return result as? Iterable<*>
+    }
+}
+
+private operator fun Any?.invoke(methodName: String): Any? {
+    if (this == null) {
+        return null
     }
 
-    return null
-  }
+    fun Array<Method>.findMethod() =
+        singleOrNull { it.name == methodName && it.parameterCount == 0 && !Modifier.isStatic(it.modifiers) }
+
+    val clazz = this::class.java
+    val methodToInvoke = clazz.declaredMethods.findMethod() ?: clazz.methods.findMethod() ?: return null
+    val oldIsAccessible = methodToInvoke.isAccessible
+
+    try {
+        methodToInvoke.isAccessible = true
+        return methodToInvoke.invoke(this)
+    } catch (e: InvocationTargetException) {
+        throw e.targetException
+    } catch (e: Throwable) {
+        throw RuntimeException("Can't invoke method '$methodName()' on $this", e)
+    } finally {
+        methodToInvoke.isAccessible = oldIsAccessible
+    }
+}
+
+private operator fun Any?.get(name: String): Any? {
+    if (this == null) {
+        return null
+    }
+
+    this.invoke("get" + name.capitalize())?.let { return it }
+
+    fun Array<Field>.findField() = singleOrNull { it.name == name && !Modifier.isStatic(it.modifiers) }
+
+    val clazz = this::class.java
+    val fieldToInvoke = clazz.declaredFields.findField() ?: clazz.fields.findField() ?: return null
+    val oldIsAccessible = fieldToInvoke.isAccessible
+
+    try {
+        fieldToInvoke.isAccessible = true
+        return fieldToInvoke.get(this)
+    } catch (e: InvocationTargetException) {
+        throw e.targetException
+    } catch (e: Throwable) {
+        throw RuntimeException("Couldn't get value of field '$name' in $this", e)
+    } finally {
+        fieldToInvoke.isAccessible = oldIsAccessible
+    }
 }

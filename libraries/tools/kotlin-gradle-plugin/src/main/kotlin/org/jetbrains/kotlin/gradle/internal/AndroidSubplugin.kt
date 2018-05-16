@@ -128,7 +128,9 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         addVariant(mainSourceSet)
 
-        val flavorSourceSets = AndroidGradleWrapper.getProductFlavorsSourceSets(androidExtension).filterNotNull()
+        val flavorSourceSets = androidExtension.productFlavors
+            .mapNotNull { androidExtension.sourceSets.findByName(it.name) }
+
         for (sourceSet in flavorSourceSets) {
             addVariant(sourceSet)
         }
