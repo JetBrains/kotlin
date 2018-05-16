@@ -16,40 +16,40 @@
 
 package kotlin.collections
 
-class ArrayList<E> private constructor(
+actual class ArrayList<E> private constructor(
         private var array: Array<E>,
         private var offset: Int,
         private var length: Int,
         private val backing: ArrayList<E>?
 ) : MutableList<E>, RandomAccess, AbstractMutableCollection<E>() {
 
-    constructor() : this(10)
+    actual constructor() : this(10)
 
-    constructor(initialCapacity: Int) : this(
+    actual constructor(initialCapacity: Int) : this(
             arrayOfUninitializedElements(initialCapacity), 0, 0, null)
 
-    constructor(c: Collection<E>) : this(c.size) {
-        addAll(c)
+    actual constructor(elements: Collection<E>) : this(elements.size) {
+        addAll(elements)
     }
 
-    override val size : Int
+    override actual val size : Int
         get() = length
 
-    override fun isEmpty(): Boolean = length == 0
+    override actual fun isEmpty(): Boolean = length == 0
 
-    override fun get(index: Int): E {
+    override actual fun get(index: Int): E {
         checkIndex(index)
         return array[offset + index]
     }
 
-    override fun set(index: Int, element: E): E {
+    override actual operator fun set(index: Int, element: E): E {
         checkIndex(index)
         val old = array[offset + index]
         array[offset + index] = element
         return old
     }
 
-    override fun contains(element: E): Boolean {
+    override actual fun contains(element: E): Boolean {
         var i = 0
         while (i < length) {
             if (array[offset + i] == element) return true
@@ -58,7 +58,7 @@ class ArrayList<E> private constructor(
         return false
     }
 
-    override fun containsAll(elements: Collection<E>): Boolean {
+    override actual fun containsAll(elements: Collection<E>): Boolean {
         val it = elements.iterator()
         while (it.hasNext()) {
             if (!contains(it.next()))return false
@@ -66,7 +66,7 @@ class ArrayList<E> private constructor(
         return true
     }
 
-    override fun indexOf(element: E): Int {
+    override actual fun indexOf(element: E): Int {
         var i = 0
         while (i < length) {
             if (array[offset + i] == element) return i
@@ -75,7 +75,7 @@ class ArrayList<E> private constructor(
         return -1
     }
 
-    override fun lastIndexOf(element: E): Int {
+    override actual fun lastIndexOf(element: E): Int {
         var i = length - 1
         while (i >= 0) {
             if (array[offset + i] == element) return i
@@ -84,78 +84,78 @@ class ArrayList<E> private constructor(
         return -1
     }
 
-    override fun iterator(): MutableIterator<E> = Itr(this, 0)
-    override fun listIterator(): MutableListIterator<E> = Itr(this, 0)
+    override actual fun iterator(): MutableIterator<E> = Itr(this, 0)
+    override actual fun listIterator(): MutableListIterator<E> = Itr(this, 0)
 
-    override fun listIterator(index: Int): MutableListIterator<E> {
+    override actual fun listIterator(index: Int): MutableListIterator<E> {
         checkInsertIndex(index)
         return Itr(this, index)
     }
 
-    override fun add(element: E): Boolean {
+    override actual fun add(element: E): Boolean {
         addAtInternal(offset + length, element)
         return true
     }
 
-    override fun add(index: Int, element: E) {
+    override actual fun add(index: Int, element: E) {
         checkInsertIndex(index)
         addAtInternal(offset + index, element)
     }
 
-    override fun addAll(elements: Collection<E>): Boolean {
+    override actual fun addAll(elements: Collection<E>): Boolean {
         val n = elements.size
         addAllInternal(offset + length, elements, n)
         return n > 0
     }
 
-    override fun addAll(index: Int, elements: Collection<E>): Boolean {
+    override actual fun addAll(index: Int, elements: Collection<E>): Boolean {
         checkInsertIndex(index)
         val n = elements.size
         addAllInternal(offset + index, elements, n)
         return n > 0
     }
 
-    override fun clear() {
+    override actual fun clear() {
         removeRangeInternal(offset, length)
     }
 
-    override fun removeAt(index: Int): E {
+    override actual fun removeAt(index: Int): E {
         checkIndex(index)
         return removeAtInternal(offset + index)
     }
 
-    override fun remove(element: E): Boolean {
+    override actual fun remove(element: E): Boolean {
         val i = indexOf(element)
         if (i >= 0) removeAt(i)
         return i >= 0
     }
 
-    override fun removeAll(elements: Collection<E>): Boolean {
+    override actual fun removeAll(elements: Collection<E>): Boolean {
         return retainOrRemoveAllInternal(offset, length, elements, false) > 0
     }
 
-    override fun retainAll(elements: Collection<E>): Boolean {
+    override actual fun retainAll(elements: Collection<E>): Boolean {
         return retainOrRemoveAllInternal(offset, length, elements, true) > 0
     }
 
-    override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
+    override actual fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
         checkInsertIndex(fromIndex)
         checkInsertIndexFrom(toIndex, fromIndex)
         return ArrayList(array, offset + fromIndex, toIndex - fromIndex, this)
     }
 
-    fun trimToSize() {
+    actual fun trimToSize() {
         if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
         if (length < array.size)
             array = array.copyOfUninitializedElements(length)
     }
 
-    fun ensureCapacity(capacity: Int) {
+    final actual fun ensureCapacity(minCapacity: Int) {
         if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
-        if (capacity > array.size) {
+        if (minCapacity > array.size) {
             var newSize = array.size * 3 / 2
-            if (capacity > newSize)
-                newSize = capacity
+            if (minCapacity > newSize)
+                newSize = minCapacity
             array = array.copyOfUninitializedElements(newSize)
         }
     }

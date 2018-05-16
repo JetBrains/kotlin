@@ -24,7 +24,7 @@ public fun<T> print(message: T) {
     print(message.toString())
 } */
 
-public fun print(message: Any?) {
+public actual fun print(message: Any?) {
     print(message.toString())
 }
 
@@ -63,7 +63,7 @@ public fun print(message: Boolean) {
 @SymbolName("Kotlin_io_Console_println")
 external public fun println(message: String)
 
-public fun println(message: Any?) {
+public actual fun println(message: Any?) {
     println(message.toString())
 }
 
@@ -104,7 +104,7 @@ public fun<T> println(message: T) {
 } */
 
 @SymbolName("Kotlin_io_Console_println0")
-external public fun println()
+external public actual fun println()
 
 @SymbolName("Kotlin_io_Console_readLine")
 external public fun readLine(): String?

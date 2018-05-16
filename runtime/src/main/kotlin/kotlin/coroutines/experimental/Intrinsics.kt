@@ -21,32 +21,6 @@ import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.coroutines.experimental.processBareContinuationResume
 import konan.internal.*
 
-/**
- * Obtains the current continuation instance inside suspend functions and either suspend
- * currently running coroutine or return result immediately without suspension.
- *
- * If the [block] returns the special [COROUTINE_SUSPENDED] value, it means that suspend function did suspend the execution and will
- * not return any result immediately. In this case, the [Continuation] provided to the [block] shall be invoked at some moment in the
- * future when the result becomes available to resume the computation.
- *
- * Otherwise, the return value of the [block] must have a type assignable to [T] and represents the result of this suspend function.
- * It means that the execution was not suspended and the [Continuation] provided to the [block] shall not be invoked.
- * As the result type of the [block] is declared as `Any?` and cannot be correctly type-checked,
- * its proper return type remains on the conscience of the suspend function's author.
- *
- * Note that it is not recommended to call either [Continuation.resume] nor [Continuation.resumeWithException] functions synchronously
- * in the same stackframe where suspension function is run. Use [suspendCoroutine] as a safer way to obtain current
- * continuation instance.
- */
-@kotlin.internal.InlineOnly
-public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
-        returnIfSuspended<T>(block(normalizeContinuation<T>(getContinuation<T>())))
-
-/**
- * This value is used as a return value of [suspendCoroutineOrReturn] `block` argument to state that
- * the execution was suspended and will not return any result immediately.
- */
-public val COROUTINE_SUSPENDED: Any = Any()
 
 /**
  * Creates a coroutine without receiver and with result type [T].
@@ -58,7 +32,7 @@ public val COROUTINE_SUSPENDED: Any = Any()
  * This function is _unchecked_. Repeated invocation of any resume function on the resulting continuation corrupts the
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
  */
-public fun <T> (suspend () -> T).createCoroutineUnchecked(
+public actual fun <T> (suspend () -> T).createCoroutineUnchecked(
         completion: Continuation<T>
 ): Continuation<Unit> =
         if (this !is CoroutineImpl)
@@ -78,7 +52,7 @@ public fun <T> (suspend () -> T).createCoroutineUnchecked(
  * This function is _unchecked_. Repeated invocation of any resume function on the resulting continuation corrupts the
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
  */
-public fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
+public actual fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
         receiver: R,
         completion: Continuation<T>
 ): Continuation<Unit> =
@@ -122,7 +96,7 @@ private /*inline*/ fun <T> buildContinuationByInvokeCall(
  */
 @Suppress("UNCHECKED_CAST")
 @kotlin.internal.InlineOnly
-public inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
+public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
         completion: Continuation<T>
 ): Any? = (this as Function1<Continuation<T>, Any?>).invoke(completion)
 
@@ -135,7 +109,7 @@ public inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
  */
 @Suppress("UNCHECKED_CAST")
 @kotlin.internal.InlineOnly
-public inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
+public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
         receiver: R,
         completion: Continuation<T>
 ): Any? = (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)

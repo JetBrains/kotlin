@@ -51,7 +51,9 @@ internal class LateinitLowering(
     private val kotlinPackageScope              = context.ir.irModule.descriptor.getPackage(KOTLIN_FQ_NAME).memberScope
     private val isInitializedPropertyDescriptor = kotlinPackageScope
             .getContributedVariables(Name.identifier("isInitialized"), NoLookupLocation.FROM_BACKEND).single {
-                it.extensionReceiverParameter.let { it != null && TypeUtils.getClassDescriptor(it.type) == context.reflectionTypes.kProperty0 }
+                it.extensionReceiverParameter.let {
+                    it != null && TypeUtils.getClassDescriptor(it.type) == context.reflectionTypes.kProperty0
+                } && it.isActual
             }
     private val isInitializedGetterDescriptor   = isInitializedPropertyDescriptor.getter!!
 

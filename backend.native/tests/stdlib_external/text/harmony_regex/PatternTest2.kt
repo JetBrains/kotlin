@@ -965,7 +965,7 @@ class PatternTest2 {
         assertEquals(4, result!!.range.start)
 
         // modify text
-        text.length = 0
+        text.setLength(0)
         text.append("Text have been changed.")
 
         assertNull(regex.find(text))

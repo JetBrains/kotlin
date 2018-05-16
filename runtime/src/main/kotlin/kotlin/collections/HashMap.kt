@@ -16,7 +16,7 @@
 
 package kotlin.collections
 
-class HashMap<K, V> private constructor(
+actual class HashMap<K, V> private constructor(
         private var keysArray: Array<K>,
         private var valuesArray: Array<V>?, // allocated only when actually used, always null in pure HashSet
         private var presenceArray: IntArray,
@@ -26,8 +26,9 @@ class HashMap<K, V> private constructor(
 ) : MutableMap<K, V> {
     private var hashShift: Int = computeShift(hashSize)
 
-    override var size: Int = 0
-        private set
+    private var _size: Int = 0
+    override actual val size: Int
+        get() = _size
 
     private var keysView: HashSet<K>? = null
     private var valuesView: HashMapValues<V>? = null
@@ -35,36 +36,39 @@ class HashMap<K, V> private constructor(
 
     // ---------------------------- functions ----------------------------
 
-    constructor() : this(INITIAL_CAPACITY)
+    actual constructor() : this(INITIAL_CAPACITY)
 
-    constructor(capacity: Int) : this(
-            arrayOfUninitializedElements(capacity),
+    actual constructor(initialCapacity: Int) : this(
+            arrayOfUninitializedElements(initialCapacity),
             null,
-            IntArray(capacity),
-            IntArray(computeHashSize(capacity)),
+            IntArray(initialCapacity),
+            IntArray(computeHashSize(initialCapacity)),
             INITIAL_MAX_PROBE_DISTANCE,
             0)
 
-    constructor(m: Map<out K, V>) : this(m.size) {
-        putAll(m)
+    actual constructor(original: Map<out K, V>) : this(original.size) {
+        putAll(original)
     }
 
-    override fun isEmpty(): Boolean = size == 0
-    override fun containsKey(key: K): Boolean = findKey(key) >= 0
-    override fun containsValue(value: V): Boolean = findValue(value) >= 0
+    // This implementation doesn't use a loadFactor, this constructor is used for compatibility with common stdlib
+    actual constructor(initialCapacity: Int, loadFactor: Float) : this(initialCapacity)
+
+    override actual fun isEmpty(): Boolean = _size == 0
+    override actual fun containsKey(key: K): Boolean = findKey(key) >= 0
+    override actual fun containsValue(value: V): Boolean = findValue(value) >= 0
 
 
     operator fun set(key: K, value: V): Unit {
         put(key, value)
     }
 
-    override operator fun get(key: K): V? {
+    override actual operator fun get(key: K): V? {
         val index = findKey(key)
         if (index < 0) return null
         return valuesArray!![index]
     }
 
-    override fun put(key: K, value: V): V? {
+    override actual fun put(key: K, value: V): V? {
         val index = addKey(key)
         val valuesArray = allocateValuesArray()
         if (index < 0) {
@@ -77,11 +81,11 @@ class HashMap<K, V> private constructor(
         }
     }
 
-    override fun putAll(from: Map<out K, V>) {
+    override actual fun putAll(from: Map<out K, V>) {
         putAllEntries(from.entries)
     }
 
-    override fun remove(key: K): V? {
+    override actual fun remove(key: K): V? {
         val index = removeKey(key)
         if (index < 0) return null
         val valuesArray = valuesArray!!
@@ -90,7 +94,7 @@ class HashMap<K, V> private constructor(
         return oldValue
     }
 
-    override fun clear() {
+    override actual fun clear() {
         // O(length) implementation for hashArray cleanup
         for (i in 0..length - 1) {
             val hash = presenceArray[i]
@@ -101,11 +105,11 @@ class HashMap<K, V> private constructor(
         }
         keysArray.resetRange(0, length)
         valuesArray?.resetRange(0, length)
-        size = 0
+        _size = 0
         length = 0
     }
 
-    override val keys: MutableSet<K> get() {
+    override actual val keys: MutableSet<K> get() {
         val cur = keysView
         return if (cur == null) {
             val new = HashSet(this)
@@ -114,7 +118,7 @@ class HashMap<K, V> private constructor(
         } else cur
     }
 
-    override val values: MutableCollection<V> get() {
+    override actual val values: MutableCollection<V> get() {
         val cur = valuesView
         return if (cur == null) {
             val new = HashMapValues(this)
@@ -123,7 +127,7 @@ class HashMap<K, V> private constructor(
         } else cur
     }
 
-    override val entries: MutableSet<MutableMap.MutableEntry<K, V>> get() {
+    override actual val entries: MutableSet<MutableMap.MutableEntry<K, V>> get() {
         val cur = entriesView
         return if (cur == null) {
             val new = HashMapEntrySet(this)
@@ -148,7 +152,7 @@ class HashMap<K, V> private constructor(
     }
 
     override fun toString(): String {
-        val sb = StringBuilder(2 + size * 3)
+        val sb = StringBuilder(2 + _size * 3)
         sb.append("{")
         var i = 0
         val it = entriesIterator()
@@ -179,7 +183,7 @@ class HashMap<K, V> private constructor(
             presenceArray = presenceArray.copyOfUninitializedElements(newSize)
             val newHashSize = computeHashSize(newSize)
             if (newHashSize > hashSize) rehash(newHashSize)
-        } else if (length + capacity - size > this.capacity) {
+        } else if (length + capacity - _size > this.capacity) {
             rehash(hashSize)
         }
     }
@@ -213,7 +217,7 @@ class HashMap<K, V> private constructor(
     }
 
     private fun rehash(newHashSize: Int) {
-        if (length > size) compact()
+        if (length > _size) compact()
         if (newHashSize != hashSize) {
             hashArray = IntArray(newHashSize)
             hashShift = computeShift(newHashSize)
@@ -282,7 +286,7 @@ class HashMap<K, V> private constructor(
                     keysArray[putIndex] = key
                     presenceArray[putIndex] = hash
                     hashArray[hash] = putIndex + 1
-                    size++
+                    _size++
                     if (probeDistance > maxProbeDistance) maxProbeDistance = probeDistance
                     return putIndex
                 }
@@ -309,7 +313,7 @@ class HashMap<K, V> private constructor(
         keysArray.resetAt(index)
         removeHashAt(presenceArray[index])
         presenceArray[index] = TOMBSTONE
-        size--
+        _size--
     }
 
     private fun removeHashAt(removedHash: Int) {
@@ -386,7 +390,7 @@ class HashMap<K, V> private constructor(
         }
     }
 
-    private fun contentEquals(other: Map<*, *>): Boolean = size == other.size && containsAllEntries(other.entries)
+    private fun contentEquals(other: Map<*, *>): Boolean = _size == other.size && containsAllEntries(other.entries)
 
     internal fun containsAllEntries(m: Collection<Map.Entry<*, *>>): Boolean {
         val it = m.iterator()
@@ -702,4 +706,4 @@ internal class HashMapEntrySet<K, V> internal constructor(
 }
 
 // This hash map keeps insertion order.
-typealias LinkedHashMap<K, V> = HashMap<K, V>
+actual typealias LinkedHashMap<K, V> = HashMap<K, V>

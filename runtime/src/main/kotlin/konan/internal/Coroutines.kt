@@ -27,59 +27,6 @@ internal external fun <T> getContinuation(): Continuation<T>
 @PublishedApi
 internal external suspend fun <T> returnIfSuspended(@Suppress("UNUSED_PARAMETER") argument: Any?): T
 
-// Single-threaded continuation.
-class SafeContinuation<in T>
-constructor(
-        private val delegate: Continuation<T>,
-        initialResult: Any?
-) : Continuation<T> {
-
-    constructor(delegate: Continuation<T>) : this(delegate, UNDECIDED)
-
-    public override val context: CoroutineContext
-        get() = delegate.context
-
-    private var result: Any? = initialResult
-
-    companion object {
-        private val UNDECIDED: Any? = Any()
-        private val RESUMED: Any? = Any()
-    }
-
-    private class Fail(val exception: Throwable)
-
-    override fun resume(value: T) {
-        when {
-            result === UNDECIDED -> result = value
-            result === COROUTINE_SUSPENDED -> {
-                result = RESUMED
-                delegate.resume(value)
-            }
-            else -> throw IllegalStateException("Already resumed")
-        }
-    }
-
-    override fun resumeWithException(exception: Throwable) {
-        when  {
-            result === UNDECIDED -> result = Fail(exception)
-            result === COROUTINE_SUSPENDED -> {
-                result = RESUMED
-                delegate.resumeWithException(exception)
-            }
-            else -> throw IllegalStateException("Already resumed")
-        }
-    }
-
-    fun getResult(): Any? {
-        if (this.result === UNDECIDED) this.result = COROUTINE_SUSPENDED
-        val result = this.result
-        when {
-            result === RESUMED -> return COROUTINE_SUSPENDED // already called continuation, indicate COROUTINE_SUSPENDED upstream
-            result is Fail -> throw result.exception
-            else -> return result // either COROUTINE_SUSPENDED or data
-        }
-    }
-}
 
 @ExportForCompiler
 internal fun <T> interceptContinuationIfNeeded(

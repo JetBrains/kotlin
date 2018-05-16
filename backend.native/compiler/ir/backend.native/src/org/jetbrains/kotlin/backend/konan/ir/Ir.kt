@@ -219,8 +219,20 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val getProgressionLast = context.getInternalFunctions("getProgressionLast")
             .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
 
-    val arrayContentToString = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentToString") })
-    val arrayContentHashCode = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentHashCode") })
+    val arrayContentToString = arrayTypes.associateBy({ it }, { findArrayExtension(it, "contentToString") })
+    val arrayContentHashCode = arrayTypes.associateBy({ it }, { findArrayExtension(it, "contentHashCode") })
+
+    fun findArrayExtension(type: KotlinType, name: String): IrSimpleFunctionSymbol {
+        val descriptor = builtInsPackage("kotlin", "collections")
+                .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
+                .singleOrNull {
+                    it.valueParameters.isEmpty()
+                            && (it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor as? ClassDescriptor)?.defaultType == type
+                            && it.isActual
+                }
+                ?: throw Error(type.toString())
+        return symbolTable.referenceSimpleFunction(descriptor)
+    }
 
     override val copyRangeTo = arrays.map { symbol ->
         val packageViewDescriptor = builtIns.builtInsModule.getPackage(KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME)

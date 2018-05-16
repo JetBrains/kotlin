@@ -532,7 +532,7 @@ internal class Lexer(val patternString: String, flags: Int) {
                 try {
                     val minParsed = sb.toString().toInt()
                     min = if (minParsed >= 0) minParsed else throw PatternSyntaxException()
-                    sb.length = 0
+                    sb.setLength(0)
                 } catch (nfe: NumberFormatException) {
                     throw PatternSyntaxException()
                 }

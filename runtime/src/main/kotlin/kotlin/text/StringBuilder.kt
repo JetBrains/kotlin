@@ -72,57 +72,46 @@ private external fun insertString(array: CharArray, start: Int, value: String): 
 private external fun insertInt(array: CharArray, start: Int, value: Int): Int
 
 /**
- * Builds new string by populating newly created [StringBuilder] using provided [builderAction]
- * and then converting it to [String].
- */
-@kotlin.internal.InlineOnly
-public inline fun buildString(builderAction: StringBuilder.() -> Unit): String =
-        StringBuilder().apply(builderAction).toString()
-
-/**
- * Builds new string by populating newly created [StringBuilder] initialized with the given [capacity]
- * using provided [builderAction] and then converting it to [String].
- */
-@SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
-public inline fun buildString(capacity: Int, builderAction: StringBuilder.() -> Unit): String =
-        StringBuilder(capacity).apply(builderAction).toString()
-
-/**
  * Sets the character at the specified [index] to the specified [value].
  */
 @kotlin.internal.InlineOnly
 public inline operator fun StringBuilder.set(index: Int, value: Char): Unit = this.setCharAt(index, value)
 
-class StringBuilder private constructor (
+actual class StringBuilder private constructor (
         private var array: CharArray
 ) : CharSequence, Appendable {
-    constructor() : this(10)
+    actual constructor() : this(10)
 
-    constructor(capacity: Int) : this(CharArray(capacity))
+    actual constructor(capacity: Int) : this(CharArray(capacity))
 
     constructor(string: String) : this(string.toCharArray()) {
-        length = array.size
+        _length = array.size
     }
 
-    constructor(sequence: CharSequence): this(sequence.length) {
-        append(sequence)
+    actual constructor(content: CharSequence): this(content.length) {
+        append(content)
     }
 
-    override var length: Int = 0
+    private var _length: Int = 0
         set(capacity) {
             ensureCapacity(capacity)
             field = capacity
         }
+    actual override val length: Int
+        get() = _length
 
-    override fun get(index: Int): Char {
+    actual override fun get(index: Int): Char {
         checkIndex(index)
         return array[index]
     }
 
-    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = substring(startIndex, endIndex)
+    fun setLength(l: Int) {
+        _length = l
+    }
 
-    override fun toString(): String = fromCharArray(array, 0, length)
+    actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = substring(startIndex, endIndex)
+
+    override fun toString(): String = fromCharArray(array, 0, _length)
 
     fun substring(startIndex: Int, endIndex: Int): String {
         checkInsertIndex(startIndex)
@@ -131,8 +120,8 @@ class StringBuilder private constructor (
     }
 
     fun trimToSize() {
-        if (length < array.size)
-            array = array.copyOf(length)
+        if (_length < array.size)
+            array = array.copyOf(_length)
     }
 
     fun ensureCapacity(capacity: Int) {
@@ -145,22 +134,22 @@ class StringBuilder private constructor (
     }
 
     // Based on Apache Harmony implementation.
-    fun reverse(): StringBuilder {
+    actual fun reverse(): StringBuilder {
         if (this.length < 2) {
             return this
         }
-        var end = length - 1
+        var end = _length - 1
         var front = 0
         var frontLeadingChar = array[0]
         var endTrailingChar = array[end]
         var allowFrontSurrogate = true
         var allowEndSurrogate = true
-        while (front < length / 2) {
+        while (front < _length / 2) {
 
             var frontTrailingChar = array[front + 1]
             var endLeadingChar = array[end - 1]
             var surrogateAtFront = allowFrontSurrogate && frontTrailingChar.isLowSurrogate() && frontLeadingChar.isHighSurrogate()
-            if (surrogateAtFront && length < 3) {
+            if (surrogateAtFront && _length < 3) {
                 return this
             }
             var surrogateAtEnd = allowEndSurrogate && endTrailingChar.isLowSurrogate() && endLeadingChar.isHighSurrogate()
@@ -205,7 +194,7 @@ class StringBuilder private constructor (
             front++
             end--
         }
-        if (length % 2 == 1 && (!allowEndSurrogate || !allowFrontSurrogate)) {
+        if (_length % 2 == 1 && (!allowEndSurrogate || !allowFrontSurrogate)) {
             array[end] = if (allowFrontSurrogate) endTrailingChar else frontLeadingChar
         }
         return this
@@ -219,7 +208,7 @@ class StringBuilder private constructor (
             array[i] = array[i - 1]
         }
         array[index] = c
-        length++
+        _length++
         return this
     }
 
@@ -237,14 +226,14 @@ class StringBuilder private constructor (
         val extraLength = end - start
         ensureExtraCapacity(extraLength)
 
-        array.copyRangeTo(array, index, length, index + extraLength)
+        array.copyRangeTo(array, index, _length, index + extraLength)
         var from = start
         var to = index
         while (from < end) {
             array[to++] = toInsert[from++]
         }
 
-        length += extraLength
+        _length += extraLength
         return this
     }
 
@@ -252,18 +241,18 @@ class StringBuilder private constructor (
         checkInsertIndex(index)
         ensureExtraCapacity(chars.size)
 
-        array.copyRangeTo(array, index, length, index + chars.size)
+        array.copyRangeTo(array, index, _length, index + chars.size)
         chars.copyRangeTo(array, 0, chars.size, index)
 
-        length += chars.size
+        _length += chars.size
         return this
     }
 
     fun insert(index: Int, string: String): StringBuilder {
         checkInsertIndex(index)
         ensureExtraCapacity(string.length)
-        array.copyRangeTo(array, index, length, index + string.length)
-        length += insertString(array, index, string)
+        array.copyRangeTo(array, index, _length, index + string.length)
+        _length += insertString(array, index, string)
         return this
     }
 
@@ -279,39 +268,39 @@ class StringBuilder private constructor (
 
 
     // Of Appenable.
-    override fun append(c: Char) : StringBuilder {
+    actual override fun append(c: Char) : StringBuilder {
         ensureExtraCapacity(1)
-        array[length++] = c
+        array[_length++] = c
         return this
     }
 
-    override fun append(csq: CharSequence?): StringBuilder {
+    actual override fun append(csq: CharSequence?): StringBuilder {
         // Kotlin/JVM processes null as if the argument was "null" char sequence.
         val toAppend = csq ?: "null"
         return append(toAppend, 0, toAppend.length)
     }
 
-    override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder {
+    actual override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder {
         // Kotlin/JVM processes null as if the argument was "null" char sequence.
         val toAppend = csq ?: "null"
         if (start < 0 || end < start || start > toAppend.length) throw IndexOutOfBoundsException()
         ensureExtraCapacity(end - start)
         var index = start
         while (index < end)
-            array[length++] = toAppend[index++]
+            array[_length++] = toAppend[index++]
         return this
     }
 
     fun append(it: CharArray): StringBuilder {
         ensureExtraCapacity(it.size)
-        it.copyRangeTo(array, 0, it.size, length)
-        length += it.size
+        it.copyRangeTo(array, 0, it.size, _length)
+        _length += it.size
         return this
     }
 
     fun append(it: String): StringBuilder {
         ensureExtraCapacity(it.length)
-        length += insertString(array, length, it)
+        _length += insertString(array, _length, it)
         return this
     }
 
@@ -321,18 +310,18 @@ class StringBuilder private constructor (
     fun append(it: Short) = append(it.toString())
     fun append(it: Int): StringBuilder {
         ensureExtraCapacity(11)
-        length += insertInt(array, length, it)
+        _length += insertInt(array, _length, it)
         return this
     }
     fun append(it: Long) = append(it.toString())
     fun append(it: Float) = append(it.toString())
     fun append(it: Double) = append(it.toString())
-    fun append(it: Any?) = append(it.toString())
+    actual fun append(obj: Any?): StringBuilder = append(obj.toString())
 
     fun deleteCharAt(index: Int) {
         checkIndex(index)
-        array.copyRangeTo(array, index + 1, length, index)
-        --length
+        array.copyRangeTo(array, index + 1, _length, index)
+        --_length
     }
 
     fun setCharAt(index: Int, value: Char) {
@@ -343,18 +332,18 @@ class StringBuilder private constructor (
     // ---------------------------- private ----------------------------
 
     private fun ensureExtraCapacity(n: Int) {
-        ensureCapacity(length + n)
+        ensureCapacity(_length + n)
     }
 
     private fun checkIndex(index: Int) {
-        if (index < 0 || index >= length) throw IndexOutOfBoundsException()
+        if (index < 0 || index >= _length) throw IndexOutOfBoundsException()
     }
 
     private fun checkInsertIndex(index: Int) {
-        if (index < 0 || index > length) throw IndexOutOfBoundsException()
+        if (index < 0 || index > _length) throw IndexOutOfBoundsException()
     }
 
     private fun checkInsertIndexFrom(index: Int, fromIndex: Int) {
-        if (index < fromIndex || index > length) throw IndexOutOfBoundsException()
+        if (index < fromIndex || index > _length) throw IndexOutOfBoundsException()
     }
 }

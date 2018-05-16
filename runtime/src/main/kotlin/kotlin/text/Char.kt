@@ -60,7 +60,7 @@ external public fun Char.isISOControl(): Boolean
  * Returns `true` if the character is whitespace.
  */
 @SymbolName("Kotlin_Char_isWhitespace")
-external public fun Char.isWhitespace(): Boolean
+external public actual fun Char.isWhitespace(): Boolean
 
 /**
  * Returns `true` if this character is upper case.
@@ -78,28 +78,28 @@ external public fun Char.isLowerCase(): Boolean
  * Converts this character to uppercase.
  */
 @SymbolName("Kotlin_Char_toUpperCase")
-external public fun Char.toUpperCase(): Char
+external public actual fun Char.toUpperCase(): Char
 
 /**
  * Converts this character to lowercase.
  */
 @SymbolName("Kotlin_Char_toLowerCase")
-external public fun Char.toLowerCase(): Char
+external public actual fun Char.toLowerCase(): Char
 
 /**
  * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).
  */
 @SymbolName("Kotlin_Char_isHighSurrogate")
-external public fun Char.isHighSurrogate(): Boolean
+external public actual fun Char.isHighSurrogate(): Boolean
 
 /**
  * Returns `true` if this character is a Unicode low-surrogate code unit (also known as trailing-surrogate code unit).
  */
 @SymbolName("Kotlin_Char_isLowSurrogate")
-external public fun Char.isLowSurrogate(): Boolean
+external public actual fun Char.isLowSurrogate(): Boolean
 
 
-internal fun digitOf(char: Char, radix: Int): Int = digitOfChecked(char, checkRadix(radix))
+internal actual fun digitOf(char: Char, radix: Int): Int = digitOfChecked(char, checkRadix(radix))
 
 @SymbolName("Kotlin_Char_digitOfChecked")
 external internal fun digitOfChecked(char: Char, radix: Int): Int
@@ -117,7 +117,7 @@ external internal fun Char.getType(): Int
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
  */
 @PublishedApi
-internal fun checkRadix(radix: Int): Int {
+internal actual fun checkRadix(radix: Int): Int {
     if(radix !in Char.MIN_RADIX..Char.MAX_RADIX) {
         throw IllegalArgumentException("radix $radix was not in valid range ${Char.MIN_RADIX..Char.MAX_RADIX}")
     }

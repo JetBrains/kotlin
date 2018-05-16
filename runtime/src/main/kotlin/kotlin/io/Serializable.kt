@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin
+package kotlin.io
 
-import kotlin.Comparator
-
-/**
- * Classes which inherit from this interface have a defined total ordering between their instances.
- */
-public interface Comparable<in T> {
-    /**
-     * Compares this object with the specified object for order. Returns zero if this object is equal
-     * to the specified [other] object, a negative number if it's less than [other], or a positive number
-     * if it's greater than [other].
-     */
-    public operator fun compareTo(other: T): Int
-}
-
+// TODO: This interface is a temporary solution for common collections and not used in Native.
+internal actual interface Serializable

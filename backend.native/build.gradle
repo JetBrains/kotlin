@@ -182,6 +182,9 @@ targetList.each { target ->
         args = [*konanArgs,
                 '-output', project(':runtime').file("build/${target}Stdlib"),
                 '-produce', 'library', '-module_name', 'stdlib',
+                '-Xmulti-platform', '-Xuse-experimental=kotlin.Experimental',
+                rootProject.file('libraries/generated'),
+                rootProject.file('libraries'),
                 project(':Interop:Runtime').file('src/main/kotlin'),
                 project(':Interop:Runtime').file('src/native/kotlin'),
                 project(':Interop:JsRuntime').file('src/main/kotlin'),
@@ -190,6 +193,8 @@ targetList.each { target ->
         inputs.dir(project(':Interop:Runtime').file('src/main/kotlin'))
         inputs.dir(project(':Interop:Runtime').file('src/native/kotlin'))
         inputs.dir(project(':Interop:JsRuntime').file('src/main/kotlin'))
+        inputs.dir(rootProject.file('libraries/generated'))
+        inputs.dir(rootProject.file('libraries/kotlin'))
         outputs.dir(project(':runtime').file("build/${target}Stdlib"))
 
         dependsOn ":runtime:${target}Runtime"

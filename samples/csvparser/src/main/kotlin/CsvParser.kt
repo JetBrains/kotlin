@@ -30,7 +30,7 @@ fun parseLine(line: String, separator: Char) : List<String> {
             (ch == '\n') || (ch ==  '\r') -> {}
             (ch == separator) && (quotes % 2 == 0) -> {
                 result.add(builder.toString())
-                builder.length = 0
+                builder.setLength(0)
             }
             else -> builder.append(ch)
         }

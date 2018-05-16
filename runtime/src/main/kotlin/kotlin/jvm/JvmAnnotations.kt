@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package kotlin.collections
+package kotlin.jvm
 
-/**
- * Data class representing a value from a collection or sequence, along with its index in that collection or sequence.
- *
- * @property value the underlying value.
- * @property index the index of the value in the collection or sequence.
- */
-public data class IndexedValue<out T>(public val index: Int, public val value: T)
+// Dummy JVM specific annotations in Kotlin/Native. Used in common stdlib.
+
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
+actual annotation class JvmName(actual val name: String)
+
+@Target(AnnotationTarget.FILE)
+actual annotation class JvmMultifileClass
+
+actual annotation class JvmField
+
+@Target(AnnotationTarget.FIELD)
+actual annotation class Volatile

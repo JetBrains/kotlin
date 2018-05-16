@@ -52,3 +52,9 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
     override fun retainAll(elements: Collection<E>): Boolean
     override fun clear(): Unit
 }
+
+// TODO: Add SingletonSet class
+/**
+ * Returns an immutable set containing only the specified object [element].
+ */
+public fun <T> setOf(element: T): Set<T> = hashSetOf(element)

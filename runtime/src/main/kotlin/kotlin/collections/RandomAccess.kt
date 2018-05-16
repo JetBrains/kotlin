@@ -16,4 +16,5 @@
 
 package kotlin.collections
 
-public interface RandomAccess
+// A marker interface indicating the fast indexed access support
+public actual interface RandomAccess
