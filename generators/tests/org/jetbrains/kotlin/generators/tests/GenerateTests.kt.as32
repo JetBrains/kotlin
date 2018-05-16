@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.android.quickfix.AbstractAndroidQuickFixMultiFileTes
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
-import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.checkers.AbstractJavaAgainstKotlinBinariesCheckerTest
 import org.jetbrains.kotlin.checkers.AbstractJavaAgainstKotlinSourceCheckerTest
 import org.jetbrains.kotlin.checkers.AbstractJsCheckerTest
@@ -1015,12 +1014,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractParcelBytecodeListingTest> {
             model("parcel/codegen")
-        }
-    }
-
-    testGroup("plugins/annotation-collector/test", "plugins/annotation-collector/testData") {
-        testClass<AbstractAnnotationProcessorBoxTest> {
-            model("collectToFile", recursive = false, extension = null)
         }
     }
 

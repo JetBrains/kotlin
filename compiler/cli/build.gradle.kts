@@ -37,13 +37,10 @@ dependencies {
 sourceSets {
     "main" {
         projectDefault()
-        java.srcDirs("../../plugins/annotation-collector/src",
-                     "../builtins-serializer/src",
+        java.srcDirs("../builtins-serializer/src",
                      "../javac-wrapper/src")
     }
-    "test" {
-        java.srcDirs("../../plugins/annotation-collector/test")
-    }
+    "test" { }
 }
 
 testsJar {}

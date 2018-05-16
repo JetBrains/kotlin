@@ -112,7 +112,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
 
         val state = GenerationState.Builder(
             file.project,
-            ClassBuilderFactories.binaries(false),
+            ClassBuilderFactories.BINARIES,
             resolutionFacade.moduleDescriptor,
             bindingContext,
             files,
