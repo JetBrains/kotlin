@@ -7,6 +7,9 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.newSingleThreadContext
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
@@ -14,6 +17,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.CompileService.CallResult
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 import java.io.File
+import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
 interface CompileServiceClientSide : CompileServiceAsync, Client<CompileServiceServerSide> {
@@ -26,7 +30,19 @@ class CompileServiceClientSideImpl(
     val serverHost: String,
     val serverFile: File
 ) : CompileServiceClientSide,
-    Client<CompileServiceServerSide> by object : DefaultAuthorizableClient<CompileServiceServerSide>(serverPort, serverHost) {
+    Client<CompileServiceServerSide> by object : DefaultAuthorizableClient<CompileServiceServerSide>(
+        serverPort,
+        serverHost
+    ) {
+
+        private fun nowMillieconds() = System.currentTimeMillis()
+
+        @Volatile
+        private var lastUsedMilliSeconds: Long = nowMillieconds()
+
+        private fun deltaTime() = nowMillieconds() - lastUsedMilliSeconds
+
+        private fun keepAliveSuccess() = deltaTime() < KEEPALIVE_PERIOD
 
         override suspend fun authorizeOnServer(serverOutputChannel: ByteWriteChannelWrapper): Boolean =
             runWithTimeout {
@@ -38,6 +54,33 @@ class CompileServiceClientSideImpl(
 
         override suspend fun clientHandshake(input: ByteReadChannelWrapper, output: ByteWriteChannelWrapper, log: Logger): Boolean {
             return trySendHandshakeMessage(output, log) && tryAcquireHandshakeMessage(input, log)
+        }
+
+        override suspend fun startKeepAlives() {
+            val keepAliveMessage = Server.KeepAliveMessage<CompileServiceServerSide>()
+            async(newSingleThreadContext("keepAliveThread")) {
+                delay(KEEPALIVE_PERIOD * 4)
+                while (true) {
+                    delay(KEEPALIVE_PERIOD)
+//                    println("[$this] KEEPALIVE_PERIOD")
+                    while (keepAliveSuccess()) {
+//                        println("[$this] remained ${KEEPALIVE_PERIOD - deltaTime()}")
+                        delay(KEEPALIVE_PERIOD - deltaTime())
+                    }
+                    runWithTimeout(timeout = KEEPALIVE_PERIOD / 2) {
+//                        println("[$this] sent keepalive")
+                        val id = sendMessage(keepAliveMessage)
+                        readMessage<Server.KeepAliveAcknowledgement<*>>(id)
+                    } ?: if (!keepAliveSuccess()) readActor.send(StopAllRequests()).also {
+//                        println("[$this] got keepalive")
+                    }
+                }
+            }
+        }
+
+        override suspend fun delayKeepAlives() {
+//            println("[$this] delayKeepAlives")
+            lastUsedMilliSeconds = nowMillieconds()
         }
 
     } {

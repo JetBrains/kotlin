@@ -100,10 +100,15 @@ class CompileServiceServerSideImpl(
 
     override val clients = hashMapOf<Socket, Server.ClientInfo>()
 
-    override suspend fun securityCheck(clientInputChannel: ByteReadChannelWrapper): Boolean =
-        runWithTimeout {
-            getSignatureAndVerify(clientInputChannel, securityData.token, securityData.publicKey)
-        } ?: false
+    object KeepAliveServer : Server<ServerBase> {
+        override val serverSocketWithPort = findCallbackServerSocket()
+        override val clients = hashMapOf<Socket, Server.ClientInfo>()
+
+    }
+
+    override suspend fun securityCheck(clientInputChannel: ByteReadChannelWrapper): Boolean = runWithTimeout {
+        getSignatureAndVerify(clientInputChannel, securityData.token, securityData.publicKey)
+    } ?: false
 
     override suspend fun serverHandshake(input: ByteReadChannelWrapper, output: ByteWriteChannelWrapper, log: Logger): Boolean {
         return tryAcquireHandshakeMessage(input, log) && trySendHandshakeMessage(output, log)
@@ -666,7 +671,7 @@ class CompileServiceServerSideImpl(
         return compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles)
     }
 
-        override suspend fun leaseReplSession(
+    override suspend fun leaseReplSession(
         aliveFlagPath: String?,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
@@ -751,7 +756,9 @@ class CompileServiceServerSideImpl(
         System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
         // TODO UNCOMMENT THIS : this.toRMIServer(daemonOptions, compilerId) // also create RMI server in order to support old clients
-//        this.toRMIServer(daemonOptions, compilerId)
+        this.toRMIServer(daemonOptions, compilerId)
+
+        KeepAliveServer.runServer()
 
         timer.schedule(10) {
             exceptionLoggingTimerThread(info = "initiateElections") {
