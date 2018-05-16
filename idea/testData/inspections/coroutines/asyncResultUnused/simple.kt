@@ -37,3 +37,18 @@ fun falsePositives() {
     val res = async { 13 }
     useIt(async { 7 })
 }
+
+class User
+
+interface DbHandler {
+    fun getUser(id: Long): Deferred<User>
+    fun doStuff(): Deferred<Unit>
+}
+
+fun DbHandler.test() {
+    getUser(42L)
+    val user = getUser(42L).await()
+    doStuff()
+    doStuff().await()
+}
+

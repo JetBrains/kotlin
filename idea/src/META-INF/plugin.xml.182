@@ -2855,8 +2855,8 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.AsyncResultUnusedInspection"
-                     displayName="Result of 'async' is not used"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.DeferredResultUnusedInspection"
+                     displayName="Deferred result is never used"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
