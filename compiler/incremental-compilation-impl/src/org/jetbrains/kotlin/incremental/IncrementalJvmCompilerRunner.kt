@@ -22,7 +22,6 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmSourceRoot
@@ -103,7 +102,6 @@ class IncrementalJvmCompilerRunner(
         private val javaSourceRoots: Set<JvmSourceRoot>,
         cacheVersions: List<CacheVersion>,
         reporter: ICReporter,
-        private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
         private val usePreciseJavaTracking: Boolean,
         private val buildHistoryFile: File,
         localStateDirs: Collection<File>,
@@ -311,28 +309,14 @@ class IncrementalJvmCompilerRunner(
     }
 
     override fun preBuildHook(args: K2JVMCompilerArguments, compilationMode: CompilationMode) {
-        when (compilationMode) {
-            is CompilationMode.Incremental -> {
-                val destinationDir = args.destinationAsFile
-                destinationDir.mkdirs()
-                args.classpathAsList = listOf(destinationDir) + args.classpathAsList
-            }
-            is CompilationMode.Rebuild -> {
-                // there is no point in updating annotation file since all files will be compiled anyway
-                kaptAnnotationsFileUpdater = null
-            }
+        if (compilationMode is CompilationMode.Incremental) {
+            val destinationDir = args.destinationAsFile
+            destinationDir.mkdirs()
+            args.classpathAsList = listOf(destinationDir) + args.classpathAsList
         }
     }
 
-    override fun postCompilationHook(exitCode: ExitCode) {
-        if (exitCode == ExitCode.OK) {
-            // TODO: Is it ok that argument always was an empty list?
-            kaptAnnotationsFileUpdater?.updateAnnotations(emptyList())
-        }
-        else {
-            kaptAnnotationsFileUpdater?.revert()
-        }
-    }
+    override fun postCompilationHook(exitCode: ExitCode) {}
 
     override fun updateCaches(
             services: Services,

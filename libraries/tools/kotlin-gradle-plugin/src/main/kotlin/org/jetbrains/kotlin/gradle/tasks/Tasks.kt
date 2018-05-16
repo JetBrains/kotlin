@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.tasks
@@ -26,8 +15,6 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
-import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
-import org.jetbrains.kotlin.annotation.AnnotationFileUpdaterImpl
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
@@ -231,9 +218,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
         compilerCalled = true
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
-
-
-
     }
 
     @Internal
@@ -283,11 +267,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     @get:Internal
     internal open val sourceRootsContainer = FilteringSourceRootsContainer()
 
-    private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
-
-    @get:Internal
-    val kaptOptions = KaptOptions()
-
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
      *
      * Example: a Java source file with `package com.example.my.package` is located in directory `src/main/java/my/package`.
@@ -315,9 +294,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
     override fun setupPlugins(compilerArgs: K2JVMCompilerArguments) {
         compilerArgs.pluginClasspaths = pluginClasspath.toTypedArray()
-
-        val kaptPluginOptions = getKaptPluginOptions()
-        compilerArgs.pluginOptions = (pluginOptions.arguments + kaptPluginOptions.arguments).toTypedArray()
+        compilerArgs.pluginOptions = pluginOptions.arguments.toTypedArray()
     }
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
@@ -366,7 +343,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                         computedCompilerClasspath,
                         if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
                         taskBuildDirectory,
-                        messageCollector, outputItemCollector, args, kaptAnnotationsFileUpdater,
+                        messageCollector, outputItemCollector, args,
                         usePreciseJavaTracking = usePreciseJavaTracking,
                         localStateDirs = outputDirectories,
                         multiModuleICSettings = multiModuleICSettings
@@ -428,25 +405,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         throwGradleExceptionIfError(exitCode)
     }
-
-    private fun getKaptPluginOptions() =
-            CompilerPluginOptions().apply {
-                kaptOptions.annotationsFile?.let { kaptAnnotationsFile ->
-                    if (incremental) {
-                        kaptAnnotationsFileUpdater = AnnotationFileUpdaterImpl(kaptAnnotationsFile)
-                    }
-
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, FilesSubpluginOption("output", listOf(kaptAnnotationsFile)))
-                }
-
-                if (kaptOptions.generateStubs) {
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, FilesSubpluginOption("stubs", listOf(destinationDir)))
-                }
-
-                if (kaptOptions.supportInheritedAnnotations) {
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, SubpluginOption("inherited", true.toString()))
-                }
-            }
 
     // override setSource to track source directory sets and files (for generated android folders)
     override fun setSource(sources: Any?) {

@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
-import com.android.build.gradle.api.AndroidSourceSet
 import com.android.builder.model.SourceProvider
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil.compareVersionNumbers
@@ -37,7 +36,6 @@ import java.util.*
 import java.util.concurrent.Callable
 import java.util.jar.Manifest
 
-val KOTLIN_AFTER_JAVA_TASK_SUFFIX = "AfterJava"
 val KOTLIN_DSL_NAME = "kotlin"
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
@@ -145,7 +143,6 @@ internal class Kotlin2JvmSourceSetProcessor(
             tasksProvider.createKotlinJVMTask(project, taskName, sourceSet.name)
 
     override fun doTargetSpecificProcessing() {
-        val aptConfiguration = project.createAptConfiguration(sourceSet.name, kotlinPluginVersion)
         kotlinSourceSet.kotlin.source(sourceSet.java)
 
         project.afterEvaluate { project ->
@@ -156,26 +153,11 @@ internal class Kotlin2JvmSourceSetProcessor(
                 val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
                         project, kotlinTask, javaTask as JavaCompile, null, null, sourceSet)
 
-                var kotlinAfterJavaTask: KotlinCompile? = null
-
-                if (!Kapt3GradleSubplugin.isEnabled(project) && aptConfiguration.allDependencies.size > 1) {
-                    javaTask.dependsOn(aptConfiguration.buildDependencies)
-
-                    val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(sourceSetName)
-
-                    val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
-                            aptConfiguration.resolve(), aptOutputDir, aptWorkingDir)
-
-                    kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
-                            sourceSetName, null, subpluginEnvironment, tasksProvider, null)
-                } else {
-                    removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
-                }
+                removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
 
                 // KotlinCompile.source(kotlinDirSet) should be called only after all java roots are added to kotlinDirSet
                 // otherwise some java roots can be ignored
                 kotlinTask.source(kotlinSourceSet.kotlin)
-                kotlinAfterJavaTask?.source(kotlinSourceSet.kotlin)
                 appliedPlugins
                         .flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
                         .forEach { it.source(kotlinSourceSet.kotlin) }
@@ -185,12 +167,12 @@ internal class Kotlin2JvmSourceSetProcessor(
                 var syncOutputTask: SyncOutputTask? = null
 
                 if (!isSeparateClassesDirSupported) {
-                    syncOutputTask = createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, sourceSetName)
+                    syncOutputTask = createSyncOutputTask(project, kotlinTask, javaTask, sourceSetName)
                 }
 
                 if (project.pluginManager.hasPlugin("java-library") && sourceSetName == SourceSet.MAIN_SOURCE_SET_NAME) {
                     val (classesProviderTask, classesDirectory) = when {
-                        isSeparateClassesDirSupported -> (kotlinAfterJavaTask ?: kotlinTask).let { it to it.destinationDir }
+                        isSeparateClassesDirSupported -> kotlinTask.let { it to it.destinationDir }
                         else -> syncOutputTask!!.let { it to it.javaOutputDir }
                     }
 
@@ -421,7 +403,6 @@ internal open class KotlinPlugin(
             Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        project.createKaptExtension()
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
         super.apply(project)
     }
@@ -509,8 +490,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                                            androidExt: BaseExtension,
                                            variantData: V,
                                            javaTask: AbstractCompile,
-                                           kotlinTask: KotlinCompile,
-                                           kotlinAfterJavaTask: KotlinCompile?): Unit
+                                           kotlinTask: KotlinCompile)
 
     protected abstract fun wrapVariantDataForKapt(variantData: V): KaptVariantData<V>
 
@@ -523,15 +503,11 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
             val kotlinSourceSet = kotlinConfigurationTools.kotlinSourceSetProvider.create(sourceSet.name)
             kotlinSourceSet.kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
             sourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
-
-            aptConfigurations.put(sourceSet.name, project.createAptConfiguration(sourceSet.name, kotlinConfigurationTools.kotlinPluginVersion))
         }
 
         val kotlinOptions = KotlinJvmOptionsImpl()
         kotlinOptions.noJdk = true
         ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
-
-        project.createKaptExtension()
 
         project.afterEvaluate { project ->
             if (project != null) {
@@ -585,49 +561,10 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         kotlinTask.destinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
         kotlinTask.description = "Compiles the $variantDataName kotlin."
 
-        val isKapt3Enabled = Kapt3GradleSubplugin.isEnabled(project)
+        removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
 
-        val aptFiles = arrayListOf<File>()
-
-        if (!isKapt3Enabled) {
-            var hasAnyKaptDependency: Boolean = false
-            for (provider in getSourceProviders(variantData)) {
-                val aptConfiguration = aptConfigurations[(provider as AndroidSourceSet).name]
-                // Ignore if there's only an annotation processor wrapper in dependencies (added by default)
-                if (aptConfiguration != null && aptConfiguration.allDependencies.size > 1) {
-                    javaTask.dependsOn(aptConfiguration.buildDependencies)
-                    aptFiles.addAll(aptConfiguration.resolve())
-                    hasAnyKaptDependency = true
-                }
-            }
-
-            if (!hasAnyKaptDependency) {
-                removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
-            }
-        } else {
-            removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
-        }
-
-        var kotlinAfterJavaTask: KotlinCompile? = null
-
-        if (javaTask is JavaCompile && aptFiles.isNotEmpty() && !isKapt3Enabled) {
-            val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(variantDataName)
-
-            addJavaSourceDirectoryToVariantModel(variantData, aptOutputDir)
-
-            val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, variantDataName,
-                    aptFiles.toSet(), aptOutputDir, aptWorkingDir, variantData)
-
-            kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
-                    variantDataName, rootKotlinOptions, subpluginEnvironment, tasksProvider, this)
-        }
-
-        for (task in listOfNotNull(kotlinTask, kotlinAfterJavaTask)) {
-            configureSources(task, variantData)
-        }
-
-        wireKotlinTasks(project, androidPlugin, androidExt, variantData, javaTask,
-                kotlinTask, kotlinAfterJavaTask)
+        configureSources(kotlinTask, variantData)
+        wireKotlinTasks(project, androidPlugin, androidExt, variantData, javaTask, kotlinTask)
 
         val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
                 project, kotlinTask, javaTask, wrapVariantDataForKapt(variantData), this, null)
@@ -680,8 +617,6 @@ internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractComp
         }
     }
     // Also, use kapt1 annotations file for up-to-date check since annotation processing is done with javac
-    kotlinTask.kaptOptions.annotationsFile?.let { javaTask.inputsCompatible.fileCompatible(it) }
-
     javaTask.dependsOn(kotlinTask)
     /*
      * It's important to modify javaTask.classpath only in doFirst,
@@ -698,13 +633,10 @@ internal fun syncOutputTaskName(variantName: String) = "copy${variantName.capita
 
 internal fun createSyncOutputTask(
         project: Project,
-        kotlinTask: KotlinCompile,
+        kotlinCompile: KotlinCompile,
         javaTask: AbstractCompile,
-        kotlinAfterJavaTask: KotlinCompile?,
         variantName: String
 ): SyncOutputTask {
-    // if kotlinAfterJavaTask is not null then kotlinTask compiles stubs, so don't sync them
-    val kotlinCompile = kotlinAfterJavaTask ?: kotlinTask
     val kotlinDir = kotlinCompile.destinationDir
     val javaDir = javaTask.destinationDir
     val taskName = syncOutputTaskName(variantName)
@@ -713,13 +645,11 @@ internal fun createSyncOutputTask(
     syncTask.kotlinOutputDir = kotlinDir
     syncTask.javaOutputDir = javaDir
     syncTask.kotlinTask = kotlinCompile
-    kotlinTask.javaOutputDir = javaDir
-    kotlinAfterJavaTask?.javaOutputDir = javaDir
+    kotlinCompile.javaOutputDir = javaDir
     syncTask.kaptClassesDir = getKaptGeneratedClassesDir(project, variantName)
 
     // copying should be executed after a latter task
-    val previousTask = kotlinAfterJavaTask ?: javaTask
-    previousTask.finalizedByIfNotFailed(syncTask)
+    javaTask.finalizedByIfNotFailed(syncTask)
 
     project.logger.kotlinDebug { "Created task ${syncTask.path} to copy kotlin classes from $kotlinDir to $javaDir" }
 
@@ -734,12 +664,12 @@ private val KOTLIN_ANNOTATION_PROCESSING_FILE_REGEX = "kotlin-annotation-process
 
 private fun removeAnnotationProcessingPluginClasspathEntry(kotlinCompile: KotlinCompile) {
     kotlinCompile.pluginOptions.classpath
-            .map(::File)
-            .filter { it.name.matches(KOTLIN_ANNOTATION_PROCESSING_FILE_REGEX) }
-            .forEach {
-                kotlinCompile.logger.kotlinDebug("Removing plugin classpath dependency $it")
-                kotlinCompile.pluginOptions.removeClasspathEntry(it)
-            }
+        .map(::File)
+        .filter { it.name.matches(KOTLIN_ANNOTATION_PROCESSING_FILE_REGEX) }
+        .forEach {
+            kotlinCompile.logger.kotlinDebug("Removing plugin classpath dependency $it")
+            kotlinCompile.pluginOptions.removeClasspathEntry(it)
+        }
 }
 
 private fun loadSubplugins(project: Project): SubpluginEnvironment {
@@ -845,41 +775,6 @@ internal fun Task.registerSubpluginOptionsAsInputs(subpluginId: String, subplugi
             }
         }
     }
-}
-
-private fun Project.getAptDirsForSourceSet(sourceSetName: String): Pair<File, File> {
-    val aptOutputDir = File(buildDir, "generated/source/kapt")
-    val aptOutputDirForVariant = File(aptOutputDir, sourceSetName)
-
-    val aptWorkingDir = File(buildDir, "tmp/kapt")
-    val aptWorkingDirForVariant = File(aptWorkingDir, sourceSetName)
-
-    return aptOutputDirForVariant to aptWorkingDirForVariant
-}
-
-private fun Project.createAptConfiguration(sourceSetName: String, kotlinPluginVersion: String): Configuration {
-    val aptConfigurationName = Kapt3KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
-
-    configurations.findByName(aptConfigurationName)?.let { return it }
-    val aptConfiguration = configurations.create(aptConfigurationName)
-
-    // Add base kotlin-annotation-processing artifact for the main kapt configuration,
-    // All other configurations (such as kaptTest) should extend the main one
-    if (aptConfiguration.name == Kapt3KotlinGradleSubplugin.MAIN_KAPT_CONFIGURATION_NAME) {
-        val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing-gradle:$kotlinPluginVersion"
-        aptConfiguration.dependencies.add(dependencies.create(kotlinAnnotationProcessingDep))
-    } else {
-        // "main" configuration can be created after some other. We should handle this case
-        val mainConfiguration = Kapt3KotlinGradleSubplugin.findMainKaptConfiguration(this)
-                ?: createAptConfiguration("main", kotlinPluginVersion)
-        aptConfiguration.extendsFrom(mainConfiguration)
-    }
-
-    return aptConfiguration
-}
-
-private fun Project.createKaptExtension() {
-    extensions.create("kapt", KaptExtension::class.java)
 }
 
 //copied from BasePlugin.getLocalVersion

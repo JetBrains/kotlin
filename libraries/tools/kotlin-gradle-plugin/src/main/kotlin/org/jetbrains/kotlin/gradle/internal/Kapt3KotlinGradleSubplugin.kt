@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.internal
@@ -59,7 +48,9 @@ class Kapt3GradleSubplugin : Plugin<Project> {
                 File(project.project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
     }
 
-    override fun apply(project: Project) {}
+    override fun apply(project: Project) {
+        project.extensions.create("kapt", KaptExtension::class.java)
+    }
 }
 
 abstract class KaptVariantData<T>(val variantData: T) {
@@ -170,6 +161,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             javaSourceSet.name
         }
 
+        createAptConfigurationIfNeeded(project, sourceSetName)
+
         val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
 
         val nonEmptyKaptConfigurations = kaptConfigurations.filter { configuration ->
@@ -194,6 +187,23 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         /** Plugin options are applied to kapt*Compile inside [createKaptKotlinTask] */
         return emptyList()
+    }
+
+    private fun createAptConfigurationIfNeeded(project: Project, sourceSetName: String): Configuration {
+        val configurationName = Kapt3KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
+
+        project.configurations.findByName(configurationName)?.let { return it }
+        val aptConfiguration = project.configurations.create(configurationName)
+
+        if (aptConfiguration.name != Kapt3KotlinGradleSubplugin.MAIN_KAPT_CONFIGURATION_NAME) {
+            // The main configuration can be created after the current one. We should handle this case
+            val mainConfiguration = findMainKaptConfiguration(project)
+                    ?: createAptConfigurationIfNeeded(project, SourceSet.MAIN_SOURCE_SET_NAME)
+
+            aptConfiguration.extendsFrom(mainConfiguration)
+        }
+
+        return aptConfiguration
     }
 
     override fun getSubpluginKotlinTasks(project: Project, kotlinCompile: KotlinCompile): List<AbstractCompile> {
