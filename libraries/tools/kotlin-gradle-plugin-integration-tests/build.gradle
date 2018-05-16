@@ -1,4 +1,9 @@
 apply plugin: 'kotlin'
+apply plugin: 'jps-compatible'
+
+pill {
+    variant = "FULL"
+}
 
 configureJvmProject(project)
 
