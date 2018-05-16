@@ -9627,6 +9627,104 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/lambdaToAnonymousFunction")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class LambdaToAnonymousFunction extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInLambdaToAnonymousFunction() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/lambdaToAnonymousFunction"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("argument.kt")
+        public void testArgument() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/argument.kt");
+        }
+
+        @TestMetadata("destructuringParameter.kt")
+        public void testDestructuringParameter() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/destructuringParameter.kt");
+        }
+
+        @TestMetadata("explicitParameterName.kt")
+        public void testExplicitParameterName() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/explicitParameterName.kt");
+        }
+
+        @TestMetadata("extention1.kt")
+        public void testExtention1() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/extention1.kt");
+        }
+
+        @TestMetadata("extention2.kt")
+        public void testExtention2() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/extention2.kt");
+        }
+
+        @TestMetadata("hasComment.kt")
+        public void testHasComment() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/hasComment.kt");
+        }
+
+        @TestMetadata("hasReturn1.kt")
+        public void testHasReturn1() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/hasReturn1.kt");
+        }
+
+        @TestMetadata("hasReturn2.kt")
+        public void testHasReturn2() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/hasReturn2.kt");
+        }
+
+        @TestMetadata("hasReturn3.kt")
+        public void testHasReturn3() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/hasReturn3.kt");
+        }
+
+        @TestMetadata("hasReturn4.kt")
+        public void testHasReturn4() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/hasReturn4.kt");
+        }
+
+        @TestMetadata("hasSomeStatements.kt")
+        public void testHasSomeStatements() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/hasSomeStatements.kt");
+        }
+
+        @TestMetadata("implicitParameterName.kt")
+        public void testImplicitParameterName() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/implicitParameterName.kt");
+        }
+
+        @TestMetadata("namedArgument.kt")
+        public void testNamedArgument() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/namedArgument.kt");
+        }
+
+        @TestMetadata("noParameter.kt")
+        public void testNoParameter() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/noParameter.kt");
+        }
+
+        @TestMetadata("returnUnit.kt")
+        public void testReturnUnit() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/returnUnit.kt");
+        }
+
+        @TestMetadata("underscoreParameter.kt")
+        public void testUnderscoreParameter() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/underscoreParameter.kt");
+        }
+
+        @TestMetadata("variable.kt")
+        public void testVariable() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/variable.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/loopToCallChain")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
