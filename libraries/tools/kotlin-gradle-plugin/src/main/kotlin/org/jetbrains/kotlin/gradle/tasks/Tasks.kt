@@ -185,10 +185,15 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @get:Internal // takes part in the compiler arguments
     var friendPaths: Lazy<Array<String>?> = lazy {
         friendTask?.let { friendTask ->
-            mutableListOf<String>().apply {
-                add((friendTask.javaOutputDir ?: friendTask.destinationDir).absolutePath)
-                addAll(friendTask.attachedClassesDirs.mapNotNull { it.value?.absolutePath })
-            }.toTypedArray()
+            val possibleFriendDirs = ArrayList<File?>().apply {
+                add(friendTask.javaOutputDir)
+                add(friendTask.destinationDir)
+                addAll(friendTask.attachedClassesDirs.map { it.value })
+            }
+
+            possibleFriendDirs.filterNotNullTo(HashSet())
+                .map { it.absolutePath }
+                .toTypedArray()
         }
     }
 
