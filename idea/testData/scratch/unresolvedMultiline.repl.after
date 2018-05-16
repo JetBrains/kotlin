@@ -1,4 +1,4 @@
-foo.forEach {    // ERROR: error: unresolved reference: foo
+foo.forEach {           // ERROR: error: unresolved reference: foo
     1 + 1
 }
 

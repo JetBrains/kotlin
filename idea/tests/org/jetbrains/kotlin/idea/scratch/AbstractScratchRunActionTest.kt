@@ -132,7 +132,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
                 .filterIsInstance<InlayScratchFileRenderer>()
                 .forEach {
                     val str = it.toString()
-                    val offset = doc.getLineEndOffset(line); actualOutput.insert(offset, "    // $str")
+                    val offset = doc.getLineEndOffset(line); actualOutput.insert(offset, "${str.takeWhile { it.isWhitespace() }}// ${str.trim()}")
                 }
         }
 

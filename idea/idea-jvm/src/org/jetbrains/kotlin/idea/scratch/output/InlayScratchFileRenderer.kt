@@ -52,7 +52,7 @@ class InlayScratchFileRenderer(val text: String, private val outputType: Scratch
     }
 
     override fun toString(): String {
-        return "${outputType.name}: ${text.trim()}"
+        return "${text.takeWhile { it.isWhitespace() }}${outputType.name}: ${text.trim()}"
     }
 
     companion object {
