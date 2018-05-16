@@ -345,9 +345,11 @@ fun EditorNotificationPanel.createComponentActionLabel(labelText: String, callba
 }
 
 private operator fun BinaryVersion.compareTo(other: BinaryVersion): Int {
-    for (i in 0..Math.max(numbers.size, other.numbers.size) - 1) {
-        val thisPart = numbers.getOrNull(i) ?: -1
-        val otherPart = other.numbers.getOrNull(i) ?: -1
+    val first = this.toArray()
+    val second = other.toArray()
+    for (i in 0 until maxOf(first.size, second.size)) {
+        val thisPart = first.getOrNull(i) ?: -1
+        val otherPart = second.getOrNull(i) ?: -1
 
         if (thisPart != otherPart) {
             return thisPart - otherPart

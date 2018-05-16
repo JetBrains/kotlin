@@ -14,7 +14,7 @@ package org.jetbrains.kotlin.metadata.deserialization
  * - Patch version can be increased freely and is only supposed to be used for debugging. Increase the patch version when you
  *   make a change to binaries which is both forward- and backward compatible.
  */
-abstract class BinaryVersion(vararg val numbers: Int) {
+abstract class BinaryVersion(private vararg val numbers: Int) {
     val major: Int = numbers.getOrNull(0) ?: UNKNOWN
     val minor: Int = numbers.getOrNull(1) ?: UNKNOWN
     val patch: Int = numbers.getOrNull(2) ?: UNKNOWN
