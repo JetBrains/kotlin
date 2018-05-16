@@ -12,8 +12,11 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
@@ -28,6 +31,21 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             val objectDeclaration = expression.mainReference.resolve() as? KtObjectDeclaration ?: return
             if (!objectDeclaration.isCompanion()) return
             if (expression.text != objectDeclaration.name) return
+
+            val property = parent.getStrictParentOfType<KtProperty>()
+            if (property != null && property.name == parent.selectorExpression?.text) return
+
+            val function = parent.getStrictParentOfType<KtNamedFunction>()
+            if (function != null) {
+                val callee = (parent.selectorExpression as? KtCallExpression)?.calleeExpression
+                if (function.name == callee?.text) {
+                    val functionParams = (function.descriptor as? FunctionDescriptor)?.valueParameters ?: emptyList()
+                    val calleeParams = callee?.getCallableDescriptor()?.valueParameters ?: emptyList()
+                    if (functionParams.size == calleeParams.size &&
+                        functionParams.zip(calleeParams).all { it.first.type == it.second.type }
+                    ) return
+                }
+            }
 
             val grandParent = parent.parent as? KtQualifiedExpression
             if (grandParent != null) {

@@ -2847,6 +2847,31 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/directCompanion.kt");
         }
 
+        @TestMetadata("function1.kt")
+        public void testFunction1() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/function1.kt");
+        }
+
+        @TestMetadata("function2.kt")
+        public void testFunction2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/function2.kt");
+        }
+
+        @TestMetadata("function3.kt")
+        public void testFunction3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/function3.kt");
+        }
+
+        @TestMetadata("function4.kt")
+        public void testFunction4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/function4.kt");
+        }
+
+        @TestMetadata("function5.kt")
+        public void testFunction5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/function5.kt");
+        }
+
         @TestMetadata("functionReference.kt")
         public void testFunctionReference() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/functionReference.kt");
@@ -2875,6 +2900,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("onlyCompanion.kt")
         public void testOnlyCompanion() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/onlyCompanion.kt");
+        }
+
+        @TestMetadata("property1.kt")
+        public void testProperty1() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/property1.kt");
+        }
+
+        @TestMetadata("property2.kt")
+        public void testProperty2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/property2.kt");
+        }
+
+        @TestMetadata("property3.kt")
+        public void testProperty3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/property3.kt");
+        }
+
+        @TestMetadata("property4.kt")
+        public void testProperty4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/property4.kt");
         }
     }
 
