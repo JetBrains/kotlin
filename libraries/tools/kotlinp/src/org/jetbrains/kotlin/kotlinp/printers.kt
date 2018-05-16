@@ -20,6 +20,7 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
         var returnType: String? = null
         var versionRequirement: String? = null
         var jvmDesc: String? = null
+        var lambdaClassOriginName: String? = null
 
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             printType(flags) { receiverParameterType = it }
@@ -44,11 +45,18 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
                 override fun visit(desc: String?) {
                     jvmDesc = desc
                 }
+
+                override fun visitLambdaClassOriginName(internalName: String) {
+                    lambdaClassOriginName = internalName
+                }
             }
         }
 
         override fun visitEnd() {
             sb.appendln()
+            if (lambdaClassOriginName != null) {
+                sb.appendln("  // lambda class origin: $lambdaClassOriginName")
+            }
             if (versionRequirement != null) {
                 sb.appendln("  // $versionRequirement")
             }
@@ -520,6 +528,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
     private val typeParams = mutableListOf<String>()
     private val supertypes = mutableListOf<String>()
     private var versionRequirement: String? = null
+    private var anonymousObjectOriginName: String? = null
 
     override fun visit(flags: Flags, name: ClassName) {
         this.flags = flags
@@ -527,6 +536,9 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
     }
 
     override fun visitEnd() {
+        if (anonymousObjectOriginName != null) {
+            result.appendln("// anonymous object origin: $anonymousObjectOriginName")
+        }
         if (versionRequirement != null) {
             result.appendln("  // $versionRequirement")
         }
@@ -584,6 +596,15 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
 
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
         printVersionRequirement { versionRequirement = it }
+
+    override fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor? {
+        if (type != JvmClassExtensionVisitor.TYPE) return null
+        return object : JvmClassExtensionVisitor() {
+            override fun visitAnonymousObjectOriginName(internalName: String) {
+                anonymousObjectOriginName = internalName
+            }
+        }
+    }
 
     override fun print(klass: KotlinClassMetadata.Class): String {
         klass.accept(this)

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.metadata.serialization.StringTable
 import java.util.*
 
 interface MetadataExtensions {
+    fun readClassExtensions(v: KmClassVisitor, proto: ProtoBuf.Class, strings: NameResolver, types: TypeTable)
+
     fun readFunctionExtensions(v: KmFunctionVisitor, proto: ProtoBuf.Function, strings: NameResolver, types: TypeTable)
 
     fun readPropertyExtensions(v: KmPropertyVisitor, proto: ProtoBuf.Property, strings: NameResolver, types: TypeTable)
@@ -22,6 +24,8 @@ interface MetadataExtensions {
     fun readTypeParameterExtensions(v: KmTypeParameterVisitor, proto: ProtoBuf.TypeParameter, strings: NameResolver)
 
     fun readTypeExtensions(v: KmTypeVisitor, proto: ProtoBuf.Type, strings: NameResolver)
+
+    fun writeClassExtensions(type: KmExtensionType, proto: ProtoBuf.Class.Builder, strings: StringTable): KmClassExtensionVisitor?
 
     fun writeFunctionExtensions(type: KmExtensionType, proto: ProtoBuf.Function.Builder, strings: StringTable): KmFunctionExtensionVisitor?
 

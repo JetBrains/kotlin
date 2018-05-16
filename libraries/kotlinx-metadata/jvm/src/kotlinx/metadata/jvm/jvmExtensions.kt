@@ -11,6 +11,31 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 /**
  * A visitor to visit JVM extensions for a function.
  */
+open class JvmClassExtensionVisitor @JvmOverloads constructor(
+    private val delegate: JvmClassExtensionVisitor? = null
+) : KmClassExtensionVisitor {
+    /**
+     * Visits the JVM internal name of the original class this anonymous object is copied from. This method is called for
+     * anonymous objects copied from bodies of inline functions to the use site by the Kotlin compiler.
+     */
+    open fun visitAnonymousObjectOriginName(internalName: String) {
+        delegate?.visitAnonymousObjectOriginName(internalName)
+    }
+
+    companion object {
+        /**
+         * The type of this extension visitor.
+         *
+         * @see KmExtensionType
+         */
+        @JvmField
+        val TYPE: KmExtensionType = KmExtensionType(JvmClassExtensionVisitor::class)
+    }
+}
+
+/**
+ * A visitor to visit JVM extensions for a function.
+ */
 open class JvmFunctionExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmFunctionExtensionVisitor? = null
 ) : KmFunctionExtensionVisitor {
@@ -22,6 +47,14 @@ open class JvmFunctionExtensionVisitor @JvmOverloads constructor(
      */
     open fun visit(desc: String?) {
         delegate?.visit(desc)
+    }
+
+    /**
+     * Visits the JVM internal name of the original class the lambda class for this function is copied from.
+     * This information is present for lambdas copied from bodies of inline functions to the use site by the Kotlin compiler.
+     */
+    open fun visitLambdaClassOriginName(internalName: String) {
+        delegate?.visitLambdaClassOriginName(internalName)
     }
 
     companion object {

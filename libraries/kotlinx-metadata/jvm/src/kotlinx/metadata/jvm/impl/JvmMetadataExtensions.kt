@@ -19,9 +19,23 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.serialization.StringTable
 
 internal class JvmMetadataExtensions : MetadataExtensions {
+    override fun readClassExtensions(v: KmClassVisitor, proto: ProtoBuf.Class, strings: NameResolver, types: TypeTable) {
+        val ext = v.visitExtensions(JvmClassExtensionVisitor.TYPE) as? JvmClassExtensionVisitor ?: return
+
+        val anonymousObjectOriginName = proto.getExtensionOrNull(JvmProtoBuf.anonymousObjectOriginName)
+        if (anonymousObjectOriginName != null) {
+            ext.visitAnonymousObjectOriginName(strings.getString(anonymousObjectOriginName))
+        }
+    }
+
     override fun readFunctionExtensions(v: KmFunctionVisitor, proto: ProtoBuf.Function, strings: NameResolver, types: TypeTable) {
         val ext = v.visitExtensions(JvmFunctionExtensionVisitor.TYPE) as? JvmFunctionExtensionVisitor ?: return
         ext.visit(JvmProtoBufUtil.getJvmMethodSignature(proto, strings, types))
+
+        val lambdaClassOriginName = proto.getExtensionOrNull(JvmProtoBuf.lambdaClassOriginName)
+        if (lambdaClassOriginName != null) {
+            ext.visitLambdaClassOriginName(strings.getString(lambdaClassOriginName))
+        }
     }
 
     override fun readPropertyExtensions(v: KmPropertyVisitor, proto: ProtoBuf.Property, strings: NameResolver, types: TypeTable) {
@@ -68,6 +82,17 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         ext.visitEnd()
     }
 
+    override fun writeClassExtensions(
+        type: KmExtensionType, proto: ProtoBuf.Class.Builder, strings: StringTable
+    ): KmClassExtensionVisitor? {
+        if (type != JvmClassExtensionVisitor.TYPE) return null
+        return object : JvmClassExtensionVisitor() {
+            override fun visitAnonymousObjectOriginName(internalName: String) {
+                proto.setExtension(JvmProtoBuf.anonymousObjectOriginName, strings.getStringIndex(internalName))
+            }
+        }
+    }
+
     override fun writeFunctionExtensions(
         type: KmExtensionType, proto: ProtoBuf.Function.Builder, strings: StringTable
     ): KmFunctionExtensionVisitor? {
@@ -77,6 +102,10 @@ internal class JvmMetadataExtensions : MetadataExtensions {
                 if (desc != null) {
                     proto.setExtension(JvmProtoBuf.methodSignature, desc.toJvmMethodSignature(strings))
                 }
+            }
+
+            override fun visitLambdaClassOriginName(internalName: String) {
+                proto.setExtension(JvmProtoBuf.lambdaClassOriginName, strings.getStringIndex(internalName))
             }
         }
     }

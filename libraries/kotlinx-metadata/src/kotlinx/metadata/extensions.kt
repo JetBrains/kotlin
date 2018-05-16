@@ -36,6 +36,11 @@ data class KmExtensionType(val klass: KClass<out KmExtensionVisitor>)
 interface KmExtensionVisitor
 
 /**
+ * A visitor to visit platform-specific extensions for a class.
+ */
+interface KmClassExtensionVisitor : KmExtensionVisitor
+
+/**
  * A visitor to visit platform-specific extensions for a function.
  */
 interface KmFunctionExtensionVisitor : KmExtensionVisitor

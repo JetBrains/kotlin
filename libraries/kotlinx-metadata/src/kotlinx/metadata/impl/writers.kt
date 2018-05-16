@@ -455,6 +455,11 @@ open class ClassWriter(stringTable: StringTable) : KmClassVisitor() {
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
         writeVersionRequirement(c) { t.versionRequirement = it }
 
+    override fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor? =
+        c.applySingleExtension(type) {
+            writeClassExtensions(type, t, c.strings)
+        }
+
     override fun visitEnd() {
         c.versionRequirements.serialize()?.let {
             t.versionRequirementTable = it

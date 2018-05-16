@@ -132,6 +132,14 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
         delegate?.visitVersionRequirement()
 
     /**
+     * Visits the extensions of the given type on the class.
+     *
+     * @param type the type of extension visitor to be returned
+     */
+    open fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor? =
+        delegate?.visitExtensions(type)
+
+    /**
      * Visits the end of the class.
      */
     open fun visitEnd() {

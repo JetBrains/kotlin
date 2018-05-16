@@ -81,6 +81,10 @@ fun ProtoBuf.Class.accept(v: KmClassVisitor, strings: NameResolver) {
         v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(it, c) }
     }
 
+    for (extension in c.extensions) {
+        extension.readClassExtensions(v, this, c.strings, c.types)
+    }
+
     v.visitEnd()
 }
 
