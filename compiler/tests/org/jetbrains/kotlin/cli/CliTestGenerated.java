@@ -236,11 +236,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/help.args");
         }
 
-        @TestMetadata("importsProducer.args")
-        public void testImportsProducer() throws Exception {
-            runTest("compiler/testData/cli/jvm/importsProducer.args");
-        }
-
         @TestMetadata("inlineCycle.args")
         public void testInlineCycle() throws Exception {
             runTest("compiler/testData/cli/jvm/inlineCycle.args");

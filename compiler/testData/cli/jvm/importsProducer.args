@@ -1,4 +1,0 @@
-$TESTDATA_DIR$/importsProducer
--d
-$TEMP_DIR$
--Xoutput-imports=$TESTDATA_DIR$/importsProducerDump.txt
