@@ -86,6 +86,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/callableReference/function/classMemberAndNonExtensionCompatibility.kt");
             }
 
+            @TestMetadata("classMemberDirectCache.kt")
+            public void testClassMemberDirectCache() throws Exception {
+                runTest("js/js.translator/testData/box/callableReference/function/classMemberDirectCache.kt");
+            }
+
             @TestMetadata("classMemberFromClass.kt")
             public void testClassMemberFromClass() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/function/classMemberFromClass.kt");
@@ -194,6 +199,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             @TestMetadata("extensionWithClosure.kt")
             public void testExtensionWithClosure() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/function/extensionWithClosure.kt");
+            }
+
+            @TestMetadata("functionReferenceName.kt")
+            public void testFunctionReferenceName() throws Exception {
+                runTest("js/js.translator/testData/box/callableReference/function/functionReferenceName.kt");
             }
 
             @TestMetadata("localAndTopLevelExtensions.kt")

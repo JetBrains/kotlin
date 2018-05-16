@@ -1,5 +1,4 @@
 // EXPECTED_REACHABLE_NODES: 1109
-// This test was adapted from compiler/testData/codegen/box/callableReference/function/local/.
 package foo
 
 import kotlin.reflect.KFunction
@@ -9,8 +8,6 @@ fun foo1(a: String) = "O" + a
 fun foo2(a: String, b: String) = a + b
 
 fun refName0(ref: KFunction<String>) = ref.name
-//fun refName1(ref: KFunction1<String, String>) = ref.name
-//fun refName2(ref: KFunction2<String, String, String>) = ref.name
 
 fun box(): String {
     val name = refName0(::foo0)
