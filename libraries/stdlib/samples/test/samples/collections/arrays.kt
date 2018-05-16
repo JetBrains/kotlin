@@ -76,4 +76,28 @@ class Arrays {
         }
     }
 
+    class CopyOfOperations {
+
+        @Sample
+        fun copyOf() {
+            val array = arrayOf("apples, oranges, lime")
+            val arrayCopy = array.copyOf()
+            assertPrints(arrayCopy.contentToString(), "[apples, oranges, lime]")
+        }
+
+        @Sample
+        fun resizingCopyOf() {
+            val array = arrayOf("apples, oranges, lime")
+            val arrayCopyResized = array.copyOf(5)
+            assertPrints(arrayCopyResized.contentToString(), "[apples, oranges, lime, null, null]")
+        }
+
+        @Sample
+        fun resizedPrimitiveCopyOf() {
+            val array = intArrayOf(1, 2, 3)
+            val arrayCopyResized = array.copyOf(5)
+            assertPrints(arrayCopyResized.contentToString(), "[1, 2, 3, 0, 0]")
+        }
+    }
+
 }

@@ -408,6 +408,7 @@ object ArrayOps : TemplateGroupBase() {
         include(ArraysOfPrimitives, PrimitiveType.defaultPrimitives)
     } builder {
         doc { "Returns new array which is a copy of the original array." }
+        sample("samples.collections.Arrays.CopyOfOperations.copyOf")
         returns("SELF")
         on(Platform.JVM) {
             inlineOnly()
@@ -443,7 +444,17 @@ object ArrayOps : TemplateGroupBase() {
         include(ArraysOfPrimitives, PrimitiveType.defaultPrimitives)
         include(InvariantArraysOfObjects)
     } builder {
-        doc { "Returns new array which is a copy of the original array, resized to the given [newSize]." }
+        doc {
+            """
+            Returns new array which is a copy of the original array, resized to the given [newSize], truncating or padding
+            with nulls if necessary. If the object is a primitive type, it will be padded with its default value.
+            For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+            For all indices that are valid in the copy, but not in the original, the copy will contain either null or the default
+            value.
+            """
+        }
+        sample("samples.collections.Arrays.CopyOfOperations.resizingCopyOf")
+        sample("samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf")
         specialFor(ArraysOfPrimitives) {
             returns("SELF")
             on(Platform.JS) {

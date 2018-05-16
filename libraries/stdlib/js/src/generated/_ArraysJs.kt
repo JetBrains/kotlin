@@ -409,6 +409,8 @@ public actual fun CharArray.contentToString(): String {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
 public actual inline fun <T> Array<out T>.copyOf(): Array<T> {
@@ -417,6 +419,8 @@ public actual inline fun <T> Array<out T>.copyOf(): Array<T> {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun ByteArray.copyOf(): ByteArray {
@@ -425,6 +429,8 @@ public actual inline fun ByteArray.copyOf(): ByteArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun ShortArray.copyOf(): ShortArray {
@@ -433,6 +439,8 @@ public actual inline fun ShortArray.copyOf(): ShortArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun IntArray.copyOf(): IntArray {
@@ -441,6 +449,8 @@ public actual inline fun IntArray.copyOf(): IntArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun LongArray.copyOf(): LongArray {
     return withType("LongArray", this.asDynamic().slice())
@@ -448,6 +458,8 @@ public actual fun LongArray.copyOf(): LongArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun FloatArray.copyOf(): FloatArray {
@@ -456,6 +468,8 @@ public actual inline fun FloatArray.copyOf(): FloatArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun DoubleArray.copyOf(): DoubleArray {
@@ -464,6 +478,8 @@ public actual inline fun DoubleArray.copyOf(): DoubleArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun BooleanArray.copyOf(): BooleanArray {
     return withType("BooleanArray", this.asDynamic().slice())
@@ -471,69 +487,134 @@ public actual fun BooleanArray.copyOf(): BooleanArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun CharArray.copyOf(): CharArray {
     return withType("CharArray", this.asDynamic().slice())
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize], truncating or padding
+ * with nulls if necessary. If the object is a primitive type, it will be padded with its default value.
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain either null or the default
+ * value.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
     return fillFrom(this, ByteArray(newSize))
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize], truncating or padding
+ * with nulls if necessary. If the object is a primitive type, it will be padded with its default value.
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain either null or the default
+ * value.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
     return fillFrom(this, ShortArray(newSize))
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize], truncating or padding
+ * with nulls if necessary. If the object is a primitive type, it will be padded with its default value.
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain either null or the default
+ * value.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun IntArray.copyOf(newSize: Int): IntArray {
     return fillFrom(this, IntArray(newSize))
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize], truncating or padding
+ * with nulls if necessary. If the object is a primitive type, it will be padded with its default value.
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain either null or the default
+ * value.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun LongArray.copyOf(newSize: Int): LongArray {
     return withType("LongArray", arrayCopyResize(this, newSize, 0L))
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize], truncating or padding
+ * with nulls if necessary. If the object is a primitive type, it will be padded with its default value.
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain either null or the default
+ * value.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
     return fillFrom(this, FloatArray(newSize))
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize], truncating or padding
+ * with nulls if necessary. If the object is a primitive type, it will be padded with its default value.
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain either null or the default
+ * value.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun DoubleArray.copyOf(newSize: Int): DoubleArray {
     return fillFrom(this, DoubleArray(newSize))
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize], truncating or padding
+ * with nulls if necessary. If the object is a primitive type, it will be padded with its default value.
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain either null or the default
+ * value.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun BooleanArray.copyOf(newSize: Int): BooleanArray {
     return withType("BooleanArray", arrayCopyResize(this, newSize, false))
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize], truncating or padding
+ * with nulls if necessary. If the object is a primitive type, it will be padded with its default value.
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain either null or the default
+ * value.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun CharArray.copyOf(newSize: Int): CharArray {
     return withType("CharArray", fillFrom(this, CharArray(newSize)))
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize], truncating or padding
+ * with nulls if necessary. If the object is a primitive type, it will be padded with its default value.
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain either null or the default
+ * value.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @Suppress("ACTUAL_WITHOUT_EXPECT")
 public actual fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
