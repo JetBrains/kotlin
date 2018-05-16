@@ -3,9 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.js.descriptors
+package org.jetbrains.kotlin.ir.backend.js.symbols
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -53,13 +51,13 @@ object JsSymbolBuilder {
     )
 
     fun buildVar(
-        containingSymbol: IrFunctionSymbol,
-        name: String,
+        containingDeclaration: DeclarationDescriptor,
         type: KotlinType,
+        name: String,
         mutable: Boolean = false
     ) = IrVariableSymbolImpl(
         LocalVariableDescriptor(
-            containingSymbol.descriptor,
+            containingDeclaration,
             Annotations.EMPTY,
             Name.identifier(name),
             type,
@@ -69,14 +67,14 @@ object JsSymbolBuilder {
         )
     )
 
-
-    fun buildTempVar(containingSymbol: IrFunctionSymbol, type: KotlinType, name: String? = null, mutable: Boolean = false) = IrVariableSymbolImpl(
-        IrTemporaryVariableDescriptorImpl(
-            containingSymbol.descriptor,
-            Name.identifier(name ?: "tmp"),
-            type, mutable
+    fun buildTempVar(containingSymbol: IrFunctionSymbol, type: KotlinType, name: String? = null, mutable: Boolean = false) =
+        IrVariableSymbolImpl(
+            IrTemporaryVariableDescriptorImpl(
+                containingSymbol.descriptor,
+                Name.identifier(name ?: "tmp"),
+                type, mutable
+            )
         )
-    )
 }
 
 
