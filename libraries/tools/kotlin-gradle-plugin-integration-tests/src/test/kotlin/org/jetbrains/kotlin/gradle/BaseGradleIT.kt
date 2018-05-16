@@ -30,21 +30,6 @@ abstract class BaseGradleIT {
         workingDir.deleteRecursively()
     }
 
-    fun Project.allowOriginalKapt() {
-        if (!projectDir.exists()) {
-            setupWorkingDir()
-        }
-
-        val allowOriginalKaptOption = "allow.original.kapt = true"
-
-        val gradleProperties = File(projectDir, "gradle.properties")
-        if (gradleProperties.exists()) {
-            gradleProperties.appendText("\n$allowOriginalKaptOption")
-        } else {
-            gradleProperties.writeText(allowOriginalKaptOption)
-        }
-    }
-
     // https://developer.android.com/studio/intro/update.html#download-with-gradle
     fun acceptAndroidSdkLicenses() = defaultBuildOptions().androidHome?.let {
         val sdkLicenses = File(it, "licenses")

@@ -287,18 +287,6 @@ fun getSomething() = 10
     }
 
     @Test
-    fun testKaptKt15814() {
-        val project = Project("kaptKt15814", gradleVersion)
-        project.allowOriginalKapt()
-
-        val options = defaultBuildOptions().copy(incremental = false)
-
-        project.build("assembleDebug", "test", options = options) {
-            assertSuccessful()
-        }
-    }
-
-    @Test
     fun testAndroidIcepickProject() {
         val project = Project("AndroidIcepickProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
@@ -351,17 +339,6 @@ fun getSomething() = 10
 
         project.build("assemble", options = options) {
             assertSuccessful()
-        }
-    }
-
-    @Test
-    fun testAndroidKaptChangingDependencies() {
-        val project = Project("AndroidKaptChangingDependencies", gradleVersion)
-        project.allowOriginalKapt()
-
-        project.build("assembleDebug") {
-            assertSuccessful()
-            assertNotContains("Changed dependencies of configuration .+ after it has been included in dependency resolution".toRegex())
         }
     }
 

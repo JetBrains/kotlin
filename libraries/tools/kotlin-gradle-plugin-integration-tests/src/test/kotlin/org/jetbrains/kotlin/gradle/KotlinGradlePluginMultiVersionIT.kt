@@ -9,19 +9,6 @@ import java.util.zip.ZipFile
 
 class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
     @Test
-    fun testKaptProcessorPath() {
-        val project = Project("kaptSimple", gradleVersion)
-        project.allowOriginalKapt()
-
-        project.build("build") {
-            assertSuccessful()
-            assertContainsRegex("""-processorpath \S*.build.tmp.kapt.main.wrappers""".toRegex())
-            assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
-            assertClassFilesNotContain(File(project.projectDir, "build/classes"), "ExampleSourceAnnotation")
-        }
-    }
-
-    @Test
     fun testKt19179() {
         val project = Project("kt19179", gradleVersion, directoryPrefix = "kapt2")
 
