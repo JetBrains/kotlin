@@ -115,18 +115,17 @@ class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logg
         }
 
     /** first reads <t>length</t> token (4 bytes), then reads <t>length</t> bytes and returns deserialized object */
-    suspend fun nextObject() = async {
+    suspend fun nextObject(): Any? {
         val obj = CompletableDeferred<Any?>()
         readActor.send(SerObjectQuery(obj))
         val result = obj.await()
         if (result is Server.ServerDownMessage<*>) {
             throw IOException("connection closed by server")
         }
-        result
+        return result
     }
 
 }
-
 
 class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: Logger) {
 
@@ -180,7 +179,6 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
     }
 
     suspend fun printBytesAndLength(length: Int, bytes: ByteArray) {
-//        println("printBytesAndLength : $length $bytes")
         writeActor.send(
             ObjectWithLength(
                 getLengthBytes(length),
@@ -192,14 +190,9 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
     private suspend fun printObjectImpl(obj: Any?) =
         ByteArrayOutputStream().use { bos ->
             ObjectOutputStream(bos).use { objOut ->
-                //                println("printObjectImpl : $obj")
-//                println("obj is ser : ${obj is Serializable}")
                 objOut.writeObject(obj)
-//                println("objOut.writeObject : $obj")
                 objOut.flush()
-//                println("objOut.flush : $obj")
                 val bytes = bos.toByteArray()
-//                println("bytes : $bytes")
                 printBytesAndLength(bytes.size, bytes)
             }
         }

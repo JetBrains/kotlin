@@ -745,17 +745,17 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 withLogFile("kotlin-daemon-test") { logFile ->
 
 
-                    val cfg: String =
-                        "handlers = java.util.logging.FileHandler\n" +
-                                "java.util.logging.FileHandler.level     = ALL\n" +
-                                "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
-                                "java.util.logging.FileHandler.encoding  = UTF-8\n" +
-                                "java.util.logging.FileHandler.limit     = 0\n" + // if file is provided - disabled, else - 1Mb
-                                "java.util.logging.FileHandler.count     = 1\n" +
-                                "java.util.logging.FileHandler.append    = true\n" +
-                                "java.util.logging.FileHandler.pattern   = ${logFile.loggerCompatiblePath}\n" +
-                                "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
-                    LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
+//                    val cfg: String =
+//                        "handlers = java.util.logging.FileHandler\n" +
+//                                "java.util.logging.FileHandler.level     = ALL\n" +
+//                                "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
+//                                "java.util.logging.FileHandler.encoding  = UTF-8\n" +
+//                                "java.util.logging.FileHandler.limit     = 0\n" + // if file is provided - disabled, else - 1Mb
+//                                "java.util.logging.FileHandler.count     = 1\n" +
+//                                "java.util.logging.FileHandler.append    = true\n" +
+//                                "java.util.logging.FileHandler.pattern   = ${logFile.loggerCompatiblePath}\n" +
+//                                "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
+//                    LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
 
 
                     val daemonJVMOptions = makeTestDaemonJvmOptions(logFile, xmx = -1)
@@ -806,7 +806,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     private object ParallelStartParams {
-        const val threads = 32
+        const val threads = 10
         const val performCompilation = false
         const val connectionFailedErr = -100
     }
