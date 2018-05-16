@@ -218,7 +218,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun getPerformanceManager(): CommonCompilerPerformanceManager = performanceManager
 
     private fun loadPlugins(paths: KotlinPaths?, arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration): ExitCode {
-        var pluginClasspaths = arguments.pluginClasspaths?.asIterable() ?: emptyArray()
+        var pluginClasspaths: Iterable<String> = arguments.pluginClasspaths?.asIterable() ?: emptyList()
         val pluginOptions = arguments.pluginOptions?.toMutableList() ?: ArrayList()
 
         if (!arguments.disableDefaultScriptingPlugin) {
