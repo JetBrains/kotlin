@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.scratch.output
 
+import com.intellij.execution.filters.OpenFileHyperlinkInfo
 import com.intellij.execution.impl.ConsoleViewImpl
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.ide.scratch.ScratchFileType
@@ -28,6 +29,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.psi.PsiFile
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
@@ -37,10 +39,22 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
         if (ApplicationManager.getApplication().isUnitTestMode) {
-            return testPrint(file, output.text)
+            return testPrint(file, output.text, expression)
         }
 
         printToConsole(file.project) {
+            val psiFile = file.getPsiFile()
+            if (psiFile != null) {
+                printHyperlink(
+                    getLineInfo(psiFile, expression),
+                    OpenFileHyperlinkInfo(
+                        project,
+                        psiFile.virtualFile,
+                        expression.lineStart
+                    )
+                )
+                print(" ", ConsoleViewContentType.NORMAL_OUTPUT)
+            }
             print(output.text, output.type.convert())
         }
     }
@@ -88,6 +102,9 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
         }
     }
 
+    private fun getLineInfo(psiFile: PsiFile, expression: ScratchExpression) =
+        "${psiFile.name}:${expression.lineStart + 1}"
+
     private fun ScratchOutputType.convert() = when (this) {
         ScratchOutputType.OUTPUT -> ConsoleViewContentType.SYSTEM_OUTPUT
         ScratchOutputType.RESULT -> ConsoleViewContentType.NORMAL_OUTPUT
@@ -108,12 +125,14 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
     }
 
     @TestOnly
-    private fun testPrint(file: ScratchFile, output: String) {
+    private fun testPrint(file: ScratchFile, output: String, expression: ScratchExpression? = null) {
         ApplicationManager.getApplication().invokeLater {
             WriteCommandAction.runWriteCommandAction(file.project) {
                 val psiFile = file.getPsiFile()!!
                 psiFile.addAfter(
-                    KtPsiFactory(file.project).createComment("/** $output */"),
+                    KtPsiFactory(file.project).createComment(
+                        "/** ${expression?.let { getLineInfo(psiFile, expression) + " " } ?: ""}$output */"
+                    ),
                     psiFile.lastChild
                 )
             }
