@@ -98,6 +98,25 @@
       <option name="insideTryAllowed" value="false" />
     </inspection_tool>
     <inspection_tool class="IfStatementWithIdenticalBranches" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="IncompatibleAPI" enabled="true" level="ERROR" enabled_by_default="true">
+      <option name="problems">
+        <list>
+          <Problem reference="org.jetbrains.plugins.gradle.util.GradleConstants#KOTLIN_DSL_SCRIPT_EXTENSION" reason="Absent in 172. Please inline." />
+          <Problem reference="com.intellij.psi.impl.compiled.ClsClassImpl#getQualifiedName" reason="Nullable in 173, platform in 172. Use qualifiedNameEx instead." />
+          <Problem reference="com.intellij.internal.statistic.utils.StatisticsUtilKt#getEnumUsage" reason="Absent in 172. Use org.jetbrains.kotlin.idea.util.compat.statistic.StatisticKt.getEnumUsage instead." />
+          <Problem reference="com.intellij.internal.statistic.utils.StatisticsUtilKt#getBooleanUsage" reason="Absent in 172 Use org.jetbrains.kotlin.idea.util.compat.statistic.StatisticKt.getBooleanUsage instead." />
+          <Problem reference="com.intellij.internal.statistic.AbstractProjectsUsagesCollector" reason="Absent in 172. Use org.jetbrains.kotlin.idea.util.compat.statistic.AbstractProjectsUsagesCollector instead." />
+          <Problem reference="com.intellij.openapi.progress.ProgressManager#getProgressIndicator" reason="Not null starting from 181. Use getProgressIndicatorNullable instead." />
+          <Problem reference="com.intellij.testFramework.PlatformTestCase#createModuleAt" reason="Not static anymore in 181 after 7dacf096c47d2125e17031c71a037b63ab00ec53" />
+          <Problem reference="com.intellij.testFramework.PlatformTestCase#doCreateRealModuleIn" reason="Not static anymore in 181 after 7dacf096c47d2125e17031c71a037b63ab00ec53" />
+          <Problem reference="com.intellij.openapi.progress.ProgressManager#getProgressIndicator" reason="Nullable in 181. Temporary use progressIndicatorNullable instead." />
+          <Problem reference="com.intellij.testFramework.fixtures.CodeInsightTestFixture#getProjectDisposable" reason="Method was introduced in 173 and absent in 172. Use getProjectDisposableEx instead. (95eaf81e0ea497f8c69263c11fd3202d28a7a1b2)" />
+          <Problem reference="org.jetbrains.org.objectweb.asm.Opcodes#V9" reason="Absent in 172 branch. Use V1_9 while 172 is supported." />
+          <Problem reference="com.intellij.psi.codeStyle.CommonCodeStyleSettings#getSoftMargins" reason="Absent in 172." />
+          <Problem reference="com.intellij.util.xmlb.XmlSerializer#serializeInto(java.lang.Object, org.jdom.Element)" reason="Absent in 172." />
+        </list>
+      </option>
+    </inspection_tool>
     <inspection_tool class="InnerClassMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="InstanceofCatchParameter" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="InstanceofIncompatibleInterface" enabled="true" level="WARNING" enabled_by_default="true" />

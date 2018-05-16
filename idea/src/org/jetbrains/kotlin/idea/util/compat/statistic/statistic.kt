@@ -11,16 +11,16 @@ package org.jetbrains.kotlin.idea.util.compat.statistic
  * Should be dropped after abandoning 172.
  * BUNCH: 173
  */
-typealias AbstractProjectsUsagesCollector = com.intellij.internal.statistic.AbstractApplicationUsagesCollector
+typealias AbstractProjectsUsagesCollector = com.intellij.internal.statistic.AbstractProjectsUsagesCollector
 
 /**
  * Should be dropped after abandoning 172.
  * BUNCH: 173
  */
-fun getEnumUsage(key: String, value: Enum<*>?) = com.intellij.internal.statistic.getEnumUsage(key, value)
+fun getEnumUsage(key: String, value: Enum<*>?) = com.intellij.internal.statistic.utils.getEnumUsage(key, value)
 
 /**
  * Should be dropped after abandoning 172.
  * BUNCH: 173
  */
-fun getBooleanUsage(key: String, value: Boolean) = com.intellij.internal.statistic.getBooleanUsage(key, value)
+fun getBooleanUsage(key: String, value: Boolean) = com.intellij.internal.statistic.utils.getBooleanUsage(key, value)
