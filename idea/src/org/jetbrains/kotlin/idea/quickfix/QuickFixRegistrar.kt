@@ -559,5 +559,7 @@ class QuickFixRegistrar : QuickFixContributor {
         TYPE_VARIANCE_CONFLICT.registerFactory(RemoveTypeVarianceFix)
 
         CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT.registerFactory(MoveMemberToCompanionObjectIntention)
+
+        NO_COMPANION_OBJECT.registerFactory(AddIsToWhenConditionFix)
     }
 }
