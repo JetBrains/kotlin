@@ -96,10 +96,10 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
 
     private fun maxLineLength(file: ScratchFile): Int {
         val doc = file.editor.editor.document
-        return (0 until doc.lineCount)
+        return file.getExpressions()
+            .flatMap { it.lineStart..it.lineEnd }
             .map { doc.getLineEndOffset(it) - doc.getLineStartOffset(it) }
-            .max()
-                ?: -1
+            .max() ?: 0
     }
 
     private fun clearInlays(editor: TextEditor) {
