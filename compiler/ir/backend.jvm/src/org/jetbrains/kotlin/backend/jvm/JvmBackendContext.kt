@@ -39,10 +39,10 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class JvmBackendContext(
-        val state: GenerationState,
-        psiSourceManager: PsiSourceManager,
-        override val irBuiltIns: IrBuiltIns,
-        irModuleFragment: IrModuleFragment, symbolTable: SymbolTable
+    val state: GenerationState,
+    psiSourceManager: PsiSourceManager,
+    override val irBuiltIns: IrBuiltIns,
+    irModuleFragment: IrModuleFragment, symbolTable: SymbolTable
 ) : CommonBackendContext {
     override val builtIns = state.module.builtIns
     override val descriptorsFactory: JvmDescriptorsFactory = JvmDescriptorsFactory(psiSourceManager, builtIns)
@@ -53,31 +53,34 @@ class JvmBackendContext(
     }
 
     override val ir: Ir<CommonBackendContext> = object : Ir<CommonBackendContext>(this, irModuleFragment) {
-        override val symbols: Symbols<CommonBackendContext> =  object: Symbols<CommonBackendContext>(this@JvmBackendContext, symbolTable) {
+        override val symbols: Symbols<CommonBackendContext> = object : Symbols<CommonBackendContext>(this@JvmBackendContext, symbolTable) {
 
             override val areEqual
                 get () = symbolTable.referenceSimpleFunction(context.getInternalFunctions("areEqual").single())
 
             override val ThrowNullPointerException
                 get () = symbolTable.referenceSimpleFunction(
-                        context.getInternalFunctions("ThrowNullPointerException").single())
+                    context.getInternalFunctions("ThrowNullPointerException").single()
+                )
 
             override val ThrowNoWhenBranchMatchedException
                 get () = symbolTable.referenceSimpleFunction(
-                        context.getInternalFunctions("ThrowNoWhenBranchMatchedException").single())
+                    context.getInternalFunctions("ThrowNoWhenBranchMatchedException").single()
+                )
 
             override val ThrowTypeCastException
                 get () = symbolTable.referenceSimpleFunction(
-                        context.getInternalFunctions("ThrowTypeCastException").single())
+                    context.getInternalFunctions("ThrowTypeCastException").single()
+                )
 
             override val ThrowUninitializedPropertyAccessException
                 get () = symbolTable.referenceSimpleFunction(
-                        context.getInternalFunctions("ThrowUninitializedPropertyAccessException").single()
+                    context.getInternalFunctions("ThrowUninitializedPropertyAccessException").single()
                 )
 
             override val stringBuilder
                 get() = symbolTable.referenceClass(
-                        context.getClass(FqName("java.lang.StringBuilder"))
+                    context.getClass(FqName("java.lang.StringBuilder"))
                 )
 
             override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
@@ -110,8 +113,10 @@ class JvmBackendContext(
     override fun getInternalFunctions(name: String): List<FunctionDescriptor> {
         return when (name) {
             "ThrowUninitializedPropertyAccessException" ->
-                getInternalClass("Intrinsics").staticScope.
-                        getContributedFunctions(Name.identifier("throwUninitializedPropertyAccessException"), NoLookupLocation.FROM_BACKEND).toList()
+                getInternalClass("Intrinsics").staticScope.getContributedFunctions(
+                    Name.identifier("throwUninitializedPropertyAccessException"),
+                    NoLookupLocation.FROM_BACKEND
+                ).toList()
             else -> TODO(name)
         }
     }
