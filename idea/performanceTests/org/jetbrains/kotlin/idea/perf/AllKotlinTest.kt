@@ -136,7 +136,7 @@ abstract class AllKotlinTest : DaemonAnalyzerTestCase() {
     }
 
     companion object {
-        val Long.nsToMs get() = this * (1e-6).toLong()
+        val Long.nsToMs get() = (this * 1e-6).toLong()
     }
 
 }
