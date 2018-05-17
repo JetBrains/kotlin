@@ -46,6 +46,7 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
         val provider = ScratchFileLanguageProvider.get(psiFile.language) ?: return
 
         val handler = provider.getOutputHandler()
+        handler.onStart(scratchFile)
 
         log.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun, isRepl = $isRepl")
 
@@ -88,14 +89,16 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
 
         if (isMakeBeforeRun) {
             CompilerManager.getInstance(project).make(module) { aborted, errors, _, _ ->
-                if (!aborted && errors == 0) {
-                    if (DumbService.isDumb(project)) {
-                        DumbService.getInstance(project).smartInvokeLater {
-                            executeScratch()
-                        }
-                    } else {
+                if (aborted || errors > 0) {
+                    handler.error(scratchFile, "There were compilation errors in module ${module.name}")
+                }
+
+                if (DumbService.isDumb(project)) {
+                    DumbService.getInstance(project).smartInvokeLater {
                         executeScratch()
                     }
+                } else {
+                    executeScratch()
                 }
             }
         } else {
