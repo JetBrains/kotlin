@@ -43,6 +43,8 @@ abstract class AllKotlinTest : DaemonAnalyzerTestCase() {
 
     protected abstract fun doTest(file: VirtualFile): PerFileTestResult
 
+    abstract fun provideFiles(): Collection<VirtualFile>
+
     fun testWholeProjectPerformance() {
 
         tcSuite(this::class.simpleName ?: "Unknown") {
@@ -65,8 +67,7 @@ abstract class AllKotlinTest : DaemonAnalyzerTestCase() {
             }
 
             tcSuite("TotalPerFile") {
-                val scope = KotlinSourceFilterScope.projectSources(ProjectScope.getContentScope(project), project)
-                val files = FileTypeIndex.getFiles(KotlinFileType.INSTANCE, scope)
+                val files = provideFiles()
 
                 files.forEach {
                     val filePath = File(it.path).relativeTo(tmp).path.replace(File.separatorChar, '/')
