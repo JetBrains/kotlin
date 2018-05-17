@@ -180,9 +180,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
                 ?: coroutinesFromGradleProperties
                 ?: Coroutines.DEFAULT
 
-    @get:Internal
-    internal var compilerCalled: Boolean = false
-
     // TODO: consider more reliable approach (see usage)
     @get:Internal
     internal var anyClassesCompiled: Boolean = false
@@ -256,8 +253,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
         sourceRoots.log(this.name, logger)
         val args = prepareCompilerArguments()
-
-        compilerCalled = true
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
     }
 

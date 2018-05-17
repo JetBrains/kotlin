@@ -96,7 +96,6 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         sourceRoots.log(this.name, logger)
         val args = prepareCompilerArguments()
 
-        compilerCalled = true
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
     }
 }
