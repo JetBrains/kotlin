@@ -82,7 +82,7 @@ class ClassModelGenerator(val context: TranslationContext) {
     // However, D inherits `foo` without suffix (i.e. it corresponds to I's dispatcher function).
     // We must copy B.foo to D.foo$default and then I.foo to D.foo
     private fun tryCopyWhenImplementingInterfaceWithDefaultArgs(member: FunctionDescriptor, model: JsClassModel): Boolean {
-        val fromInterface = member.overriddenDescriptors.firstOrNull { it.hasOwnParametersWithDefaultValue() } ?: return false
+        val fromInterface = member.overriddenDescriptors.firstOrNull { it.hasOrInheritsParametersWithDefaultValue() } ?: return false
         if (!DescriptorUtils.isInterface(fromInterface.containingDeclaration)) return false
         val fromClass = member.overriddenDescriptors.firstOrNull { !DescriptorUtils.isInterface(it.containingDeclaration) } ?: return false
 

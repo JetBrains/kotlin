@@ -8194,6 +8194,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/defaultArguments/function/funInTrait.kt");
             }
 
+            @TestMetadata("funInTraitChain.kt")
+            public void testFunInTraitChain() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/function/funInTraitChain.kt");
+            }
+
             @TestMetadata("innerExtentionFunction.kt")
             public void testInnerExtentionFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/function/innerExtentionFunction.kt");
