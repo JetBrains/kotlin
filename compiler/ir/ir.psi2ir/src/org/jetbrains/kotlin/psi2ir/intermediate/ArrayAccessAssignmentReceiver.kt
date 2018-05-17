@@ -46,10 +46,10 @@ class ArrayAccessAssignmentReceiver(
         val irResultType = callGenerator.translateType(resultType)
         val irBlock = IrBlockImpl(startOffset, endOffset, irResultType, origin)
 
-        val irArrayValue = callGenerator.scope.createTemporaryVariableInBlock(irArray, irBlock, "array")
+        val irArrayValue = callGenerator.scope.createTemporaryVariableInBlock(callGenerator.context, irArray, irBlock, "array")
 
         val irIndexValues = irIndices.mapIndexed { i, irIndex ->
-            callGenerator.scope.createTemporaryVariableInBlock(irIndex, irBlock, "index$i")
+            callGenerator.scope.createTemporaryVariableInBlock(callGenerator.context, irIndex, irBlock, "index$i")
         }
 
         indexedGetCall?.fillArrayAndIndexArguments(irArrayValue, irIndexValues)

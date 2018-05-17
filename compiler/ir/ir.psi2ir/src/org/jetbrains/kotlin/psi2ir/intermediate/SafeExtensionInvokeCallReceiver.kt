@@ -42,7 +42,7 @@ class SafeExtensionInvokeCallReceiver(
 
         val irTmp = generator.scope.createTemporaryVariable(extensionInvokeReceiver.load(), "safe_receiver")
 
-        val safeReceiverValue = VariableLValue(irTmp)
+        val safeReceiverValue = VariableLValue(generator.context, irTmp)
 
         // Patch call and generate it
         assert(callBuilder.irValueArgumentsByIndex[0] == null) {

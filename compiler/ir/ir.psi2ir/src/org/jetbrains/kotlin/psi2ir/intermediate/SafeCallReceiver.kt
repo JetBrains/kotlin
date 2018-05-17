@@ -38,7 +38,7 @@ class SafeCallReceiver(
 
     override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
         val irTmp = generator.scope.createTemporaryVariable(extensionReceiver?.load() ?: dispatchReceiver!!.load(), "safe_receiver")
-        val safeReceiverValue = VariableLValue(irTmp)
+        val safeReceiverValue = VariableLValue(generator.context, irTmp)
 
         val dispatchReceiverValue: IntermediateValue?
         val extensionReceiverValue: IntermediateValue?
