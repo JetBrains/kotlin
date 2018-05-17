@@ -57,7 +57,7 @@ class Psi2IrTranslator(val configuration: Psi2IrConfiguration = Psi2IrConfigurat
     }
 
     private fun postprocess(context: GeneratorContext, irElement: IrElement) {
-        insertImplicitCasts(context.builtIns, irElement, context.symbolTable)
+        insertImplicitCasts(irElement, context)
         generateAnnotationsForDeclarations(context, irElement)
 
         postprocessingSteps.forEach { it.postprocess(context, irElement) }
