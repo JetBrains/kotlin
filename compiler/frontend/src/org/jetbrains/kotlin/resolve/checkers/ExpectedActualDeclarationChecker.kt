@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -41,6 +42,8 @@ import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
 object ExpectedActualDeclarationChecker : DeclarationChecker {
+    internal val OPTIONAL_EXPECTATION_FQ_NAME = FqName("kotlin.OptionalExpectation")
+
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
 
@@ -67,6 +70,8 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
         val compatibility = ExpectedActualResolver.findActualForExpected(descriptor, platformModule) ?: return
 
+        if (compatibility.allStrongIncompatibilities() && isOptionalAnnotationClass(descriptor)) return
+
         val shouldReportError =
             compatibility.allStrongIncompatibilities() ||
                     Compatible !in compatibility && compatibility.values.flatMapTo(hashSetOf()) { it }.all { actual ->
@@ -87,6 +92,10 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
             expectActualTracker.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
         }
+    }
+
+    internal fun isOptionalAnnotationClass(descriptor: DeclarationDescriptor): Boolean {
+        return descriptor.annotations.hasAnnotation(OPTIONAL_EXPECTATION_FQ_NAME)
     }
 
     private fun ExpectActualTracker.reportExpectActual(expected: MemberDescriptor, actualMembers: Sequence<MemberDescriptor>) {

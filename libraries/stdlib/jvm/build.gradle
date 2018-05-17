@@ -159,7 +159,8 @@ compileKotlin {
                 "-Xmultifile-parts-inherit",
                 "-Xnormalize-constructor-calls=enable",
                 "-Xdump-declarations-to=${buildDir}/stdlib-declarations.json",
-                "-module-name", "kotlin-stdlib"
+                "-module-name", "kotlin-stdlib",
+                "-Xuse-experimental=kotlin.Experimental"
         ]
     }
 }

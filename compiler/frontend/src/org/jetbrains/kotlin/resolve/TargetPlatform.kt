@@ -100,7 +100,8 @@ private val DEFAULT_CALL_CHECKERS = listOf(
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
-    DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker, MissingDependencyClassChecker.ClassifierUsage
+    DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker, MissingDependencyClassChecker.ClassifierUsage,
+    OptionalExpectationUsageChecker()
 )
 private val DEFAULT_ANNOTATION_CHECKERS = listOf<AdditionalAnnotationChecker>(
     ExperimentalMarkerDeclarationAnnotationChecker

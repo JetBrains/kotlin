@@ -37,7 +37,8 @@ compileKotlinCommon {
 compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs = [
-                "-module-name", project.name
+                "-module-name", project.name,
+                "-Xuse-experimental=kotlin.Experimental"
         ]
     }
 }

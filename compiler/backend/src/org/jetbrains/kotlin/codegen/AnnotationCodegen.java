@@ -300,6 +300,10 @@ public abstract class AnnotationCodegen {
             return null;
         }
 
+        if (classDescriptor.isExpect()) {
+            return null;
+        }
+
         innerClassConsumer.addInnerClassInfoFromAnnotation(classDescriptor);
 
         String asmTypeDescriptor = typeMapper.mapType(annotationDescriptor.getType()).getDescriptor();
