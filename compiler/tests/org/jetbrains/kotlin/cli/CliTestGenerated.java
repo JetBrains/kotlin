@@ -61,6 +61,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/apiVersionLessThanLanguage.args");
         }
 
+        @TestMetadata("apiVersionLessThanLanguageUsingArgfile.args")
+        public void testApiVersionLessThanLanguageUsingArgfile() throws Exception {
+            runTest("compiler/testData/cli/jvm/apiVersionLessThanLanguageUsingArgfile.args");
+        }
+
+        @TestMetadata("argfileWithEscaping.args")
+        public void testArgfileWithEscaping() throws Exception {
+            runTest("compiler/testData/cli/jvm/argfileWithEscaping.args");
+        }
+
         @TestMetadata("argumentPassedMultipleTimes.args")
         public void testArgumentPassedMultipleTimes() throws Exception {
             runTest("compiler/testData/cli/jvm/argumentPassedMultipleTimes.args");
@@ -381,6 +391,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/legacySmartCastsAfterTry.args");
         }
 
+        @TestMetadata("mixingArgfilesAndUsualArgs.args")
+        public void testMixingArgfilesAndUsualArgs() throws Exception {
+            runTest("compiler/testData/cli/jvm/mixingArgfilesAndUsualArgs.args");
+        }
+
         @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
         public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
             runTest("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
@@ -419,6 +434,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("nonexistentScript.args")
         public void testNonexistentScript() throws Exception {
             runTest("compiler/testData/cli/jvm/nonexistentScript.args");
+        }
+
+        @TestMetadata("nonexistingArgfile.args")
+        public void testNonexistingArgfile() throws Exception {
+            runTest("compiler/testData/cli/jvm/nonexistingArgfile.args");
         }
 
         @TestMetadata("pluginSimple.args")
