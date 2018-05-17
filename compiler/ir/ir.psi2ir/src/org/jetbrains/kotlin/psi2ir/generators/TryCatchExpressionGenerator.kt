@@ -42,7 +42,7 @@ class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 context.symbolTable.declareVariable(
                     ktCatchParameter.startOffset, ktCatchParameter.endOffset,
                     IrDeclarationOrigin.CATCH_PARAMETER,
-                    catchParameterDescriptor
+                    catchParameterDescriptor, catchParameterDescriptor.type.toIrType()
                 )
             ).apply {
                 result = ktCatchBody.genExpr()

@@ -100,7 +100,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         context.symbolTable.declareSimpleFunctionWithOverrides(
             ktDelegate.startOffset, ktDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
-            accessorDescriptor
+            accessorDescriptor, accessorDescriptor.returnType!!.toIrType()
         ).buildWithScope { irAccessor ->
             FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irAccessor, ktProperty, null)
             irAccessor.body = generateBody(irAccessor)
@@ -127,7 +127,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
 
         return context.symbolTable.declareField(
             ktDelegate.startOffset, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATE,
-            delegateDescriptor
+            delegateDescriptor, delegateDescriptor.type.toIrType()
         ).also { irDelegate ->
             irDelegate.initializer = generateInitializerBodyForPropertyDelegate(
                 propertyDescriptor, kPropertyType, ktDelegate,
@@ -282,7 +282,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
 
         return context.symbolTable.declareVariable(
             ktDelegate.startOffset, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATE,
-            delegateDescriptor
+            delegateDescriptor, delegateDescriptor.type.toIrType()
         ).also { irVariable ->
             irVariable.initializer = generateInitializerForLocalDelegatedPropertyDelegate(
                 variableDescriptor, kPropertyType, ktDelegate,
@@ -338,7 +338,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         context.symbolTable.declareSimpleFunctionWithOverrides(
             ktDelegate.startOffset, ktDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
-            getterDescriptor
+            getterDescriptor, getterDescriptor.returnType!!.toIrType()
         ).buildWithScope { irAccessor ->
             FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irAccessor, ktDelegate, null)
             irAccessor.body = generateBody(irAccessor)
