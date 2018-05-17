@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
+import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
@@ -31,11 +32,12 @@ class RematerializableValue(val irExpression: IrExpressionWithCopy) : Intermedia
 }
 
 fun Scope.createTemporaryVariableInBlock(
+    context: IrGeneratorContext,
     irExpression: IrExpression,
     block: IrContainerExpressionBase,
     nameHint: String? = null
 ): IntermediateValue {
     val temporaryVariable = createTemporaryVariable(irExpression, nameHint)
     block.statements.add(temporaryVariable)
-    return VariableLValue(temporaryVariable)
+    return VariableLValue(context, temporaryVariable)
 }

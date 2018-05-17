@@ -43,12 +43,12 @@ abstract class PropertyLValueBase(
             val dispatchReceiverVariable2 = dispatchReceiverValue?.let {
                 scope.createTemporaryVariable(dispatchReceiverValue.load(), "this")
             }
-            val dispatchReceiverValue2 = dispatchReceiverVariable2?.let { VariableLValue(it) }
+            val dispatchReceiverValue2 = dispatchReceiverVariable2?.let { VariableLValue(context, it) }
 
             val extensionReceiverVariable2 = extensionReceiverValue?.let {
                 scope.createTemporaryVariable(extensionReceiverValue.load(), "receiver")
             }
-            val extensionReceiverValue2 = extensionReceiverVariable2?.let { VariableLValue(it) }
+            val extensionReceiverValue2 = extensionReceiverVariable2?.let { VariableLValue(context, it) }
 
             val irResultExpression = withLValue(withReceiver(dispatchReceiverValue2, extensionReceiverValue2))
 
