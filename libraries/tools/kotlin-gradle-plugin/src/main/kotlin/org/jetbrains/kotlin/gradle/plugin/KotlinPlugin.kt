@@ -3,9 +3,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.builder.model.SourceProvider
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil.compareVersionNumbers
-import com.intellij.util.ReflectionUtil
 import groovy.lang.Closure
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
@@ -218,10 +215,8 @@ internal class Kotlin2JvmSourceSetProcessor(
 internal fun SourceSetOutput.tryAddClassesDir(
         classesDirProvider: () -> FileCollection
 ): Boolean {
-    val getClassesDirs = ReflectionUtil.findMethod(
-            javaClass.methods.asList(),
-            "getClassesDirs"
-    ) ?: return false
+    val getClassesDirs = javaClass.methods.firstOrNull { it.name == "getClassesDirs" && it.parameterCount == 0 }
+            ?: return false
 
     val classesDirs = getClassesDirs(this) as? ConfigurableFileCollection
             ?: return false
@@ -262,7 +257,7 @@ internal class Kotlin2JsSourceSetProcessor(
             kotlinTask.kotlinOptions.outputFile = kotlinTask.outputFile.absolutePath
             val outputDir = kotlinTask.outputFile.parentFile
 
-            if (FileUtil.isAncestor(outputDir, project.rootDir, false))
+            if (outputDir.isParentOf(project.rootDir))
                 throw InvalidUserDataException(
                         "The output directory '$outputDir' (defined by outputFile of $kotlinTask) contains or " +
                         "matches the project root directory '${project.rootDir}'.\n" +

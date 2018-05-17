@@ -1,7 +1,5 @@
 package org.jetbrains.kotlin.gradle.internal
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil.compareVersionNumbers
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
@@ -11,9 +9,11 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
+import org.jetbrains.kotlin.gradle.plugin.compareVersionNumbers
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.isJavaFile
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import java.io.File
 
@@ -101,8 +101,7 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
             .filterTo(HashSet(), ::isRootAllowed)
 
     private fun isRootAllowed(file: File): Boolean =
-        !FileUtil.isAncestor(destinationDir, file, /* strict = */ false) &&
-                !FileUtil.isAncestor(classesDir, file, /* strict = */ false)
+        !destinationDir.isParentOf(file) && !classesDir.isParentOf(file)
 
     @TaskAction
     fun compile() {

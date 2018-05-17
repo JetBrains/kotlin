@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
 import java.io.File
+import java.nio.file.Paths
 import java.util.*
 
 internal fun File.isJavaFile() =
@@ -32,3 +33,19 @@ internal fun File.relativeToRoot(project: Project): String =
 
 internal fun Iterable<File>.toSortedPathsArray(): Array<String> =
     map { it.canonicalPath }.toTypedArray().also { Arrays.sort(it) }
+
+internal fun newTmpFile(prefix: String, suffix: String? = null, directory: File? = null, deleteOnExit: Boolean = true) =
+    File.createTempFile(prefix, suffix, directory).apply {
+        if (deleteOnExit) deleteOnExit()
+    }
+
+internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boolean {
+    val parentPath = Paths.get(this.absolutePath).normalize()
+    val childCandidatePath = Paths.get(childCandidate.absolutePath).normalize()
+
+    return if (strict) {
+        childCandidatePath.startsWith(parentPath) && parentPath != childCandidate
+    } else {
+        childCandidatePath.startsWith(parentPath)
+    }
+}

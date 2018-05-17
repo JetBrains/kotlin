@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
@@ -416,7 +416,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             it is AbstractCompile &&
                     it !is JavaCompile &&
                     it !is AbstractKotlinCompile<*> &&
-                    FileUtil.isAncestor(javaOutputDir!!, it.destinationDir, /* strict = */ false)
+                    javaOutputDir!!.isParentOf(it.destinationDir)
         } as? AbstractCompile
 
         if (illegalTask != null) {
