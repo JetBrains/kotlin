@@ -28,6 +28,7 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
+import org.gradle.language.cpp.internal.NativeVariantIdentity
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.model.KonanToolingModelBuilder
@@ -371,13 +372,13 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                     project.extensions.configure(PublishingExtension::class.java) {
                         val publishing = it
                         for (v in konanSoftwareComponent.variants) {
-                            // TODO: with gradle 4.7 don't forget to change to SoftwareComponentsWithCoordinates
                             publishing.publications.create(v.name, MavenPublication::class.java) {
-                                it.artifactId = v.name
-                                it.groupId = project.group.toString()
-                                it.version = project.version.toString()
+                                val coordinates = (v as NativeVariantIdentity).coordinates
+                                project.logger.info("variant with coordiants(${coordinates}) and module: ${coordinates.module}")
+                                it.artifactId = coordinates.module.name
+                                it.groupId = coordinates.group
+                                it.version = coordinates.version
                                 it.from(v)
-                                (it as MavenPublicationInternal).publishWithOriginalFileName()
                             }
                         }
                     }

@@ -17,6 +17,18 @@
 apply plugin: "cpp"
 apply plugin: "c"
 
+buildscript {
+  ext.rootBuildDirectory = file('..')
+
+  apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+  }
+}
+import org.jetbrains.kotlin.konan.target.ClangArgs
+
 model {
   components {
     debugInfo(NativeLibrarySpec) {
@@ -34,15 +46,10 @@ model {
     }
   }
 
-  /* HACK over gradle 4.4, it adds /usr/include, that affects our --sysroot flag */
   toolChains {
     clang(Clang) {
       eachPlatform {
-        cppCompiler.withArguments { args ->
-          args.remove "/usr/include"
-          if (isLinux())
-            args.remove "/usr/include/x86_64-linux-gnu"
-        }
+        cppCompiler.withArguments(ClangArgs.&filterGradleNativeSoftwareFlags)
       }
     }
   }

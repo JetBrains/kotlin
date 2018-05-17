@@ -15,14 +15,22 @@
  */
 
 buildscript {
-    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
-}
+    ext.rootBuildDirectory = file('../..')
 
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+    }
+}
 apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 
 apply plugin: 'c'
 apply plugin: 'cpp'
+
+import org.jetbrains.kotlin.konan.target.ClangArgs
 
 final Project libclangextProject = project(":libclangext")
 final String libclangextTask = libclangextProject.path + ":build"
@@ -82,20 +90,11 @@ model {
         }
    }
 
-  /* HACK over gradle 4.4, it adds /usr/include, that affects our --sysroot flag */
   toolChains {
     clang(Clang) {
       eachPlatform {
-        cppCompiler.withArguments { args ->
-          args.remove "/usr/include"
-          if (isLinux())
-            args.remove "/usr/include/x86_64-linux-gnu"
-        }
-	cCompiler.withArguments { args ->
-          args.remove "/usr/include"
-          if (isLinux())
-            args.remove "/usr/include/x86_64-linux-gnu"
-        }
+        cppCompiler.withArguments(ClangArgs.&filterGradleNativeSoftwareFlags)
+        cCompiler.withArguments(ClangArgs.&filterGradleNativeSoftwareFlags)
       }
     }
   }

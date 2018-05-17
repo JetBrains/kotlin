@@ -21,17 +21,25 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.DependencyConstraint
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
+import org.gradle.api.capabilities.Capability
+import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.tasks.DefaultTaskDependency
 import org.gradle.api.tasks.*
 import org.gradle.language.cpp.CppBinary
-import org.gradle.language.cpp.internal.NativeVariant
+import org.gradle.language.cpp.internal.DefaultUsageContext
+import org.gradle.language.cpp.internal.NativeVariantIdentity
 import org.gradle.language.nativeplatform.internal.Names
 import org.gradle.nativeplatform.Linkage
+import org.gradle.nativeplatform.OperatingSystemFamily
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -97,11 +105,12 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
             it.attribute(Attribute.of("org.gradle.native.kotlin.platform", String::class.java), target.name)
         }
 
+        val artifactNameWithoutSuffix = artifact.name.removeSuffix("$artifactSuffix")
         project.pluginManager.withPlugin("maven-publish") {
             if (!(project.getProperty(KonanPlugin.ProjectProperty.KONAN_PUBLICATION_ENABLED) as Boolean))
                 return@withPlugin
             platformConfiguration.artifacts.add(object: PublishArtifact {
-                override fun getName() = "${artifact.name.removeSuffix("$artifactSuffix")}/${target.name}"
+                override fun getName(): String = artifactNameWithoutSuffix
                 override fun getExtension() = if (artifactSuffix.startsWith('.')) artifactSuffix.substring(1) else artifactSuffix
                 override fun getType() = artifactSuffix
                 override fun getClassifier():String? = target.name
@@ -113,7 +122,26 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
             val objectFactory = project.objects
             val linkUsage = objectFactory.named(Usage::class.java, Usage.NATIVE_LINK)
             val konanSoftwareComponent = config.mainVariant
-            konanSoftwareComponent.addVariant(NativeVariant(Names.of("${artifact.name.removeSuffix("$artifactSuffix")}_${target.name}"), linkUsage, null, linkUsage, platformConfiguration))
+            val variantName = "${artifactNameWithoutSuffix}_${target.name}"
+            val context = DefaultUsageContext(object:UsageContext {
+                override fun getUsage(): Usage = linkUsage
+                override fun getName(): String = "${variantName}Link"
+                override fun getCapabilities(): MutableSet<out Capability> = mutableSetOf()
+                override fun getDependencies(): MutableSet<out ModuleDependency> = mutableSetOf()
+                override fun getDependencyConstraints(): MutableSet<out DependencyConstraint> = mutableSetOf()
+                override fun getArtifacts(): MutableSet<out PublishArtifact> = platformConfiguration.allArtifacts
+                override fun getAttributes(): AttributeContainer = platformConfiguration.attributes
+            }, platformConfiguration.allArtifacts, platformConfiguration)
+            konanSoftwareComponent.addVariant(NativeVariantIdentity(
+                    variantName,
+                    project.provider{ artifactName },
+                    project.provider{ project.group.toString() },
+                    project.provider{ project.version.toString() },
+                    false,
+                    false,
+                    target.asOperatingSystemFamily(),
+                    context,
+                    null))
         }
     }
 
@@ -130,6 +158,9 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
     fun destinationDir(dir: Any) {
         destinationDir = project.file(dir)
     }
+
+    private fun KonanTarget.asOperatingSystemFamily(): OperatingSystemFamily = project.objects.named(OperatingSystemFamily::class.java, family.name)
+
 }
 
 /** Task building an artifact with libraries */

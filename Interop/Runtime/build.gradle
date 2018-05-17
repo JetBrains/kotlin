@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-buildscript {
-    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
-}
-
 apply plugin: 'kotlin'
 apply plugin: 'c'
+
+buildscript {
+    ext.rootBuildDirectory = file('../..')
+
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+    }
+}
+import org.jetbrains.kotlin.konan.target.ClangArgs
+
 
 model {
     components {
@@ -41,15 +50,10 @@ model {
         }
    }
 
-   /* HACK over gradle 4.4, it adds /usr/include, that affects our --sysroot flag */
    toolChains {
      clang(Clang) {
        eachPlatform {
-         cCompiler.withArguments { args ->
-           args.remove "/usr/include"
-           if (isLinux())
-             args.remove "/usr/include/x86_64-linux-gnu"
-         }
+         cCompiler.withArguments(ClangArgs.&filterGradleNativeSoftwareFlags)
        }
      }
    }
