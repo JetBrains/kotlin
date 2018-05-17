@@ -79,7 +79,8 @@ fun FunctionDescriptor.hasOrInheritsParametersWithDefaultValue(): Boolean = DFS.
     { it.hasOwnParametersWithDefaultValue() }
 )
 
-fun FunctionDescriptor.hasOwnParametersWithDefaultValue() = original.valueParameters.any { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault }
+fun FunctionDescriptor.hasOwnParametersWithDefaultValue() =
+    original.valueParameters.any { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault }
 
 private fun ValueParameterDescriptor.checkExpectedParameter(checker: (ValueParameterDescriptor) -> Boolean): Boolean {
     val function = containingDeclaration
