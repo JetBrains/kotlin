@@ -160,7 +160,7 @@ class ExpressionCodegen(
             //coerceNotToUnit(r.type, Type.VOID_TYPE)
             exp.accept(this, data)
         }
-        return coerceNotToUnit(result.type, expression.asmType)
+        return coerceNotToUnit(result.type, expression.type)
     }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: BlockInfo): StackValue {
@@ -279,8 +279,7 @@ class ExpressionCodegen(
             mv.aconst(null)
             mv.athrow()
         } else if (expression.descriptor !is ConstructorDescriptor) {
-            val expectedTypeOnStack = returnType?.let { typeMapper.mapType(it) } ?: callable.returnType
-            return coerceNotToUnit(callable.returnType, expectedTypeOnStack)
+            return returnType?.run { coerceNotToUnit(callable.returnType, this) } ?: onStack(callable.returnType)
         }
 
         return expression.onStack
@@ -534,10 +533,10 @@ class ExpressionCodegen(
 
 
     override fun visitWhen(expression: IrWhen, data: BlockInfo): StackValue =
-        genIfWithBranches(expression.branches[0], data, expression.asmType, expression.branches.drop(1))
+        genIfWithBranches(expression.branches[0], data, expression.type, expression.branches.drop(1))
 
 
-    private fun genIfWithBranches(branch: IrBranch, data: BlockInfo, type: Type, otherBranches: List<IrBranch>): StackValue {
+    private fun genIfWithBranches(branch: IrBranch, data: BlockInfo, type: KotlinType, otherBranches: List<IrBranch>): StackValue {
         val elseLabel = Label()
         val condition = branch.condition
         val thenBranch = branch.result
@@ -933,10 +932,11 @@ class ExpressionCodegen(
 
     }
 
-    private fun coerceNotToUnit(fromType: Type, toType: Type): StackValue {
-        if (toType != AsmTypes.UNIT_TYPE) {
-            coerce(fromType, toType, mv)
-            return onStack(toType)
+    private fun coerceNotToUnit(fromType: Type, toType: KotlinType): StackValue {
+        val asmType = toType.asmType
+        if (asmType != AsmTypes.UNIT_TYPE || TypeUtils.isNullableType(toType)) {
+            coerce(fromType, asmType, mv)
+            return onStack(asmType)
         }
         return onStack(fromType)
     }
