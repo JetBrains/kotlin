@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolsRemapper
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.DescriptorsRemapper
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -38,7 +38,7 @@ fun <T : IrElement> T.deepCopyWithVariables(): T {
         )
     }
 
-    val symbolsRemapper = DeepCopySymbolsRemapper(descriptorsRemapper)
+    val symbolsRemapper = DeepCopySymbolRemapper(descriptorsRemapper)
     acceptVoid(symbolsRemapper)
 
     return this.transform(
