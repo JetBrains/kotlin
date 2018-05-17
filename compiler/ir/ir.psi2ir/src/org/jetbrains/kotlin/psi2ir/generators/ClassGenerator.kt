@@ -62,7 +62,8 @@ class ClassGenerator(
             irClass.thisReceiver = context.symbolTable.declareValueParameter(
                 startOffset, endOffset,
                 IrDeclarationOrigin.INSTANCE_RECEIVER,
-                irClass.descriptor.thisAsReceiverParameter
+                irClass.descriptor.thisAsReceiverParameter,
+                irClass.descriptor.thisAsReceiverParameter.type.toIrType()
             )
 
             declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, descriptor.declaredTypeParameters)
@@ -132,7 +133,7 @@ class ClassGenerator(
         val irDelegateField = context.symbolTable.declareField(
             ktDelegateExpression.startOffset, ktDelegateExpression.endOffset,
             IrDeclarationOrigin.DELEGATE,
-            delegateDescriptor,
+            delegateDescriptor, delegateDescriptor.type.toIrType(),
             createBodyGenerator(irClass.symbol).generateExpressionBody(ktDelegateExpression)
         )
         irClass.addMember(irDelegateField)
@@ -207,7 +208,8 @@ class ClassGenerator(
         context.symbolTable.declareSimpleFunctionWithOverrides(
             irDelegate.startOffset, irDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_MEMBER,
-            delegated
+            delegated,
+            delegated.returnType!!.toIrType()
         ).buildWithScope { irFunction ->
             FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irFunction)
             irFunction.body = generateDelegateFunctionBody(irDelegate, delegated, overridden, irFunction)

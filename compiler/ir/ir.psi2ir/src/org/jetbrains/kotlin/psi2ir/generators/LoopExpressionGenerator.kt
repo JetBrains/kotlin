@@ -182,14 +182,16 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         nextCall.setExplicitReceiverValue(iteratorValue)
         val irNextCall = callGenerator.generateCall(ktLoopRange, nextCall, IrStatementOrigin.FOR_LOOP_NEXT)
         val irLoopParameter =
-            if (ktLoopParameter != null && ktLoopDestructuringDeclaration == null)
+            if (ktLoopParameter != null && ktLoopDestructuringDeclaration == null) {
+                val loopParameter = getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter)
                 context.symbolTable.declareVariable(
                     ktLoopParameter.startOffset, ktLoopParameter.endOffset, IrDeclarationOrigin.FOR_LOOP_VARIABLE,
-                    getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter),
+                    loopParameter, loopParameter.type.toIrType(),
                     irNextCall
                 )
-            else
+            } else {
                 scope.createTemporaryVariable(irNextCall, "loop_parameter", origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE)
+            }
         irInnerBody.statements.add(irLoopParameter)
 
         if (ktLoopDestructuringDeclaration != null) {

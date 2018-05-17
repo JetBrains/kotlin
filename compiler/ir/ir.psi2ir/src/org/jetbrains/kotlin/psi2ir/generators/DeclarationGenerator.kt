@@ -91,7 +91,8 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                 startOffset,
                 endOffset,
                 IrDeclarationOrigin.DEFINED,
-                typeParameterDescriptor
+                typeParameterDescriptor,
+                typeParameterDescriptor.upperBounds.map { it.toIrType() }
             )
         }
     }
@@ -105,7 +106,8 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                 startOffset,
                 endOffset,
                 IrDeclarationOrigin.DEFINED,
-                typeParameterDescriptor
+                typeParameterDescriptor,
+                typeParameterDescriptor.upperBounds.map { it.toIrType() }
             )
         }
     }
@@ -162,17 +164,20 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     }
 
     private fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtElement): IrProperty {
+        val startOffset = ktElement.startOffset
+        val endOffset = ktElement.endOffset
+
         val backingField =
             if (propertyDescriptor.getter == null)
                 context.symbolTable.declareField(
-                    ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined, IrDeclarationOrigin.FAKE_OVERRIDE,
-                    propertyDescriptor
+                    startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE,
+                    propertyDescriptor, propertyDescriptor.type.toIrType()
                 )
             else
                 null
 
         return IrPropertyImpl(
-            ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
+            startOffset, endOffset,
             IrDeclarationOrigin.FAKE_OVERRIDE,
             false,
             propertyDescriptor,

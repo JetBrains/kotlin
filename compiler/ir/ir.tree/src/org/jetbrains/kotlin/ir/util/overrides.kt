@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.types.IrType
 
 fun SymbolTable.declareSimpleFunctionWithOverrides(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
-    descriptor: FunctionDescriptor
+    descriptor: FunctionDescriptor,
+    returnType: IrType
 ) =
-    declareSimpleFunction(startOffset, endOffset, origin, descriptor).also { declaration ->
+    declareSimpleFunction(startOffset, endOffset, origin, descriptor, returnType).also { declaration ->
         generateOverriddenSymbols(declaration, this)
     }
 

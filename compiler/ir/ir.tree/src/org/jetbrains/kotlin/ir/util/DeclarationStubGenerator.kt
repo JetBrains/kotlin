@@ -70,7 +70,7 @@ class DeclarationStubGenerator(
             val getterDescriptor = descriptor.getter
             if (getterDescriptor == null) {
                 irProperty.backingField =
-                        symbolTable.declareField(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor)
+                        symbolTable.declareField(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor, descriptor.type.toIrType())
             } else {
                 irProperty.getter = generateFunctionStub(getterDescriptor)
             }
@@ -86,14 +86,17 @@ class DeclarationStubGenerator(
             } else {
                 origin
             },
-            descriptor.original
+            descriptor.original,
+            descriptor.returnType!!.toIrType()
         ).also { irFunction ->
             generateTypeParameterStubs(descriptor.propertyIfAccessor.typeParameters, irFunction)
             generateValueParametersStubs(irFunction)
         }
 
     private fun generateConstructorStub(descriptor: ClassConstructorDescriptor): IrConstructor =
-        symbolTable.declareConstructor(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original).also { irConstructor ->
+        symbolTable.declareConstructor(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original, descriptor.returnType.toIrType()
+        ).also { irConstructor ->
             generateValueParametersStubs(irConstructor)
         }
 
