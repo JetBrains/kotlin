@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.Logger
@@ -23,6 +24,7 @@ import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdaterImpl
@@ -229,6 +231,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
         compilerCalled = true
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
+
+
+
     }
 
     @Internal
@@ -381,6 +386,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                     args,
                     environment)
 
+            disableMultiModuleICIfNeeded()
             processCompilerExitCode(exitCode)
         }
         catch (e: Throwable) {
@@ -388,6 +394,26 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             throw e
         }
         anyClassesCompiled = true
+    }
+
+    private fun disableMultiModuleICIfNeeded() {
+        if (!incremental || javaOutputDir == null) return
+
+        val illegalTask = project.tasks.firstOrNull {
+            it is AbstractCompile &&
+                    it !is JavaCompile &&
+                    it !is AbstractKotlinCompile<*> &&
+                    FileUtil.isAncestor(javaOutputDir!!, it.destinationDir, /* strict = */ false)
+        } as? AbstractCompile
+
+        if (illegalTask != null) {
+            project.logger.info(
+                "Kotlin inter-project IC is disabled: " +
+                        "unknown task '$illegalTask' destination dir ${illegalTask.destinationDir} " +
+                        "intersects with java destination dir $javaOutputDir"
+            )
+            buildHistoryFile.delete()
+        }
     }
 
     private fun cleanupOnError() {
