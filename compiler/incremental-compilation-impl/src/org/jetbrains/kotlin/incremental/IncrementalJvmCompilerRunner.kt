@@ -299,6 +299,8 @@ class IncrementalJvmCompilerRunner(
             }
 
             for (buildDiff in newBuilds) {
+                if (!buildDiff.isIncremental) return ChangesEither.Unknown("Non-incremental build from dependency $historyFile")
+
                 val dirtyData = buildDiff.dirtyData
                 symbols.addAll(dirtyData.dirtyLookupSymbols)
                 fqNames.addAll(dirtyData.dirtyClassesFqNames)
