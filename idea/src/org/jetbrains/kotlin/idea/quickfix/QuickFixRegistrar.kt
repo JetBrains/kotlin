@@ -555,5 +555,7 @@ class QuickFixRegistrar : QuickFixContributor {
         EXPERIMENTAL_IS_NOT_ENABLED.registerFactory(MakeModuleExperimentalFix)
 
         TYPE_VARIANCE_CONFLICT.registerFactory(RemoveTypeVarianceFix)
+
+        NO_COMPANION_OBJECT.registerFactory(AddIsToWhenConditionFix)
     }
 }
