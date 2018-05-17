@@ -806,4 +806,82 @@ class KotlinGradleIT : BaseGradleIT() {
             assertNotNull(metaInfDir.listFiles().singleOrNull { it.name.endsWith(".kotlin_module") })
         }
     }
+
+    @Test
+    fun testJavaIcCompatibility() {
+        val project = Project("kotlinJavaProject")
+        project.setupWorkingDir()
+
+        val buildScript = File(project.projectDir, "build.gradle")
+
+        buildScript.modify { "$it\n" + "compileJava.options.incremental = true" }
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        // Then modify a Java source and check that compileJava is incremental:
+        File(project.projectDir, "src/main/java/demo/HelloWorld.java").modify { "$it\n" + "class NewClass { }" }
+        project.build("build") {
+            assertSuccessful()
+            assertContains("Incremental compilation")
+            assertNotContains("not incremental")
+        }
+
+        // Then modify a Kotlin source and check that Gradle sees that Java is not up-to-date:
+        File(project.projectDir, "src/main/kotlin/helloWorld.kt").modify {
+            it.trim('\r', '\n').trimEnd('}') + "\nval z: Int = 0 }"
+        }
+        project.build("build") {
+            assertSuccessful()
+            assertTasksExecuted(":compileKotlin", ":compileJava")
+            assertNotContains("not incremental")
+            assertNotContains("None of the classes needs to be compiled!")
+        }
+    }
+
+    @Test
+    fun testApplyPluginFromBuildSrc() {
+        val project = Project("kotlinProjectWithBuildSrc")
+        project.setupWorkingDir()
+        File(project.projectDir, "buildSrc/build.gradle").modify { it.replace("\$kotlin_version", KOTLIN_VERSION) }
+        project.build("build") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testInternalTest() {
+        Project("internalTest").build("build") {
+            assertSuccessful()
+            assertReportExists()
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
+        }
+    }
+
+    @Test
+    fun testJavaLibraryCompatibility() {
+        val project = Project("javaLibraryProject")
+
+        val compileKotlinTasks = listOf(":libA:compileKotlin", ":libB:compileKotlin", ":app:compileKotlin")
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains("Could not register Kotlin output")
+            assertTasksExecuted(compileKotlinTasks)
+        }
+
+        // Modify a library source and its usage and re-build the project:
+        for (path in listOf("libA/src/main/kotlin/HelloA.kt", "libB/src/main/kotlin/HelloB.kt", "app/src/main/kotlin/App.kt")) {
+            File(project.projectDir, path).modify { original ->
+                original.replace("helloA", "helloA1")
+                    .replace("helloB", "helloB1")
+                    .apply { assert(!equals(original)) }
+            }
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains("Could not register Kotlin output")
+            assertTasksExecuted(compileKotlinTasks)
+        }
+    }
 }
