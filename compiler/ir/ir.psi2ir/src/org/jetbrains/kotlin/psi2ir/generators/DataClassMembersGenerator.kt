@@ -53,7 +53,10 @@ class DataClassMembersGenerator(
     }
 
     private fun declareSimpleFunction(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, function: FunctionDescriptor) =
-        context.symbolTable.declareSimpleFunctionWithOverrides(startOffset, endOffset, origin, function)
+        context.symbolTable.declareSimpleFunctionWithOverrides(
+            startOffset, endOffset, origin,
+            function, function.returnType!!.toIrType()
+        )
 
     private inner class MemberFunctionBuilder(
         val irClass: IrClass,

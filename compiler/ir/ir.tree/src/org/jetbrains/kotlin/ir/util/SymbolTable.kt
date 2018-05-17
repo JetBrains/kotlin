@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.types.IrType
 
 class SymbolTable {
     private abstract class SymbolTableBase<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> {
@@ -189,12 +190,13 @@ class SymbolTable {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: ClassConstructorDescriptor
+        descriptor: ClassConstructorDescriptor,
+        returnType: IrType
     ): IrConstructor =
         constructorSymbolTable.declare(
             descriptor,
             { IrConstructorSymbolImpl(descriptor) },
-            { IrConstructorImpl(startOffset, endOffset, origin, it) }
+            { IrConstructorImpl(startOffset, endOffset, origin, it, returnType) }
         )
 
     fun referenceConstructor(descriptor: ClassConstructorDescriptor) =
@@ -214,18 +216,30 @@ class SymbolTable {
 
     val unboundEnumEntries: Set<IrEnumEntrySymbol> get() = enumEntrySymbolTable.unboundSymbols
 
-    fun declareField(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor): IrField =
+    fun declareField(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: PropertyDescriptor,
+        type: IrType
+    ): IrField =
         fieldSymbolTable.declare(
             descriptor,
             { IrFieldSymbolImpl(descriptor) },
-            { IrFieldImpl(startOffset, endOffset, origin, it) }
+            { IrFieldImpl(startOffset, endOffset, origin, it, type) }
         )
 
     fun declareField(
-        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor,
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: PropertyDescriptor,
+        type: IrType,
         irInitializer: IrExpressionBody?
     ): IrField =
-        declareField(startOffset, endOffset, origin, descriptor).apply { initializer = irInitializer }
+        declareField(startOffset, endOffset, origin, descriptor, type).apply {
+            initializer = irInitializer
+        }
 
     fun referenceField(descriptor: PropertyDescriptor) =
         fieldSymbolTable.referenced(descriptor) { IrFieldSymbolImpl(descriptor) }
@@ -236,12 +250,13 @@ class SymbolTable {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: FunctionDescriptor
+        descriptor: FunctionDescriptor,
+        returnType: IrType
     ): IrSimpleFunction =
         simpleFunctionSymbolTable.declare(
             descriptor,
             { IrSimpleFunctionSymbolImpl(descriptor) },
-            { IrFunctionImpl(startOffset, endOffset, origin, it) }
+            { IrFunctionImpl(startOffset, endOffset, origin, it, returnType) }
         )
 
     fun referenceSimpleFunction(descriptor: FunctionDescriptor) =
@@ -256,24 +271,26 @@ class SymbolTable {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: TypeParameterDescriptor
+        descriptor: TypeParameterDescriptor,
+        upperBounds: List<IrType>
     ): IrTypeParameter =
         globalTypeParameterSymbolTable.declare(
             descriptor,
             { IrTypeParameterSymbolImpl(descriptor) },
-            { IrTypeParameterImpl(startOffset, endOffset, origin, it) }
+            { IrTypeParameterImpl(startOffset, endOffset, origin, it, upperBounds) }
         )
 
     fun declareScopedTypeParameter(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: TypeParameterDescriptor
+        descriptor: TypeParameterDescriptor,
+        upperBounds: List<IrType>
     ): IrTypeParameter =
         scopedTypeParameterSymbolTable.declare(
             descriptor,
             { IrTypeParameterSymbolImpl(descriptor) },
-            { IrTypeParameterImpl(startOffset, endOffset, origin, it) }
+            { IrTypeParameterImpl(startOffset, endOffset, origin, it, upperBounds) }
         )
 
     val unboundTypeParameters: Set<IrTypeParameterSymbol> get() = globalTypeParameterSymbolTable.unboundSymbols
@@ -282,12 +299,14 @@ class SymbolTable {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: ParameterDescriptor
+        descriptor: ParameterDescriptor,
+        type: IrType,
+        varargElementType: IrType? = null
     ): IrValueParameter =
         valueParameterSymbolTable.declareLocal(
             descriptor,
             { IrValueParameterSymbolImpl(descriptor) },
-            { IrValueParameterImpl(startOffset, endOffset, origin, it) }
+            { IrValueParameterImpl(startOffset, endOffset, origin, it, type, varargElementType) }
         )
 
     fun introduceValueParameter(irValueParameter: IrValueParameter) {
@@ -307,19 +326,28 @@ class SymbolTable {
 
     val unboundValueParameters: Set<IrValueParameterSymbol> get() = valueParameterSymbolTable.unboundSymbols
 
-    fun declareVariable(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: VariableDescriptor): IrVariable =
+    fun declareVariable(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: VariableDescriptor,
+        type: IrType
+    ): IrVariable =
         variableSymbolTable.declareLocal(
             descriptor,
             { IrVariableSymbolImpl(descriptor) },
-            { IrVariableImpl(startOffset, endOffset, origin, it) }
+            { IrVariableImpl(startOffset, endOffset, origin, it, type) }
         )
 
     fun declareVariable(
-        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
         descriptor: VariableDescriptor,
+        type: IrType,
         irInitializerExpression: IrExpression?
     ): IrVariable =
-        declareVariable(startOffset, endOffset, origin, descriptor).apply {
+        declareVariable(startOffset, endOffset, origin, descriptor, type).apply {
             initializer = irInitializerExpression
         }
 

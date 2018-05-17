@@ -58,11 +58,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         }
 
     fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement): IrSimpleFunction =
-        context.symbolTable.declareSimpleFunctionWithOverrides(
-            ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
-            IrDeclarationOrigin.FAKE_OVERRIDE,
-            functionDescriptor
-        ).buildWithScope { irFunction ->
+        declareSimpleFunctionInner(functionDescriptor, ktElement, IrDeclarationOrigin.FAKE_OVERRIDE).buildWithScope { irFunction ->
             generateFunctionParameterDeclarations(irFunction, ktElement, null)
         }
 
@@ -73,12 +69,20 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         descriptor: FunctionDescriptor,
         generateBody: BodyGenerator.() -> IrBody?
     ): IrSimpleFunction =
-        context.symbolTable.declareSimpleFunctionWithOverrides(
-            ktFunction.startOffset, ktFunction.endOffset, origin, descriptor
-        ).buildWithScope { irFunction ->
+        declareSimpleFunctionInner(descriptor, ktFunction, origin).buildWithScope { irFunction ->
             generateFunctionParameterDeclarations(irFunction, ktFunction, ktReceiver)
             irFunction.body = createBodyGenerator(irFunction.symbol).generateBody()
         }
+
+    private fun declareSimpleFunctionInner(
+        descriptor: FunctionDescriptor,
+        ktElement: KtElement,
+        origin: IrDeclarationOrigin
+    ): IrSimpleFunction =
+        context.symbolTable.declareSimpleFunctionWithOverrides(
+            ktElement.startOffset, ktElement.endOffset, origin,
+            descriptor, descriptor.returnType!!.toIrType()
+        )
 
     fun generateFunctionParameterDeclarations(
         irFunction: IrFunction,
@@ -94,11 +98,10 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktProperty: KtProperty,
         ktAccessor: KtPropertyAccessor?
     ): IrSimpleFunction =
-        context.symbolTable.declareSimpleFunctionWithOverrides(
-            ktAccessor?.startOffset ?: ktProperty.startOffset,
-            ktAccessor?.endOffset ?: ktProperty.endOffset,
-            if (ktAccessor != null) IrDeclarationOrigin.DEFINED else IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR,
-            descriptor
+        declareSimpleFunctionInner(
+            descriptor,
+            ktAccessor ?: ktProperty,
+            if (ktAccessor != null) IrDeclarationOrigin.DEFINED else IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
         ).buildWithScope { irAccessor ->
             declarationGenerator.generateScopedTypeParameterDeclarations(irAccessor, descriptor.correspondingProperty.typeParameters)
             generateFunctionParameterDeclarations(irAccessor, ktAccessor ?: ktProperty, ktProperty.receiverTypeReference)
@@ -114,12 +117,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         descriptor: PropertyAccessorDescriptor,
         ktParameter: KtParameter
     ): IrSimpleFunction =
-        context.symbolTable.declareSimpleFunctionWithOverrides(
-            ktParameter.startOffsetOrUndefined,
-            ktParameter.endOffsetOrUndefined,
-            IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR,
-            descriptor
-        ).buildWithScope { irAccessor ->
+        declareSimpleFunctionInner(descriptor, ktParameter, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR).buildWithScope { irAccessor ->
             declarationGenerator.generateScopedTypeParameterDeclarations(irAccessor, descriptor.typeParameters)
             FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irAccessor)
             irAccessor.body = generateDefaultAccessorBody(ktParameter, descriptor, irAccessor)
@@ -237,7 +235,8 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         generateBody: BodyGenerator.() -> IrBody?
     ): IrConstructor =
         context.symbolTable.declareConstructor(
-            ktConstructorElement.startOffset, ktConstructorElement.endOffset, IrDeclarationOrigin.DEFINED, constructorDescriptor
+            ktConstructorElement.startOffset, ktConstructorElement.endOffset, IrDeclarationOrigin.DEFINED,
+            constructorDescriptor, constructorDescriptor.returnType.toIrType()
         ).buildWithScope { irConstructor ->
             generateValueParameterDeclarations(irConstructor, ktParametersElement, null)
             irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody()
@@ -277,12 +276,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         bodyGenerator: BodyGenerator,
         withDefaultValues: Boolean
     ): IrValueParameter =
-        context.symbolTable.declareValueParameter(
-            ktParameter.startOffsetOrUndefined,
-            ktParameter.endOffsetOrUndefined,
-            IrDeclarationOrigin.DEFINED,
-            valueParameterDescriptor
-        ).also {
+        declareParameter(valueParameterDescriptor, ktParameter).also {
             if (withDefaultValues) {
                 it.defaultValue = ktParameter?.defaultValue?.let {
                     bodyGenerator.generateExpressionBody(it)
@@ -294,11 +288,12 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         receiverParameterDescriptor: ReceiverParameterDescriptor,
         ktElement: KtElement?
     ): IrValueParameter =
-        context.symbolTable.declareValueParameter(
-            ktElement.startOffsetOrUndefined,
-            ktElement.endOffsetOrUndefined,
-            IrDeclarationOrigin.DEFINED,
-            receiverParameterDescriptor
-        )
+        declareParameter(receiverParameterDescriptor, ktElement)
 
+    private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtElement?) =
+        context.symbolTable.declareValueParameter(
+            ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
+            IrDeclarationOrigin.DEFINED,
+            descriptor, descriptor.type.toIrType()
+        )
 }
