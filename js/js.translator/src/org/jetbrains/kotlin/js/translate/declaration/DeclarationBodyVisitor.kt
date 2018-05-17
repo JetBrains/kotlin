@@ -28,9 +28,6 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.components.hasOwnParametersWithDefaultValue
-import org.jetbrains.kotlin.resolve.calls.components.hasOrInheritsParametersWithDefaultValue
-import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithCorrespondingExpectedDefault
 
 class DeclarationBodyVisitor(
         private val containingClass: ClassDescriptor,

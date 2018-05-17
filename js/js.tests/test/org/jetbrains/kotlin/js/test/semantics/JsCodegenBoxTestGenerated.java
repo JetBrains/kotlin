@@ -11558,11 +11558,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
-            @TestMetadata("complexExpressionAsConstructorDefaultArgument.kt")
-            public void testComplexExpressionAsConstructorDefaultArgument() throws Exception {
-                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/complexExpressionAsConstructorDefaultArgument.kt");
-            }
-
             @TestMetadata("constructor.kt")
             public void testConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/constructor.kt");
@@ -11601,11 +11596,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("inheritedInExpectedDeclarations.kt")
             public void testInheritedInExpectedDeclarations() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedInExpectedDeclarations.kt");
-            }
-
-            @TestMetadata("inheritedThroughIntermediateInterfaceWithDefaultImpl.kt")
-            public void testInheritedThroughIntermediateInterfaceWithDefaultImpl() throws Exception {
-                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedThroughIntermediateInterfaceWithDefaultImpl.kt");
             }
 
             @TestMetadata("inheritedViaAnotherInterfaceIndirectly.kt")
