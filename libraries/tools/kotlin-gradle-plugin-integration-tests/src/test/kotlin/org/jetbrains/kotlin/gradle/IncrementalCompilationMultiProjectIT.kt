@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
@@ -98,27 +99,71 @@ open class A {
 
     @Test
     fun testCleanBuildLib() {
-        // Test with Gradle 3.4, since Gradle 3.5+ uses classpath hash normalization for JARs
-        val project = Project("incrementalMultiproject", GradleVersionRequired.Exact("3.4"))
-
-        project.setupWorkingDir()
+        val project = Project("incrementalMultiproject")
 
         project.build("build") {
             assertSuccessful()
         }
 
-        project.build(":lib:clean", ":lib:build") {
+        project.build(":lib:clean") {
             assertSuccessful()
-            val affectedSources = File(project.projectDir, "lib").allKotlinFiles()
+        }
+
+        // Change file so Gradle won't skip :app:compile
+        project.projectFile("BarDummy.kt").modify {
+            it.replace("class BarDummy", "open class BarDummy")
+        }
+        project.build("build") {
+            assertSuccessful()
+            val affectedSources = project.projectDir.allKotlinFiles()
             val relativePaths = project.relativize(affectedSources)
             assertCompiledKotlinSources(relativePaths, weakTesting = false)
         }
 
+        val aaKt = project.projectFile("AA.kt")
+        aaKt.modify { "$it " }
         project.build("build") {
             assertSuccessful()
-            val affectedSources = File(project.projectDir, "app").allKotlinFiles()
+            assertCompiledKotlinSources(project.relativize(aaKt), weakTesting = false)
+        }
+    }
+
+    @Test
+    fun testAddDependencyToLib() {
+        val project = Project("incrementalMultiproject")
+
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val libBuildGradle = File(project.projectDir, "lib/build.gradle")
+        Assert.assertTrue("$libBuildGradle does not exist", libBuildGradle.exists())
+        libBuildGradle.modify {
+            """
+                $it
+
+                dependencies {
+                    implementation 'junit:junit:4.12'
+                }
+            """.trimIndent()
+        }
+        // Change file so Gradle won't skip :app:compile
+        project.projectFile("BarDummy.kt").modify {
+            it.replace("class BarDummy", "open class BarDummy")
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            val affectedSources = project.projectDir.allKotlinFiles()
             val relativePaths = project.relativize(affectedSources)
             assertCompiledKotlinSources(relativePaths, weakTesting = false)
+        }
+
+        val aaKt = project.projectFile("AA.kt")
+        aaKt.modify { "$it " }
+        project.build("build") {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(aaKt), weakTesting = false)
         }
     }
 
