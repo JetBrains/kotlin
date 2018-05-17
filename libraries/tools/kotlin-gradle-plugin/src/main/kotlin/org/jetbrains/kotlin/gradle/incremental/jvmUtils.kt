@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.incremental
+package org.jetbrains.kotlin.gradle.incremental
 
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream
 import java.io.PrintStream
