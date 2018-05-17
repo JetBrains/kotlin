@@ -65,7 +65,7 @@ class IncrementalCompilationOptions(
          * Directories that should be cleared when IC decides to rebuild
          */
         val localStateDirs: List<File>,
-        val buildHistoryFile: File,
+        val multiModuleICSettings: MultiModuleICSettings,
         val modulesInfo: IncrementalModuleInfo
 ) : CompilationOptions(compilerMode, targetPlatform, reportCategories, reportSeverity, requestedCompilationResults) {
     companion object {
@@ -81,10 +81,19 @@ class IncrementalCompilationOptions(
                "workingDir=$workingDir, " +
                "customCacheVersionFileName='$customCacheVersionFileName', " +
                "customCacheVersion=$customCacheVersion, " +
-               "buildHistoryFile=$buildHistoryFile, " +
+               "multiModuleICSettings=$multiModuleICSettings, " +
                "usePreciseJavaTracking=$usePreciseJavaTracking" +
                "localStateDirs=$localStateDirs" +
                ")"
+    }
+}
+
+data class MultiModuleICSettings(
+    val buildHistoryFile: File,
+    val useModuleDetection: Boolean
+) : Serializable {
+    companion object {
+        const val serialVersionUID: Long = 0
     }
 }
 

@@ -275,7 +275,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 targetPlatform = targetPlatform,
                 usePreciseJavaTracking = environment.usePreciseJavaTracking,
                 localStateDirs = environment.localStateDirs,
-                buildHistoryFile = environment.buildHistoryFile,
+                multiModuleICSettings = environment.multiModuleICSettings,
                 modulesInfo = buildModulesInfo(project.gradle)
         )
 

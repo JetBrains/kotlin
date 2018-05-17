@@ -97,5 +97,43 @@ open class ModulesApiHistoryJvm(protected val modulesInfo: IncrementalModuleInfo
     }
 }
 
+class ModulesApiHistoryAndroid(modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryJvm(modulesInfo) {
+    override fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>> {
+        // Module detection is expensive, so we don't don it for jars outside of project dir
+        if (!projectRootPath.isParentOf(jar)) return Either.Error("Non-project jar is modified $jar")
+
+        val jarPath = Paths.get(jar.absolutePath)
+        val possibleModules = getPossibleModuleNamesFromJar(jarPath)
+            .flatMapTo(HashSet()) { modulesInfo.nameToModules[it] ?: emptySet() }
+
+        val modules = possibleModules.filter { Paths.get(it.buildDir.absolutePath).isParentOf(jarPath) }
+        if (modules.isEmpty()) return Either.Error("Unknown module for $jar (candidates: ${possibleModules.joinToString()})")
+
+        val result = modules.mapTo(HashSet()) { it.buildHistoryFile }
+        return Either.Success(result)
+    }
+
+    private fun getPossibleModuleNamesFromJar(path: Path): Collection<String> {
+        val result = HashSet<String>()
+
+        try {
+            ZipFile(path.toFile()).use { zip ->
+                val entries = zip.entries()
+                while (entries.hasMoreElements()) {
+                    val entry = entries.nextElement()
+                    val name = entry.name
+                    if (name.endsWith(".kotlin_module", ignoreCase = true)) {
+                        result.add(File(name).nameWithoutExtension)
+                    }
+                }
+            }
+        } catch (t: Throwable) {
+            return emptyList()
+        }
+
+        return result
+    }
+}
+
 private fun Path.isParentOf(path: Path) = path.startsWith(this)
 private fun Path.isParentOf(file: File) = this.isParentOf(Paths.get(file.absolutePath))
