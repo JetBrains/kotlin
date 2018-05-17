@@ -52,7 +52,9 @@ data class ArgumentParseErrors(
     // Arguments where [Argument.deprecatedName] was used; the key is the deprecated name, the value is the new name ([Argument.value])
     val deprecatedArguments: MutableMap<String, String> = mutableMapOf(),
 
-    var argumentWithoutValue: String? = null
+    var argumentWithoutValue: String? = null,
+
+    val argfileErrors: MutableList<String> = SmartList<String>()
 )
 
 // Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
