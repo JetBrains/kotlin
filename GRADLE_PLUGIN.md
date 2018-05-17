@@ -311,14 +311,14 @@ target list in `konan.build.targets` project property:
 * __compileKonan__. Aggregate task to build all the Kotlin/Native artifacts for all available targets. `konan.build.targets` project
 property also may be used to override the target list. The task has no properties to use by a build script.
 
-* __run__. This task builds and runs all the executable artifacts supported by the current host. Additional run
-parameters can be passed using the `runArgs` project property:
+* __run<ArtifactName>__. Such a task is created for each executable supported by current host and allows one to run this
+executable. The task is an instance of Gradle's [`Exec`](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.Exec.html)
+so it supports all settings provided by `Exec`. Additionally, run parameters may be passed to the task using the `runArgs`
+project property:
 
     ```
     ./gradlew run -PrunArgs='foo bar'
     ```
-
-    The task has no properties to use by a build script.
 
 The plugin also edits the default `build` and `clean` tasks so that the first one allows one to build all the artifacts supported
 (it's dependent on the `compileKonan` task) and the second one removes the files created by the Kotlin/Native build.
