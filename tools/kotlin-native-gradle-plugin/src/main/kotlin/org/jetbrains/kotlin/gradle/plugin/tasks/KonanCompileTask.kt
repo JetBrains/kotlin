@@ -16,14 +16,18 @@
 
 package org.jetbrains.kotlin.gradle.plugin.tasks
 
+import groovy.lang.Closure
+import org.codehaus.groovy.runtime.GStringImpl
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
+import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifactImpl
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.Distribution
 import java.io.File
 
@@ -241,6 +245,34 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
 open class KonanCompileProgramTask: KonanCompileTask() {
     override val produce: CompilerOutputKind get() = CompilerOutputKind.PROGRAM
+
+    var runTask: Exec? = null
+
+    inner class RunArgumentProvider(): CommandLineArgumentProvider {
+        override fun asArguments() = project.findProperty("runArgs")?.let {
+            it.toString().split(' ')
+        } ?: emptyList()
+    }
+
+    // Create tasks to run supported executables.
+    override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
+        super.init(config, destinationDir, artifactName, target)
+        if (!isCrossCompile) {
+            runTask = project.tasks.create("run${artifactName.capitalize()}", Exec::class.java).apply {
+                group = "run"
+                dependsOn(this@KonanCompileProgramTask)
+                val artifactPathClosure = object : Closure<String>(this) {
+                    override fun call() = artifactPath
+                }
+                // Use GString to evaluate a path to the artifact lazily thus allow changing it at configuration phase.
+                val lazyArtifactPath = GStringImpl(arrayOf(artifactPathClosure), arrayOf(""))
+                executable(lazyArtifactPath)
+                // Add values passed in the runArgs project property as arguments.
+                argumentProviders.add(RunArgumentProvider())
+            }
+        }
+    }
+
 }
 
 open class KonanCompileDynamicTask: KonanCompileTask() {

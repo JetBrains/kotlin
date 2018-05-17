@@ -167,6 +167,7 @@ open class PropertiesAsEnvVariablesTest {
         assertFileExists(destination2, artifactFileName("main", ArtifactType.LIBRARY))
     }
 
+    @Test
     fun `Up-to-date checks should work with different directories for different targets`() {
         val project = KonanProject.createEmpty(projectDirectory)
         val fooDir = project.createSubDir("foo")

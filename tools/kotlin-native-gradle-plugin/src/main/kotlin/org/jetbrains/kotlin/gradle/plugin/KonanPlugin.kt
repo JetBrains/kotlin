@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.customerDistribution
-import org.jetbrains.kotlin.konan.util.*
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import java.io.File
 import javax.inject.Inject
 
@@ -341,24 +341,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
             doLast { project.cleanKonan() }
         }
 
-        // Create task to run supported executables.
-        project.getOrCreateTask("run").apply {
-            dependsOn(project.getTask("build"))
-            doLast {
-                for (task in project.tasks
-                        .withType(KonanCompileProgramTask::class.java)
-                        .matching { !it.isCrossCompile }) {
-                    project.exec {
-                        with(it) {
-                            commandLine(task.artifact.canonicalPath)
-                            if (project.extensions.extraProperties.has("runArgs")) {
-                                args(project.extensions.extraProperties.get("runArgs").toString().split(' '))
-                            }
-                        }
-                    }
-                }
-            }
-        }
         //project.gradle.experimentalFeatures.enable()
 
         // Enable multiplatform support
