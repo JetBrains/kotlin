@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.compilerRunner
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import org.jetbrains.kotlin.incremental.ChangedFiles
@@ -31,8 +32,8 @@ internal class GradleIncrementalCompilerEnvironment(
         messageCollector: GradleMessageCollector,
         outputItemsCollector: OutputItemsCollector,
         compilerArgs: CommonCompilerArguments,
-        val buildHistoryFile: File,
         val kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
         val usePreciseJavaTracking: Boolean = false,
-        val localStateDirs: List<File> = emptyList()
+        val localStateDirs: List<File> = emptyList(),
+        val multiModuleICSettings: MultiModuleICSettings
 ) : GradleCompilerEnvironment(compilerClasspath, messageCollector, outputItemsCollector, compilerArgs)

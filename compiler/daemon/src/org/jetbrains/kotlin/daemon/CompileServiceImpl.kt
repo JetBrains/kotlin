@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.daemon.report.RemoteICReporter
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
+import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
@@ -523,14 +524,20 @@ class CompileServiceImpl(
                                           workingDir,
                                           enabled = true)
 
-        val modulesApiHistory = ModulesApiHistoryJvm(incrementalCompilationOptions.modulesInfo)
+        val modulesApiHistory = incrementalCompilationOptions.run {
+            if (!multiModuleICSettings.useModuleDetection) {
+                ModulesApiHistoryJvm(modulesInfo)
+            } else {
+                ModulesApiHistoryAndroid(modulesInfo)
+            }
+        }
 
         val compiler = IncrementalJvmCompilerRunner(
             workingDir,
             javaSourceRoots,
             versions,
             reporter, annotationFileUpdater,
-            buildHistoryFile = incrementalCompilationOptions.buildHistoryFile,
+            buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
             localStateDirs = incrementalCompilationOptions.localStateDirs,
             usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking,
             modulesApiHistory = modulesApiHistory

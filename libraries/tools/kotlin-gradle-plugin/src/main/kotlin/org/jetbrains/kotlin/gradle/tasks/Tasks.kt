@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAwareWithInput
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
@@ -98,6 +99,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @get:Internal
     internal val buildHistoryFile: File get() = File(taskBuildDirectory, "build-history.bin")
+
+    @get:Input
+    internal var useModuleDetection: Boolean = false
+
+    @get:Internal
+    protected val multiModuleICSettings: MultiModuleICSettings
+        get() = MultiModuleICSettings(buildHistoryFile, useModuleDetection)
 
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
@@ -353,11 +361,10 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                         computedCompilerClasspath,
                         if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
                         taskBuildDirectory,
-                        messageCollector, outputItemCollector, args,
-                        buildHistoryFile = buildHistoryFile,
-                        kaptAnnotationsFileUpdater = kaptAnnotationsFileUpdater,
+                        messageCollector, outputItemCollector, args, kaptAnnotationsFileUpdater,
                         usePreciseJavaTracking = usePreciseJavaTracking,
-                        localStateDirs = outputDirectories
+                        localStateDirs = outputDirectories,
+                        multiModuleICSettings = multiModuleICSettings
                 )
             }
         }
@@ -509,7 +516,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
                         if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
                         taskBuildDirectory,
                         messageCollector, outputItemCollector, args,
-                        buildHistoryFile = buildHistoryFile
+                        multiModuleICSettings = multiModuleICSettings
                 )
             }
             else -> {

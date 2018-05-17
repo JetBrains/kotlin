@@ -158,6 +158,25 @@ fun getSomething() = 10
     }
 
     @Test
+    fun testMultiModuleIC() {
+        val project = Project("AndroidProject", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = true)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+        }
+
+        val libUtilKt = project.projectDir.getFileByName("libUtil.kt")
+        libUtilKt.modify { it.replace("fun libUtil(): String", "fun libUtil(): CharSequence") }
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("libUtil.kt", "MainActivity2.kt")
+            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+        }
+    }
+
+    @Test
     fun testIncrementalBuildWithNoChanges() {
         val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val tasksToExecute = listOf(
