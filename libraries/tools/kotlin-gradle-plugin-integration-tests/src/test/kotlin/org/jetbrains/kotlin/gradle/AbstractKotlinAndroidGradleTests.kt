@@ -13,8 +13,6 @@ import java.io.File
 class KotlinAndroidGradleIT :
     AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionRequired.AtLeast("3.4"), androidGradlePluginVersion = "2.3.0")
 
-class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(androidGradlePluginVersion = "2.3.+")
-
 // TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
 class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtLeast("4.6"), "3.2.0-alpha15") {
 
@@ -380,30 +378,6 @@ fun getSomething() = 10
             assertFileExists("libAndroid/build/tmp/kotlin-classes/release/foo/PlatformClass.class")
             assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
             assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
-        }
-    }
-}
-
-
-abstract class AbstractKotlinAndroidWithJackGradleTests(
-    private val androidGradlePluginVersion: String
-) : BaseGradleIT() {
-
-    fun getEnvJDK_18() = System.getenv()["JDK_18"]
-
-    override fun defaultBuildOptions() =
-        super.defaultBuildOptions().copy(
-            androidHome = KotlinTestUtils.findAndroidSdk(),
-            androidGradlePluginVersion = androidGradlePluginVersion, javaHome = File(getEnvJDK_18())
-        )
-
-    @Test
-    fun testSimpleCompile() {
-        val project = Project("AndroidJackProject", GradleVersionRequired.Exact("3.4"))
-
-        project.build("assemble") {
-            assertFailed()
-            assertContains("Kotlin Gradle plugin does not support the deprecated Jack toolchain")
         }
     }
 }
