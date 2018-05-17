@@ -208,13 +208,8 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
             "<`$index>"
     }
 
-    private fun IrMemberAccessExpression.renderTypeArgument(index: Int): String {
-        val typeArgument = getTypeArgument(index)
-        return if (typeArgument != null)
-            DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.renderType(typeArgument)
-        else
-            "<none>"
-    }
+    private fun IrMemberAccessExpression.renderTypeArgument(index: Int): String =
+        getTypeArgument(index)?.render() ?: "<none>"
 
     override fun visitGetField(expression: IrGetField, data: String) {
         expression.dumpLabeledElementWith(data) {
