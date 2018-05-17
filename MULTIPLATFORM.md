@@ -4,7 +4,7 @@ While Kotlin/Native could be used as the only Kotlin compiler in the project, it
 Kotlin/Native with other Kotlin backends, such as Kotlin/JVM (for JVM or Android targets) or Kotlin/JS
 (for web and Node.js applications). This document describes recommended approaches and the best practices for such scenarios.
 
-Kotlin as a language provides a notion of expect/actual declarations, and Gradle, as an official Kotlin build system
+Kotlin as a language provides a notion of expect/actual declarations, and Gradle in its turn
 augments it with the notion of multiplatform projects (aka MPP). Those two, combined together, provide a flexible
 standartized [mechanism of multiplatform development](https://kotlinlang.org/docs/reference/multiplatform.html)
 across various Kotlin flavours.
