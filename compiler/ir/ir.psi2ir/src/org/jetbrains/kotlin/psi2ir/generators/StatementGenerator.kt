@@ -99,7 +99,9 @@ class StatementGenerator(
 
         return context.symbolTable.declareVariable(
             property.startOffset, property.endOffset, IrDeclarationOrigin.DEFINED,
-            variableDescriptor, property.initializer?.genExpr()
+            variableDescriptor,
+            variableDescriptor.type.toIrType(),
+            property.initializer?.genExpr()
         )
     }
 
@@ -118,7 +120,7 @@ class StatementGenerator(
             context.irBuiltIns.unitType, IrStatementOrigin.DESTRUCTURING_DECLARATION
         )
         val ktInitializer = multiDeclaration.initializer!!
-        val containerValue = scope.createTemporaryVariableInBlock(ktInitializer.genExpr(), irBlock, "container")
+        val containerValue = scope.createTemporaryVariableInBlock(context, ktInitializer.genExpr(), irBlock, "container")
 
         declareComponentVariablesInBlock(multiDeclaration, irBlock, containerValue)
 
@@ -148,7 +150,7 @@ class StatementGenerator(
             )
             val irComponentVar = context.symbolTable.declareVariable(
                 ktEntry.startOffset, ktEntry.endOffset, IrDeclarationOrigin.DEFINED,
-                componentVariable, irComponentCall
+                componentVariable, componentVariable.type.toIrType(), irComponentCall
             )
             irBlock.statements.add(irComponentVar)
         }

@@ -85,7 +85,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         context.symbolTable.declareField(
             ktPropertyElement.startOffset, ktPropertyElement.endOffset,
             IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-            propertyDescriptor
+            propertyDescriptor, propertyDescriptor.type.toIrType()
         ).also {
             it.initializer = generateInitializer(it)
         }
