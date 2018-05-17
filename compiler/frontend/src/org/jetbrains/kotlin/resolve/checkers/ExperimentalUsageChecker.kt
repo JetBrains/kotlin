@@ -265,18 +265,6 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             }
         }
 
-        private fun PsiElement.isUsageAsAnnotationOrImport(): Boolean {
-            val parent = parent
-
-            if (parent is KtUserType) {
-                return parent.parent is KtTypeReference &&
-                        parent.parent.parent is KtConstructorCalleeExpression &&
-                        parent.parent.parent.parent is KtAnnotationEntry
-            }
-
-            return parent is KtDotQualifiedExpression && parent.parent is KtImportDirective
-        }
-
         private fun PsiElement.isUsageAsQualifier(): Boolean {
             if (this is KtSimpleNameExpression) {
                 val qualifier = getTopmostParentQualifiedExpressionForSelector() ?: this

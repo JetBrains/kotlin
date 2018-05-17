@@ -12078,6 +12078,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/jvmName/functionName.kt");
         }
 
+        @TestMetadata("loadJvmName.kt")
+        public void testLoadJvmName() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmName/loadJvmName.kt");
+        }
+
         @TestMetadata("multifileClass.kt")
         public void testMultifileClass() throws Exception {
             runTest("compiler/testData/codegen/box/jvmName/multifileClass.kt");
@@ -13438,6 +13443,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("noArgActualConstructor.kt")
         public void testNoArgActualConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/multiplatform/noArgActualConstructor.kt");
+        }
+
+        @TestMetadata("optionalExpectation.kt")
+        public void testOptionalExpectation() throws Exception {
+            runTest("compiler/testData/codegen/box/multiplatform/optionalExpectation.kt");
         }
 
         @TestMetadata("compiler/testData/codegen/box/multiplatform/defaultArguments")
