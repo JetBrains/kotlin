@@ -104,6 +104,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val sourceSets = androidExtension.sourceSets
 
         val pluginOptions = arrayListOf<SubpluginOption>()
+        pluginOptions += SubpluginOption("features", AndroidExtensionsFeature.VIEWS.featureName)
 
         val mainSourceSet = sourceSets.getByName("main")
         val manifestFile = mainSourceSet.manifest.srcFile
@@ -157,6 +158,8 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         androidProjectHandler as? AbstractAndroidProjectHandler<Any?> ?: return emptyList()
 
         val pluginOptions = arrayListOf<SubpluginOption>()
+        pluginOptions += SubpluginOption("features",
+                AndroidExtensionsFeature.parseFeatures(androidExtensionsExtension.features).joinToString(",") { it.featureName })
 
         pluginOptions += SubpluginOption("experimental", "true")
         pluginOptions += SubpluginOption("defaultCacheImplementation", androidExtensionsExtension.defaultCacheImplementation.optionName)
@@ -207,6 +210,8 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
             addVariant(sourceSetName, (srcDirs - commonResDirectories).sorted())
         }
+
+        project.logger.warn("Blah: " + allResDirectories)
 
         return wrapPluginOptions(pluginOptions, "configuration")
     }
