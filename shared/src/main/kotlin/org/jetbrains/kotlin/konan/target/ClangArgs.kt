@@ -163,7 +163,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 emptyList()
             }
 
-    val commonClangArgs = listOf("-B$binDir") + extraHostClangArgs
+    val commonClangArgs = listOf("-B$binDir", "-fno-stack-protector") + extraHostClangArgs
 
     val clangPaths = listOf("$absoluteLlvmHome/bin", binDir)
 
