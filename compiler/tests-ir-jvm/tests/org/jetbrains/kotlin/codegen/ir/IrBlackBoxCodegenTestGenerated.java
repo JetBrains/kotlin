@@ -8144,6 +8144,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/function"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("complexInheritance.kt")
+            public void testComplexInheritance() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/function/complexInheritance.kt");
+            }
+
             @TestMetadata("covariantOverride.kt")
             public void testCovariantOverride() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/function/covariantOverride.kt");

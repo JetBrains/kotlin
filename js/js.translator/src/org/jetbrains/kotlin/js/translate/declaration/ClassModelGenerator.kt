@@ -85,6 +85,7 @@ class ClassModelGenerator(val context: TranslationContext) {
         val fromInterface = member.overriddenDescriptors.firstOrNull { it.hasOrInheritsParametersWithDefaultValue() } ?: return false
         if (!DescriptorUtils.isInterface(fromInterface.containingDeclaration)) return false
         val fromClass = member.overriddenDescriptors.firstOrNull { !DescriptorUtils.isInterface(it.containingDeclaration) } ?: return false
+        if (fromClass.hasOrInheritsParametersWithDefaultValue()) return false
 
         val targetClass = member.containingDeclaration as ClassDescriptor
         val fromInterfaceName = context.getNameForDescriptor(fromInterface).ident

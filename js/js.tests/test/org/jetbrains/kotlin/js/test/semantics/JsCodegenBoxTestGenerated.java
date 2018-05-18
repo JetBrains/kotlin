@@ -6593,11 +6593,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/defaultArguments/simpleFromOtherFile.kt");
         }
 
-        @TestMetadata("superCallCheck.kt")
-        public void testSuperCallCheck() throws Exception {
-            runTest("compiler/testData/codegen/box/defaultArguments/superCallCheck.kt");
-        }
-
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/constructor")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -6618,11 +6613,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("annotationWithEmptyArray.kt")
             public void testAnnotationWithEmptyArray() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/constructor/annotationWithEmptyArray.kt");
-            }
-
-            @TestMetadata("checkIfConstructorIsSynthetic.kt")
-            public void testCheckIfConstructorIsSynthetic() throws Exception {
-                runTest("compiler/testData/codegen/box/defaultArguments/constructor/checkIfConstructorIsSynthetic.kt");
             }
 
             @TestMetadata("defArgs1.kt")
@@ -6674,11 +6664,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testKt3060() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/constructor/kt3060.kt");
             }
-
-            @TestMetadata("manyArgs.kt")
-            public void testManyArgs() throws Exception {
-                runTest("compiler/testData/codegen/box/defaultArguments/constructor/manyArgs.kt");
-            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/convention")
@@ -6724,6 +6709,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
 
             public void testAllFilesPresentInFunction() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/function"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("complexInheritance.kt")
+            public void testComplexInheritance() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/function/complexInheritance.kt");
             }
 
             @TestMetadata("covariantOverride.kt")
