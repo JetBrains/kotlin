@@ -32,7 +32,7 @@ class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
 
     override fun visitUniverseClass(universeClass: JKUniverseClass) {
         somethingChanged = true
-        universeClass.declarationList.declarations = universeClass.declarationList.declarations.map {
+        universeClass.declarationList = universeClass.declarationList.map {
             if (it is JKJavaMethod) JKKtFunctionImpl(
                 JKJavaPrimitiveTypeImpl.BOOLEAN,
                 it.name,
