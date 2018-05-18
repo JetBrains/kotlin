@@ -558,7 +558,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.store(2, OBJECT_TYPE);
 
             for (PropertyDescriptor propertyDescriptor : properties) {
-                Type asmType = typeMapper.mapType(propertyDescriptor);
+                KotlinType type = propertyDescriptor.getType();
+                Type asmType = typeMapper.mapType(type);
 
                 Type thisPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, ImplementationBodyCodegen.this.classAsmType, 0);
                 StackValue.coerce(thisPropertyType, asmType, iv);
@@ -579,18 +580,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         StackValue value = StackValue.cmp(KtTokens.EQEQ, asmType, StackValue.onStack(asmType), StackValue.onStack(asmType));
                         value.put(Type.BOOLEAN_TYPE, iv);
                     }
-                    else if (TypeUtils.isNullableType(propertyDescriptor.getType())) {
-                        StackValue value =
-                                genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
-                        value.put(Type.BOOLEAN_TYPE, iv);
-                    }
                     else {
-                        Type owner =
-                                DescriptorUtils.isInterface(propertyDescriptor.getType().getConstructor().getDeclarationDescriptor())
-                                ? AsmTypes.OBJECT_TYPE
-                                : asmType;
-                        iv.invokevirtual(owner.getInternalName(), "equals",
-                                         Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE), false);
+                        if (TypeUtils.isNullableType(type)) {
+                            StackValue value =
+                                    genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
+                            value.put(Type.BOOLEAN_TYPE, iv);
+                        }
+                        else {
+                            ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
+                            Type owner =
+                                    !(classifier instanceof ClassDescriptor) || DescriptorUtils.isInterface(classifier)
+                                    ? AsmTypes.OBJECT_TYPE
+                                    : asmType;
+                            iv.invokevirtual(owner.getInternalName(), "equals",
+                                             Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE), false);
+                        }
                     }
                     iv.ifeq(ne);
                 }
