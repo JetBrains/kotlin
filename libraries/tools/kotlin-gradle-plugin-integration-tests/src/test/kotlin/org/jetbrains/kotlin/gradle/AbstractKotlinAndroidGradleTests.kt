@@ -350,6 +350,11 @@ fun getSomething() = 10
 
     @Test
     fun testAndroidExtensionsManyVariants() {
+        if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+            // Library dependencies are not supported in older versions of Android Gradle plugin (< 3.0)
+            return
+        }
+
         val project = Project("AndroidExtensionsManyVariants", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
 
@@ -362,6 +367,30 @@ fun getSomething() = 10
             } else {
                 assertSuccessful()
             }
+        }
+    }
+
+    @Test
+    fun testAndroidExtensionsSpecificFeatures() {
+        val project = Project("AndroidExtensionsSpecificFeatures", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assemble", options = options) {
+            assertFailed()
+            assertContains("Unresolved reference: textView")
+        }
+
+        File(project.projectDir, "app/build.gradle").modify { it.replace("[\"parcelize\"]", "[\"views\"]") }
+
+        project.build("assemble", options = options) {
+            assertFailed()
+            assertContains("Class 'User' is not abstract and does not implement abstract member public abstract fun writeToParcel")
+        }
+
+        File(project.projectDir, "app/build.gradle").modify { it.replace("[\"views\"]", "[\"parcelize\", \"views\"]") }
+
+        project.build("assemble", options = options) {
+            assertSuccessful()
         }
     }
 

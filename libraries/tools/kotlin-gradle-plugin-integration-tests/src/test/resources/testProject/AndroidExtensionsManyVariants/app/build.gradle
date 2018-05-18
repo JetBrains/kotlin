@@ -36,6 +36,7 @@ android {
 
 androidExtensions {
     experimental = true
+    features = ["views", "parcelize"]
 }
 
 dependencies {
