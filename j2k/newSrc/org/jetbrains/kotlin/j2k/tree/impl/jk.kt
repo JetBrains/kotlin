@@ -29,28 +29,28 @@ class JKChild<T : JKElement>(val value: Int) : ReadWriteProperty<JKBranchElement
     }
 
     override operator fun setValue(thisRef: JKBranchElementBase, property: KProperty<*>, value: T) {
-        (thisRef.children[this.value] as T).detach()
-        value.attach(thisRef)
+        (thisRef.children[this.value] as T).detach(thisRef)
         thisRef.children[this.value] = value
+        value.attach(thisRef)
     }
 }
 
 class JKListChild<T : JKElement>(val value: Int) : ReadWriteProperty<JKBranchElementBase, List<T>> {
     override operator fun getValue(thisRef: JKBranchElementBase, property: KProperty<*>): List<T> {
-        return thisRef.children.toList() as List<T>
+        return thisRef.children[value] as List<T>
     }
 
     override operator fun setValue(thisRef: JKBranchElementBase, property: KProperty<*>, value: List<T>) {
-        (thisRef.children[this.value] as List<T>).forEach { it.detach() }
-        value.forEach { it.attach(thisRef) }
+        (thisRef.children[this.value] as List<T>).forEach { it.detach(thisRef) }
         thisRef.children[this.value] = value
+        value.forEach { it.attach(thisRef) }
     }
 }
 
 abstract class JKElementBase : JKTreeElement {
     override var parent: JKElement? = null
 
-    final override fun detach() {
+    final override fun detach(from: JKElement) {
         val prevParent = parent
         assert(prevParent != null)
         parent = null
@@ -80,16 +80,18 @@ abstract class JKBranchElementBase : JKElementBase(), JKBranchElement {
     protected var childNum = 0
     protected fun <T : JKTreeElement, U : T> child(v: U): ReadWriteProperty<JKBranchElementBase, T> {
         children.add(childNum, v)
+        v.attach(this)
         return JKChild(childNum++)
     }
 
-    protected inline fun <reified T : JKTreeElement> child(): ReadWriteProperty<JKBranchElementBase, List<T>> {
-        children[childNum] = listOf<T>()
+    protected inline fun <reified T : JKTreeElement> children(): ReadWriteProperty<JKBranchElementBase, List<T>> {
+        children.add(childNum, listOf<T>())
         return JKListChild(childNum++)
     }
 
-    protected inline fun <reified T : JKTreeElement> child(v: List<T>): ReadWriteProperty<JKBranchElementBase, List<T>> {
-        children[childNum] = v
+    protected inline fun <reified T : JKTreeElement> children(v: List<T>): ReadWriteProperty<JKBranchElementBase, List<T>> {
+        children.add(childNum, v)
+        v.forEach { it.attach(this) }
         return JKListChild(childNum++)
     }
 
@@ -113,7 +115,7 @@ class JKClassImpl(modifierList: JKModifierList, name: JKNameIdentifier, override
     override var modifierList by child(modifierList)
     override val valid: Boolean = true
 
-    override var declarationList by child<JKUniverseDeclaration>()
+    override var declarationList by children<JKUniverseDeclaration>()
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitUniverseClass(this, data)
 }
@@ -122,7 +124,7 @@ class JKClassImpl(modifierList: JKModifierList, name: JKNameIdentifier, override
 class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKElementBase() {}
 
 class JKModifierListImpl(modifiers: List<JKModifier> = emptyList()) : JKModifierList, JKBranchElementBase() {
-    override var modifiers: List<JKModifier> by child(modifiers)
+    override var modifiers: List<JKModifier> by children(modifiers)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitModifierList(this, data)
 }
 
@@ -132,7 +134,7 @@ class JKValueArgumentImpl(type: JKType, override val name: String) : JKValueArgu
 }
 
 class JKBlockImpl(statements: List<JKStatement> = emptyList()) : JKBlock, JKBranchElementBase() {
-    override var statements by child(statements)
+    override var statements by children(statements)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlock(this, data)
 }
 
@@ -155,7 +157,7 @@ class JKPostfixExpressionImpl(expression: JKExpression, override var operator: J
 }
 
 class JKExpressionListImpl(expressions: List<JKExpression> = emptyList()) : JKExpressionList, JKBranchElementBase() {
-    override var expressions by child(expressions)
+    override var expressions by children(expressions)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitExpressionList(this, data)
 }
 

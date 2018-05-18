@@ -218,10 +218,8 @@ class JavaToJKTreeBuilder {
                 JKNameIdentifierImpl(name!!),
                 classKind
             ).also {
-                it.declarationList.apply {
-                    declarations = psi.children.mapNotNull {
-                        ElementVisitor(this@DeclarationMapper).apply { it.accept(this) }.resultElement as? JKUniverseDeclaration
-                    }
+                it.declarationList = psi.children.mapNotNull {
+                    ElementVisitor(this@DeclarationMapper).apply { it.accept(this) }.resultElement as? JKUniverseDeclaration
                 }
 
                 bindSymbol(this, it)

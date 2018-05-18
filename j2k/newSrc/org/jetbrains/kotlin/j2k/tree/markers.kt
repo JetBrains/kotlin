@@ -23,7 +23,7 @@ interface JKQualifier
 interface JKElement {
     val parent: JKElement?
 
-    fun detach()
+    fun detach(from: JKElement)
 
     fun attach(to: JKElement)
 }
