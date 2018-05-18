@@ -32,10 +32,7 @@ class ModuleContext(val project: PProject, val module: PModule) : PathContext {
             return file.absolutePath
         }
 
-        return "\$MODULE_DIR\$/" +
-            project.rootDirectory.toRelativeString(module.moduleFile.parentFile).withSlash() +
-            module.rootDirectory.toRelativeString(project.rootDirectory).withSlash() +
-            file.toRelativeString(module.rootDirectory)
+        return "\$MODULE_DIR\$/" + file.toRelativeString(module.moduleFile.parentFile)
     }
 }
 
