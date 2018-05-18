@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.j2k.tree
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 interface JKTreeElement : JKElement {
     fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R
@@ -36,7 +38,7 @@ interface JKUDeclarationList : JKDeclarationList {
 }
 
 interface JKUniverseClass : JKUniverseDeclaration, JKClass {
-    override val declarationList: JKUDeclarationList
+    override var declarationList: List<JKUniverseDeclaration>
 }
 
 interface JKModifier : JKTreeElement

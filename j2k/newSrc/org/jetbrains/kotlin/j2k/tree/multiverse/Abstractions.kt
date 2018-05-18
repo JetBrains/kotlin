@@ -15,3 +15,7 @@
  */
 
 package org.jetbrains.kotlin.j2k.tree.multiverse
+
+import org.jetbrains.kotlin.j2k.tree.JKDeclaration
+
+interface JKMultiverseDeclaration : JKDeclaration
