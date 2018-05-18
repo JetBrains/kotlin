@@ -16,16 +16,20 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-interface JKOperator: JKTreeElement
+interface JKOperator : JKTreeElement
 
 interface JKQualifier
 
 interface JKElement {
-    var parent: JKElement?
+    val parent: JKElement?
+
+    fun detach()
+
+    fun attach(to: JKElement)
 }
 
 interface JKBranchElement : JKElement {
-    val children: List<JKTreeElement>
+    val children: List<Any>
 }
 
 interface JKModifierListOwner {
@@ -40,7 +44,7 @@ interface JKDeclaration : JKElement, JKReferenceTarget
 
 interface JKClass : JKDeclaration, JKModifierListOwner {
     val name: JKNameIdentifier
-    val declarationList: JKDeclarationList
+    val declarationList: List<JKDeclaration>
     var classKind: ClassKind
 
     enum class ClassKind {

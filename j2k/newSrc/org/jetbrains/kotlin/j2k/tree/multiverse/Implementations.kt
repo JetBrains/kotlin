@@ -29,14 +29,14 @@ abstract class JKMultiverseElementBase : JKElement {
     }
 }
 
-class JKMultiverseField(override var name: JKNameIdentifier) : JKField, JKMultiverseElementBase() {
+class JKMultiverseField(override var name: JKNameIdentifier) : JKField, JKMultiverseDeclaration, JKMultiverseElementBase() {
     override var modifierList: JKModifierList = JKModifierListImpl()
     override var type: JKType = JKJavaPrimitiveTypeImpl.BOOLEAN //TODO
     override val valid: Boolean
         get() = true
 }
 
-class JKMultiverseMethod(override var name: JKNameIdentifier) : JKMethod, JKMultiverseElementBase() {
+class JKMultiverseMethod(override var name: JKNameIdentifier) : JKMethod, JKMultiverseDeclaration, JKMultiverseElementBase() {
     override val returnType: JKType
         get() = TODO("not implemented")
     override var modifierList: JKModifierList = JKModifierListImpl()
@@ -46,11 +46,9 @@ class JKMultiverseMethod(override var name: JKNameIdentifier) : JKMethod, JKMult
 }
 
 class JKMultiverseClass(
-    override var name: JKNameIdentifier, override val declarationList: JKMDeclarationList,
+    override var name: JKNameIdentifier, override val declarationList: List<JKMultiverseDeclaration>,
     override var classKind: JKClass.ClassKind, override var modifierList: JKModifierList
 ) : JKClass, JKMultiverseElementBase() {
     override val valid: Boolean
         get() = true
 }
-
-class JKMDeclarationList(override val declarations: List<JKDeclaration>) : JKMultiverseElementBase(), JKDeclarationList
