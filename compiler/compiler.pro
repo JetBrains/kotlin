@@ -52,6 +52,9 @@ messages/**)
 -dontwarn org.jetbrains.annotations.Mutable
 -dontwarn com.intellij.util.io.TarUtil
 
+# Depends on apache batick which has lots of dependencies
+-dontwarn com.intellij.util.SVGLoader*
+
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
 #-libraryjars '<bootstrap.runtime>'
