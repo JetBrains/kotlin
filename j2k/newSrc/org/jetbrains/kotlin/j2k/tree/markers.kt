@@ -39,30 +39,3 @@ interface JKModifierListOwner {
 interface JKReferenceTarget {
     val valid: Boolean
 }
-
-interface JKDeclaration : JKElement, JKReferenceTarget
-
-interface JKClass : JKDeclaration, JKModifierListOwner {
-    val name: JKNameIdentifier
-    val declarationList: List<JKDeclaration>
-    var classKind: ClassKind
-
-    enum class ClassKind {
-        ABSTRACT, ANNOTATION, CLASS, ENUM, INTERFACE
-    }
-}
-
-interface JKMethod : JKDeclaration, JKModifierListOwner {
-    val name: JKNameIdentifier
-    var valueArguments: List<JKValueArgument>
-    val returnType: JKType
-}
-
-interface JKField : JKDeclaration, JKModifierListOwner {
-    val type: JKType
-    val name: JKNameIdentifier
-}
-
-interface JKSymbol<E : JKElement> {
-    val element: E
-}

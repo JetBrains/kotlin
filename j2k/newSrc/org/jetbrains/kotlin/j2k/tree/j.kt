@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-interface JKJavaField : JKUniverseDeclaration, JKField {
+import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
+
+interface JKJavaField : JKField {
     val initializer: JKExpression
 }
 
-interface JKJavaMethod : JKUniverseDeclaration, JKMethod {
+interface JKJavaMethod : JKMethod {
     val block: JKBlock
 }
 
@@ -44,7 +46,7 @@ interface JKJavaMethodCallExpression : JKMethodCallExpression
 interface JKJavaFieldAccessExpression : JKFieldAccessExpression
 
 interface JKJavaNewExpression : JKExpression {
-    val constructorSymbol: JKSymbol<JKMethod>
+    val constructorSymbol: JKMethodSymbol
     val arguments: JKExpressionList
 }
 

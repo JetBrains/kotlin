@@ -77,26 +77,25 @@ sealed class JKJavaQualifierImpl : JKQualifier, JKElementBase() {
 }
 
 class JKJavaMethodCallExpressionImpl(
-    override var identifier: JKMethodReference, override var arguments: JKExpressionList
+    override var identifier: JKMethodSymbol, override var arguments: JKExpressionList
 ) : JKJavaMethodCallExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodCallExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        identifier.accept(visitor, data)
         arguments.accept(visitor, data)
     }
 }
 
-class JKJavaFieldAccessExpressionImpl(override var identifier: JKFieldReference) : JKJavaFieldAccessExpression, JKElementBase() {
+class JKJavaFieldAccessExpressionImpl(override var identifier: JKFieldSymbol) : JKJavaFieldAccessExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaFieldAccessExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        identifier.accept(visitor, data)
+
     }
 }
 
 class JKJavaNewExpressionImpl(
-    override val constructorSymbol: JKSymbol<JKMethod>,
+    override val constructorSymbol: JKMethodSymbol,
     arguments: JKExpressionList
 ) : JKJavaNewExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewExpression(this, data)

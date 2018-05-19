@@ -34,16 +34,30 @@ class JavaToJKTreeBuilder {
 
     private val modifierMapper = ModifierMapper()
 
-    val symbols = mutableMapOf<PsiElement, JKBindableSymbol<*>>()
+    val symbols = mutableMapOf<PsiElement, JKSymbol>()
 
-    fun bindSymbol(psi: PsiElement, element: JKElement) {
-        provideSymbol(psi).bind(element)
+    val symbolsByDeclaration = mutableMapOf<JKDeclaration, JKSymbol>()
+
+    fun provideSymbol(psi: PsiElement): JKSymbol {
+        return symbols.getOrPut(psi) {
+            when (psi) {
+                is PsiClass -> JKMultiverseClassSymbol(psi)
+                is PsiMethod -> JKMultiverseMethodSymbol(psi)
+                is PsiField -> JKMultiverseFieldSymbol(psi)
+                else -> TODO()
+            }
+        }
     }
 
-    fun <T : JKElement> provideSymbol(psi: PsiElement): JKBindableSymbol<T> {
-        return symbols.getOrPut(psi) {
-            DelayedPsiSymbol<T>(psi)
-        } as JKBindableSymbol<T>
+    fun provideSymbol(psi: JKDeclaration): JKSymbol {
+        return symbolsByDeclaration.getOrPut(psi) {
+            when (psi) {
+                is JKClass -> JKUniverseClassSymbol(psi)
+                is JKMethod -> JKUniverseMethodSymbol(psi)
+                is JKField -> JKUniverseFieldSymbol(psi)
+                else -> TODO()
+            }
+        }
     }
 
     private inner class ExpressionTreeMapper {
@@ -127,8 +141,8 @@ class JavaToJKTreeBuilder {
         fun PsiMethodCallExpression.toJK(): JKExpression {
             val method = methodExpression as PsiReferenceExpressionImpl
 
-            val identifier = JKMethodReferenceImpl({ method.reference?.resolve() })
-            val call = JKJavaMethodCallExpressionImpl(identifier as JKMethodReference, argumentList.toJK())
+            val identifier = JKMultiverseMethodSymbol(method.reference?.resolve() as PsiMethod)
+            val call = JKJavaMethodCallExpressionImpl(identifier as JKMethodSymbol, argumentList.toJK())
             return if (method.findChildByRole(ChildRole.DOT) != null) {
                 JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, call)
             } else {
@@ -138,7 +152,7 @@ class JavaToJKTreeBuilder {
 
         fun PsiReferenceExpression.toJK(): JKExpression {
             val impl = this as PsiReferenceExpressionImpl
-            val access = JKJavaFieldAccessExpressionImpl(JKFieldReferenceImpl({ impl.resolve() }))
+            val access = JKJavaFieldAccessExpressionImpl(JKMultiverseFieldSymbol(impl.resolve() as PsiField))
             return if (impl.findChildByRole(ChildRole.DOT) != null) {
                 JKQualifiedExpressionImpl((impl.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, access)
             } else {
@@ -169,7 +183,7 @@ class JavaToJKTreeBuilder {
                     return JKJavaNewEmptyArrayImpl(dimensions.map { it?.toJK() })
                 }
             }
-            return JKJavaNewExpressionImpl(provideSymbol(constructorFakeReference.resolve()!!), argumentList.toJK())
+            return JKJavaNewExpressionImpl(provideSymbol(constructorFakeReference.resolve()!!) as JKMethodSymbol, argumentList.toJK())
         }
 
         fun PsiArrayAccessExpression.toJK(): JKExpression {
@@ -190,7 +204,7 @@ class JavaToJKTreeBuilder {
 
         fun PsiType.toJK(): JKType {
             return when (this) {
-                is PsiClassType -> JKClassTypeImpl(resolve()?.let { provideSymbol<JKClass>(it) }, parameters.map { it.toJK() })
+                is PsiClassType -> JKClassTypeImpl(resolve()?.let { provideSymbol(it) as? JKClassSymbol }!!, parameters.map { it.toJK() })
                 is PsiArrayType -> JKJavaArrayTypeImpl(componentType.toJK())
                 is PsiPrimitiveType -> when (presentableText) {
                     "int" -> JKJavaPrimitiveTypeImpl.INT
@@ -205,7 +219,7 @@ class JavaToJKTreeBuilder {
     }
 
     private inner class DeclarationMapper(val expressionTreeMapper: ExpressionTreeMapper) {
-        fun PsiClass.toJK(): JKUniverseClass {
+        fun PsiClass.toJK(): JKClass {
             val classKind: JKClass.ClassKind = when {
                 isAnnotationType -> JKClass.ClassKind.ANNOTATION
                 isEnum -> JKClass.ClassKind.ENUM
@@ -213,16 +227,11 @@ class JavaToJKTreeBuilder {
                 else -> JKClass.ClassKind.CLASS
             }
             val psi = this
-            return JKClassImpl(
-                with(modifierMapper) { modifierList.toJK() },
-                JKNameIdentifierImpl(name!!),
-                classKind
-            ).also {
+            return JKClassImpl(with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name!!), classKind).also {
                 it.declarationList = psi.children.mapNotNull {
-                    ElementVisitor(this@DeclarationMapper).apply { it.accept(this) }.resultElement as? JKUniverseDeclaration
+                    ElementVisitor(this@DeclarationMapper).apply { it.accept(this) }.resultElement as? JKDeclaration
                 }
-
-                bindSymbol(this, it)
+                provideSymbol(it)
             }
         }
 
@@ -233,7 +242,7 @@ class JavaToJKTreeBuilder {
                 JKNameIdentifierImpl(this.name),
                 with(expressionTreeMapper) { initializer?.toJK() } ?: TODO()
             ).also {
-                bindSymbol(this, it)
+                provideSymbol(it)
             }
         }
 
@@ -242,7 +251,7 @@ class JavaToJKTreeBuilder {
                 with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name),
                 parameterList.parameters.map { it -> it.toJK() }, body?.toJK() ?: TODO()
             ).also {
-                bindSymbol(this, it)
+                provideSymbol(it)
             }
         }
 
