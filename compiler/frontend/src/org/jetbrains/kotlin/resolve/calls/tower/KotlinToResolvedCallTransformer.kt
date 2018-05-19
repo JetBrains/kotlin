@@ -207,10 +207,14 @@ class KotlinToResolvedCallTransformer(
         for (valueArgument in resolvedCall.call.valueArguments) {
             val argumentMapping = resolvedCall.getArgumentMapping(valueArgument!!)
             val (expectedType, callPosition) = when (argumentMapping) {
-                is ArgumentMatch -> Pair(
-                    getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument, context),
-                    CallPosition.ValueArgumentPosition(resolvedCall, argumentMapping.valueParameter, valueArgument)
-                )
+                is ArgumentMatch -> {
+                    val expectedType = resolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument)
+                                ?: getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument, context)
+                    Pair(
+                        expectedType,
+                        CallPosition.ValueArgumentPosition(resolvedCall, argumentMapping.valueParameter, valueArgument)
+                    )
+                }
                 else -> Pair(TypeUtils.NO_EXPECTED_TYPE, CallPosition.Unknown)
             }
             val newContext =
@@ -520,6 +524,8 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     private var extensionReceiver = resolvedCallAtom.extensionReceiverArgument?.receiver?.receiverValue
     private var dispatchReceiver = resolvedCallAtom.dispatchReceiverArgument?.receiver?.receiverValue
     private var smartCastDispatchReceiverType: KotlinType? = null
+    private var argumentToSamConvertedType: MutableMap<ValueArgument, UnwrappedType>? = null
+
 
     override val kotlinCall: KotlinCall get() = resolvedCallAtom.atom
 
@@ -607,6 +613,22 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         typeArguments = resolvedCallAtom.substitutor.freshVariables.map {
             val substituted = (substitutor ?: FreshVariableNewTypeSubstitutor.Empty).safeSubstitute(it.defaultType)
             TypeApproximator().approximateToSuperType(substituted, TypeApproximatorConfiguration.CapturedTypesApproximation) ?: substituted
+        }
+
+        calculateArgumentToSamConvertedType(substitutor)
+    }
+
+    fun getExpectedTypeForSamConvertedArgument(valueArgument: ValueArgument): UnwrappedType? =
+        argumentToSamConvertedType?.get(valueArgument)
+
+    private fun calculateArgumentToSamConvertedType(substitutor: NewTypeSubstitutor?) {
+        if (resolvedCallAtom.argumentsWithConversion.isEmpty()) return
+
+        argumentToSamConvertedType = hashMapOf()
+        for ((argument, description) in resolvedCallAtom.argumentsWithConversion) {
+            val expectedType = substitutor?.safeSubstitute(description.convertedTypeByCandidateParameter)
+                    ?: description.convertedTypeByCandidateParameter
+            argumentToSamConvertedType!![argument.psiCallArgument.valueArgument] = expectedType
         }
     }
 

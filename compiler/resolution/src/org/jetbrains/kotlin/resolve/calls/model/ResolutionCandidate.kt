@@ -176,16 +176,16 @@ class MutableResolvedCallAtom(
     override lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     override lateinit var substitutor: FreshVariableNewTypeSubstitutor
     lateinit var argumentToCandidateParameter: Map<KotlinCallArgument, ValueParameterDescriptor>
-    private var samAdapterMap: HashMap<KotlinCallArgument, UnwrappedType>? = null
+    private var samAdapterMap: HashMap<KotlinCallArgument, SamConversionDescription>? = null
 
-    override val argumentsWithConversion: Map<KotlinCallArgument, UnwrappedType>
+    override val argumentsWithConversion: Map<KotlinCallArgument, SamConversionDescription>
         get() = samAdapterMap ?: emptyMap()
 
-    fun registerArgumentWithSamConversion(argument: KotlinCallArgument, functionTypeByOriginParameter: UnwrappedType) {
+    fun registerArgumentWithSamConversion(argument: KotlinCallArgument, samConversionDescription: SamConversionDescription) {
         if (samAdapterMap == null)
             samAdapterMap = hashMapOf()
 
-        samAdapterMap!![argument] = functionTypeByOriginParameter
+        samAdapterMap!![argument] = samConversionDescription
     }
 
     override public fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>) {

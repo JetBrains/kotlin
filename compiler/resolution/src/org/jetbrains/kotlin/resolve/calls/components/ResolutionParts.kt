@@ -270,18 +270,21 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
     if (!argumentIsFunctional) return null
 
     val originalExpectedType = argument.getExpectedType(candidateParameter.original, callComponents.languageVersionSettings)
-    val transformedType = callComponents.samTypeTransformer.getFunctionTypeForPossibleSamType(originalExpectedType) ?: return null
+    val convertedTypeByOriginal = callComponents.samTypeTransformer.getFunctionTypeForPossibleSamType(originalExpectedType) ?: return null
 
-    resolvedCall.registerArgumentWithSamConversion(argument, transformedType)
 
     // if our candidate was a member function of class Foo<T> then we create function type by original type and
     // should provide expected type in terms of substituted receiver: Foo<String>. If it isn't member then no substitution required.
     val substitutedDispatchType = candidateParameter.containingDeclaration.safeAs<CallableDescriptor>()?.dispatchReceiverParameter?.type
-            ?: return transformedType
+    val convertedTypeByCandidate = substitutedDispatchType?.let {
+        TypeConstructorSubstitution.create(substitutedDispatchType)
+            .wrapWithCapturingSubstitution(needApproximation = true)
+            .buildSubstitutor().substitute(convertedTypeByOriginal)
+    } ?: convertedTypeByOriginal
 
-    return TypeConstructorSubstitution.create(substitutedDispatchType)
-        .wrapWithCapturingSubstitution(needApproximation = true)
-        .buildSubstitutor().substitute(transformedType)
+    resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate))
+
+    return convertedTypeByCandidate
 }
 
 private fun UnwrappedType.isSubtypeOfFunctionType() = anySuperTypeConstructor {

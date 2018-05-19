@@ -62,9 +62,13 @@ abstract class ResolvedCallAtom : ResolvedAtom() {
     abstract val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     abstract val substitutor: FreshVariableNewTypeSubstitutor
 
-    // map from argument to result of SAM conversion for corresponding origin parameter
-    abstract val argumentsWithConversion: Map<KotlinCallArgument, UnwrappedType>
+    abstract val argumentsWithConversion: Map<KotlinCallArgument, SamConversionDescription>
 }
+
+class SamConversionDescription(
+    val convertedTypeByOriginParameter: UnwrappedType,
+    val convertedTypeByCandidateParameter: UnwrappedType // expected type for corresponding argument
+)
 
 class ResolvedExpressionAtom(override val atom: ExpressionKotlinCallArgument) : ResolvedAtom() {
     init {
