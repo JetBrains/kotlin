@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // FILE: KotlinFile.kt
 class KotlinClass {
     public fun doSomething(runnable: Runnable) { runnable.run() }
@@ -12,7 +13,7 @@ fun foo(javaClass: JavaClass, kotlinClass: KotlinClass) {
         bar()
     }
 
-    kotlinClass.doSomething <!TYPE_MISMATCH!>{
+    kotlinClass.doSomething <!OI;TYPE_MISMATCH!>{
         bar()
     }<!>
 
