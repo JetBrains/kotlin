@@ -75,7 +75,7 @@ fun main1() {
 fun test() {
     {<!UNUSED_ANONYMOUS_PARAMETER!>x<!> : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
     (fun Int.() = 1)(<!NO_VALUE_FOR_PARAMETER!>)<!>
-    <!TYPE_MISMATCH!>"sd"<!>.(fun Int.() = 1)()
+    <!OI;TYPE_MISMATCH!>"sd"<!>.<!NI;FUNCTION_EXPECTED!>(fun Int.() = 1)<!>()
     val i : Int? = null
     i<!UNSAFE_CALL!>.<!>(fun Int.() = 1)();
     {}<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>()
