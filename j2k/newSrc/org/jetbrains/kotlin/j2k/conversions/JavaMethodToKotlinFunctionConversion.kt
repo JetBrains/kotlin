@@ -16,23 +16,20 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.tree.JKTreeElement
-import org.jetbrains.kotlin.j2k.tree.JKJavaField
+import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKJavaMethod
-import org.jetbrains.kotlin.j2k.tree.JKUniverseClass
-import org.jetbrains.kotlin.j2k.tree.impl.JKBlockImpl
+import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKKtPropertyImpl
 
 class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
-    override fun visitElement(element: JKTreeElement) {
+    override fun visitTreeElement(element: JKTreeElement) {
         element.acceptChildren(this, null)
     }
 
-    override fun visitUniverseClass(universeClass: JKUniverseClass) {
+    override fun visitClass(klass: JKClass) {
         somethingChanged = true
-        universeClass.declarationList = universeClass.declarationList.map {
+        klass.declarationList = klass.declarationList.map {
             if (it is JKJavaMethod) JKKtFunctionImpl(
                 JKJavaPrimitiveTypeImpl.BOOLEAN,
                 it.name,

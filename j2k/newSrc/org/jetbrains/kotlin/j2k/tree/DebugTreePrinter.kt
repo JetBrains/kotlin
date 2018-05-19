@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-import org.jetbrains.kotlin.j2k.tree.impl.JKBindableSymbol
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.utils.Printer
 
@@ -24,7 +23,7 @@ private class DebugTreePrinter : JKVisitorVoid {
     internal val stringBuilder = StringBuilder()
     private val printer = Printer(stringBuilder)
 
-    override fun visitElement(element: JKTreeElement) {
+    override fun visitTreeElement(element: JKTreeElement) {
         printer.println(element.classNameWithoutJK(), " [")
         printer.indented {
             element.acceptChildren(this, null)
@@ -78,12 +77,12 @@ private class DebugTreePrinter : JKVisitorVoid {
         printer.println(type.classNameWithoutJK(), " \"")
         printer.indented {
             if (type is JKClassType) {
-                if ((type.classReference as? JKBindableSymbol)?.isBound == true) {
+                /*if ((type.classReference as? JKBindableSymbol)?.isBound == true) {
                     printer.println(type.classReference?.element?.name?.value)
 
                 } else {
                     printer.println("Unbound")
-                }
+                }*/
             }
         }
         printer.println("\"")

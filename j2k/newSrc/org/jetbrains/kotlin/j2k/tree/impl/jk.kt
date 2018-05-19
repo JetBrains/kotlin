@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
@@ -71,7 +70,7 @@ abstract class JKElementBase : JKTreeElement {
 
     }
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitElement(this, data)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTreeElement(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {}
 }
@@ -108,16 +107,16 @@ abstract class JKBranchElementBase : JKElementBase(), JKBranchElement {
 }
 
 class JKClassImpl(modifierList: JKModifierList, name: JKNameIdentifier, override var classKind: JKClass.ClassKind) :
-    JKUniverseClass,
+    JKClass,
     JKBranchElementBase() {
 
     override val name by child(name)
     override var modifierList by child(modifierList)
     override val valid: Boolean = true
 
-    override var declarationList by children<JKUniverseDeclaration>()
+    override var declarationList by children<JKDeclaration>()
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitUniverseClass(this, data)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
 }
 
 
@@ -204,7 +203,7 @@ class JKTypeCastExpressionImpl(override var expression: JKExpression, override v
 }
 
 class JKClassTypeImpl(
-    override val classReference: JKSymbol<JKClass>?,
+    override val classReference: JKClassSymbol,
     override val parameters: List<JKType>,
     override val nullability: Nullability = Nullability.Default
 ) : JKClassType, JKElementBase() {
@@ -214,23 +213,4 @@ class JKClassTypeImpl(
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
 
     }
-}
-
-
-abstract class JKReferenceBase<T : JKReferenceTarget>(val resolve: () -> PsiElement?) : JKElementBase(), JKReference {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitReference(this, data)
-
-    override var target: T? = null
-}
-
-class JKFieldReferenceImpl(resolve: () -> PsiElement?) : JKFieldReference, JKReferenceBase<JKField>(resolve) {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitFieldReference(this, data)
-}
-
-class JKClassReferenceImpl(resolve: () -> PsiElement?) : JKClassReference, JKReferenceBase<JKClass>(resolve) {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClassReference(this, data)
-}
-
-class JKMethodReferenceImpl(resolve: () -> PsiElement?) : JKMethodReference, JKReferenceBase<JKMethod>(resolve) {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitMethodReference(this, data)
 }

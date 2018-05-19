@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.j2k.tree
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.j2k.tree.impl.JKFieldSymbol
+import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
+import org.jetbrains.kotlin.j2k.tree.impl.JKSymbol
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 interface JKTreeElement : JKElement {
     fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R
@@ -27,23 +28,32 @@ interface JKTreeElement : JKElement {
     fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
 }
 
-interface JKUniverseDeclaration : JKTreeElement, JKDeclaration
+interface JKDeclaration : JKTreeElement, JKReferenceTarget
 
-interface JKDeclarationList : JKElement {
-    val declarations: List<JKDeclaration>
+interface JKClass : JKDeclaration, JKModifierListOwner {
+    val name: JKNameIdentifier
+    var declarationList: List<JKDeclaration>
+    var classKind: ClassKind
+
+    enum class ClassKind {
+        ABSTRACT, ANNOTATION, CLASS, ENUM, INTERFACE
+    }
 }
 
-interface JKUDeclarationList : JKDeclarationList {
-    override var declarations: List<JKUniverseDeclaration>
+interface JKMethod : JKDeclaration, JKModifierListOwner {
+    val name: JKNameIdentifier
+    var valueArguments: List<JKValueArgument>
+    val returnType: JKType
 }
 
-interface JKUniverseClass : JKUniverseDeclaration, JKClass {
-    override var declarationList: List<JKUniverseDeclaration>
+interface JKField : JKDeclaration, JKModifierListOwner {
+    val type: JKType
+    val name: JKNameIdentifier
 }
 
 interface JKModifier : JKTreeElement
 
-interface JKModifierList : JKBranchElement, JKTreeElement {
+interface JKModifierList : JKTreeElement {
     var modifiers: List<JKModifier>
 }
 
@@ -51,27 +61,10 @@ interface JKAccessModifier : JKModifier
 
 interface JKModalityModifier : JKModifier
 
-interface JKReference : JKTreeElement {
-    val target: JKReferenceTarget?
-    val isBound get() = target != null
-}
-
-interface JKMethodReference : JKReference {
-    override val target: JKMethod?
-}
-
-interface JKFieldReference : JKReference {
-    override val target: JKField?
-}
-
-interface JKClassReference : JKReference {
-    override val target: JKClass?
-}
-
 interface JKType : JKTreeElement
 
 interface JKClassType : JKType {
-    val classReference: JKSymbol<JKClass>?
+    val classReference: JKSymbol?
     val nullability: Nullability
     val parameters: List<JKType>
 }
@@ -118,12 +111,12 @@ interface JKQualifiedExpression : JKExpression {
 }
 
 interface JKMethodCallExpression : JKExpression {
-    val identifier: JKMethodReference
+    val identifier: JKMethodSymbol
     val arguments: JKExpressionList
 }
 
 interface JKFieldAccessExpression : JKExpression {
-    val identifier: JKFieldReference
+    val identifier: JKFieldSymbol
 }
 
 interface JKArrayAccessExpression : JKExpression {
