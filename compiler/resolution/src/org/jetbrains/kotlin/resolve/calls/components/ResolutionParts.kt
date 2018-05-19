@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
+import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
 import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.anySuperTypeConstructor
@@ -248,33 +250,38 @@ private fun KotlinResolutionCandidate.prepareExpectedType(
     argument: KotlinCallArgument,
     candidateParameter: ParameterDescriptor
 ): UnwrappedType {
-    val argumentType = argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
+    val argumentType = getExpectedTypeWithSAMConversion(argument, candidateParameter) ?: argument.getExpectedType(
+        candidateParameter,
+        callComponents.languageVersionSettings
+    )
     val resultType = knownTypeParametersResultingSubstitutor?.substitute(argumentType) ?: argumentType
-    val typeInTermsFreshTypes = resolvedCall.substitutor.substituteKeepAnnotations(resultType)
-    return applySAMConversionIfNeeded(typeInTermsFreshTypes, argument)
+    return resolvedCall.substitutor.substituteKeepAnnotations(resultType)
 }
 
-private fun KotlinResolutionCandidate.applySAMConversionIfNeeded(
-    expectedType: UnwrappedType,
-    argument: KotlinCallArgument
-): UnwrappedType {
+private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
+    argument: KotlinCallArgument,
+    candidateParameter: ParameterDescriptor
+): UnwrappedType? {
     val argumentIsFunctional = when (argument) {
         is SimpleKotlinCallArgument -> argument.receiver.let { it.unstableType ?: it.stableType }.isSubtypeOfFunctionType()
         is LambdaKotlinCallArgument, is CallableReferenceKotlinCallArgument -> true
         else -> false
     }
-    if (!argumentIsFunctional) return expectedType
+    if (!argumentIsFunctional) return null
 
-    // todo: support case T <:> Runnable
-    if (csBuilder.isTypeVariable(expectedType)) return expectedType
+    val originalExpectedType = argument.getExpectedType(candidateParameter.original, callComponents.languageVersionSettings)
+    val transformedType = callComponents.samTypeTransformer.getFunctionTypeForPossibleSamType(originalExpectedType) ?: return null
 
-    val transformedType = callComponents.samTypeTransformer.getFunctionTypeForPossibleSamType(expectedType)
+    resolvedCall.registerArgumentWithSamConversion(argument, transformedType)
 
-    if (transformedType != null) {
-        // todo write information about SAM conversion for this parameter
-        return transformedType
-    }
-    return expectedType
+    // if our candidate was a member function of class Foo<T> then we create function type by original type and
+    // should provide expected type in terms of substituted receiver: Foo<String>. If it isn't member then no substitution required.
+    val substitutedDispatchType = candidateParameter.containingDeclaration.safeAs<CallableDescriptor>()?.dispatchReceiverParameter?.type
+            ?: return transformedType
+
+    return TypeConstructorSubstitution.create(substitutedDispatchType)
+        .wrapWithCapturingSubstitution(needApproximation = true)
+        .buildSubstitutor().substitute(transformedType)
 }
 
 private fun UnwrappedType.isSubtypeOfFunctionType() = anySuperTypeConstructor {
