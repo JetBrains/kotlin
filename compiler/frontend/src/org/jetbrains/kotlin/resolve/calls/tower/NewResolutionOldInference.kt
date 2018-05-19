@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
@@ -305,41 +306,11 @@ class NewResolutionOldInference(
                             //  return@map null
                         }
 
-                        is ResolvedUsingDeprecatedVisbility -> {
-                            resolvedCall.trace.record(
-                                BindingContext.DEPRECATED_SHORT_NAME_ACCESS,
-                                resolvedCall.call.calleeExpression
+                        is ResolvedUsingDeprecatedVisibility -> {
+                            reportResolvedUsingDeprecatedVisibility(
+                                resolvedCall.call, resolvedCall.candidateDescriptor,
+                                resolvedCall.resultingDescriptor, error, resolvedCall.trace
                             )
-
-                            val candidateDescriptor = resolvedCall.candidateDescriptor
-                            val descriptorToLookup: DeclarationDescriptor = when (candidateDescriptor) {
-                                is ClassConstructorDescriptor -> candidateDescriptor.containingDeclaration
-                                is FakeCallableDescriptorForObject -> candidateDescriptor.classDescriptor
-                                else -> error(
-                                    "Unexpected candidate descriptor of resolved call with " +
-                                            "ResolvedUsingDeprecatedVisibility-diagnostic: $candidateDescriptor\n" +
-                                            "Call context: ${resolvedCall.call.callElement.parent?.text}"
-                                )
-                            }
-
-                            // If this descriptor was resolved from HierarchicalScope, then there can be another, non-deprecated path
-                            // in parents of base scope
-                            val sourceScope = error.baseSourceScope
-                            val canBeResolvedWithoutDeprecation = if (sourceScope is HierarchicalScope) {
-                                descriptorToLookup.canBeResolvedWithoutDeprecation(
-                                    sourceScope,
-                                    error.lookupLocation
-                                )
-                            } else {
-                                // Normally, that should be unreachable, but instead of asserting that, we will report diagnostic
-                                false
-                            }
-
-                            if (!canBeResolvedWithoutDeprecation) {
-                                resolvedCall.trace.report(
-                                    Errors.DEPRECATED_ACCESS_BY_SHORT_NAME.on(resolvedCall.call.callElement, resolvedCall.resultingDescriptor)
-                                )
-                            }
                         }
                     }
                 }
@@ -609,3 +580,46 @@ internal fun createPreviousResolveError(status: ResolutionStatus): PreviousResol
 }
 
 private val BasicCallResolutionContext.isSuperCall: Boolean get() = call.explicitReceiver is SuperCallReceiverValue
+
+internal fun reportResolvedUsingDeprecatedVisibility(
+    call: Call,
+    candidateDescriptor: CallableDescriptor,
+    resultingDescriptor : CallableDescriptor,
+    diagnostic: ResolvedUsingDeprecatedVisibility,
+    trace: BindingTrace
+) {
+    trace.record(
+        BindingContext.DEPRECATED_SHORT_NAME_ACCESS,
+        call.calleeExpression
+    )
+
+    val descriptorToLookup: DeclarationDescriptor = when (candidateDescriptor) {
+        is ClassConstructorDescriptor -> candidateDescriptor.containingDeclaration
+        is FakeCallableDescriptorForObject -> candidateDescriptor.classDescriptor
+        else -> error(
+            "Unexpected candidate descriptor of resolved call with " +
+                    "ResolvedUsingDeprecatedVisibility-diagnostic: $candidateDescriptor\n" +
+                    "Call context: ${call.callElement.parent?.text}"
+        )
+    }
+
+    // If this descriptor was resolved from HierarchicalScope, then there can be another, non-deprecated path
+    // in parents of base scope
+    val sourceScope = diagnostic.baseSourceScope
+    val canBeResolvedWithoutDeprecation = if (sourceScope is HierarchicalScope) {
+        descriptorToLookup.canBeResolvedWithoutDeprecation(
+            sourceScope,
+            diagnostic.lookupLocation
+        )
+    } else {
+        // Normally, that should be unreachable, but instead of asserting that, we will report diagnostic
+        false
+    }
+
+    if (!canBeResolvedWithoutDeprecation) {
+        trace.report(
+            Errors.DEPRECATED_ACCESS_BY_SHORT_NAME.on(call.callElement, resultingDescriptor)
+        )
+    }
+
+}
