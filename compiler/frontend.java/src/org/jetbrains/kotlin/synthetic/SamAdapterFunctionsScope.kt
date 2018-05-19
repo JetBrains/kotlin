@@ -161,10 +161,11 @@ class SamAdapterFunctionsScope(
     }
 
     override fun getSyntheticConstructors(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        if (samViaSyntheticScopeDisabled) return emptyList()
-
         val classifier = scope.getContributedClassifier(name, location) ?: return emptyList()
         recordSamLookupsToClassifier(classifier, location)
+
+        if (samViaSyntheticScopeDisabled) return listOfNotNull(getSamConstructor(classifier))
+
         return getAllSamConstructors(classifier)
     }
 
@@ -183,11 +184,11 @@ class SamAdapterFunctionsScope(
     }
 
     override fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor> {
-        if (samViaSyntheticScopeDisabled) return emptyList()
+        val classifiers = scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassifierDescriptor>()
 
-        return scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)
-                .filterIsInstance<ClassifierDescriptor>()
-                .flatMap { getAllSamConstructors(it) }
+        if (samViaSyntheticScopeDisabled) return classifiers.mapNotNull { getSamConstructor(it) }
+
+        return classifiers.flatMap { getAllSamConstructors(it) }
     }
 
     override fun getSyntheticConstructor(constructor: ConstructorDescriptor): ConstructorDescriptor? {
