@@ -626,8 +626,8 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 
         argumentToSamConvertedType = hashMapOf()
         for ((argument, description) in resolvedCallAtom.argumentsWithConversion) {
-            val expectedType = substitutor?.safeSubstitute(description.convertedTypeByCandidateParameter)
-                    ?: description.convertedTypeByCandidateParameter
+            val typeWithFreshVariables = resolvedCallAtom.substitutor.safeSubstitute(description.convertedTypeByCandidateParameter)
+            val expectedType = substitutor?.safeSubstitute(typeWithFreshVariables) ?: typeWithFreshVariables
             argumentToSamConvertedType!![argument.psiCallArgument.valueArgument] = expectedType
         }
     }

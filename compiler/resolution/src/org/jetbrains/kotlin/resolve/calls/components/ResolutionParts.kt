@@ -272,17 +272,16 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
     val originalExpectedType = argument.getExpectedType(candidateParameter.original, callComponents.languageVersionSettings)
     val convertedTypeByOriginal = callComponents.samTypeTransformer.getFunctionTypeForPossibleSamType(originalExpectedType) ?: return null
 
+    val candidateExpectedType = argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
+    val convertedTypeByCandidate = callComponents.samTypeTransformer.getFunctionTypeForPossibleSamType(candidateExpectedType)
 
-    // if our candidate was a member function of class Foo<T> then we create function type by original type and
-    // should provide expected type in terms of substituted receiver: Foo<String>. If it isn't member then no substitution required.
-    val substitutedDispatchType = candidateParameter.containingDeclaration.safeAs<CallableDescriptor>()?.dispatchReceiverParameter?.type
-    val convertedTypeByCandidate = substitutedDispatchType?.let {
-        TypeConstructorSubstitution.create(substitutedDispatchType)
-            .wrapWithCapturingSubstitution(needApproximation = true)
-            .buildSubstitutor().substitute(convertedTypeByOriginal)
-    } ?: convertedTypeByOriginal
+    assert(candidateExpectedType.constructor == originalExpectedType.constructor && convertedTypeByCandidate != null) {
+        "If original type is SAM type, then candidate should have same type constructor and corresponding function type\n" +
+                "originalExpectType: $originalExpectedType, candidateExpectType: $candidateExpectedType\n" +
+                "functionTypeByOriginal: $convertedTypeByOriginal, functionTypeByCandidate: $convertedTypeByCandidate"
+    }
 
-    resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate))
+    resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
 
     return convertedTypeByCandidate
 }
