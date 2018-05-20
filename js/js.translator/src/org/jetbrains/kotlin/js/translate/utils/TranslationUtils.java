@@ -370,8 +370,8 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static VariableDescriptor getEnclosingContinuationParameter(@NotNull TranslationContext context) {
-        VariableDescriptor result = context.getContinuationParameterDescriptor();
+    public static ValueParameterDescriptor getEnclosingContinuationParameter(@NotNull TranslationContext context) {
+        ValueParameterDescriptor result = context.getContinuationParameterDescriptor();
         if (result == null) {
             assert context.getParent() != null;
             result = getEnclosingContinuationParameter(context.getParent());
