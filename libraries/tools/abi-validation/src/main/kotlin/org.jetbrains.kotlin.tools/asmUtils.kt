@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools
 
+import kotlinx.metadata.jvm.KotlinClassMetadata
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.*
 import kotlin.comparisons.*
@@ -30,6 +31,8 @@ data class ClassBinarySignature(
 
 }
 
+fun ClassVisibility.findMember(signature: MemberSignature): MemberVisibility? =
+    members[signature] ?: partVisibilities.mapNotNull { it.members[signature] }.firstOrNull()
 
 interface MemberBinarySignature {
     val name: String
@@ -41,8 +44,9 @@ interface MemberBinarySignature {
             = access.isPublic && !(access.isProtected && classAccess.isFinal)
             && (findMemberVisibility(classVisibility)?.isPublic(isPublishedApi) ?: true)
 
-    fun findMemberVisibility(classVisibility: ClassVisibility?)
-            = classVisibility?.members?.get(MemberSignature(name, desc))
+    fun findMemberVisibility(classVisibility: ClassVisibility?): MemberVisibility? {
+        return classVisibility?.findMember(MemberSignature(name, desc))
+    }
 
     val signature: String
 }
@@ -55,11 +59,36 @@ data class MethodBinarySignature(
     override val signature: String
         get() = "${access.getModifierString()} fun $name $desc"
 
-    override fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?)
-            = super.isEffectivelyPublic(classAccess, classVisibility)
-            && !isAccessOrAnnotationsMethod()
+    override fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?) =
+        super.isEffectivelyPublic(classAccess, classVisibility)
+                && !isAccessOrAnnotationsMethod()
+                && !isDummyDefaultConstructor()
+
+    override fun findMemberVisibility(classVisibility: ClassVisibility?): MemberVisibility? {
+        return super.findMemberVisibility(classVisibility) ?: classVisibility?.let { alternateDefaultSignature(it.name)?.let(it::findMember) }
+    }
 
     private fun isAccessOrAnnotationsMethod() = access.isSynthetic && (name.startsWith("access\$") || name.endsWith("\$annotations"))
+
+    private fun isDummyDefaultConstructor() = access.isSynthetic && name == "<init>" && desc == "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"
+
+    /**
+     * Calculates the signature of this method without default parameters
+     *
+     * Returns `null` if this method isn't an entry point of a function
+     * or a constructor with default parameters.
+     * Returns an incorrect result, if there are more than 31 default parameters.
+     */
+    private fun alternateDefaultSignature(className: String): MemberSignature? {
+        return when {
+            !access.isSynthetic -> null
+            name == "<init>" && "ILkotlin/jvm/internal/DefaultConstructorMarker;" in desc ->
+                MemberSignature(name, desc.replace("ILkotlin/jvm/internal/DefaultConstructorMarker;", ""))
+            name.endsWith("\$default") && "ILjava/lang/Object;)" in desc ->
+                MemberSignature(name.removeSuffix("\$default"), desc.replace("ILjava/lang/Object;)", ")").replace("(L$className;", "("))
+            else -> null
+        }
+    }
 }
 
 data class FieldBinarySignature(
@@ -71,9 +100,10 @@ data class FieldBinarySignature(
         get() = "${access.getModifierString()} field $name $desc"
 
     override fun findMemberVisibility(classVisibility: ClassVisibility?): MemberVisibility? {
-        val fieldVisibility = super.findMemberVisibility(classVisibility) ?: return null
+        val fieldVisibility = super.findMemberVisibility(classVisibility)
+                ?: takeIf { access.isStatic }?.let { super.findMemberVisibility(classVisibility?.companionVisibilities) }
+                ?: return null
 
-        // good case for 'satisfying': fieldVisibility.satisfying { it.isLateInit() }?.let { classVisibility?.findSetterForProperty(it) }
         if (fieldVisibility.isLateInit()) {
             classVisibility?.findSetterForProperty(fieldVisibility)?.let { return it }
         }
@@ -143,7 +173,7 @@ private object KotlinClassKind {
 }
 
 fun ClassNode.isFileOrMultipartFacade() = kotlinClassKind.let { it != null && it in KotlinClassKind.FILE_OR_MULTIPART_FACADE_KINDS }
-fun ClassNode.isDefaultImpls() = isInner() && name.endsWith("\$DefaultImpls") && kotlinClassKind == KotlinClassKind.SYNTHETIC_CLASS
+fun ClassNode.isDefaultImpls(metadata: KotlinClassMetadata?) = isInner() && name.endsWith("\$DefaultImpls") && metadata.isSyntheticClass()
 
 
 val ClassNode.kotlinClassKind: Int?

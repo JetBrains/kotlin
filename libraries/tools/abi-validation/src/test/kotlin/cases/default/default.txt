@@ -15,15 +15,3 @@ public final class cases/default/InterfaceFunctions$DefaultImpls {
 	public static synthetic fun withSomeDefaults$default (Lcases/default/InterfaceFunctions;ILjava/lang/String;ILjava/lang/Object;)V
 }
 
-public final class cases/default/JvmOverloadsClass {
-	public final fun getA ()I
-	public final fun getB ()Ljava/lang/String;
-}
-
-public final class cases/default/JvmOverloadsKt {
-	public static final fun publicFunWithOverloads ()V
-	public static final fun publicFunWithOverloads (I)V
-	public static final fun publicFunWithOverloads (ILjava/lang/String;)V
-	public static synthetic fun publicFunWithOverloads$default (ILjava/lang/String;ILjava/lang/Object;)V
-}
-
