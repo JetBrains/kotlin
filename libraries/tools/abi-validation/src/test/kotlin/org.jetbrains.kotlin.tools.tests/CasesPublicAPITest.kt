@@ -22,6 +22,8 @@ class CasesPublicAPITest {
 
     @Test fun companions() { snapshotAPIAndCompare(testName.methodName) }
 
+    @Test fun default() { snapshotAPIAndCompare(testName.methodName) }
+
     @Test fun inline() { snapshotAPIAndCompare(testName.methodName) }
 
     @Test fun interfaces() { snapshotAPIAndCompare(testName.methodName) }
