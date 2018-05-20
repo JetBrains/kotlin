@@ -29,8 +29,7 @@ compileKotlin {
         freeCompilerArgs = ["-version",
                             "-Xallow-kotlin-package",
                             "-Xnormalize-constructor-calls=enable",
-                            "-module-name", "kotlin-reflection",
-                            "-Xdump-declarations-to=${buildDir}/reflect-declarations.json"]
+                            "-module-name", "kotlin-reflection"]
     }
 }
 

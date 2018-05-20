@@ -174,7 +174,6 @@ compileKotlin {
                 "-Xallow-kotlin-package",
                 "-Xmultifile-parts-inherit",
                 "-Xnormalize-constructor-calls=enable",
-                "-Xdump-declarations-to=${buildDir}/stdlib-declarations.json",
                 "-module-name", "kotlin-stdlib"
         ]
     }
@@ -189,7 +188,6 @@ compileExperimentalKotlin {
                 "-version",
                 "-Xallow-kotlin-package",
                 "-Xmultifile-parts-inherit",
-                "-Xdump-declarations-to=${buildDir}/stdlib-experimental-declarations.json",
                 "-module-name", "kotlin-stdlib-experimental"
         ]
     }
@@ -205,7 +203,6 @@ compileCoroutinesKotlin {
                 "-version",
                 "-Xallow-kotlin-package",
                 "-Xmultifile-parts-inherit",
-                "-Xdump-declarations-to=${buildDir}/stdlib-coroutines-declarations.json",
                 "-module-name", "kotlin-stdlib-coroutines"
         ]
     }
