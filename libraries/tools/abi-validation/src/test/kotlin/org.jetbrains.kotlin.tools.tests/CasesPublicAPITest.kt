@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.tools.tests
 
 import org.jetbrains.kotlin.tools.*
@@ -8,12 +13,11 @@ import java.io.File
 class CasesPublicAPITest {
 
     companion object {
-        val visibilities by lazy { readKotlinVisibilities(File(System.getProperty("testCasesDeclarations")!!)) }
         val baseClassPaths: List<File> =
-                System.getProperty("testCasesClassesDirs")
-                        .let { requireNotNull(it) { "Specify testCasesClassesDirs with a system property"} }
-                        .split(File.pathSeparator)
-                        .map { File(it, "cases").canonicalFile }
+            System.getProperty("testCasesClassesDirs")
+                .let { requireNotNull(it) { "Specify testCasesClassesDirs with a system property"} }
+                .split(File.pathSeparator)
+                .map { File(it, "cases").canonicalFile }
         val baseOutputPath = File("src/test/kotlin/cases")
     }
 
@@ -54,7 +58,7 @@ class CasesPublicAPITest {
 
         val testClassStreams = testClasses.asSequence().filter { it.name.endsWith(".class") }.map { it.inputStream() }
 
-        val api = getBinaryAPI(testClassStreams, visibilities).filterOutNonPublic()
+        val api = getBinaryAPI(testClassStreams).filterOutNonPublic()
 
         val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
 
