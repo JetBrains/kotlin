@@ -12,6 +12,7 @@ import org.objectweb.asm.tree.ClassNode
 val ClassNode.kotlinMetadata: KotlinClassMetadata?
     get() {
         val metadata = findAnnotation("kotlin/Metadata", false) ?: return null
+        @Suppress("UNCHECKED_CAST")
         val header = with(metadata) {
             KotlinClassHeader(
                 kind = get("k") as Int?,
