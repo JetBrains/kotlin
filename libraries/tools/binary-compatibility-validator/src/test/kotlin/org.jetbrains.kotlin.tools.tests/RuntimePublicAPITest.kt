@@ -68,13 +68,14 @@ class RuntimePublicAPITest {
 
         println("Reading kotlin visibilities from $kotlinJvmMappingsFiles")
         val publicPackagePrefixes = publicPackages.map { it.replace('.', '/') + '/' }
+        val publicPackageFilter = { className: String -> publicPackagePrefixes.none { className.startsWith(it) } }
         val visibilities =
                 kotlinJvmMappingsFiles
-                        .map { readKotlinVisibilities(it).filterKeys { name -> publicPackagePrefixes.none { name.startsWith(it) } } }
+                        .map { readKotlinVisibilities(it).filterKeys(publicPackageFilter) }
                         .reduce { m1, m2 -> m1 + m2 }
 
         println("Reading binary API from $jarFile")
-        val api = getBinaryAPI(JarFile(jarFile), visibilities).filterOutNonPublic(nonPublicPackages)
+        val api = getBinaryAPI(JarFile(jarFile), visibilities, publicPackageFilter).filterOutNonPublic(nonPublicPackages)
 
         val target = File("reference-public-api")
                 .resolve(testName.methodName.replaceCamelCaseWithDashedLowerCase() + ".txt")

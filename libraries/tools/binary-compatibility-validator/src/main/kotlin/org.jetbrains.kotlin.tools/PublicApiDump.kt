@@ -15,37 +15,46 @@ fun main(args: Array<String>) {
 }
 
 
-fun JarFile.classEntries() = entries().asSequence().filter {
+fun JarFile.classEntries() = Sequence { entries().iterator() }.filter {
     !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
 }
 
-fun getBinaryAPI(jar: JarFile, visibilityMap: Map<String, ClassVisibility>): List<ClassBinarySignature> =
-        getBinaryAPI(jar.classEntries().map { entry -> jar.getInputStream(entry) }, visibilityMap)
+fun getBinaryAPI(jar: JarFile, visibilityMap: Map<String, ClassVisibility>, visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> =
+        getBinaryAPI(jar.classEntries().map { entry -> jar.getInputStream(entry) }, visibilityMap, visibilityFilter)
 
-fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityMap: Map<String, ClassVisibility>): List<ClassBinarySignature> =
-        classStreams.map { it.use { stream ->
-                val classNode = ClassNode()
-                ClassReader(stream).accept(classNode, ClassReader.SKIP_CODE)
-                classNode
-            }
-        }
+fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityMap: Map<String, ClassVisibility>, visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature>
+{
+    val classNodes = classStreams.map { it.use { stream ->
+            val classNode = ClassNode()
+            ClassReader(stream).accept(classNode, ClassReader.SKIP_CODE)
+            classNode
+    }}
+
+    val visibilityMapNew = classNodes.readKotlinVisibilities().filterKeys(visibilityFilter)
+
+    return classNodes
         .map { with(it) {
-            val classVisibility = visibilityMap[name]
-            val classAccess = AccessFlags(effectiveAccess and Opcodes.ACC_STATIC.inv())
+                val classVisibility = visibilityMap[name]
+                val metadata = kotlinMetadata
+                val mVisibility = visibilityMapNew[name]
+                val classAccess = AccessFlags(effectiveAccess and Opcodes.ACC_STATIC.inv())
 
-            val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
+                val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
 
-            val memberSignatures = (
-                    fields.map { with(it) { FieldBinarySignature(name, desc, isPublishedApi(), AccessFlags(access)) } } +
-                    methods.map { with(it) { MethodBinarySignature(name, desc, isPublishedApi(), AccessFlags(access)) } }
-            ).filter {
-                it.isEffectivelyPublic(classAccess, classVisibility)
-            }
+                val memberSignatures = (
+                        fields.map { with(it) { FieldBinarySignature(name, desc, isPublishedApi(), AccessFlags(access)) } } +
+                        methods.map { with(it) { MethodBinarySignature(name, desc, isPublishedApi(), AccessFlags(access)) } }
+                ).filter {
+                    it.isEffectivelyPublic(classAccess, mVisibility)
+                }
 
-            ClassBinarySignature(name, superName, outerClassName, supertypes, memberSignatures, classAccess, isEffectivelyPublic(classVisibility), isFileOrMultipartFacade() || isDefaultImpls())
+                ClassBinarySignature(name, superName, outerClassName, supertypes, memberSignatures, classAccess,
+                                     isEffectivelyPublic(mVisibility), metadata.isFileOrMultipartFacade() || isDefaultImpls(metadata)
+                )
         }}
         .asIterable()
         .sortedBy { it.name }
+}
 
 
 

@@ -4,7 +4,10 @@ import com.google.gson.internal.Streams
 import com.google.gson.stream.JsonReader
 import java.io.File
 
-data class ClassVisibility(val name: String, val visibility: String?, val members: Map<MemberSignature, MemberVisibility>)
+class ClassVisibility(val name: String, val visibility: String?, val members: Map<MemberSignature, MemberVisibility>, val isCompanion: Boolean = false, val facadeClassName: String? = null) {
+    var companionVisibilities: ClassVisibility? = null
+    val partVisibilities = mutableListOf<ClassVisibility>()
+}
 data class MemberVisibility(val member: MemberSignature, val declaration: String?, val visibility: String?)
 data class MemberSignature(val name: String, val desc: String)
 
