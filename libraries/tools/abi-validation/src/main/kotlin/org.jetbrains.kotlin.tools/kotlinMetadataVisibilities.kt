@@ -63,7 +63,7 @@ private fun visitFunction(flags: Flags, name: String, addMember: (MemberVisibili
 
         override fun visitEnd() {
             jvmDesc?.let { jvmDesc ->
-                addMember(MemberVisibility(jvmDesc.toMemberSignature(), name, flags.toVisibility()))
+                addMember(MemberVisibility(jvmDesc.toMemberSignature(), flags))
             }
         }
     }
@@ -82,7 +82,7 @@ private fun visitConstructor(flags: Flags, addMember: (MemberVisibility) -> Unit
 
         override fun visitEnd() {
             jvmDesc?.toMemberSignature()?.let { signature ->
-                addMember(MemberVisibility(signature, signature.name, flags.toVisibility()))
+                addMember(MemberVisibility(signature, flags))
             }
         }
     }
@@ -107,15 +107,15 @@ private fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setter
         }
 
         override fun visitEnd() {
-            _getterDesc?.let { addMember(MemberVisibility(it, name, getterFlags.toVisibility())) }
-            _setterDesc?.let { addMember(MemberVisibility(it, name, setterFlags.toVisibility())) }
+            _getterDesc?.let { addMember(MemberVisibility(it, getterFlags)) }
+            _setterDesc?.let { addMember(MemberVisibility(it, setterFlags)) }
             fieldDesc?.let {
-                val fieldVisibility = (when {
+                val fieldVisibility = when {
                     Flag.Property.IS_LATEINIT(flags) -> setterFlags
                     _getterDesc == null && _setterDesc == null -> flags // JvmField or const case
                     else -> flagsOf(Flag.IS_PRIVATE)
-                }).toVisibility()
-                addMember(MemberVisibility(it, name, fieldVisibility))
+                }
+                addMember(MemberVisibility(it, fieldVisibility))
             }
         }
     }
@@ -175,11 +175,7 @@ fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility
         }
         else -> {}
     }
-    return ClassVisibility(classNode.name,
-                           flags?.toVisibility(),
-                           members.associateBy { it.member },
-                           flags?.let { Flag.Class.IS_COMPANION_OBJECT(it) } ?: false,
-                           _facadeClassName)
+    return ClassVisibility(classNode.name, flags, members.associateBy { it.member }, _facadeClassName)
 }
 
 fun ClassNode.toClassVisibility() = kotlinMetadata?.toClassVisibility(this)
