@@ -123,9 +123,9 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
             unsubstitutedMemberScope.getDescriptorsFiltered { it == Name.identifier(funcName) }
 
     override fun generateSave(function: FunctionDescriptor) = generateFunction(function) { jsFun, ctx ->
-        val kOutputClass = serializerDescriptor.getClassFromSerializationPackage("KOutput")
+        val kOutputClass = serializerDescriptor.getClassFromSerializationPackage("StructureEncoder")
         val wBeginFunc = ctx.getNameForDescriptor(
-                kOutputClass.getFuncDesc("writeBegin").single { (it as FunctionDescriptor).valueParameters.size == 2 })
+                kOutputClass.getFuncDesc("beginStructure").single { (it as FunctionDescriptor).valueParameters.size == 2 })
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(serialDescPropertyDescriptor!!), JsThisRef())
 
         // output.writeBegin(desc, [])
@@ -151,7 +151,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
             val innerSerial = serializerInstance(sti.serializer, property.module, property.type, property.genericIndex)
             if (innerSerial == null) {
                 val writeFunc =
-                        kOutputClass.getFuncDesc("write${sti.elementMethodPrefix}ElementValue").single()
+                        kOutputClass.getFuncDesc("encode${sti.elementMethodPrefix}ElementValue").single()
                                 .let { ctx.getNameForDescriptor(it) }
                 +JsInvocation(JsNameRef(writeFunc, localOutputRef),
                               serialClassDescRef,
@@ -160,7 +160,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
             }
             else {
                 val writeFunc =
-                        kOutputClass.getFuncDesc("write${sti.elementMethodPrefix}SerializableElementValue").single()
+                        kOutputClass.getFuncDesc("encode${sti.elementMethodPrefix}SerializableElementValue").single()
                                 .let { ctx.getNameForDescriptor(it) }
                 +JsInvocation(JsNameRef(writeFunc, localOutputRef),
                               serialClassDescRef,
@@ -171,7 +171,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         }
 
         // output.writeEnd(serialClassDesc)
-        val wEndFunc = kOutputClass.getFuncDesc("writeEnd").single()
+        val wEndFunc = kOutputClass.getFuncDesc("endStructure").single()
                 .let { ctx.getNameForDescriptor(it) }
         +JsInvocation(JsNameRef(wEndFunc, localOutputRef), serialClassDescRef).makeStmt()
     }
@@ -212,7 +212,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
 
 
     override fun generateLoad(function: FunctionDescriptor) = generateFunction(function) { jsFun, context ->
-        val inputClass = serializerDescriptor.getClassFromSerializationPackage("KInput")
+        val inputClass = serializerDescriptor.getClassFromSerializationPackage("StructureDecoder")
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(serialDescPropertyDescriptor!!), JsThisRef())
 
         // var index = -1, readAll = false
@@ -237,7 +237,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
             JsNameRef(context.scope().declareName("$typeArgPrefix$idx"), JsThisRef())
         }
         val inputVar = JsNameRef(jsFun.scope.declareFreshName("input"))
-        val readBeginF = inputClass.getFuncDesc("readBegin").single()
+        val readBeginF = inputClass.getFuncDesc("beginStructure").single()
         val call = JsInvocation(JsNameRef(context.getNameForDescriptor(readBeginF), JsNameRef(jsFun.parameters[0].name)),
                                 serialClassDescRef, JsArrayLiteral(typeParams))
         +JsVars(JsVars.JsVar(inputVar.name, call))
@@ -247,7 +247,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         val loopRef = JsNameRef(loop.name)
         jsWhile(JsBooleanLiteral(true), {
             // index = input.readElement(classDesc)
-            val readElementF = context.getNameForDescriptor(inputClass.getFuncDesc("readElement").single())
+            val readElementF = context.getNameForDescriptor(inputClass.getFuncDesc("decodeElement").single())
             +JsAstUtils.assignment(
                     indexVar,
                     JsInvocation(JsNameRef(readElementF, inputVar), serialClassDescRef)
@@ -270,7 +270,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                         val call: JsExpression = if (innerSerial == null) {
                             val unknownSer = (sti.elementMethodPrefix.isEmpty())
                             val readFunc =
-                                    inputClass.getFuncDesc("read${sti.elementMethodPrefix}ElementValue")
+                                    inputClass.getFuncDesc("decode${sti.elementMethodPrefix}ElementValue")
                                             // if readElementValue, must have 3 parameters, if readXXXElementValue - 2
                                             .single { !unknownSer || (it is FunctionDescriptor && it.valueParameters.size == 3) }
                                             .let { context.getNameForDescriptor(it) }
@@ -281,7 +281,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                         else {
                             val notSeenTest = propNotSeenTest(bitMasks[i / 32], i)
                             val readFunc =
-                                    inputClass.getFuncDesc("read${sti.elementMethodPrefix}SerializableElementValue").single()
+                                    inputClass.getFuncDesc("decode${sti.elementMethodPrefix}SerializableElementValue").single()
                                             .let { context.getNameForDescriptor(it) }
                             val updateFunc =
                                     inputClass.getFuncDesc("update${sti.elementMethodPrefix}SerializableElementValue").single()
@@ -349,7 +349,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         }, loop)
 
         // input.readEnd(desc)
-        val readEndF = inputClass.getFuncDesc("readEnd").single()
+        val readEndF = inputClass.getFuncDesc("endStructure").single()
                 .let { context.getNameForDescriptor(it) }
         +JsInvocation(
                 JsNameRef(readEndF, inputVar),

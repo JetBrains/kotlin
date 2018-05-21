@@ -34,14 +34,14 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescripto
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-internal val descType = Type.getObjectType("kotlinx/serialization/KSerialClassDesc")
+internal val descType = Type.getObjectType("kotlinx/serialization/SerialDescriptor")
 internal val descImplType = Type.getObjectType("kotlinx/serialization/internal/SerialClassDescImpl")
-internal val kOutputType = Type.getObjectType("kotlinx/serialization/KOutput")
-internal val kInputType = Type.getObjectType("kotlinx/serialization/KInput")
+internal val kOutputType = Type.getObjectType("kotlinx/serialization/StructureEncoder")
+internal val kInputType = Type.getObjectType("kotlinx/serialization/StructureDecoder")
 
 
-internal val kSerialSaverType = Type.getObjectType("kotlinx/serialization/KSerialSaver")
-internal val kSerialLoaderType = Type.getObjectType("kotlinx/serialization/KSerialLoader")
+internal val kSerialSaverType = Type.getObjectType("kotlinx/serialization/SerializationStrategy")
+internal val kSerialLoaderType = Type.getObjectType("kotlinx/serialization/DeserializationStrategy")
 internal val kSerializerType = Type.getObjectType("kotlinx/serialization/KSerializer")
 internal val kSerializerArrayType = Type.getObjectType("[Lkotlinx/serialization/KSerializer;")
 
@@ -77,11 +77,11 @@ fun InstructionAdapter.genKOutputMethodCall(property: SerializableProperty, clas
     val useSerializer = if (fromClassStartVar == null) stackValueSerializerInstanceFromSerializer(classCodegen, sti)
     else stackValueSerializerInstanceFromClass(classCodegen, sti, fromClassStartVar)
     if (!sti.unit) classCodegen.genPropertyOnStack(this, expressionCodegen.context, property.descriptor, propertyOwnerType, ownerVar)
-    invokevirtual(kOutputType.internalName,
-                  "write" + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + "ElementValue",
+    invokeinterface(kOutputType.internalName,
+                  "encode" + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + "ElementValue",
                   "(" + descType.descriptor + "I" +
                   (if (useSerializer) kSerialSaverType.descriptor else "") +
-                  (if (sti.unit) "" else sti.type.descriptor) + ")V", false)
+                  (if (sti.unit) "" else sti.type.descriptor) + ")V")
 }
 
 internal fun InstructionAdapter.buildInternalConstructorDesc(propsStartVar: Int, bitMaskBase: Int, codegen: ClassBodyCodegen, args: List<SerializableProperty>): String {

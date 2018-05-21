@@ -155,9 +155,9 @@ class SerializerCodegenImpl(
             load(outputVar, kOutputType)
             load(descVar, descType)
             genArrayOfTypeParametersSerializers()
-            invokevirtual(kOutputType.internalName, "writeBegin",
+            invokeinterface(kOutputType.internalName, "beginStructure",
                           "(" + descType.descriptor + kSerializerArrayType.descriptor +
-                          ")" + kOutputType.descriptor, false)
+                          ")" + kOutputType.descriptor)
             store(outputVar, kOutputType)
             if (serializableDescriptor.isInternalSerializable) {
                 val sig = StringBuilder("(${kOutputType.descriptor}${descType.descriptor}")
@@ -190,8 +190,8 @@ class SerializerCodegenImpl(
             // output.writeEnd(classDesc)
             load(outputVar, kOutputType)
             load(descVar, descType)
-            invokevirtual(kOutputType.internalName, "writeEnd",
-                          "(" + descType.descriptor + ")V", false)
+            invokeinterface(kOutputType.internalName, "endStructure",
+                          "(" + descType.descriptor + ")V")
             // return
             areturn(Type.VOID_TYPE)
         }
@@ -245,17 +245,17 @@ class SerializerCodegenImpl(
             load(inputVar, kInputType)
             load(descVar, descType)
             genArrayOfTypeParametersSerializers()
-            invokevirtual(kInputType.internalName, "readBegin",
+            invokeinterface(kInputType.internalName, "beginStructure",
                           "(" + descType.descriptor + kSerializerArrayType.descriptor +
-                          ")" + kInputType.descriptor, false)
+                          ")" + kInputType.descriptor)
             store(inputVar, kInputType)
             // readElement: int index = input.readElement(classDesc)
             val readElementLabel = Label()
             visitLabel(readElementLabel)
             load(inputVar, kInputType)
             load(descVar, descType)
-            invokevirtual(kInputType.internalName, "readElement",
-                          "(" + descType.descriptor + ")I", false)
+            invokeinterface(kInputType.internalName, "decodeElement",
+                          "(" + descType.descriptor + ")I")
             store(indexVar, Type.INT_TYPE)
             // switch(index)
             val labeledProperties = orderedProperties.filter { !it.transient }
@@ -296,13 +296,13 @@ class SerializerCodegenImpl(
                     }
 
                     fun produceCall(update: Boolean) {
-                        invokevirtual(kInputType.internalName,
-                                      (if (update) "update" else "read") + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + "ElementValue",
+                        invokeinterface(kInputType.internalName,
+                                      (if (update) "update" else "decode") + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + "ElementValue",
                                       "(" + descType.descriptor + "I" +
                                       (if (useSerializer) kSerialLoaderType.descriptor else "")
                                       + (if (unknownSer) AsmTypes.K_CLASS_TYPE.descriptor else "")
                                       + (if (update) sti.type.descriptor else "")
-                                      + ")" + (if (sti.unit) "V" else sti.type.descriptor), false)
+                                      + ")" + (if (sti.unit) "V" else sti.type.descriptor))
                     }
 
                     if (useSerializer) {
@@ -351,8 +351,8 @@ class SerializerCodegenImpl(
             visitLabel(readEndLabel)
             load(inputVar, kInputType)
             load(descVar, descType)
-            invokevirtual(kInputType.internalName, "readEnd",
-                          "(" + descType.descriptor + ")V", false)
+            invokeinterface(kInputType.internalName, "endStructure",
+                          "(" + descType.descriptor + ")V")
             if (!serializableDescriptor.isInternalSerializable) {
                 //validate all required (constructor) fields
                 val nonThrowLabel = Label()

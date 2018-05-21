@@ -39,8 +39,8 @@ import java.util.*
 object KSerializerDescriptorResolver {
 
     val SERIAL_DESC_FIELD = "serialClassDesc"
-    val SAVE = "save"
-    val LOAD = "load"
+    val SAVE = "serialize"
+    val LOAD = "deserialize"
     val SERIALIZER_CLASS = "\$serializer"
 
     internal val typeArgPrefix = "typeSerial"
@@ -379,7 +379,7 @@ object KSerializerDescriptorResolver {
                 i++,
                 Annotations.EMPTY,
                 Name.identifier("output"),
-                thisClass.getClassFromSerializationPackage("KOutput").toSimpleType(false),
+                thisClass.getClassFromSerializationPackage("StructureEncoder").toSimpleType(false),
                 false,
                 false,
                 false,
@@ -393,7 +393,7 @@ object KSerializerDescriptorResolver {
                 i++,
                 Annotations.EMPTY,
                 Name.identifier("serialDesc"),
-                thisClass.getClassFromSerializationPackage("KSerialClassDesc").toSimpleType(false),
+                thisClass.getClassFromSerializationPackage("SerialDescriptor").toSimpleType(false),
                 false,
                 false,
                 false,
