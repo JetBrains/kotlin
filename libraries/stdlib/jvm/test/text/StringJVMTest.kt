@@ -72,4 +72,14 @@ class StringJVMTest {
         assertEquals("UTF-32LE", Charsets.UTF_32LE.name())
         assertEquals("UTF-32BE", Charsets.UTF_32BE.name())
     }
+
+    @Test fun charArrayFullSlice() {
+        val chars = "Kotlin".toCharArray()
+        assertEquals("Kotlin", String(chars, 0, chars.size))
+    }
+
+    @Test fun charArraySlice() {
+        val chars = "Some Longer String".toCharArray()
+        assertEquals("Longer", String(chars, 5, 6))
+    }
 }

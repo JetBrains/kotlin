@@ -267,7 +267,7 @@ public inline fun String(chars: CharArray): String =
  * Converts the characters from a portion of the specified array to a string.
  */
 @kotlin.internal.InlineOnly
-public inline fun String(chars: CharArray, offset: Int, length: Int): String =
+public actual inline fun String(chars: CharArray, offset: Int, length: Int): String =
     java.lang.String(chars, offset, length) as String
 
 /**
