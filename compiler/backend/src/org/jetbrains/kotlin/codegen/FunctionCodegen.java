@@ -1020,6 +1020,7 @@ public class FunctionCodegen {
 
         Set<Bridge<Method>> bridgesToGenerate;
         if (!isSpecial) {
+            if (!state.getClassBuilderMode().generateBodies) return;
             bridgesToGenerate =
                     ImplKt.generateBridgesForFunctionDescriptor(descriptor, typeMapper::mapAsmMethod, DECLARATION_AND_DEFINITION_CHECKER);
             if (!bridgesToGenerate.isEmpty()) {

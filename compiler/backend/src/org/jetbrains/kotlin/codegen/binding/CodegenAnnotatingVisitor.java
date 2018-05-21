@@ -82,6 +82,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     private final SwitchCodegenProvider switchCodegenProvider;
     private final LanguageVersionSettings languageVersionSettings;
     private final ClassBuilderMode classBuilderMode;
+    private final boolean isForLocalLightClass;
 
     public CodegenAnnotatingVisitor(@NotNull GenerationState state) {
         this.bindingTrace = state.getBindingTrace();
@@ -91,6 +92,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         this.switchCodegenProvider = new SwitchCodegenProvider(state);
         this.languageVersionSettings = state.getLanguageVersionSettings();
         this.classBuilderMode = state.getClassBuilderMode();
+        this.isForLocalLightClass = state.getForLocalLightClassOrObject();
     }
 
     @NotNull
@@ -580,6 +582,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
             return;
         }
+
+        if (!classBuilderMode.generateBodies && !isForLocalLightClass) return;
 
         if (nameForClassOrPackageMember != null) {
             nameStack.push(nameForClassOrPackageMember);

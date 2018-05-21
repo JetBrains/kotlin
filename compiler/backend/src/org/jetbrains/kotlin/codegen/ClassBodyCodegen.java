@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
 import org.jetbrains.kotlin.codegen.context.ClassContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptorKt;
@@ -113,6 +114,9 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
         for (DeclarationDescriptor memberDescriptor : DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().getMemberScope())) {
             if (memberDescriptor instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor member = (CallableMemberDescriptor) memberDescriptor;
+                boolean isSpecial = SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(member) != null;
+                if (!state.getClassBuilderMode().generateBodies && !isSpecial) continue;
+
                 if (!member.getKind().isReal() && ImplKt.findInterfaceImplementation(member) == null) {
                     if (member instanceof FunctionDescriptor) {
                         functionCodegen.generateBridges((FunctionDescriptor) member);

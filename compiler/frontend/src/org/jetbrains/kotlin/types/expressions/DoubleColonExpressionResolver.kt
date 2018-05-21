@@ -193,6 +193,7 @@ class DoubleColonExpressionResolver(
     }
 
     private fun shouldTryResolveLHSAsExpression(expression: KtDoubleColonExpression): Boolean {
+        if (expression is KtClassLiteralExpression) return false
         val lhs = expression.receiverExpression ?: return false
         return lhs.canBeConsideredProperExpression() && !expression.hasQuestionMarks /* TODO: test this */
     }
@@ -214,6 +215,7 @@ class DoubleColonExpressionResolver(
     }
 
     private fun shouldTryResolveLHSAsReservedExpression(expression: KtDoubleColonExpression): Boolean {
+        if (expression is KtClassLiteralExpression) return false
         val lhs = expression.receiverExpression ?: return false
         return (expression.hasQuestionMarks && lhs.canBeConsideredProperExpression()) ||
                 (lhs is KtCallExpression && lhs.canBeReservedGenericPropertyCall())

@@ -51,7 +51,8 @@ class GenerationState private constructor(
     moduleName: String?,
     val outDirectory: File?,
     private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
-    wantsDiagnostics: Boolean
+    wantsDiagnostics: Boolean,
+    val forLocalLightClassOrObject: Boolean
 ) {
 
     class Builder(
@@ -94,11 +95,16 @@ class GenerationState private constructor(
         fun wantsDiagnostics(v: Boolean) =
             apply { wantsDiagnostics = v }
 
+        private var forLocalLightClassOrObject: Boolean = false
+        fun forLocalLightClassOrObject(v: Boolean) =
+            apply { forLocalLightClassOrObject = v }
+
         fun build() =
             GenerationState(
                 project, builderFactory, module, bindingContext, files, configuration,
                 generateDeclaredClassFilter, codegenFactory, targetId,
-                moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics
+                moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics,
+                forLocalLightClassOrObject
             )
     }
 
@@ -231,7 +237,12 @@ class GenerationState private constructor(
 
         this.interceptedBuilderFactory = builderFactory
             .wrapWith(
-                { OptimizationClassBuilderFactory(it, disableOptimization, constructorCallNormalizationMode) },
+                {
+                    if (classBuilderMode.generateBodies)
+                        OptimizationClassBuilderFactory(it, disableOptimization, constructorCallNormalizationMode)
+                    else
+                        it
+                },
                 {
                     BuilderFactoryForDuplicateSignatureDiagnostics(
                         it, this.bindingContext, diagnostics, this.moduleName,

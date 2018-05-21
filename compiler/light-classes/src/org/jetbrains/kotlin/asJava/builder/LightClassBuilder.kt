@@ -38,11 +38,12 @@ import java.lang.StringBuilder
 data class LightClassBuilderResult(val stub: PsiJavaFileStub, val bindingContext: BindingContext, val diagnostics: Diagnostics)
 
 fun buildLightClass(
-        packageFqName: FqName,
-        files: Collection<KtFile>,
-        generateClassFilter: GenerationState.GenerateClassFilter,
-        context: LightClassConstructionContext,
-        generate: (state: GenerationState, files: Collection<KtFile>) -> Unit
+    packageFqName: FqName,
+    files: Collection<KtFile>,
+    generateClassFilter: GenerationState.GenerateClassFilter,
+    context: LightClassConstructionContext,
+    isForLocalClass: Boolean = false,
+    generate: (state: GenerationState, files: Collection<KtFile>) -> Unit
 ): LightClassBuilderResult {
     val project = files.first().project
 
@@ -55,7 +56,7 @@ fun buildLightClass(
                 context.bindingContext,
                 files.toList(),
                 CompilerConfiguration.EMPTY
-        ).generateDeclaredClassFilter(generateClassFilter).wantsDiagnostics(false).build()
+        ).generateDeclaredClassFilter(generateClassFilter).wantsDiagnostics(false).forLocalLightClassOrObject(isForLocalClass).build()
         state.beforeCompile()
 
         generate(state, files)

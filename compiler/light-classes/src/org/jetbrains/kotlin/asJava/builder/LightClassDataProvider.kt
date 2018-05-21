@@ -46,7 +46,7 @@ class LightClassDataProviderForClassOrObject(
         val packageFqName = file.packageFqName
         return LightClassGenerationSupport.getInstance(classOrObject.project).createDataHolderForClass(classOrObject) {
             constructionContext ->
-            buildLightClass(packageFqName, listOf(file), ClassFilterForClassOrObject(classOrObject), constructionContext) {
+            buildLightClass(packageFqName, listOf(file), ClassFilterForClassOrObject(classOrObject), constructionContext, isForLocalClass = classOrObject.isLocal) {
                 state, files ->
                 val packageCodegen = state.factory.forPackage(packageFqName, files)
                 val packagePartType = Type.getObjectType(JvmFileClassUtil.getFileClassInternalName(file))

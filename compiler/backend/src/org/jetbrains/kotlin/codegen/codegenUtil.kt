@@ -290,8 +290,11 @@ fun FunctionDescriptor.isNonGenericToArray(): Boolean {
     return returnType != null && KotlinBuiltIns.isArray(returnType)
 }
 
+const val TO_ARRAY_NAME = "toArray"
+
 fun MemberDescriptor.isToArrayFromCollection(): Boolean {
     if (this !is FunctionDescriptor) return false
+    if (name.asString() != TO_ARRAY_NAME) return false
 
     val containingClassDescriptor = containingDeclaration as? ClassDescriptor ?: return false
     if (containingClassDescriptor.source == SourceElement.NO_SOURCE) return false

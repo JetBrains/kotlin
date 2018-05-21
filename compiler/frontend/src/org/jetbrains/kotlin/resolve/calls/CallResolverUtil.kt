@@ -124,7 +124,7 @@ fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boolean {
         return true
     }
     if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-        return descriptor.overriddenDescriptors.all(::isOrOverridesSynthesized)
+        return descriptor.original.overriddenDescriptors.all(::isOrOverridesSynthesized)
     }
     return false
 }

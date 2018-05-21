@@ -102,7 +102,7 @@ sealed class LazyLightClassDataHolder(
     ) : LightClassData {
         override val clsDelegate: PsiClass by lazyPub { findDelegate(javaFileStub) }
 
-        private val dummyDelegate: PsiClass? by lazyPub { inexactStub?.let(findDelegate) }
+        private val dummyDelegate: PsiClass? get() = null
 
         override fun getOwnFields(containingClass: KtLightClass): List<KtLightField> {
             if (dummyDelegate == null) return KtLightFieldImpl.fromClsFields(clsDelegate, containingClass)

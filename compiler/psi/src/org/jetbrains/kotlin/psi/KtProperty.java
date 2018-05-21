@@ -200,6 +200,10 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     @Nullable
     public KtPropertyDelegate getDelegate() {
+        KotlinPropertyStub stub = getStub();
+        if (stub != null && !stub.hasDelegateExpression()) {
+            return null;
+        }
         return (KtPropertyDelegate) findChildByType(PROPERTY_DELEGATE);
     }
 
