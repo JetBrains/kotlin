@@ -97,6 +97,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
     private lateinit var platformVersion: String
     private lateinit var platformBaseNumber: String
     private lateinit var platformDir: File
+    private var isAndroidStudioPlatform: Boolean = false
 
     private fun initEnvironment(project: Project) {
         projectDir = project.projectDir
@@ -104,6 +105,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
         platformBaseNumber = platformVersion.substringBefore(".", "").takeIf { it.isNotEmpty() }
                 ?: error("Invalid platform version: $platformVersion")
         platformDir = IntellijRootUtils.getIntellijRootDir(project)
+        isAndroidStudioPlatform = project.extensions.extraProperties.has("versions.androidStudioRelease")
     }
 
     private fun pill(rootProject: Project) {
@@ -165,12 +167,19 @@ class JpsCompatiblePlugin : Plugin<Project> {
         val runConfigurationsDir = File(projectDir, "buildSrc/src/main/resources/runConfigurations")
         val targetDir = File(projectDir, ".idea/runConfigurations")
         val platformDirProjectRelative = "\$PROJECT_DIR\$/" + platformDir.toRelativeString(projectDir)
+        val additionalIdeaArgs = if (isAndroidStudioPlatform) "-Didea.platform.prefix=AndroidStudio" else ""
 
         targetDir.mkdirs()
 
+        fun substitute(text: String): String {
+            return text
+                .replace("\$IDEA_HOME_PATH\$", platformDirProjectRelative)
+                .replace("\$ADDITIONAL_IDEA_ARGS\$", additionalIdeaArgs)
+        }
+
         runConfigurationsDir.listFiles()
             .filter { it.extension == "xml" }
-            .map { it.name to it.readText().replace("\$IDEA_HOME_PATH\$", platformDirProjectRelative) }
+            .map { it.name to substitute(it.readText()) }
             .forEach { File(targetDir, it.first).writeText(it.second) }
     }
 
