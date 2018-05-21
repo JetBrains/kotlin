@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -43,7 +44,8 @@ class IrClassImpl(
     override val isInner: Boolean,
     override val isData: Boolean,
     override val isExternal: Boolean
-) : IrDeclarationBase(startOffset, endOffset, origin),
+) :
+    IrDeclarationBase(startOffset, endOffset, origin),
     IrClass {
 
     constructor(
@@ -71,7 +73,10 @@ class IrClassImpl(
             this(startOffset, endOffset, origin, IrClassSymbolImpl(descriptor))
 
     constructor(
-        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: ClassDescriptor,
         members: List<IrDeclaration>
     ) : this(startOffset, endOffset, origin, descriptor) {
         addAll(members)
@@ -89,7 +94,7 @@ class IrClassImpl(
 
     override val typeParameters: MutableList<IrTypeParameter> = SmartList()
 
-    override val superClasses: MutableList<IrClassSymbol> = SmartList()
+    override val superTypes: MutableList<IrType> = SmartList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)

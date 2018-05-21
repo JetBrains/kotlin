@@ -128,22 +128,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             )
         }
 
-        irTypeParameters.forEach {
-            mapSuperClassifiers(it.descriptor, it)
-        }
-
         irTypeParametersOwner.typeParameters.addAll(irTypeParameters)
-    }
-
-    private fun mapSuperClassifiers(
-        descriptor: TypeParameterDescriptor,
-        irTypeParameter: IrTypeParameter
-    ) {
-        descriptor.typeConstructor.supertypes.mapNotNullTo(irTypeParameter.superClassifiers) {
-            it.constructor.declarationDescriptor?.let {
-                context.symbolTable.referenceClassifier(it)
-            }
-        }
     }
 
     fun generateInitializerBody(scopeOwnerSymbol: IrSymbol, ktBody: KtExpression): IrExpressionBody =

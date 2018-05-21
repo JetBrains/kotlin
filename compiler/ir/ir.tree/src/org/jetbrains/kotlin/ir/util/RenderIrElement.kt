@@ -129,7 +129,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         declaration.run {
             "CLASS ${renderOriginIfNonTrivial()}" +
                     "$kind name:$name modality:$modality visibility:$visibility " +
-                    "flags:${renderClassFlags()}"
+                    "flags:${renderClassFlags()} " +
+                    "superTypes:[${superTypes.joinToString(separator = "; ") { it.render() }}]"
         }
 
     private fun IrClass.renderClassFlags() =
@@ -164,7 +165,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         declaration.run {
             "TYPE_PARAMETER ${renderOriginIfNonTrivial()}" +
                     "name:$name index:$index variance:$variance " +
-                    "upperBounds:[${upperBounds.joinToString(separator = "; ") { it.render() }}]"
+                    "superTypes:[${superTypes.joinToString(separator = "; ") { it.render() }}]"
         }
 
     override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): String =
