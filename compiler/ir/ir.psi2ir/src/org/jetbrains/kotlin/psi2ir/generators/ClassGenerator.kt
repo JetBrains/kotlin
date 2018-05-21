@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.backend.common.descriptors.substitute
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,15 +27,17 @@ import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.util.StableDescriptorsComparator
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
-import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 import java.lang.AssertionError
@@ -46,27 +47,25 @@ class ClassGenerator(
 ) : DeclarationGeneratorExtension(declarationGenerator) {
 
     fun generateClass(ktClassOrObject: KtClassOrObject): IrClass {
-        val descriptor = getOrFail(BindingContext.CLASS, ktClassOrObject)
+        val classDescriptor = getOrFail(BindingContext.CLASS, ktClassOrObject)
         val startOffset = ktClassOrObject.startOffset
         val endOffset = ktClassOrObject.endOffset
 
         return context.symbolTable.declareClass(
-            startOffset, endOffset, IrDeclarationOrigin.DEFINED, descriptor
+            startOffset, endOffset, IrDeclarationOrigin.DEFINED, classDescriptor
         ).buildWithScope { irClass ->
-            descriptor.typeConstructor.supertypes.mapNotNullTo(irClass.superClasses) {
-                it.constructor.declarationDescriptor?.safeAs<ClassDescriptor>()?.let {
-                    context.symbolTable.referenceClass(it)
-                }
+            classDescriptor.typeConstructor.supertypes.mapTo(irClass.superTypes) {
+                it.toIrType()
             }
 
             irClass.thisReceiver = context.symbolTable.declareValueParameter(
                 startOffset, endOffset,
                 IrDeclarationOrigin.INSTANCE_RECEIVER,
-                irClass.descriptor.thisAsReceiverParameter,
-                irClass.descriptor.thisAsReceiverParameter.type.toIrType()
+                classDescriptor.thisAsReceiverParameter,
+                classDescriptor.thisAsReceiverParameter.type.toIrType()
             )
 
-            declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, descriptor.declaredTypeParameters)
+            declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)
 
             val irPrimaryConstructor = generatePrimaryConstructor(irClass, ktClassOrObject)
             if (irPrimaryConstructor != null) {
@@ -83,7 +82,7 @@ class ClassGenerator(
                 generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
             }
 
-            if (irClass.isEnumClass) {
+            if (DescriptorUtils.isEnumClass(classDescriptor)) {
                 generateAdditionalMembersForEnumClass(irClass)
             }
         }
@@ -275,8 +274,14 @@ class ClassGenerator(
         return if (overridden is PropertyAccessorDescriptor)
             overridden
         else {
-            val typeArguments = zipTypeParametersToDefaultTypes(overridden, delegated)
-            overridden.substitute(typeArguments)
+            val substitutor =
+                TypeSubstitutor.create(
+                    overridden.original.typeParameters.associate {
+                        val delegatedDefaultType = delegated.typeParameters[it.index].defaultType
+                        it.typeConstructor to TypeProjectionImpl(delegatedDefaultType)
+                    }
+                )
+            overridden.substitute(substitutor)!!
         }
     }
 

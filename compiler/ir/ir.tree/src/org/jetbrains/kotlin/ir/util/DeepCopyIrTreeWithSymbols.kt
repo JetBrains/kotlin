@@ -99,8 +99,8 @@ open class DeepCopyIrTreeWithSymbols(
             symbolRemapper.getDeclaredClass(declaration.symbol)
         ).apply {
             transformAnnotations(declaration)
-            declaration.superClasses.mapTo(superClasses) {
-                symbolRemapper.getReferencedClass(it)
+            declaration.superTypes.mapTo(superTypes) {
+                it.remapType()
             }
             thisReceiver = declaration.thisReceiver?.transform()
             declaration.typeParameters.transformTo(typeParameters)
@@ -227,12 +227,9 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredTypeParameter(declaration.symbol),
-            declaration.upperBounds.map { it.remapType() }
+            declaration.superTypes.map { it.remapType() }
         ).apply {
             transformAnnotations(declaration)
-            declaration.superClassifiers.mapTo(superClassifiers) {
-                symbolRemapper.getReferencedClassifier(it)
-            }
         }
 
     override fun visitValueParameter(declaration: IrValueParameter): IrValueParameter =
