@@ -24,12 +24,12 @@ import kotlin.reflect.KClass
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @Suppress("ANNOTATION_CLASS_MEMBER")
-annotation class Experimental(val level: Level = Level.ERROR) {
+public annotation class Experimental(val level: Level = Level.ERROR) {
     /**
      * Severity of the diagnostic that should be reported on usages of experimental API which did not explicitly accept the experimental aspect
      * of that API either by using [UseExperimental] or by being annotated with the corresponding marker annotation.
      */
-    enum class Level {
+    public enum class Level {
         /** Specifies that a warning should be reported on incorrect usages of this experimental API. */
         WARNING,
         /** Specifies that an error should be reported on incorrect usages of this experimental API. */
@@ -49,7 +49,7 @@ annotation class Experimental(val level: Level = Level.ERROR) {
 @Retention(SOURCE)
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
-annotation class UseExperimental(
+public annotation class UseExperimental(
     vararg val markerClass: KClass<out Annotation>
 )
 
