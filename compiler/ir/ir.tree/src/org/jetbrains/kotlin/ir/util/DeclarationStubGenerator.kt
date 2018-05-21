@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DeclarationStubGenerator(
     moduleDescriptor: ModuleDescriptor,
@@ -134,10 +133,8 @@ class DeclarationStubGenerator(
     private fun generateClassStub(descriptor: ClassDescriptor): IrClass =
         symbolTable.declareClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irClass ->
             // TODO get rid of code duplication, see ClassGenerator#generateClass
-            descriptor.typeConstructor.supertypes.mapNotNullTo(irClass.superClasses) {
-                it.constructor.declarationDescriptor?.safeAs<ClassDescriptor>()?.let {
-                    symbolTable.referenceClass(it)
-                }
+            descriptor.typeConstructor.supertypes.mapNotNullTo(irClass.superTypes) {
+                it.toIrType()
             }
 
             generateTypeParameterStubs(descriptor.declaredTypeParameters, irClass)

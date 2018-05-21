@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 inline fun <reified T : IrElement> T.deepCopyOld(): T =
@@ -100,18 +99,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
 
             transformTypeParameters(declaration, descriptor.declaredTypeParameters)
 
-            descriptor.typeConstructor.supertypes.forEachIndexed { index, supertype ->
-                val superclassDescriptor = supertype.constructor.declarationDescriptor
-                if (superclassDescriptor is ClassDescriptor) {
-                    val oldSuperclassSymbol = declaration.superClasses.getOrNull(index)
-                    val newSuperclassSymbol =
-                        if (superclassDescriptor == oldSuperclassSymbol?.descriptor)
-                            oldSuperclassSymbol
-                        else
-                            IrClassSymbolImpl(superclassDescriptor)
-                    superClasses.add(newSuperclassSymbol)
-                }
-            }
+            superTypes.addAll(declaration.superTypes) // TODO
         }
 
     override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
@@ -203,19 +191,9 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             originalTypeParameter.startOffset, originalTypeParameter.endOffset,
             mapDeclarationOrigin(originalTypeParameter.origin),
             newTypeParameterDescriptor,
-            originalTypeParameter.upperBounds // TODO
+            originalTypeParameter.superTypes // TODO
         ).apply {
             transformAnnotations(originalTypeParameter)
-            for (i in upperBounds.indices) {
-                val upperBoundClassifier = upperBounds[i].classifierOrFail.descriptor // TODO
-                val oldSuperClassifierSymbol = originalTypeParameter.superClassifiers[i]
-                val newSuperClassifierSymbol =
-                    if (upperBoundClassifier == oldSuperClassifierSymbol.descriptor)
-                        oldSuperClassifierSymbol
-                    else
-                        createUnboundClassifierSymbol(upperBoundClassifier)
-                superClassifiers.add(newSuperClassifierSymbol)
-            }
         }
 
     protected fun createUnboundClassifierSymbol(classifier: ClassifierDescriptor): IrClassifierSymbol =

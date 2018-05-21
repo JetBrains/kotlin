@@ -37,7 +37,7 @@ class IrTypeParameterImpl(
     override val name: Name,
     override val index: Int,
     override val variance: Variance,
-    override val upperBounds: List<IrType>
+    override val superTypes: List<IrType>
 ) :
     IrDeclarationBase(startOffset, endOffset, origin),
     IrTypeParameter {
@@ -71,8 +71,6 @@ class IrTypeParameterImpl(
     }
 
     override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
-
-    override val superClassifiers: MutableList<IrClassifierSymbol> = SmartList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeParameter(this, data)
