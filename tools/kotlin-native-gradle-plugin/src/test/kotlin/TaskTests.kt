@@ -50,11 +50,16 @@ class TaskTests {
                 listOf("src", "bar", "kotlin"),
                 "main.kt",
                 "fun main(args: Array<String>) = println(\"Run Bar: \${args[0]}, \${args[1]}\")")
-        val result = project.createRunner()
+        val resultFoo = project.createRunner()
                 .withArguments("runFoo", "-PrunArgs=arg1 arg2")
                 .build()
+        val resultAll = project.createRunner()
+                .withArguments("run", "-PrunArgs=arg1 arg2")
+                .build()
 
-        assertTrue(result.output.contains("Run Foo: arg1, arg2"), "No Foo output!")
-        assertTrue(!result.output.contains("Run Bar: "), "There is Bar output!")
+        assertTrue(resultFoo.output.contains("Run Foo: arg1, arg2"), "No Foo output for 'runFoo'")
+        assertFalse(resultFoo.output.contains("Run Bar: "), "There is Bar output for 'runFoo'")
+        assertTrue(resultAll.output.contains("Run Foo: arg1, arg2"), "No Foo output for 'run'")
+        assertTrue(resultAll.output.contains("Run Bar: arg1, arg2"), "No Bar output for 'run'")
     }
 }

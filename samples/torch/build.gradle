@@ -25,7 +25,7 @@ konanArtifacts {
     }
 }
 
-runTorch.dependsOn 'warning'
+tasks.findByName("runTorch")?.dependsOn 'warning'
 
 task warning {
     doLast {

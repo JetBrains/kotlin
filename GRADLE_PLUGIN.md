@@ -259,7 +259,7 @@ See more about multiplatform projects [here](https://kotlinlang.org/docs/referen
 
 The Kotlin/Native plugin creates the following tasks:
 
-* __compileKonan<ArtifactName><Target>__. The plugin creates such a task for each target declared in `konan.targets` list and
+* __compileKonan\<ArtifactName>\<Target>__. The plugin creates such a task for each target declared in `konan.targets` list and
 for each an artifact defined in a `konanArtifacts` block. Such a task may have different properties depending on the artifact type:
 
     ##### Properties available for a compiler task (executable, library or bitcode building task):
@@ -298,7 +298,7 @@ for each an artifact defined in a `konanArtifacts` block. Such a task may have d
     |`linkFiles     `|`Collection<FileCollection>`|Additional files linked with the stubs                   |
 
 
-* __compileKonan<ArtifactName>__. Aggregate task allowing one to build an artifact for several targets. By default it builds
+* __compileKonan\<ArtifactName>__. Aggregate task allowing one to build an artifact for several targets. By default it builds
 the artifact for all supported targets declared for the project. One may change this behavior by specifying the space-separated
 target list in `konan.build.targets` project property:
 
@@ -311,13 +311,13 @@ target list in `konan.build.targets` project property:
 * __compileKonan__. Aggregate task to build all the Kotlin/Native artifacts for all available targets. `konan.build.targets` project
 property also may be used to override the target list. The task has no properties to use by a build script.
 
-* __run<ArtifactName>__. Such a task is created for each executable supported by current host and allows one to run this
+* __run\<ArtifactName>__. Such a task is created for each executable supported by current host and allows one to run this
 executable. The task is an instance of Gradle's [`Exec`](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.Exec.html)
 so it supports all settings provided by `Exec`. Additionally, run parameters may be passed to the task using the `runArgs`
 project property:
 
     ```
-    ./gradlew run -PrunArgs='foo bar'
+    ./gradlew runFoo -PrunArgs='foo bar'
     ```
 
 The plugin also edits the default `build` and `clean` tasks so that the first one allows one to build all the artifacts supported

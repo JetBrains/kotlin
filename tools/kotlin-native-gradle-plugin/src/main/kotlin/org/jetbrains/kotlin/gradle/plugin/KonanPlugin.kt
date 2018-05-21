@@ -341,7 +341,16 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
             doLast { project.cleanKonan() }
         }
 
-        //project.gradle.experimentalFeatures.enable()
+        val runTask = project.getOrCreateTask("run")
+        project.afterEvaluate {
+            project.konanArtifactsContainer
+                    .filterIsInstance(KonanProgram::class.java)
+                    .forEach { program ->
+                        program.forEach { compile ->
+                            compile.runTask?.let { runTask.dependsOn(it) }
+                        }
+                    }
+        }
 
         // Enable multiplatform support
         project.pluginManager.apply(KotlinNativePlatformPlugin::class.java)

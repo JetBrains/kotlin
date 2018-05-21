@@ -155,7 +155,7 @@ def tasksOf(Closure<Task> filter) {
             .matching { filter(it) && it.enabled && (prefix != null ? it.name.startsWith(prefix) : true) }
 }
 
-task run {
+run {
     def tasks = tasksOf { it instanceof KonanTest && it.inDevelopersRun }
     dependsOn(tasks)
 
