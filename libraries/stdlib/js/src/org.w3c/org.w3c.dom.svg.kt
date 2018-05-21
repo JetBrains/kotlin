@@ -857,3 +857,14 @@ public external abstract class SVGViewElement : SVGElement, SVGFitToViewBox, SVG
     }
 }
 
+/**
+ * Exposes the JavaScript [SVGMaskElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGMaskElement) to Kotlin
+ */
+public external abstract class SVGMaskElement : SVGElement {
+    open val maskUnits: SVGAnimatedEnumeration
+    open val maskContentUnits: SVGAnimatedEnumeration
+    open val x: SVGAnimatedLength
+    open val y: SVGAnimatedLength
+    open val width: SVGAnimatedLength
+    open val height: SVGAnimatedLength
+}
