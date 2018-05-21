@@ -71,6 +71,8 @@ abstract class ScriptDependenciesLoader(
     protected val cache: ScriptDependenciesCache = ServiceManager.getService(project, ScriptDependenciesCache::class.java)
 
     protected fun processResult(result: DependenciesResolver.ResolveResult) {
+        loaders.remove(file)
+
         ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
 
         val newDependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: return
@@ -87,8 +89,6 @@ abstract class ScriptDependenciesLoader(
                 file.removeScriptDependenciesNotificationPanel(project)
             }
         }
-
-        loaders.remove(file)
     }
 
     private fun saveDependencies(dependencies: ScriptDependencies) {
