@@ -1370,6 +1370,11 @@ task advanced_when5(type: RunKonanTest) {
     source = "codegen/branching/advanced_when5.kt"
 }
 
+task when_with_try1(type: RunKonanTest) {
+    goldValue = "null\nnull\n42\n"
+    source = "codegen/branching/when_with_try1.kt"
+}
+
 task bool_yes(type: RunKonanTest) {
     source = "codegen/function/boolean.kt"
 }

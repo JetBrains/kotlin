@@ -2449,6 +2449,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 functionGenerationContext.assignPhis(resultPhi to brResult)
             if (bbExit != null)
                 functionGenerationContext.br(bbExit)
+            else
+                functionGenerationContext.unreachable()
         }
         if (bbNext != null)                                                          // Switch generation to next or exit.
             functionGenerationContext.positionAtEnd(bbNext)
