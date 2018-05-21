@@ -198,8 +198,9 @@ class CoroutineInferenceSession(
         context: BasicCallResolutionContext
     ): ResolvedAtomCompleter {
         return ResolvedAtomCompleter(
-            resultSubstitutor, context.trace, context, kotlinToResolvedCallTransformer, expressionTypingServices,
-            argumentTypeResolver, doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context.dataFlowValueFactory
+            resultSubstitutor, context.trace, context, kotlinToResolvedCallTransformer,
+            expressionTypingServices, argumentTypeResolver, doubleColonExpressionResolver, builtIns,
+            deprecationResolver, moduleDescriptor, context.dataFlowValueFactory
         )
     }
 }
