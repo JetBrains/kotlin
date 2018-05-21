@@ -1,5 +1,5 @@
 class Test {
     private val foo = 1
 
-    fun <caret>bar() = foo + foo
+    fun <caret>bar() = foo + this.foo + this@Test.foo + this.foo
 }

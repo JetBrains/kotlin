@@ -2,5 +2,5 @@ class Test {
     private val foo = 1
 
     val <caret>baz: Int
-        get() = foo + foo
+        get() = foo + this.foo + this@Test.foo + this.foo
 }

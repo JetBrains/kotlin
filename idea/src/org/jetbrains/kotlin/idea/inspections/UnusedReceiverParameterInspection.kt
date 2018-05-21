@@ -28,14 +28,18 @@ import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.isOverridable
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
+import org.jetbrains.kotlin.idea.refactoring.explicateAsTextForReceiver
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -70,9 +74,8 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
                 if (callable != null && MainFunctionDetector.isMain(callable)) return
 
-                if ((callableDeclaration is KtProperty || callableDeclaration is KtNamedFunction)
-                    && callable?.containingDeclaration == receiverTypeDeclaration
-                ) {
+                val containingDeclaration = callable?.containingDeclaration
+                if (containingDeclaration != null && containingDeclaration == receiverTypeDeclaration) {
                     registerProblem(receiverTypeReference)
                     return
                 }
@@ -147,6 +150,12 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
             val function = element.parent as? KtCallableDeclaration ?: return
             val callableDescriptor = function.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? CallableDescriptor ?: return
             runChangeSignature(project, callableDescriptor, configureChangeSignature(), element, name)
+            runWriteAction {
+                val explicateAsTextForReceiver = callableDescriptor.explicateAsTextForReceiver()
+                function.forEachDescendantOfType<KtThisExpression> {
+                    if (it.text == explicateAsTextForReceiver) it.labelQualifier?.delete()
+                }
+            }
         }
 
         override fun getFamilyName(): String = name
