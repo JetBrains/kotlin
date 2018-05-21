@@ -85,7 +85,8 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
                     when (container) {
                         is ObjCClass -> {
                             // TODO: consider generating non-designated initializers as factories.
-                            val designated = method.isDesginatedInitializer
+                            val designated = method.isDesginatedInitializer ||
+                                    stubGenerator.configuration.disableDesignatedInitializerChecks
 
                             result.add("")
                             result.add("@ObjCConstructor(${method.selector.quoteAsKotlinLiteral()}, $designated)")

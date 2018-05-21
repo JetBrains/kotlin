@@ -99,6 +99,10 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
         val exportForwardDeclarations by lazy {
             properties.getSpaceSeparated("exportForwardDeclarations")
         }
+
+        val disableDesignatedInitializerChecks by lazy {
+            properties.getProperty("disableDesignatedInitializerChecks")?.toBoolean() ?: false
+        }
     }
 }
 

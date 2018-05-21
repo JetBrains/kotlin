@@ -216,6 +216,12 @@ The overriding constructor must have the same parameter names and types as the o
 To override different methods with clashing Kotlin signatures, one can add
 `@Suppress("CONFLICTING_OVERLOADS")` annotation to the class.
 
+By default Kotlin/Native compiler doesn't allow to call non-designated
+Objective-C initializer as `super(...)` constructor. This behaviour can be
+inconvenient if designated initializers aren't marked properly in the Objective-C
+library. Adding `disableDesignatedInitializerChecks = true` to `.def` file for
+this library would disable these compiler checks.
+
 ## C features
 
 See [INTEROP.md](INTEROP.md) for the case when library uses some plain C features

@@ -28,5 +28,6 @@ class InteropConfiguration(
         val strictEnums: Set<String>,
         val nonStrictEnums: Set<String>,
         val noStringConversion: Set<String>,
-        val exportForwardDeclarations: List<String>
+        val exportForwardDeclarations: List<String>,
+        val disableDesignatedInitializerChecks: Boolean
 )
