@@ -221,7 +221,9 @@ fun configureFacetByGradleModule(
     }
 
     with(kotlinFacet.configuration.settings) {
-        implementedModuleNames = getImplementedModuleNames(moduleNode, sourceSetName, ideModule.project)
+        val sourceSetNameForImplementedModules = if (ideModule.getBuildSystemType() == AndroidGradle) null else sourceSetName
+        implementedModuleNames = getImplementedModuleNames(moduleNode, sourceSetNameForImplementedModules, ideModule.project)
+
         productionOutputPath = getExplicitOutputPath(moduleNode, platformKind, "main")
         testOutputPath = getExplicitOutputPath(moduleNode, platformKind, "test")
     }
