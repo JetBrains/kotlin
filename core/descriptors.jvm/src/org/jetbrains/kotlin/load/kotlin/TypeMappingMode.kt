@@ -69,12 +69,14 @@ class TypeMappingMode private constructor(
 
         /**
          * kotlin.reflect.KClass mapped to java.lang.Class
+         * primitive types and inline class types are not boxed because types in annotations cannot be nullable
          * Other types mapped as DEFAULT
          */
         @JvmField
         val VALUE_FOR_ANNOTATION = TypeMappingMode(
                 isForAnnotationParameter = true,
                 needPrimitiveBoxing = false,
+                needInlineClassWrapping = false,
                 genericArgumentMode = TypeMappingMode(isForAnnotationParameter = true, genericArgumentMode = GENERIC_ARGUMENT))
 
 

@@ -7042,6 +7042,24 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             public void testWrongLongSuffix() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/evaluate/wrongLongSuffix.kt");
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/evaluate/inlineClasses")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class InlineClasses extends AbstractDiagnosticsUsingJavacTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInInlineClasses() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/evaluate/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("constructorOfUnsignedType.kt")
+                public void testConstructorOfUnsignedType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/evaluate/inlineClasses/constructorOfUnsignedType.kt");
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/exposed")
@@ -10681,6 +10699,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("inlineClassDeclarationCheck.kt")
             public void testInlineClassDeclarationCheck() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassDeclarationCheck.kt");
+            }
+
+            @TestMetadata("inlineClassesInsideAnnotations.kt")
+            public void testInlineClassesInsideAnnotations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassesInsideAnnotations.kt");
             }
 
             @TestMetadata("presenceOfInitializerBlockInsideInlineClass.kt")

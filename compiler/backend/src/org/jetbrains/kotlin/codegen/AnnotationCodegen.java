@@ -407,6 +407,26 @@ public abstract class AnnotationCodegen {
                 return null;
             }
 
+            @Override
+            public Void visitUByteValue(UByteValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitUShortValue(UShortValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitUIntValue(UIntValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitULongValue(ULongValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
             private Void visitSimpleValue(ConstantValue<?> value) {
                 annotationVisitor.visit(name, value.getValue());
                 return null;

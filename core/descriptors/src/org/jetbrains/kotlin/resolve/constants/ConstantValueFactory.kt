@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -44,6 +45,16 @@ object ConstantValueFactory {
             is DoubleArray -> createArrayValue(value.toList(), PrimitiveType.DOUBLE)
             is BooleanArray -> createArrayValue(value.toList(), PrimitiveType.BOOLEAN)
             null -> NullValue()
+            else -> null
+        }
+    }
+
+    fun createUnsignedValue(constantValue: ConstantValue<*>, type: KotlinType): UnsignedValueConstant<*>? {
+        return when (constantValue) {
+            is ByteValue -> UByteValue(constantValue, type)
+            is ShortValue -> UShortValue(constantValue, type)
+            is IntValue -> UIntValue(constantValue, type)
+            is LongValue -> ULongValue(constantValue, type)
             else -> null
         }
     }
