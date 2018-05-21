@@ -43,6 +43,28 @@ fun Char.isAsciiUpperCase() = this in 'A'..'Z'
 
 class StringTest {
 
+    @Test fun stringFromCharArrayFullSlice() {
+        val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n')
+        assertEquals("Kotlin", String(chars, 0, chars.size))
+    }
+
+    @Test fun stringFromCharArraySlice() {
+        val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n', ' ', 'r', 'u', 'l', 'e', 's')
+        assertEquals("rule", String(chars, 7, 4))
+    }
+
+    @Test fun stringFromCharArray() {
+        val chars: CharArray = charArrayOf('K', 'o', 't', 'l', 'i', 'n')
+        assertEquals("Kotlin", String(chars))
+    }
+
+    @Test fun stringFromCharArrayUnicodeSurrogatePairs() {
+        val chars: CharArray = charArrayOf('Ц', '月', '語', '\u016C', '\u138D', '\uD83C', '\uDC3A')
+        assertEquals("Ц月語Ŭᎍ🀺", String(chars))
+        assertEquals("月", String(chars, 1, 1))
+        assertEquals("Ŭᎍ🀺", String(chars, 3, 4))
+    }
+
     @Test fun isEmptyAndBlank() = withOneCharSequenceArg { arg1 ->
         class Case(val value: String?, val isNull: Boolean = false, val isEmpty: Boolean = false, val isBlank: Boolean = false)
 
