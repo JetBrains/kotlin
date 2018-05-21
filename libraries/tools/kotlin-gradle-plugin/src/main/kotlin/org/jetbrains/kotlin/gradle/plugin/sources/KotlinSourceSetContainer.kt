@@ -13,6 +13,7 @@ import org.gradle.api.internal.tasks.TaskResolver
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.internal.reflect.Instantiator
+import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProvider
 import org.jetbrains.kotlin.gradle.plugin.addConvention
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
@@ -24,6 +25,10 @@ abstract class KotlinSourceSetContainer<T : KotlinSourceSet> internal constructo
     protected val fileResolver: FileResolver,
     protected val project: Project
 ) : AbstractNamedDomainObjectContainer<T>(itemClass, instantiator), KotlinSourceSetProvider {
+
+    // Needs setting when the plugin is applied. See `registerKotlinSourceSetsIfAbsent`.
+    lateinit var kotlinPlatformExtension: KotlinPlatformExtension
+
     protected open fun defaultSourceRoots(sourceSetName: String): List<File> =
         listOf(project.file("src/$sourceSetName/kotlin"))
 
@@ -43,6 +48,15 @@ abstract class KotlinSourceSetContainer<T : KotlinSourceSet> internal constructo
 
     final override fun provideSourceSet(displayName: String): T =
         maybeCreate(displayName)
+}
+
+class KotlinAndroidSourceSetContainer(
+    instantiator: Instantiator,
+    project: Project,
+    fileResolver: FileResolver
+): KotlinSourceSetContainer<KotlinAndroidSourceSet>(KotlinAndroidSourceSet::class.java, instantiator, fileResolver, project) {
+    override fun doCreateSourceSet(name: String): KotlinAndroidSourceSet =
+        KotlinAndroidSourceSet(name, fileResolver)
 }
 
 class KotlinJavaSourceSetContainer internal constructor(
@@ -71,8 +85,7 @@ class KotlinOnlySourceSetContainer(
     project: Project,
     fileResolver: FileResolver,
     instantiator: Instantiator,
-    private val taskResolver: TaskResolver,
-    private val platformName: String = ""
+    private val taskResolver: TaskResolver
 ) : KotlinSourceSetContainer<KotlinOnlySourceSet>(KotlinOnlySourceSet::class.java, instantiator, fileResolver, project) {
 
     override fun doCreateSourceSet(name: String): KotlinOnlySourceSet {
@@ -80,6 +93,6 @@ class KotlinOnlySourceSetContainer(
             DefaultSourceSetOutput::class.java, name, fileResolver, taskResolver
         )
 
-        return KotlinOnlySourceSet(name, fileResolver, newSourceSetOutput, project, platformName)
+        return KotlinOnlySourceSet(name, fileResolver, newSourceSetOutput, project, kotlinPlatformExtension)
     }
 }

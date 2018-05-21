@@ -15,10 +15,12 @@ import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformExtension
+import org.jetbrains.kotlin.gradle.plugin.base.processResourcesTaskName
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import java.lang.reflect.Constructor
 
-interface KotlinExtendedSourceSet : KotlinSourceSet {
+interface KotlinBaseSourceSet : KotlinSourceSet {
     var compileClasspath: FileCollection
 
     var runtimeClasspath: FileCollection
@@ -58,8 +60,7 @@ interface KotlinExtendedSourceSet : KotlinSourceSet {
 
 abstract class AbstractKotlinSourceSet(
     val displayName: String,
-    fileResolver: FileResolver,
-    val platformName: String
+    fileResolver: FileResolver
 ) : KotlinSourceSet {
     override fun getName(): String = displayName
 
@@ -74,11 +75,16 @@ abstract class AbstractKotlinSourceSet(
     }
 }
 
+class KotlinAndroidSourceSet(
+    displayName: String,
+    fileResolver: FileResolver
+) : AbstractKotlinSourceSet(displayName, fileResolver)
+
 class KotlinJavaSourceSet(
     displayName: String,
     fileResolver: FileResolver,
     val javaSourceSet: SourceSet
-) : AbstractKotlinSourceSet(displayName, fileResolver, ""), KotlinExtendedSourceSet {
+) : AbstractKotlinSourceSet(displayName, fileResolver), KotlinBaseSourceSet {
     override fun getCompileTaskName(suffix: String): String = composeName("compile", "Kotlin")
 
     val java: SourceDirectorySet get() = javaSourceSet.java
@@ -146,8 +152,8 @@ open class KotlinOnlySourceSet(
     fileResolver: FileResolver,
     newSourceSetOutput: SourceSetOutput,
     val project: Project,
-    platformName: String = "kotlin"
-) : AbstractKotlinSourceSet(name, fileResolver, platformName), KotlinExtendedSourceSet {
+    val kotlinPlatformExtension: KotlinPlatformExtension
+) : AbstractKotlinSourceSet(name, fileResolver), KotlinBaseSourceSet {
 
     override fun getCompileTaskName(suffix: String): String = composeName("compile", suffix)
 
@@ -165,9 +171,9 @@ open class KotlinOnlySourceSet(
 
     override val jarTaskName: String get() = composeName(suffix = "jar")
 
-    override val processResourcesTaskName: String get() = composeName("process", "resources")
+    override val processResourcesTaskName: String get() = kotlinPlatformExtension.processResourcesTaskName
 
-    override val compileKotlinTaskName: String get() = composeName("compile", platformName)
+    override val compileKotlinTaskName: String get() = composeName("compile", kotlinPlatformExtension.platformName)
 
     override val compileConfigurationName: String get() = composeName(suffix = "compile")
 
