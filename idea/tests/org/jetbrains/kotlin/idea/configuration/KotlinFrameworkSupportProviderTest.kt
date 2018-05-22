@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.config.VersionView
 import org.jetbrains.kotlin.config.apiVersionView
 import org.jetbrains.kotlin.config.languageVersionView
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
-import org.jetbrains.kotlin.idea.framework.JSFrameworkSupportProvider
 import org.jetbrains.kotlin.idea.framework.JavaFrameworkSupportProvider
 
 class KotlinFrameworkSupportProviderTest : FrameworkSupportProviderTestCase() {
@@ -28,6 +27,4 @@ class KotlinFrameworkSupportProviderTest : FrameworkSupportProviderTestCase() {
     }
 
     fun testJvm() = doTest(JavaFrameworkSupportProvider())
-
-    fun testJs() = doTest(JSFrameworkSupportProvider())
 }
