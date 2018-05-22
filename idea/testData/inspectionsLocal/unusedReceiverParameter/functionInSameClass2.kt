@@ -1,23 +1,9 @@
 // PROBLEM: none
-// WITH_RUNTIME
 
 class Test(val str: String) {
-
     private fun <caret>Test.print() {
-        println(str)
-        println(this.str)
-        println(this@print.str)
-        println(this@Test.str)
-        println()
-    }
-
-    fun test(test: Test) {
-        print()
-        test.print()
-        Test("three").print()
+        println(this@Test.str) // Unused receiver isn't reported because of explicit usage for parent `this`
     }
 }
 
-fun main(args: Array<String>) {
-    Test("one").test(Test("two"))
-}
+fun println(a: Any) {}

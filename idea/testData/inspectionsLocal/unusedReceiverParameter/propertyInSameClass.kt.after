@@ -1,7 +1,4 @@
-// WITH_RUNTIME
-
 class Test(private val foo: Int) {
-
     val <caret>baz: Int
         get() = foo + this.foo + this.foo
 
@@ -14,4 +11,8 @@ class Test(private val foo: Int) {
 
 fun main(args: Array<String>) {
     Test(1).test(Test(2))
+}
+
+fun println(a: Any) {
+    // kotlin.io.println(a)
 }
