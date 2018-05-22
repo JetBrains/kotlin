@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.script.StandardScriptDefinition
 import java.io.File
-import java.net.URLClassLoader
 
 class ScriptingCompilerConfigurationExtension(val project: MockProject) : CompilerConfigurationExtension {
 
@@ -41,6 +39,7 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
                 configureScriptDefinitions(
                     explicitScriptDefinitions,
                     configuration,
+                    this::class.java.classLoader,
                     messageCollector,
                     scriptResolverEnv
                 )
@@ -57,6 +56,7 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
                 ScriptDefinitionsFromClasspathDiscoverySource(
                     configuration.jvmClasspathRoots,
                     emptyList(),
+                    configuration.get(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION) ?: emptyMap(),
                     messageCollector
                 )
             )
@@ -74,31 +74,17 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
 fun configureScriptDefinitions(
     scriptTemplates: List<String>,
     configuration: CompilerConfiguration,
+    baseClassloader: ClassLoader,
     messageCollector: MessageCollector,
     scriptResolverEnv: Map<String, Any?>
 ) {
     val classpath = configuration.jvmClasspathRoots
     // TODO: consider using escaping to allow kotlin escaped names in class names
     if (scriptTemplates.isNotEmpty()) {
-        val classloader =
-            URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), Thread.currentThread().contextClassLoader)
-        var hasErrors = false
-        for (template in scriptTemplates) {
-            val def = loadScriptDefinition(
-                classloader,
-                template,
-                scriptResolverEnv,
-                messageCollector
-            )
-            if (!hasErrors && def == null) hasErrors = true
-            if (def != null) {
-                configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, def)
+        loadScriptTemplatesFromClasspath(scriptTemplates, classpath, emptyList(), baseClassloader, scriptResolverEnv, messageCollector)
+            .forEach {
+                configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, it)
             }
-        }
-        if (hasErrors) {
-            messageCollector.report(CompilerMessageSeverity.LOGGING, "(Classpath used for templates loading: $classpath)")
-            return
-        }
     }
 }
 

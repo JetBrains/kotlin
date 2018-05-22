@@ -236,10 +236,13 @@ internal class BridgeScriptDefinition(
     scriptCompilerConfiguration: ScriptCompileConfiguration,
     scriptConfigurator: ScriptCompilationConfigurator?,
     updateClasspath: (List<File>) -> Unit
-) : KotlinScriptDefinition(scriptCompilerConfiguration[ScriptingEnvironmentProperties.baseClass] as KClass<out Any>) {
-    override val acceptedAnnotations =
-        scriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)?.toList()
+) : KotlinScriptDefinition(scriptCompilerConfiguration.getScriptBaseClass(BridgeScriptDefinition::class)) {
+    override val acceptedAnnotations = run {
+        val cl = this::class.java.classLoader
+        scriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)
+            ?.map { (cl.loadClass(it.typeName) as Class<out Annotation>).kotlin }
                 ?: emptyList()
+    }
 
     override val dependencyResolver: DependenciesResolver =
         BridgeDependenciesResolver(scriptConfigurator, scriptCompilerConfiguration, updateClasspath)

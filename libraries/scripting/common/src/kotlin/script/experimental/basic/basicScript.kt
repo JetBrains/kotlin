@@ -10,15 +10,14 @@ import kotlin.script.experimental.annotations.KotlinScriptDefaultCompilationConf
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.TypedKey
 
-
 private const val ILLEGAL_CONFIG_ANN_ARG =
     "Illegal argument to KotlinScriptDefaultCompilationConfiguration annotation: expecting List-derived object or default-constructed class of configuration parameters"
 
 open class AnnotationsBasedCompilationConfigurator(val environment: ScriptingEnvironment) : ScriptCompilationConfigurator {
 
-    override val defaultConfiguration = run {
-        val base = environment[ScriptingEnvironmentProperties.baseClass]
-        val cfg = base.annotations.filterIsInstance(KotlinScriptDefaultCompilationConfiguration::class.java).flatMap { ann ->
+    override val defaultConfiguration by lazy {
+        val baseClass = environment.getScriptBaseClass(this)
+        val cfg = baseClass.annotations.filterIsInstance(KotlinScriptDefaultCompilationConfiguration::class.java).flatMap { ann ->
             val params = try {
                 ann.compilationConfiguration.objectInstance ?: ann.compilationConfiguration.createInstance()
             } catch (e: Throwable) {

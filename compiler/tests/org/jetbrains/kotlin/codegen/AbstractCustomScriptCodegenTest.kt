@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
-import kotlin.reflect.full.starProjectedType
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptDefaultCompilationConfiguration
+import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptCompileConfigurationProperties
 import kotlin.script.experimental.util.TypedKey
 
@@ -32,7 +32,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         if (scriptDefinitions.isNotEmpty()) {
-            configureScriptDefinitions(scriptDefinitions, configuration, MessageCollector.NONE, emptyMap())
+            configureScriptDefinitions(scriptDefinitions, configuration, this::class.java.classLoader, MessageCollector.NONE, emptyMap())
         }
 
         configuration.addJvmClasspathRoots(additionalDependencies.orEmpty())
@@ -116,7 +116,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
 
 object TestScriptWithReceiversConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
     listOf(
-        ScriptCompileConfigurationProperties.scriptImplicitReceivers to listOf(String::class.starProjectedType)
+        ScriptCompileConfigurationProperties.scriptImplicitReceivers to listOf(KotlinType(String::class))
     )
 )
 
@@ -127,7 +127,7 @@ abstract class TestScriptWithReceivers
 
 object TestScriptWithSimpleEnvVarsConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
     listOf(
-        ScriptCompileConfigurationProperties.contextVariables to mapOf("stringVar1" to String::class.starProjectedType)
+        ScriptCompileConfigurationProperties.contextVariables to mapOf("stringVar1" to KotlinType(String::class))
     )
 )
 
