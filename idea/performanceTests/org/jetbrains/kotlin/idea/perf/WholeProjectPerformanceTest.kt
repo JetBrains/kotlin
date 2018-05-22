@@ -23,7 +23,7 @@ import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 
-abstract class AllKotlinTest : DaemonAnalyzerTestCase() {
+abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase() {
 
     private val rootProjectFile: File = File("../perfTestProject").absoluteFile
     private val statsFile: File = File("build/stats.csv").absoluteFile

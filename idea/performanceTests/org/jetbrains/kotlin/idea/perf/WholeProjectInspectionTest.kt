@@ -11,33 +11,17 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ex.InspectionToolRegistrar
 import com.intellij.codeInspection.ex.Tools
-import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.lang.java.JavaLanguage
-import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.psi.PsiFile
-import com.intellij.psi.search.DelegatingGlobalSearchScope
-import com.intellij.psi.search.FileTypeIndex
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import kotlin.system.measureNanoTime
 
-class AllKotlinJavaInspectionTest : AllKotlinTest() {
-    override fun provideFiles(): Collection<VirtualFile> {
-        val scope = object : DelegatingGlobalSearchScope(ProjectScope.getContentScope(project)) {
-            val index = ProjectFileIndex.getInstance(myProject)
-            override fun contains(file: VirtualFile): Boolean {
-                return super.contains(file) &&
-                        ProjectRootsUtil.isInContent(myProject, file, true, false, false, false, index)
-            }
-        }
+abstract class WholeProjectInspectionTest : WholeProjectPerformanceTest() {
 
-        return FileTypeIndex.getFiles(JavaFileType.INSTANCE, scope)
-    }
+    abstract override fun provideFiles(): Collection<VirtualFile>
+
+    class ExceptionWhileInspection(inspectionId: String, cause: Throwable) : RuntimeException(inspectionId, cause)
 
     private lateinit var profileTools: List<Tools>
 
@@ -52,7 +36,8 @@ class AllKotlinJavaInspectionTest : AllKotlinTest() {
         profileTools = ProjectInspectionProfileManager.getInstance(project).currentProfile.getAllEnabledInspectionTools(project)
     }
 
-    class ExceptionWhileInspection(inspectionId: String, cause: Throwable) : RuntimeException(inspectionId, cause)
+
+    abstract fun isEnabledInspection(tools: Tools): Boolean
 
     override fun doTest(file: VirtualFile): PerFileTestResult {
 
@@ -67,7 +52,7 @@ class AllKotlinJavaInspectionTest : AllKotlinTest() {
 
         for (profileTool in profileTools) {
             val localInspectionTool = profileTool.tool.tool as? LocalInspectionTool ?: continue
-            if (profileTool.tool.language !in setOf(null, "java", "UAST", JavaLanguage.INSTANCE.id)) continue
+            if (!isEnabledInspection(profileTool)) continue
             val result = measureNanoTime {
                 try {
                     localInspectionTool.analyze(psiFile)
@@ -85,7 +70,7 @@ class AllKotlinJavaInspectionTest : AllKotlinTest() {
         return PerFileTestResult(results, totalNs, errors)
     }
 
-    private fun LocalInspectionTool.analyze(file: PsiFile) {
+    protected fun LocalInspectionTool.analyze(file: PsiFile) {
         if (file.textRange == null) return
 
         val holder = ProblemsHolder(InspectionManager.getInstance(file.project), file, false)
