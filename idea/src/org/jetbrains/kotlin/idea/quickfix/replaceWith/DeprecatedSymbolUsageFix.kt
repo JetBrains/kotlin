@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 
 class DeprecatedSymbolUsageFix(
-        element: KtSimpleNameExpression,
-        replaceWith: ReplaceWith
+    element: KtSimpleNameExpression,
+    replaceWith: ReplaceWith
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith), CleanupFix, HighPriorityAction {
 
     override fun getFamilyName() = "Replace deprecated symbol usage"
@@ -55,8 +55,9 @@ class DeprecatedSymbolUsageFix(
         }
 
         fun isImportToBeRemoved(import: KtImportDirective): Boolean {
-            return !import.isAllUnder
-                   && import.targetDescriptors().all { DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(it, import.project) != null }
+            return !import.isAllUnder && import.targetDescriptors().all {
+                DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(it, import.project) != null
+            }
         }
     }
 }
