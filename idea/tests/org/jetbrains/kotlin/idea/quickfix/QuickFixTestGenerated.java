@@ -10496,6 +10496,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/tooLongCharLiteralToString"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("backslash.kt")
+        public void testBackslash() throws Exception {
+            runTest("idea/testData/quickfix/tooLongCharLiteralToString/backslash.kt");
+        }
+
         @TestMetadata("backslashShouldNotBeEscaped.kt")
         public void testBackslashShouldNotBeEscaped() throws Exception {
             runTest("idea/testData/quickfix/tooLongCharLiteralToString/backslashShouldNotBeEscaped.kt");
@@ -10514,6 +10519,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("ecapedDoubleQuotesShouldNotBeEscaped.kt")
         public void testEcapedDoubleQuotesShouldNotBeEscaped() throws Exception {
             runTest("idea/testData/quickfix/tooLongCharLiteralToString/ecapedDoubleQuotesShouldNotBeEscaped.kt");
+        }
+
+        @TestMetadata("startWithBackslash.kt")
+        public void testStartWithBackslash() throws Exception {
+            runTest("idea/testData/quickfix/tooLongCharLiteralToString/startWithBackslash.kt");
         }
     }
 
