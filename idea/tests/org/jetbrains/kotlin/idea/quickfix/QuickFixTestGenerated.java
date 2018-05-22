@@ -10525,6 +10525,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testStartWithBackslash() throws Exception {
             runTest("idea/testData/quickfix/tooLongCharLiteralToString/startWithBackslash.kt");
         }
+
+        @TestMetadata("startWithBackslashInString.kt")
+        public void testStartWithBackslashInString() throws Exception {
+            runTest("idea/testData/quickfix/tooLongCharLiteralToString/startWithBackslashInString.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/typeAddition")
