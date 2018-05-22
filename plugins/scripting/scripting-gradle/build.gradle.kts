@@ -22,6 +22,7 @@ dependencies {
     packedJars(project(":kotlin-scripting-compiler")) { isTransitive = false }
     runtime(project(":kotlin-scripting-common"))
     runtime(project(":kotlin-scripting-jvm"))
+    runtime(project(":kotlin-scripting-misc"))
 }
 
 sourceSets {

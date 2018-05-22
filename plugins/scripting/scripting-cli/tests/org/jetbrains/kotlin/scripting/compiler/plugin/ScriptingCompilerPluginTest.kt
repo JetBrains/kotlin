@@ -113,7 +113,7 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
         messageCollector.clear()
 
         val lazyDefsSeq =
-            discoverScriptTemplatesInClasspath(listOf(defsOut), emptyList(), messageCollector)
+            discoverScriptTemplatesInClasspath(listOf(defsOut), emptyList(), this::class.java.classLoader, emptyMap(), messageCollector)
 
         assertTrue(messageCollector.messages.isEmpty()) {
             "Unexpected messages from discovery sequence (should be empty):\n$messageCollector"

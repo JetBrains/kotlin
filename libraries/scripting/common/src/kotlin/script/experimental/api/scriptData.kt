@@ -8,8 +8,6 @@
 package kotlin.script.experimental.api
 
 import java.net.URL
-import kotlin.reflect.KClass
-import kotlin.reflect.KType
 
 interface ScriptSource {
     val location: URL?

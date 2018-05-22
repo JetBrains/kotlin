@@ -12,33 +12,27 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
-import java.net.URLClassLoader
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.JvmGetScriptingClass
 
-class LazyScriptDefinitionFromDiscoveredClass(
-    classBytes: ByteArray,
+class LazyScriptDefinitionFromDiscoveredClass internal constructor(
+    private val annotationsFromAsm: ArrayList<BinAnnData>,
     private val className: String,
     private val classpath: List<File>,
     private val messageCollector: MessageCollector
 ) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
-    private val annotationsFromAsm = loadAnnotationsFromClass(classBytes)
 
-    private val classloader by lazy {
-        // should use this cl to allow smooth interop with classes explicitly mentioned here, see e.g. scriptDefinition body
-        val parentClassloader = LazyScriptDefinitionFromDiscoveredClass::class.java.classLoader
-        if (classpath.isEmpty()) parentClassloader
-        else URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), parentClassloader)
-    }
+    constructor(
+        classBytes: ByteArray,
+        className: String,
+        classpath: List<File>,
+        messageCollector: MessageCollector
+    ) : this(loadAnnotationsFromClass(classBytes), className, classpath, messageCollector)
 
     override val scriptDefinition: ScriptDefinition by lazy {
         messageCollector.report(
@@ -46,10 +40,11 @@ class LazyScriptDefinitionFromDiscoveredClass(
             "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
         )
         try {
-            val cls = classloader.loadClass(className).kotlin
             ScriptDefinitionFromAnnotatedBaseClass(
                 ScriptingEnvironment(
-                    ScriptingEnvironmentProperties.baseClass to cls
+                    ScriptingEnvironmentProperties.baseClass to KotlinType(className),
+                    ScriptingEnvironmentProperties.configurationDependencies to listOf(JvmDependency(classpath)),
+                    ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
                 )
             )
         } catch (ex: ClassNotFoundException) {
@@ -84,43 +79,5 @@ object InvalidScriptDefinition : ScriptDefinition {
         override val defaultConfiguration: ScriptCompileConfiguration = ScriptDefinitionPropertiesBag()
     }
     override val evaluator: ScriptEvaluator<*>? = null
-}
-
-private class BinAnnData(
-    val name: String,
-    val args: ArrayList<String> = arrayListOf()
-)
-
-private class TemplateAnnotationVisitor(val anns: ArrayList<BinAnnData> = arrayListOf()) : AnnotationVisitor(Opcodes.ASM5) {
-    override fun visit(name: String?, value: Any?) {
-        anns.last().args.add(value.toString())
-    }
-}
-
-private class TemplateClassVisitor(val annVisitor: TemplateAnnotationVisitor) : ClassVisitor(Opcodes.ASM5) {
-    override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
-        val shortName = jvmDescToClassId(desc).shortClassName.asString()
-        if (shortName.startsWith("KotlinScript")) {
-            annVisitor.anns.add(BinAnnData(shortName))
-        }
-        return annVisitor
-    }
-}
-
-private fun jvmDescToClassId(desc: String): ClassId {
-    assert(desc.startsWith("L") && desc.endsWith(";")) { "Not a JVM descriptor: $desc" }
-    val name = desc.substring(1, desc.length - 1)
-    val cid = ClassId.topLevel(FqName(name.replace('/', '.')))
-    return cid
-}
-
-private fun loadAnnotationsFromClass(fileContents: ByteArray): ArrayList<BinAnnData> {
-
-    val visitor =
-        TemplateClassVisitor(TemplateAnnotationVisitor())
-
-    ClassReader(fileContents).accept(visitor, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
-
-    return visitor.annVisitor.anns
 }
 

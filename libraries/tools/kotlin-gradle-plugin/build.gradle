@@ -65,7 +65,6 @@ dependencies {
     runtime project(':kotlin-reflect')
     runtime project(':kotlin-scripting-common')
     runtime project(':kotlin-scripting-compiler')
-    runtime project(':kotlin-scripting-jvm')
     runtime project(path: ':kotlin-scripting-gradle', configuration: 'runtimeJar')
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
