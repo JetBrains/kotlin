@@ -5,17 +5,32 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReferenceExpression
+import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.JKClassType
 import org.jetbrains.kotlin.j2k.tree.JKJavaPrimitiveType
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.JKType
+import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
+import org.jetbrains.kotlin.j2k.tree.impl.JKClassTypeImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKMultiverseKtClassSymbol
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
-class TypeMappingConversion : MatchBasedConversion() {
+class TypeMappingConversion(val context: ConversionContext) : MatchBasedConversion() {
     override fun onElementChanged(new: JKTreeElement, old: JKTreeElement) {
         somethingChanged = true
     }
 
-    override fun runConversion(treeRoot: JKTreeElement): Boolean {
+    override fun runConversion(treeRoot: JKTreeElement, context: ConversionContext): Boolean {
         val root = applyToElement(treeRoot)
         assert(root === treeRoot)
         return somethingChanged
@@ -32,14 +47,37 @@ class TypeMappingConversion : MatchBasedConversion() {
         }
     }
 
+    fun fqNameRef(classId: ClassId, element: PsiElement): PsiReferenceExpression? {
+        return KtPsiFactory(element)
+            .createExpressionCodeFragment(classId.asString(), element)
+            .findChildByClass(PsiReferenceExpression::class.java)
+    }
+
+    fun classTypeByFqName(
+        contextElement: PsiElement?,
+        fqName: ClassId,
+        parameters: List<JKType>,
+        nullability: Nullability = Nullability.Default
+    ): JKType? {
+        contextElement ?: return null
+        val newTarget = fqNameRef(fqName, contextElement)?.resolve() as? KtClassOrObject ?: return null
+
+        val newSymbol = JKMultiverseKtClassSymbol(newTarget)
+
+        return JKClassTypeImpl(newSymbol, parameters, nullability)
+    }
+
     fun mapClassType(type: JKClassType): JKType {
-//        if (type.classReference?.target) {
-//
-//        }
-        return type
+        val fqNameStr = (type.classReference as? JKClassSymbol)?.fqName ?: return type
+
+        val newFqName = JavaToKotlinClassMap.mapJavaToKotlin(FqName(fqNameStr)) ?: return type
+
+        return classTypeByFqName(context.backAnnotator(type), newFqName, type.parameters, type.nullability) ?: type
     }
 
     fun mapPrimitiveType(type: JKJavaPrimitiveType): JKType {
-        return type
+        val fqName = JvmPrimitiveType.get(type.name).primitiveType.typeFqName
+
+        return classTypeByFqName(context.backAnnotator(type), ClassId.topLevel(fqName), emptyList()) ?: type
     }
 }

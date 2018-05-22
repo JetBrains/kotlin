@@ -18,15 +18,17 @@ package org.jetbrains.kotlin.j2k
 
 import org.jetbrains.kotlin.j2k.conversions.FieldToPropertyConversion
 import org.jetbrains.kotlin.j2k.conversions.JavaMethodToKotlinFunctionConversion
+import org.jetbrains.kotlin.j2k.conversions.TypeMappingConversion
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 
 object ConversionsRunner {
 
-    fun doApply(trees: List<JKTreeElement>) {
+    fun doApply(trees: List<JKTreeElement>, context: ConversionContext) {
 
         trees.forEach {
-            FieldToPropertyConversion().runConversion(it)
-            JavaMethodToKotlinFunctionConversion().runConversion(it)
+            FieldToPropertyConversion().runConversion(it, context)
+            TypeMappingConversion(context).runConversion(it, context)
+            JavaMethodToKotlinFunctionConversion().runConversion(it, context)
         }
     }
 

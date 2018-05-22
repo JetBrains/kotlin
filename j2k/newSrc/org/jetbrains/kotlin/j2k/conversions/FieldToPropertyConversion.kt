@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 
@@ -16,7 +17,7 @@ class FieldToPropertyConversion : MatchBasedConversion() {
 
     var somethingChanged = false
 
-    override fun runConversion(treeRoot: JKTreeElement): Boolean {
+    override fun runConversion(treeRoot: JKTreeElement, context: ConversionContext): Boolean {
         val root = applyToElement(treeRoot)
         assert(root === treeRoot)
         return somethingChanged

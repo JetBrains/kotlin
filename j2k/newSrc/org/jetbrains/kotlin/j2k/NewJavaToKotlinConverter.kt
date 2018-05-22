@@ -42,7 +42,13 @@ class NewJavaToKotlinConverter(
 
         println(fileTrees.prettyPrintTrees())
 
-        ConversionsRunner.doApply(fileTrees)
+        val context = ConversionContext(
+            JKSymbolProvider(),
+            project,
+            { treeBuilder.backAnnotation[it] }
+        )
+
+        ConversionsRunner.doApply(fileTrees, context)
 
         val resultTree = fileTrees.prettyPrintTrees()
 

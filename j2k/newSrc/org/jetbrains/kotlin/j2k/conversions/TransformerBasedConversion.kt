@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 
 abstract class TransformerBasedConversion : BaseConversion(), JKVisitorVoid {
     protected var somethingChanged = false
 
-    override fun runConversion(treeRoot: JKTreeElement): Boolean {
+    override fun runConversion(treeRoot: JKTreeElement, context: ConversionContext): Boolean {
         somethingChanged = false
         treeRoot.accept(this, null)
         return somethingChanged

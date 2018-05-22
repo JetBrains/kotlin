@@ -204,13 +204,13 @@ class JKTypeCastExpressionImpl(override var expression: JKExpression, override v
 
 class JKClassTypeImpl(
     override val classReference: JKClassSymbol,
-    override val parameters: List<JKType>,
+    parameters: List<JKType>,
     override val nullability: Nullability = Nullability.Default
-) : JKClassType, JKElementBase() {
+) : JKClassType, JKBranchElementBase() {
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClassType(this, data)
 
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
+    override var parameters: List<JKType> by children(parameters)
 }
+
+class JKNullLiteral : JKExpression, JKElementBase()
