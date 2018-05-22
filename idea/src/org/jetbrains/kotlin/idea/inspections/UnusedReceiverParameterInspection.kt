@@ -34,12 +34,16 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescrip
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.kotlin.idea.refactoring.explicateAsTextForReceiver
+import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -76,7 +80,10 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
                 val containingDeclaration = callable?.containingDeclaration
                 if (containingDeclaration != null && containingDeclaration == receiverTypeDeclaration) {
-                    registerProblem(receiverTypeReference)
+                    val thisLabelName = containingDeclaration.getThisLabelName()
+                    if (!callableDeclaration.anyDescendantOfType<KtThisExpression> { it.getLabelName() == thisLabelName }) {
+                        registerProblem(receiverTypeReference, true)
+                    }
                     return
                 }
 
@@ -124,18 +131,18 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 check(property)
             }
 
-            private fun registerProblem(receiverTypeReference: KtTypeReference) {
+            private fun registerProblem(receiverTypeReference: KtTypeReference, inSameClass: Boolean = false) {
                 holder.registerProblem(
                     receiverTypeReference,
                     KotlinBundle.message("unused.receiver.parameter"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                    MyQuickFix()
+                    MyQuickFix(inSameClass)
                 )
             }
         }
     }
 
-    private class MyQuickFix : LocalQuickFix {
+    private class MyQuickFix(private val inSameClass: Boolean) : LocalQuickFix {
         override fun getName(): String = KotlinBundle.message("unused.receiver.parameter.remove")
 
         private fun configureChangeSignature() = object : KotlinChangeSignatureConfiguration {
@@ -149,12 +156,17 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
             val function = element.parent as? KtCallableDeclaration ?: return
             val callableDescriptor = function.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? CallableDescriptor ?: return
-            runChangeSignature(project, callableDescriptor, configureChangeSignature(), element, name)
-            runWriteAction {
-                val explicateAsTextForReceiver = callableDescriptor.explicateAsTextForReceiver()
-                function.forEachDescendantOfType<KtThisExpression> {
-                    if (it.text == explicateAsTextForReceiver) it.labelQualifier?.delete()
+
+            if (inSameClass) {
+                runWriteAction {
+                    val explicateAsTextForReceiver = callableDescriptor.explicateAsTextForReceiver()
+                    function.forEachDescendantOfType<KtThisExpression> {
+                        if (it.text == explicateAsTextForReceiver) it.labelQualifier?.delete()
+                    }
+                    function.setReceiverTypeReference(null)
                 }
+            } else {
+                runChangeSignature(project, callableDescriptor, configureChangeSignature(), element, name)
             }
         }
 

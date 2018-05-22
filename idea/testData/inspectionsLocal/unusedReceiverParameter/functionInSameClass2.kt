@@ -1,3 +1,4 @@
+// PROBLEM: none
 // WITH_RUNTIME
 
 class Test(val str: String) {
@@ -6,6 +7,7 @@ class Test(val str: String) {
         println(str)
         println(this.str)
         println(this@print.str)
+        println(this@Test.str)
         println()
     }
 

@@ -1,5 +1,21 @@
-class Test {
-    private val foo = 1
+// WITH_RUNTIME
 
-    fun <caret>bar() = foo + this.foo + this@Test.foo + this.foo
+class Test(val str: String) {
+
+    private fun <caret>print() {
+        println(str)
+        println(this.str)
+        println(this.str)
+        println()
+    }
+
+    fun test(test: Test) {
+        print()
+        test.print()
+        Test("three").print()
+    }
+}
+
+fun main(args: Array<String>) {
+    Test("one").test(Test("two"))
 }
