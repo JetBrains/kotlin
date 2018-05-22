@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.psi.KtExpression
  * Use [CodeToInlineBuilder.prepareCodeToInline].
  */
 class CodeToInline(
-        val mainExpression: KtExpression?,
-        val statementsBefore: List<KtExpression>,
-        val fqNamesToImport: Collection<FqName>
+    val mainExpression: KtExpression?,
+    val statementsBefore: List<KtExpression>,
+    val fqNamesToImport: Collection<FqName>
 ) {
     companion object {
         val PARAMETER_USAGE_KEY: Key<Name> = Key("PARAMETER_USAGE")
