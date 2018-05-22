@@ -1314,4 +1314,19 @@ ${"    "}
         assertEquals("  ABC\n   \n  123", "ABC\n   \n123".prependIndent("  "))
         assertEquals("  ", "".prependIndent("  "))
     }
+
+    @Test fun charArrayToStringFullSlice() {
+        val chars: CharArray = charArrayOf().plus("Kotlin".toList())
+        assertEquals("Kotlin", String(chars, 0, chars.size))
+    }
+
+    @Test fun charArrayToStringSlice() {
+        val chars: CharArray = charArrayOf().plus("Some Longer String".toList())
+        assertEquals("Longer", String(chars, 5, 6))
+    }
+
+    @Test fun charArrayToString() {
+        val chars: CharArray = charArrayOf().plus("Some Text".toList())
+        assertEquals("Some Text", String(chars))
+    }
 }

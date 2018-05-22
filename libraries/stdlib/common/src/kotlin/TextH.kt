@@ -272,6 +272,11 @@ internal expect fun checkRadix(radix: Int): Int
 internal expect fun digitOf(char: Char, radix: Int): Int
 
 /**
+ * Converts the characters in the specified array to a string.
+ */
+expect inline fun String(chars: CharArray): String
+
+/**
  * Converts the characters from a portion of the specified array to a string.
  */
 expect inline fun String(chars: CharArray, offset: Int, length: Int): String

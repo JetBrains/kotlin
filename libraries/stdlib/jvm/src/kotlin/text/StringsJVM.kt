@@ -260,7 +260,7 @@ public inline fun String(bytes: ByteArray): String =
  * Converts the characters in the specified array to a string.
  */
 @kotlin.internal.InlineOnly
-public inline fun String(chars: CharArray): String =
+public actual inline fun String(chars: CharArray): String =
     java.lang.String(chars) as String
 
 /**
