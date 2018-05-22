@@ -61,8 +61,8 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
 
     fun testScriptResolverEnvironmentArgsParsing() {
 
-        val longStr = (1..100).joinToString { """\" $it aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \\""" }
-        val unescapeRe = """\\(["\\])""".toRegex()
+        val longStr = (1..100).joinToString("\\,") { """\" $it aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \\""" }
+        val unescapeRe = """\\(["\\,])""".toRegex()
         val cmdlineProcessor = ScriptingCommandLineProcessor()
         val configuration = CompilerConfiguration()
 
