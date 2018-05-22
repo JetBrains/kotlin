@@ -366,6 +366,7 @@ object KSerializerDescriptorResolver {
 
         val args = mutableListOf<ValueParameterDescriptor>()
         var i = 0
+
         args.add(ValueParameterDescriptorImpl(
                 f,
                 null,
@@ -394,9 +395,13 @@ object KSerializerDescriptorResolver {
                 f.source)
         )
 
-        val kSerialClass = thisClass.getClassFromSerializationPackage("KSerializer").toSimpleType(false)
+        val kSerialClassDesc = thisClass.getClassFromSerializationPackage("KSerializer")
 
         thisClass.declaredTypeParameters.forEach {
+            val typeArgument = TypeProjectionImpl(it.defaultType)
+            val kSerialClass = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kSerialClassDesc, listOf(typeArgument))
+
+
             args.add(ValueParameterDescriptorImpl(
                     f,
                     null,
