@@ -326,6 +326,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/declarations/annotations/arrayInAnnotationArguments.kt");
             }
 
+            @TestMetadata("classLiteralInAnnotation.kt")
+            public void testClassLiteralInAnnotation() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/classLiteralInAnnotation.kt");
+            }
+
             @TestMetadata("classesWithAnnotations.kt")
             public void testClassesWithAnnotations() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/classesWithAnnotations.kt");
