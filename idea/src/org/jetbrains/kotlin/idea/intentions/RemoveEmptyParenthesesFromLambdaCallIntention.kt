@@ -44,10 +44,8 @@ class RemoveEmptyParenthesesFromLambdaCallIntention : SelfTargetingRangeIntentio
         val parent = element.parent as? KtCallExpression ?: return null
         val singleLambdaArgument = parent.lambdaArguments.singleOrNull() ?: return null
         if (element.getLineNumber(start = false) != singleLambdaArgument.getLineNumber(start = true)) return null
-        val prevCall = element.getPrevSiblingIgnoringWhitespaceAndComments() as? KtCallExpression
-        if (prevCall?.lambdaArguments?.let { it.size > 0 } == true
-            || prevCall?.valueArguments?.any { it.getArgumentExpression() is KtLambdaExpression } == true) return null
-        return element.range
+        element.getPrevSiblingIgnoringWhitespaceAndComments() as? KtCallExpression ?: return element.range
+        return null
     }
 
     override fun applyTo(element: KtValueArgumentList, editor: Editor?) {
