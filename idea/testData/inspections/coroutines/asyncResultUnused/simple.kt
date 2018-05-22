@@ -52,3 +52,10 @@ fun DbHandler.test() {
     doStuff().await()
 }
 
+operator fun Deferred<Int>.unaryPlus() = this
+operator fun Deferred<Int>.plus(arg: Int) = this
+
+fun moreFalsePositives() {
+    +(async { 0 })
+    async { -1 } + 1
+}

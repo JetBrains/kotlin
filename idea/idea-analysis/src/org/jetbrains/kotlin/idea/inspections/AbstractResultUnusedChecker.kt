@@ -21,11 +21,14 @@ abstract class AbstractResultUnusedChecker(
     protected fun check(expression: KtExpression): Boolean {
         // Check whatever possible by PSI
         if (!expressionChecker(expression, this)) return false
+        var current: PsiElement? = expression
         var parent: PsiElement? = expression.parent
         while (parent != null) {
             if (parent is KtBlockExpression || parent is KtFunction || parent is KtFile) break
-            if (parent is KtValueArgument) return false
-            if (parent is KtBinaryExpression && parent.operationToken in KtTokens.ALL_ASSIGNMENTS) return false
+            if (parent is KtValueArgument || parent is KtBinaryExpression || parent is KtUnaryExpression) return false
+            if (parent is KtQualifiedExpression && parent.receiverExpression == current) return false
+            // TODO: add when condition, if condition (later when it's applicable not only to Deferred)
+            current = parent
             parent = parent.parent
         }
         // Then check by call
