@@ -12522,6 +12522,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
 
+        @TestMetadata("afterLambda.kt")
+        public void testAfterLambda() throws Exception {
+            runTest("idea/testData/intentions/removeEmptyParenthesesFromLambdaCall/afterLambda.kt");
+        }
+
+        @TestMetadata("afterLambda2.kt")
+        public void testAfterLambda2() throws Exception {
+            runTest("idea/testData/intentions/removeEmptyParenthesesFromLambdaCall/afterLambda2.kt");
+        }
+
         public void testAllFilesPresentInRemoveEmptyParenthesesFromLambdaCall() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeEmptyParenthesesFromLambdaCall"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
