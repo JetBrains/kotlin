@@ -2281,6 +2281,16 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/imports/addImports.before.Main.kt");
             }
 
+            @TestMetadata("addImportsSimple.before.Main.kt")
+            public void testAddImportsSimple() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/imports/addImportsSimple.before.Main.kt");
+            }
+
+            @TestMetadata("addImportsWithSameName.before.Main.kt")
+            public void testAddImportsWithSameName() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/imports/addImportsWithSameName.before.Main.kt");
+            }
+
             public void testAllFilesPresentInImports() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/imports"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
             }

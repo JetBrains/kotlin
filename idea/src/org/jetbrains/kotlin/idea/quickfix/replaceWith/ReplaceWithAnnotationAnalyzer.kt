@@ -79,7 +79,7 @@ object ReplaceWithAnnotationAnalyzer {
         val languageVersionSettings = resolutionFacade.getFrontendService(LanguageVersionSettings::class.java)
         val scope = getResolutionScope(
             symbolDescriptor, symbolDescriptor,
-            listOf(explicitImportsScope) + defaultImportsScopes, languageVersionSettings
+            listOf(explicitImportsScope), defaultImportsScopes, languageVersionSettings
         ) ?: return null
 
         val expressionTypingServices = resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
@@ -110,7 +110,7 @@ object ReplaceWithAnnotationAnalyzer {
         val scope = getResolutionScope(
             symbolDescriptor,
             symbolDescriptor,
-            listOf(explicitImportsScope) + defaultImportScopes,
+            listOf(explicitImportsScope), defaultImportScopes,
             resolutionFacade.getFrontendService(LanguageVersionSettings::class.java)
         ) ?: return null
 
@@ -175,6 +175,7 @@ object ReplaceWithAnnotationAnalyzer {
     private fun getResolutionScope(
         descriptor: DeclarationDescriptor,
         ownerDescriptor: DeclarationDescriptor,
+        explicitScopes: Collection<ExplicitImportsScope>,
         additionalScopes: Collection<ImportingScope>,
         languageVersionSettings: LanguageVersionSettings
     ): LexicalScope? {
@@ -184,21 +185,23 @@ object ReplaceWithAnnotationAnalyzer {
                 getResolutionScope(
                     moduleDescriptor.getPackage(descriptor.fqName),
                     ownerDescriptor,
+                    explicitScopes,
                     additionalScopes,
                     languageVersionSettings
                 )
             }
 
             is PackageViewDescriptor -> {
+                val memberAsImportingScope = descriptor.memberScope.memberScopeAsImportingScope()
                 LexicalScope.Base(
-                    chainImportingScopes(listOf(descriptor.memberScope.memberScopeAsImportingScope()) + additionalScopes)!!,
+                    chainImportingScopes(explicitScopes + listOf(memberAsImportingScope) + additionalScopes)!!,
                     ownerDescriptor
                 )
             }
 
             is ClassDescriptor -> {
                 val outerScope = getResolutionScope(
-                    descriptor.containingDeclaration, ownerDescriptor, additionalScopes, languageVersionSettings
+                    descriptor.containingDeclaration, ownerDescriptor, explicitScopes, additionalScopes, languageVersionSettings
                 ) ?: return null
                 ClassResolutionScopesSupport(
                     descriptor,
@@ -209,7 +212,7 @@ object ReplaceWithAnnotationAnalyzer {
 
             is TypeAliasDescriptor -> {
                 val outerScope = getResolutionScope(
-                    descriptor.containingDeclaration, ownerDescriptor, additionalScopes, languageVersionSettings
+                    descriptor.containingDeclaration, ownerDescriptor, explicitScopes, additionalScopes, languageVersionSettings
                 ) ?: return null
                 LexicalScopeImpl(
                     outerScope,
@@ -227,14 +230,14 @@ object ReplaceWithAnnotationAnalyzer {
 
             is FunctionDescriptor -> {
                 val outerScope = getResolutionScope(
-                    descriptor.containingDeclaration, ownerDescriptor, additionalScopes, languageVersionSettings
+                    descriptor.containingDeclaration, ownerDescriptor, explicitScopes, additionalScopes, languageVersionSettings
                 ) ?: return null
                 FunctionDescriptorUtil.getFunctionInnerScope(outerScope, descriptor, LocalRedeclarationChecker.DO_NOTHING)
             }
 
             is PropertyDescriptor -> {
                 val outerScope = getResolutionScope(
-                    descriptor.containingDeclaration, ownerDescriptor, additionalScopes, languageVersionSettings
+                    descriptor.containingDeclaration, ownerDescriptor, explicitScopes, additionalScopes, languageVersionSettings
                 ) ?: return null
                 val propertyHeader = ScopeUtils.makeScopeForPropertyHeader(outerScope, descriptor)
                 LexicalScopeImpl(
