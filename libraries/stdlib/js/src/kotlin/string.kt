@@ -60,5 +60,5 @@ public actual inline fun String(chars: CharArray): String {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String(chars: CharArray, offset: Int, length: Int): String {
-    return js("String.fromCharCode").apply(null, chars.sliceArray(offset until offset + length))
+    return String(chars.sliceArray(offset until offset + length))
 }
