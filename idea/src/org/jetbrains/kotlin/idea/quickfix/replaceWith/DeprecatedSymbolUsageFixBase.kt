@@ -55,8 +55,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 //TODO: different replacements for property accessors
 
 abstract class DeprecatedSymbolUsageFixBase(
-        element: KtSimpleNameExpression,
-        val replaceWith: ReplaceWith
+    element: KtSimpleNameExpression,
+    val replaceWith: ReplaceWith
 ) : KotlinQuickFixAction<KtSimpleNameExpression>(element) {
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
@@ -67,14 +67,13 @@ abstract class DeprecatedSymbolUsageFixBase(
 
     final override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val strategy = buildUsageReplacementStrategy(element, replaceWith, recheckAnnotation = false, reformat = true, editor = editor) ?: return
+        val strategy = buildUsageReplacementStrategy(
+            element, replaceWith, recheckAnnotation = false, reformat = true, editor = editor
+        ) ?: return
         invoke(strategy, project, editor)
     }
 
-    protected abstract fun invoke(
-            replacementStrategy: UsageReplacementStrategy,
-            project: Project,
-            editor: Editor?)
+    protected abstract fun invoke(replacementStrategy: UsageReplacementStrategy, project: Project, editor: Editor?)
 
     companion object {
         fun fetchReplaceWithPattern(descriptor: DeclarationDescriptor, project: Project): ReplaceWith? {
@@ -88,16 +87,18 @@ abstract class DeprecatedSymbolUsageFixBase(
             val imports = importValues.map { (it as StringValue).value }
 
             // should not be available for descriptors with optional parameters if we cannot fetch default values for them (currently for library with no sources)
-            if (descriptor is CallableDescriptor &&
-                descriptor.valueParameters.any { it.hasDefaultValue() && OptionalParametersHelper.defaultParameterValue(it, project) == null }) return null
+            if (descriptor is CallableDescriptor && descriptor.valueParameters.any {
+                    it.hasDefaultValue() && OptionalParametersHelper.defaultParameterValue(it, project) == null
+                }
+            ) return null
 
             return ReplaceWith(pattern, imports)
         }
 
         data class Data(
-                val nameExpression: KtSimpleNameExpression,
-                val replaceWith: ReplaceWith,
-                val descriptor: DeclarationDescriptor
+            val nameExpression: KtSimpleNameExpression,
+            val replaceWith: ReplaceWith,
+            val descriptor: DeclarationDescriptor
         )
 
         fun extractDataFromDiagnostic(deprecatedDiagnostic: Diagnostic): Data? {
@@ -124,11 +125,11 @@ abstract class DeprecatedSymbolUsageFixBase(
         }
 
         private fun buildUsageReplacementStrategy(
-                element: KtSimpleNameExpression,
-                replaceWith: ReplaceWith,
-                recheckAnnotation: Boolean,
-                reformat: Boolean,
-                editor: Editor? = null
+            element: KtSimpleNameExpression,
+            replaceWith: ReplaceWith,
+            recheckAnnotation: Boolean,
+            reformat: Boolean,
+            editor: Editor? = null
         ): UsageReplacementStrategy? {
             val resolutionFacade = element.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
@@ -147,7 +148,9 @@ abstract class DeprecatedSymbolUsageFixBase(
                 is CallableDescriptor -> {
                     val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
                     if (!resolvedCall.isReallySuccess()) return null
-                    val replacement = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(replaceWith, target, resolutionFacade, reformat) ?: return null
+                    val replacement = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(
+                        replaceWith, target, resolutionFacade, reformat
+                    ) ?: return null
                     return CallableUsageReplacementStrategy(replacement, inlineSetter = false)
                 }
 
@@ -157,19 +160,23 @@ abstract class DeprecatedSymbolUsageFixBase(
                         replacementType != null -> {
                             if (editor != null) {
                                 val typeAlias = element
-                                        .getStrictParentOfType<KtUserType>()
-                                        ?.getStrictParentOfType<KtTypeReference>()
-                                        ?.getStrictParentOfType<KtTypeAlias>()
+                                    .getStrictParentOfType<KtUserType>()
+                                    ?.getStrictParentOfType<KtTypeReference>()
+                                    ?.getStrictParentOfType<KtTypeAlias>()
                                 if (typeAlias != null) {
                                     val usedConstructorWithOwnReplaceWith = usedConstructorsWithOwnReplaceWith(
-                                            element.project, target, typeAlias)
+                                        element.project, target, typeAlias
+                                    )
 
                                     if (usedConstructorWithOwnReplaceWith != null) {
-                                        val constructorStr = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(usedConstructorWithOwnReplaceWith)
+                                        val constructorStr = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(
+                                            usedConstructorWithOwnReplaceWith
+                                        )
                                         HintManager.getInstance().showErrorHint(
-                                                editor,
-                                                "There is own 'ReplaceWith' on '$constructorStr' that is used through this alias. " +
-                                                "Please replace usages first.")
+                                            editor,
+                                            "There is own 'ReplaceWith' on '$constructorStr' that is used through this alias. " +
+                                                    "Please replace usages first."
+                                        )
                                         return null
                                     }
                                 }
@@ -180,7 +187,12 @@ abstract class DeprecatedSymbolUsageFixBase(
                         }
                         target is ClassDescriptor -> {
                             val constructor = target.unsubstitutedPrimaryConstructor ?: return null
-                            val replacementExpression = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(replaceWith, constructor, resolutionFacade, reformat) ?: return null
+                            val replacementExpression = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(
+                                replaceWith,
+                                constructor,
+                                resolutionFacade,
+                                reformat
+                            ) ?: return null
                             ClassUsageReplacementStrategy(null, replacementExpression, element.project)
                         }
                         else -> null
@@ -192,7 +204,8 @@ abstract class DeprecatedSymbolUsageFixBase(
         }
 
         private fun usedConstructorsWithOwnReplaceWith(
-                project: Project, classifier: ClassifierDescriptorWithTypeParameters, typeAlias: PsiElement): ConstructorDescriptor? {
+            project: Project, classifier: ClassifierDescriptorWithTypeParameters, typeAlias: PsiElement
+        ): ConstructorDescriptor? {
             val specialReplaceWithForConstructor = classifier.constructors.filter {
                 DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(it, project) != null
             }.toSet()
