@@ -11,6 +11,8 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKField
 import org.jetbrains.kotlin.j2k.tree.JKMethod
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 
 interface JKSymbol {
     val target: Any
@@ -18,7 +20,7 @@ interface JKSymbol {
 }
 
 interface JKClassSymbol : JKSymbol {
-    val fqName: String
+    val fqName: String?
 }
 
 interface JKMethodSymbol : JKSymbol {
@@ -39,8 +41,15 @@ class JKUniverseClassSymbol(override val target: JKClass) : JKClassSymbol {
 class JKMultiverseClassSymbol(override val target: PsiClass) : JKClassSymbol {
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val fqName: String
-        get() = target.name!!
+    override val fqName: String?
+        get() = target.qualifiedName
+}
+
+class JKMultiverseKtClassSymbol(override val target: KtClassOrObject): JKClassSymbol {
+    override val declaredIn: JKSymbol
+        get() = TODO("not implemented")
+    override val fqName: String?
+        get() = target.fqName?.asString()
 
 }
 

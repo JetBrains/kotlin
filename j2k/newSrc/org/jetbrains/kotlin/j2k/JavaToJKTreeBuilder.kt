@@ -34,6 +34,8 @@ class JavaToJKTreeBuilder {
 
     private val modifierMapper = ModifierMapper()
 
+    val backAnnotation = mutableMapOf<JKElement, PsiElement>()
+
     val symbols = mutableMapOf<PsiElement, JKSymbol>()
 
     val symbolsByDeclaration = mutableMapOf<JKDeclaration, JKSymbol>()
@@ -152,11 +154,16 @@ class JavaToJKTreeBuilder {
 
         fun PsiReferenceExpression.toJK(): JKExpression {
             val impl = this as PsiReferenceExpressionImpl
+            if (impl.resolve() !is PsiField) {
+                return JKNullLiteral() // TODO !!!
+            }
+
             val access = JKJavaFieldAccessExpressionImpl(JKMultiverseFieldSymbol(impl.resolve() as PsiField))
-            return if (impl.findChildByRole(ChildRole.DOT) != null) {
-                JKQualifiedExpressionImpl((impl.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, access)
-            } else {
-                access
+            return when {
+                impl.findChildByRole(ChildRole.DOT) != null &&
+                        (impl.qualifierExpression as? PsiReferenceExpression)?.resolve() !is PsiClass ->
+                    JKQualifiedExpressionImpl((impl.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, access)
+                else -> access
             }
         }
 
@@ -191,7 +198,7 @@ class JavaToJKTreeBuilder {
         }
 
         fun PsiTypeCastExpression.toJK(): JKExpression {
-            return JKTypeCastExpressionImpl(operand?.toJK() ?: TODO(), castType?.type?.toJK() ?: TODO())
+            return JKTypeCastExpressionImpl(operand?.toJK() ?: TODO(), castType?.toJK() ?: TODO())
         }
 
         fun PsiParenthesizedExpression.toJK(): JKExpression {
@@ -202,9 +209,18 @@ class JavaToJKTreeBuilder {
             return JKExpressionListImpl(this?.expressions?.map { it.toJK() } ?: emptyList())
         }
 
+        fun PsiTypeElement.toJK(): JKType {
+            return type.toJK().also {
+                backAnnotation[it] = this
+            }
+        }
+
         fun PsiType.toJK(): JKType {
             return when (this) {
-                is PsiClassType -> JKClassTypeImpl(resolve()?.let { provideSymbol(it) as? JKClassSymbol }!!, parameters.map { it.toJK() })
+                is PsiClassType -> JKClassTypeImpl(
+                    resolve()?.let { provideSymbol(it) as? JKClassSymbol }!!,
+                    parameters.map { it.toJK() }
+                )
                 is PsiArrayType -> JKJavaArrayTypeImpl(componentType.toJK())
                 is PsiPrimitiveType -> when (presentableText) {
                     "int" -> JKJavaPrimitiveTypeImpl.INT
@@ -238,7 +254,7 @@ class JavaToJKTreeBuilder {
         fun PsiField.toJK(): JKJavaField {
             return JKJavaFieldImpl(
                 with(modifierMapper) { modifierList.toJK() },
-                with(expressionTreeMapper) { type.toJK() },
+                with(expressionTreeMapper) { typeElement?.toJK() } ?: TODO(),
                 JKNameIdentifierImpl(this.name),
                 with(expressionTreeMapper) { initializer?.toJK() } ?: TODO()
             ).also {
@@ -262,7 +278,7 @@ class JavaToJKTreeBuilder {
         }
 
         fun PsiParameter.toJK(): JKValueArgumentImpl {
-            return JKValueArgumentImpl(with(expressionTreeMapper) { type.toJK() }, name!!)
+            return JKValueArgumentImpl(with(expressionTreeMapper) { typeElement?.toJK() } ?: TODO(), name!!)
         }
 
         fun PsiCodeBlock.toJK(): JKBlock {

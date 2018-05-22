@@ -20,21 +20,21 @@ import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 class JKJavaFieldImpl(
-    override var modifierList: JKModifierList,
-    override var type: JKType,
-    override var name: JKNameIdentifier,
-    override var initializer: JKExpression
-) : JKJavaField, JKElementBase() {
+    modifierList: JKModifierList,
+    type: JKType,
+    name: JKNameIdentifier,
+    initializer: JKExpression
+) : JKJavaField, JKBranchElementBase() {
     override val valid: Boolean
         get() = true
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaField(this, data)
 
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        type.accept(visitor, data)
-        name.accept(visitor, data)
-        initializer.accept(visitor, data)
-    }
+    override var initializer: JKExpression by child(initializer)
+    override var modifierList: JKModifierList by child(modifierList)
+    override var name: JKNameIdentifier by child(name)
+    override var type: JKType by child(type)
+
 }
 
 class JKJavaLiteralExpressionImpl(

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
+import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.utils.Printer
 
@@ -77,12 +78,7 @@ private class DebugTreePrinter : JKVisitorVoid {
         printer.println(type.classNameWithoutJK(), " \"")
         printer.indented {
             if (type is JKClassType) {
-                /*if ((type.classReference as? JKBindableSymbol)?.isBound == true) {
-                    printer.println(type.classReference?.element?.name?.value)
-
-                } else {
-                    printer.println("Unbound")
-                }*/
+                printer.println((type.classReference as? JKClassSymbol)?.fqName ?: type.classReference?.let { it::class } ?: "Unbound")
             }
         }
         printer.println("\"")
