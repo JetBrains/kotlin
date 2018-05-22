@@ -39,11 +39,14 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
         val element = element ?: return
         val primaryConstructor = element.parent?.parent as? KtPrimaryConstructor
         val parameterList = element.parent as? KtParameterList
+        val isSingleParameter = parameterList?.parameters?.size == 1
         val parameterDescriptor = element.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
         ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
-        val nextParameter = parameterList?.parameters?.getOrNull(parameterDescriptor.index)
-        if (nextParameter != null) {
-            editor?.caretModel?.moveToOffset(nextParameter.startOffset)
+        if (!isSingleParameter) {
+            val nextParameter = parameterList?.parameters?.getOrNull(parameterDescriptor.index)
+            if (nextParameter != null) {
+                editor?.caretModel?.moveToOffset(nextParameter.startOffset)
+            }
         }
         if (primaryConstructor != null) {
             val removeConstructorIntention = RemoveEmptyPrimaryConstructorIntention()
@@ -60,8 +63,7 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtParameter>? {
             val parameter = Errors.UNUSED_PARAMETER.cast(diagnostic).psiElement
             val parameterOwner = parameter.parent.parent
-            if (parameterOwner is KtFunctionLiteral ||
-                (parameterOwner is KtNamedFunction && parameterOwner.name == null)) return null
+            if (parameterOwner is KtFunctionLiteral || (parameterOwner is KtNamedFunction && parameterOwner.name == null)) return null
             return RemoveUnusedFunctionParameterFix(parameter)
         }
     }

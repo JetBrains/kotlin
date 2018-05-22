@@ -1,0 +1,7 @@
+// "Remove parameter 'bar'" "true"
+
+fun foo(<caret>) {}
+
+fun test() {
+    foo()
+}
