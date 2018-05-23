@@ -593,15 +593,15 @@ class CodeInliner<TCallElement : KtElement>(
             val callExpression = argumentList.parent as? KtCallExpression ?: return
             if (callExpression.lambdaArguments.isNotEmpty()) return
 
-            val resolvedCall = callExpression.resolveToCall() ?: return
-            if (!resolvedCall.isReallySuccess()) return
-            val argumentMatch = resolvedCall.getArgumentMapping(argument) as ArgumentMatch
-            if (argumentMatch.valueParameter != resolvedCall.resultingDescriptor.valueParameters.last()) return
-
+            callExpression.resolveToCall() ?: return
             callExpressions.add(callExpression)
         })
 
-        callExpressions.forEach { it.moveFunctionLiteralOutsideParentheses() }
+        callExpressions.forEach {
+            if (it.canMoveLambdaOutsideParentheses()) {
+                it.moveFunctionLiteralOutsideParentheses()
+            }
+        }
     }
 
     private operator fun <T : Any> PsiElement.get(key: Key<T>): T? = getCopyableUserData(key)

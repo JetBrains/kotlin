@@ -5602,6 +5602,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters/namedArgument.kt");
             }
 
+            @TestMetadata("optionalParameterAndLambda.kt")
+            public void testOptionalParameterAndLambda() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters/optionalParameterAndLambda.kt");
+            }
+
+            @TestMetadata("optionalParameterAndLambdaComplex.kt")
+            public void testOptionalParameterAndLambdaComplex() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters/optionalParameterAndLambdaComplex.kt");
+            }
+
             @TestMetadata("optionalParameters1.kt")
             public void testOptionalParameters1() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters/optionalParameters1.kt");
