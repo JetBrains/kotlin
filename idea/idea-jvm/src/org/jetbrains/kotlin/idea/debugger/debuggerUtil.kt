@@ -9,6 +9,7 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
+import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
@@ -27,6 +28,42 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.util.*
+
+fun Method.safeAllLineLocations(): List<Location> {
+    return DebuggerUtilsEx.allLineLocations(this) ?: emptyList()
+}
+
+fun ReferenceType.safeAllLineLocations(): List<Location> {
+    return DebuggerUtilsEx.allLineLocations(this) ?: emptyList()
+}
+
+fun Method.safeLocationsOfLine(line: Int): List<Location> {
+    return try {
+        locationsOfLine(line)
+    } catch (e: AbsentInformationException) {
+        emptyList()
+    }
+}
+
+fun Method.safeVariables(): List<LocalVariable> {
+    return try {
+        variables()
+    } catch (e: AbsentInformationException) {
+        emptyList()
+    }
+}
+
+fun Location.safeLineNumber(): Int {
+    return DebuggerUtilsEx.getLineNumber(this, false)
+}
+
+fun Location.safeSourceLineNumber(): Int {
+    return DebuggerUtilsEx.getLineNumber(this, true)
+}
+
+fun Location.safeMethod(): Method? {
+    return DebuggerUtilsEx.getMethod(this)
+}
 
 fun isInsideInlineFunctionBody(visibleVariables: List<LocalVariableProxyImpl>): Boolean {
     return visibleVariables.any { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
@@ -108,7 +145,7 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
 
     private fun createVisibleVariables() {
         if (visibleVariables == null) {
-            val allVariables = location.method().variables()
+            val allVariables = location.method().safeVariables()
             val map = HashMap<String, LocalVariable>(allVariables.size)
 
             for (allVariable in allVariables) {
@@ -176,13 +213,7 @@ fun isOnSuspendReturnOrReenter(location: Location): Boolean {
 }
 
 fun isLastLineLocationInMethod(location: Location): Boolean {
-    val allLineLocations = try {
-        location.method().allLineLocations()
-    } catch (e: AbsentInformationException) {
-        return false
-    }
-
-    val knownLines = allLineLocations.map { it.lineNumber() }.filter { it != -1 }
+    val knownLines = location.method().safeAllLineLocations().map { it.lineNumber() }.filter { it != -1 }
     if (knownLines.isEmpty()) {
         return false
     }
@@ -191,7 +222,7 @@ fun isLastLineLocationInMethod(location: Location): Boolean {
 }
 
 fun isOneLineMethod(location: Location): Boolean {
-    val allLineLocations = location.method().allLineLocations()
+    val allLineLocations = location.method().safeAllLineLocations()
     val firstLine = allLineLocations.firstOrNull()?.lineNumber()
     val lastLine = allLineLocations.lastOrNull()?.lineNumber()
 
