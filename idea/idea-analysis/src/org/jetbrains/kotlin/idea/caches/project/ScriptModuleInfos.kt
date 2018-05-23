@@ -35,9 +35,6 @@ data class ScriptModuleInfo(
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
-    val externalDependencies: ScriptDependencies
-        get() = ScriptDependenciesManager.getInstance(project).getScriptDependencies(scriptFile)
-
     val relatedModuleSourceInfo: ModuleSourceInfo?
         get() = getScriptRelatedModuleInfo(project, scriptFile)
 
@@ -47,9 +44,10 @@ data class ScriptModuleInfo(
 
     override fun dependencies(): List<IdeaModuleInfo> {
         return arrayListOf<IdeaModuleInfo>(this).apply {
-            add(ScriptDependenciesInfo.ForFile(project, this@ScriptModuleInfo))
+            val dependenciesInfo = ScriptDependenciesInfo.ForFile(project, scriptFile, scriptDefinition)
+            add(dependenciesInfo)
             relatedModuleSourceInfo?.let { addAll(it.dependencies()) }
-            findJdk(externalDependencies, project)?.let { add(SdkInfo(project, it)) }
+            dependenciesInfo.sdk?.let { add(SdkInfo(project, it)) }
         }
     }
 }
@@ -87,12 +85,19 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
     override val sourcesModuleInfo: SourceForBinaryModuleInfo?
         get() = ScriptDependenciesSourceInfo.ForProject(project)
 
-    class ForFile(project: Project, val scriptModuleInfo: ScriptModuleInfo) : ScriptDependenciesInfo(project) {
+    class ForFile(
+        project: Project,
+        val scriptFile: VirtualFile,
+        val scriptDefinition: KotlinScriptDefinition
+    ) : ScriptDependenciesInfo(project) {
+        private val externalDependencies: ScriptDependencies
+            get() = ScriptDependenciesManager.getInstance(project).getScriptDependencies(scriptFile)
+
         override val sdk: Sdk?
-            get() = findJdk(scriptModuleInfo.externalDependencies, project)
+            get() = findJdk(externalDependencies, project)
 
         override fun contentScope(): GlobalSearchScope {
-            return ServiceManager.getService(project, ScriptBinariesScopeCache::class.java).get(scriptModuleInfo.externalDependencies)
+            return ServiceManager.getService(project, ScriptBinariesScopeCache::class.java).get(externalDependencies)
         }
     }
 

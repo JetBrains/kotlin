@@ -49,7 +49,7 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
             moduleInfo is LibraryInfo -> project.getLanguageVersionSettings(extraAnalysisFlags = getExtraAnalysisFlags(project))
             moduleInfo is ScriptModuleInfo -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
             moduleInfo is ScriptDependenciesInfo.ForFile ->
-                getVersionLanguageSettingsForScripts(project, moduleInfo.scriptModuleInfo.scriptDefinition)
+                getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
             else -> project.getLanguageVersionSettings()
         }
 
