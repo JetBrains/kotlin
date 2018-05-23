@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile
 
 abstract class DelegateSourcePosition(private var delegate: SourcePosition) : SourcePosition() {
     override fun getFile(): PsiFile = delegate.file
-    override fun getElementAt(): PsiElement = delegate.elementAt
+    override fun getElementAt(): PsiElement? = delegate.elementAt
     override fun getLine(): Int = delegate.line
     override fun getOffset(): Int = delegate.offset
 
