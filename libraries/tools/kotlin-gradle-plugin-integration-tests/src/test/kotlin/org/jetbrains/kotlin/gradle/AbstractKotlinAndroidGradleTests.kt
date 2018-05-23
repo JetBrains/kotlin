@@ -96,6 +96,7 @@ abstract class KotlinAndroid3GradleIT(
             text.replace("com.android.library", "com.android.feature")
                 .replace("compileSdkVersion 22", "compileSdkVersion 26")
                 .apply { assert(!equals(text)) }
+                .plus("\nandroid { baseFeature true }")
         }
 
         // Check that Kotlin tasks were created for both lib and feature variants:
