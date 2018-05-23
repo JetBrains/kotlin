@@ -5679,6 +5679,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             public void testCallToProperty() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/properties/callToProperty.kt");
             }
+
+            @TestMetadata("extensionPropertyToProperty.kt")
+            public void testExtensionPropertyToProperty() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/properties/extensionPropertyToProperty.kt");
+            }
+
+            @TestMetadata("extensionPropertyWriteToProperty.kt")
+            public void testExtensionPropertyWriteToProperty() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/properties/extensionPropertyWriteToProperty.kt");
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi")
