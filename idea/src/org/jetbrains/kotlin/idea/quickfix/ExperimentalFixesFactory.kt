@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -27,7 +25,13 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val element = diagnostic.psiElement
-        val containingDeclaration: KtDeclaration = element.getStrictParentOfType() ?: return emptyList()
+        val containingDeclaration: KtDeclaration = element.getParentOfTypesAndPredicate(
+            true,
+            KtDeclarationWithBody::class.java,
+            KtClassOrObject::class.java
+        ) {
+            !KtPsiUtil.isLocal(it)
+        } ?: return emptyList()
 
         val factory = diagnostic.factory
         val annotationFqName = when (factory) {

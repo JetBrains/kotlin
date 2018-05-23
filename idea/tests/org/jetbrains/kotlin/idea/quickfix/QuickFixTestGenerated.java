@@ -1645,38 +1645,32 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("removeUnusedParameterWithTypeParameter.kt")
         public void testRemoveUnusedParameterWithTypeParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter.kt");
-            doTest(fileName);
+            runTest("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter.kt");
         }
 
         @TestMetadata("removeUnusedParameterWithTypeParameter2.kt")
         public void testRemoveUnusedParameterWithTypeParameter2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter2.kt");
-            doTest(fileName);
+            runTest("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter2.kt");
         }
 
         @TestMetadata("removeUnusedParameterWithTypeParameter3.kt")
         public void testRemoveUnusedParameterWithTypeParameter3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter3.kt");
-            doTest(fileName);
+            runTest("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter3.kt");
         }
 
         @TestMetadata("removeUnusedParameterWithTypeParameter4.kt")
         public void testRemoveUnusedParameterWithTypeParameter4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter4.kt");
-            doTest(fileName);
+            runTest("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter4.kt");
         }
 
         @TestMetadata("removeUnusedParameterWithTypeParameter5.kt")
         public void testRemoveUnusedParameterWithTypeParameter5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter5.kt");
-            doTest(fileName);
+            runTest("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter5.kt");
         }
 
         @TestMetadata("removeUnusedParameterWithTypeParameter6.kt")
         public void testRemoveUnusedParameterWithTypeParameter6() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter6.kt");
-            doTest(fileName);
+            runTest("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter6.kt");
         }
 
         @TestMetadata("removeUnusedPrimaryConstructorParameter.kt")
@@ -6061,6 +6055,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("classUseExperimental.kt")
         public void testClassUseExperimental() throws Exception {
             runTest("idea/testData/quickfix/experimental/classUseExperimental.kt");
+        }
+
+        @TestMetadata("functionInLocalClass.kt")
+        public void testFunctionInLocalClass() throws Exception {
+            runTest("idea/testData/quickfix/experimental/functionInLocalClass.kt");
+        }
+
+        @TestMetadata("localFunction.kt")
+        public void testLocalFunction() throws Exception {
+            runTest("idea/testData/quickfix/experimental/localFunction.kt");
+        }
+
+        @TestMetadata("nestedClasses.kt")
+        public void testNestedClasses() throws Exception {
+            runTest("idea/testData/quickfix/experimental/nestedClasses.kt");
         }
 
         @TestMetadata("override.kt")
