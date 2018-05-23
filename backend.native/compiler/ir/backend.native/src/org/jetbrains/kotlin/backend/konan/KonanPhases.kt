@@ -61,10 +61,10 @@ enum class KonanPhase(val description: String,
     /* ... */ BITCODE("LLVM BitCode Generation"),
     /* ... ... */ RTTI("RTTI Generation"),
     /* ... ... */ BUILD_DFG("Data flow graph building"),
-    /* ... ... */ SERIALIZE_DFG("Data flow graph serializing", BUILD_DFG),
     /* ... ... */ DESERIALIZE_DFG("Data flow graph deserializing"),
     /* ... ... */ DEVIRTUALIZATION("Devirtualization", BUILD_DFG, DESERIALIZE_DFG),
-    /* ... ... */ ESCAPE_ANALYSIS("Escape analysis", BUILD_DFG, DESERIALIZE_DFG, enabled = false),
+    /* ... ... */ ESCAPE_ANALYSIS("Escape analysis", BUILD_DFG, DESERIALIZE_DFG, enabled = false), // TODO: Requires devirtualization.
+    /* ... ... */ SERIALIZE_DFG("Data flow graph serializing", BUILD_DFG), // TODO: Requires escape analysis.
     /* ... ... */ CODEGEN("Code Generation"),
     /* ... ... */ BITCODE_LINKER("Bitcode linking"),
     /* */ LINK_STAGE("Link stage"),

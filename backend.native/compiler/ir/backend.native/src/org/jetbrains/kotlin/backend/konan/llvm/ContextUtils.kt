@@ -40,45 +40,39 @@ import kotlin.reflect.KProperty
 
 internal sealed class SlotType {
     // Frame local arena slot can be used.
-    class ARENA: SlotType()
+    object ARENA: SlotType()
     // Return slot can be used.
-    class RETURN: SlotType()
+    object RETURN: SlotType()
     // Return slot, if it is an arena, can be used.
-    class RETURN_IF_ARENA: SlotType()
-    // Return slot, if it is an arena, can be used.
+    object RETURN_IF_ARENA: SlotType()
+    // Param slot, if it is an arena, can be used.
     class PARAM_IF_ARENA(val parameter: Int): SlotType()
+    // Params slot, if it is an arena, can be used.
+    class PARAMS_IF_ARENA(val parameters: IntArray, val useReturnSlot: Boolean): SlotType()
     // Anonymous slot.
-    class ANONYMOUS: SlotType()
+    object ANONYMOUS: SlotType()
     // Unknown slot type.
-    class UNKNOWN: SlotType()
-
-    companion object {
-        val ARENA = ARENA()
-        val RETURN = RETURN()
-        val RETURN_IF_ARENA = RETURN_IF_ARENA()
-        val ANONYMOUS = ANONYMOUS()
-        val UNKNOWN = UNKNOWN()
-    }
+    object UNKNOWN: SlotType()
 }
 
 // Lifetimes class of reference, computed by escape analysis.
 internal sealed class Lifetime(val slotType: SlotType) {
     // If reference is frame-local (only obtained from some call and never leaves).
-    class LOCAL: Lifetime(SlotType.ARENA) {
+    object LOCAL: Lifetime(SlotType.ARENA) {
         override fun toString(): String {
             return "LOCAL"
         }
     }
 
     // If reference is only returned.
-    class RETURN_VALUE: Lifetime(SlotType.RETURN) {
+    object RETURN_VALUE: Lifetime(SlotType.RETURN) {
         override fun toString(): String {
             return "RETURN_VALUE"
         }
     }
 
     // If reference is set as field of references of class RETURN_VALUE or INDIRECT_RETURN_VALUE.
-    class INDIRECT_RETURN_VALUE: Lifetime(SlotType.RETURN_IF_ARENA) {
+    object INDIRECT_RETURN_VALUE: Lifetime(SlotType.RETURN_IF_ARENA) {
         override fun toString(): String {
             return "INDIRECT_RETURN_VALUE"
         }
@@ -91,15 +85,23 @@ internal sealed class Lifetime(val slotType: SlotType) {
         }
     }
 
+    // If reference is stored to the field of an incoming parameters.
+    class PARAMETERS_FIELD(val parameters: IntArray, val useReturnSlot: Boolean)
+        : Lifetime(SlotType.PARAMS_IF_ARENA(parameters, useReturnSlot)) {
+        override fun toString(): String {
+            return "PARAMETERS_FIELD(${parameters.contentToString()}, useReturnSlot='$useReturnSlot')"
+        }
+    }
+
     // If reference refers to the global (either global object or global variable).
-    class GLOBAL: Lifetime(SlotType.ANONYMOUS) {
+    object GLOBAL: Lifetime(SlotType.ANONYMOUS) {
         override fun toString(): String {
             return "GLOBAL"
         }
     }
 
     // If reference used to throw.
-    class THROW: Lifetime(SlotType.ANONYMOUS) {
+    object THROW: Lifetime(SlotType.ANONYMOUS) {
         override fun toString(): String {
             return "THROW"
         }
@@ -107,35 +109,24 @@ internal sealed class Lifetime(val slotType: SlotType) {
 
     // If reference used as an argument of outgoing function. Class can be improved by escape analysis
     // of called function.
-    class ARGUMENT: Lifetime(SlotType.ANONYMOUS) {
+    object ARGUMENT: Lifetime(SlotType.ANONYMOUS) {
         override fun toString(): String {
             return "ARGUMENT"
         }
     }
 
     // If reference class is unknown.
-    class UNKNOWN: Lifetime(SlotType.UNKNOWN) {
+    object UNKNOWN: Lifetime(SlotType.UNKNOWN) {
         override fun toString(): String {
             return "UNKNOWN"
         }
     }
 
     // If reference class is irrelevant.
-    class IRRELEVANT: Lifetime(SlotType.UNKNOWN) {
+    object IRRELEVANT: Lifetime(SlotType.UNKNOWN) {
         override fun toString(): String {
             return "IRRELEVANT"
         }
-    }
-
-    companion object {
-        val LOCAL = LOCAL()
-        val RETURN_VALUE = RETURN_VALUE()
-        val INDIRECT_RETURN_VALUE = INDIRECT_RETURN_VALUE()
-        val GLOBAL = GLOBAL()
-        val THROW = THROW()
-        val ARGUMENT = ARGUMENT()
-        val UNKNOWN = UNKNOWN()
-        val IRRELEVANT = IRRELEVANT()
     }
 }
 

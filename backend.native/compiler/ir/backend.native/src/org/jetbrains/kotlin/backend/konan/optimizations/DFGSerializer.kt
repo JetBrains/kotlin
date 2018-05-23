@@ -309,26 +309,25 @@ internal object DFGSerializer {
         }
     }
 
-    class FunctionSymbolBase(val parameterTypes: IntArray, val returnType: Int, val attributes: Int) {
+    class FunctionSymbolBase(val parameterTypes: IntArray, val returnType: Int, val attributes: Int, val escapes: Int?, val pointsTo: IntArray?) {
 
-        constructor(data: ArraySlice) : this(data.readIntArray(), data.readInt(), data.readInt())
+        constructor(data: ArraySlice) : this(data.readIntArray(), data.readInt(), data.readInt(), data.readNullableInt(), data.readNullable { readIntArray() })
 
         fun write(result: ArraySlice) {
             result.writeIntArray(parameterTypes)
             result.writeInt(returnType)
             result.writeInt(attributes)
+            result.writeNullableInt(escapes)
+            result.writeNullable(pointsTo) { writeIntArray(it) }
         }
     }
 
-    class ExternalFunctionSymbol(val hash: Long, val escapes: Int?, val pointsTo: IntArray?, val name: String?) {
+    class ExternalFunctionSymbol(val hash: Long, val name: String?) {
 
-        constructor(data: ArraySlice) : this(data.readLong(), data.readNullableInt(),
-                data.readNullable { readIntArray() }, data.readNullableString())
+        constructor(data: ArraySlice) : this(data.readLong(), data.readNullableString())
 
         fun write(result: ArraySlice) {
             result.writeLong(hash)
-            result.writeNullableInt(escapes)
-            result.writeNullable(pointsTo) { writeIntArray(it) }
             result.writeNullableString(name)
         }
     }
@@ -376,8 +375,8 @@ internal object DFGSerializer {
         }
 
         companion object {
-            fun external(base: FunctionSymbolBase, hash: Long, escapes: Int?, pointsTo: IntArray?, name: String?) =
-                    FunctionSymbol(base, ExternalFunctionSymbol(hash, escapes, pointsTo, name), null, null)
+            fun external(base: FunctionSymbolBase, hash: Long, name: String?) =
+                    FunctionSymbol(base, ExternalFunctionSymbol(hash, name), null, null)
 
             fun public(base: FunctionSymbolBase, hash: Long, index: Int, bridgeTarget: Int?, name: String?) =
                     FunctionSymbol(base, null, PublicFunctionSymbol(hash, index, bridgeTarget, name), null)
@@ -807,15 +806,16 @@ internal object DFGSerializer {
                             FunctionSymbolBase(
                                     symbol.parameterTypes.map { typeMap[it]!! }.toIntArray(),
                                     typeMap[symbol.returnType]!!,
-                                    symbol.attributes
+                                    symbol.attributes,
+                                    symbol.escapes,
+                                    symbol.pointsTo
                             )
 
                     val symbol = it.key
                     val bridgeTarget = (symbol as? DataFlowIR.FunctionSymbol.Declared)?.let { functionSymbolMap[it] }
                     when (symbol) {
                         is DataFlowIR.FunctionSymbol.External ->
-                            FunctionSymbol.external(buildFunctionSymbolBase(symbol), symbol.hash,
-                                    symbol.escapes, symbol.pointsTo, symbol.name)
+                            FunctionSymbol.external(buildFunctionSymbolBase(symbol), symbol.hash, symbol.name)
 
                         is DataFlowIR.FunctionSymbol.Public ->
                             FunctionSymbol.public(buildFunctionSymbolBase(symbol), symbol.hash,
@@ -977,8 +977,7 @@ internal object DFGSerializer {
                     val private = it.private
                     when {
                         external != null ->
-                            DataFlowIR.FunctionSymbol.External(external.hash,
-                                    attributes, external.escapes, external.pointsTo, external.name)
+                            DataFlowIR.FunctionSymbol.External(external.hash, attributes, external.name)
 
                         public != null -> {
                             val symbolTableIndex = public.index
@@ -1000,6 +999,8 @@ internal object DFGSerializer {
                     }.apply {
                         parameterTypes = it.base.parameterTypes.map { types[it] }.toTypedArray()
                         returnType = types[it.base.returnType]
+                        escapes = it.base.escapes
+                        pointsTo = it.base.pointsTo
                     }
                 }
 
@@ -1110,7 +1111,7 @@ internal object DFGSerializer {
                             NodeType.FIELD_READ -> {
                                 val fieldRead = it.fieldRead!!
                                 val receiver = fieldRead.receiver?.let { deserializeEdge(it) }
-                                DataFlowIR.Node.FieldRead(receiver, deserializeField(fieldRead.field))
+                                DataFlowIR.Node.FieldRead(receiver, deserializeField(fieldRead.field), null)
                             }
 
                             NodeType.FIELD_WRITE -> {

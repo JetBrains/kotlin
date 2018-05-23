@@ -189,6 +189,7 @@ class IrSuspendableExpressionImpl(startOffset: Int, endOffset: Int, type: Kotlin
 }
 
 internal interface IrPrivateFunctionCall : IrCall {
+    val virtualCallee: IrCall?
     val dfgSymbol: DataFlowIR.FunctionSymbol.Declared
     val moduleDescriptor: ModuleDescriptor
     val totalFunctions: Int
@@ -200,6 +201,7 @@ internal class IrPrivateFunctionCallImpl(startOffset: Int,
                                          type: KotlinType,
                                          override val symbol: IrFunctionSymbol,
                                          override val descriptor: FunctionDescriptor,
+                                         override val virtualCallee: IrCall?,
                                          typeArgumentsCount: Int,
                                          override val dfgSymbol: DataFlowIR.FunctionSymbol.Declared,
                                          override val moduleDescriptor: ModuleDescriptor,

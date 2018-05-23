@@ -991,7 +991,8 @@ internal object Devirtualization {
                         dfgSymbol          = devirtualizedCallee,
                         totalFunctions     = devirtualizedCallee.module.numberOfFunctions,
                         moduleDescriptor   = devirtualizedCallee.module.descriptor,
-                        functionIndex      = devirtualizedCallee.symbolTableIndex
+                        functionIndex      = devirtualizedCallee.symbolTableIndex,
+                        virtualCallee      = callee
                 )
 
         fun IrBuilderWithScope.irDevirtualizedCall(callee: IrCall, actualType: KotlinType,

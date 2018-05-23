@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
@@ -138,8 +139,10 @@ internal object DataFlowIR {
         val returnsUnit = attributes.and(FunctionAttributes.RETURNS_UNIT) != 0
         val returnsNothing = attributes.and(FunctionAttributes.RETURNS_NOTHING) != 0
 
-        class External(val hash: Long, attributes: Int,
-                       val escapes: Int?, val pointsTo: IntArray?, name: String? = null)
+        var escapes: Int? = null
+        var pointsTo: IntArray? = null
+
+        class External(val hash: Long, attributes: Int, name: String? = null)
             : FunctionSymbol(attributes, name) {
 
             override fun equals(other: Any?): Boolean {
@@ -180,7 +183,7 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "PublicFunction(hash='$hash', symbolTableIndex='$symbolTableIndex', name='$name')"
+                return "PublicFunction(hash='$hash', name='$name', symbolTableIndex='$symbolTableIndex', escapes='$escapes', pointsTo='${pointsTo?.contentToString()})"
             }
         }
 
@@ -200,7 +203,7 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "PrivateFunction(index=$index, symbolTableIndex='$symbolTableIndex', name='$name')"
+                return "PrivateFunction(index=$index, symbolTableIndex='$symbolTableIndex', name='$name', escapes='$escapes', pointsTo='${pointsTo?.contentToString()})"
             }
         }
     }
@@ -251,7 +254,7 @@ internal object DataFlowIR {
 
         class Singleton(val type: Type, val constructor: FunctionSymbol?) : Node()
 
-        class FieldRead(val receiver: Edge?, val field: Field) : Node()
+        class FieldRead(val receiver: Edge?, val field: Field, val ir: IrGetField?) : Node()
 
         class FieldWrite(val receiver: Edge?, val field: Field, val value: Edge) : Node()
 
@@ -565,8 +568,10 @@ internal object DataFlowIR {
                     val escapesBitMask = (escapesAnnotation?.allValueArguments?.get(escapesWhoDescriptor.name) as? ConstantValue<Int>)?.value
                     @Suppress("UNCHECKED_CAST")
                     val pointsToBitMask = (pointsToAnnotation?.allValueArguments?.get(pointsToOnWhomDescriptor.name) as? ConstantValue<List<IntValue>>)?.value
-                    FunctionSymbol.External(name.localHash.value, attributes, escapesBitMask,
-                            pointsToBitMask?.let { it.map { it.value }.toIntArray() }, takeName { name })
+                    FunctionSymbol.External(name.localHash.value, attributes, takeName { name }).apply {
+                        escapes  = escapesBitMask
+                        pointsTo = pointsToBitMask?.let { it.map { it.value }.toIntArray() }
+                    }
                 }
 
                 else -> {

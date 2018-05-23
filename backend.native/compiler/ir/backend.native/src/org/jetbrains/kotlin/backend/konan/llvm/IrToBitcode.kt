@@ -119,7 +119,7 @@ internal fun emitLLVM(context: Context) {
 
     phaser.phase(KonanPhase.ESCAPE_ANALYSIS) {
         val callGraph = CallGraphBuilder(context, moduleDFG!!, externalModulesDFG!!, devirtualizationAnalysisResult, false).build()
-        EscapeAnalysis.computeLifetimes(moduleDFG!!, externalModulesDFG!!, callGraph, lifetimes)
+        EscapeAnalysis.computeLifetimes(context, moduleDFG!!, externalModulesDFG!!, callGraph, lifetimes)
     }
 
     phaser.phase(KonanPhase.SERIALIZE_DFG) {
@@ -1993,7 +1993,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
 
         if (callee is IrPrivateFunctionCall)
-            return evaluatePrivateFunctionCall(callee, argsWithContinuationIfNeeded, resultLifetime)
+            return evaluatePrivateFunctionCall(callee, argsWithContinuationIfNeeded, callee.virtualCallee?.let { resultLifetime(it) } ?: resultLifetime)
 
         when {
             descriptor.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
