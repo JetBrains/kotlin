@@ -45,8 +45,8 @@ class DeferredResultUnusedInspection(@JvmField var standardOnly: Boolean = true)
     companion object {
         private val shortNames = setOf("async")
 
-        private val fqNames: Set<FqName> = shortNames.mapTo(mutableSetOf()) { FqName("kotlinx.coroutines.experimental.$it") }
+        private val fqNames: Set<FqName> = shortNames.mapTo(mutableSetOf()) { FqName("$COROUTINE_PACKAGE.$it") }
 
-        private val deferred = FqName("kotlinx.coroutines.experimental.Deferred")
+        private val deferred = FqName("$COROUTINE_PACKAGE.Deferred")
     }
 }

@@ -9,7 +9,7 @@ interface Deferred<T> {
 
 interface CoroutineContext
 
-object DefaultContext : CoroutineContext
+object DefaultDispatcher : CoroutineContext
 
 enum class CoroutineStart {
     DEFAULT,
@@ -21,7 +21,7 @@ enum class CoroutineStart {
 interface Job
 
 fun <T> async(
-    context: CoroutineContext = DefaultContext,
+    context: CoroutineContext = DefaultDispatcher,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     parent: Job? = null,
     f: suspend () -> T
@@ -30,7 +30,7 @@ fun <T> async(
 }
 
 fun <T> runBlocking(
-    context: CoroutineContext = DefaultContext,
+    context: CoroutineContext = DefaultDispatcher,
     f: suspend () -> T
 ) {
     TODO()
