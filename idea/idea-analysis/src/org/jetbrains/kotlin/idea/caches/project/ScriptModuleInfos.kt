@@ -35,11 +35,11 @@ data class ScriptModuleInfo(
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
-    val externalDependencies: ScriptDependencies by lazy {
-        ScriptDependenciesManager.getInstance(project).getScriptDependencies(scriptFile)
-    }
+    val externalDependencies: ScriptDependencies
+        get() = ScriptDependenciesManager.getInstance(project).getScriptDependencies(scriptFile)
 
-    val relatedModuleSourceInfo: ModuleSourceInfo? = getScriptRelatedModuleInfo(project, scriptFile)
+    val relatedModuleSourceInfo: ModuleSourceInfo?
+        get() = getScriptRelatedModuleInfo(project, scriptFile)
 
     override val name: Name = Name.special("<script ${scriptFile.name} ${scriptDefinition.name}>")
 

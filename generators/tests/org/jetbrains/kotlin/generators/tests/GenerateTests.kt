@@ -739,6 +739,7 @@ fun main(args: Array<String>) {
 
         testClass<AbstractScriptConfigurationHighlightingTest> {
             model("script/definition/highlighting", extension = null, recursive = false)
+            model("script/definition/complex", extension = null, recursive = false, testMethod = "doComplexTest")
         }
 
         testClass<AbstractScriptConfigurationNavigationTest> {
