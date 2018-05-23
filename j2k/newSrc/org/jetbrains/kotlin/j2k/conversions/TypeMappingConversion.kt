@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReferenceExpression
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.JKClassType
@@ -20,9 +19,11 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.analysisContext
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 class TypeMappingConversion(val context: ConversionContext) : MatchBasedConversion() {
@@ -47,20 +48,24 @@ class TypeMappingConversion(val context: ConversionContext) : MatchBasedConversi
         }
     }
 
-    fun fqNameRef(classId: ClassId, element: PsiElement): PsiReferenceExpression? {
-        return KtPsiFactory(element)
-            .createExpressionCodeFragment(classId.asString(), element)
-            .findChildByClass(PsiReferenceExpression::class.java)
+    private fun resolveFqName(classId: ClassId, element: PsiElement): PsiElement? {
+        val importDirective = KtPsiFactory(element).createImportDirective(ImportPath(classId.asSingleFqName(), false))
+        importDirective.containingKtFile.analysisContext = element.containingFile
+        return importDirective.getChildOfType<KtDotQualifiedExpression>()
+            ?.selectorExpression
+            ?.let {
+                it.references.mapNotNull { it.resolve() }.first()
+            }
     }
 
-    fun classTypeByFqName(
+    private fun classTypeByFqName(
         contextElement: PsiElement?,
         fqName: ClassId,
         parameters: List<JKType>,
         nullability: Nullability = Nullability.Default
     ): JKType? {
         contextElement ?: return null
-        val newTarget = fqNameRef(fqName, contextElement)?.resolve() as? KtClassOrObject ?: return null
+        val newTarget = resolveFqName(fqName, contextElement) as? KtClassOrObject ?: return null
 
         val newSymbol = JKMultiverseKtClassSymbol(newTarget)
 
