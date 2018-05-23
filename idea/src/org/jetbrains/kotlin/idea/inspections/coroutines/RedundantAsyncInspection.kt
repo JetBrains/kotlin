@@ -35,8 +35,9 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
             if (defaultParent != true) return
             if (defaultContext!! && !defaultStart!!) return
 
-            val replacement =
-                if (defaultContext!! && defaultStart!!) "kotlinx.coroutines.experimental.runBlocking" else conversion.replacement
+            var replacement = conversion.replacement
+            if (defaultContext!! && defaultStart!!) replacement += "($defaultAsyncArgument)"
+
             val descriptor = holder.manager.createProblemDescriptor(
                 expression,
                 expression.firstCalleeExpression()!!.textRange.shiftRight(-expression.startOffset),
@@ -51,13 +52,16 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
     private val conversionGroups = conversions.group()
 
     companion object {
-
         private val conversions = listOf(
             Conversion(
-                "kotlinx.coroutines.experimental.async",
-                "kotlinx.coroutines.experimental.Deferred.await",
-                "kotlinx.coroutines.experimental.withContext"
+                "$COROUTINE_PACKAGE.async",
+                "$COROUTINE_PACKAGE.Deferred.await",
+                "$COROUTINE_PACKAGE.withContext"
             )
         )
+
+        private val defaultAsyncArgument = "$COROUTINE_PACKAGE.DefaultDispatcher"
     }
 }
+
+internal const val COROUTINE_PACKAGE = "kotlinx.coroutines.experimental"
