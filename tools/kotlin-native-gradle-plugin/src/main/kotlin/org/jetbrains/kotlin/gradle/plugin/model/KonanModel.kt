@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.model
 
-import org.jetbrains.kotlin.gradle.plugin.tasks.Produce
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File
 import java.io.Serializable
 
@@ -26,8 +26,10 @@ import java.io.Serializable
  * This model is shared with the client processes such as an IDE.
  */
 interface KonanModel : Serializable {
-    val konanHome: String
-    val konanVersion: String
+    val konanHome: File
+    val konanVersion: KonanVersion
+    val languageVersion: String?
+    val apiVersion: String?
 
     val artifacts: List<KonanModelArtifact>
 }
@@ -37,11 +39,12 @@ interface KonanModel : Serializable {
  */
 interface KonanModelArtifact : Serializable {
     val name: String
-    val type: Produce
-    val targetPlatform: KonanTarget
+    val type: CompilerOutputKind
+    val targetPlatform: String
     val file: File
     val buildTaskName: String
     val srcDirs: List<File>
     val srcFiles: List<File>
     val libraries: List<File>
+    val searchPaths: List<File>
 }

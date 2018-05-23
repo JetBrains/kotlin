@@ -22,16 +22,10 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifactImpl
+import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Distribution
 import java.io.File
-
-enum class Produce(val cliOption: String, val kind: CompilerOutputKind) {
-    PROGRAM("program", CompilerOutputKind.PROGRAM),
-    DYNAMIC("dynamic", CompilerOutputKind.DYNAMIC),
-    FRAMEWORK("framework", CompilerOutputKind.FRAMEWORK),
-    LIBRARY("library", CompilerOutputKind.LIBRARY),
-    BITCODE("bitcode", CompilerOutputKind.BITCODE)
-}
 
 /**
  * A task compiling the target executable/library using Kotlin/Native compiler
@@ -40,16 +34,16 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     @Internal override val toolRunner = KonanCompilerRunner(project)
 
-    abstract val produce: Produce
+    abstract val produce: CompilerOutputKind
         @Internal get
 
     // Output artifact --------------------------------------------------------
 
     override val artifactSuffix: String
-        @Internal get() = produce.kind.suffix(konanTarget)
+        @Internal get() = produce.suffix(konanTarget)
 
     override val artifactPrefix: String
-        @Internal get() = produce.kind.prefix(konanTarget)
+        @Internal get() = produce.prefix(konanTarget)
 
     // Multiplatform support --------------------------------------------------
 
@@ -119,7 +113,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         addArgs("-library", libraries.artifacts.map { it.artifact.canonicalPath })
 
         addFileArgs("-nativelibrary", nativeLibraries)
-        addArg("-produce", produce.cliOption)
+        addArg("-produce", produce.name.toLowerCase())
 
         addListArg("-linkerOpts", linkerOpts)
 
@@ -222,41 +216,51 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     // endregion
 
     // region IDE model
-    override fun toModelArtifact(): KonanModelArtifact = KonanModelArtifactImpl(
-            artifactName,
-            artifact,
-            produce,
-            konanTarget,
-            name,
-            allSources.filter { it is ConfigurableFileTree }.map { (it as ConfigurableFileTree).dir },
-            allSourceFiles,
-            libraries.asFiles()
-    )
+    override fun toModelArtifact(): KonanModelArtifact {
+        val repos = libraries.repos
+        val resolver = defaultResolver(
+                repos.map { it.absolutePath },
+                konanTarget,
+                Distribution(konanHomeOverride = project.konanHome)
+        )
+
+        return KonanModelArtifactImpl(
+                artifactName,
+                artifact,
+                produce,
+                konanTarget.name,
+                name,
+                allSources.filterIsInstance(ConfigurableFileTree::class.java).map { it.dir },
+                allSourceFiles,
+                libraries.asFiles(resolver),
+                repos.toList()
+        )
+    }
     // endregion
 }
 
 open class KonanCompileProgramTask: KonanCompileTask() {
-    override val produce: Produce  get() = Produce.PROGRAM
+    override val produce: CompilerOutputKind get() = CompilerOutputKind.PROGRAM
 }
 
 open class KonanCompileDynamicTask: KonanCompileTask() {
-    override val produce: Produce  get() = Produce.DYNAMIC
+    override val produce: CompilerOutputKind get() = CompilerOutputKind.DYNAMIC
 
     val headerFile: File
         @OutputFile get() = destinationDir.resolve("$artifactPrefix${artifactName}_api.h")
 }
 
 open class KonanCompileFrameworkTask: KonanCompileTask() {
-    override val produce: Produce  get() = Produce.FRAMEWORK
+    override val produce: CompilerOutputKind get() = CompilerOutputKind.FRAMEWORK
 
     override val artifact
         @OutputDirectory get() = super.artifact
 }
 
 open class KonanCompileLibraryTask: KonanCompileTask() {
-    override val produce: Produce  get() = Produce.LIBRARY
+    override val produce: CompilerOutputKind get() = CompilerOutputKind.LIBRARY
 }
 
 open class KonanCompileBitcodeTask: KonanCompileTask() {
-    override val produce: Produce  get() = Produce.BITCODE
+    override val produce: CompilerOutputKind get() = CompilerOutputKind.BITCODE
 }

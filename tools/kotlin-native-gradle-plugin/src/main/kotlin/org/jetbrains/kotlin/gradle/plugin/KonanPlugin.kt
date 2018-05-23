@@ -29,7 +29,9 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.language.cpp.internal.NativeVariantIdentity
+import org.gradle.tooling.UnsupportedVersionException
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.model.KonanToolingModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
@@ -284,21 +286,30 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         internal const val KONAN_DOWNLOAD_TASK_NAME = "checkKonanCompiler"
         internal const val KONAN_GENERATE_CMAKE_TASK_NAME = "generateCMake"
         internal const val COMPILE_ALL_TASK_NAME = "compileKonan"
-        internal const val KONAN_MAIN_VARIANT = "konan_main_variant"
 
         internal const val KONAN_EXTENSION_NAME = "konan"
+
+        internal val REQUIRED_GRADLE_VERSION = GradleVersion.version("4.7")
     }
 
     private fun Project.cleanKonan() = project.tasks.withType(KonanBuildingTask::class.java).forEach {
         project.delete(it.artifact)
     }
 
+    private fun checkGradleVersion() =  GradleVersion.current().let { current ->
+        check(current >= REQUIRED_GRADLE_VERSION) {
+            "Kotlin/Native Gradle plugin is incompatible with this version of Gradle.\n" +
+            "The minimal required version is ${REQUIRED_GRADLE_VERSION}\n" +
+            "Current version is ${current}"
+        }
+    }
 
 
     override fun apply(project: ProjectInternal?) {
         if (project == null) {
             return
         }
+        checkGradleVersion()
         registry.register(KonanToolingModelBuilder)
         project.plugins.apply("base")
         // Create necessary tasks and extensions.

@@ -40,7 +40,8 @@ ext {
     kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
     kotlinScriptRuntimeModule="org.jetbrains.kotlin:kotlin-script-runtime:${kotlinVersion}"
 
-    gradlePluginVersion = KonanVersion.CURRENT.gradlePluginVersion
+    konanVersionFull = KonanVersion.Companion.CURRENT
+    gradlePluginVersion = konanVersionFull.toString()
 }
 
 allprojects {
@@ -345,7 +346,7 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
     dependsOn('crossDistPlatformLibs')
     dependsOn('crossDist')
     def simpleOsName = HostManager.simpleOsName()
-    baseName = "kotlin-native-$simpleOsName-${KonanVersion.CURRENT}"
+    baseName = "kotlin-native-$simpleOsName-$konanVersionFull"
     from("$project.rootDir/dist") {
         include '**'
         exclude 'dependencies'
@@ -403,7 +404,7 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
 task uploadBundle {
     dependsOn ':bundle'
     doLast {
-        def kind = (KonanVersion.CURRENT.meta == MetaVersion.DEV) ? "dev" : "releases"
+        def kind = (konanVersionFull.meta == MetaVersion.DEV) ? "dev" : "releases"
         def ftpSettings = [
                 server: project.findProperty("cdnUrl") ?: System.getenv("CDN_URL"),
                 userid: project.findProperty("cdnUser") ?: System.getenv("CDN_USER"),
@@ -430,9 +431,9 @@ task performance {
 task teamcityKonanVersion {
     doLast {
         println("##teamcity[setParameter name='kotlin.native.version.base' value='$konanVersion']")
-        println("##teamcity[setParameter name='kotlin.native.version.full' value='$KonanVersion.CURRENT']")
-        println("##teamcity[setParameter name='kotlin.native.version.meta' value='${KonanVersion.CURRENT.meta.toString().toLowerCase()}']")
-        println("##teamcity[buildNumber '${KonanVersion.CURRENT.toString(true, true)}']")
+        println("##teamcity[setParameter name='kotlin.native.version.full' value='$konanVersionFull']")
+        println("##teamcity[setParameter name='kotlin.native.version.meta' value='${konanVersionFull.meta.toString().toLowerCase()}']")
+        println("##teamcity[buildNumber '${konanVersionFull.toString(true, true)}']")
     }
 }
 

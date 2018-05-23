@@ -43,7 +43,7 @@ sourceSets {
     }
 }
 
-compileKotlin{
+compileKotlin {
     dependsOn('generateCompilerVersion')
 }
 

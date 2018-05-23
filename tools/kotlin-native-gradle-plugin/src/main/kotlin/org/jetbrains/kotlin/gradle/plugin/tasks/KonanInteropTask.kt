@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KonanInteropSpec.IncludeDirectoriesSpec
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifactImpl
+import org.jetbrains.kotlin.konan.library.defaultResolver
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -155,16 +158,26 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
     // endregion
 
     // region IDE model
-    override fun toModelArtifact(): KonanModelArtifact = KonanModelArtifactImpl(
-            artifactName,
-            artifact,
-            Produce.LIBRARY,
-            konanTarget,
-            name,
-            listOfNotNull(defFile.parentFile),
-            listOf(defFile),
-            libraries.asFiles()
-    )
+    override fun toModelArtifact(): KonanModelArtifact {
+        val repos = libraries.repos
+        val resolver = defaultResolver(
+                repos.map { it.absolutePath },
+                konanTarget,
+                Distribution(konanHomeOverride = project.konanHome)
+        )
+
+        return KonanModelArtifactImpl(
+                artifactName,
+                artifact,
+                CompilerOutputKind.LIBRARY,
+                konanTarget.name,
+                name,
+                listOfNotNull(defFile.parentFile),
+                listOf(defFile),
+                libraries.asFiles(resolver),
+                repos.toList()
+        )
+    }
     // endregion
 }
 
