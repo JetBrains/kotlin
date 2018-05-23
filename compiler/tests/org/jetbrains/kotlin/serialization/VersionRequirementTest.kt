@@ -56,7 +56,7 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
                     languageVersionSettings = LanguageVersionSettingsImpl(
                         LanguageVersionSettingsImpl.DEFAULT.languageVersion,
                         LanguageVersionSettingsImpl.DEFAULT.apiVersion,
-                        mapOf(AnalysisFlag.enableJvmDefault to true),
+                        mapOf(AnalysisFlag.jvmDefaultMode to JvmDefaultMode.ENABLE),
                         emptyMap()
                     )
                 },
