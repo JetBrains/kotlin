@@ -446,16 +446,15 @@ object ArrayOps : TemplateGroupBase() {
     } builder {
         doc {
             """
-            Returns new array which is a copy of the original array, resized to the given [newSize], truncating or padding
-            with nulls if necessary. If the object is a primitive type, it will be padded with its default value.
+            Returns new array which is a copy of the original array, resized to the given [newSize],
+            truncating original values or padding new array with ${if(family == ArraysOfPrimitives) "primitive default" else "null"} values if necessary.
+
             For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
-            For all indices that are valid in the copy, but not in the original, the copy will contain either null or the default
-            value.
+            For all indices that are valid in the copy, but not in the original, the copy will contain ${if(family == ArraysOfPrimitives) "primitive default" else "null"} values.
             """
         }
-        sample("samples.collections.Arrays.CopyOfOperations.resizingCopyOf")
-        sample("samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf")
         specialFor(ArraysOfPrimitives) {
+            sample("samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf")
             returns("SELF")
             on(Platform.JS) {
                 when (primitive!!) {
@@ -472,6 +471,7 @@ object ArrayOps : TemplateGroupBase() {
 
         }
         specialFor(InvariantArraysOfObjects) {
+            sample("samples.collections.Arrays.CopyOfOperations.resizingCopyOf")
             returns("Array<T?>")
             on(Platform.JS) {
                 family = ArraysOfObjects
