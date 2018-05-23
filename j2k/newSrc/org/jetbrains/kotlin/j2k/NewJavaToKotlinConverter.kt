@@ -37,16 +37,17 @@ class NewJavaToKotlinConverter(
     }
 
     fun filesToKotlin(files: List<PsiJavaFile>, progressIndicator: ProgressIndicator = EmptyProgressIndicator()): List<String> {
-        val treeBuilder = JavaToJKTreeBuilder()
+        val symbolProvider = JKSymbolProvider()
+        symbolProvider.preBuildTree(files)
+        val treeBuilder = JavaToJKTreeBuilder(symbolProvider)
         val fileTrees = files.mapNotNull(treeBuilder::buildTree)
 
         println(fileTrees.prettyPrintTrees())
 
         val context = ConversionContext(
             JKSymbolProvider(),
-            project,
-            { treeBuilder.backAnnotation[it] }
-        )
+            project
+        ) { treeBuilder.backAnnotation[it] }
 
         ConversionsRunner.doApply(fileTrees, context)
 

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.impl.JKBlockImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKKtPropertyImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
 
 class FieldToPropertyConversion : MatchBasedConversion() {
@@ -31,7 +33,7 @@ class FieldToPropertyConversion : MatchBasedConversion() {
     )
 
     fun applyToElement(element: JKTreeElement): JKTreeElement {
-        /*if (element !is JKUDeclarationList) return applyRecursive(element, this::applyToElement)
+        if (element !is JKClass) return applyRecursive(element, this::applyToElement)
 
         val propertyInfos = mutableMapOf<String, PropertyInfo>()
 
@@ -41,7 +43,7 @@ class FieldToPropertyConversion : MatchBasedConversion() {
             }
         }
 
-        val declarations= element.declarations.toMutableList()
+        val declarations = element.declarationList.toMutableList()
         declarations.forEach {
             when (it) {
                 is JKJavaField -> propertyInfoFor(it.name.value).field = it
@@ -62,13 +64,13 @@ class FieldToPropertyConversion : MatchBasedConversion() {
                     JKKtPropertyImpl(field.modifierList, field.type, field.name, field.initializer, JKBlockImpl(), JKBlockImpl())
 
                 declarations.remove(field)
-                declarations.remove(info.getter!!)
-                declarations.remove(info.setter!!)
+                declarations.remove(info.getter)
+                declarations.remove(info.setter)
                 declarations.add(property)
             }
         }
 
-        element.declarations = declarations*/
+        element.declarationList = declarations
 
         return element
     }

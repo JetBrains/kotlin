@@ -11,7 +11,6 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKField
 import org.jetbrains.kotlin.j2k.tree.JKMethod
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 interface JKSymbol {
@@ -31,7 +30,8 @@ interface JKFieldSymbol : JKSymbol {
     val fqName: String
 }
 
-class JKUniverseClassSymbol(override val target: JKClass) : JKClassSymbol {
+class JKUniverseClassSymbol : JKClassSymbol {
+    override lateinit var target: JKClass
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String
@@ -45,7 +45,7 @@ class JKMultiverseClassSymbol(override val target: PsiClass) : JKClassSymbol {
         get() = target.qualifiedName
 }
 
-class JKMultiverseKtClassSymbol(override val target: KtClassOrObject): JKClassSymbol {
+class JKMultiverseKtClassSymbol(override val target: KtClassOrObject) : JKClassSymbol {
     override val declaredIn: JKSymbol
         get() = TODO("not implemented")
     override val fqName: String?
@@ -53,7 +53,8 @@ class JKMultiverseKtClassSymbol(override val target: KtClassOrObject): JKClassSy
 
 }
 
-class JKUniverseMethodSymbol(override val target: JKMethod) : JKMethodSymbol {
+class JKUniverseMethodSymbol : JKMethodSymbol {
+    override lateinit var target: JKMethod
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String
@@ -68,7 +69,8 @@ class JKMultiverseMethodSymbol(override val target: PsiMethod) : JKMethodSymbol 
 
 }
 
-class JKUniverseFieldSymbol(override val target: JKField) : JKFieldSymbol {
+class JKUniverseFieldSymbol : JKFieldSymbol {
+    override lateinit var target: JKField
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String
