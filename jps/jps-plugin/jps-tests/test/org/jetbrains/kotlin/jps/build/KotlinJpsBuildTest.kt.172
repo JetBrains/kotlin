@@ -676,6 +676,12 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         result.assertSuccessful()
     }
 
+    fun testDevKitProject() {
+        initProject(JVM_MOCK_RUNTIME)
+        assertEquals(myProject.modules.single().moduleType, JpsPluginModuleType.INSTANCE)
+        buildAllModules().assertSuccessful()
+    }
+
     fun testAccessToInternalInProductionFromTests() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
