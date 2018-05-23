@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.jps.platforms
 
 import com.intellij.openapi.util.Key
+import org.jetbrains.jps.builders.ModuleBasedBuildTargetType
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
@@ -55,7 +56,7 @@ class KotlinBuildTargets internal constructor(val compileContext: CompileContext
     }
 
     operator fun get(target: ModuleBuildTarget): KotlinModuleBuilderTarget? {
-        if (target.module.moduleType != JpsJavaModuleType.INSTANCE) return null
+        if (target.targetType !is ModuleBasedBuildTargetType) return null
 
         return byJpsModuleBuildTarget.computeIfAbsent(target) {
             when (target.module.targetPlatform ?: detectTargetPlatform(target)) {
