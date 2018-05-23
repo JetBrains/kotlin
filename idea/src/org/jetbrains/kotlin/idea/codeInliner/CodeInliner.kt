@@ -76,6 +76,7 @@ class CodeInliner<TCallElement : KtElement>(
 
         // if the value to be inlined is not used and has no side effects we may drop it
         if (codeToInline.mainExpression != null
+            && !codeToInline.alwaysKeepMainExpression
             && assignment == null
             && elementToBeReplaced is KtExpression
             && !elementToBeReplaced.isUsedAsExpression(bindingContext)

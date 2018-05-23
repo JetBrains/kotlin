@@ -5653,6 +5653,34 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/properties")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Properties extends AbstractQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInProperties() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/properties"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("callInAssignmentToProperty.kt")
+            public void testCallInAssignmentToProperty() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/properties/callInAssignmentToProperty.kt");
+            }
+
+            @TestMetadata("callToCustomProperty.kt")
+            public void testCallToCustomProperty() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/properties/callToCustomProperty.kt");
+            }
+
+            @TestMetadata("callToProperty.kt")
+            public void testCallToProperty() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/properties/callToProperty.kt");
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
