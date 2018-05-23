@@ -3,12 +3,11 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin
+package org.jetbrains.kotlin.gradle.plugin.base
 
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
@@ -23,14 +22,15 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPlugin.*
 import org.gradle.api.plugins.ReportingBasePlugin
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinOnlyPlatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinExtendedSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinBaseSourceSet
 import java.io.File
 import javax.inject.Inject
 
@@ -277,18 +277,10 @@ class KotlinOnlyPlugin @Inject constructor(
         with(project.pluginManager) {
             apply(BasePlugin::class.java)
             apply(ReportingBasePlugin::class.java)
-            apply(JavaBasePlugin::class.java)
+            // TODO check that the functionality of JavaBasePlugin is correctly copied
         }
 
-        val kotlinProjectExtension = project.extensions.getByType(KotlinProjectExtension::class.java)
-
-        configureSourceSetDefaults(project, kotlinProjectExtension)
-        configureSourceSets(project, kotlinProjectExtension)
-
-        configureConfigurations(project)
-
-        configureArchivesAndComponent(project)
-
-        configureBuild(project)
+        val kotlinPlatformExtension = project.kotlinExtension as KotlinOnlyPlatformExtension
+        KotlinOnlyPlatformConfigurator(buildOutputCleanupRegistry, objectFactory).configureKotlinPlatform(project, kotlinPlatformExtension)
     }
 }

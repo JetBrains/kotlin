@@ -22,6 +22,8 @@ import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.tasks.TaskResolver
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.model.ObjectFactory
+import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinAndroidSourceSetContainer
@@ -84,6 +86,19 @@ open class KotlinCommonPluginWrapper @Inject constructor(fileResolver: FileResol
 
     override val projectExtensionClass: KClass<out KotlinOnlyPlatformExtension>
         get() = KotlinOnlyPlatformExtension::class
+}
+
+open class KotlinMultiplatformPluginWrapper @Inject constructor(
+    fileResolver: FileResolver,
+    private val instantiator: Instantiator,
+    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
+    private val objectFactory: ObjectFactory
+): KotlinBasePluginWrapper(fileResolver) {
+    override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
+        KotlinMultiplatformSingleModulePlugin(buildOutputCleanupRegistry, project.objects, fileResolver, instantiator)
+
+    override val projectExtensionClass: KClass<out KotlinMultiplatformExtension>
+        get() = KotlinMultiplatformExtension::class
 }
 
 open class KotlinAndroidPluginWrapper @Inject constructor(fileResolver: FileResolver, private val instantiator: Instantiator): KotlinBasePluginWrapper(fileResolver) {
