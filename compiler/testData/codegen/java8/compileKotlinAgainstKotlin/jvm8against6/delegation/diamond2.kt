@@ -1,5 +1,5 @@
 // !API_VERSION: 1.3
-// !ENABLE_JVM_DEFAULT
+// !JVM_DEFAULT_MODE: enable
 // FILE: 1.kt
 interface Test {
     fun test(): String {

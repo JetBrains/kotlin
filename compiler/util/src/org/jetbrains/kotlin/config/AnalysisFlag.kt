@@ -43,6 +43,10 @@ class AnalysisFlag<out T> internal constructor(
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, Jsr305State.DEFAULT)
         }
 
+        object JvmDefaultModeDisabledByDefaul {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, org.jetbrains.kotlin.config.JvmDefaultMode.DISABLE)
+        }
+
         object ListOfStrings {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, emptyList<String>())
         }
@@ -71,6 +75,6 @@ class AnalysisFlag<out T> internal constructor(
         val explicitApiVersion by Flag.Boolean
 
         @JvmStatic
-        val enableJvmDefault by Flag.Boolean
+        val jvmDefaultMode by Flag.JvmDefaultModeDisabledByDefaul
     }
 }
