@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAn
 import org.jetbrains.kotlin.idea.intentions.RemoveEmptyPrimaryConstructorIntention
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixAction<KtParameter>(parameter) {
@@ -43,13 +40,11 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
         val parameterList = parameter.parent as? KtParameterList ?: return
         val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
         val parameterSize = parameterList.parameters.size
-        val redundantTypeParameter = redundantTypeParameter(parameter)
+        val typeParameters = typeParameters(parameter)
         val primaryConstructor = parameterList.parent as? KtPrimaryConstructor
 
         ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, parameter)
-        if (redundantTypeParameter != null) {
-            runRemoveTypeParameter(redundantTypeParameter)
-        }
+        runRemoveUnusedTypeParameters(typeParameters)
 
         if (parameterSize > 1) {
             val nextParameter = parameterList.parameters.getOrNull(parameterDescriptor.index)
@@ -69,26 +64,28 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
         }
     }
 
-    private fun redundantTypeParameter(parameter: KtParameter): KtTypeParameter? {
-        val typeParameter = parameter.typeReference?.typeElement?.getChildOfType<KtNameReferenceExpression>()?.reference?.resolve()
-                as? KtTypeParameter ?: return null
-        val parameterParent =
-            parameter.getParentOfTypesAndPredicate(false, KtNamedFunction::class.java, KtClass::class.java) { true }
-        val typeParameterParent =
-            typeParameter.getParentOfTypesAndPredicate(false, KtNamedFunction::class.java, KtClass::class.java) { true }
-        return if (parameterParent == typeParameterParent) typeParameter else null
+    private fun typeParameters(parameter: KtParameter): List<KtTypeParameter> {
+        val parameterParent = parameter.getParentOfTypesAndPredicate(false, KtNamedFunction::class.java, KtClass::class.java) { true }
+        return parameter.typeReference?.typeElement
+            ?.collectDescendantsOfType<KtNameReferenceExpression> { true }
+            ?.mapNotNull {
+                val typeParameter = it.reference?.resolve() as? KtTypeParameter ?: return@mapNotNull null
+                val parent = typeParameter.getParentOfTypesAndPredicate(false, KtNamedFunction::class.java, KtClass::class.java) { true }
+                if (parent == parameterParent) typeParameter else null
+            } ?: emptyList()
     }
 
-    private fun runRemoveTypeParameter(typeParameter: KtTypeParameter) {
-        if (ReferencesSearch.search(typeParameter).findFirst() != null) return
-
-        val typeParameterList = typeParameter.parent as? KtTypeParameterList ?: return
-        val typeParameters = typeParameterList.parameters
+    private fun runRemoveUnusedTypeParameters(typeParameters: List<KtTypeParameter>) {
+        val unusedTypeParams = typeParameters.filter { ReferencesSearch.search(it).findFirst() == null }
+        if (unusedTypeParams.isEmpty()) return
         runWriteAction {
-            if (typeParameters.size == 1)
-                typeParameterList.delete()
-            else
-                EditCommaSeparatedListHelper.removeItem(typeParameter)
+            unusedTypeParams.forEach { typeParameter ->
+                val typeParameterList = typeParameter.parent as? KtTypeParameterList ?: return@forEach
+                if (typeParameterList.parameters.size == 1)
+                    typeParameterList.delete()
+                else
+                    EditCommaSeparatedListHelper.removeItem(typeParameter)
+            }
         }
     }
 
@@ -96,8 +93,7 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtParameter>? {
             val parameter = Errors.UNUSED_PARAMETER.cast(diagnostic).psiElement
             val parameterOwner = parameter.parent.parent
-            if (parameterOwner is KtFunctionLiteral ||
-                (parameterOwner is KtNamedFunction && parameterOwner.name == null)) return null
+            if (parameterOwner is KtFunctionLiteral || (parameterOwner is KtNamedFunction && parameterOwner.name == null)) return null
             return RemoveUnusedFunctionParameterFix(parameter)
         }
     }
