@@ -576,6 +576,9 @@ public class KotlinTestUtils {
         if (configurationKind.getWithCoroutines()) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.coroutinesJarForTests());
         }
+        if (configurationKind.getWithUnsignedTypes()) {
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.unsignedTypesJarForTests());
+        }
         if (configurationKind.getWithRuntime()) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.runtimeJarForTests());
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.scriptRuntimeJarForTests());

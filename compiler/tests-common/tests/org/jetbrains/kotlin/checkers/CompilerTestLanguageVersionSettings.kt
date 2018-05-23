@@ -19,6 +19,7 @@ const val EXPERIMENTAL_DIRECTIVE = "EXPERIMENTAL"
 const val USE_EXPERIMENTAL_DIRECTIVE = "USE_EXPERIMENTAL"
 const val IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE = "IGNORE_DATA_FLOW_IN_ASSERT"
 const val JVM_DEFAULT_MODE = "JVM_DEFAULT_MODE"
+const val SKIP_METADATA_VERSION_CHECK = "SKIP_METADATA_VERSION_CHECK"
 
 data class CompilerTestLanguageVersionSettings(
         private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
@@ -52,6 +53,7 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVer
     val useExperimental = directiveMap[USE_EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.useExperimental to it }
     val ignoreDataFlowInAssert = AnalysisFlag.ignoreDataFlowInAssert to directiveMap.containsKey(IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE)
     val enableJvmDefault = directiveMap[JVM_DEFAULT_MODE]?.let { AnalysisFlag.jvmDefaultMode to JvmDefaultMode.fromStringOrNull(it)!! }
+    val skipMetadataVersionCheck = AnalysisFlag.skipMetadataVersionCheck to directiveMap.containsKey(SKIP_METADATA_VERSION_CHECK)
 
     if (apiVersionString == null && languageFeaturesString == null && experimental == null && useExperimental == null && !ignoreDataFlowInAssert.second) return null
 
@@ -64,7 +66,11 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVer
 
     return CompilerTestLanguageVersionSettings(
         languageFeatures, apiVersion, languageVersion,
-        mapOf(*listOfNotNull(experimental, useExperimental, enableJvmDefault, ignoreDataFlowInAssert).toTypedArray())
+        mapOf(
+            *listOfNotNull(
+                experimental, useExperimental, enableJvmDefault, ignoreDataFlowInAssert, skipMetadataVersionCheck
+            ).toTypedArray()
+        )
     )
 }
 
