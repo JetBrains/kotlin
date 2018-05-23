@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.JKType
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassTypeImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKMultiverseKtClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -67,9 +66,8 @@ class TypeMappingConversion(val context: ConversionContext) : MatchBasedConversi
         contextElement ?: return null
         val newTarget = resolveFqName(fqName, contextElement) as? KtClassOrObject ?: return null
 
-        val newSymbol = JKMultiverseKtClassSymbol(newTarget)
 
-        return JKClassTypeImpl(newSymbol, parameters, nullability)
+        return JKClassTypeImpl(context.symbolProvider.provideSymbol(newTarget) as JKClassSymbol, parameters, nullability)
     }
 
     fun mapClassType(type: JKClassType): JKType {

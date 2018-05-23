@@ -45,7 +45,7 @@ class NewJavaToKotlinConverter(
         println(fileTrees.prettyPrintTrees())
 
         val context = ConversionContext(
-            JKSymbolProvider(),
+            symbolProvider,
             project
         ) { treeBuilder.backAnnotation[it] }
 
