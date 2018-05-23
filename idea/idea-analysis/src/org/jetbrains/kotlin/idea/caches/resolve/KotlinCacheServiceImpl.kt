@@ -80,24 +80,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             }
         }
 
-
-    private val facadesForScriptDependencies: SLRUCache<ScriptModuleInfo, ProjectResolutionFacade> =
-        object : SLRUCache<ScriptModuleInfo, ProjectResolutionFacade>(2, 3) {
-            override fun createValue(scriptModuleInfo: ScriptModuleInfo?): ProjectResolutionFacade {
-                val dependenciesInfo = if (scriptModuleInfo != null) {
-                    ScriptDependenciesInfo.ForFile(project, scriptModuleInfo)
-                } else {
-                    ScriptDependenciesInfo.ForProject(project)
-                }
-                return createFacadeForScriptDependencies(dependenciesInfo)
-            }
-        }
-
-    private fun getFacadeForScriptDependencies(scriptModuleInfo: ScriptModuleInfo): ProjectResolutionFacade {
-        return synchronized(facadesForScriptDependencies) {
-            facadesForScriptDependencies.get(scriptModuleInfo)
-        }
-    }
+    private val facadeForScriptDependenciesForProject = createFacadeForScriptDependencies(ScriptDependenciesInfo.ForProject(project))
 
     private fun createFacadeForScriptDependencies(
         dependenciesModuleInfo: ScriptDependenciesInfo,
@@ -113,8 +96,9 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             ScriptDependenciesModificationTracker.getInstance(project)
         )
 
-        val scriptModuleInfo = (dependenciesModuleInfo as? ScriptDependenciesInfo.ForFile)?.scriptModuleInfo
-        val globalFacade = if (scriptModuleInfo?.relatedModuleSourceInfo != null) {
+        val scriptFile = (dependenciesModuleInfo as? ScriptDependenciesInfo.ForFile)?.scriptFile
+        val relatedModuleSourceInfo = scriptFile?.let { getScriptRelatedModuleInfo(project, it) }
+        val globalFacade = if (relatedModuleSourceInfo != null) {
             globalFacade(settings)
         } else {
             getOrBuildGlobalFacade(settings).facadeForSdk
@@ -258,7 +242,9 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             }
 
             specialModuleInfo is ScriptModuleInfo -> {
-                val facadeForScriptDependencies = getFacadeForScriptDependencies(specialModuleInfo)
+                val facadeForScriptDependencies = createFacadeForScriptDependencies(
+                    ScriptDependenciesInfo.ForFile(project, specialModuleInfo.scriptFile, specialModuleInfo.scriptDefinition)
+                )
                 val globalContext = facadeForScriptDependencies.globalContext.contextWithNewLockAndCompositeExceptionTracker()
                 makeProjectResolutionFacade(
                     "facadeForSpecialModuleInfo (ScriptModuleInfo)",
@@ -268,17 +254,13 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                     moduleFilter = { it == specialModuleInfo }
                 )
             }
-            specialModuleInfo is ScriptDependenciesInfo -> {
-                createFacadeForScriptDependencies(specialModuleInfo, files)
-            }
+            specialModuleInfo is ScriptDependenciesInfo -> facadeForScriptDependenciesForProject
             specialModuleInfo is ScriptDependenciesSourceInfo -> {
-                // TODO: can be optimized by caching facadeForScriptDependencies
-                val facadeForScriptDependencies = createFacadeForScriptDependencies(specialModuleInfo.binariesModuleInfo, files)
-                val globalContext = facadeForScriptDependencies.globalContext.contextWithNewLockAndCompositeExceptionTracker()
+                val globalContext = facadeForScriptDependenciesForProject.globalContext.contextWithNewLockAndCompositeExceptionTracker()
                 makeProjectResolutionFacade(
                     "facadeForSpecialModuleInfo (ScriptDependenciesSourceInfo)",
                     globalContext,
-                    reuseDataFrom = facadeForScriptDependencies,
+                    reuseDataFrom = facadeForScriptDependenciesForProject,
                     allModules = specialModuleInfo.dependencies(),
                     moduleFilter = { it == specialModuleInfo }
                 )
@@ -430,8 +412,8 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val settings = PlatformAnalysisSettings(platform, moduleInfo.sdk, moduleInfo.supportsAdditionalBuiltInsMembers())
         val projectFacade = when (moduleInfo) {
             is ScriptDependenciesInfo.ForProject,
-            is ScriptDependenciesSourceInfo.ForProject -> facadesForScriptDependencies[null]
-            is ScriptDependenciesInfo.ForFile -> facadesForScriptDependencies[moduleInfo.scriptModuleInfo]
+            is ScriptDependenciesSourceInfo.ForProject -> facadeForScriptDependenciesForProject
+            is ScriptDependenciesInfo.ForFile -> createFacadeForScriptDependencies(moduleInfo)
             else -> globalFacade(settings)
         }
         return ModuleResolutionFacadeImpl(projectFacade, moduleInfo)
