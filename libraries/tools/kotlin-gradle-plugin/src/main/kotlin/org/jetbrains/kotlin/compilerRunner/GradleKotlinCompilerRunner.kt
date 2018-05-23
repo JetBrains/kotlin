@@ -339,10 +339,12 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     private fun logFinish(strategy: String) = log.logFinish(strategy)
 
     override fun getDaemonConnection(environment: GradleCompilerEnvironment): CompileServiceSession? {
-        val compilerId = CompilerId.makeCompilerId(environment.compilerFullClasspath)
-        val clientIsAliveFlagFile = getOrCreateClientFlagFile(project)
-        val sessionIsAliveFlagFile = getOrCreateSessionFlagFile(project)
-        return newDaemonConnection(compilerId, clientIsAliveFlagFile, sessionIsAliveFlagFile, environment)
+        synchronized(this::javaClass) {
+            val compilerId = CompilerId.makeCompilerId(environment.compilerFullClasspath)
+            val clientIsAliveFlagFile = getOrCreateClientFlagFile(project)
+            val sessionIsAliveFlagFile = getOrCreateSessionFlagFile(project)
+            return newDaemonConnection(compilerId, clientIsAliveFlagFile, sessionIsAliveFlagFile, environment)
+        }
     }
 
     companion object {
