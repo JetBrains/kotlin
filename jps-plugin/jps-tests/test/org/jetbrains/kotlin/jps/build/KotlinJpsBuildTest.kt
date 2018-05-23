@@ -35,6 +35,7 @@ import org.jetbrains.jps.builders.TestProjectBuilderLogger
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.cmdline.ProjectDescriptor
+import org.jetbrains.jps.devkit.model.JpsPluginModuleType
 import org.jetbrains.jps.incremental.BuilderRegistry
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.IncProjectBuilder
@@ -675,6 +676,12 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         val result = buildAllModules()
         result.assertSuccessful()
+    }
+
+    fun testDevKitProject() {
+        initProject(JVM_MOCK_RUNTIME)
+        assertEquals(myProject.modules.single().moduleType, JpsPluginModuleType.INSTANCE)
+        buildAllModules().assertSuccessful()
     }
 
     fun testAccessToInternalInProductionFromTests() {
