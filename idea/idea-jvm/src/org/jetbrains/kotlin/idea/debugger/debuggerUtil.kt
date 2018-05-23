@@ -176,7 +176,13 @@ fun isOnSuspendReturnOrReenter(location: Location): Boolean {
 }
 
 fun isLastLineLocationInMethod(location: Location): Boolean {
-    val knownLines = location.method().allLineLocations().map { it.lineNumber() }.filter { it != -1 }
+    val allLineLocations = try {
+        location.method().allLineLocations()
+    } catch (e: AbsentInformationException) {
+        return false
+    }
+
+    val knownLines = allLineLocations.map { it.lineNumber() }.filter { it != -1 }
     if (knownLines.isEmpty()) {
         return false
     }
