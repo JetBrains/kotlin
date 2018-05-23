@@ -128,4 +128,32 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """val entries<hint text=": Set<Map.Entry<Int, String>>" /> = mapOf(1 to "1").entries"""
         )
     }
+
+    fun testTypeInCompanion() {
+        checkPropertyHint(
+            """
+            class A {
+                companion object {
+                    class InA
+                    fun provideInA() = InA()
+                }
+            }
+            val inA<hint text=": A.InA"/> = A.provideInA()
+            """.trimIndent()
+        )
+    }
+
+    fun testTypeInNonDefaultCompanion() {
+        checkPropertyHint(
+            """
+            class A {
+                companion object N {
+                    class InA
+                    fun provideInA() = InA()
+                }
+            }
+            val inA<hint text=": A.N.InA"/> = A.provideInA()
+            """.trimIndent()
+        )
+    }
 }
