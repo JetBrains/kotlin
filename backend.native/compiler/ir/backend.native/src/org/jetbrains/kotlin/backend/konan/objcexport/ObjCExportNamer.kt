@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -28,11 +28,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 
-internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMapper) {
+internal class ObjCExportNamer(val moduleDescriptor: ModuleDescriptor,
+        val builtIns: KotlinBuiltIns,
+        val mapper: ObjCExportMapper,
+        private val topLevelNamePrefix: String = moduleDescriptor.namePrefix
+    ) {
     val kotlinAnyName = "KotlinBase"
 
-    private val commonPackageSegments = context.moduleDescriptor.guessMainPackage().pathSegments()
-    private val topLevelNamePrefix = context.moduleDescriptor.namePrefix
+    private val commonPackageSegments = moduleDescriptor.guessMainPackage().pathSegments()
 
     val mutableSetName = "${topLevelNamePrefix}MutableSet"
     val mutableMapName = "${topLevelNamePrefix}MutableDictionary"
@@ -116,7 +119,7 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
             StringBuilder().apply {
                 append(topLevelNamePrefix)
 
-                if (descriptor.module != context.moduleDescriptor) {
+                if (descriptor.module != moduleDescriptor) {
                     append(descriptor.module.namePrefix)
                 }
 
@@ -246,11 +249,11 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
     }
 
     init {
-        val any = context.builtIns.any
+        val any = builtIns.any
 
         classNames.forceAssign(any, kotlinAnyName)
-        classNames.forceAssign(context.builtIns.mutableSet, mutableSetName)
-        classNames.forceAssign(context.builtIns.mutableMap, mutableMapName)
+        classNames.forceAssign(builtIns.mutableSet, mutableSetName)
+        classNames.forceAssign(builtIns.mutableMap, mutableMapName)
 
         fun ClassDescriptor.method(name: String) =
                 this.unsubstitutedMemberScope.getContributedFunctions(
@@ -439,7 +442,7 @@ private fun ObjCExportMapper.canHaveSameName(first: PropertyDescriptor, second: 
     return bridgePropertyType(first) == bridgePropertyType(second)
 }
 
-private val ModuleDescriptor.namePrefix: String get() {
+internal val ModuleDescriptor.namePrefix: String get() {
     // <fooBar> -> FooBar
     val moduleName = this.name.asString().let { it.substring(1, it.lastIndex) }.capitalize()
 

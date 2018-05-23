@@ -46,7 +46,7 @@ internal class ObjCExport(val codegen: CodeGenerator) {
         val topLevelDeclarations: Map<FqName, List<CallableMemberDescriptor>>
 
         if (context.config.produce == CompilerOutputKind.FRAMEWORK) {
-            val headerGenerator = ObjCExportHeaderGenerator(context)
+            val headerGenerator = ObjCExportHeaderGeneratorImpl(context)
             produceFrameworkSpecific(headerGenerator)
 
             generatedClasses = headerGenerator.generatedClasses
@@ -63,7 +63,7 @@ internal class ObjCExport(val codegen: CodeGenerator) {
 
             }
 
-            val namer = ObjCExportNamer(context, mapper)
+            val namer = ObjCExportNamer(context.moduleDescriptor, context.builtIns, mapper)
             objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
 
             generatedClasses = emptySet()
