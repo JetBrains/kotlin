@@ -114,6 +114,7 @@
           <Problem reference="org.jetbrains.org.objectweb.asm.Opcodes#V9" reason="Absent in 172 branch. Use V1_9 while 172 is supported." />
           <Problem reference="com.intellij.psi.codeStyle.CommonCodeStyleSettings#getSoftMargins" reason="Absent in 172." />
           <Problem reference="com.intellij.util.xmlb.XmlSerializer#serializeInto(java.lang.Object, org.jdom.Element)" reason="Absent in 172." />
+          <Problem reference="org.jetbrains.java.decompiler.main.decompiler.BaseDecompiler#addSpace" reason="Method was replaced with outher methods in 182. Use addSpaceEx instead." />
         </list>
       </option>
     </inspection_tool>
