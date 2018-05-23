@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtVisitorVoid
 import java.util.*
 import kotlin.system.measureNanoTime
 
-class AllKotlinLightClassTest : WholeProjectPerformanceTest(), WholeProjectKotlinFileProvider {
+class WholeProjectLightClassTest : WholeProjectPerformanceTest(), WholeProjectKotlinFileProvider {
 
     override fun doTest(file: VirtualFile): PerFileTestResult {
         val results = mutableMapOf<String, Long>()
