@@ -47,7 +47,13 @@ class MakeModuleExperimentalFix(
         val facet = KotlinFacet.get(module) ?: return true
         val facetSettings = facet.configuration.settings
         val compilerSettings = facetSettings.compilerSettings ?: return true
-        return compilerArgument !in compilerSettings.additionalArgumentsAsList
+        return if (annotationFqName != ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAME) {
+            compilerArgument !in compilerSettings.additionalArgumentsAsList
+        } else {
+            compilerSettings.additionalArgumentsAsList.none {
+                it.startsWith("-Xuse-experimental=") || it.startsWith("-Xexperimental=")
+            }
+        }
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

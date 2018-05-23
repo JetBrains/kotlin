@@ -6062,6 +6062,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/experimental/classUseExperimental.kt");
         }
 
+        @TestMetadata("doNotSwitchOn.kt")
+        public void testDoNotSwitchOn() throws Exception {
+            runTest("idea/testData/quickfix/experimental/doNotSwitchOn.kt");
+        }
+
         @TestMetadata("functionInLocalClass.kt")
         public void testFunctionInLocalClass() throws Exception {
             runTest("idea/testData/quickfix/experimental/functionInLocalClass.kt");
