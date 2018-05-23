@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
-import kotlin.Generated;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -209,11 +208,6 @@ public class FunctionCodegen {
                         flags, asmMethod.getName(),
                         asmMethod.getDescriptor()
                 );
-
-        if (functionDescriptor.isGenerated()) {
-            String descriptor = Type.getType(Generated.class).getDescriptor();
-            mv.visitAnnotation(descriptor, false);
-        }
 
         if (CodegenContextUtil.isImplClassOwner(owner)) {
             v.getSerializationBindings().put(METHOD_FOR_FUNCTION, CodegenUtilKt.unwrapFrontendVersion(functionDescriptor), asmMethod);

@@ -51,7 +51,6 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean isHiddenToOvercomeSignatureClash = false;
     private boolean isHiddenForResolutionEverywhereBesideSupercalls = false;
     private boolean isSuspend = false;
-    private boolean isGenerated = false;
     private boolean hasStableParameterNames = true;
     private boolean hasSynthesizedParameterNames = false;
     private Collection<? extends FunctionDescriptor> overriddenFunctions = null;
@@ -157,10 +156,6 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         isSuspend = suspend;
     }
 
-    public void setGenerated(boolean generated) {
-        isGenerated = generated;
-    }
-
     public void setReturnType(@NotNull KotlinType unsubstitutedReturnType) {
         if (this.unsubstitutedReturnType != null) {
             // TODO: uncomment and fix tests
@@ -260,11 +255,6 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @Override
     public boolean isSuspend() {
         return isSuspend;
-    }
-
-    @Override
-    public boolean isGenerated() {
-        return isGenerated;
     }
 
     @Override

@@ -79,8 +79,6 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
 
     boolean isSuspend();
 
-    boolean isGenerated();
-
     interface UserDataKey<V> {}
 
     // TODO: pull up userdata related members to DeclarationDescriptor and use more efficient implementation (e.g. THashMap)
