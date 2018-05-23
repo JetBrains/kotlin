@@ -423,9 +423,27 @@ class JDIEval(
     private fun Method.safeArgumentTypes(): List<jdi_Type> {
         try {
             return argumentTypes()
-        }
-        catch (e: ClassNotLoadedException) {
-            return argumentTypeNames()!!.map { name -> loadClassByName(name, declaringType().classLoader()) }
+        } catch (e: ClassNotLoadedException) {
+            return argumentTypeNames()!!.map { name ->
+                val classLoader = declaringType()?.classLoader()
+                if (classLoader != null) {
+                    return@map loadClassByName(name, classLoader)
+                }
+
+                when (name) {
+                    "void" -> virtualMachine().mirrorOfVoid().type()
+                    "boolean" -> primitiveTypes.getValue(Type.BOOLEAN_TYPE.className)
+                    "byte" -> primitiveTypes.getValue(Type.BYTE_TYPE.className)
+                    "char" -> primitiveTypes.getValue(Type.CHAR_TYPE.className)
+                    "short" -> primitiveTypes.getValue(Type.SHORT_TYPE.className)
+                    "int" -> primitiveTypes.getValue(Type.INT_TYPE.className)
+                    "long" -> primitiveTypes.getValue(Type.LONG_TYPE.className)
+                    "float" -> primitiveTypes.getValue(Type.FLOAT_TYPE.className)
+                    "double" -> primitiveTypes.getValue(Type.DOUBLE_TYPE.className)
+                    else -> virtualMachine().classesByName(name).firstOrNull()
+                            ?: throw IllegalStateException("Unknown class $name")
+                }
+            }
         }
     }
 }
