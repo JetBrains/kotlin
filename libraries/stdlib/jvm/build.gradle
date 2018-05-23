@@ -40,8 +40,6 @@ sourceSets {
     coroutines {
         kotlin {
             srcDir '../coroutines/jvm/src'
-            srcDir '../coroutines/common/src'
-            srcDir '../coroutines/src'
         }
         compileClasspath += sourceSets.main.output
     }
