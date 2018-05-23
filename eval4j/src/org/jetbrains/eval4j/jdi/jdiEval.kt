@@ -357,7 +357,17 @@ class JDIEval(
     }
 
     private fun shouldInvokeMethodWithReflection(method: Method, args: List<com.sun.jdi.Value?>): Boolean {
-        return !method.isVarArgs && args.zip(method.argumentTypes()).any { isArrayOfInterfaces(it.first?.type(), it.second) }
+        if (method.isVarArgs) {
+            return false
+        }
+
+        val argumentTypes = try {
+            method.argumentTypes()
+        } catch (e: ClassNotLoadedException) {
+            return false
+        }
+
+        return args.zip(argumentTypes).any { isArrayOfInterfaces(it.first?.type(), it.second) }
     }
 
     private fun isArrayOfInterfaces(valueType: jdi_Type?, expectedType: jdi_Type?): Boolean {
@@ -413,8 +423,8 @@ class JDIEval(
     }
 
 
-    private fun mapArguments(arguments: List<Value>, expecetedTypes: List<jdi_Type>): List<jdi_Value?> {
-        return arguments.zip(expecetedTypes).map {
+    private fun mapArguments(arguments: List<Value>, expectedTypes: List<jdi_Type>): List<jdi_Value?> {
+        return arguments.zip(expectedTypes).map {
             val (arg, expectedType) = it
             arg.asJdiValue(vm, expectedType.asType())
         }
