@@ -18,12 +18,18 @@ package org.jetbrains.kotlin.asJava.builder;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.compiled.InnerClassSourceStrategy;
+import com.intellij.psi.impl.compiled.SignatureParsing;
 import com.intellij.psi.impl.compiled.StubBuildingVisitor;
 import com.intellij.psi.impl.java.stubs.PsiClassStub;
+import com.intellij.psi.impl.java.stubs.PsiFieldStub;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
+import com.intellij.psi.impl.java.stubs.PsiMethodStub;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.util.MethodSignatureUtil;
+import com.intellij.util.cls.ClsFormatException;
 import com.intellij.util.containers.Stack;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder;
@@ -34,8 +40,11 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
 
+import java.text.StringCharacterIterator;
 import java.util.List;
+import java.util.Map;
 
 public class StubClassBuilder extends AbstractClassBuilder {
     private static final InnerClassSourceStrategy<Object> EMPTY_STRATEGY = new InnerClassSourceStrategy<Object>() {
@@ -51,15 +60,17 @@ public class StubClassBuilder extends AbstractClassBuilder {
     };
     private final StubElement parent;
     private final PsiJavaFileStub fileStub;
-    private StubBuildingVisitor v;
+    private final Map m;
+    private StubBuildingVisitor<?> v;
     private final Stack<StubElement> parentStack;
     private boolean isPackageClass = false;
     private int memberIndex = 0;
 
-    public StubClassBuilder(@NotNull Stack<StubElement> parentStack, @NotNull PsiJavaFileStub fileStub) {
+    public StubClassBuilder(@NotNull Stack<StubElement> parentStack, @NotNull PsiJavaFileStub fileStub, Map m) {
         this.parentStack = parentStack;
         this.parent = parentStack.peek();
         this.fileStub = fileStub;
+        this.m = m;
     }
 
     @NotNull
@@ -187,7 +198,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
     }
 
     private void markLastChild(@NotNull JvmDeclarationOrigin origin) {
-        List children = v.getResult().getChildrenStubs();
+        List<StubElement> children = v.getResult().getChildrenStubs();
         StubBase last = (StubBase) children.get(children.size() - 1);
 
         LightElementOrigin oldOrigin = last.getUserData(ClsWrapperStubPsiFactory.ORIGIN);
@@ -196,6 +207,31 @@ public class StubClassBuilder extends AbstractClassBuilder {
             throw new IllegalStateException("Rewriting origin element: " +
                                             (originalElement != null ? originalElement.getText() : null) + " for stub " + last.toString());
         }
+
+        String typeText = null;
+        if (last instanceof PsiMethodStub) {
+            typeText = ((PsiMethodStub) last).getReturnTypeText(false).toString();
+        }
+        else if (last instanceof PsiFieldStub) {
+            typeText = ((PsiFieldStub) last).getType(false).toString();
+        }
+
+        if (typeText != null) {
+            typeText = typeText.replace('.', '/');
+        }
+
+        if (typeText != null && this.m.containsKey(typeText)) {
+            Function0<String> function0 = (Function0<String>) m.get(typeText);
+            last.putUserData(ClsWrapperStubPsiFactory.DEFERRED_RETURN_TYPE, () -> {
+                String signature = function0.invoke();
+                try {
+                    return SignatureParsing.parseTypeString(new StringCharacterIterator(signature), StubBuildingVisitor.GUESSING_MAPPER);
+                }
+                catch (ClsFormatException e) {
+                    return null;
+                }
+            });
+       }
 
         last.putUserData(ClsWrapperStubPsiFactory.ORIGIN, LightElementOriginKt.toLightMemberOrigin(origin));
         last.putUserData(MemberIndex.KEY, new MemberIndex(memberIndex++));

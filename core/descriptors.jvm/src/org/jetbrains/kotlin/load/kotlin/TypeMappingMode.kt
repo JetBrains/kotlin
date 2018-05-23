@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.WrappedType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class TypeMappingMode private constructor(
         val needPrimitiveBoxing: Boolean = true,
@@ -99,6 +101,7 @@ class TypeMappingMode private constructor(
                 isForAnnotationParameter: Boolean,
                 canBeUsedInSupertypePosition: Boolean
         ): TypeMappingMode {
+            if (type.safeAs<WrappedType>()?.isComputed() == false) return DEFAULT
             if (type.arguments.isEmpty()) return DEFAULT
 
             val contravariantArgumentMode =

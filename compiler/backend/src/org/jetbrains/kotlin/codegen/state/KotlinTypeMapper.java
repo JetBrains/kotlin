@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function0;
 import kotlin.reflect.KType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,10 +63,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
@@ -86,6 +84,12 @@ public class KotlinTypeMapper {
     private final String moduleName;
     private final boolean isJvm8Target;
     private final boolean isReleaseCoroutines;
+
+    public Map<String, Function0<String>> getDeferredTypes() {
+        return deferredTypes;
+    }
+
+    private final Map<String, Function0<String>> deferredTypes = new HashMap<>();
 
     private final TypeMappingConfiguration<Type> typeMappingConfiguration = new TypeMappingConfiguration<Type>() {
         @NotNull
@@ -118,6 +122,22 @@ public class KotlinTypeMapper {
         public boolean releaseCoroutines() {
             return isReleaseCoroutines;
         }
+
+        @Override
+        public Type processDeferredType(@NotNull KotlinType kotlinType, @NotNull TypeMappingMode mode) {
+            assert !classBuilderMode.generateBodies : "Deferred types in backend in non-light class mode";
+
+            String internalName = TypeSignatureMappingKt.NON_EXISTENT_CLASS_NAME + deferredTypes.size();
+            deferredTypes.put(internalName, () -> {
+                  BothSignatureWriter visitor = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
+                kotlinType.unwrap();
+                Type type = mapType(kotlinType, visitor, mode);
+                  if (visitor.makeJavaGenericSignature() != null) return visitor.makeJavaGenericSignature();
+                  return type.getDescriptor();
+            });
+
+            return Type.getObjectType(internalName);
+        }
     };
 
     private static final TypeMappingConfiguration<Type> staticTypeMappingConfiguration = new TypeMappingConfiguration<Type>() {
@@ -147,6 +167,12 @@ public class KotlinTypeMapper {
         @Override
         public boolean releaseCoroutines() {
             return false;
+        }
+
+        @Nullable
+        @Override
+        public Type processDeferredType(@NotNull KotlinType kotlinType, @NotNull TypeMappingMode mode) {
+            return null;
         }
     };
 
@@ -394,6 +420,10 @@ public class KotlinTypeMapper {
                     sw);
         }
 
+        if (descriptor.getReturnType() instanceof WrappedType && !((WrappedType) descriptor.getReturnType()).isComputed()) {
+            return mapReturnType(descriptor, sw, returnType);
+        }
+
         if (TypeSignatureMappingKt.hasVoidReturnType(descriptor)) {
             if (sw != null) {
                 sw.writeAsmType(Type.VOID_TYPE);
@@ -415,11 +445,11 @@ public class KotlinTypeMapper {
             return mapType(returnType, sw, TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod));
         }
 
-        TypeMappingMode typeMappingModeFromAnnotation =
-                TypeMappingUtil.extractTypeMappingModeFromAnnotation(descriptor, returnType, isAnnotationMethod);
-        if (typeMappingModeFromAnnotation != null) {
-            return mapType(returnType, sw, typeMappingModeFromAnnotation);
-        }
+        //TypeMappingMode typeMappingModeFromAnnotation =
+        //        TypeMappingUtil.extractTypeMappingModeFromAnnotation(descriptor, returnType, isAnnotationMethod);
+        //if (typeMappingModeFromAnnotation != null) {
+        //    return mapType(returnType, sw, typeMappingModeFromAnnotation);
+        //}
 
         TypeMappingMode mappingMode = TypeMappingMode.getOptimalModeForReturnType(
                 returnType,
@@ -570,6 +600,11 @@ public class KotlinTypeMapper {
             @NotNull TypeMappingMode mode
     ) {
         if (signatureVisitor == null) return;
+
+        if (type instanceof WrappedType && !((WrappedType) type).isComputed()) {
+            signatureVisitor.writeAsmType(asmType);
+            return;
+        }
 
         // Nothing mapping rules:
         //  Map<Nothing, Foo> -> Map

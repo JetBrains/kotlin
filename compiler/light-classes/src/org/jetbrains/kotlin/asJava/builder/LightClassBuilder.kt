@@ -57,6 +57,7 @@ fun buildLightClass(
                 files.toList(),
                 CompilerConfiguration.EMPTY
         ).generateDeclaredClassFilter(generateClassFilter).wantsDiagnostics(false).forLocalLightClassOrObject(isForLocalClass).build()
+        classBuilderFactory.deferredTypes = state.typeMapper.deferredTypes
         state.beforeCompile()
 
         generate(state, files)

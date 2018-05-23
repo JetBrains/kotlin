@@ -43,7 +43,9 @@ sealed class LazyLightClassDataHolder(
             cache.computeIfAbsent(lazyLightClassDataHolder, diagnostics)
     }
 
-    private val exactResultLazyValue = lazyPub { builder(exactContextProvider()).stub }
+    private val exactResultLazyValue = lazyPub {
+        builder(exactContextProvider()).stub
+    }
 
     private val lazyInexactStub by lazyPub {
         dummyContextProvider?.let { provider -> provider()?.let { context -> builder.invoke(context).stub } }
@@ -102,7 +104,7 @@ sealed class LazyLightClassDataHolder(
     ) : LightClassData {
         override val clsDelegate: PsiClass by lazyPub { findDelegate(javaFileStub) }
 
-        private val dummyDelegate: PsiClass? get() = null
+        private val dummyDelegate: PsiClass? by lazyPub { inexactStub?.let(findDelegate) }
 
         override fun getOwnFields(containingClass: KtLightClass): List<KtLightField> {
             if (dummyDelegate == null) return KtLightFieldImpl.fromClsFields(clsDelegate, containingClass)

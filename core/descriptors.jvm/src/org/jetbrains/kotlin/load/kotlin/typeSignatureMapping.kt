@@ -41,6 +41,9 @@ interface TypeMappingConfiguration<out T : Any> {
     fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String?
     fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor)
     fun releaseCoroutines(): Boolean
+
+
+    fun processDeferredType(kotlinType: KotlinType, mode: TypeMappingMode): T? = null
 }
 
 const val NON_EXISTENT_CLASS_NAME = "error/NonExistentClass"
@@ -53,6 +56,12 @@ fun <T : Any> mapType(
     descriptorTypeWriter: JvmDescriptorTypeWriter<T>?,
     writeGenericType: (KotlinType, T, TypeMappingMode) -> Unit = DO_NOTHING_3
 ): T {
+    if (kotlinType is WrappedType && !kotlinType.isComputed()) {
+        typeMappingConfiguration.processDeferredType(kotlinType, mode)?.let {
+            writeGenericType(kotlinType, it, mode)
+            return it
+        }
+    }
     if (kotlinType.isSuspendFunctionType) {
         return mapType(
             transformSuspendFunctionToRuntimeFunctionType(kotlinType, typeMappingConfiguration.releaseCoroutines()),

@@ -89,7 +89,8 @@ public class ForceResolveUtil {
             for (TypeParameterDescriptor typeParameterDescriptor : callableDescriptor.getTypeParameters()) {
                 forceResolveAllContents(typeParameterDescriptor.getUpperBounds());
             }
-            forceResolveAllContents(callableDescriptor.getReturnType());
+            //forceResolveAllContents(callableDescriptor.getReturnType());
+
             forceResolveAllContents(callableDescriptor.getAnnotations());
         }
         else if (object instanceof TypeAliasDescriptor) {

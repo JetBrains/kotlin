@@ -20,4 +20,6 @@ abstract class AbstractJavaAgainstKotlinSourceCheckerTest : AbstractJavaAgainstK
     fun doTest(path: String) {
         doTest(true, true, path.replace(".kt", ".java"), path)
     }
+
+    override fun doTestLineMarkers() = true
 }

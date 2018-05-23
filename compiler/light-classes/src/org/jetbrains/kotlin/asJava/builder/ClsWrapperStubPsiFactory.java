@@ -26,11 +26,13 @@ import com.intellij.psi.impl.compiled.ClsRepositoryPsiElement;
 import com.intellij.psi.impl.java.stubs.*;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ClsWrapperStubPsiFactory extends StubPsiFactory {
     public static final Key<LightElementOrigin> ORIGIN = Key.create("ORIGIN");
+    public static final Key<Function0<String>> DEFERRED_RETURN_TYPE = Key.create("DEFERRED_RETURN_TYPE");
     public static final ClsWrapperStubPsiFactory INSTANCE = new ClsWrapperStubPsiFactory();
 
     private final StubPsiFactory delegate = new ClsStubPsiFactory();
