@@ -540,7 +540,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            WriteAnnotationUtilKt.markMethodAsGenerated(mv);
+            WriteAnnotationUtilKt.writeGeneratedAnnotation(mv);
             mv.visitCode();
             Label eq = new Label();
             Label ne = new Label();
@@ -598,7 +598,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "hashCode", "()I", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            WriteAnnotationUtilKt.markMethodAsGenerated(mv);
+            WriteAnnotationUtilKt.writeGeneratedAnnotation(mv);
             mv.visitCode();
             boolean first = true;
             for (PropertyDescriptor propertyDescriptor : properties) {
@@ -648,7 +648,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            WriteAnnotationUtilKt.markMethodAsGenerated(mv);
+            WriteAnnotationUtilKt.writeGeneratedAnnotation(mv);
             mv.visitCode();
             genStringBuilderConstructor(iv);
 

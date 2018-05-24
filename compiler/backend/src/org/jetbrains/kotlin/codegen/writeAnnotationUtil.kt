@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.codegen
 
+import kotlin.Generated
+
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.isPreRelease
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -53,6 +55,6 @@ fun writeSyntheticClassMetadata(cb: ClassBuilder, state: GenerationState) {
     }
 }
 
-fun markMethodAsGenerated(mv: MethodVisitor) {
+fun writeGeneratedAnnotation(mv: MethodVisitor) {
     mv.visitAnnotation(JvmAnnotationNames.GENERATED_DESC, false)
 }

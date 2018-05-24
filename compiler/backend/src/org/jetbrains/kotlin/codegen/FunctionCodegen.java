@@ -475,7 +475,7 @@ public class FunctionCodegen {
         AnnotationCodegen annotationCodegen = AnnotationCodegen.forMethod(mv, consumer, typeMapper);
 
         if (addGeneratedAnnotation) {
-            WriteAnnotationUtilKt.markMethodAsGenerated(mv);
+            WriteAnnotationUtilKt.writeGeneratedAnnotation(mv);
         }
 
         if (functionDescriptor instanceof PropertyAccessorDescriptor) {
