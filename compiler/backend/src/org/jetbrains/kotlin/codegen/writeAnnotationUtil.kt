@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 
 fun writeKotlinMetadata(
         cb: ClassBuilder,
@@ -50,4 +51,8 @@ fun writeSyntheticClassMetadata(cb: ClassBuilder, state: GenerationState) {
     writeKotlinMetadata(cb, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) { _ ->
         // Do nothing
     }
+}
+
+fun markMethodAsGenerated(mv: MethodVisitor) {
+    mv.visitAnnotation(JvmAnnotationNames.GENERATED_DESC, false)
 }

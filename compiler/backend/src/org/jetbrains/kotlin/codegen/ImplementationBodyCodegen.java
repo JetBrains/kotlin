@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
-import kotlin.Generated;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function2;
@@ -535,18 +534,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             super(klass, bindingContext);
         }
 
-        private void addGeneratedAnnotation(MethodVisitor mv) {
-            String descriptor = Type.getType(Generated.class).getDescriptor();
-            mv.visitAnnotation(descriptor, false);
-        }
-
         @Override
         public void generateEqualsMethod(@NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> properties) {
             MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(function);
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            addGeneratedAnnotation(mv);
+            WriteAnnotationUtilKt.markMethodAsGenerated(mv);
             mv.visitCode();
             Label eq = new Label();
             Label ne = new Label();
@@ -604,7 +598,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "hashCode", "()I", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            addGeneratedAnnotation(mv);
+            WriteAnnotationUtilKt.markMethodAsGenerated(mv);
             mv.visitCode();
             boolean first = true;
             for (PropertyDescriptor propertyDescriptor : properties) {
@@ -654,7 +648,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            addGeneratedAnnotation(mv);
+            WriteAnnotationUtilKt.markMethodAsGenerated(mv);
             mv.visitCode();
             genStringBuilderConstructor(iv);
 
@@ -726,7 +720,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 public boolean skipNotNullAssertionsForParameters() {
                     return false;
                 }
-            });
+            }, true);
         }
 
         @Override
@@ -805,7 +799,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         capturedValue.put(sharedVarType, iv);
                     }
                 }
-            });
+            }, true);
 
             functionCodegen.generateDefaultIfNeeded(
                     context.intoFunction(function), function, OwnerKind.IMPLEMENTATION,

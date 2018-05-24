@@ -159,12 +159,21 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor descriptor,
             @NotNull FunctionGenerationStrategy strategy
     ) {
+        generateMethod(origin, descriptor, strategy, false);
+    }
+
+    public void generateMethod(
+            @NotNull JvmDeclarationOrigin origin,
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull FunctionGenerationStrategy strategy,
+            boolean addGeneratedAnnotation
+    ) {
         if (CoroutineCodegenUtilKt.isSuspendFunctionNotSuspensionView(descriptor)) {
             generateMethod(origin, CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(descriptor, bindingContext), strategy);
             return;
         }
 
-        generateMethod(origin, descriptor, owner.intoFunction(descriptor), strategy);
+        generateMethod(origin, descriptor, owner.intoFunction(descriptor), strategy, addGeneratedAnnotation);
     }
 
     public void generateMethod(
@@ -172,6 +181,16 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodContext methodContext,
             @NotNull FunctionGenerationStrategy strategy
+    ) {
+        generateMethod(origin, functionDescriptor, methodContext, strategy, false);
+    }
+
+    public void generateMethod(
+            @NotNull JvmDeclarationOrigin origin,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull MethodContext methodContext,
+            @NotNull FunctionGenerationStrategy strategy,
+            boolean addGeneratedAnnotation
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
@@ -213,7 +232,7 @@ public class FunctionCodegen {
             v.getSerializationBindings().put(METHOD_FOR_FUNCTION, CodegenUtilKt.unwrapFrontendVersion(functionDescriptor), asmMethod);
         }
 
-        generateMethodAnnotations(functionDescriptor, asmMethod, mv);
+        generateMethodAnnotations(functionDescriptor, asmMethod, mv, addGeneratedAnnotation);
 
         generateParameterAnnotations(functionDescriptor, mv, jvmSignature);
         GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, jvmSignature, state, (flags & ACC_SYNTHETIC) != 0);
@@ -439,9 +458,10 @@ public class FunctionCodegen {
     private void generateMethodAnnotations(
             @NotNull FunctionDescriptor functionDescriptor,
             Method asmMethod,
-            MethodVisitor mv
+            MethodVisitor mv,
+            boolean addGeneratedAnnotation
     ) {
-        generateMethodAnnotations(functionDescriptor, asmMethod, mv, memberCodegen, typeMapper);
+        generateMethodAnnotations(functionDescriptor, asmMethod, mv, memberCodegen, typeMapper, addGeneratedAnnotation);
     }
 
     public static void generateMethodAnnotations(
@@ -449,7 +469,8 @@ public class FunctionCodegen {
             Method asmMethod,
             MethodVisitor mv,
             @NotNull InnerClassConsumer consumer,
-            @NotNull KotlinTypeMapper typeMapper
+            @NotNull KotlinTypeMapper typeMapper,
+            boolean addGeneratedAnnotation
     ) {
         AnnotationCodegen annotationCodegen = AnnotationCodegen.forMethod(mv, consumer, typeMapper);
 
@@ -459,6 +480,10 @@ public class FunctionCodegen {
         }
         else {
             annotationCodegen.genAnnotations(functionDescriptor, asmMethod.getReturnType());
+        }
+
+        if (addGeneratedAnnotation) {
+            WriteAnnotationUtilKt.markMethodAsGenerated(mv);
         }
     }
 
