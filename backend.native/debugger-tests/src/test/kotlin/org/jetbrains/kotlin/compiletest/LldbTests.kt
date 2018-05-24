@@ -72,8 +72,9 @@ class LldbTests {
         > b main.kt:4
         > r
         > fr var
-        (ObjHeader *) point = Point(x=1, y=2)
-        (ObjHeader *) person = John Doe
+        (ObjHeader *) args = []
+        (ObjHeader *) point = {'y': 2, 'x': 1}
+        (ObjHeader *) person = {}
     """)
 
     @Test
@@ -93,8 +94,9 @@ class LldbTests {
         > b main.kt:8
         > r
         > fr var
+        (ObjHeader *) args = []
         (ObjHeader *) xs = [1, 2, 3]
-        (ObjHeader *) ys = [Point(x=1, y=2), null]
+        (ObjHeader *) ys = [{'y': 2, 'x': 1}, 'null']
     """)
 
     @Test
@@ -106,10 +108,9 @@ class LldbTests {
 
         data class Point(val x: Int, val y: Int)
     """, """
-        > type summary add "ObjHeader *" --inline-children
         > b main.kt:3
         > r
         > fr var xs
-        (ObjHeader *) xs = [..] (0 = 3, 1 = 5, 2 = 8)
+        (ObjHeader *) xs = [3, 5, 8]
     """)
 }
