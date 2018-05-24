@@ -599,6 +599,8 @@ public actual inline fun CharArray.contentToString(): String {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<T>.copyOf(): Array<T> {
@@ -607,6 +609,8 @@ public actual inline fun <T> Array<T>.copyOf(): Array<T> {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ByteArray.copyOf(): ByteArray {
@@ -615,6 +619,8 @@ public actual inline fun ByteArray.copyOf(): ByteArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ShortArray.copyOf(): ShortArray {
@@ -623,6 +629,8 @@ public actual inline fun ShortArray.copyOf(): ShortArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun IntArray.copyOf(): IntArray {
@@ -631,6 +639,8 @@ public actual inline fun IntArray.copyOf(): IntArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun LongArray.copyOf(): LongArray {
@@ -639,6 +649,8 @@ public actual inline fun LongArray.copyOf(): LongArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun FloatArray.copyOf(): FloatArray {
@@ -647,6 +659,8 @@ public actual inline fun FloatArray.copyOf(): FloatArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun DoubleArray.copyOf(): DoubleArray {
@@ -655,6 +669,8 @@ public actual inline fun DoubleArray.copyOf(): DoubleArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun BooleanArray.copyOf(): BooleanArray {
@@ -663,6 +679,8 @@ public actual inline fun BooleanArray.copyOf(): BooleanArray {
 
 /**
  * Returns new array which is a copy of the original array.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun CharArray.copyOf(): CharArray {
@@ -670,7 +688,13 @@ public actual inline fun CharArray.copyOf(): CharArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize],
+ * truncating original values or padding new array with primitive default values if necessary.
+ * 
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ByteArray.copyOf(newSize: Int): ByteArray {
@@ -678,7 +702,13 @@ public actual inline fun ByteArray.copyOf(newSize: Int): ByteArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize],
+ * truncating original values or padding new array with primitive default values if necessary.
+ * 
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ShortArray.copyOf(newSize: Int): ShortArray {
@@ -686,7 +716,13 @@ public actual inline fun ShortArray.copyOf(newSize: Int): ShortArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize],
+ * truncating original values or padding new array with primitive default values if necessary.
+ * 
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun IntArray.copyOf(newSize: Int): IntArray {
@@ -694,7 +730,13 @@ public actual inline fun IntArray.copyOf(newSize: Int): IntArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize],
+ * truncating original values or padding new array with primitive default values if necessary.
+ * 
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun LongArray.copyOf(newSize: Int): LongArray {
@@ -702,7 +744,13 @@ public actual inline fun LongArray.copyOf(newSize: Int): LongArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize],
+ * truncating original values or padding new array with primitive default values if necessary.
+ * 
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun FloatArray.copyOf(newSize: Int): FloatArray {
@@ -710,7 +758,13 @@ public actual inline fun FloatArray.copyOf(newSize: Int): FloatArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize],
+ * truncating original values or padding new array with primitive default values if necessary.
+ * 
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun DoubleArray.copyOf(newSize: Int): DoubleArray {
@@ -718,7 +772,13 @@ public actual inline fun DoubleArray.copyOf(newSize: Int): DoubleArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize],
+ * truncating original values or padding new array with primitive default values if necessary.
+ * 
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun BooleanArray.copyOf(newSize: Int): BooleanArray {
@@ -726,7 +786,13 @@ public actual inline fun BooleanArray.copyOf(newSize: Int): BooleanArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize],
+ * truncating original values or padding new array with primitive default values if necessary.
+ * 
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun CharArray.copyOf(newSize: Int): CharArray {
@@ -734,7 +800,13 @@ public actual inline fun CharArray.copyOf(newSize: Int): CharArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * Returns new array which is a copy of the original array, resized to the given [newSize],
+ * truncating original values or padding new array with null values if necessary.
+ * 
+ * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
+ * For all indices that are valid in the copy, but not in the original, the copy will contain null values.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
