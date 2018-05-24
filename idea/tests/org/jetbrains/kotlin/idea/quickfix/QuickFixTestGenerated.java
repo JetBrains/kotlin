@@ -2286,6 +2286,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/classDelegatorToSuperclass.kt");
                 }
 
+                @TestMetadata("createSuperclassInsideSubclass.kt")
+                public void testCreateSuperclassInsideSubclass() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/createSuperclassInsideSubclass.kt");
+                }
+
                 @TestMetadata("delegatorToSupercallNoReceiver.kt")
                 public void testDelegatorToSupercallNoReceiver() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/delegatorToSupercallNoReceiver.kt");
