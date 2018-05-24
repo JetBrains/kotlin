@@ -1100,6 +1100,29 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 runTest("idea/testData/quickfix/changeSignature/jk/jkRemoveSecondaryConstructorParameter.before.Main.java");
             }
         }
+
+        @TestMetadata("idea/testData/quickfix/changeSignature/kj")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Kj extends AbstractQuickFixMultiFileTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
+            }
+
+            @TestMetadata("addConstructorParameter.before.Main.kt")
+            public void testAddConstructorParameter() throws Exception {
+                runTest("idea/testData/quickfix/changeSignature/kj/addConstructorParameter.before.Main.kt");
+            }
+
+            @TestMetadata("addMethodParameter.before.Main.kt")
+            public void testAddMethodParameter() throws Exception {
+                runTest("idea/testData/quickfix/changeSignature/kj/addMethodParameter.before.Main.kt");
+            }
+
+            public void testAllFilesPresentInKj() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature/kj"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/changeToLabeledReturn")
