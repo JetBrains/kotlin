@@ -54,6 +54,7 @@ fun AbstractMultiModuleTest.setupMppProjectFromDirStructure(testRoot: File) {
                         PluginTestCaseBase.jdk(TestJdkKind.FULL_JDK)
                     })
                 }
+                is CoroutinesDependency -> module.enableCoroutines()
             }
         }
     }
@@ -140,6 +141,7 @@ private fun parseDependency(it: String): Dependency {
     return when {
         dependencyString.equals("stdlib", ignoreCase = true) -> StdlibDependency
         dependencyString.equals("fulljdk", ignoreCase = true) -> FullJdkDependency
+        dependencyString.equals("coroutines", ignoreCase = true) -> CoroutinesDependency
         else -> ModuleDependency(parseModuleId(dependencyString.split("-")))
     }
 }
@@ -188,3 +190,4 @@ private sealed class Dependency
 private class ModuleDependency(val moduleId: ModuleId) : Dependency()
 private object StdlibDependency : Dependency()
 private object FullJdkDependency : Dependency()
+private object CoroutinesDependency : Dependency()

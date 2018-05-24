@@ -424,7 +424,7 @@ interface SourceForBinaryModuleInfo : IdeaModuleInfo {
 }
 
 class PlatformModuleInfo(
-    private val platformModule: ModuleSourceInfo,
+    internal val platformModule: ModuleSourceInfo,
     private val commonModules: List<ModuleSourceInfo>
 ) : IdeaModuleInfo, CombinedModuleInfo, TrackableModuleInfo {
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>

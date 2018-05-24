@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
-import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
-import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.project.ScriptDependenciesInfo
-import org.jetbrains.kotlin.idea.caches.project.ScriptModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.targetPlatform
@@ -44,12 +41,12 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition
 
 object IDELanguageSettingsProvider : LanguageSettingsProvider {
     override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings =
-        when {
-            moduleInfo is ModuleSourceInfo -> moduleInfo.module.languageVersionSettings
-            moduleInfo is LibraryInfo -> project.getLanguageVersionSettings(extraAnalysisFlags = getExtraAnalysisFlags(project))
-            moduleInfo is ScriptModuleInfo -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
-            moduleInfo is ScriptDependenciesInfo.ForFile ->
-                getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
+        when (moduleInfo) {
+            is ModuleSourceInfo -> moduleInfo.module.languageVersionSettings
+            is LibraryInfo -> project.getLanguageVersionSettings(extraAnalysisFlags = getExtraAnalysisFlags(project))
+            is ScriptModuleInfo -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
+            is ScriptDependenciesInfo.ForFile -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
+            is PlatformModuleInfo -> moduleInfo.platformModule.module.languageVersionSettings
             else -> project.getLanguageVersionSettings()
         }
 
