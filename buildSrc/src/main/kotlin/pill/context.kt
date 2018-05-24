@@ -12,4 +12,4 @@ class DependencyMapper(
 
 class MappedDependency(val main: PDependency, val deferred: List<PDependency> = emptyList())
 
-class ParserContext(val dependencyMappers: List<DependencyMapper>)
+class ParserContext(val dependencyMappers: List<DependencyMapper>, val variant: PillExtension.Variant)

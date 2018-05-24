@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(protected val owner: T)
@@ -138,9 +139,18 @@ private fun getAnnotationDescriptors(declaration: KtDeclaration, annotatedLightE
         else -> descriptor
     } ?: return emptyList()
 
-    return annotatedDescriptor.annotations.getAllAnnotations()
-            .filter { it.matches(annotatedLightElement) }
-            .map { it.annotation }
+    val annotations = annotatedDescriptor.annotations.getAllAnnotations()
+        .filter { it.matches(annotatedLightElement) }
+        .map { it.annotation }
+
+    if (descriptor is PropertyDescriptor) {
+        val jvmDefault = descriptor.annotations.findAnnotation(JVM_DEFAULT_FQ_NAME)
+        if (jvmDefault != null) {
+            return annotations + jvmDefault
+        }
+    }
+    return annotations
+
 }
 
 private fun hasAnnotationsInSource(declaration: KtDeclaration): Boolean {

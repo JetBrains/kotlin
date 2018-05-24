@@ -45,7 +45,7 @@ class KotlinCallResolver(
     ): CallResolutionResult {
         kotlinCall.checkCallInvariants()
 
-        val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall, resolutionCallbacks.inferenceSession)
+        val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall, resolutionCallbacks)
         val processor = when (kotlinCall.callKind) {
             KotlinCallKind.VARIABLE -> {
                 createVariableAndObjectProcessor(scopeTower, kotlinCall.name, candidateFactory, kotlinCall.explicitReceiver?.receiver)
@@ -96,7 +96,7 @@ class KotlinCallResolver(
         collectAllCandidates: Boolean
     ): CallResolutionResult {
         kotlinCall.checkCallInvariants()
-        val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall, resolutionCallbacks.inferenceSession)
+        val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall, resolutionCallbacks)
 
         val resolutionCandidates = givenCandidates.map { candidateFactory.createCandidate(it).forceResolution() }
 

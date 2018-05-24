@@ -62,7 +62,12 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
     private fun getEnclosingFunction(element: KtElement, stopOnNonInlinedLambdas: Boolean): KtNamedFunction? {
         for (parent in element.parents) {
             when (parent) {
-                is KtFunctionLiteral -> if (stopOnNonInlinedLambdas && !InlineUtil.isInlinedArgument(parent, parent.analyze(), false)) return null
+                is KtFunctionLiteral -> if (stopOnNonInlinedLambdas && !InlineUtil.isInlinedArgument(
+                        parent,
+                        parent.analyze(),
+                        false
+                    )
+                ) return null
                 is KtNamedFunction -> {
                     when (parent.parent) {
                         is KtBlockExpression, is KtClassBody, is KtFile, is KtScript -> return parent
@@ -84,7 +89,8 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
 
         val enclosingFunctionName = enclosingFunction.name
         if (enclosingFunctionName != OperatorNameConventions.INVOKE.asString()
-            && enclosingFunctionName != resolveName.asString()) return false
+            && enclosingFunctionName != resolveName.asString()
+        ) return false
 
         // Check that there were no not-inlined lambdas on the way to enclosing function
         if (enclosingFunction != getEnclosingFunction(element, true)) return false
@@ -113,15 +119,14 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
         return true
     }
 
-    private class RecursiveMethodCallMarkerInfo(callElement: KtElement)
-            : LineMarkerInfo<KtElement>(
-            callElement,
-            callElement.textRange,
-            AllIcons.Gutter.RecursiveMethod,
-            Pass.LINE_MARKERS,
-            { "Recursive call" },
-            null,
-            GutterIconRenderer.Alignment.RIGHT
+    private class RecursiveMethodCallMarkerInfo(callElement: KtElement) : LineMarkerInfo<KtElement>(
+        callElement,
+        callElement.textRange,
+        AllIcons.Gutter.RecursiveMethod,
+        Pass.LINE_MARKERS,
+        { "Recursive call" },
+        null,
+        GutterIconRenderer.Alignment.RIGHT
     ) {
 
         override fun createGutterRenderer(): GutterIconRenderer? {
@@ -149,13 +154,12 @@ private fun getCallNameFromPsi(element: KtElement): Name? {
                         val node = operationReference.getReferencedNameElementType()
                         return if (node is KtToken) {
                             val conventionName = if (elementParent is KtPrefixExpression)
-                                OperatorConventions.getNameForOperationSymbol(node, true,  false)
+                                OperatorConventions.getNameForOperationSymbol(node, true, false)
                             else
                                 OperatorConventions.getNameForOperationSymbol(node)
 
                             conventionName ?: Name.identifier(element.getText())
-                        }
-                        else {
+                        } else {
                             Name.identifier(element.getText())
                         }
                     }

@@ -5,22 +5,13 @@ import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
 class IncrementalCompilationMultiProjectIT : BaseGradleIT() {
-    companion object {
-        private val ANDROID_GRADLE_PLUGIN_VERSION = "1.5.+"
-    }
-
-    private fun androidBuildOptions() =
-            BuildOptions(withDaemon = true,
-                         androidHome = KotlinTestUtils.findAndroidSdk(),
-                         androidGradlePluginVersion = ANDROID_GRADLE_PLUGIN_VERSION,
-                         incremental = true)
-
     override fun defaultBuildOptions(): BuildOptions =
-            super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
+        super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
 
     @Test
     fun testDuplicatedClass() {
@@ -66,14 +57,16 @@ class IncrementalCompilationMultiProjectIT : BaseGradleIT() {
         }
 
         val aKt = project.projectDir.getFileByName("A.kt")
-        aKt.writeText("""
+        aKt.writeText(
+            """
 package bar
 
 open class A {
     fun a() {}
     fun newA() {}
 }
-""")
+"""
+        )
 
         project.build("build") {
             assertSuccessful()
@@ -96,8 +89,9 @@ open class A {
         project.build("build") {
             assertFailed()
             val affectedSources = project.projectDir.getFilesByNames(
-                    "B.kt", "barUseAB.kt", "barUseB.kt",
-                    "BB.kt", "fooCallUseAB.kt", "fooUseB.kt")
+                "B.kt", "barUseAB.kt", "barUseB.kt",
+                "BB.kt", "fooCallUseAB.kt", "fooUseB.kt"
+            )
             val relativePaths = project.relativize(affectedSources)
             assertCompiledKotlinSources(relativePaths, weakTesting = false)
         }
@@ -105,27 +99,71 @@ open class A {
 
     @Test
     fun testCleanBuildLib() {
-        // Test with Gradle 3.4, since Gradle 3.5+ uses classpath hash normalization for JARs
-        val project = Project("incrementalMultiproject", GradleVersionRequired.Exact("3.4"))
-
-        project.setupWorkingDir()
+        val project = Project("incrementalMultiproject")
 
         project.build("build") {
             assertSuccessful()
         }
 
-        project.build(":lib:clean", ":lib:build") {
+        project.build(":lib:clean") {
             assertSuccessful()
-            val affectedSources = File(project.projectDir, "lib").allKotlinFiles()
+        }
+
+        // Change file so Gradle won't skip :app:compile
+        project.projectFile("BarDummy.kt").modify {
+            it.replace("class BarDummy", "open class BarDummy")
+        }
+        project.build("build") {
+            assertSuccessful()
+            val affectedSources = project.projectDir.allKotlinFiles()
             val relativePaths = project.relativize(affectedSources)
             assertCompiledKotlinSources(relativePaths, weakTesting = false)
         }
 
+        val aaKt = project.projectFile("AA.kt")
+        aaKt.modify { "$it " }
         project.build("build") {
             assertSuccessful()
-            val affectedSources = File(project.projectDir, "app").allKotlinFiles()
+            assertCompiledKotlinSources(project.relativize(aaKt), weakTesting = false)
+        }
+    }
+
+    @Test
+    fun testAddDependencyToLib() {
+        val project = Project("incrementalMultiproject")
+
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val libBuildGradle = File(project.projectDir, "lib/build.gradle")
+        Assert.assertTrue("$libBuildGradle does not exist", libBuildGradle.exists())
+        libBuildGradle.modify {
+            """
+                $it
+
+                dependencies {
+                    implementation 'junit:junit:4.12'
+                }
+            """.trimIndent()
+        }
+        // Change file so Gradle won't skip :app:compile
+        project.projectFile("BarDummy.kt").modify {
+            it.replace("class BarDummy", "open class BarDummy")
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            val affectedSources = project.projectDir.allKotlinFiles()
             val relativePaths = project.relativize(affectedSources)
             assertCompiledKotlinSources(relativePaths, weakTesting = false)
+        }
+
+        val aaKt = project.projectFile("AA.kt")
+        aaKt.modify { "$it " }
+        project.build("build") {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(aaKt), weakTesting = false)
         }
     }
 
@@ -158,8 +196,7 @@ open class A {
     // that is not JavaCompile or KotlinCompile
     @Test
     fun testCompileLibWithGroovy() {
-        val gradleVersion = GradleVersionRequired.Exact("3.5") // With newer versions, Groovy uses separate classes dirs
-        val project = Project("incrementalMultiproject", gradleVersion)
+        val project = Project("incrementalMultiproject")
         project.setupWorkingDir()
         val lib = File(project.projectDir, "lib")
         val libBuildGradle = File(lib, "build.gradle")
@@ -176,11 +213,13 @@ open class A {
 
         val libGroovySrcBar = File(lib, "src/main/groovy/bar").apply { mkdirs() }
         val groovyClass = File(libGroovySrcBar, "GroovyClass.groovy")
-        groovyClass.writeText("""
+        groovyClass.writeText(
+            """
             package bar
 
             class GroovyClass {}
-        """)
+        """
+        )
 
         project.build("build") {
             assertSuccessful()
@@ -192,25 +231,6 @@ open class A {
             val affectedSources = File(project.projectDir, "app").allKotlinFiles()
             val relativePaths = project.relativize(affectedSources)
             assertCompiledKotlinSources(relativePaths, weakTesting = false)
-        }
-    }
-
-    @Test
-    fun testAndroid() {
-        val project = Project("AndroidProject", GradleVersionRequired.Exact("2.10"))
-        val options = androidBuildOptions()
-
-        project.build("assembleDebug", options = options) {
-            assertSuccessful()
-        }
-
-        val libUtilKt = project.projectDir.getFileByName("libUtil.kt")
-        libUtilKt.modify { it.replace("fun libUtil(): String", "fun libUtil(): None") }
-
-        project.build("assembleDebug", options = options) {
-            assertSuccessful()
-            val affectedSources = project.projectDir.getFilesByNames("libUtil.kt", "MainActivity2.kt")
-            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
         }
     }
 }
@@ -269,24 +289,26 @@ abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking:
     }
 
     override fun defaultBuildOptions(): BuildOptions =
-            super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
+        super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
 
     protected val trackedJavaClass = "TrackedJavaClass.java"
     private val javaClass = "JavaClass.java"
-    protected val changeBody: (String)->String = { it.replace("Hello, World!", "Hello, World!!!!")  }
-    protected val changeSignature: (String)->String = { it.replace("String getString", "Object getString")  }
+    protected val changeBody: (String) -> String = { it.replace("Hello, World!", "Hello, World!!!!") }
+    protected val changeSignature: (String) -> String = { it.replace("String getString", "Object getString") }
 
     @Test
     fun testModifySignatureJavaInLib() {
-        doTest(javaClass, changeBody,
-               expectedAffectedSources = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
+        doTest(
+            javaClass, changeBody,
+            expectedAffectedSources = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
         )
     }
 
     @Test
     fun testModifyBodyJavaInLib() {
-        doTest(javaClass, changeBody,
-               expectedAffectedSources = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
+        doTest(
+            javaClass, changeBody,
+            expectedAffectedSources = listOf("JavaClassChild.kt", "useJavaClass.kt", "useJavaClassFooMethodUsage.kt")
         )
     }
 
@@ -294,9 +316,9 @@ abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking:
     abstract fun testModifyBodyTrackedJavaInLib()
 
     protected fun doTest(
-            fileToModify: String,
-            transformFile: (String)->String,
-            expectedAffectedSources: Collection<String>
+        fileToModify: String,
+        transformFile: (String) -> String,
+        expectedAffectedSources: Collection<String>
     ) {
         val project = Project("incrementalMultiproject")
 

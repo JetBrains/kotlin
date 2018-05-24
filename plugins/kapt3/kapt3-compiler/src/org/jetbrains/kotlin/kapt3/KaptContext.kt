@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.sun.tools.javac.file.JavacFileManager
 import com.sun.tools.javac.jvm.ClassReader
 import com.sun.tools.javac.main.JavaCompiler
+import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Options
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -34,21 +35,22 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import javax.tools.JavaFileManager
 
 class KaptContext<out GState : GenerationState?>(
-        val logger: KaptLogger,
-        val project: Project,
-        val bindingContext: BindingContext,
-        val compiledClasses: List<ClassNode>,
-        val origins: Map<Any, JvmDeclarationOrigin>,
-        val generationState: GState,
-        mapDiagnosticLocations: Boolean,
-        processorOptions: Map<String, String>,
-        javacOptions: Map<String, String> = emptyMap()
+    val logger: KaptLogger,
+    val project: Project,
+    val bindingContext: BindingContext,
+    val compiledClasses: List<ClassNode>,
+    val origins: Map<Any, JvmDeclarationOrigin>,
+    val generationState: GState,
+    mapDiagnosticLocations: Boolean,
+    processorOptions: Map<String, String>,
+    javacOptions: Map<String, String> = emptyMap()
 ) : AutoCloseable {
     val context = Context()
     val compiler: KaptJavaCompiler
     val fileManager: JavacFileManager
     val options: Options
     val javaLog: KaptJavaLog
+    val treeMaker: KaptTreeMaker
 
     init {
         KaptJavaLog.preRegister(this, logger.messageCollector, mapDiagnosticLocations)
@@ -81,9 +83,11 @@ class KaptContext<out GState : GenerationState?>(
         ClassReader.instance(context).saveParameterNames = true
 
         javaLog = compiler.log as KaptJavaLog
+        treeMaker = TreeMaker.instance(context) as KaptTreeMaker
     }
 
     override fun close() {
+        treeMaker.dispose()
         compiler.close()
         fileManager.close()
         generationState?.destroy()

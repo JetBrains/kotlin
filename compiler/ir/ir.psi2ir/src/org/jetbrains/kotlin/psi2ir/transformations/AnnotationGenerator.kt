@@ -39,15 +39,22 @@ class AnnotationGenerator(
 
     constructor(context: GeneratorContext) : this(context.moduleDescriptor, context.symbolTable)
 
-    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, this)
+    private val scopedTypeParameterResolver = ScopedTypeParametersResolver()
+    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, this, scopedTypeParameterResolver)
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
 
     override fun visitDeclaration(declaration: IrDeclaration) {
-        visitElement(declaration)
+        if (declaration is IrTypeParametersContainer) {
+            scopedTypeParameterResolver.enterTypeParameterScope(declaration)
+        }
         generateAnnotationsForDeclaration(declaration)
+        visitElement(declaration)
+        if (declaration is IrTypeParametersContainer) {
+            scopedTypeParameterResolver.leaveTypeParameterScope()
+        }
     }
 
     override fun visitValueParameter(declaration: IrValueParameter) {

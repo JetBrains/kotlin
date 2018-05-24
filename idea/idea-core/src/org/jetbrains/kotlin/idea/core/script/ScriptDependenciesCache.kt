@@ -43,7 +43,7 @@ class ScriptDependenciesCache(private val project: Project) {
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = SLRUMap<VirtualFile, ScriptDependencies>(MAX_SCRIPTS_CACHED, MAX_SCRIPTS_CACHED)
 
-    operator fun get(virtualFile: VirtualFile): ScriptDependencies? = cacheLock.read { cache[virtualFile] }
+    operator fun get(virtualFile: VirtualFile): ScriptDependencies? = cacheLock.write { cache[virtualFile] }
 
     val allScriptsClasspath by ClearableLazyValue(cacheLock) {
         val files = cache.entrySet().flatMap { it.value.classpath }.distinct()
@@ -69,9 +69,9 @@ class ScriptDependenciesCache(private val project: Project) {
         this::allLibrarySourcesScope.clearValue()
 
         val kotlinScriptDependenciesClassFinder =
-                Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).extensions
-                        .filterIsInstance<KotlinScriptDependenciesClassFinder>()
-                        .single()
+            Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).extensions
+                .filterIsInstance<KotlinScriptDependenciesClassFinder>()
+                .single()
 
         kotlinScriptDependenciesClassFinder.clearCache()
         updateHighlighting(files)
@@ -91,7 +91,7 @@ class ScriptDependenciesCache(private val project: Project) {
 
     fun hasNotCachedRoots(scriptDependencies: ScriptDependencies): Boolean {
         return !allScriptsClasspath.containsAll(ScriptDependenciesManager.toVfsRoots(scriptDependencies.classpath)) ||
-               !allLibrarySources.containsAll(ScriptDependenciesManager.toVfsRoots(scriptDependencies.sources))
+                !allLibrarySources.containsAll(ScriptDependenciesManager.toVfsRoots(scriptDependencies.sources))
     }
 
     fun clear() {
@@ -143,11 +143,11 @@ class ScriptDependenciesCache(private val project: Project) {
         }
 
         return ScriptDependencies(
-                classpath = binaries.distinct(),
-                sources = sources.distinct(),
-                imports = imports.distinct(),
-                scripts = scripts.distinct(),
-                javaHome = relevantEntries.map { it.javaHome }.firstOrNull()
+            classpath = binaries.distinct(),
+            sources = sources.distinct(),
+            imports = imports.distinct(),
+            scripts = scripts.distinct(),
+            javaHome = relevantEntries.map { it.javaHome }.firstOrNull()
         )
     }
 }
@@ -157,7 +157,10 @@ private fun <R> KProperty0<R>.clearValue() {
     (getDelegate() as ClearableLazyValue<*, *>).clear()
 }
 
-private class ClearableLazyValue<in R, out T : Any>(private val lock: ReentrantReadWriteLock, private val compute: () -> T): ReadOnlyProperty<R, T> {
+private class ClearableLazyValue<in R, out T : Any>(
+    private val lock: ReentrantReadWriteLock,
+    private val compute: () -> T
+) : ReadOnlyProperty<R, T> {
     override fun getValue(thisRef: R, property: KProperty<*>): T {
         lock.read {
             if (value == null) {

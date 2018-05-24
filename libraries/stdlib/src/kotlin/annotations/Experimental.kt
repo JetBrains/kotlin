@@ -24,12 +24,12 @@ import kotlin.reflect.KClass
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @Suppress("ANNOTATION_CLASS_MEMBER")
-annotation class Experimental(val level: Level = Level.ERROR) {
+public annotation class Experimental(val level: Level = Level.ERROR) {
     /**
      * Severity of the diagnostic that should be reported on usages of experimental API which did not explicitly accept the experimental aspect
      * of that API either by using [UseExperimental] or by being annotated with the corresponding marker annotation.
      */
-    enum class Level {
+    public enum class Level {
         /** Specifies that a warning should be reported on incorrect usages of this experimental API. */
         WARNING,
         /** Specifies that an error should be reported on incorrect usages of this experimental API. */
@@ -43,10 +43,19 @@ annotation class Experimental(val level: Level = Level.ERROR) {
  *
  * This class is experimental itself and can only be used with the compiler argument `-Xuse-experimental=kotlin.Experimental`.
  */
-@Target(CLASS, PROPERTY, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, EXPRESSION, FILE)
+@Target(
+    CLASS, PROPERTY, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, EXPRESSION, FILE, TYPEALIAS
+)
 @Retention(SOURCE)
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
-annotation class UseExperimental(
+public annotation class UseExperimental(
+    vararg val markerClass: KClass<out Annotation>
+)
+
+
+@Target(CLASS, PROPERTY, CONSTRUCTOR, FUNCTION, TYPEALIAS)
+@Retention(BINARY)
+internal annotation class WasExperimental(
     vararg val markerClass: KClass<out Annotation>
 )

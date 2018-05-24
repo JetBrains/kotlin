@@ -37,3 +37,4 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
               GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='box(): String'
         CONST String type=kotlin.String value=OK
+

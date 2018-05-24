@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -78,7 +77,6 @@ class ScriptContentLoader(private val project: Project) {
         catch (e: Throwable) {
             e.asResolveFailure(scriptDef)
         }
-        ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
         return result
     }
 

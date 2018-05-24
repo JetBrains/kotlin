@@ -47,10 +47,12 @@ messages/**)
 -dontwarn javax.crypto.**
 -dontwarn java.lang.invoke.MethodHandle
 -dontwarn org.jline.builtins.Nano$Buffer
--dontwarn net.jpountz.lz4.LZ4Factory
 -dontwarn org.jetbrains.annotations.ReadOnly
 -dontwarn org.jetbrains.annotations.Mutable
 -dontwarn com.intellij.util.io.TarUtil
+
+# Depends on apache batik which has lots of dependencies
+-dontwarn com.intellij.util.SVGLoader*
 
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
@@ -213,3 +215,11 @@ messages/**)
 
 # for kapt
 -keep class com.intellij.openapi.project.Project { *; }
+
+# remove when KT-18563 would be fixed
+-keep class org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt { *; }
+
+# for imports dumper in compiler
+-keep class kotlinx.serialization.** { *; }
+
+-keep class net.jpountz.lz4.* { *; }

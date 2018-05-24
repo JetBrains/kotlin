@@ -204,7 +204,9 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 addSourceSetAsVariant(flavorName)
             }
 
-            addSourceSetAsVariant(variantName)
+            if (buildTypeName != variantName && buildTypeName != flavorName) {
+                addSourceSetAsVariant(variantName)
+            }
         }
 
         return wrapPluginOptions(pluginOptions, "configuration")

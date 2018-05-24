@@ -80,7 +80,7 @@ fun returnType(): @EAnno Unit {}
 @UseExperimental(ExperimentalAPI::class)
 @EAnno val property = ""
 
-<!WRONG_ANNOTATION_TARGET!>@UseExperimental(ExperimentalAPI::class)<!>
+@UseExperimental(ExperimentalAPI::class)
 @EAnno typealias Typealias = Unit
 
 @UseExperimental(ExperimentalAPI::class)

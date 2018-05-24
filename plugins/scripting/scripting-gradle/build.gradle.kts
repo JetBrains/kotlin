@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.pill.PillExtension.Variant
 
 description = "Kotlin Scripting Compiler Plugin for Gradle"
 
@@ -6,6 +7,11 @@ plugins {
     kotlin("jvm")
     id("com.gradle.plugin-publish")
     `java-gradle-plugin`
+    id("jps-compatible")
+}
+
+pill {
+    variant = Variant.FULL
 }
 
 val packedJars by configurations.creating

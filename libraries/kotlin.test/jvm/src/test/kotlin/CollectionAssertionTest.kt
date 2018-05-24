@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("DEPRECATION")
+
 package kotlin.test.tests
 
 import org.junit.Assert

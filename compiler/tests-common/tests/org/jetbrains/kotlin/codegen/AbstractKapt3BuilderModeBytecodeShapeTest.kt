@@ -24,7 +24,7 @@ import java.io.File
 
 abstract class AbstractKapt3BuilderModeBytecodeShapeTest : CodegenTestCase() {
     private companion object {
-        var TEST_LIGHT_ANALYSIS: ClassBuilderFactory = object : ClassBuilderFactories.TestClassBuilderFactory(false) {
+        var TEST_LIGHT_ANALYSIS: ClassBuilderFactory = object : ClassBuilderFactories.TestClassBuilderFactory() {
             override fun getClassBuilderMode() = ClassBuilderMode.KAPT3
         }
     }

@@ -102,12 +102,12 @@ public final class Translation {
                     constantResult.setSource(expression);
 
                     if (KotlinBuiltIns.isLong(type)) {
-                        KtReferenceExpression referenceExpression = PsiUtils.getSimpleName(expression);
+                        KtSimpleNameExpression referenceExpression = PsiUtils.getSimpleName(expression);
                         if (referenceExpression != null) {
                             DeclarationDescriptor descriptor =
                                     BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), referenceExpression);
                             if (descriptor != null) {
-                                return context.declareConstantValue(descriptor, constantResult);
+                                return context.declareConstantValue(descriptor, referenceExpression, constantResult);
                             }
                         }
 

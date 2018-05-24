@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.generators.builtins.progressionIterators.GeneratePro
 import org.jetbrains.kotlin.generators.builtins.progressions.GenerateProgressions
 import org.jetbrains.kotlin.generators.builtins.ranges.GeneratePrimitives
 import org.jetbrains.kotlin.generators.builtins.ranges.GenerateRanges
+import org.jetbrains.kotlin.generators.builtins.unsigned.generateUnsignedTypes
 import org.xml.sax.InputSource
 import java.io.File
 import java.io.PrintWriter
@@ -25,6 +26,7 @@ fun assertExists(file: File) {
 val BUILT_INS_NATIVE_DIR = File("core/builtins/native/")
 val BUILT_INS_SRC_DIR = File("core/builtins/src/")
 val RUNTIME_JVM_DIR = File("libraries/stdlib/jvm/runtime/")
+val UNSIGNED_TYPES_DIR = File("libraries/stdlib/unsigned/src")
 
 abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
     protected abstract fun generateBody(): Unit
@@ -65,6 +67,7 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
     assertExists(BUILT_INS_NATIVE_DIR)
     assertExists(BUILT_INS_SRC_DIR)
     assertExists(RUNTIME_JVM_DIR)
+    assertExists(UNSIGNED_TYPES_DIR)
 
     generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/functions/Functions.kt")) { GenerateFunctions(it) }
     generate(File(BUILT_INS_NATIVE_DIR, "kotlin/Arrays.kt")) { GenerateArrays(it) }
@@ -74,6 +77,8 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
     generate(File(BUILT_INS_SRC_DIR, "kotlin/ProgressionIterators.kt")) { GenerateProgressionIterators(it) }
     generate(File(BUILT_INS_SRC_DIR, "kotlin/Progressions.kt")) { GenerateProgressions(it) }
     generate(File(BUILT_INS_SRC_DIR, "kotlin/Ranges.kt")) { GenerateRanges(it) }
+
+    generateUnsignedTypes(UNSIGNED_TYPES_DIR, generate)
 }
 
 fun main(args: Array<String>) {

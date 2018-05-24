@@ -56,6 +56,7 @@ dependencies {
     fatJarContents(commonDep("com.google.code.findbugs", "jsr305"))
     fatJarContents(commonDep("io.javaslang", "javaslang"))
     fatJarContents(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    fatJarContents(commonDep("org.jetbrains.kotlinx", "kotlinx-serialization-runtime")) { isTransitive = false }
 
     proguardLibraryJars(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar"),
             firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar"),
@@ -71,7 +72,7 @@ dependencies {
     compile(project(":kotlin-reflect"))
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
     fatJarContents(intellijDep()) { includeIntellijCoreJarDependencies(project, { !(it.startsWith("jdom") || it.startsWith("log4j")) }) }
-    fatJarContents(intellijDep()) { includeJars("jna-platform") }
+    fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-java-1.3") }
     fatJarContentsStripServices(intellijDep("jps-standalone")) { includeJars("jps-model") }
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j") }
 }

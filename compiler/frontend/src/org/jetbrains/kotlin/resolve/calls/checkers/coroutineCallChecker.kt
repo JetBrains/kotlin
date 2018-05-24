@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
@@ -156,9 +157,9 @@ private fun checkRestrictsSuspension(
     if (!enclosingSuspendReceiverValue.isRestrictsSuspensionReceiver()) return
 
     // member of suspend receiver
-    if (enclosingSuspendReceiverValue sameInstance resolvedCall.dispatchReceiver) return
+    if (enclosingSuspendReceiverValue sameInstance resolvedCall.dispatchReceiver?.original) return
 
-    if (enclosingSuspendReceiverValue sameInstance resolvedCall.extensionReceiver &&
+    if (enclosingSuspendReceiverValue sameInstance resolvedCall.extensionReceiver?.original &&
         resolvedCall.candidateDescriptor.extensionReceiverParameter!!.value.isRestrictsSuspensionReceiver()) return
 
     context.trace.report(Errors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL.on(reportOn))

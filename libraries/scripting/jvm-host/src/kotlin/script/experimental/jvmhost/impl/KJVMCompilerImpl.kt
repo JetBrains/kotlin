@@ -174,7 +174,7 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
 
             val generationState = GenerationState.Builder(
                 psiFile.project,
-                ClassBuilderFactories.binaries(false),
+                ClassBuilderFactories.BINARIES,
                 analysisResult.moduleDescriptor,
                 analysisResult.bindingContext,
                 sourceFiles,

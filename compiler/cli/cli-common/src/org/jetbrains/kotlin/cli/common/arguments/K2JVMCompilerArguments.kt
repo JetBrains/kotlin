@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.*
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -125,6 +122,17 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var constructorCallNormalizationMode: String? by FreezableVar(JVMConstructorCallNormalizationMode.DEFAULT.description)
 
     @Argument(
+        value = "-Xassertions", valueDescription = "{always-enable|always-disable|jvm|legacy}",
+        description = "Assert calls behaviour\n" +
+                "-Xassertions=always-enable:  enable, ignore jvm assertion settings;\n" +
+                "-Xassertions=always-disable: disable, ignore jvm assertion settings;\n" +
+                "-Xassertions=jvm:            enable, depend on jvm assertion settings;\n" +
+                "-Xassertions=legacy:         calculate condition on each call, check depends on jvm assertion settings in the kotlin package;\n" +
+                "default: legacy"
+    )
+    var assertionsMode: String? by FreezableVar(JVMAssertionsMode.DEFAULT.description)
+
+    @Argument(
         value = "-Xbuild-file",
         deprecatedName = "-module",
         valueDescription = "<path>",
@@ -224,6 +232,13 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         description = "Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type"
     )
     var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
+
+    @Argument(
+        value = "-Xoutput-imports",
+        valueDescription = "<path>",
+        description = "Output imports from all compiled files to the specified file in JSON format"
+    )
+    var outputImports: String? by FreezableVar(null)
 
     @Argument(value = "-Xenable-jvm-default", description = "Allow to use '@JvmDefault' for JVM default method support")
     var enableJvmDefault: Boolean by FreezableVar(false)

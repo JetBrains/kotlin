@@ -154,7 +154,7 @@ private fun KtDeclaration.getType(parent: UElement): PsiType? {
 
 private fun PsiElement.getHashCode(): Int {
     var result = 42
-    result = 41 * result + containingFile.name.hashCode()
+    result = 41 * result + (containingFile?.name?.hashCode() ?: 0)
     result = 41 * result + startOffset
     result = 41 * result + text.hashCode()
     return result

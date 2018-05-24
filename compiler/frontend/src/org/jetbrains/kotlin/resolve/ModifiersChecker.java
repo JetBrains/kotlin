@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker;
-import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext;
-import org.jetbrains.kotlin.resolve.checkers.PublishedApiUsageChecker;
-import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker;
+import org.jetbrains.kotlin.resolve.checkers.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -275,6 +272,7 @@ public class ModifiersChecker {
             }
             OperatorModifierChecker.INSTANCE.check(declaration, descriptor, trace, languageVersionSettings);
             PublishedApiUsageChecker.INSTANCE.check(declaration, descriptor, trace);
+            OptionalExpectationTargetChecker.INSTANCE.check(declaration, descriptor, trace);
         }
 
         public void checkTypeParametersModifiers(@NotNull KtModifierListOwner modifierListOwner) {

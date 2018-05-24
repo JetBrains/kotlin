@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.backend.common.onlyIf
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.isAny
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -22,7 +25,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private val className = context.getNameForSymbol(irClass.symbol)
     private val classNameRef = className.makeRef()
-    private val baseClass = irClass.superClasses.firstOrNull { it.kind != ClassKind.INTERFACE }
+    private val baseClass = irClass.superClasses.firstOrNull { !it.owner.isInterface }
     private val baseClassName = baseClass?.let { context.getNameForSymbol(it) }
     private val classPrototypeRef = prototypeOf(classNameRef)
     private val classBlock = JsBlock()
@@ -72,7 +75,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         // interface I { foo() = "OK" }
         // interface II : I
         // II.prototype.foo = I.prototype.foo
-        if (irClass.kind != ClassKind.INTERFACE) {
+        if (!irClass.isInterface) {
             declaration.resolveFakeOverride()?.let {
                 val implClassDesc = it.descriptor.containingDeclaration as ClassDescriptor
                 if (!KotlinBuiltIns.isAny(implClassDesc)) {
@@ -138,7 +141,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun generateClassMetadata(): JsStatement {
         val metadataLiteral = JsObjectLiteral(true)
-        val simpleName = irClass.symbol.name
+        val simpleName = irClass.name
 
         if (!simpleName.isSpecial) {
             val simpleNameProp = JsPropertyInitializer(JsNameRef(Namer.METADATA_SIMPLE_NAME), JsStringLiteral(simpleName.identifier))
@@ -151,7 +154,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun generateSuperClasses(): JsPropertyInitializer = JsPropertyInitializer(
         JsNameRef(Namer.METADATA_INTERFACES),
-        JsArrayLiteral(irClass.superClasses.filter { it.kind == ClassKind.INTERFACE }.map { JsNameRef(context.getNameForSymbol(it.owner.symbol)) })
+        JsArrayLiteral(irClass.superClasses.filter { it.owner.isInterface }.map { JsNameRef(context.getNameForSymbol(it.owner.symbol)) })
     )
 
 }

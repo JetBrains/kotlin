@@ -34,6 +34,7 @@ import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
+import org.jetbrains.jps.incremental.messages.ProgressMessage
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JpsJavaClasspathKind
@@ -176,7 +177,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val incrementalCaches = getIncrementalCaches(chunk, context)
         val messageCollector = MessageCollectorAdapter(context)
-        val environment = createCompileEnvironment(incrementalCaches, LookupTracker.DO_NOTHING, context, messageCollector)
+        val environment = createCompileEnvironment(incrementalCaches, LookupTracker.DO_NOTHING, context, chunk, messageCollector)
         if (environment == null) return
 
         val removedClasses = HashSet<String>()
@@ -347,7 +348,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val project = projectDescriptor.project
         val lookupTracker = getLookupTracker(project)
         val incrementalCaches = getIncrementalCaches(chunk, context)
-        val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context, messageCollector) ?: return ABORT
+        val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context, chunk, messageCollector) ?: return ABORT
 
         val commonArguments = compilerArgumentsForChunk(chunk).apply {
             reportOutputFiles = true
@@ -405,17 +406,24 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         context.checkCanceled()
 
-        val changesCollector = ChangesCollector()
-        for ((target, files) in generatedFiles) {
-            updateIncrementalCache(files, incrementalCaches[target]!!, changesCollector, null)
-        }
-        updateLookupStorage(chunk, lookupTracker, dataManager, dirtyFilesHolder, filesToCompile)
+        environment.withProgressReporter { progress ->
+            progress.progress("updating IC caches")
 
-        if (isChunkRebuilding) {
-            return OK
-        }
+            val changesCollector = ChangesCollector()
+            for ((target, files) in generatedFiles) {
+                updateIncrementalCache(files, incrementalCaches[target]!!, changesCollector, null)
+            }
+            updateLookupStorage(chunk, lookupTracker, dataManager, dirtyFilesHolder, filesToCompile)
 
-        changesCollector.processChangesUsingLookups(filesToCompile.values().toSet(), dataManager, fsOperations, incrementalCaches.values)
+            if (!isChunkRebuilding) {
+                changesCollector.processChangesUsingLookups(
+                    filesToCompile.values().toSet(),
+                    dataManager,
+                    fsOperations,
+                    incrementalCaches.values
+                )
+            }
+        }
 
         return OK
     }
@@ -567,6 +575,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         incrementalCaches: Map<ModuleBuildTarget, IncrementalCache>,
         lookupTracker: LookupTracker,
         context: CompileContext,
+        chunk: ModuleChunk,
         messageCollector: MessageCollectorAdapter
     ): JpsCompilerEnvironment? {
         val compilerServices = with(Services.Builder()) {
@@ -597,7 +606,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             compilerServices,
             classesToLoadByParent,
             messageCollector,
-            OutputItemsCollectorImpl()
+            OutputItemsCollectorImpl(),
+            ProgressReporterImpl(context, chunk)
         )
     }
 

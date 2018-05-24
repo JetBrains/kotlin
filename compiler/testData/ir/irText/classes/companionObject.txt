@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/companionObject.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Test1 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test1 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/companionObject.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1.Companion flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:private <> () returnType:Test1.Companion flags:
+      CONSTRUCTOR visibility:private <> () returnType:Test1.Companion flags:primary
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='companion object of Test1'
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/companionObject.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Test2 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test2 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/companionObject.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2.Named flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:private <> () returnType:Test2.Named flags:
+      CONSTRUCTOR visibility:private <> () returnType:Test2.Named flags:primary
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='companion object of Test2Named'

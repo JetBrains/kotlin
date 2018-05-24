@@ -14,7 +14,7 @@ class A {
                     return JetBundle.message(
                             "x.in.y",
                             DescriptorRenderer.COMPACT.render(declarationDescriptor),
-                            IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(containingDescriptor)
+                            IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(containingDescriptor)
                     )
                 }
             }

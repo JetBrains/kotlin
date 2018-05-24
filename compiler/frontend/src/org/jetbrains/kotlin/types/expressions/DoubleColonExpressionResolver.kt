@@ -704,7 +704,7 @@ class DoubleColonExpressionResolver(
                 ?.apply { commitTrace() }?.results
         }
 
-        val resultSequence = buildSequence<ResolutionResultsAndTraceCommitCallback> {
+        val resultSequence = buildSequence {
             when (lhs) {
                 is DoubleColonLHS.Type -> {
                     val classifier = lhsType.constructor.declarationDescriptor

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.backend.js.descriptors.JsSymbolBuilder
 import org.jetbrains.kotlin.ir.backend.js.descriptors.initialize
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.isPrimary
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -52,7 +51,7 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) : IrElementTransfor
         val newConstructors = mutableListOf<IrSimpleFunction>()
 
         for (declaration in irClass.declarations) {
-            if (declaration is IrConstructor && !declaration.symbol.isPrimary) {
+            if (declaration is IrConstructor && !declaration.isPrimary) {
                 // TODO delegate name generation
                 val constructorName = "${className}_init"
                 // We should split secondary constructor into two functions,
@@ -220,7 +219,7 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) : IrElementTransfor
             super.visitDelegatingConstructorCall(expression, ownerFunc)
 
             val target = expression.symbol
-            if (target.isPrimary) {
+            if (target.owner.isPrimary) {
                 // nothing to do here
                 return expression
             }

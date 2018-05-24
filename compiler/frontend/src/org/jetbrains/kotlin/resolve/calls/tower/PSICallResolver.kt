@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
+import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -61,7 +63,11 @@ class PSICallResolver(
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val effectSystem: EffectSystem,
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
-    private val dataFlowValueFactory: DataFlowValueFactory
+    private val dataFlowValueFactory: DataFlowValueFactory,
+    private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
+    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
+    private val deprecationResolver: DeprecationResolver,
+    private val moduleDescriptor: ModuleDescriptor
 ) {
     private val givenCandidatesName = Name.special("<given candidates>")
 
@@ -154,13 +160,15 @@ class PSICallResolver(
     }
 
     private fun createResolutionCallbacks(context: BasicCallResolutionContext) =
-        createResolutionCallbacks(context.trace, context.inferenceSession)
+        createResolutionCallbacks(context.trace, context.inferenceSession, context)
 
-    fun createResolutionCallbacks(trace: BindingTrace, inferenceSession: InferenceSession) =
+    fun createResolutionCallbacks(trace: BindingTrace, inferenceSession: InferenceSession, context: BasicCallResolutionContext?) =
         KotlinResolutionCallbacksImpl(
             trace, expressionTypingServices, typeApproximator,
             argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
-            dataFlowValueFactory, inferenceSession, constantExpressionEvaluator, typeResolver
+            dataFlowValueFactory, inferenceSession, constantExpressionEvaluator, typeResolver,
+            this, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents,
+            doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context
         )
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
@@ -377,7 +385,7 @@ class PSICallResolver(
         override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<KotlinResolutionCandidate> {
             val explicitReceiver = if (stripExplicitReceiver) null else kotlinCall.explicitReceiver
             val variableCall = PSIKotlinCallForVariable(kotlinCall, explicitReceiver, kotlinCall.name)
-            return SimpleCandidateFactory(callComponents, scopeTower, variableCall, context.inferenceSession)
+            return SimpleCandidateFactory(callComponents, scopeTower, variableCall, createResolutionCallbacks(context))
         }
 
         override fun factoryForInvoke(variable: KotlinResolutionCandidate, useExplicitReceiver: Boolean):
@@ -398,7 +406,7 @@ class PSICallResolver(
             }
 
             return variableCallArgument.receiver to SimpleCandidateFactory(
-                callComponents, scopeTower, callForInvoke, context.inferenceSession
+                callComponents, scopeTower, callForInvoke, createResolutionCallbacks(context)
             )
         }
 

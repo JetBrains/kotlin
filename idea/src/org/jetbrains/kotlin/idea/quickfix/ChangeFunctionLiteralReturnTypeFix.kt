@@ -41,8 +41,8 @@ class ChangeFunctionLiteralReturnTypeFix(
         type: KotlinType
 ) : KotlinQuickFixAction<KtLambdaExpression>(functionLiteralExpression) {
 
-    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_TYPES_WITH_SHORT_NAMES.renderType(type)
+    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE_TYPES.renderType(type)
     private val functionLiteralReturnTypeRef: KtTypeReference?
         get() = element?.functionLiteral?.typeReference
     private val appropriateQuickFix = createAppropriateQuickFix(functionLiteralExpression, type)

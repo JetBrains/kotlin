@@ -295,9 +295,10 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
                 modifierList = modifierBuilder.modifierList,
                 withBody = true
         )
+        val targetClassName = targetClass.name
         val addConstructorAction = object : CreateCallableFromUsageFix<KtElement>(targetKtClass, listOf(constructorInfo)) {
             override fun getFamilyName() = "Add method"
-            override fun getText() = "Add ${if (needPrimary) "primary" else "secondary"} constructor to '${targetClass.name}'"
+            override fun getText() = "Add ${if (needPrimary) "primary" else "secondary"} constructor to '$targetClassName'"
         }
 
         val changePrimaryConstructorAction = run {
@@ -394,19 +395,21 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         val parameterInfos = parameters.map { (suggestedNames, expectedTypes) ->
             ParameterInfo(expectedTypes.toKotlinTypeInfo(resolutionFacade), suggestedNames.names.toList())
         }
+        val methodName = request.methodName
         val functionInfo = FunctionInfo(
-                request.methodName,
-                TypeInfo.Empty,
-                returnTypeInfo,
-                listOf(targetContainer),
-                parameterInfos,
-                isForCompanion = JvmModifier.STATIC in request.modifiers,
-                modifierList = modifierBuilder.modifierList,
-                preferEmptyBody = true
+            methodName,
+            TypeInfo.Empty,
+            returnTypeInfo,
+            listOf(targetContainer),
+            parameterInfos,
+            isForCompanion = JvmModifier.STATIC in request.modifiers,
+            modifierList = modifierBuilder.modifierList,
+            preferEmptyBody = true
         )
+        val targetClassName = targetClass.name
         val action = object : CreateCallableFromUsageFix<KtElement>(targetContainer, listOf(functionInfo)) {
             override fun getFamilyName() = "Add method"
-            override fun getText() = "Add method '${request.methodName}' to '${targetClass.name}'"
+            override fun getText() = "Add method '$methodName' to '$targetClassName'"
         }
         return listOf(action)
     }

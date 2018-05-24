@@ -22,7 +22,7 @@ import java.io.File
 
 class BuildCacheIT : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
-            super.defaultBuildOptions().copy(withBuildCache = true)
+        super.defaultBuildOptions().copy(withBuildCache = true)
 
     companion object {
         private val GRADLE_VERSION = GradleVersionRequired.AtLeast("4.3")
@@ -145,11 +145,13 @@ class BuildCacheIT : BaseGradleIT() {
             assertContains("Caching disabled for task ':kaptKotlin': 'Caching is disabled by default for kapt")
         }
 
-        File(projectDir, "build.gradle").appendText("\n" + """
+        File(projectDir, "build.gradle").appendText(
+            "\n" + """
             afterEvaluate {
                 kaptKotlin.useBuildCache = true
             }
-            """.trimIndent())
+            """.trimIndent()
+        )
 
         build("clean", "build") {
             assertSuccessful()

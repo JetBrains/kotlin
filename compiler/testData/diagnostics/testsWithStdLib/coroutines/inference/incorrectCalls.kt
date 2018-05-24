@@ -1,4 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
 
 class GenericController<T> {
     suspend fun yield(t: T) {}
@@ -14,17 +16,17 @@ val test1 = generate {
     yield(3)
 }
 
-val test2 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test2 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield(3)
     notYield(3)
 }
 
-val test3 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test3 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield(3)
     yieldBarReturnType(3)
 }
 
-val test4 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test4 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
     yield(3)
     barReturnType()
 }

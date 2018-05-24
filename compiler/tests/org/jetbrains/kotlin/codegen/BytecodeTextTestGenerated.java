@@ -1983,6 +1983,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/assertionsForParametersOfInlineClassTypes.kt");
         }
 
+        @TestMetadata("boxInlineClassInsideElvisWithNullConstant.kt")
+        public void testBoxInlineClassInsideElvisWithNullConstant() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/boxInlineClassInsideElvisWithNullConstant.kt");
+        }
+
         @TestMetadata("boxInlineClassesOnPassingToVarargs.kt")
         public void testBoxInlineClassesOnPassingToVarargs() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/boxInlineClassesOnPassingToVarargs.kt");
@@ -2066,6 +2071,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("isCheckForInlineClass.kt")
         public void testIsCheckForInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/isCheckForInlineClass.kt");
+        }
+
+        @TestMetadata("noActualCallsOfInlineFunctionsOfInlineClass.kt")
+        public void testNoActualCallsOfInlineFunctionsOfInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noActualCallsOfInlineFunctionsOfInlineClass.kt");
         }
 
         @TestMetadata("noAssertionsForInlineClassesBasedOnNullableTypes.kt")

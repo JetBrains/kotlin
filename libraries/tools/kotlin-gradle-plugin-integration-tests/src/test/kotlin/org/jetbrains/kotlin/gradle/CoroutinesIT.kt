@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 
-class CoroutinesIT: BaseGradleIT() {
+class CoroutinesIT : BaseGradleIT() {
     companion object {
         private const val LOCAL_PROPERTIES = "local.properties"
         private const val GRADLE_PROPERTIES = "gradle.properties"
@@ -97,10 +97,10 @@ class CoroutinesIT: BaseGradleIT() {
 
     // todo: replace with project that actually uses coroutines after their syntax is finalized
     private val jvmProject: Project
-            get() = Project("kotlinProject")
+        get() = Project("kotlinProject")
 
     private val jsProject: Project
-            get() = Project("kotlin2JsProject")
+        get() = Project("kotlin2JsProject")
 
     private fun Project.doTest(coroutineSupport: String, propertyFileName: String?) {
         if (propertyFileName != null) {

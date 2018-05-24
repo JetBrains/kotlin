@@ -30,7 +30,6 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.search.PsiElementProcessorAdapter
-import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.util.CommonProcessors
 import gnu.trove.THashSet
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -91,7 +90,8 @@ fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): 
     val method = getPsiMethod(element) ?: return null
 
     if (DumbService.isDumb(method.project)) {
-        DumbService.getInstance(method.project)?.showDumbModeNotification("Navigation to overriding classes is not possible during index update")
+        DumbService.getInstance(method.project)
+            ?.showDumbModeNotification("Navigation to overriding classes is not possible during index update")
         return null
     }
 
@@ -104,7 +104,9 @@ fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): 
                     }
                 }
             },
-            "Searching for overriding declarations", true, method.project, e?.component as JComponent?)) {
+            "Searching for overriding declarations", true, method.project, e?.component as JComponent?
+        )
+    ) {
         return null
     }
 
@@ -115,17 +117,20 @@ fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): 
     overridingJavaMethods = overridingJavaMethods.sortedWith(renderer.comparator)
 
     val methodsUpdater = OverridingMethodsUpdater(method, renderer)
-    return NavigationPopupDescriptor(overridingJavaMethods,
-                                     methodsUpdater.getCaption(overridingJavaMethods.size),
-                                     "Overriding declarations of " + method.name,
-                                     renderer,
-                                     methodsUpdater)
+    return NavigationPopupDescriptor(
+        overridingJavaMethods,
+        methodsUpdater.getCaption(overridingJavaMethods.size),
+        "Overriding declarations of " + method.name,
+        renderer,
+        methodsUpdater
+    )
 }
 
 private class OverridingMethodsUpdater(
-        private val myMethod: PsiMethod,
-        private val myRenderer: PsiElementListCellRenderer<out PsiElement>) :
-        ListBackgroundUpdaterTask(myMethod.project, "Searching for overriding methods") {
+    private val myMethod: PsiMethod,
+    private val myRenderer: PsiElementListCellRenderer<out PsiElement>
+) :
+    ListBackgroundUpdaterTask(myMethod.project, "Searching for overriding methods") {
     override fun getCaption(size: Int): String {
         return if (myMethod.hasModifierProperty(PsiModifier.ABSTRACT))
             DaemonBundle.message("navigation.title.implementation.method", myMethod.name, size)!!

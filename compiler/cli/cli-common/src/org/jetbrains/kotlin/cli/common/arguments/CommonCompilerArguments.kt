@@ -25,7 +25,8 @@ import java.util.*
 @SuppressWarnings("WeakerAccess")
 abstract class CommonCompilerArguments : CommonToolArguments() {
     companion object {
-        @JvmStatic private val serialVersionUID = 0L
+        @JvmStatic
+        private val serialVersionUID = 0L
 
         const val PLUGIN_OPTION_FORMAT = "plugin:<pluginId>:<optionName>=<value>"
 
@@ -39,9 +40,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @GradleOption(DefaultValues.LanguageVersions::class)
     @Argument(
-            value = "-language-version",
-            valueDescription = "<version>",
-            description = "Provide source compatibility with specified language version"
+        value = "-language-version",
+        valueDescription = "<version>",
+        description = "Provide source compatibility with specified language version"
     )
     var languageVersion: String? by FreezableVar(null)
 
@@ -50,16 +51,16 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @GradleOption(DefaultValues.LanguageVersions::class)
     @Argument(
-            value = "-api-version",
-            valueDescription = "<version>",
-            description = "Allow to use declarations only from the specified version of bundled libraries"
+        value = "-api-version",
+        valueDescription = "<version>",
+        description = "Allow to use declarations only from the specified version of bundled libraries"
     )
     var apiVersion: String? by FreezableVar(null)
 
     @Argument(
-            value = "-kotlin-home",
-            valueDescription = "<path>",
-            description = "Path to Kotlin compiler home directory, used for runtime libraries discovery"
+        value = "-kotlin-home",
+        valueDescription = "<path>",
+        description = "Path to Kotlin compiler home directory, used for runtime libraries discovery"
     )
     var kotlinHome: String? by FreezableVar(null)
 
@@ -72,12 +73,15 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var noInline: Boolean by FreezableVar(false)
 
     @Argument(
-            value = "-Xskip-metadata-version-check",
-            description = "Load classes with bad metadata version anyway (incl. pre-release classes)"
+        value = "-Xskip-metadata-version-check",
+        description = "Load classes with bad metadata version anyway (incl. pre-release classes)"
     )
     var skipMetadataVersionCheck: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info")
+    @Argument(
+        value = "-Xallow-kotlin-package",
+        description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info"
+    )
     var allowKotlinPackage: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xreport-output-files", description = "Report source to output files mapping")
@@ -93,34 +97,34 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var noCheckActual: Boolean by FreezableVar(false)
 
     @Argument(
-            value = "-Xintellij-plugin-root",
-            valueDescription = "<path>",
-            description = "Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found"
+        value = "-Xintellij-plugin-root",
+        valueDescription = "<path>",
+        description = "Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found"
     )
     var intellijPluginRoot: String? by FreezableVar(null)
 
     @Argument(
-            value = "-Xcoroutines",
-            valueDescription = "{enable|warn|error}",
-            description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"
+        value = "-Xcoroutines",
+        valueDescription = "{enable|warn|error}",
+        description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"
     )
     var coroutinesState: String? by FreezableVar(WARN)
 
     @Argument(
-            value = "-Xnew-inference",
-            description = "Enable new experimental generic type inference algorithm"
+        value = "-Xnew-inference",
+        description = "Enable new experimental generic type inference algorithm"
     )
     var newInference: Boolean by FreezableVar(false)
 
     @Argument(
-            value = "-Xlegacy-smart-cast-after-try",
-            description = "Allow var smart casts despite assignment in try block"
+        value = "-Xlegacy-smart-cast-after-try",
+        description = "Allow var smart casts despite assignment in try block"
     )
     var legacySmartCastAfterTry: Boolean by FreezableVar(false)
 
     @Argument(
-            value = "-Xeffect-system",
-            description = "Enable experimental language feature: effect system"
+        value = "-Xeffect-system",
+        description = "Enable experimental language feature: effect system"
     )
     var effectSystem: Boolean by FreezableVar(false)
 
@@ -131,9 +135,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var readDeserializedContracts: Boolean by FreezableVar(false)
 
     @Argument(
-            value = "-Xexperimental",
-            valueDescription = "<fq.name>",
-            description = "Enable and propagate usages of experimental API for marker annotation with the given fully qualified name"
+        value = "-Xexperimental",
+        valueDescription = "<fq.name>",
+        description = "Enable and propagate usages of experimental API for marker annotation with the given fully qualified name"
     )
     var experimental: Array<String>? by FreezableVar(null)
 
@@ -160,6 +164,16 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var dumpPerf: String? by FreezableVar(null)
 
+    @Argument(
+        value = "-Xprogressive",
+        description = "Enable compiler progressive mode.\n" +
+                "In this mode, deprecations and bug fixes for unstable code take effect immediately,\n" +
+                "instead of going through graceful migration cycle.\n" +
+                "Code, written in progressive mode is backward compatible; however, code written in\n" +
+                "non-progressive mode may cause compilation errors in progressive mode."
+    )
+    var progressiveMode by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
@@ -180,7 +194,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             when (coroutinesState) {
                 CommonCompilerArguments.ERROR -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED_WITH_ERROR)
                 CommonCompilerArguments.ENABLE -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED)
-                CommonCompilerArguments.WARN -> {}
+                CommonCompilerArguments.WARN -> {
+                }
                 else -> {
                     val message = "Invalid value of -Xcoroutines (should be: enable, warn or error): " + coroutinesState
                     collector.report(CompilerMessageSeverity.ERROR, message, null)
@@ -207,7 +222,41 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             if (properIeee754Comparisons) {
                 put(LanguageFeature.ProperIeee754Comparisons, LanguageFeature.State.ENABLED)
             }
+
+            if (progressiveMode) {
+                LanguageFeature.values().filter { it.kind.enabledInProgressiveMode }.forEach {
+                    // Don't overwrite other settings: users may want to turn off some particular
+                    // breaking change manually instead of turning off whole progressive mode
+                    if (!contains(it)) put(it, LanguageFeature.State.ENABLED)
+                }
+            }
+
+            // Internal arguments should go last, because it may be useful to override
+            // some feature state via -XX (even if some -X flags were passed)
+            if (internalArguments.isNotEmpty()) {
+                configureLanguageFeaturesFromInternalArgs(collector)
+            }
         }
+
+    private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(collector: MessageCollector) {
+        val languageSettingsParser = LanguageSettingsParser()
+        val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
+
+        for (argument in internalArguments) {
+            val (feature, state) = languageSettingsParser.parseInternalArgument(argument, collector) ?: continue
+            put(feature, state)
+            if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
+                featuresThatForcePreReleaseBinaries += feature
+            }
+        }
+
+        if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {
+            collector.report(
+                CompilerMessageSeverity.STRONG_WARNING,
+                "Following manually enabled features will force generation of pre-release binaries: ${featuresThatForcePreReleaseBinaries.joinToString()}"
+            )
+        }
+    }
 
     fun configureLanguageVersionSettings(collector: MessageCollector): LanguageVersionSettings {
 
@@ -229,6 +278,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             collector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
                 "Language version ${languageVersion.versionString} is experimental, there are no backwards compatibility guarantees for new language and library features"
+            )
+        }
+
+        if (progressiveMode && languageVersion < LanguageVersion.LATEST_STABLE) {
+            collector.report(
+                CompilerMessageSeverity.STRONG_WARNING,
+                "'-Xprogressive' meaningful only for latest language version (${LanguageVersion.LATEST_STABLE}), while this build uses $languageVersion\n" +
+                        "Behaviour of compiler in such mode is undefined; please, consider moving to the latest stable version or turning off progressive mode."
             )
         }
 

@@ -3,6 +3,7 @@ description = "Kotlin Scripting IDEA Plugin"
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 dependencies {

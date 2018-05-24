@@ -3,12 +3,12 @@ FILE fqName:<root> fileName:/localDelegatedPropertyWithSuspendOperators.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:A flags:
+    CONSTRUCTOR visibility:public <> () returnType:A flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
     PROPERTY name:z type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:public flags:
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:

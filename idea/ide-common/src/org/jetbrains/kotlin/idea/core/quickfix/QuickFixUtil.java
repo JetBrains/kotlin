@@ -168,7 +168,7 @@ public class QuickFixUtil {
         FqName typeFqName = typeClassifierDescriptor != null ? DescriptorUtils.getFqNameSafe(typeClassifierDescriptor) : fqNameToCheckAgainst;
         DescriptorRenderer renderer = typeFqName.shortName().equals(fqNameToCheckAgainst.shortName())
                ? IdeDescriptorRenderers.SOURCE_CODE
-               : IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES;
+               : IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS;
         return renderer.renderType(type);
     }
 }

@@ -56,7 +56,7 @@ abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver)
 
 open class KotlinPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
-            KotlinPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion, kotlinGradleBuildServices)
+            KotlinPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
 
     override val projectExtensionClass: KClass<out KotlinJvmProjectExtension>
         get() = KotlinJvmProjectExtension::class
@@ -69,7 +69,7 @@ open class KotlinCommonPluginWrapper @Inject constructor(fileResolver: FileResol
 
 open class KotlinAndroidPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
-            KotlinAndroidPlugin(AndroidTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion, kotlinGradleBuildServices)
+            KotlinAndroidPlugin(AndroidTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
 }
 
 open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {

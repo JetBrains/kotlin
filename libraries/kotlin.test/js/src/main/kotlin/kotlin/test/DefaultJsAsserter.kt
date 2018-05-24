@@ -58,8 +58,7 @@ internal object DefaultJsAsserter : Asserter {
     override fun assertTrue(lazyMessage: () -> String?, actual: Boolean) {
         if (!actual) {
             failWithMessage(lazyMessage)
-        }
-        else {
+        } else {
             invokeHook(true, lazyMessage)
         }
     }
@@ -89,8 +88,7 @@ internal object DefaultJsAsserter : Asserter {
                 override val actual: Any? = a
                 override val lazyMessage: () -> String? = lazyMessage
             })
-        }
-        finally {
+        } finally {
             e = undefined
             a = undefined
         }

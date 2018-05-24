@@ -141,6 +141,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/callableReference/function/constructorsWithArgs.kt");
             }
 
+            @TestMetadata("constructorsWithArgsSimple.kt")
+            public void testConstructorsWithArgsSimple() throws Exception {
+                runTest("js/js.translator/testData/box/callableReference/function/constructorsWithArgsSimple.kt");
+            }
+
             @TestMetadata("extension.kt")
             public void testExtension() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/function/extension.kt");
@@ -3545,6 +3550,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
 
             public void testAllFilesPresentInInterfaces() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/inheritance/interfaces"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("fromExternalInterface.kt")
+            public void testFromExternalInterface() throws Exception {
+                runTest("js/js.translator/testData/box/inheritance/interfaces/fromExternalInterface.kt");
             }
 
             @TestMetadata("withDefaultMethod.kt")

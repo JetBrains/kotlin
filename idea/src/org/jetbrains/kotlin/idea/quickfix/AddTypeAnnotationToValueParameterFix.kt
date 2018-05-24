@@ -56,7 +56,7 @@ class AddTypeAnnotationToValueParameterFix(element: KtParameter) : KotlinQuickFi
             }
         }
 
-        typeNameShort = type?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }
+        typeNameShort = type?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(it) }
         typeName = type?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) }
     }
 

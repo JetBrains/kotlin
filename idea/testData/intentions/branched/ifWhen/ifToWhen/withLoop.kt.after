@@ -1,0 +1,8 @@
+fun test() {
+    loop@ for (i in -2..2) {
+        when {
+            i > 0 -> i.hashCode()
+            else -> continue@loop
+        }
+    }
+}

@@ -238,8 +238,8 @@ public class Flags {
             return new BooleanFlagField(offset);
         }
 
-        protected final int offset;
-        protected final int bitWidth;
+        public final int offset;
+        public final int bitWidth;
 
         private FlagField(int offset, int bitWidth) {
             this.offset = offset;

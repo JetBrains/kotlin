@@ -102,7 +102,7 @@ class ClasspathBasedKapt3Extension(
     override fun loadProcessors(): List<Processor> {
         ClassUtilCore.clearJarURLCache()
 
-        val classpath = annotationProcessingClasspath + compileClasspath
+        val classpath = (annotationProcessingClasspath + compileClasspath).distinct()
         val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray())
         this.annotationProcessingClassLoader = classLoader
 

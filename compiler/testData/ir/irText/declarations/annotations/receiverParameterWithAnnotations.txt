@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Ann flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Ann flags:
+    CONSTRUCTOR visibility:public <> () returnType:Ann flags:primary
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:A flags:
+    CONSTRUCTOR visibility:public <> () returnType:A flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
@@ -70,3 +70,4 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-topLevelP>() on String: String'
           CONST String type=kotlin.String value=
+

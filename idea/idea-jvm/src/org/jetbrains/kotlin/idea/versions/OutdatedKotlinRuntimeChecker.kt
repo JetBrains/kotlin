@@ -50,7 +50,7 @@ fun findOutdatedKotlinLibraries(project: Project): List<VersionedLibrary> {
     val outdatedLibraries = arrayListOf<VersionedLibrary>()
 
     for ((library, modules) in findAllUsedLibraries(project).entrySet()) {
-        getOutdatedRuntimeLibraryVersion(library)?.let { version ->
+        getOutdatedRuntimeLibraryVersion(library, project)?.let { version ->
             outdatedLibraries.add(VersionedLibrary(library, version, modules))
         }
     }
@@ -58,30 +58,30 @@ fun findOutdatedKotlinLibraries(project: Project): List<VersionedLibrary> {
     return outdatedLibraries
 }
 
-private fun getOutdatedRuntimeLibraryVersion(library: Library): String? {
-    val libraryVersion = getKotlinLibraryVersion(library) ?: return null
+private fun getOutdatedRuntimeLibraryVersion(library: Library, project: Project): String? {
+    val libraryVersion = getKotlinLibraryVersion(library, project) ?: return null
     val runtimeVersion = bundledRuntimeVersion()
 
     return if (isRuntimeOutdated(libraryVersion, runtimeVersion)) libraryVersion else null
 }
 
-private fun getKotlinLibraryVersion(library: Library): String? =
-    JavaRuntimeDetectionUtil.getJavaRuntimeVersion(library) ?: JsLibraryStdDetectionUtil.getJsLibraryStdVersion(library)
+private fun getKotlinLibraryVersion(library: Library, project: Project): String? =
+    JavaRuntimeDetectionUtil.getJavaRuntimeVersion(library) ?: JsLibraryStdDetectionUtil.getJsLibraryStdVersion(library, project)
 
-fun findKotlinRuntimeLibrary(module: Module, predicate: (Library) -> Boolean = ::isKotlinRuntime): Library? {
+fun findKotlinRuntimeLibrary(module: Module, predicate: (Library, Project) -> Boolean = ::isKotlinRuntime): Library? {
     val orderEntries = ModuleRootManager.getInstance(module).orderEntries.filterIsInstance<LibraryOrderEntry>()
     return orderEntries.asSequence()
         .mapNotNull { it.library }
-        .firstOrNull(predicate)
+        .firstOrNull { predicate(it, module.project) }
 }
 
-private fun isKotlinRuntime(library: Library) = isKotlinJavaRuntime(library) || isKotlinJsRuntime(library)
+private fun isKotlinRuntime(library: Library, project: Project) = isKotlinJavaRuntime(library) || isKotlinJsRuntime(library, project)
 
 private fun isKotlinJavaRuntime(library: Library) =
     JavaRuntimeDetectionUtil.getRuntimeJar(library.getFiles(OrderRootType.CLASSES).asList()) != null
 
-private fun isKotlinJsRuntime(library: Library) =
-    JsLibraryStdDetectionUtil.hasJsStdlibJar(library)
+private fun isKotlinJsRuntime(library: Library, project: Project) =
+    JsLibraryStdDetectionUtil.hasJsStdlibJar(library, project)
 
 fun collectModulesWithOutdatedRuntime(libraries: List<VersionedLibrary>): List<Module> =
     libraries.flatMap { it.usedInModules }

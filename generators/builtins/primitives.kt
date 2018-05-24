@@ -10,27 +10,29 @@ import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceG
 import java.io.PrintWriter
 
 class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
-    private val binaryOperators: Map<String, String> = mapOf(
+    companion object {
+        internal val binaryOperators: Map<String, String> = mapOf(
             "plus" to "Adds the other value to this value.",
             "minus" to "Subtracts the other value from this value.",
             "times" to "Multiplies this value by the other value.",
             "div" to "Divides this value by the other value.",
             "mod" to "Calculates the remainder of dividing this value by the other value.",
             "rem" to "Calculates the remainder of dividing this value by the other value."
-    )
-    private val unaryOperators: Map<String, String> = mapOf(
+        )
+        internal val unaryOperators: Map<String, String> = mapOf(
             "inc" to "Increments this value.",
             "dec" to "Decrements this value.",
             "unaryPlus" to "Returns this value.",
             "unaryMinus" to "Returns the negative of this value.")
-    private val shiftOperators: Map<String, String> = mapOf(
+        internal val shiftOperators: Map<String, String> = mapOf(
             "shl" to "Shifts this value left by the [bitCount] number of bits.",
             "shr" to "Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.",
             "ushr" to "Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.")
-    private val bitwiseOperators: Map<String, String> = mapOf(
+        internal val bitwiseOperators: Map<String, String> = mapOf(
             "and" to "Performs a bitwise AND operation between the two values.",
             "or" to "Performs a bitwise OR operation between the two values.",
             "xor" to "Performs a bitwise XOR operation between the two values.")
+    }
     private val typeDescriptions: Map<PrimitiveType, String> = mapOf(
             PrimitiveType.DOUBLE to "double-precision 64-bit IEEE 754 floating point number",
             PrimitiveType.FLOAT to "single-precision 32-bit IEEE 754 floating point number",

@@ -90,6 +90,16 @@ class SignatureEnhancement(
 
             annotationFqName == COMPATQUAL_NONNULL_ANNOTATION && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
                 NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+
+            annotationFqName == ANDROIDX_RECENTLY_NON_NULL_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
+                NullabilityQualifier.NOT_NULL,
+                isForWarningOnly = true
+            )
+
+            annotationFqName == ANDROIDX_RECENTLY_NULLABLE_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
+                NullabilityQualifier.NULLABLE,
+                isForWarningOnly = true
+            )
             else -> null
         }
     }
@@ -168,9 +178,10 @@ class SignatureEnhancement(
             || returnTypeEnhancement.wereChanges || valueParameterEnhancements.any { it.wereChanges }
         ) {
             @Suppress("UNCHECKED_CAST")
-            return this.enhance(receiverTypeEnhancement?.type,
-                                valueParameterEnhancements.map { ValueParameterData(it.type, it.hasDefaultValue) },
-                                returnTypeEnhancement.type
+            return this.enhance(
+                receiverTypeEnhancement?.type,
+                valueParameterEnhancements.map { ValueParameterData(it.type, it.hasDefaultValue) },
+                returnTypeEnhancement.type
             ) as D
         }
 

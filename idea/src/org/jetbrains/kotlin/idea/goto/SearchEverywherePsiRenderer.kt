@@ -28,7 +28,7 @@ import java.util.*
 import javax.swing.JList
 
 class KotlinSearchEverywherePsiRenderer(private val list: JList<*>) : DefaultPsiElementCellRenderer() {
-    private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+    private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
         parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
         modifiers = emptySet()
         startFromName = false

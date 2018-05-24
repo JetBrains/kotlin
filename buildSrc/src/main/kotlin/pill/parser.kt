@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
+import org.gradle.api.tasks.*
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.kotlin.dsl.configure
@@ -11,6 +12,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
 import org.jetbrains.kotlin.pill.POrderRoot.*
 import org.jetbrains.kotlin.pill.PSourceRoot.*
+import org.jetbrains.kotlin.pill.PillExtension.*
 import java.io.File
 import java.util.LinkedList
 
@@ -41,13 +43,34 @@ data class PContentRoot(
 
 data class PSourceRoot(
     val path: File,
-    val kind: Kind
+    val kind: Kind,
+    val kotlinOptions: PSourceRootKotlinOptions?
 ) {
-    enum class Kind {
-        PRODUCTION, TEST, RESOURCES, TEST_RESOURCES;
+    enum class Kind { PRODUCTION, TEST, RESOURCES, TEST_RESOURCES }
+}
 
-        val isResources get() = this == RESOURCES || this == TEST_RESOURCES
-    }
+data class PSourceRootKotlinOptions(
+    val noStdlib: Boolean?,
+    val noReflect: Boolean?,
+    val moduleName: String?,
+    val apiVersion: String?,
+    val languageVersion: String?,
+    val jvmTarget: String?,
+    val addCompilerBuiltIns: Boolean?,
+    val loadBuiltInsFromDependencies: Boolean?,
+    val extraArguments: List<String>
+) {
+    fun intersect(other: PSourceRootKotlinOptions) = PSourceRootKotlinOptions(
+        if (noStdlib == other.noStdlib) noStdlib else null,
+        if (noReflect == other.noReflect) noReflect else null,
+        if (moduleName == other.moduleName) moduleName else null,
+        if (apiVersion == other.apiVersion) apiVersion else null,
+        if (languageVersion == other.languageVersion) languageVersion else null,
+        if (jvmTarget == other.jvmTarget) jvmTarget else null,
+        if (addCompilerBuiltIns == other.addCompilerBuiltIns) addCompilerBuiltIns else null,
+        if (loadBuiltInsFromDependencies == other.loadBuiltInsFromDependencies) loadBuiltInsFromDependencies else null,
+        extraArguments.intersect(other.extraArguments).toList()
+    )
 }
 
 data class POrderRoot(
@@ -83,9 +106,16 @@ fun parse(project: Project, libraries: List<PLibrary>, context: ParserContext): 
         error("$project is not a root project")
     }
 
-    val modules = project.allprojects
-        .filter { it.plugins.hasPlugin(JpsCompatiblePlugin::class.java) }
-        .flatMap { parseModules(it) }
+    fun Project.matchesSelectedVariant(): Boolean {
+        val extension = this.extensions.findByType(PillExtension::class.java) ?: return true
+        val projectVariant = extension.variant.takeUnless { it == Variant.DEFAULT } ?: Variant.BASE
+        return projectVariant in context.variant.includes
+    }
+
+    val (includedProjects, excludedProjects) = project.allprojects
+        .partition { it.plugins.hasPlugin(JpsCompatiblePlugin::class.java) && it.matchesSelectedVariant() }
+
+    val modules = includedProjects.flatMap { parseModules(it, excludedProjects) }
 
     return PProject("Kotlin", project.projectDir, modules, libraries)
 }
@@ -108,12 +138,7 @@ private val TEST_CONFIGURATION_MAPPING = mapOf(
     listOf("jpsTest") to Scope.TEST
 )
 
-private val SOURCE_SET_MAPPING = mapOf(
-    "main" to Kind.PRODUCTION,
-    "test" to Kind.TEST
-)
-
-private fun ParserContext.parseModules(project: Project): List<PModule> {
+private fun ParserContext.parseModules(project: Project, excludedProjects: List<Project>): List<PModule> {
     val (productionContentRoots, testContentRoots) = parseContentRoots(project).partition { !it.forTests }
 
     val modules = mutableListOf<PModule>()
@@ -121,7 +146,10 @@ private fun ParserContext.parseModules(project: Project): List<PModule> {
     fun getJavaExcludedDirs() = project.plugins.findPlugin(IdeaPlugin::class.java)
         ?.model?.module?.excludeDirs?.toList() ?: emptyList()
 
-    val allExcludedDirs = getJavaExcludedDirs() + project.buildDir
+    fun getPillExcludedDirs() = project.extensions.getByType(PillExtension::class.java).excludedDirs
+
+    val allExcludedDirs = getPillExcludedDirs() + getJavaExcludedDirs() + project.buildDir +
+            (if (project == project.rootProject) excludedProjects.map { it.buildDir } else emptyList())
 
     var productionSourcesModule: PModule? = null
 
@@ -162,8 +190,8 @@ private fun ParserContext.parseModules(project: Project): List<PModule> {
         }
     }
 
-    val mainModuleFileRelativePath = when {
-        project == project.rootProject -> File(project.rootProject.projectDir, project.name + ".iml")
+    val mainModuleFileRelativePath = when (project) {
+        project.rootProject -> File(project.rootProject.projectDir, project.name + ".iml")
         else -> getModuleFile()
     }
 
@@ -199,53 +227,95 @@ private fun parseSourceRoots(project: Project): List<PSourceRoot> {
         return emptyList()
     }
 
+    val kotlinTasksBySourceSet = project.tasks
+            .filter { it.name.startsWith("compile") && it.name.endsWith("Kotlin") }
+            .associateBy { it.invokeInternal("getSourceSetName") }
+
     val sourceRoots = mutableListOf<PSourceRoot>()
 
-    project.configure<JavaPluginConvention> {
-        for ((sourceSetName, kind) in SOURCE_SET_MAPPING) {
-            val sourceSet = sourceSets.findByName(sourceSetName) ?: continue
+    for (sourceSet in project.sourceSets) {
+        val kotlinCompileTask = kotlinTasksBySourceSet[sourceSet.name]
+        val kind = if (sourceSet.name == SourceSet.TEST_SOURCE_SET_NAME) Kind.TEST else Kind.PRODUCTION
 
-            fun Any.getKotlin(): SourceDirectorySet {
-                val kotlinMethod = javaClass.getMethod("getKotlin")
-                val oldIsAccessible = kotlinMethod.isAccessible
-                try {
-                    kotlinMethod.isAccessible = true
-                    return kotlinMethod(this) as SourceDirectorySet
-                } finally {
-                    kotlinMethod.isAccessible = oldIsAccessible
-                }
+        fun Any.getKotlin(): SourceDirectorySet {
+            val kotlinMethod = javaClass.getMethod("getKotlin")
+            val oldIsAccessible = kotlinMethod.isAccessible
+            try {
+                kotlinMethod.isAccessible = true
+                return kotlinMethod(this) as SourceDirectorySet
+            } finally {
+                kotlinMethod.isAccessible = oldIsAccessible
+            }
+        }
+
+        val kotlinSourceDirectories = (sourceSet as HasConvention).convention
+            .plugins["kotlin"]?.getKotlin()?.srcDirs
+                ?: emptySet()
+
+        val directories = (sourceSet.java.sourceDirectories.files + kotlinSourceDirectories).toList()
+            .filter { it.exists() }
+            .takeIf { it.isNotEmpty() }
+                ?: continue
+
+        val kotlinOptions = kotlinCompileTask?.let { getKotlinOptions(it) }
+
+        for (resourceRoot in sourceSet.resources.sourceDirectories.files) {
+            if (!resourceRoot.exists() || resourceRoot in directories) {
+                continue
             }
 
-            val kotlinSourceDirectories = (sourceSet as HasConvention).convention
-                .plugins["kotlin"]?.getKotlin()?.srcDirs
-                    ?: emptySet()
-
-            val directories = (sourceSet.java.sourceDirectories.files + kotlinSourceDirectories).toList()
-                .filter { it.exists() }
-                .takeIf { it.isNotEmpty() }
-                    ?: continue
-
-            for (resourceRoot in sourceSet.resources.sourceDirectories.files) {
-                if (!resourceRoot.exists() || resourceRoot in directories) {
-                    continue
-                }
-
-                val resourceRootKind = when (kind) {
-                    Kind.PRODUCTION -> Kind.RESOURCES
-                    Kind.TEST -> Kind.TEST_RESOURCES
-                    else -> error("Invalid source root kind $kind")
-                }
-
-                sourceRoots += PSourceRoot(resourceRoot, resourceRootKind)
+            val resourceRootKind = when (kind) {
+                Kind.PRODUCTION -> Kind.RESOURCES
+                Kind.TEST -> Kind.TEST_RESOURCES
+                else -> error("Invalid source root kind $kind")
             }
 
-            for (directory in directories) {
-                sourceRoots += PSourceRoot(directory, kind)
-            }
+            sourceRoots += PSourceRoot(resourceRoot, resourceRootKind, kotlinOptions)
+        }
+
+        for (directory in directories) {
+            sourceRoots += PSourceRoot(directory, kind, kotlinOptions)
         }
     }
 
     return sourceRoots
+}
+
+private fun getKotlinOptions(kotlinCompileTask: Any): PSourceRootKotlinOptions? {
+    val compileArguments = kotlinCompileTask.invokeInternal("getSerializedCompilerArguments") as List<String>
+    fun parseBoolean(name: String) = compileArguments.contains("-$name")
+    fun parseString(name: String) = compileArguments.dropWhile { it != "-$name" }.drop(1).firstOrNull()
+
+    val addCompilerBuiltins = "Xadd-compiler-builtins"
+    val loadBuiltinsFromDependencies = "Xload-builtins-from-dependencies"
+
+    val extraArguments = compileArguments.filter {
+        it.startsWith("-X") && it != "-$addCompilerBuiltins" && it != "-$loadBuiltinsFromDependencies"
+    }
+
+    return PSourceRootKotlinOptions(
+            parseBoolean("no-stdlib"),
+            parseBoolean("no-reflect"),
+            parseString("module-name"),
+            parseString("api-version"),
+            parseString("language-version"),
+            parseString("jvm-target"),
+            parseBoolean(addCompilerBuiltins),
+            parseBoolean(loadBuiltinsFromDependencies),
+            extraArguments
+    )
+}
+
+private fun Any.invokeInternal(name: String, instance: Any = this): Any? {
+    val method = javaClass.methods.single { it.name.startsWith(name) && it.parameterTypes.isEmpty() }
+
+    val oldIsAccessible = method.isAccessible
+    try {
+        method.isAccessible = true
+        return method.invoke(instance)
+    } finally {
+        method.isAccessible = oldIsAccessible
+    }
 }
 
 private fun ParserContext.parseDependencies(project: Project, forTests: Boolean): List<POrderRoot> {
@@ -255,20 +325,34 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
         val mainRoots = mutableListOf<POrderRoot>()
         val deferredRoots = mutableListOf<POrderRoot>()
 
-        fun collectConfigurations(): List<Pair<ResolvedConfiguration, Scope>> {
-            val configurations = mutableListOf<Pair<ResolvedConfiguration, Scope>>()
+        fun collectConfigurations(): List<CollectedConfiguration> {
+            val configurations = mutableListOf<CollectedConfiguration>()
 
             for ((configurationNames, scope) in configurationMapping) {
                 for (configurationName in configurationNames) {
                     val configuration = findByName(configurationName)?.also { it.resolve() } ?: continue
-                    configurations += Pair(configuration.resolvedConfiguration, scope)
+
+                    val extraDependencies = resolveExtraDependencies(configuration)
+                    configurations += CollectedConfiguration(configuration.resolvedConfiguration, scope, extraDependencies)
                 }
             }
 
             return configurations
         }
 
-        nextDependency@ for ((configuration, scope, dependency) in collectConfigurations().collectDependencies()) {
+        nextDependency@ for (dependencyInfo in collectConfigurations().collectDependencies()) {
+            val scope = dependencyInfo.scope
+
+            if (dependencyInfo is DependencyInfo.CustomDependencyInfo) {
+                val files = dependencyInfo.files
+                val library = PLibrary(files.firstOrNull()?.nameWithoutExtension ?: "unnamed", classes = files)
+
+                mainRoots += POrderRoot(PDependency.ModuleLibrary(library), scope)
+                continue
+            }
+
+            val dependency = (dependencyInfo as DependencyInfo.ResolvedDependencyInfo).dependency
+
             for (mapper in dependencyMappers) {
                 if (dependency.moduleGroup == mapper.group
                     && dependency.moduleName == mapper.module
@@ -277,12 +361,7 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
                     val mappedDependency = mapper.mapping(dependency)
 
                     if (mappedDependency != null) {
-                        val orderRoot = POrderRoot(mappedDependency.main, scope)
-                        if (mappedDependency.main is PDependency.Module) {
-                            mainRoots += orderRoot
-                        } else {
-                            mainRoots += orderRoot
-                        }
+                        mainRoots += POrderRoot(mappedDependency.main, scope)
 
                         for (deferredDep in mappedDependency.deferred) {
                             deferredRoots += POrderRoot(deferredDep, scope)
@@ -293,10 +372,10 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
                 }
             }
 
-            if (dependency.configuration == "runtimeElements" && scope != Scope.TEST) {
-                mainRoots += POrderRoot(PDependency.Module(dependency.moduleName + ".src"), scope)
+            mainRoots += if (dependency.configuration == "runtimeElements" && scope != Scope.TEST) {
+                POrderRoot(PDependency.Module(dependency.moduleName + ".src"), scope)
             } else if (dependency.configuration == "tests-jar" || dependency.configuration == "jpsTest") {
-                mainRoots += POrderRoot(
+                POrderRoot(
                     PDependency.Module(dependency.moduleName + ".test"),
                     scope,
                     isProductionOnTestDependency = true
@@ -304,7 +383,7 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
             } else {
                 val classes = dependency.moduleArtifacts.map { it.file }
                 val library = PLibrary(dependency.moduleName, classes)
-                mainRoots += POrderRoot(PDependency.ModuleLibrary(library), scope)
+                POrderRoot(PDependency.ModuleLibrary(library), scope)
             }
         }
 
@@ -312,9 +391,23 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
     }
 }
 
+private fun resolveExtraDependencies(configuration: Configuration): List<File> {
+    return configuration.dependencies
+        .filterIsInstance<SelfResolvingDependency>()
+        .map { it.resolve() }
+        .filter { isGradleApiDependency(it) }
+        .flatMap { it }
+}
+
+private fun isGradleApiDependency(files: Iterable<File>): Boolean {
+    return listOf("gradle-api", "groovy-all").all { dep ->
+        files.any { it.extension == "jar" && it.name.startsWith("$dep-") }
+    }
+}
+
 private fun removeDuplicates(roots: List<POrderRoot>): List<POrderRoot> {
     val dependenciesByScope = roots.groupBy { it.scope }.mapValues { it.value.mapTo(mutableSetOf()) { it.dependency } }
-    fun depenciesFor(scope: Scope) = dependenciesByScope[scope] ?: emptySet<PDependency>()
+    fun dependenciesFor(scope: Scope) = dependenciesByScope[scope] ?: emptySet<PDependency>()
 
     val result = mutableSetOf<POrderRoot>()
     for (root in roots.distinct()) {
@@ -325,16 +418,16 @@ private fun removeDuplicates(roots: List<POrderRoot>): List<POrderRoot> {
             continue
         }
 
-        if ((scope == Scope.PROVIDED || scope == Scope.RUNTIME) && dependency in depenciesFor(Scope.COMPILE)) {
+        if ((scope == Scope.PROVIDED || scope == Scope.RUNTIME) && dependency in dependenciesFor(Scope.COMPILE)) {
             continue
         }
 
-        if (scope == Scope.PROVIDED && dependency in depenciesFor(Scope.RUNTIME)) {
+        if (scope == Scope.PROVIDED && dependency in dependenciesFor(Scope.RUNTIME)) {
             result += POrderRoot(dependency, Scope.COMPILE)
             continue
         }
 
-        if (scope == Scope.RUNTIME && dependency in depenciesFor(Scope.PROVIDED)) {
+        if (scope == Scope.RUNTIME && dependency in dependenciesFor(Scope.PROVIDED)) {
             result += POrderRoot(dependency, Scope.COMPILE)
             continue
         }
@@ -345,23 +438,37 @@ private fun removeDuplicates(roots: List<POrderRoot>): List<POrderRoot> {
     return result.toList()
 }
 
-data class DependencyInfo(val configuration: ResolvedConfiguration, val scope: Scope, val dependency: ResolvedDependency)
+data class CollectedConfiguration(
+    val configuration: ResolvedConfiguration,
+    val scope: Scope,
+    val extraDependencies: List<File> = emptyList())
 
-fun List<Pair<ResolvedConfiguration, Scope>>.collectDependencies(): List<DependencyInfo> {
+sealed class DependencyInfo(val scope: Scope) {
+    class ResolvedDependencyInfo(scope: Scope, val dependency: ResolvedDependency) : DependencyInfo(scope)
+    class CustomDependencyInfo(scope: Scope, val files: List<File>) : DependencyInfo(scope)
+}
+
+fun List<CollectedConfiguration>.collectDependencies(): List<DependencyInfo> {
     val dependencies = mutableListOf<DependencyInfo>()
 
     val unprocessed = LinkedList<DependencyInfo>()
     val existing = mutableSetOf<Pair<Scope, ResolvedDependency>>()
 
-    for ((configuration, scope) in this) {
+    for ((configuration, scope, extraDependencies) in this) {
         for (dependency in configuration.firstLevelModuleDependencies) {
-            unprocessed += DependencyInfo(configuration, scope, dependency)
+            unprocessed += DependencyInfo.ResolvedDependencyInfo(scope, dependency)
+        }
+
+        if (!extraDependencies.isEmpty()) {
+            unprocessed += DependencyInfo.CustomDependencyInfo(scope, extraDependencies)
         }
     }
 
     while (unprocessed.isNotEmpty()) {
         val info = unprocessed.removeAt(0)
         dependencies += info
+
+        info as? DependencyInfo.ResolvedDependencyInfo ?: continue
 
         val data = Pair(info.scope, info.dependency)
         existing += data
@@ -371,9 +478,16 @@ fun List<Pair<ResolvedConfiguration, Scope>>.collectDependencies(): List<Depende
                 continue
             }
 
-            unprocessed += DependencyInfo(info.configuration, info.scope, child)
+            unprocessed += DependencyInfo.ResolvedDependencyInfo(info.scope, child)
         }
     }
 
     return dependencies
 }
+
+private val Project.sourceSets: SourceSetContainer
+    get() {
+        lateinit var result: SourceSetContainer
+        project.configure<JavaPluginConvention> { result = sourceSets }
+        return result
+    }

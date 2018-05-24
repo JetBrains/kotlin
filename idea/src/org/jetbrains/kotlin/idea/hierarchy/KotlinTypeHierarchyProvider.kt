@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
 import org.jetbrains.kotlin.idea.project.targetPlatform
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
@@ -97,7 +98,11 @@ class KotlinTypeHierarchyProvider : JavaTypeHierarchyProvider() {
         if (editor != null) {
             val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return null
             if (!ProjectRootsUtil.isInProjectOrLibSource(file)) return null
-            return getTargetByReference(project, editor, file.module) ?: getTargetByContainingElement(editor, file)
+            val psiElement = getTargetByReference(project, editor, file.module) ?: getTargetByContainingElement(editor, file)
+            if (psiElement is PsiNamedElement && psiElement.name == null) {
+                return null
+            }
+            return psiElement
         }
 
         val element = LangDataKeys.PSI_ELEMENT.getData(dataContext)

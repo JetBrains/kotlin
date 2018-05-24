@@ -20,6 +20,7 @@ dependencies {
     compile(project(":js:js.translator"))
     compile(project(":js:js.serializer"))
     compile(project(":js:js.dce"))
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-serialization-runtime")) { isTransitive = false }
     compile(commonDep("org.fusesource.jansi", "jansi"))
     compile(commonDep("org.jline", "jline"))
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
@@ -36,13 +37,10 @@ dependencies {
 sourceSets {
     "main" {
         projectDefault()
-        java.srcDirs("../../plugins/annotation-collector/src",
-                     "../builtins-serializer/src",
+        java.srcDirs("../builtins-serializer/src",
                      "../javac-wrapper/src")
     }
-    "test" {
-        java.srcDirs("../../plugins/annotation-collector/test")
-    }
+    "test" { }
 }
 
 testsJar {}

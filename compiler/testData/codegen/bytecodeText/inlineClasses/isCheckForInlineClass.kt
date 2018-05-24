@@ -17,7 +17,7 @@ fun test(a: Any, b: Any?) {
 }
 
 // 2 INSTANCEOF UInt
-// 1 CHECKCAST UInt
+// 2 CHECKCAST UInt
 
 // 1 INVOKEVIRTUAL UInt.unbox
 // 2 INVOKESTATIC UInt\$Erased.member

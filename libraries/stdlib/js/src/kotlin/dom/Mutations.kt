@@ -17,7 +17,7 @@ public fun Node.clear() {
 /**
  * Creates text node and append it to the element.
  *
- * @returns this element
+ * @return this element
  */
 fun Element.appendText(text: String): Element {
     appendChild(ownerDocument!!.createTextNode(text))

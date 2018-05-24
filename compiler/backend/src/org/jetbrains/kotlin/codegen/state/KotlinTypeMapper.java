@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.load.java.descriptors.UtilKt;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
 import org.jetbrains.kotlin.load.kotlin.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider.IncrementalMultifileClassPackageFragment;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion;
 import org.jetbrains.kotlin.name.*;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -149,6 +149,16 @@ public class KotlinTypeMapper {
             return false;
         }
     };
+
+    public KotlinTypeMapper(
+            @NotNull BindingContext bindingContext,
+            @NotNull ClassBuilderMode classBuilderMode,
+            @NotNull IncompatibleClassTracker incompatibleClassTracker,
+            @NotNull String moduleName,
+            boolean isJvm8Target
+    ) {
+        this(bindingContext, classBuilderMode, incompatibleClassTracker, moduleName, isJvm8Target, false);
+    }
 
     public KotlinTypeMapper(
             @NotNull BindingContext bindingContext,
@@ -309,10 +319,21 @@ public class KotlinTypeMapper {
         ClassId classId = DescriptorUtilsKt.getClassId(classDescriptor);
         assert classId != null : "Deserialized class should have a ClassId: " + classDescriptor;
 
+        String nestedClass;
         if (isInterface(classDescriptor)) {
+            nestedClass = JvmAbi.DEFAULT_IMPLS_SUFFIX;
+        }
+        else if (classDescriptor.isInline()) {
+            nestedClass = JvmAbi.ERASED_INLINE_CLASS_SUFFIX;
+        }
+        else {
+            nestedClass = null;
+        }
+
+        if (nestedClass != null) {
             FqName relativeClassName = classId.getRelativeClassName();
             //TODO test nested trait fun inlining
-            String defaultImplsClassName = relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX;
+            String defaultImplsClassName = relativeClassName.shortName().asString() + nestedClass;
             return new ClassId(classId.getPackageFqName(), Name.identifier(defaultImplsClassName));
         }
 

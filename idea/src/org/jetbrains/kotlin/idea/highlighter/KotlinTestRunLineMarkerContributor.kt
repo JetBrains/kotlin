@@ -95,7 +95,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
     }
 
     private fun DeclarationDescriptor.isIgnored(): Boolean =
-            annotations.any { it.fqName == IGNORE_FQ_NAME } || ((containingDeclaration as? ClassDescriptor)?.isIgnored() ?: false)
+        annotations.any { it.fqName == IGNORE_FQ_NAME } || ((containingDeclaration as? ClassDescriptor)?.isIgnored() ?: false)
 
     private fun DeclarationDescriptor.isTest(): Boolean {
         if (isIgnored()) return false

@@ -1,3 +1,4 @@
+@file:Suppress("PackageDirectoryMismatch")
 package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Plugin
@@ -10,16 +11,15 @@ import shadow.org.jdom2.output.Format
 import shadow.org.jdom2.output.XMLOutputter
 import java.io.File
 
-class JpsCompatibleBasePlugin : Plugin<Project> {
+class PillConfigurablePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.configurations.create(EmbeddedComponents.CONFIGURATION_NAME)
+        project.extensions.create("pill", PillExtension::class.java)
     }
 }
 
 class JpsCompatiblePlugin : Plugin<Project> {
     companion object {
-        private const val JPS_LIBRARY_PATH = "jpsLibraryPath"
-
         private fun mapper(module: String, vararg configurations: String): DependencyMapper {
             return DependencyMapper("org.jetbrains.kotlin", module, *configurations) { MappedDependency(PDependency.Library(module)) }
         }
@@ -47,21 +47,24 @@ class JpsCompatiblePlugin : Plugin<Project> {
         }
 
         fun getProjectLibraries(rootProject: Project): List<PLibrary> {
+            val distLibDir = File(rootProject.extra["distLibDir"].toString())
             fun distJar(name: String) = File(rootProject.projectDir, "dist/kotlinc/lib/$name.jar")
-            fun projectFile(path: String) = File(rootProject.projectDir, path)
 
             val libraries = rootProject.allprojects
-                .filter { it.extra.has(JPS_LIBRARY_PATH) }
-                .map { library ->
-                    val libraryPath = library.extra.get(JPS_LIBRARY_PATH).toString()
+                .mapNotNull { library ->
+                    val libraryExtension = library.extensions.findByType(PillExtension::class.java)
+                            ?.takeIf { it.importAsLibrary }
+                            ?: return@mapNotNull null
+
+                    val libraryPath = libraryExtension.libraryPath ?: distLibDir
                     val archivesBaseName = library.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName ?: library.name
 
                     fun List<File>.filterExisting() = filter { it.exists() }
 
                     PLibrary(
                         library.name,
-                        classes = listOf(File(libraryPath, archivesBaseName + ".jar")).filterExisting(),
-                        sources = listOf(File(libraryPath, archivesBaseName + "-sources.jar")).filterExisting()
+                        classes = listOf(File(libraryPath, "$archivesBaseName.jar")).filterExisting(),
+                        sources = listOf(File(libraryPath, "$archivesBaseName-sources.jar")).filterExisting()
                     )
                 }
 
@@ -70,15 +73,18 @@ class JpsCompatiblePlugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
-        project.plugins.apply(JpsCompatibleBasePlugin::class.java)
+        project.plugins.apply(PillConfigurablePlugin::class.java)
         // 'jpsTest' does not require the 'tests-jar' artifact
         project.configurations.create("jpsTest")
 
         if (project == project.rootProject) {
             project.tasks.create("pill") {
                 doLast { pill(project) }
-                TaskUtils.useAndroidSdk(this)
-                TaskUtils.useAndroidJar(this)
+
+                if (System.getProperty("pill.android.tests", "false") == "true") {
+                    TaskUtils.useAndroidSdk(this)
+                    TaskUtils.useAndroidJar(this)
+                }
             }
 
             project.tasks.create("unpill") {
@@ -103,8 +109,22 @@ class JpsCompatiblePlugin : Plugin<Project> {
     private fun pill(rootProject: Project) {
         initEnvironment(rootProject)
 
+        val variantOptionValue = System.getProperty("pill.variant", "base").toUpperCase()
+        val variant = PillExtension.Variant.values().firstOrNull { it.name == variantOptionValue }
+                ?: run {
+                    rootProject.logger.error("Invalid variant name: $variantOptionValue")
+                    return
+                }
+
+        rootProject.logger.lifecycle("Pill: Setting up project for the '${variant.name.toLowerCase()}' variant...")
+
+        if (variant == PillExtension.Variant.NONE || variant == PillExtension.Variant.DEFAULT) {
+            rootProject.logger.error("'none' and 'default' should not be passed as a Pill variant property value")
+            return
+        }
+
         val projectLibraries = getProjectLibraries(rootProject)
-        val parserContext = ParserContext(getDependencyMappers(projectLibraries))
+        val parserContext = ParserContext(getDependencyMappers(projectLibraries), variant)
 
         val jpsProject = parse(rootProject, projectLibraries, parserContext)
             .mapLibraries(this::attachPlatformSources, this::attachAsmSources)
@@ -202,8 +222,9 @@ class JpsCompatiblePlugin : Plugin<Project> {
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }
 
-                fun addOrReplaceOptionValue(name: String, value: Any) {
-                    options = options.filter { !it.startsWith("-D$name=") } + listOf("-D$name=$value")
+                fun addOrReplaceOptionValue(name: String, value: Any?) {
+                    val optionsWithoutNewValue = options.filter { !it.startsWith("-D$name=") }
+                    options = if (value == null) optionsWithoutNewValue else (optionsWithoutNewValue + listOf("-D$name=$value"))
                 }
 
                 val robolectricClasspath = project.rootProject
@@ -211,16 +232,21 @@ class JpsCompatiblePlugin : Plugin<Project> {
                     .configurations.getByName("robolectricClasspath")
                     .files.joinToString(File.pathSeparator)
 
-                val androidJarPath = project.configurations.getByName("androidJar").singleFile
-                val androidSdkPath = project.configurations.getByName("androidSdk").singleFile
-
                 addOrReplaceOptionValue("idea.home.path", platformDirProjectRelative)
                 addOrReplaceOptionValue("ideaSdk.androidPlugin.path", platformDirProjectRelative + "/plugins/android/lib")
                 addOrReplaceOptionValue("robolectric.classpath", robolectricClasspath)
                 addOrReplaceOptionValue("use.pill", "true")
 
-                addOrReplaceOptionValue("android.sdk", "\$PROJECT_DIR\$/" + androidSdkPath.toRelativeString(projectDir))
-                addOrReplaceOptionValue("android.jar", "\$PROJECT_DIR\$/" + androidJarPath.toRelativeString(projectDir))
+                val isAndroidStudioBunch = project.findProperty("versions.androidStudioRelease") != null
+                addOrReplaceOptionValue("idea.platform.prefix", if (isAndroidStudioBunch) "AndroidStudio" else null)
+
+                val androidJarPath = project.configurations.findByName("androidJar")?.singleFile
+                val androidSdkPath = project.configurations.findByName("androidSdk")?.singleFile
+
+                if (androidJarPath != null && androidSdkPath != null) {
+                    addOrReplaceOptionValue("android.sdk", "\$PROJECT_DIR\$/" + androidSdkPath.toRelativeString(projectDir))
+                    addOrReplaceOptionValue("android.jar", "\$PROJECT_DIR\$/" + androidJarPath.toRelativeString(projectDir))
+                }
 
                 vmParams.setAttribute("value", options.joinToString(" "))
             }

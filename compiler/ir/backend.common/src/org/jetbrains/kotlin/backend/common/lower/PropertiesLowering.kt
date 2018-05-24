@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -25,25 +26,25 @@ class PropertiesLowering : IrElementTransformerVoid(), FileLoweringPass {
 
     override fun visitFile(declaration: IrFile): IrFile {
         declaration.transformChildrenVoid(this)
-        declaration.declarations.transformFlat { lowerProperty(it) }
+        declaration.declarations.transformFlat { lowerProperty(it, ClassKind.CLASS) }
         return declaration
     }
 
     override fun visitClass(declaration: IrClass): IrStatement {
         declaration.transformChildrenVoid(this)
-        declaration.declarations.transformFlat { lowerProperty(it) }
+        declaration.declarations.transformFlat { lowerProperty(it, declaration.kind) }
         return declaration
     }
 
-    private fun lowerProperty(declaration: IrDeclaration): List<IrDeclaration>? =
-            if (declaration is IrProperty)
-                ArrayList<IrDeclaration>(3).apply {
-                    if (!DescriptorUtils.isAnnotationClass(declaration.descriptor.containingDeclaration)) {
-                        addIfNotNull(declaration.backingField)
-                    }
-                    addIfNotNull(declaration.getter)
-                    addIfNotNull(declaration.setter)
+    private fun lowerProperty(declaration: IrDeclaration, kind: ClassKind): List<IrDeclaration>? =
+        if (declaration is IrProperty)
+            ArrayList<IrDeclaration>(3).apply {
+                if (kind != ClassKind.ANNOTATION_CLASS) {
+                    addIfNotNull(declaration.backingField)
                 }
-            else
-                null
+                addIfNotNull(declaration.getter)
+                addIfNotNull(declaration.setter)
+            }
+        else
+            null
 }

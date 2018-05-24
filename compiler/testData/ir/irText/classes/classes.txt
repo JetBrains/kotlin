@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/classes.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestClass flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:TestClass flags:
+    CONSTRUCTOR visibility:public <> () returnType:TestClass flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestClass'
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/classes.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestObject flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:TestObject flags:
+    CONSTRUCTOR visibility:private <> () returnType:TestObject flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestObject'
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/classes.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnnotationClass flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:TestAnnotationClass flags:
+    CONSTRUCTOR visibility:public <> () returnType:TestAnnotationClass flags:primary
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/classes.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnumClass flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:TestEnumClass flags:
+    CONSTRUCTOR visibility:private <> () returnType:TestEnumClass flags:primary
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: TestEnumClass

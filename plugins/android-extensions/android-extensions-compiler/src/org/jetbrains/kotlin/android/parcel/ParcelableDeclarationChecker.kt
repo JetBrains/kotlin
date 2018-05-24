@@ -170,7 +170,7 @@ class ParcelableDeclarationChecker : DeclarationChecker {
 
         val typeMapper = KotlinTypeMapper(
             bindingContext,
-            ClassBuilderMode.full(false),
+            ClassBuilderMode.FULL,
             IncompatibleClassTracker.DoNothing,
             descriptor.module.name.asString(),
             /* isJvm8Target */ false,

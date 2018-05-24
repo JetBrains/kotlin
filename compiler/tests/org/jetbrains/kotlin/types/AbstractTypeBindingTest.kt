@@ -88,7 +88,7 @@ abstract class AbstractTypeBindingTest : KotlinTestWithEnvironment() {
             if (argument.projection.isStarProjection)
                 printlnWithNoIndent("*")
             else printlnWithNoIndent("${projection}${argument.projection.type.render()}")
-            print(argument.holder)
+            print(argument.binding)
             return this
         }
 

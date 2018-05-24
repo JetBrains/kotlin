@@ -33,6 +33,8 @@ interface AnnotationBasedPluginModel : Serializable {
     val annotations: List<String>
     val presets: List<String>
 
+    fun copy(): AnnotationBasedPluginModel
+
     val isEnabled get() = annotations.isNotEmpty() || presets.isNotEmpty()
 }
 
@@ -56,7 +58,7 @@ abstract class AnnotationBasedPluginProjectResolverExtension<T : AnnotationBased
         val model = resolverCtx.getExtraProject(gradleModule, modelClass)
 
         if (model != null) {
-            ideModule.putCopyableUserData(userDataKey, model)
+            ideModule.putCopyableUserData(userDataKey, model.copy() as T)
         }
 
         super.populateModuleExtraModels(gradleModule, ideModule)

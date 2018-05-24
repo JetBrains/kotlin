@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.text.MessageFormat
@@ -345,9 +345,11 @@ fun EditorNotificationPanel.createComponentActionLabel(labelText: String, callba
 }
 
 private operator fun BinaryVersion.compareTo(other: BinaryVersion): Int {
-    for (i in 0..Math.max(numbers.size, other.numbers.size) - 1) {
-        val thisPart = numbers.getOrNull(i) ?: -1
-        val otherPart = other.numbers.getOrNull(i) ?: -1
+    val first = this.toArray()
+    val second = other.toArray()
+    for (i in 0 until maxOf(first.size, second.size)) {
+        val thisPart = first.getOrNull(i) ?: -1
+        val otherPart = second.getOrNull(i) ?: -1
 
         if (thisPart != otherPart) {
             return thisPart - otherPart

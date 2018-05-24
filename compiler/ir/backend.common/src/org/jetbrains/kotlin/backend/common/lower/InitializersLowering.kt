@@ -48,7 +48,8 @@ class InitializersLowering(
 
         classInitializersBuilder.transformInstanceInitializerCallsInConstructors(irClass)
 
-        if (clinitNeeded) classInitializersBuilder.createStaticInitializationMethod(irClass)
+        if (clinitNeeded && classInitializersBuilder.staticInitializerStatements.isNotEmpty())
+            classInitializersBuilder.createStaticInitializationMethod(irClass)
     }
 
     private inner class ClassInitializersBuilder(val irClass: IrClass) : IrElementVisitorVoid {
@@ -93,7 +94,7 @@ class InitializersLowering(
             irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression {
                     return IrBlockImpl(irClass.startOffset, irClass.endOffset, context.builtIns.unitType, null,
-                                       instanceInitializerStatements.map { it.copy() })
+                                       instanceInitializerStatements.map { it.copy(irClass) })
                 }
             })
         }
@@ -114,7 +115,7 @@ class InitializersLowering(
                     irClass.startOffset, irClass.endOffset, declarationOrigin,
                     staticInitializerDescriptor,
                     IrBlockBodyImpl(irClass.startOffset, irClass.endOffset,
-                                    staticInitializerStatements.map { it.copy() })
+                                    staticInitializerStatements.map { it.copy(irClass) })
                 )
             )
         }
@@ -123,7 +124,7 @@ class InitializersLowering(
     companion object {
         val clinitName = Name.special("<clinit>")
 
-        fun IrStatement.copy() = deepCopyWithSymbols()
-        fun IrExpression.copy() = deepCopyWithSymbols()
+        fun IrStatement.copy(containingDeclaration: IrClass) = deepCopyWithSymbols(containingDeclaration)
+        fun IrExpression.copy(containingDeclaration: IrClass) = deepCopyWithSymbols(containingDeclaration)
     }
 }

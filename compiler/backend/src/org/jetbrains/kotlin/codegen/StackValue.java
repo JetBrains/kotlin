@@ -454,28 +454,42 @@ public abstract class StackValue {
 
         if (fromKotlinType.equals(toKotlinType) && fromType.equals(toType)) return true;
 
+        /*
+        * Preconditions: one of the types is definitely inline class type and types are not equal
+        * Consider the following situations:
+        *  - both types are inline class types: we do box/unbox only if they are not both boxed or unboxed
+        *  - from type is inline class type: we should do box, because target type can be only "subtype" of inline class type (like Any)
+        *  - target type is inline class type: we should do unbox, because from type can come from some 'is' check for object type
+        *
+        *  "return true" means that types were coerced successfully and usual coercion shouldn't be evaluated
+        * */
+
         if (isFromTypeInlineClass && isToTypeInlineClass) {
             boolean isFromTypeUnboxed = isUnboxedInlineClass(fromKotlinType, fromType);
             boolean isToTypeUnboxed = isUnboxedInlineClass(toKotlinType, toType);
             if (isFromTypeUnboxed && !isToTypeUnboxed) {
                 boxInlineClass(fromKotlinType, v);
+                return true;
             }
             else if (!isFromTypeUnboxed && isToTypeUnboxed) {
                 unboxInlineClass(fromType, toKotlinType, v);
+                return true;
             }
         }
         else if (isFromTypeInlineClass) {
             if (isUnboxedInlineClass(fromKotlinType, fromType)) {
                 boxInlineClass(fromKotlinType, v);
+                return true;
             }
         }
         else { // isToTypeInlineClass is `true`
             if (isUnboxedInlineClass(toKotlinType, toType)) {
                 unboxInlineClass(fromType, toKotlinType, v);
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     private static boolean isUnboxedInlineClass(@NotNull KotlinType kotlinType, @NotNull Type actualType) {

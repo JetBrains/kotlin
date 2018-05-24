@@ -247,7 +247,7 @@ open class ConvertLambdaToReferenceIntention(text: String) :
                                 val originalReceiverType = receiverDescriptor.type
                                 val receiverType = originalReceiverType.approximateFlexibleTypes(preferNotNull = true)
                                 if (shortTypes) {
-                                    "${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)}::$selectorReferenceName"
+                                    "${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(receiverType)}::$selectorReferenceName"
                                 }
                                 else {
                                     "${IdeDescriptorRenderers.SOURCE_CODE.renderType(receiverType)}::$selectorReferenceName"

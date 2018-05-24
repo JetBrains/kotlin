@@ -18,16 +18,19 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
-import org.jetbrains.kotlin.backend.common.lower.InitializersLowering
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
@@ -60,7 +63,7 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
         FunctionCodegen.generateMethodAnnotations(descriptor, signature.asmMethod, methodVisitor, classCodegen, state.typeMapper)
         FunctionCodegen.generateParameterAnnotations(descriptor, methodVisitor, signature, classCodegen, state)
 
-        if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || descriptor.isExternal) {
+        if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
             methodVisitor.visitEnd()
             return
@@ -71,20 +74,32 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
     }
 
     private fun calculateMethodFlags(isStatic: Boolean): Int {
-        var flags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, state).or(if (isStatic) Opcodes.ACC_STATIC else 0).xor(
-            if (DescriptorUtils.isAnnotationClass(descriptor.containingDeclaration)) Opcodes.ACC_FINAL else 0/*TODO*/
-        ).or(if (descriptor is JvmDescriptorWithExtraFlags) descriptor.extraFlags else 0)
-
         if (irFunction.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER) {
-            flags = flags.xor(AsmUtil.getVisibilityAccessFlag(descriptor)).or(Opcodes.ACC_PUBLIC)
+            return Opcodes.ACC_PUBLIC or Opcodes.ACC_SYNTHETIC.let {
+                if (irFunction is IrConstructor) it else it or Opcodes.ACC_BRIDGE or Opcodes.ACC_STATIC
+            }
         }
 
-        val interfaceClInit = JvmCodegenUtil.isJvmInterface(classCodegen.descriptor) && InitializersLowering.clinitName == descriptor.name
-        if (interfaceClInit) {
-            //reset abstract flag
-            flags = flags.xor(Opcodes.ACC_ABSTRACT)
+        val visibility = AsmUtil.getVisibilityAccessFlag(irFunction.visibility) ?: error("Unmapped visibility ${irFunction.visibility}")
+        val staticFlag = if (isStatic) Opcodes.ACC_STATIC else 0
+        val varargFlag = if (irFunction.valueParameters.any { it.varargElementType != null }) Opcodes.ACC_VARARGS else 0
+        val deprecation = if (irFunction.hasAnnotation(FQ_NAMES.deprecated)) Opcodes.ACC_DEPRECATED else 0
+        val bridgeFlag = 0 //TODO
+        val modalityFlag = when ((irFunction as? IrSimpleFunction)?.modality) {
+            Modality.FINAL -> if (!classCodegen.irClass.isAnnotationClass) Opcodes.ACC_FINAL else Opcodes.ACC_ABSTRACT
+            Modality.ABSTRACT -> Opcodes.ACC_ABSTRACT
+            else -> if (classCodegen.irClass.isJvmInterface && irFunction.body == null) Opcodes.ACC_ABSTRACT else 0 //TODO transform interface modality on lowering to DefaultImpls
         }
-        return flags
+        val nativeFlag = if (irFunction.isExternal) Opcodes.ACC_NATIVE else 0
+
+        return visibility or
+                modalityFlag or
+                staticFlag or
+                varargFlag or
+                deprecation or
+                nativeFlag or
+                bridgeFlag or
+                (if (descriptor is JvmDescriptorWithExtraFlags) descriptor.extraFlags else 0)
     }
 
     protected open fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
@@ -97,9 +112,8 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
     }
 
     private fun generateAnnotationDefaultValueIfNeeded(methodVisitor: MethodVisitor) {
-        val directMember = JvmCodegenUtil.getDirectMember(descriptor)
-        if (DescriptorUtils.isAnnotationClass(directMember.containingDeclaration)) {
-            val source = directMember.source
+        if (classCodegen.irClass.isAnnotationClass) {
+            val source = JvmCodegenUtil.getDirectMember(descriptor).source
             (source.getPsi() as? KtParameter)?.defaultValue?.apply {
                 val defaultValue = this
                 val constant = org.jetbrains.kotlin.codegen.ExpressionCodegen.getCompileTimeConstant(

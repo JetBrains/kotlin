@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
@@ -92,6 +93,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
     private ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
+    private boolean jvmAssertFieldGenerated;
 
     private DefaultSourceMapper sourceMapper;
 
@@ -111,6 +113,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         this.functionCodegen = new FunctionCodegen(context, v, state, this);
         this.propertyCodegen = new PropertyCodegen(context, v, functionCodegen, this);
         this.parentCodegen = parentCodegen;
+        this.jvmAssertFieldGenerated = false;
     }
 
     protected MemberCodegen(@NotNull MemberCodegen<T> wrapped, T declaration, FieldOwnerContext codegenContext) {
@@ -872,5 +875,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             writeAnnotationData(av, serializer, classProto);
             return Unit.INSTANCE;
         });
+    }
+
+    public void generateAssertField() {
+        if (jvmAssertFieldGenerated) return;
+        AssertCodegenUtilKt.generateAssertionsDisabledFieldInitialization(this);
+        jvmAssertFieldGenerated = true;
     }
 }

@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/when.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:A flags:
+    CONSTRUCTOR visibility:private <> () returnType:A flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/when.kt
               then: CONST String type=kotlin.String value=A
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-                typeOperand: UNBOUND: class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags:
                 GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value=String
             BRANCH

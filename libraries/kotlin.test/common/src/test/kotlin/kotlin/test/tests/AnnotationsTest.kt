@@ -11,23 +11,29 @@ private var value = 5
 
 class AnnotationsTest {
 
-    @BeforeTest fun setup() {
+    @BeforeTest
+    fun setup() {
         value *= 2
     }
 
-    @AfterTest fun teardown() {
+    @AfterTest
+    fun teardown() {
         value /= 2
     }
 
-    @Test fun testValue() {
+    @Test
+    fun testValue() {
         assertEquals(10, value)
     }
 
-    @Test fun testValueAgain() {
+    @Test
+    fun testValueAgain() {
         assertEquals(10, value)
     }
 
-    @Ignore @Test fun testValueWrong() {
+    @Ignore
+    @Test
+    fun testValueWrong() {
         assertEquals(20, value)
     }
 

@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
@@ -34,6 +31,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import org.jetbrains.kotlin.codegen.CompilationException
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -218,7 +216,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun getPerformanceManager(): CommonCompilerPerformanceManager = performanceManager
 
     private fun loadPlugins(paths: KotlinPaths?, arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration): ExitCode {
-        val pluginClasspaths = arguments.pluginClasspaths?.toMutableList() ?: ArrayList()
+        var pluginClasspaths: Iterable<String> = arguments.pluginClasspaths?.asIterable() ?: emptyList()
         val pluginOptions = arguments.pluginOptions?.toMutableList() ?: ArrayList()
 
         if (!arguments.disableDefaultScriptingPlugin) {
@@ -238,7 +236,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     val jars = arrayOf(KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR)
                         .mapNotNull { File(libPath, it).takeIf { it.exists() }?.canonicalPath }
                     if (jars.size == 3) {
-                        pluginClasspaths.addAll(jars)
+                        pluginClasspaths = jars + pluginClasspaths
                     }
                 }
             }
@@ -363,6 +361,20 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 constructorCallNormalizationMode ?: JVMConstructorCallNormalizationMode.DEFAULT
             )
 
+            val assertionsMode =
+                JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)
+            if (assertionsMode == null) {
+                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                    ERROR,
+                    "Unknown assertions mode: ${arguments.assertionsMode}, " +
+                            "supported modes: ${JVMAssertionsMode.values().map { it.description }}"
+                )
+            }
+            configuration.put(
+                JVMConfigurationKeys.ASSERTIONS_MODE,
+                assertionsMode ?: JVMAssertionsMode.DEFAULT
+            )
+
             configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, arguments.inheritMultifileParts)
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, arguments.useTypeTable)
             configuration.put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
@@ -377,6 +389,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
             configuration.put(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES, arguments.addCompilerBuiltIns)
             configuration.put(JVMConfigurationKeys.CREATE_BUILT_INS_FROM_MODULE_DEPENDENCIES, arguments.loadBuiltInsFromDependencies)
+
+            if (arguments.outputImports != null) {
+                configuration.put(JVMConfigurationKeys.OUTPUT_IMPORTS, arguments.outputImports!!)
+                configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ImportsProducerComponentRegistrar())
+            }
 
             arguments.declarationsOutputPath?.let { configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
         }

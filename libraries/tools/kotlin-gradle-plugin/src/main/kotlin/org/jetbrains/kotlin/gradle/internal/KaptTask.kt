@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.incremental.isJavaFile
 import java.io.File
 
 @CacheableTask
@@ -36,14 +37,12 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
     @get:Internal
     internal lateinit var stubsDir: File
 
-    private fun isInsideDestinationDirs(file: File): Boolean {
-        return FileUtil.isAncestor(destinationDir, file, /* strict = */ false)
-                || FileUtil.isAncestor(classesDir, file, /* strict = */ false)
-    }
-
     @get:Classpath @get:InputFiles
     val kaptClasspath: FileCollection
         get() = project.files(*kaptClasspathConfigurations.toTypedArray())
+
+    @get:Classpath @get:InputFiles
+    val compilerClasspath: List<File> get() = kotlinCompileTask.computedCompilerClasspath
 
     @get:Internal
     internal lateinit var kaptClasspathConfigurations: List<Configuration>
@@ -56,6 +55,9 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
 
     @get:OutputDirectory
     lateinit var kotlinSourcesDestinationDir: File
+
+    @get:Nested
+    internal val annotationProcessorOptionProviders: MutableList<Any> = mutableListOf()
 
     override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
@@ -84,14 +86,22 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
     internal val pluginClasspath get() = pluginOptions.classpath
 
     @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
-    val source: FileCollection
+    val source: Collection<File>
         get() {
-            val sourcesFromKotlinTask = kotlinCompileTask.source
-                    .filter { it.extension == "java" && !isInsideDestinationDirs(it) }
-
-            val stubSources = project.fileTree(stubsDir)
-            return sourcesFromKotlinTask + stubSources
+            val result = HashSet<File>()
+            for (root in javaSourceRoots) {
+                root.walk().filterTo(result) { it.isJavaFile() }
+            }
+            return result
         }
+
+    private val javaSourceRoots: Set<File>
+        get() = (kotlinCompileTask.sourceRootsContainer.sourceRoots + stubsDir)
+            .filterTo(HashSet(), ::isRootAllowed)
+
+    private fun isRootAllowed(file: File): Boolean =
+        !FileUtil.isAncestor(destinationDir, file, /* strict = */ false) &&
+                !FileUtil.isAncestor(classesDir, file, /* strict = */ false)
 
     @TaskAction
     fun compile() {
@@ -99,26 +109,23 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
          * (annotation processing is not incremental) */
         clearOutputDirectories()
 
-        val sourceRootsFromKotlin = kotlinCompileTask.sourceRootsContainer.sourceRoots
-        val rawSourceRoots = FilteringSourceRootsContainer(sourceRootsFromKotlin, { !isInsideDestinationDirs(it) })
-        val sourceRoots = SourceRoots.ForJvm.create(kotlinCompileTask.source, rawSourceRoots)
-
         val args = prepareCompilerArguments()
 
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
-        val environment = GradleCompilerEnvironment(kotlinCompileTask.computedCompilerClasspath, messageCollector, outputItemCollector, args)
+        val environment = GradleCompilerEnvironment(compilerClasspath, messageCollector, outputItemCollector, args)
         if (environment.toolsJar == null && !isAtLeastJava9) {
             throw GradleException("Could not find tools.jar in system classpath, which is required for kapt to work")
         }
 
         val compilerRunner = GradleCompilerRunner(project)
         val exitCode = compilerRunner.runJvmCompiler(
-                sourceRoots.kotlinSourceFiles,
-                sourceRoots.javaSourceRoots,
-                kotlinCompileTask.javaPackagePrefix,
-                args,
-                environment)
+            sourcesToCompile = emptyList(),
+            javaSourceRoots = javaSourceRoots,
+            javaPackagePrefix = kotlinCompileTask.javaPackagePrefix,
+            args = args,
+            environment = environment
+        )
         throwGradleExceptionIfError(exitCode)
     }
 

@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import java.io.File
 import java.io.IOException
 

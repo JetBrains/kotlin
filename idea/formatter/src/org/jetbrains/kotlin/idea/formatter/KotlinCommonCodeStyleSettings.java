@@ -90,7 +90,7 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
         }
         //noinspection deprecation
         DefaultJDOMExternalizer.writeExternal(this, element, new SupportedFieldsDiffFilter(this, supportedFields, defaultSettings));
-        List<Integer> softMargins = getSoftMargins();
+        @SuppressWarnings("IncompatibleAPI") List<Integer> softMargins = getSoftMargins();
         serializeInto(softMargins, element);
 
         IndentOptions myIndentOptions = getIndentOptions();
@@ -148,6 +148,7 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
             if (setRootSettingsMethod != null) {
                 // Method was introduced in 173
                 setRootSettingsMethod.setAccessible(true);
+                //noinspection IncompatibleAPI
                 setRootSettingsMethod.invoke(commonSettings, getSoftMargins());
             }
         }
@@ -169,6 +170,7 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
         }
 
         CommonCodeStyleSettings other = (CommonCodeStyleSettings) obj;
+        //noinspection IncompatibleAPI
         if (!getSoftMargins().equals(other.getSoftMargins())) {
             return false;
         }
@@ -185,6 +187,7 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
     // SoftMargins.serializeInfo
     private void serializeInto(@NotNull List<Integer> softMargins, @NotNull Element element) {
         if (softMargins.size() > 0) {
+            //noinspection IncompatibleAPI
             XmlSerializer.serializeInto(this, element);
         }
     }

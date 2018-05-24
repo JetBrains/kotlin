@@ -16,7 +16,7 @@ class TestRootAffectedIT : BaseGradleIT() {
 
         val kotlinGreetingJoinerFile = project.projectDir.getFileByName("KotlinGreetingJoiner.kt")
         kotlinGreetingJoinerFile.modify {
-            val replacing   = "fun addName(name: String?): Unit"
+            val replacing = "fun addName(name: String?): Unit"
             val replacement = "fun addName(name: String): Unit"
             assert(it.contains(replacing)) { "API has changed!" }
             it.replace(replacing, replacement)

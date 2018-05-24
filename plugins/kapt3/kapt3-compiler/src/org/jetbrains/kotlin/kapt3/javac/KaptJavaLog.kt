@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.kapt3.javac
 
-import com.intellij.openapi.project.Project
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.*
 import com.sun.tools.javac.util.JCDiagnostic.DiagnosticType
@@ -36,7 +35,7 @@ import javax.tools.SimpleJavaFileObject
 import com.sun.tools.javac.util.List as JavacList
 
 class KaptJavaLog(
-        private val project: Project,
+        private val projectBasePath: String?,
         context: Context,
         errWriter: PrintWriter,
         warnWriter: PrintWriter,
@@ -184,7 +183,7 @@ class KaptJavaLog(
 
     private fun getKotlinSourceFile(pos: KotlinPosition): File? {
         return if (pos.isRelativePath) {
-            val basePath = project.basePath
+            val basePath = this.projectBasePath
             if (basePath != null) File(basePath, pos.path) else null
         }
         else {
@@ -242,7 +241,7 @@ class KaptJavaLog(
                 val noticeWriter = makeWriter(WARNING)
 
                 KaptJavaLog(
-                    kaptContext.project, newContext, errWriter, warnWriter, noticeWriter,
+                    kaptContext.project.basePath, newContext, errWriter, warnWriter, noticeWriter,
                     interceptorData, mapDiagnosticLocations)
             })
         }

@@ -29,6 +29,7 @@ import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.*
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.quickfix.utils.findInspectionFile
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.psi.KtFile
@@ -113,6 +114,13 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
                 configExtra(fileText)
 
                 applyAction(contents, fileName)
+
+                val compilerArgumentsAfter = InTextDirectivesUtils.findStringWithPrefixes(fileText, "COMPILER_ARGUMENTS_AFTER: ")
+                if (compilerArgumentsAfter != null) {
+                    val facetSettings = KotlinFacet.get(module)!!.configuration.settings
+                    val compilerSettings = facetSettings.compilerSettings
+                    TestCase.assertEquals(compilerArgumentsAfter, compilerSettings?.additionalArguments)
+                }
 
                 UsefulTestCase.assertEmpty(expectedErrorMessage)
             }

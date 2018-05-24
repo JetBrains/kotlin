@@ -3,6 +3,13 @@ where advanced options include:
   -Xadd-compiler-builtins    Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)
   -Xadd-modules=<module[,]>  Root modules to resolve in addition to the initial modules,
                              or all modules on the module path if <module> is ALL-MODULE-PATH
+  -Xassertions={always-enable|always-disable|jvm|legacy}
+                             Assert calls behaviour
+                             -Xassertions=always-enable:  enable, ignore jvm assertion settings;
+                             -Xassertions=always-disable: disable, ignore jvm assertion settings;
+                             -Xassertions=jvm:            enable, depend on jvm assertion settings;
+                             -Xassertions=legacy:         calculate condition on each call, check depends on jvm assertion settings in the kotlin package;
+                             default: legacy
   -Xbuild-file=<path>        Path to the .xml build file to compile
   -Xcompile-java             Reuse javac analysis and compile Java source files
   -Xnormalize-constructor-calls={disable|enable}
@@ -32,6 +39,7 @@ where advanced options include:
   -Xno-optimize              Disable optimizations
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
+  -Xoutput-imports=<path>    Output imports from all compiled files to the specified file in JSON format
   -Xscript-resolver-environment=<key=value[,]>
                              Script resolver environment in key-value pairs (the value could be quoted and escaped)
   -Xsingle-module            Combine modules for source files and binary dependencies into a single module
@@ -57,6 +65,11 @@ where advanced options include:
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
   -Xplugin=<path>            Load plugins from the given classpath
+  -Xprogressive              Enable compiler progressive mode.
+                             In this mode, deprecations and bug fixes for unstable code take effect immediately,
+                             instead of going through graceful migration cycle.
+                             Code, written in progressive mode is backward compatible; however, code written in
+                             non-progressive mode may cause compilation errors in progressive mode.
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
   -Xread-deserialized-contracts Enable reading of contracts from metadata
   -Xreport-output-files      Report source to output files mapping

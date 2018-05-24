@@ -7,13 +7,14 @@
 
 package kotlin.script.experimental.jvm
 
-import kotlin.script.experimental.api.ScriptDiagnostic
-import kotlin.script.experimental.api.ScriptSource
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
+import kotlin.script.experimental.api.ScriptDiagnostic
+import kotlin.script.experimental.api.ScriptSource
 import kotlin.script.experimental.dependencies.ScriptReport
 
 fun mapLegacyDiagnosticSeverity(severity: ScriptDependenciesResolver.ReportSeverity): ScriptDiagnostic.Severity = when (severity) {
+    ScriptDependenciesResolver.ReportSeverity.FATAL -> ScriptDiagnostic.Severity.FATAL
     ScriptDependenciesResolver.ReportSeverity.ERROR -> ScriptDiagnostic.Severity.ERROR
     ScriptDependenciesResolver.ReportSeverity.WARNING -> ScriptDiagnostic.Severity.WARNING
     ScriptDependenciesResolver.ReportSeverity.INFO -> ScriptDiagnostic.Severity.INFO

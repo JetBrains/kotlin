@@ -59,6 +59,7 @@ val KotlinCallArgument.psiExpression: KtExpression?
         return when (this) {
             is ReceiverExpressionKotlinCallArgument -> receiver.receiverValue.safeAs<ExpressionReceiver>()?.expression
             is QualifierReceiverKotlinCallArgument -> receiver.safeAs<Qualifier>()?.expression
+            is EmptyLabeledReturn -> null // questionable, maybe unit?
             else -> psiCallArgument.valueArgument.getArgumentExpression()
         }
     }

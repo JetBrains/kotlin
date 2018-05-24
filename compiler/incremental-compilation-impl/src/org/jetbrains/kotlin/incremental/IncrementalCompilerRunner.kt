@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
-import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -43,8 +41,6 @@ abstract class IncrementalCompilerRunner<
         cacheDirName: String,
         protected val cacheVersions: List<CacheVersion>,
         protected val reporter: ICReporter,
-        protected val artifactChangesProvider: ArtifactChangesProvider?,
-        protected val changesRegistry: ChangesRegistry?,
         private val localStateDirs: Collection<File> = emptyList()
 ) {
 
@@ -307,16 +303,11 @@ abstract class IncrementalCompilerRunner<
 
     open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
 
-    protected open fun processChangesAfterBuild(compilationMode: CompilationMode, currentBuildInfo: BuildInfo, dirtyData: DirtyData) {
-        if (changesRegistry == null) return
-
-        if (compilationMode is CompilationMode.Incremental) {
-            changesRegistry.registerChanges(currentBuildInfo.startTS, dirtyData)
-        }
-        else {
-            assert(compilationMode is CompilationMode.Rebuild) { "Unexpected compilation mode: ${compilationMode::class.java}" }
-            changesRegistry.unknownChanges(currentBuildInfo.startTS)
-        }
+    protected open fun processChangesAfterBuild(
+        compilationMode: CompilationMode,
+        currentBuildInfo: BuildInfo,
+        dirtyData: DirtyData
+    ) {
     }
 
     companion object {

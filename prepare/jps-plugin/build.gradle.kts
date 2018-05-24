@@ -4,7 +4,7 @@ description = "Kotlin JPS plugin"
 
 plugins {
     `java-base`
-    id("jps-compatible-base")
+    id("pill-configurable")
 }
 
 val projectsToShadow = listOf(

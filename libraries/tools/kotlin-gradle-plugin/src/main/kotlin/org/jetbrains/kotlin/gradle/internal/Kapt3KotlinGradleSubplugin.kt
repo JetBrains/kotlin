@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.internal
@@ -28,14 +17,16 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.process.CommandLineArgumentProvider
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.File
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.ObjectOutputStream
 import java.util.*
 
@@ -57,7 +48,9 @@ class Kapt3GradleSubplugin : Plugin<Project> {
                 File(project.project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
     }
 
-    override fun apply(project: Project) {}
+    override fun apply(project: Project) {
+        project.extensions.create("kapt", KaptExtension::class.java)
+    }
 }
 
 abstract class KaptVariantData<T>(val variantData: T) {
@@ -69,6 +62,9 @@ abstract class KaptVariantData<T>(val variantData: T) {
             project: Project,
             kaptTask: KaptTask,
             javaTask: AbstractCompile)
+
+    open val annotationProcessorOptionProviders: List<*>
+        get() = emptyList<Any>()
 }
 
 // Subplugin for the Kotlin Gradle plugin
@@ -165,6 +161,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             javaSourceSet.name
         }
 
+        createAptConfigurationIfNeeded(project, sourceSetName)
+
         val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
 
         val nonEmptyKaptConfigurations = kaptConfigurations.filter { configuration ->
@@ -189,6 +187,23 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         /** Plugin options are applied to kapt*Compile inside [createKaptKotlinTask] */
         return emptyList()
+    }
+
+    private fun createAptConfigurationIfNeeded(project: Project, sourceSetName: String): Configuration {
+        val configurationName = Kapt3KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
+
+        project.configurations.findByName(configurationName)?.let { return it }
+        val aptConfiguration = project.configurations.create(configurationName)
+
+        if (aptConfiguration.name != Kapt3KotlinGradleSubplugin.MAIN_KAPT_CONFIGURATION_NAME) {
+            // The main configuration can be created after the current one. We should handle this case
+            val mainConfiguration = findMainKaptConfiguration(project)
+                    ?: createAptConfigurationIfNeeded(project, SourceSet.MAIN_SOURCE_SET_NAME)
+
+            aptConfiguration.extendsFrom(mainConfiguration)
+        }
+
+        return aptConfiguration
     }
 
     override fun getSubpluginKotlinTasks(project: Project, kotlinCompile: KotlinCompile): List<AbstractCompile> {
@@ -226,9 +241,20 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         kotlinSourcesOutputDir.mkdirs()
 
-        val apOptions =
-                (kaptExtension.getAdditionalArguments(project, kaptVariantData?.variantData, androidPlugin) + androidOptions)
-                        .map { SubpluginOption(it.key, it.value) } +
+        val apOptionsFromProviders =
+            if (isGradleVersionAtLeast(4, 6))
+                kaptVariantData?.annotationProcessorOptionProviders
+                    ?.flatMap { (it as CommandLineArgumentProvider).asArguments().map { "" to it.removePrefix("-A") } }
+                    .orEmpty()
+            else
+                emptyList()
+
+        val apOptionsPairsList: List<Pair<String, String>> =
+            kaptExtension.getAdditionalArguments(project, kaptVariantData?.variantData, androidPlugin).toList() +
+                    androidOptions.toList() +
+                    apOptionsFromProviders
+
+        val apOptions = apOptionsPairsList.map { SubpluginOption(it.first, it.second) } +
                 FilesSubpluginOption("kapt.kotlin.generated", listOf(kotlinSourcesOutputDir))
 
         pluginOptions += CompositeSubpluginOption("apoptions", encodeList(apOptions.associate { it.key to it.value }), apOptions)
@@ -312,12 +338,15 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         if (kaptVariantData != null) {
             kaptVariantData.registerGeneratedJavaSource(project, kaptTask, javaCompile)
-        }
-        else {
+        } else {
             registerGeneratedJavaSource(kaptTask, javaCompile)
         }
 
         kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
+
+        kaptVariantData?.annotationProcessorOptionProviders?.let {
+            kaptTask.annotationProcessorOptionProviders.add(it)
+        }
 
         buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "apt")
 
@@ -366,6 +395,15 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             newCompilerArgs.add("-proc:none")
             @Suppress("UNCHECKED_CAST")
             options.compilerArgs = newCompilerArgs as List<String>
+
+            if (isGradleVersionAtLeast(4, 6)) {
+                // Filter out the argument providers that are related to annotation processing and therefore already used by Kapt.
+                // This is done to avoid outputs intersections between Kapt and and javaCompile and make the up-to-date check for
+                // javaCompile more granular as it does not perform annotation processing:
+                if (kaptVariantData != null) {
+                    options.compilerArgumentProviders.removeAll(kaptVariantData.annotationProcessorOptionProviders)
+                }
+            }
         }
     }
 

@@ -12,4 +12,5 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
  * Method was introduced in 173 idea. Should be dropped after abandoning 172 branch.
  * BUNCH: 173
  */
+@Suppress("IncompatibleAPI")
 val CodeInsightTestFixture.projectDisposableEx: Disposable get() = projectDisposable

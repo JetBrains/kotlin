@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
@@ -28,6 +17,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.annotations.isCallableMemberWithJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -260,6 +250,10 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 innerClasses.addAll(parentAsInnerClasses)
             }
         }
+
+        override fun generateAssertField() {
+            delegate.generateAssertField()
+        }
     }
 
     override fun doCreateMethodNodeFromSource(
@@ -446,11 +440,14 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 }
                 is ClassDescriptor -> {
                     val kind =
-                        if (DescriptorUtils.isInterface(descriptor) &&
-                            innerDescriptor !is ClassDescriptor && !innerDescriptor.isCallableMemberWithJvmDefaultAnnotation()
-                        )
-                            OwnerKind.DEFAULT_IMPLS
-                        else OwnerKind.IMPLEMENTATION
+                        when {
+                            DescriptorUtils.isInterface(descriptor) && innerDescriptor !is ClassDescriptor &&
+                                    !innerDescriptor.isCallableMemberWithJvmDefaultAnnotation() -> OwnerKind.DEFAULT_IMPLS
+
+                            descriptor.isInlineClass() -> OwnerKind.ERASED_INLINE_CLASS
+
+                            else -> OwnerKind.IMPLEMENTATION
+                        }
 
                     additionalInners.addIfNotNull(
                         InnerClassConsumer.classForInnerClassRecord(descriptor, kind == OwnerKind.DEFAULT_IMPLS)

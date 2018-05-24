@@ -28,3 +28,9 @@ sourceSets {
 }
 
 configureInstrumentation()
+
+runtimeJar {
+    archiveName = "jvm-ide.jar"
+}
+
+ideaPlugin()

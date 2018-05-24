@@ -3,10 +3,10 @@ FILE fqName:<root> fileName:/valueParametersWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnn flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
     PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnn) returnType:String flags:
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/valueParametersWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestClassConstructor1 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:TestClassConstructor1 flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:TestClassConstructor1 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
         annotations:
           CALL 'constructor TestAnn(String)' type=TestAnn origin=null
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/valueParametersWithAnnotations.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestClassConstructor1'
     PROPERTY name:xx type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xx> visibility:public modality:FINAL <> ($this:TestClassConstructor1) returnType:Int flags:
@@ -69,3 +69,4 @@ FILE fqName:<root> fileName:/valueParametersWithAnnotations.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+

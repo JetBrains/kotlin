@@ -5,3 +5,4 @@ FILE fqName:<root> fileName:/javaMethod.kt
       RETURN type=kotlin.Nothing from='test(J): Unit'
         CALL 'bar(): Unit' type=kotlin.Unit origin=null
           $this: GET_VAR 'value-parameter j: J' type=J origin=null
+

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -29,12 +30,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 interface ConstraintSystemOperation {
     val hasContradiction: Boolean
     fun registerVariable(variable: NewTypeVariable)
+    fun markPostponedVariable(variable: NewTypeVariable)
+    fun unmarkPostponedVariable(variable: NewTypeVariable)
 
     fun addSubtypeConstraint(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition)
     fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition)
 
     fun isProperType(type: UnwrappedType): Boolean
     fun isTypeVariable(type: UnwrappedType): Boolean
+    fun isPostponedTypeVariable(typeVariable: NewTypeVariable): Boolean
 
     fun getProperSuperTypeConstructors(type: UnwrappedType): List<TypeConstructor>
 }
@@ -45,6 +49,8 @@ interface ConstraintSystemBuilder : ConstraintSystemOperation {
     fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean
 
     fun buildCurrentSubstitutor(): NewTypeSubstitutor
+
+    fun currentStorage(): ConstraintStorage
 }
 
 fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(

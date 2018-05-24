@@ -24,15 +24,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
 class FileClassDescriptorImpl(
-        name: Name,
-        containingDeclaration: PackageFragmentDescriptor,
-        supertypes: List<KotlinType>,
-        sourceElement: SourceElement,
-        annotations: Annotations
+    name: Name,
+    containingDeclaration: PackageFragmentDescriptor,
+    supertypes: List<KotlinType>,
+    sourceElement: SourceElement,
+    annotations: Annotations
 ) : FileClassDescriptor, KnownClassDescriptor(
-        name, containingDeclaration, sourceElement,
-        ClassKind.CLASS, Modality.FINAL, Visibilities.PUBLIC,
-        annotations
+    name, containingDeclaration, sourceElement,
+    ClassKind.CLASS, Modality.FINAL, Visibilities.PUBLIC,
+    annotations
 ) {
     init {
         initialize(emptyList(), supertypes)

@@ -37,19 +37,19 @@ fun test(d: dynamic) {
 
 var Any.onAnyVar: Int
     get() = 1
-    set(v) {}
+    set(<!UNUSED_PARAMETER!>v<!>) {}
 
 var Any?.onNullableAnyVar: Int
     get() = 1
-    set(v) {}
+    set(<!UNUSED_PARAMETER!>v<!>) {}
 
 var String.onStringVar: Int
     get() = 1
-    set(v) {}
+    set(<!UNUSED_PARAMETER!>v<!>) {}
 
 var <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.onDynamicVar: Int
     get() = 1
-    set(v) {}
+    set(<!UNUSED_PARAMETER!>v<!>) {}
 
 class C {
     fun test(d: dynamic) {
@@ -63,5 +63,5 @@ class C {
     var memberVar = 1
     var Any.memberExtensionVar: Int
         get() = 1
-        set(v) {}
+        set(<!UNUSED_PARAMETER!>v<!>) {}
 }

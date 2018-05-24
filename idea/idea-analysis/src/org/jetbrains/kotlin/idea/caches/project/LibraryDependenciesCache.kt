@@ -61,7 +61,7 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
         val libraries = LinkedHashSet<Library>()
         val sdks = LinkedHashSet<Sdk>()
 
-        val platform = getLibraryPlatform(library)
+        val platform = getLibraryPlatform(project, library)
 
         for (module in getLibraryUsageIndex().modulesLibraryIsUsedIn[library]) {
             if (!processedModules.add(module)) continue
@@ -73,7 +73,7 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
 
                 override fun visitLibraryOrderEntry(libraryOrderEntry: LibraryOrderEntry, value: Unit) {
                     val otherLibrary = libraryOrderEntry.library
-                    if (otherLibrary != null && compatiblePlatforms(platform, getLibraryPlatform(otherLibrary))) {
+                    if (otherLibrary != null && compatiblePlatforms(platform, getLibraryPlatform(project, otherLibrary))) {
                         libraries.add(otherLibrary)
                     }
                 }

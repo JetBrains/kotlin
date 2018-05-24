@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/typeParameterBeforeBound.kt
     TYPE_PARAMETER name:U index:1 variance: upperBounds:[kotlin.Any?]
       superClassifiers:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Test1<T, U> flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test1<T, U> flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
@@ -54,3 +54,4 @@ FILE fqName:<root> fileName:/typeParameterBeforeBound.kt
       $receiver: VALUE_PARAMETER name:<this> type:Test1<T, U> flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.Unit flags:
       BLOCK_BODY
+

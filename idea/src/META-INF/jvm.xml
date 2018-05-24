@@ -17,6 +17,12 @@
         <component>
             <implementation-class>org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent</implementation-class>
         </component>
+        <component>
+            <implementation-class>org.jetbrains.kotlin.idea.scratch.ui.ScratchFileHook</implementation-class>
+        </component>
+        <component>
+            <implementation-class>org.jetbrains.kotlin.idea.scratch.ScratchFileModuleInfoProvider</implementation-class>
+        </component>
     </project-components>
 
     <actions>
@@ -43,13 +49,17 @@
         </action>
 
         <action id="CreateIncrementalCompilationBackup"
-                class="org.jetbrains.kotlin.idea.internal.makeBackup.CreateIncrementalCompilationBackup">
+                class="org.jetbrains.kotlin.idea.internal.makeBackup.CreateIncrementalCompilationBackup" internal="true">
             <add-to-group group-id="KotlinInternalGroup"/>
         </action>
 
         <action id="ReactivePostOpenProjectActionsAction" class="org.jetbrains.kotlin.idea.actions.internal.ReactivePostOpenProjectActionsAction"
-                text="Kotlin Project Post-Open Activity">
+                text="Kotlin Project Post-Open Activity" internal="true">
             <add-to-group group-id="KotlinInternalGroup"/>
+        </action>
+
+        <action id="AddToProblemApiInspection" class="org.jetbrains.kotlin.idea.inspections.api.AddIncompatibleApiAction"
+                text="Report as incompatible API">
         </action>
     </actions>
 
@@ -111,6 +121,17 @@
                                  implementationClass="org.jetbrains.kotlin.idea.debugger.surroundWith.KotlinDebuggerExpressionSurroundDescriptor"/>
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
+
+        <localInspection
+            groupName="Plugin DevKit"
+            shortName="IncompatibleAPI"
+            enabledByDefault="false"
+            level="ERROR"
+            displayName="Incompatible API usage"
+            implementationClass="org.jetbrains.kotlin.idea.inspections.api.IncompatibleAPIInspection"/>
+
+        <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService"
+                        serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastBindingContextProviderService"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.uast">

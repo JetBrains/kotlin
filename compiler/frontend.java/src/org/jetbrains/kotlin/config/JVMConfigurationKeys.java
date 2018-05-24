@@ -65,6 +65,8 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("disable not-null call receiver assertions");
     public static final CompilerConfigurationKey<Boolean> DISABLE_PARAM_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null parameter assertions");
+    public static final CompilerConfigurationKey<JVMAssertionsMode> ASSERTIONS_MODE =
+            CompilerConfigurationKey.create("assertions mode");
     public static final CompilerConfigurationKey<JVMConstructorCallNormalizationMode> CONSTRUCTOR_CALL_NORMALIZATION_MODE =
             CompilerConfigurationKey.create("constructor call normalization mode");
     public static final CompilerConfigurationKey<Boolean> NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL =
@@ -103,7 +105,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> PARAMETERS_METADATA =
             CompilerConfigurationKey.create("Parameters metadata for java 1.8 reflection");
-
+    
     public static final CompilerConfigurationKey<IncrementalCompilationComponents> INCREMENTAL_COMPILATION_COMPONENTS =
             CompilerConfigurationKey.create("incremental cache provider");
 
@@ -136,6 +138,9 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<List<String>> ADDITIONAL_JAVA_MODULES =
             CompilerConfigurationKey.create("additional Java modules");
+
+    public static final CompilerConfigurationKey<String> OUTPUT_IMPORTS =
+            CompilerConfigurationKey.create("output imports");
 
     public static final CompilerConfigurationKey<Boolean> ENABLE_JVM_DEFAULT =
             CompilerConfigurationKey.create("Allow to use '@JvmDefault'");

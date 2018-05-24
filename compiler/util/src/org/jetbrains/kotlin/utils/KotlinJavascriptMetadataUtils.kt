@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.utils
 
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import java.io.DataInputStream
 import java.io.File
 import java.io.InputStream

@@ -1,12 +1,17 @@
 description = 'Kotlin Common Standard Library'
 
 apply plugin: 'kotlin-platform-common'
+apply plugin: 'pill-configurable'
 
 configureDist(project)
 configurePublishing(project)
 
 def commonSrcDir = "../src"
 def commonTestSrcDir = "../test"
+
+pill {
+    importAsLibrary = true
+}
 
 sourceSets {
     main {
@@ -21,11 +26,18 @@ sourceSets {
             srcDir 'test'
         }
     }
+    unsigned {
+        kotlin {
+            srcDir '../unsigned/src'
+        }
+    }
 }
 
 dependencies {
     testCompile project(":kotlin-test:kotlin-test-common")
     testCompile project(":kotlin-test:kotlin-test-annotations-common")
+
+    unsignedCompile sourceSets.main.output
 }
 
 compileKotlinCommon {
@@ -37,7 +49,16 @@ compileKotlinCommon {
 compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs = [
-                "-module-name", project.name
+                "-module-name", project.name,
+                "-Xuse-experimental=kotlin.Experimental"
+        ]
+    }
+}
+
+compileUnsignedKotlinCommon {
+    kotlinOptions {
+        freeCompilerArgs += [
+                "-XXLanguage:+InlineClasses"
         ]
     }
 }

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 
@@ -39,7 +40,8 @@ class IrPropertyImpl(
     override val isVar: Boolean,
     override val isConst: Boolean,
     override val isLateinit: Boolean,
-    override val isDelegated: Boolean
+    override val isDelegated: Boolean,
+    override val isExternal: Boolean
 ) : IrDeclarationBase(startOffset, endOffset, origin),
     IrProperty {
 
@@ -52,25 +54,40 @@ class IrPropertyImpl(
     ) : this(
         startOffset, endOffset, origin, descriptor,
         descriptor.name, descriptor.type, descriptor.visibility, descriptor.modality,
-        descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
-        isDelegated
+        isVar = descriptor.isVar,
+        isConst = descriptor.isConst,
+        isLateinit = descriptor.isLateInit,
+        isDelegated = isDelegated,
+        isExternal = descriptor.isEffectivelyExternal()
     )
 
     constructor(
-        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor
     ) : this(startOffset, endOffset, origin, descriptor.isDelegated, descriptor)
 
     constructor(
-        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, isDelegated: Boolean, descriptor: PropertyDescriptor,
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        isDelegated: Boolean,
+        descriptor: PropertyDescriptor,
         backingField: IrField?
     ) : this(startOffset, endOffset, origin, isDelegated, descriptor) {
         this.backingField = backingField
     }
 
     constructor(
-        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, isDelegated: Boolean, descriptor: PropertyDescriptor,
-        backingField: IrField?, getter: IrFunction?, setter: IrFunction?
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        isDelegated: Boolean,
+        descriptor: PropertyDescriptor,
+        backingField: IrField?,
+        getter: IrFunction?,
+        setter: IrFunction?
     ) : this(startOffset, endOffset, origin, isDelegated, descriptor, backingField) {
         this.getter = getter
         this.setter = setter

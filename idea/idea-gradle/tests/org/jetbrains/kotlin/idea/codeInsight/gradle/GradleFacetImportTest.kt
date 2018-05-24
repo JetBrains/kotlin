@@ -25,6 +25,11 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.PathUtil
+import org.jetbrains.jps.model.java.JavaResourceRootType
+import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
@@ -50,7 +55,26 @@ internal val GradleImportingTestCase.facetSettings: KotlinFacetSettings
 internal val GradleImportingTestCase.testFacetSettings: KotlinFacetSettings
     get() = facetSettings("project_test")
 
+internal fun GradleImportingTestCase.getSourceRootInfos(moduleName: String): List<Pair<String, JpsModuleSourceRootType<*>>> {
+    return ModuleRootManager.getInstance(getModule(moduleName)).contentEntries.flatMap {
+        it.sourceFolders.map { it.url.replace(projectPath, "") to it.rootType }
+    }
+}
+
 class GradleFacetImportTest : GradleImportingTestCase() {
+    private var isCreateEmptyContentRootDirectories = true
+
+    override fun setUp() {
+        super.setUp()
+        isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
+        currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
+    }
+
+    override fun tearDown() {
+        currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
+        super.tearDown()
+    }
+
     @Test
     fun testJvmImport() {
         createProjectSubFile(
@@ -114,12 +138,25 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         }
 
         assertAllModulesConfigured()
+
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
+                       "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                       "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                       "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                       "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
+                getSourceRootInfos("project_test")
+        )
     }
 
     @Test
     fun testJvmImportWithPlugin() {
         createProjectSubFile(
-            "build.gradle", """
+                "build.gradle", """
 buildscript {
     repositories {
         mavenCentral()
@@ -223,6 +260,19 @@ compileTestKotlin {
                 compilerSettings!!.additionalArguments
             )
         }
+
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
+                       "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                       "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                       "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                       "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
+                getSourceRootInfos("project_test")
+        )
     }
 
     @Test
@@ -300,6 +350,19 @@ compileTestKotlin {
         }
 
         assertAllModulesConfigured()
+
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
+                       "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                       "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                       "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                       "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
+                getSourceRootInfos("project_test")
+        )
     }
 
     @Test
@@ -378,6 +441,19 @@ compileTestKotlin {
                 compilerSettings!!.additionalArguments
             )
         }
+
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
+                       "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                       "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                       "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                       "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
+                getSourceRootInfos("project_test")
+        )
     }
 
     @Test
@@ -538,6 +614,19 @@ compileTestKotlin {
         Assert.assertTrue(ModuleRootManager.getInstance(getModule("project_main")).sdk!!.sdkType is KotlinSdkType)
         Assert.assertTrue(ModuleRootManager.getInstance(getModule("project_test")).sdk!!.sdkType is KotlinSdkType)
 
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to KotlinSourceRootType.Source,
+                       "file:///src/main/kotlin" to KotlinSourceRootType.Source,
+                       "file:///src/main/resources" to KotlinResourceRootType.Resource),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/java" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/kotlin" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/resources" to KotlinResourceRootType.TestResource),
+                getSourceRootInfos("project_test")
+        )
+
         assertAllModulesConfigured()
     }
 
@@ -588,6 +677,19 @@ compileTestKotlin {
         assertEquals(JSLibraryKind, stdlib.kind)
 
         assertAllModulesConfigured()
+
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to KotlinSourceRootType.Source,
+                       "file:///src/main/kotlin" to KotlinSourceRootType.Source,
+                       "file:///src/main/resources" to KotlinResourceRootType.Resource),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/java" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/kotlin" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/resources" to KotlinResourceRootType.TestResource),
+                getSourceRootInfos("project_test")
+        )
     }
 
     @Test
@@ -671,6 +773,19 @@ compileTestKotlin {
         }
 
         assertAllModulesConfigured()
+
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to KotlinSourceRootType.Source,
+                       "file:///src/main/kotlin" to KotlinSourceRootType.Source,
+                       "file:///src/main/resources" to KotlinResourceRootType.Resource),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/java" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/kotlin" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/resources" to KotlinResourceRootType.TestResource),
+                getSourceRootInfos("project_test")
+        )
     }
 
     @Test
@@ -737,6 +852,19 @@ compileTestKotlin {
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
         }
+
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
+                       "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                       "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                       "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                       "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
+                getSourceRootInfos("project_test")
+        )
     }
 
     @Test
@@ -780,6 +908,19 @@ compileTestKotlin {
         val libraries = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().mapNotNull { it.library as LibraryEx }
         assertEquals(JSLibraryKind, libraries.single { it.name?.contains("kotlin-stdlib-js") == true }.kind)
         assertEquals(CommonLibraryKind, libraries.single { it.name?.contains("kotlin-stdlib-common") == true }.kind)
+
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to KotlinSourceRootType.Source,
+                       "file:///src/main/kotlin" to KotlinSourceRootType.Source,
+                       "file:///src/main/resources" to KotlinResourceRootType.Resource),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/java" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/kotlin" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/resources" to KotlinResourceRootType.TestResource),
+                getSourceRootInfos("project_test")
+        )
     }
 
     @Test
@@ -825,6 +966,19 @@ compileTestKotlin {
         val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
         val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
         assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
+
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to KotlinSourceRootType.Source,
+                       "file:///src/main/kotlin" to KotlinSourceRootType.Source,
+                       "file:///src/main/resources" to KotlinResourceRootType.Resource),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/java" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/kotlin" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/resources" to KotlinResourceRootType.TestResource),
+                getSourceRootInfos("project_test")
+        )
     }
 
     @Test
@@ -869,6 +1023,16 @@ compileTestKotlin {
         val rootManager = ModuleRootManager.getInstance(getModule("project"))
         val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().mapTo(HashSet()) { it.library }.single()
         assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
+
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to KotlinSourceRootType.Source,
+                       "file:///src/main/kotlin" to KotlinSourceRootType.Source,
+                       "file:///src/test/java" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/kotlin" to KotlinSourceRootType.TestSource,
+                       "file:///src/main/resources" to KotlinResourceRootType.Resource,
+                       "file:///src/test/resources" to KotlinResourceRootType.TestResource),
+                getSourceRootInfos("project")
+        )
     }
 
     @Test
@@ -901,6 +1065,19 @@ compileTestKotlin {
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], targetPlatformKind)
         }
+
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
+                       "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                       "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                       "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                       "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
+                getSourceRootInfos("project_test")
+        )
     }
 
     @Test
@@ -933,6 +1110,19 @@ compileTestKotlin {
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
         }
+
+        Assert.assertEquals(
+                listOf("file:///src/main/java" to KotlinSourceRootType.Source,
+                       "file:///src/main/kotlin" to KotlinSourceRootType.Source,
+                       "file:///src/main/resources" to KotlinResourceRootType.Resource),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/java" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/kotlin" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/resources" to KotlinResourceRootType.TestResource),
+                getSourceRootInfos("project_test")
+        )
     }
 
     @Test
@@ -1889,6 +2079,17 @@ compileTestKotlin {
 
         Assert.assertTrue(ModuleRootManager.getInstance(getModule("project_main")).sdk!!.sdkType is KotlinSdkType)
         Assert.assertTrue(ModuleRootManager.getInstance(getModule("project_test")).sdk!!.sdkType is KotlinSdkType)
+
+        Assert.assertEquals(
+                listOf("file:///src/main/kotlin" to KotlinSourceRootType.Source,
+                       "file:///src/main/resources" to KotlinResourceRootType.Resource),
+                getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+                listOf("file:///src/test/kotlin" to KotlinSourceRootType.TestSource,
+                       "file:///src/test/resources" to KotlinResourceRootType.TestResource),
+                getSourceRootInfos("project_test")
+        )
     }
 
     private fun assertAllModulesConfigured() {

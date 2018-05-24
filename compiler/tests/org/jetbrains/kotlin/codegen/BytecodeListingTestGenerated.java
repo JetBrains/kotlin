@@ -35,8 +35,15 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
     }
 
     @TestMetadata("coroutineContextIntrinsic.kt")
-    public void testCoroutineContextIntrinsic() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/coroutineContextIntrinsic.kt");
+    public void testCoroutineContextIntrinsic_1_2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/coroutineContextIntrinsic.kt");
+        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+    }
+
+    @TestMetadata("coroutineContextIntrinsic.kt")
+    public void testCoroutineContextIntrinsic_1_3() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/coroutineContextIntrinsic.kt");
+        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
     }
 
     @TestMetadata("coroutineFields.kt")
@@ -277,10 +284,23 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         public void testShapeOfInlineClassWithPrimitive() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/shapeOfInlineClassWithPrimitive.kt");
         }
+    }
 
-        @TestMetadata("shapeOfInlineClassWithPrivateConstructor.kt")
-        public void testShapeOfInlineClassWithPrivateConstructor() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/shapeOfInlineClassWithPrivateConstructor.kt");
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/multiplatform")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Multiplatform extends AbstractBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMultiplatform() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/multiplatform"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("optionalExpectation.kt")
+        public void testOptionalExpectation() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/multiplatform/optionalExpectation.kt");
         }
     }
 

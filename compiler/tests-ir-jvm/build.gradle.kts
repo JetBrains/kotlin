@@ -18,4 +18,5 @@ sourceSets {
 
 projectTest {
     workingDir = rootDir
+    maxParallelForks = Math.max(Runtime.getRuntime().availableProcessors() / 2, 1)
 }

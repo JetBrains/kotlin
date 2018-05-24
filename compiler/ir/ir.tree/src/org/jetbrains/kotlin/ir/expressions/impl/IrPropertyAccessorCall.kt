@@ -110,7 +110,7 @@ class IrGetterCallImpl(
         IrGetterCallImpl(
             startOffset, endOffset, newCallee,
             descriptor, // TODO substitute descriptor for new callee?
-            typeArgumentsCount, newOrigin, newSuperQualifier
+            typeArgumentsCount, dispatchReceiver, extensionReceiver, newOrigin, newSuperQualifier
         ).also { newCall ->
             newCall.copyTypeArgumentsFrom(this)
         }
@@ -121,6 +121,8 @@ class IrGetterCallImpl(
             createFunctionSymbol(newCallee),
             newCallee,
             typeArgumentsCount,
+            dispatchReceiver,
+            extensionReceiver,
             newOrigin,
             createClassSymbolOrNull(newSuperQualifier)
         ).also { newCall ->
@@ -190,7 +192,7 @@ class IrSetterCallImpl(
         IrSetterCallImpl(
             startOffset, endOffset, newCallee,
             descriptor, // TODO substitute newCallee.descriptor?
-            typeArgumentsCount, newOrigin, newSuperQualifier
+            typeArgumentsCount, dispatchReceiver, extensionReceiver, argumentImpl!!, newOrigin, newSuperQualifier
         ).also { newCall ->
             newCall.copyTypeArgumentsFrom(this)
         }
@@ -201,6 +203,9 @@ class IrSetterCallImpl(
             createFunctionSymbol(newCallee),
             newCallee,
             typeArgumentsCount,
+            dispatchReceiver,
+            extensionReceiver,
+            argumentImpl!!,
             newOrigin,
             createClassSymbolOrNull(newSuperQualifier)
         ).also { newCall ->

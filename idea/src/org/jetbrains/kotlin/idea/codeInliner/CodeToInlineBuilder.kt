@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInliner
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.asExpression
@@ -59,7 +57,17 @@ class CodeToInlineBuilder(
     ): CodeToInline {
         var bindingContext = analyze()
 
-        val codeToInline = MutableCodeToInline(mainExpression, statementsBefore.toMutableList(), mutableSetOf())
+        val descriptor = mainExpression.getResolvedCall(bindingContext)?.resultingDescriptor
+        val alwaysKeepMainExpression = when (descriptor) {
+            is PropertyDescriptor -> descriptor.getter?.isDefault == false
+            else -> false
+        }
+        val codeToInline = MutableCodeToInline(
+            mainExpression,
+            statementsBefore.toMutableList(),
+            mutableSetOf(),
+            alwaysKeepMainExpression
+        )
 
         bindingContext = insertExplicitTypeArguments(codeToInline, bindingContext, analyze)
 

@@ -20,12 +20,14 @@ import java.io.Serializable
 
 abstract class CommonToolArguments : Freezable(), Serializable {
     companion object {
-        @JvmStatic private val serialVersionUID = 0L
+        @JvmStatic
+        private val serialVersionUID = 0L
     }
 
     var freeArgs: List<String> by FreezableVar(emptyList())
 
-    @Transient var errors: ArgumentParseErrors = ArgumentParseErrors()
+    @Transient
+    var errors: ArgumentParseErrors = ArgumentParseErrors()
 
     @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options")
     var help: Boolean by FreezableVar(false)
@@ -47,4 +49,6 @@ abstract class CommonToolArguments : Freezable(), Serializable {
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-Werror", description = "Report an error if there are any warnings")
     var allWarningsAsErrors: Boolean by FreezableVar(false)
+
+    var internalArguments: List<String> by FreezableVar(emptyList())
 }

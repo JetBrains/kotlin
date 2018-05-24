@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/references.kt
   PROPERTY name:ok type:kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:public flags:final
       EXPRESSION_BODY
         CONST String type=kotlin.String value=OK
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> () returnType:String flags:
@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/references.kt
         RETURN type=kotlin.Nothing from='<get-ok>(): String'
           GET_FIELD 'ok: String' type=kotlin.String origin=null
   PROPERTY name:ok2 type:kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:ok2 type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:ok2 type:kotlin.String visibility:public flags:final
       EXPRESSION_BODY
         CALL '<get-ok>(): String' type=kotlin.String origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok2> visibility:public modality:FINAL <> () returnType:String flags:

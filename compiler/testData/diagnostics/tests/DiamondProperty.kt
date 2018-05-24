@@ -1,7 +1,7 @@
 interface Base {
     var v : Int
         get() = 1
-        set(v) {}
+        set(<!UNUSED_PARAMETER!>v<!>) {}
 }
     
 open class Left() : Base

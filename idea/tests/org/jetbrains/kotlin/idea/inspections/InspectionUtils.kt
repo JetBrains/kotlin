@@ -24,9 +24,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.createGlobalContextForTool
+import org.jdom.Element
 
 fun runInspection(
-        inspection: LocalInspectionTool, project: Project, files: List<VirtualFile>? = null, withTestDir: String? = null
+    inspection: LocalInspectionTool, project: Project, files: List<VirtualFile>? = null, withTestDir: String? = null
 ): InspectionToolPresentation {
     val wrapper = LocalInspectionToolWrapper(inspection)
 
@@ -46,7 +47,12 @@ fun runInspection(
 }
 
 fun runInspection(
-        inspectionClass: Class<*>, project: Project, files: List<VirtualFile>? = null, withTestDir: String? = null
+    inspectionClass: Class<*>, project: Project,
+    settings: Element? = null, files: List<VirtualFile>? = null, withTestDir: String? = null
 ): InspectionToolPresentation {
-    return runInspection(inspectionClass.newInstance() as LocalInspectionTool, project, files, withTestDir)
+    val inspection = inspectionClass.newInstance() as LocalInspectionTool
+    if (settings != null) {
+        inspection.readSettings(settings)
+    }
+    return runInspection(inspection, project, files, withTestDir)
 }

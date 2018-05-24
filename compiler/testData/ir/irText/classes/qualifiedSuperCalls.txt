@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
     superClasses:
       CLASS INTERFACE name:ILeft modality:ABSTRACT visibility:public flags:
       CLASS INTERFACE name:IRight modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:CBoth flags:
+    CONSTRUCTOR visibility:public <> () returnType:CBoth flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='CBoth'

@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:BaseImpl flags:
     superClasses:
       CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:BaseImpl flags:
+    CONSTRUCTOR visibility:private <> () returnType:BaseImpl flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='BaseImpl'
@@ -114,12 +114,12 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:otherImpl.<no name provided> flags:
             superClasses:
               CLASS INTERFACE name:IOther modality:ABSTRACT visibility:public flags:
-            CONSTRUCTOR visibility:public <> () returnType:otherImpl.<no name provided> flags:
+            CONSTRUCTOR visibility:public <> () returnType:otherImpl.<no name provided> flags:primary
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
                 INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
             PROPERTY name:x type:kotlin.String visibility:public modality:OPEN flags:val
-              FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public
+              FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
                 EXPRESSION_BODY
                   GET_VAR 'value-parameter x0: String' type=kotlin.String origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:OPEN <> ($this:otherImpl.<no name provided>) returnType:String flags:
@@ -131,7 +131,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                     GET_FIELD 'x: String' type=kotlin.String origin=null
                       receiver: GET_VAR 'this@<no name provided>: <no name provided>' type=otherImpl.<no name provided> origin=null
             PROPERTY name:y type:kotlin.Int visibility:public modality:OPEN flags:var
-              FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public
+              FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public flags:
                 EXPRESSION_BODY
                   GET_VAR 'value-parameter y0: Int' type=kotlin.Int origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:OPEN <> ($this:otherImpl.<no name provided>) returnType:Int flags:
@@ -194,11 +194,11 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
     superClasses:
       CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Test1 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test1 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
-    FIELD DELEGATE name:Test1$IBase$delegate type:BaseImpl visibility:private
+    FIELD DELEGATE name:Test1$IBase$delegate type:BaseImpl visibility:private flags:final
       EXPRESSION_BODY
         GET_OBJECT 'BaseImpl' type=BaseImpl
     FUN DELEGATED_MEMBER name:bar visibility:public modality:OPEN <> ($this:Test1) returnType:Int flags:
@@ -250,11 +250,11 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     superClasses:
       CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public flags:
       CLASS INTERFACE name:IOther modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Test2 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test2 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
-    FIELD DELEGATE name:Test2$IBase$delegate type:BaseImpl visibility:private
+    FIELD DELEGATE name:Test2$IBase$delegate type:BaseImpl visibility:private flags:final
       EXPRESSION_BODY
         GET_OBJECT 'BaseImpl' type=BaseImpl
     FUN DELEGATED_MEMBER name:bar visibility:public modality:OPEN <> ($this:Test2) returnType:Int flags:
@@ -288,7 +288,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
           $this: GET_FIELD '`Test2$IBase$delegate`: BaseImpl' type=BaseImpl origin=null
             receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
           $receiver: GET_VAR 'this@qux: String' type=kotlin.String origin=null
-    FIELD DELEGATE name:Test2$IOther$delegate type:IOther visibility:private
+    FIELD DELEGATE name:Test2$IOther$delegate type:IOther visibility:private flags:final
       EXPRESSION_BODY
         CALL 'otherImpl(String, Int): IOther' type=IOther origin=null
           x0: CONST String type=kotlin.String value=
