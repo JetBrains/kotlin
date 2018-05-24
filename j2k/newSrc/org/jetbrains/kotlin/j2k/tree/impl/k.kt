@@ -20,36 +20,41 @@ import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 class JKKtPropertyImpl(
-    override var modifierList: JKModifierList,
-    override var type: JKType,
-    override var name: JKNameIdentifier,
-    override var initializer: JKExpression,
-    override var getter: JKBlock,
-    override var setter: JKBlock
-) : JKElementBase(), JKKtProperty {
+    modifierList: JKModifierList,
+    type: JKType,
+    name: JKNameIdentifier,
+    initializer: JKExpression,
+    getter: JKBlock,
+    setter: JKBlock
+) : JKBranchElementBase(), JKKtProperty {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtProperty(this, data)
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        modifierList.accept(visitor, data)
-        type.accept(visitor, data)
-        name.accept(visitor, data)
-        initializer.accept(visitor, data)
-        getter.accept(visitor, data)
-        setter.accept(visitor, data)
-    }
 
     override val valid: Boolean
         get() = true
+
+    override var modifierList: JKModifierList by child(modifierList)
+    override var type: JKType by child(type)
+    override var name: JKNameIdentifier by child(name)
+    override val initializer: JKExpression by child(initializer)
+    override val getter: JKBlock by child(getter)
+    override val setter: JKBlock by child(setter)
 }
 
 class JKKtFunctionImpl(
-    override var returnType: JKType,
-    override var name: JKNameIdentifier,
-    override var valueArguments: List<JKValueArgument>,
-    override var block: JKBlock,
-    override var modifierList: JKModifierList
-) : JKElementBase(), JKKtFunction {
+    returnType: JKType,
+    name: JKNameIdentifier,
+    valueArguments: List<JKValueArgument>,
+    block: JKBlock,
+    modifierList: JKModifierList
+) : JKBranchElementBase(), JKKtFunction {
     override val valid: Boolean
         get() = true
+
+    override var returnType: JKType by child(returnType)
+    override var name: JKNameIdentifier by child(name)
+    override var valueArguments: List<JKValueArgument> by children(valueArguments)
+    override var block: JKBlock by child(block)
+    override var modifierList: JKModifierList by child(modifierList)
 }
 
 sealed class JKKtQualifierImpl : JKQualifier, JKElementBase() {
