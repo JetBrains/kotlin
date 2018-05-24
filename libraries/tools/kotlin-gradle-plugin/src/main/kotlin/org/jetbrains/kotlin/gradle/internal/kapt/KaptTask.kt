@@ -1,16 +1,10 @@
 package org.jetbrains.kotlin.gradle.internal
 
-import org.gradle.api.GradleException
+import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.gradle.plugin.compareVersionNumbers
-import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.isJavaFile
 import org.jetbrains.kotlin.gradle.utils.isParentOf
@@ -18,7 +12,7 @@ import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import java.io.File
 
 @CacheableTask
-open class KaptTask : ConventionTask() {
+abstract class KaptTask : ConventionTask() {
     init {
         cacheOnlyIfEnabledForKotlin()
 
@@ -74,6 +68,7 @@ open class KaptTask : ConventionTask() {
             return result
         }
 
+    @get:Internal
     protected val javaSourceRoots: Set<File>
         get() = (kotlinCompileTask.sourceRootsContainer.sourceRoots + stubsDir)
             .filterTo(HashSet(), ::isRootAllowed)
