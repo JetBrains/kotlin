@@ -269,7 +269,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             if (this is PsiReturnStatement) {
                 return JKReturnStatementImpl(with(expressionTreeMapper) { returnValue?.toJK() ?: TODO() })
             }
-            TODO()
+            TODO("for ${this::class}")
         }
     }
 
