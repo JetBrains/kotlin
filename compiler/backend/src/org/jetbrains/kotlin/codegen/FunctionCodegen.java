@@ -474,16 +474,16 @@ public class FunctionCodegen {
     ) {
         AnnotationCodegen annotationCodegen = AnnotationCodegen.forMethod(mv, consumer, typeMapper);
 
+        if (addGeneratedAnnotation) {
+            WriteAnnotationUtilKt.markMethodAsGenerated(mv);
+        }
+
         if (functionDescriptor instanceof PropertyAccessorDescriptor) {
             AnnotationUseSiteTarget target = functionDescriptor instanceof PropertySetterDescriptor ? PROPERTY_SETTER : PROPERTY_GETTER;
             annotationCodegen.genAnnotations(functionDescriptor, asmMethod.getReturnType(), target);
         }
         else {
             annotationCodegen.genAnnotations(functionDescriptor, asmMethod.getReturnType());
-        }
-
-        if (addGeneratedAnnotation) {
-            WriteAnnotationUtilKt.markMethodAsGenerated(mv);
         }
     }
 
