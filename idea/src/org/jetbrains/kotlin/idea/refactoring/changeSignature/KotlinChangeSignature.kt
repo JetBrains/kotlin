@@ -153,16 +153,17 @@ class KotlinChangeSignature(
         // Generate new Java method signature from the Kotlin point of view
         val ktChangeInfo = KotlinChangeInfo(methodDescriptor = descriptor, context = defaultValueContext)
         val ktSignature = ktChangeInfo.getNewSignature(descriptor.originalPrimaryCallable)
+        val previewClassName = if (originalMethod.isConstructor) originalMethod.name else "Dummy"
         val dummyFileText = with(StringBuilder()) {
             contextFile.packageDirective?.let { append(it.text).append("\n") }
-            append("class Dummy {\n").append(ktSignature).append("{}\n}")
+            append("class $previewClassName {\n").append(ktSignature).append("{}\n}")
             toString()
         }
         val dummyFile = KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", dummyFileText, originalMethod)
         val dummyDeclaration = (dummyFile.declarations.first() as KtClass).getBody()!!.declarations.first()
 
         // Convert to PsiMethod which can be used in Change Signature dialog
-        val containingClass = PsiElementFactory.SERVICE.getInstance(project).createClass("Dummy")
+        val containingClass = PsiElementFactory.SERVICE.getInstance(project).createClass(previewClassName)
         val preview = createJavaMethod(dummyDeclaration.getRepresentativeLightMethod()!!, containingClass)
 
         // Create JavaChangeInfo based on new signature
