@@ -108,7 +108,7 @@ RUNTIME_USED int Konan_DebugGetFieldType(KRef obj, int index) {
     return Konan_RuntimeType::RT_INVALID;
 
   if (extendedTypeInfo->fieldsCount_ < 0)
-    return -typeInfo->fieldsCount_;
+    return -extendedTypeInfo->fieldsCount_;
 
   if (index >= extendedTypeInfo->fieldsCount_)
     return Konan_RuntimeType::RT_INVALID;
@@ -127,10 +127,10 @@ RUNTIME_USED void* Konan_DebugGetFieldAddress(KRef obj, int index) {
     return nullptr;
 
    if (extendedTypeInfo->fieldsCount_ < 0) {
-     if (index >= obj->array()->count_)
+     if (index > obj->array()->count_)
         return nullptr;
 
-      return reinterpret_cast<uint8_t*>(obj + 1) + index * runtimeTypeSize[-typeInfo->fieldsCount_];
+      return reinterpret_cast<uint8_t*>(obj->array() + 1) + index * runtimeTypeSize[-extendedTypeInfo->fieldsCount_];
    }
 
    if (index >= extendedTypeInfo->fieldsCount_)
