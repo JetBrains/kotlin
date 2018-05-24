@@ -80,6 +80,12 @@ private class DebugTreePrinter : JKVisitorVoid {
             if (type is JKClassType) {
                 printer.println((type.classReference as? JKClassSymbol)?.fqName ?: type.classReference?.let { it::class } ?: "Unbound")
             }
+            if (type is JKJavaArrayType) {
+                type.type.accept(this, null)
+            }
+            if (type is JKJavaPrimitiveType) {
+                printer.println(type.name)
+            }
         }
         printer.println("\"")
     }
