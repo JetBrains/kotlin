@@ -57,7 +57,7 @@ internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context
 
     fun get(descriptor: FunctionDescriptor): IrFunction {
         return moduleIndexForCodegen.functions[descriptor]
-                ?: symbols.symbolTable.referenceFunction(descriptor).owner as IrFunction
+                ?: symbols.symbolTable.referenceFunction(descriptor).owner
     }
 
     fun get(descriptor: ClassDescriptor): IrClass {

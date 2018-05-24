@@ -305,7 +305,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                                     IrConstKind.String, functionDescriptor.name.asString())
                             putValueArgument(0, name)
                             val fqName = IrConstImpl(startOffset, endOffset, context.builtIns.stringType, IrConstKind.String,
-                                    (functionReference.symbol.owner as IrFunction).fullName)
+                                    (functionReference.symbol.owner).fullName)
                             putValueArgument(1, fqName)
                             val bound = IrConstImpl.boolean(startOffset, endOffset, context.builtIns.booleanType,
                                     boundFunctionParameters.isNotEmpty())

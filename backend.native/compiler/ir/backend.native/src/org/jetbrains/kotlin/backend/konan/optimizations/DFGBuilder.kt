@@ -587,7 +587,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                         expressionToEdge(value.getValueArgument(0)!!), expressionToEdge(value.getValueArgument(1)!!))
 
                                 else -> {
-                                    val callee = value.symbol.owner as IrFunction
+                                    val callee = value.symbol.owner
                                     val arguments = value.getArguments()
                                             .map { expressionToEdge(it.second) }
                                             .let {

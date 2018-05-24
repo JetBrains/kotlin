@@ -295,7 +295,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
 
             private fun parametersForCall(expression: IrFunctionAccessExpression): Pair<IrFunctionSymbol, List<Pair<ValueParameterDescriptor, IrExpression?>>> {
                 val descriptor = expression.descriptor
-                val keyFunction = (expression.symbol.owner as IrFunction).findSuperMethodWithDefaultArguments()!!
+                val keyFunction = expression.symbol.owner.findSuperMethodWithDefaultArguments()!!
                 val keyDescriptor = keyFunction.descriptor
                 val realFunction = keyDescriptor.generateDefaultsFunction(context)
                 realFunction.parent = keyFunction.parent

@@ -214,7 +214,6 @@ extern "C" void RUNTIME_USED Konan_main(
   if (launchThread) {
     launcherState = (LauncherState*)calloc(sizeof(LauncherState), 1);
     launcherState->nativeActivityState = {activity, savedState, savedStateSize, nullptr};
-
     activity->instance = launcherState;
     activity->callbacks->onDestroy = onDestroy;
     activity->callbacks->onStart = onStart;

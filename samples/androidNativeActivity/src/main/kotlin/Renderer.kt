@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package NativeApplication
 
 import kotlinx.cinterop.*
 import platform.android.*
@@ -55,10 +57,9 @@ import platform.gles.glTexCoordPointer
 import platform.gles.glNormalPointer
 import platform.gles.GL_TEXTURE_ENV_COLOR
 
-
-class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActivity, val savedMatrix: COpaquePointer?) {
-
-    private val arena = MemScope()
+class Renderer(val container: DisposableContainer,
+               val nativeActivity: ANativeActivity,
+               val savedMatrix: COpaquePointer?) {
     private var display: EGLDisplay? = null
     private var surface: EGLSurface? = null
     private var context: EGLContext? = null
@@ -66,20 +67,20 @@ class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActi
 
     var screen = Vector2.Zero
 
-    private val matrix = parentArena.allocArray<FloatVar>(16)
+    private val matrix = container.arena.allocArray<FloatVar>(16)
 
     init {
         if (savedMatrix != null) {
             memcpy(matrix, savedMatrix, 16 * 4)
         } else {
-            for (i in 0..3)
-                for (j in 0..3)
+            for (i in 0 .. 3)
+                for (j in 0 .. 3)
                     matrix[i * 4 + j] = if (i == j) 1.0f else 0.0f
         }
     }
 
     fun initialize(window: CPointer<ANativeWindow>): Boolean {
-        with(arena) {
+        with (container.arena) {
             logInfo("Initializing context..")
             display = eglGetDisplay(null)
             if (display == null) {
@@ -100,15 +101,11 @@ class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActi
             )
             val numConfigs = alloc<EGLintVar>()
             if (eglChooseConfig(display, attribs, null, 0, numConfigs.ptr) == 0) {
-                logError("eglChooseConfig()#1 returned error ${eglGetError()}")
-                destroy()
-                return false
+                throw Error("eglChooseConfig()#1 returned error ${eglGetError()}")
             }
             val supportedConfigs = allocArray<EGLConfigVar>(numConfigs.value)
             if (eglChooseConfig(display, attribs, supportedConfigs, numConfigs.value, numConfigs.ptr) == 0) {
-                logError("eglChooseConfig()#2 returned error ${eglGetError()}")
-                destroy()
-                return false
+                throw Error("eglChooseConfig()#2 returned error ${eglGetError()}")
             }
             var configIndex = 0
             while (configIndex < numConfigs.value) {
@@ -116,13 +113,11 @@ class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActi
                 val g = alloc<EGLintVar>()
                 val b = alloc<EGLintVar>()
                 val d = alloc<EGLintVar>()
-                if (eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_RED_SIZE, r.ptr) != 0   &&
-                        eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_GREEN_SIZE, g.ptr) != 0 &&
-                eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_BLUE_SIZE, b.ptr) != 0  &&
-                eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_DEPTH_SIZE, d.ptr) != 0 &&
-                r.value == 8 && g.value == 8 && b.value == 8 && d.value == 0 ) {
-                    break
-                }
+                if (eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_RED_SIZE, r.ptr) != 0 &&
+                    eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_GREEN_SIZE, g.ptr) != 0 &&
+                    eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_BLUE_SIZE, b.ptr) != 0 &&
+                    eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_DEPTH_SIZE, d.ptr) != 0 &&
+                    r.value == 8 && g.value == 8 && b.value == 8 && d.value == 0) break
                 ++configIndex
             }
             if (configIndex >= numConfigs.value)
@@ -130,31 +125,23 @@ class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActi
 
             surface = eglCreateWindowSurface(display, supportedConfigs[configIndex], window, null)
             if (surface == null) {
-                logError("eglCreateWindowSurface() returned error ${eglGetError()}")
-                destroy()
-                return false
+                throw Error("eglCreateWindowSurface() returned error ${eglGetError()}")
             }
 
             context = eglCreateContext(display, supportedConfigs[configIndex], null, null)
             if (context == null) {
-                logError("eglCreateContext() returned error ${eglGetError()}")
-                destroy()
-                return false
+                throw Error("eglCreateContext() returned error ${eglGetError()}")
             }
 
             if (eglMakeCurrent(display, surface, surface, context) == 0) {
-                logError("eglMakeCurrent() returned error ${eglGetError()}")
-                destroy()
-                return false
+                throw Error("eglMakeCurrent() returned error ${eglGetError()}")
             }
 
             val width = alloc<EGLintVar>()
             val height = alloc<EGLintVar>()
             if (eglQuerySurface(display, surface, EGL_WIDTH, width.ptr) == 0
                     || eglQuerySurface(display, surface, EGL_HEIGHT, height.ptr) == 0) {
-                logError("eglQuerySurface() returned error ${eglGetError()}")
-                destroy()
-                return false
+                throw Error("eglQuerySurface() returned error ${eglGetError()}")
             }
 
             this@Renderer.screen = Vector2(width.value.toFloat(), height.value.toFloat())
@@ -192,14 +179,14 @@ class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActi
 
     fun getState() = matrix to 16 * 4
 
-    fun rotateBy(vec: Vector2) {
+    fun rotateBy(vector: Vector2) {
         if (!initialized) return
 
-        val len = vec.length
-        if (len < 1e-9f) return
-        val angle = 180 * len / screen.length
-        val x = - vec.y / len
-        val y = - vec.x / len
+        val length = vector.length
+        if (length < 1e-9f) return
+        val angle = 180 * length / screen.length
+        val x = -vector.y / length
+        val y = -vector.x / length
 
         glPushMatrix()
         glMatrixMode(GL_MODELVIEW)
@@ -210,51 +197,38 @@ class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActi
         glPopMatrix()
     }
 
-    private class BMPHeader(val rawPtr: NativePtr) {
-        inline fun <reified T : CPointed> memberAt(offset: Long): T {
-            return interpretPointed<T>(this.rawPtr + offset)
-        }
 
-        val magic get() = memberAt<ShortVar>(0).value.toInt()
-        val size get() = memberAt<IntVar>(2).value
-        val zero get() = memberAt<IntVar>(6).value
-        val width get() = memberAt<IntVar>(18).value
-        val height get() = memberAt<IntVar>(22).value
-        val bits get() = memberAt<ShortVar>(28).value.toInt()
-        val data get() = interpretCPointer<ByteVar>(rawPtr + 54) as CArrayPointer<ByteVar>
-    }
 
     private fun loadTexture(assetName: String): Unit = memScoped {
         val asset = AAssetManager_open(nativeActivity.assetManager, assetName, AASSET_MODE_BUFFER)
-        if (asset == null) {
-            logError("Error opening asset")
-            return
-        }
-        val length = AAsset_getLength(asset)
-        val buf = allocArray<ByteVar>(length)
-        if (AAsset_read(asset, buf, length) != length.toInt()) {
-            logError("Error reading asset")
-            AAsset_close(asset)
-        }
-        with (BMPHeader(buf.rawValue)) {
-            if (magic != 0x4d42 || zero != 0 || size != length.toInt() || bits != 24) {
-                logError("Error parsing texture file")
-                AAsset_close(asset)
-                return
+                ?: throw Error("Error opening asset $assetName")
+        try {
+            val length = AAsset_getLength(asset)
+            val buffer = allocArray<ByteVar>(length)
+            if (AAsset_read(asset, buffer, length) != length.toInt()) {
+                throw Error("Error reading asset")
             }
-            val numberOfBytes = width * height * 3
-            for (i in 0 until numberOfBytes step 3) {
-                val t = data[i]
-                data[i] = data[i + 2]
-                data[i + 2] = t
+            with(BMPHeader(buffer.rawValue)) {
+                if (magic != 0x4d42 || zero != 0 || size != length.toInt() || bits != 24) {
+                    throw Error("Error parsing texture file")
+                }
+                val numberOfBytes = width * height * 3
+                // Swap BGR in bitmap to RGB.
+                for (i in 0 until numberOfBytes step 3) {
+                    val t = data[i]
+                    data[i] = data[i + 2]
+                    data[i + 2] = t
+                }
+                glBindTexture(GL_TEXTURE_2D, 1)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+                glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND.toFloat())
+                glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, cValuesOf(1.0f, 1.0f, 1.0f, 1.0f))
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data)
+
             }
-            glBindTexture(GL_TEXTURE_2D, 1)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND.toFloat())
-            glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, cValuesOf(1.0f, 1.0f, 1.0f, 1.0f))
-            glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data)
+        } finally {
             AAsset_close(asset)
         }
     }
@@ -265,7 +239,7 @@ class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActi
 
     private val scale = 1.25f
 
-    fun draw() = memScoped {
+    fun draw(): Unit {
         if (!initialized) return
 
         glPushMatrix()
@@ -279,61 +253,83 @@ class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActi
         glEnableClientState(GL_NORMAL_ARRAY)
         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
 
-        val poly = RegularPolyhedra.Dodecahedron
+        val polygon = RegularPolyhedra.Dodecahedron
         val vertices = mutableListOf<Float>()
         val texCoords = mutableListOf<Float>()
         val triangles = mutableListOf<Byte>()
         val normals = mutableListOf<Float>()
-        for (face in poly.faces) {
-            val u = poly.vertices[face[2].toInt()] - poly.vertices[face[1].toInt()]
-            val v = poly.vertices[face[0].toInt()] - poly.vertices[face[1].toInt()]
+        for (face in polygon.faces) {
+            val u = polygon.vertices[face[2].toInt()] - polygon.vertices[face[1].toInt()]
+            val v = polygon.vertices[face[0].toInt()] - polygon.vertices[face[1].toInt()]
             val normal = u.crossProduct(v).normalized()
 
             val copiedFace = ByteArray(face.size)
             for (j in face.indices) {
                 copiedFace[j] = (vertices.size / 4).toByte()
-                poly.vertices[face[j].toInt()].copyCoordinatesTo(vertices)
+                polygon.vertices[face[j].toInt()].copyCoordinatesTo(vertices)
                 vertices.add(scale)
                 normal.copyCoordinatesTo(normals)
                 texturePoints[j].copyCoordinatesTo(texCoords)
             }
 
-            for (j in 1..face.size-2) {
+            for (j in 1..face.size - 2) {
                 triangles.add(copiedFace[0])
                 triangles.add(copiedFace[j])
                 triangles.add(copiedFace[j + 1])
             }
         }
 
-        glFrontFace(GL_CW)
-        glVertexPointer(4, GL_FLOAT, 0, vertices.toFloatArray().toCValues().ptr)
-        glTexCoordPointer(2, GL_FLOAT, 0, texCoords.toFloatArray().toCValues().ptr)
-        glNormalPointer(GL_FLOAT, 0, normals.toFloatArray().toCValues().ptr)
-        glDrawElements(GL_TRIANGLES, triangles.size, GL_UNSIGNED_BYTE, triangles.toByteArray().toCValues().ptr)
+        memScoped {
+            glFrontFace(GL_CW)
+            glVertexPointer(4, GL_FLOAT, 0, vertices.toFloatArray().toCValues().ptr)
+            glTexCoordPointer(2, GL_FLOAT, 0, texCoords.toFloatArray().toCValues().ptr)
+            glNormalPointer(GL_FLOAT, 0, normals.toFloatArray().toCValues().ptr)
+            glDrawElements(GL_TRIANGLES, triangles.size, GL_UNSIGNED_BYTE, triangles.toByteArray().toCValues().ptr)
+        }
 
         glPopMatrix()
 
         if (eglSwapBuffers(display, surface) == 0) {
-            logError("eglSwapBuffers() returned error ${eglGetError()}")
-            destroy()
+            val error = eglGetError()
+            if (error != EGL_BAD_SURFACE)
+                throw Error("eglSwapBuffers() returned error $error")
+            else {
+                if (eglMakeCurrent(display, surface, surface, context) == 0) {
+                    throw Error("Reinit eglMakeCurrent() returned error ${eglGetError()}")
+                }
+                if (eglSwapBuffers(display, surface) == 0)
+                    throw Error("Bad eglSwapBuffers() after surface reinit: ${eglGetError()}")
+            }
         }
+    }
+
+    fun start() {
+        logInfo("Starting renderer..")
+        if (initialized) {
+            if (eglMakeCurrent(display, surface, surface, context) == 0) {
+                throw Error("eglMakeCurrent() returned error ${eglGetError()}")
+            }
+        }
+    }
+
+    fun stop() {
+        logInfo("Stopping renderer..")
+        eglMakeCurrent(display, null, null, null)
     }
 
     fun destroy() {
         if (!initialized) return
 
-        logInfo("Destroying context..")
-
+        logInfo("Destroying renderer..")
         eglMakeCurrent(display, null, null, null)
+
         context?.let { eglDestroyContext(display, it) }
         surface?.let { eglDestroySurface(display, it) }
-        eglTerminate(display)
+        display?.let { eglTerminate(display) }
 
         display = null
         surface = null
         context = null
         initialized = false
-        // TODO: What should be called here?
-        //arena.clear()
     }
 }

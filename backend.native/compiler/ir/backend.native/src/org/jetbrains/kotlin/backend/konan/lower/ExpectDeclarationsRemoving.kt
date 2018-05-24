@@ -61,7 +61,7 @@ internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPa
     }
 
     private fun IrFunction.findActualForExpected(): IrFunction =
-            context.ir.symbols.symbolTable.referenceFunction(descriptor.findActualForExpect()).owner as IrFunction
+            context.ir.symbols.symbolTable.referenceFunction(descriptor.findActualForExpect()).owner
 
     private fun IrClass.findActualForExpected(): IrClass =
             context.ir.symbols.symbolTable.referenceClass(descriptor.findActualForExpect()).owner

@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:${project.property('konan.plugin.version')}"
-        classpath "com.android.tools.build:gradle:3.1.0"
+        classpath 'com.android.tools.build:gradle:3.1.2'
     }
 }
 

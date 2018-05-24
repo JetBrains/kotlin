@@ -1690,7 +1690,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun evaluateSpecialIntrinsicCall(expression: IrFunctionAccessExpression): LLVMValueRef? {
-        val function = expression.symbol.owner as IrFunction
+        val function = expression.symbol.owner
 
         if (function.isIntrinsic) {
             when (function.descriptor) {
@@ -1715,7 +1715,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     val initializer = callee.getValueArgument(1) as IrCall
                     val thiz = evaluateExpression(callee.getValueArgument(0)!!)
                     evaluateSimpleFunctionCall(
-                            initializer.symbol.owner as IrFunction,
+                            initializer.symbol.owner,
                             listOf(thiz) + evaluateExplicitArgs(initializer),
                             resultLifetime(initializer)
                     )
@@ -1901,7 +1901,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         assert (expression.getArguments().isEmpty())
 
-        val descriptor = expression.symbol.owner as IrFunction
+        val descriptor = expression.symbol.owner
         assert (descriptor.dispatchReceiverParameter == null)
 
         val entry = codegen.functionEntryPointAddress(descriptor)
@@ -1983,7 +1983,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateFunctionCall(callee: IrCall, args: List<LLVMValueRef>,
                                      resultLifetime: Lifetime): LLVMValueRef {
-        val descriptor = callee.symbol.owner as IrFunction
+        val descriptor = callee.symbol.owner
 
         val argsWithContinuationIfNeeded = if (descriptor.isSuspend)
                                                args + getContinuation()
@@ -2021,7 +2021,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
             )
         }
-        return call(callee.symbol.owner as IrFunction, function, args, resultLifetime)
+        return call(callee.symbol.owner, function, args, resultLifetime)
     }
 
     //-------------------------------------------------------------------------//
@@ -2086,7 +2086,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             } else {
                 functionGenerationContext.allocInstance(constructedClass, resultLifetime(callee))
             }
-            evaluateSimpleFunctionCall(callee.symbol.owner as IrFunction,
+            evaluateSimpleFunctionCall(callee.symbol.owner,
                     listOf(thisValue) + args, Lifetime.IRRELEVANT /* constructor doesn't return anything */)
             thisValue
         }
@@ -2401,7 +2401,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateOperatorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         context.log{"evaluateOperatorCall           : origin:${ir2string(callee)}"}
-        val descriptor = callee.symbol.owner as IrFunction
+        val descriptor = callee.symbol.owner
         val ib = context.irModule!!.irBuiltins
 
         with(functionGenerationContext) {
