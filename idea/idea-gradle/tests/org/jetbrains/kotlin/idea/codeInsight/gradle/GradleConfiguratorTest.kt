@@ -184,6 +184,136 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
+    fun testConfigureKotlinDevVersion() {
+        createProjectSubFile("settings.gradle", "include ':app'")
+        val file = createProjectSubFile(
+                "app/build.gradle", """
+        group 'testgroup'
+        version '1.0-SNAPSHOT'
+        """.trimIndent()
+        )
+
+        importProject()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.2.60-dev-286", collector)
+
+                FileDocumentManager.getInstance().saveAllDocuments()
+                val content = LoadTextUtil.loadText(file).toString()
+                assertEquals(
+                        """
+                group 'testgroup'
+                version '1.0-SNAPSHOT'
+                buildscript {
+                    ext.kotlin_version = '1.2.60-dev-286'
+                    repositories {
+                        maven {
+                            url 'https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:1.2.60-dev-286,branch:default:any/artifacts/content/maven/'
+                        }
+                        mavenCentral()
+                    }
+                    dependencies {
+                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${"$"}kotlin_version"
+                    }
+                }
+                apply plugin: 'kotlin'
+                repositories {
+                    maven {
+                        url 'https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:1.2.60-dev-286,branch:default:any/artifacts/content/maven/'
+                    }
+                    mavenCentral()
+                }
+                dependencies {
+                    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${"$"}kotlin_version"
+                }
+                compileKotlin {
+                    kotlinOptions {
+                        jvmTarget = "1.8"
+                    }
+                }
+                compileTestKotlin {
+                    kotlinOptions {
+                        jvmTarget = "1.8"
+                    }
+                }
+                """.trimIndent(), content
+                )
+            }
+        }
+    }
+
+    @Test
+    fun testConfigureGradleKtsKotlinDevVersion() {
+        createProjectSubFile("settings.gradle", "include ':app'")
+        val file = createProjectSubFile(
+                "app/build.gradle.kts", """
+        group = "testgroup"
+        version = "1.0-SNAPSHOT"
+        """.trimIndent()
+        )
+
+        importProject()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.2.60-dev-286", collector)
+
+                FileDocumentManager.getInstance().saveAllDocuments()
+                val content = LoadTextUtil.loadText(file).toString()
+                assertEquals(
+                        """
+                import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+                val kotlin_version: String by extra
+                buildscript {
+                    var kotlin_version: String by extra
+                    kotlin_version = "1.2.60-dev-286"
+                    repositories {
+                        maven {
+                            setUrl("https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:1.2.60-dev-286,branch:default:any/artifacts/content/maven/")
+                        }
+                        mavenCentral()
+                    }
+                    dependencies {
+                        classpath(kotlinModule("gradle-plugin", kotlin_version))
+                    }
+                }
+                group = "testgroup"
+                version = "1.0-SNAPSHOT"
+                apply {
+                    plugin("kotlin")
+                }
+                dependencies {
+                    compile(kotlinModule("stdlib-jdk8", kotlin_version))
+                }
+                repositories {
+                    maven {
+                        setUrl("https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:1.2.60-dev-286,branch:default:any/artifacts/content/maven/")
+                    }
+                    mavenCentral()
+                }
+                val compileKotlin: KotlinCompile by tasks
+                compileKotlin.kotlinOptions {
+                    jvmTarget = "1.8"
+                }
+                val compileTestKotlin: KotlinCompile by tasks
+                compileTestKotlin.kotlinOptions {
+                    jvmTarget = "1.8"
+                }
+                """.trimIndent(), content
+                )
+            }
+        }
+    }
+
+    @Test
     @Ignore // Enable in Gradle 4.4+
     fun testConfigureJvmWithBuildGradle() {
         val settingsFile = createProjectSubFile("settings.gradle", "include ':app'")
