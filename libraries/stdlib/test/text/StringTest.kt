@@ -1329,4 +1329,11 @@ ${"    "}
         val chars: CharArray = charArrayOf().plus("Some Text".toList())
         assertEquals("Some Text", String(chars))
     }
+
+    @Test fun unicodeCharArrayToString() {
+        val chars: CharArray = charArrayOf('Ц', '単', '語', '\u016C', '\u138D')
+        assertEquals("Ц単語Ŭᎍ", String(chars))
+        assertEquals("単", String(chars, 1, 1))
+        assertEquals("語Ŭᎍ", String(chars, 2, 3))
+    }
 }
