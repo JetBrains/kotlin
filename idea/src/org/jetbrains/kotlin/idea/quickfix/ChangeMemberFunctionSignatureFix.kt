@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
@@ -330,6 +331,9 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 }
 
                 val newParameterList = function.valueParameterList!!.replace(patternFunction.valueParameterList!!) as KtParameterList
+                if (patternFunction.receiverTypeReference == null && function.receiverTypeReference != null) {
+                    function.setReceiverTypeReference(null)
+                }
                 ShortenReferences.DEFAULT.process(newParameterList)
             }
         }

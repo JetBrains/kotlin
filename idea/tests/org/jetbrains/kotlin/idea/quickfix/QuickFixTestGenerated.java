@@ -8362,6 +8362,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/override/nothingToOverride/overrideJavaMethod.kt");
             }
 
+            @TestMetadata("removeFunctionReciever.kt")
+            public void testRemoveFunctionReciever() throws Exception {
+                runTest("idea/testData/quickfix/override/nothingToOverride/removeFunctionReciever.kt");
+            }
+
             @TestMetadata("removeOverride.kt")
             public void testRemoveOverride() throws Exception {
                 runTest("idea/testData/quickfix/override/nothingToOverride/removeOverride.kt");
