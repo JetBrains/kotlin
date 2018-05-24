@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.tasks.clearOutputDirectories
@@ -24,7 +21,8 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
     @get:Classpath
     lateinit var annotationProcessingJars: List<File>
 
-    @get:Input
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     lateinit var projectDir: File
 
     @get:Input
