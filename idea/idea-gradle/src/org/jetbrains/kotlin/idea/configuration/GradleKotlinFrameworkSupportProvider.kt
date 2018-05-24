@@ -101,12 +101,11 @@ abstract class GradleKotlinFrameworkSupportProvider(
 
             buildScriptData
                 .addPluginDefinition(KotlinWithGradleConfigurator.getGroovyApplyPluginDirective(getPluginId()))
-
                 .addBuildscriptRepositoriesDefinition("mavenCentral()")
-                .addRepositoriesDefinition("mavenCentral()")
-
                 .addBuildscriptPropertyDefinition("ext.kotlin_version = '$kotlinVersion'")
         }
+
+        buildScriptData.addRepositoriesDefinition("mavenCentral()")
 
         for (dependency in getDependencies(sdk)) {
             buildScriptData.addDependencyNotation(KotlinWithGradleConfigurator.getGroovyDependencySnippet(dependency, "compile", !useNewSyntax))
