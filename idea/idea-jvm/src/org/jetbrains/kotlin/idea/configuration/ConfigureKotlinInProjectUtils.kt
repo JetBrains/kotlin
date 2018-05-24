@@ -60,6 +60,14 @@ val EAP_REPOSITORY = RepositoryDescription(
         "https://bintray.com/kotlin/kotlin-eap/kotlin/",
         isSnapshot = false)
 
+fun devRepository(version: String) = RepositoryDescription(
+        "teamcity.kotlin.dev",
+        "Teamcity Repository of Kotlin Development Builds",
+        "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:$version,branch:default:any/artifacts/content/maven/",
+        null,
+        isSnapshot = false
+)
+
 val MAVEN_CENTRAL = "mavenCentral()"
 
 val JCENTER = "jcenter()"
@@ -85,6 +93,7 @@ fun RepositoryDescription.toKotlinRepositorySnippet() = "maven {\n    setUrl(\"$
 fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
     isSnapshot(version) -> SNAPSHOT_REPOSITORY
     isEap(version) -> EAP_REPOSITORY
+    isDev(version) -> devRepository(version)
     else -> null
 }
 
@@ -269,6 +278,10 @@ fun hasKotlinFilesInSources(module: Module): Boolean {
 
 fun isEap(version: String): Boolean {
     return version.contains("rc") || version.contains("eap") || version.contains("-M")
+}
+
+fun isDev(version: String): Boolean {
+    return version.contains("dev")
 }
 
 private class LibraryKindSearchScope(val module: Module,
