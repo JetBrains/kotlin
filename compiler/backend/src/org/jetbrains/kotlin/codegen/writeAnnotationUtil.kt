@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import kotlin.Generated
-
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.isPreRelease
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
