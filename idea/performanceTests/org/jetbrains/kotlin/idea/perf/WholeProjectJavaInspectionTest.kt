@@ -38,5 +38,5 @@ class WholeProjectJavaInspectionTest : WholeProjectInspectionTest() {
         return FileTypeIndex.getFiles(JavaFileType.INSTANCE, scope)
     }
 
-    override fun isEnabledInspection(tools: Tools) = tools.tool.language !in setOf(null, "java", "UAST", JavaLanguage.INSTANCE.id)
+    override fun isEnabledInspection(tools: Tools) = tools.tool.language in setOf(null, "java", "UAST", JavaLanguage.INSTANCE.id)
 }
