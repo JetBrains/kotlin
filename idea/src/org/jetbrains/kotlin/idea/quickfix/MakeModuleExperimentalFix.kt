@@ -13,6 +13,8 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.additionalArgumentsAsList
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.configuration.BuildSystemType
+import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.util.projectStructure.module
@@ -44,6 +46,7 @@ class MakeModuleExperimentalFix(
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
+        if (module.getBuildSystemType() != BuildSystemType.JPS) return false
         val facet = KotlinFacet.get(module) ?: return true
         val facetSettings = facet.configuration.settings
         val compilerSettings = facetSettings.compilerSettings ?: return true
