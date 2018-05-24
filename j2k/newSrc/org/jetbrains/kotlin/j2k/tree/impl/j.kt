@@ -131,12 +131,10 @@ sealed class JKJavaPrimitiveTypeImpl(override val name: String) : JKJavaPrimitiv
     object INT : JKJavaPrimitiveTypeImpl("int")
 }
 
-class JKJavaArrayTypeImpl(override val type: JKType) : JKJavaArrayType, JKElementBase() {
+class JKJavaArrayTypeImpl(type: JKType) : JKJavaArrayType, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaArrayType(this, data)
 
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
+    override val type: JKType by child(type)
 }
 
 class JKReturnStatementImpl(expression: JKExpression) : JKBranchElementBase(), JKReturnStatement {
