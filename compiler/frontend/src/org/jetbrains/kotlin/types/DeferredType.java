@@ -43,7 +43,7 @@ public class DeferredType extends WrappedType {
         trace.record(DEFERRED_TYPE, new Box<>(deferredType));
         return deferredType;
     }
-    
+
     @NotNull
     /*package private*/ static DeferredType createRecursionIntolerant(
             @NotNull StorageManager storageManager,

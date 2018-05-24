@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.*
+import com.intellij.psi.impl.compiled.ClsRepositoryPsiElement
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.*
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
-import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.builder.MemberIndex
-import org.jetbrains.kotlin.asJava.builder.memberIndex
+import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KtLightMethodImpl private constructor(
         computeRealDelegate: () -> PsiMethod,
@@ -43,7 +43,14 @@ class KtLightMethodImpl private constructor(
 ) : KtLightMemberImpl<PsiMethod>(computeRealDelegate, lightMemberOrigin, containingClass, dummyDelegate), KtLightMethod {
     private val returnTypeElem by lazyPub {
         val delegateTypeElement = clsDelegate.returnTypeElement as? ClsTypeElementImpl
-        delegateTypeElement?.let { ClsTypeElementImpl(this, it.canonicalText, /*ClsTypeElementImpl.VARIANCE_NONE */ 0.toChar()) }
+        val canonicalText =
+            clsDelegate.safeAs<ClsRepositoryPsiElement<*>>()?.stub?.safeAs<UserDataHolder>()
+                ?.getUserData(ClsWrapperStubPsiFactory.DEFERRED_RETURN_TYPE)
+                ?.invoke()
+                    ?: delegateTypeElement?.canonicalText
+                    ?: return@lazyPub null
+
+        ClsTypeElementImpl(this, canonicalText, /*ClsTypeElementImpl.VARIANCE_NONE */ 0.toChar())
     }
 
     private val calculatingReturnType = ThreadLocal<Boolean>()

@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function0;
 import kotlin.reflect.KType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,14 +59,13 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
@@ -86,6 +86,12 @@ public class KotlinTypeMapper {
     private final String moduleName;
     private final boolean isJvm8Target;
     private final boolean isReleaseCoroutines;
+
+    public Map<String, Function0<String>> getDeferredTypes() {
+        return deferredTypes;
+    }
+
+    private final Map<String, Function0<String>> deferredTypes = new HashMap<>();
 
     private final TypeMappingConfiguration<Type> typeMappingConfiguration = new TypeMappingConfiguration<Type>() {
         @NotNull
@@ -388,6 +394,10 @@ public class KotlinTypeMapper {
             return Type.VOID_TYPE;
         }
 
+        if (TypeUtilsKt.isWrappedNotComputedType(returnType)) {
+            return deferTypeComputation(sw, returnType, visitor -> mapReturnType(descriptor, visitor));
+        }
+
         if (CoroutineCodegenUtilKt.isSuspendFunctionNotSuspensionView(descriptor)) {
             return mapReturnType(
                     CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView((SimpleFunctionDescriptor) descriptor, isReleaseCoroutines),
@@ -409,7 +419,34 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
+    private Type deferTypeComputation(
+            @Nullable JvmSignatureWriter originalSignatureWriter,
+            @NotNull KotlinType returnType,
+            @NotNull Consumer<BothSignatureWriter> typeComputation
+    ) {
+        assert !classBuilderMode.generateBodies : "Deferred types in backend in non-light class mode";
+
+        String internalName = TypeSignatureMappingKt.NON_EXISTENT_CLASS_NAME + deferredTypes.size();
+        deferredTypes.put(internalName, () -> {
+            BothSignatureWriter visitor = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
+            returnType.unwrap();
+            typeComputation.accept(visitor);
+            return visitor.toString();
+        });
+
+        Type resultingType = Type.getObjectType(internalName);
+        if (originalSignatureWriter != null) {
+            originalSignatureWriter.writeAsmType(resultingType);
+        }
+        return resultingType;
+    }
+
+    @NotNull
     private Type mapReturnType(@NotNull CallableDescriptor descriptor, @Nullable JvmSignatureWriter sw, @NotNull KotlinType returnType) {
+        if (TypeUtilsKt.isWrappedNotComputedType(returnType)) {
+            return deferTypeComputation(sw, returnType, visitor -> mapReturnType(descriptor, visitor, returnType));
+        }
+
         boolean isAnnotationMethod = DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration());
         if (sw == null || sw.skipGenericSignature()) {
             return mapType(returnType, sw, TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod));
@@ -1440,6 +1477,11 @@ public class KotlinTypeMapper {
             @NotNull KotlinType type,
             @Nullable CallableDescriptor callableDescriptor
     ) {
+        if (TypeUtilsKt.isWrappedNotComputedType(type)) {
+            deferTypeComputation(sw, type, writer -> writeParameterType(writer, type, callableDescriptor));
+            return;
+        }
+
         if (sw.skipGenericSignature()) {
             mapType(type, sw, TypeMappingMode.DEFAULT);
             return;

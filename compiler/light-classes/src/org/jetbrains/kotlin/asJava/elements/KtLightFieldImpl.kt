@@ -16,9 +16,13 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiVariableEx
+import com.intellij.psi.impl.compiled.ClsRepositoryPsiElement
+import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -27,6 +31,7 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.UnsupportedOperationException
 
 sealed class KtLightFieldImpl<D : PsiField>(
@@ -36,15 +41,27 @@ sealed class KtLightFieldImpl<D : PsiField>(
         dummyDelegate: PsiField?
 ) : KtLightMemberImpl<PsiField>(computeRealDelegate, lightMemberOrigin, containingClass, dummyDelegate), KtLightField {
 
+    private val returnTypeElem by lazyPub {
+        val delegateTypeElement = clsDelegate.typeElement as? ClsTypeElementImpl
+        val canonicalText =
+            clsDelegate.safeAs<ClsRepositoryPsiElement<*>>()?.stub?.safeAs<UserDataHolder>()
+                ?.getUserData(ClsWrapperStubPsiFactory.DEFERRED_RETURN_TYPE)
+                ?.invoke()
+                    ?: delegateTypeElement?.canonicalText
+                    ?: return@lazyPub null
+
+        ClsTypeElementImpl(this, canonicalText, /*ClsTypeElementImpl.VARIANCE_NONE */ 0.toChar())
+    }
+
     override val clsDelegate: D
         @Suppress("UNCHECKED_CAST")
         get() = super.clsDelegate as D
 
     override fun setInitializer(initializer: PsiExpression?) = cannotModify()
 
-    override fun getType() = clsDelegate.type
+    override fun getType() = typeElement?.type ?: clsDelegate.type
 
-    override fun getTypeElement() = clsDelegate.typeElement
+    override fun getTypeElement() = returnTypeElem
 
     override fun getInitializer() = clsDelegate.initializer
 

@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext.Mode.EXACT
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext.Mode.LIGHT
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
@@ -102,7 +102,7 @@ internal object IDELightClassContexts {
         val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject).sure {
             "Class descriptor was not found for ${classOrObject.getElementTextWithContext()}"
         }
-        ForceResolveUtil.forceResolveAllContents(classDescriptor)
+        ForceResolveUtil.forceResolveAllContents(classDescriptor, false)
         return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, EXACT)
     }
 
@@ -117,7 +117,7 @@ internal object IDELightClassContexts {
             return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, EXACT)
         }
 
-        ForceResolveUtil.forceResolveAllContents(descriptor)
+        ForceResolveUtil.forceResolveAllContents(descriptor, false)
 
         return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, EXACT)
     }
@@ -273,7 +273,7 @@ internal object IDELightClassContexts {
                 }
             }
 
-            ForceResolveUtil.forceResolveAllContents(session.getFileAnnotations(file))
+            ForceResolveUtil.forceResolveAllContents(session.getFileAnnotations(file), false)
         }
     }
 

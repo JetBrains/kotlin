@@ -30,10 +30,8 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.AnnotationChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.FlexibleType;
-import org.jetbrains.kotlin.types.FlexibleTypesKt;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.lang.annotation.*;
@@ -186,7 +184,7 @@ public abstract class AnnotationCodegen {
     }
 
     private void generateNullabilityAnnotation(@Nullable KotlinType type, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
-        if (type == null) return;
+        if (type == null || TypeUtilsKt.isWrappedNotComputedType(type)) return;
 
         if (isBareTypeParameterWithNullableUpperBound(type)) {
             // This is to account for the case of, say

@@ -53,7 +53,7 @@ public abstract class VariableDescriptorWithInitializerImpl extends VariableDesc
     @Override
     public ConstantValue<?> getCompileTimeInitializer() {
         if (compileTimeInitializer != null) {
-            return compileTimeInitializer.invoke();
+            return null;
         }
         return null;
     }
