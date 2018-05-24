@@ -21,6 +21,7 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
           GET_VAR 'this@castExtFun: Any' type=kotlin.Any origin=null
   PROPERTY name:castExtVal type:T visibility:public modality:FINAL flags:val
     FUN name:<get-castExtVal> visibility:public modality:FINAL <T> ($receiver:T) returnType:T flags:
+      correspondingProperty: PROPERTY name:castExtVal type:T visibility:public modality:FINAL flags:val
       TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
         superClassifiers:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
@@ -81,6 +82,7 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
             GET_VAR 'this@castGenericMemberExtFun: Any' type=kotlin.Any origin=null
     PROPERTY name:castMemberExtVal type:T visibility:public modality:FINAL flags:val
       FUN name:<get-castMemberExtVal> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:kotlin.Any) returnType:T flags:
+        correspondingProperty: PROPERTY name:castMemberExtVal type:T visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
         BLOCK_BODY
@@ -90,6 +92,7 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
               GET_VAR 'this@castMemberExtVal: Any' type=kotlin.Any origin=null
     PROPERTY name:castGenericMemberExtVal type:TV visibility:public modality:FINAL flags:val
       FUN name:<get-castGenericMemberExtVal> visibility:public modality:FINAL <TV> ($this:Host<T>, $receiver:TV) returnType:TV flags:
+        correspondingProperty: PROPERTY name:castGenericMemberExtVal type:TV visibility:public modality:FINAL flags:val
         TYPE_PARAMETER name:TV index:0 variance: upperBounds:[kotlin.Any?]
           superClassifiers:
             CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:

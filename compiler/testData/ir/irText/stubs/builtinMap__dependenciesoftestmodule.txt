@@ -149,6 +149,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap<K!, V!> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:OPEN flags:val
         FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.HashMap<K!, V!>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:OPEN flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:OPEN <> ($this:java.util.HashMap<K, V>) returnType:Int flags:
             FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
@@ -191,18 +192,21 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiFunction<in K, in V, out V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:OPEN flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:OPEN <> ($this:java.util.LinkedHashMap<K, V>) returnType:(kotlin.collections.MutableSet<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)>..kotlin.collections.Set<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)>?) flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:OPEN flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:OPEN <> ($this:java.util.HashMap<K, V>) returnType:(kotlin.collections.MutableSet<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)>..kotlin.collections.Set<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)>?) flags:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<MutableEntry<K, V>> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.LinkedHashMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:OPEN flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:OPEN <> ($this:java.util.LinkedHashMap<K, V>) returnType:(kotlin.collections.MutableSet<(K..K?)>..kotlin.collections.Set<(K..K?)>?) flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:OPEN flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:OPEN <> ($this:java.util.HashMap<K, V>) returnType:(kotlin.collections.MutableSet<(K..K?)>..kotlin.collections.Set<(K..K?)>?) flags:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<K> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.LinkedHashMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:OPEN flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:OPEN <> ($this:java.util.LinkedHashMap<K, V>) returnType:(kotlin.collections.MutableCollection<(V..V?)>..kotlin.collections.Collection<(V..V?)>?) flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:OPEN flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:OPEN <> ($this:java.util.HashMap<K, V>) returnType:(kotlin.collections.MutableCollection<(V..V?)>..kotlin.collections.Collection<(V..V?)>?) flags:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableCollection<V> flags:
@@ -325,6 +329,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.LinkedHashMap<K, V>.LinkedEntrySet flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL <> ($this:java.util.LinkedHashMap<K, V>.LinkedEntrySet) returnType:Int flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
             overridden:
               UNBOUND: fun <get-size>(): kotlin.Int
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.LinkedHashMap<K, V>.LinkedEntrySet flags:
@@ -492,6 +497,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.LinkedHashMap<K, V>.LinkedKeySet flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL <> ($this:java.util.LinkedHashMap<K, V>.LinkedKeySet) returnType:Int flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
             overridden:
               UNBOUND: fun <get-size>(): kotlin.Int
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.LinkedHashMap<K, V>.LinkedKeySet flags:
@@ -654,6 +660,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.LinkedHashMap<K, V>.LinkedValues flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL <> ($this:java.util.LinkedHashMap<K, V>.LinkedValues) returnType:Int flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
             overridden:
               UNBOUND: fun <get-size>(): kotlin.Int
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.LinkedHashMap<K, V>.LinkedValues flags:
@@ -840,11 +847,13 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap.Node<K!, V!> flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public modality:FINAL flags:val
           FUN FAKE_OVERRIDE name:<get-key> visibility:public modality:FINAL <> ($this:java.util.HashMap.Node<K!, V!>) returnType:(K..K?) flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public modality:FINAL flags:val
             overridden:
               FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:FINAL <> ($this:java.util.HashMap.Node<K, V>) returnType:(K..K?) flags:
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap.Node<K!, V!> flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public modality:FINAL flags:val
           FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:java.util.HashMap.Node<K!, V!>) returnType:(V..V?) flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public modality:FINAL flags:val
             overridden:
               FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:FINAL <> ($this:java.util.HashMap.Node<K, V>) returnType:(V..V?) flags:
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap.Node<K!, V!> flags:
@@ -1103,24 +1112,28 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiFunction<in K, in V, out V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:OPEN flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:OPEN <> ($this:java.util.HashMap<K, V>) returnType:(kotlin.collections.MutableSet<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)>..kotlin.collections.Set<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)>?) flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:OPEN flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:java.util.AbstractMap<K, V>) returnType:(kotlin.collections.MutableSet<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)>..kotlin.collections.Set<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)>?) flags:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<MutableEntry<K, V>> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:OPEN flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:OPEN <> ($this:java.util.HashMap<K, V>) returnType:(kotlin.collections.MutableSet<(K..K?)>..kotlin.collections.Set<(K..K?)>?) flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:OPEN flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:OPEN <> ($this:java.util.AbstractMap<K, V>) returnType:(kotlin.collections.MutableSet<(K..K?)>..kotlin.collections.Set<(K..K?)>?) flags:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<K> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:OPEN flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:OPEN <> ($this:java.util.HashMap<K, V>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:OPEN flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:OPEN <> ($this:java.util.AbstractMap<K, V>) returnType:Int flags:
             FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:OPEN flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:OPEN <> ($this:java.util.HashMap<K, V>) returnType:(kotlin.collections.MutableCollection<(V..V?)>..kotlin.collections.Collection<(V..V?)>?) flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:OPEN flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:OPEN <> ($this:java.util.AbstractMap<K, V>) returnType:(kotlin.collections.MutableCollection<(V..V?)>..kotlin.collections.Collection<(V..V?)>?) flags:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableCollection<V> flags:
@@ -1405,11 +1418,13 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap.Node<K!, V!> flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public modality:FINAL flags:val
           FUN FAKE_OVERRIDE name:<get-key> visibility:public modality:FINAL <> ($this:java.util.HashMap.Node<K!, V!>) returnType:(K..K?) flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public modality:FINAL flags:val
             overridden:
               FUN FAKE_OVERRIDE name:<get-key> visibility:public modality:FINAL <> ($this:java.util.HashMap.Node<K!, V!>) returnType:(K..K?) flags:
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap.Node<K!, V!> flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public modality:FINAL flags:val
           FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:java.util.HashMap.Node<K!, V!>) returnType:(V..V?) flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public modality:FINAL flags:val
             overridden:
               FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:java.util.HashMap.Node<K!, V!>) returnType:(V..V?) flags:
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap.Node<K!, V!> flags:
@@ -1720,6 +1735,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap<K, V>.EntrySet flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL <> ($this:java.util.HashMap<K, V>.EntrySet) returnType:Int flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
             overridden:
               UNBOUND: fun <get-size>(): kotlin.Int
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap<K, V>.EntrySet flags:
@@ -1889,6 +1905,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap<K, V>.KeySet flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL <> ($this:java.util.HashMap<K, V>.KeySet) returnType:Int flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
             overridden:
               UNBOUND: fun <get-size>(): kotlin.Int
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap<K, V>.KeySet flags:
@@ -2053,6 +2070,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap<K, V>.Values flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL <> ($this:java.util.HashMap<K, V>.Values) returnType:Int flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:FINAL flags:val
             overridden:
               UNBOUND: fun <get-size>(): kotlin.Int
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap<K, V>.Values flags:
@@ -2226,11 +2244,13 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap.Node<K, V> flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public modality:FINAL flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:FINAL <> ($this:java.util.HashMap.Node<K, V>) returnType:(K..K?) flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public modality:FINAL flags:val
             overridden:
               FUN FAKE_OVERRIDE name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap.Node<K, V> flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public modality:FINAL flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:FINAL <> ($this:java.util.HashMap.Node<K, V>) returnType:(V..V?) flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public modality:FINAL flags:val
             overridden:
               FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap.Node<K, V> flags:
@@ -2328,6 +2348,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K!, V!>> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:java.util.AbstractMap<K, V>) returnType:(kotlin.collections.MutableSet<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)>..kotlin.collections.Set<(kotlin.collections.MutableMap.MutableEntry<(K..K?), (V..V?)>..kotlin.collections.Map.Entry<(K..K?), (V..V?)>?)>?) flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K!, V!>> visibility:public modality:ABSTRACT flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<MutableEntry<K, V>> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap<K, V> flags:
@@ -2354,11 +2375,13 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:newValue index:0 type:V! flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public modality:OPEN flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:OPEN <> ($this:java.util.AbstractMap.SimpleEntry<K, V>) returnType:(K..K?) flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public modality:OPEN flags:val
             overridden:
               FUN FAKE_OVERRIDE name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap.SimpleEntry<K, V> flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public modality:OPEN flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:OPEN <> ($this:java.util.AbstractMap.SimpleEntry<K, V>) returnType:(V..V?) flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public modality:OPEN flags:val
             overridden:
               FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap.SimpleEntry<K, V> flags:
@@ -2403,11 +2426,13 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:newValue index:0 type:V! flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public modality:OPEN flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:OPEN <> ($this:java.util.AbstractMap.SimpleImmutableEntry<K, V>) returnType:(K..K?) flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K! visibility:public modality:OPEN flags:val
             overridden:
               FUN FAKE_OVERRIDE name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap.SimpleImmutableEntry<K, V> flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public modality:OPEN flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:OPEN <> ($this:java.util.AbstractMap.SimpleImmutableEntry<K, V>) returnType:(V..V?) flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V! visibility:public modality:OPEN flags:val
             overridden:
               FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap.SimpleImmutableEntry<K, V> flags:
@@ -2537,16 +2562,19 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K!> visibility:public modality:OPEN flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:OPEN <> ($this:java.util.AbstractMap<K, V>) returnType:(kotlin.collections.MutableSet<(K..K?)>..kotlin.collections.Set<(K..K?)>?) flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K!> visibility:public modality:OPEN flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<K> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:OPEN flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:OPEN <> ($this:java.util.AbstractMap<K, V>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:OPEN flags:val
           overridden:
             FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V!> visibility:public modality:OPEN flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:OPEN <> ($this:java.util.AbstractMap<K, V>) returnType:(kotlin.collections.MutableCollection<(V..V?)>..kotlin.collections.Collection<(V..V?)>?) flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V!> visibility:public modality:OPEN flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableCollection<V> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap<K, V> flags:
@@ -2581,15 +2609,19 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Set<Entry<K, V>> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> visibility:public modality:ABSTRACT flags:val
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.Set<K> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Set<K> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.Set<K> visibility:public modality:ABSTRACT flags:val
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.Collection<V> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Collection<V> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.Collection<V> visibility:public modality:ABSTRACT flags:val
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Entry modality:ABSTRACT visibility:public flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
@@ -2599,9 +2631,11 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance:out upperBounds:[kotlin.Any?]
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
           FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
           overridden:
@@ -2681,21 +2715,25 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
         FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<MutableEntry<K, V>> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:ABSTRACT flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Set<Entry<K, V>> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<K> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:ABSTRACT flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Set<K> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableCollection<V> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:ABSTRACT flags:val
           overridden:
             FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Collection<V> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
@@ -2710,11 +2748,13 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:newValue index:0 type:V flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
           FUN FAKE_OVERRIDE name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
             overridden:
               FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
           FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
             overridden:
               FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
@@ -2811,9 +2851,11 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Pair<A, B> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:first type:A visibility:public modality:FINAL flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-first> visibility:public modality:FINAL <> ($this:kotlin.Pair<A, B>) returnType:A flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:first type:A visibility:public modality:FINAL flags:val
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Pair<A, B> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:second type:B visibility:public modality:FINAL flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-second> visibility:public modality:FINAL <> ($this:kotlin.Pair<A, B>) returnType:B flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:second type:B visibility:public modality:FINAL flags:val
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Pair<A, B> flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Pair<A, B>, other:kotlin.Any?) returnType:Boolean flags:
         overridden:

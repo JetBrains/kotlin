@@ -93,7 +93,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         ktDelegate: KtPropertyDelegate,
         accessorDescriptor: PropertyAccessorDescriptor,
         generateBody: (IrFunction) -> IrBody
-    ): IrFunction =
+    ): IrSimpleFunction =
         context.symbolTable.declareSimpleFunctionWithOverrides(
             ktDelegate.startOffset, ktDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,

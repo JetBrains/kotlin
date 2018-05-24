@@ -4,10 +4,12 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>(): Int'
           GET_FIELD 'p: Int' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-p> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'p: Int' type=kotlin.Unit origin=null
@@ -21,6 +23,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
             CONST Int type=kotlin.Int value=2
             CONST Int type=kotlin.Int value=3
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arr> visibility:public modality:FINAL <> () returnType:IntArray flags:
+      correspondingProperty: PROPERTY name:arr type:kotlin.IntArray visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-arr>(): IntArray'
           GET_FIELD 'arr: IntArray' type=kotlin.IntArray origin=null

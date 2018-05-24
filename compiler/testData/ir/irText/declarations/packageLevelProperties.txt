@@ -4,11 +4,13 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): Int'
           GET_FIELD 'test1: Int' type=kotlin.Int origin=null
   PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:val
     FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): Int'
           CONST Int type=kotlin.Int value=0
@@ -17,10 +19,12 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test3>(): Int'
           GET_FIELD 'test3: Int' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'test3: Int' type=kotlin.Unit origin=null
@@ -30,10 +34,12 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test4>(): Int'
           GET_FIELD 'test4: Int' type=kotlin.Int origin=null
     FUN name:<set-test4> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'test4: Int' type=kotlin.Unit origin=EQ
@@ -43,10 +49,12 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:test5 type:kotlin.Int visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test5>(): Int'
           GET_FIELD 'test5: Int' type=kotlin.Int origin=null
     FUN name:<set-test5> visibility:private modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:test5 type:kotlin.Int visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'test5: Int' type=kotlin.Unit origin=null
@@ -56,6 +64,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=1
     FUN name:<get-test6> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:test6 type:kotlin.Int visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test6>(): Int'
           GET_FIELD 'test6: Int' type=kotlin.Int origin=null
@@ -71,6 +80,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
                   CONST Int type=kotlin.Int value=42
             FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:test7 type:kotlin.Int visibility:public modality:FINAL flags:delegated,val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test7>(): Int'
           CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
@@ -85,6 +95,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
           <K>: String
           <V>: Int
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:test8 type:kotlin.Int visibility:public modality:FINAL flags:delegated,var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test8>(): Int'
           CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out Int>: Int' type=kotlin.Int origin=null
@@ -94,6 +105,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'test8: Int' field=null getter='<get-test8>(): Int' setter='<set-test8>(Int): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:test8 type:kotlin.Int visibility:public modality:FINAL flags:delegated,var
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<set-test8>(Int): Unit'

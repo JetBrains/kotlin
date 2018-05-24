@@ -4,6 +4,7 @@ FILE fqName:<root> fileName:/javaEnum.kt
       EXPRESSION_BODY
         GET_ENUM 'ONE' type=JEnum
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:JEnum flags:
+      correspondingProperty: PROPERTY name:test type:JEnum visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test>(): JEnum'
           GET_FIELD 'test: JEnum' type=JEnum origin=null

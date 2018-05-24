@@ -38,6 +38,6 @@ interface IrProperty : IrDeclaration {
     val typeParameters: MutableList<IrTypeParameter>
 
     var backingField: IrField?
-    var getter: IrFunction?
-    var setter: IrFunction?
+    var getter: IrSimpleFunction?
+    var setter: IrSimpleFunction?
 }

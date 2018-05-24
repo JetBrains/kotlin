@@ -36,11 +36,13 @@ MODULE_FRAGMENT name:<test-module>
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Enum<JEnum!> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:name type:kotlin.String visibility:public modality:FINAL flags:val
         FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<JEnum!>) returnType:String flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:name type:kotlin.String visibility:public modality:FINAL flags:val
           overridden:
             UNBOUND: fun <get-name>(): kotlin.String
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Enum<JEnum!> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ordinal type:kotlin.Int visibility:public modality:FINAL flags:val
         FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<JEnum!>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ordinal type:kotlin.Int visibility:public modality:FINAL flags:val
           overridden:
             UNBOUND: fun <get-ordinal>(): kotlin.Int
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Enum<JEnum!> flags:

@@ -16,6 +16,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Outer<T>) returnType:T flags:
+        correspondingProperty: PROPERTY name:x type:T visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Outer<T> flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): T'
@@ -36,6 +37,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
           EXPRESSION_BODY
             GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Outer<T>.Inner) returnType:Int flags:
+          correspondingProperty: PROPERTY name:y type:kotlin.Int visibility:public modality:FINAL flags:val
           $this: VALUE_PARAMETER name:<this> type:Outer<T>.Inner flags:
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-y>(): Int'
@@ -91,6 +93,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
                     other: CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
                       $this: GET_VAR 'this@<no name provided>: <no name provided>' type=test.<no name provided> origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xx> visibility:public modality:FINAL <> ($this:test.<no name provided>) returnType:Int flags:
+                correspondingProperty: PROPERTY name:xx type:kotlin.Int visibility:public modality:FINAL flags:val
                 $this: VALUE_PARAMETER name:<this> type:test.<no name provided> flags:
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='<get-xx>(): Int'
@@ -98,6 +101,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
                       receiver: GET_VAR 'this@<no name provided>: <no name provided>' type=test.<no name provided> origin=null
             PROPERTY FAKE_OVERRIDE name:y type:kotlin.Int visibility:public modality:FINAL flags:val
               FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:Outer<kotlin.Int>.Inner) returnType:Int flags:
+                correspondingProperty: PROPERTY FAKE_OVERRIDE name:y type:kotlin.Int visibility:public modality:FINAL flags:val
                 overridden:
                   FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Outer<T>.Inner) returnType:Int flags:
                 $this: VALUE_PARAMETER name:<this> type:Outer<kotlin.Int>.Inner flags:

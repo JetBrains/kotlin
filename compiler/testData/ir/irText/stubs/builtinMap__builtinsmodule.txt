@@ -78,21 +78,25 @@ MODULE_FRAGMENT name:<built-ins module>
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
         FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
           overridden:
             UNBOUND: fun <get-size>(): kotlin.Int
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<MutableEntry<K, V>> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:ABSTRACT flags:val
           overridden:
             UNBOUND: fun <get-entries>(): kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>>
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<K> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:ABSTRACT flags:val
           overridden:
             UNBOUND: fun <get-keys>(): kotlin.collections.Set<K>
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableCollection<V> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:ABSTRACT flags:val
           overridden:
             UNBOUND: fun <get-values>(): kotlin.collections.Collection<V>
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
@@ -107,11 +111,13 @@ MODULE_FRAGMENT name:<built-ins module>
           VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:newValue index:0 type:V flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
           FUN FAKE_OVERRIDE name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
             overridden:
               UNBOUND: fun <get-key>(): K
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
           FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
             overridden:
               UNBOUND: fun <get-value>(): V
             $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:

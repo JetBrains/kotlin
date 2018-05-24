@@ -86,8 +86,8 @@ class IrPropertyImpl(
         isDelegated: Boolean,
         descriptor: PropertyDescriptor,
         backingField: IrField?,
-        getter: IrFunction?,
-        setter: IrFunction?
+        getter: IrSimpleFunction?,
+        setter: IrSimpleFunction?
     ) : this(startOffset, endOffset, origin, isDelegated, descriptor, backingField) {
         this.getter = getter
         this.setter = setter
@@ -95,8 +95,8 @@ class IrPropertyImpl(
 
     override val typeParameters: MutableList<IrTypeParameter> = SmartList()
     override var backingField: IrField? = null
-    override var getter: IrFunction? = null
-    override var setter: IrFunction? = null
+    override var getter: IrSimpleFunction? = null
+    override var setter: IrSimpleFunction? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitProperty(this, data)
@@ -112,7 +112,7 @@ class IrPropertyImpl(
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         typeParameters.transform { it.transform(transformer, data) }
         backingField = backingField?.transform(transformer, data) as? IrField
-        getter = getter?.transform(transformer, data) as? IrFunction
-        setter = setter?.transform(transformer, data) as? IrFunction
+        getter = getter?.run { transform(transformer, data) as IrSimpleFunction }
+        setter = setter?.run { transform(transformer, data) as IrSimpleFunction }
     }
 }

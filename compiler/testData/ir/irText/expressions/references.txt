@@ -4,6 +4,7 @@ FILE fqName:<root> fileName:/references.kt
       EXPRESSION_BODY
         CONST String type=kotlin.String value=OK
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:ok type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-ok>(): String'
           GET_FIELD 'ok: String' type=kotlin.String origin=null
@@ -12,11 +13,13 @@ FILE fqName:<root> fileName:/references.kt
       EXPRESSION_BODY
         CALL '<get-ok>(): String' type=kotlin.String origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok2> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:ok2 type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-ok2>(): String'
           GET_FIELD 'ok2: String' type=kotlin.String origin=null
   PROPERTY name:ok3 type:kotlin.String visibility:public modality:FINAL flags:val
     FUN name:<get-ok3> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:ok3 type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-ok3>(): String'
           CONST String type=kotlin.String value=OK
@@ -41,6 +44,7 @@ FILE fqName:<root> fileName:/references.kt
         CALL '<get-ok3>(): String' type=kotlin.String origin=GET_PROPERTY
   PROPERTY name:okext type:kotlin.String visibility:public modality:FINAL flags:val
     FUN name:<get-okext> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:String flags:
+      correspondingProperty: PROPERTY name:okext type:kotlin.String visibility:public modality:FINAL flags:val
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-okext>() on String: String'

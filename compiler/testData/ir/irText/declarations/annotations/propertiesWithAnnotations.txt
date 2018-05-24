@@ -10,6 +10,7 @@ FILE fqName:<root> fileName:/propertiesWithAnnotations.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnn) returnType:String flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:TestAnn flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): String'
@@ -36,6 +37,7 @@ FILE fqName:<root> fileName:/propertiesWithAnnotations.kt
       EXPRESSION_BODY
         CONST String type=kotlin.String value=
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVal> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:testVal type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testVal>(): String'
           GET_FIELD 'testVal: String' type=kotlin.String origin=null

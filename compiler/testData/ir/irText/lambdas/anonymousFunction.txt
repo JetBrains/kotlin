@@ -8,6 +8,7 @@ FILE fqName:<root> fileName:/anonymousFunction.kt
               CALL 'println(): Unit' type=kotlin.Unit origin=null
           FUNCTION_REFERENCE '<no name provided>(): Unit' type=() -> kotlin.Unit origin=ANONYMOUS_FUNCTION
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anonymous> visibility:public modality:FINAL <> () returnType:Function0<Unit> flags:
+      correspondingProperty: PROPERTY name:anonymous type:() -> kotlin.Unit visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-anonymous>(): () -> Unit'
           GET_FIELD 'anonymous: () -> Unit' type=() -> kotlin.Unit origin=null

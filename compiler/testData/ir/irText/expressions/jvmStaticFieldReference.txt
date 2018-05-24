@@ -8,6 +8,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
         x: CONST String type=kotlin.String value=testFun
   PROPERTY name:testProp type:kotlin.Any visibility:public modality:FINAL flags:var
     FUN name:<get-testProp> visibility:public modality:FINAL <> () returnType:Any flags:
+      correspondingProperty: PROPERTY name:testProp type:kotlin.Any visibility:public modality:FINAL flags:var
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
@@ -17,6 +18,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
         RETURN type=kotlin.Nothing from='<get-testProp>(): Any'
           CONST Int type=kotlin.Int value=42
     FUN name:<set-testProp> visibility:public modality:FINAL <> (value:kotlin.Any) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:testProp type:kotlin.Any visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:value index:0 type:kotlin.Any flags:
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
@@ -46,6 +48,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
                   x: CONST String type=kotlin.String value=TestClass/test
                 CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> ($this:TestClass) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:TestClass flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test>(): Int'

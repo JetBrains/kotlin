@@ -15,6 +15,7 @@ FILE fqName:<root> fileName:/superCalls.kt
         EXPRESSION_BODY
           CONST String type=kotlin.String value=
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:Base) returnType:String flags:
+        correspondingProperty: PROPERTY name:bar type:kotlin.String visibility:public modality:OPEN flags:val
         $this: VALUE_PARAMETER name:<this> type:Base flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): String'
@@ -50,6 +51,7 @@ FILE fqName:<root> fileName:/superCalls.kt
           $this: GET_VAR 'this@Derived: Derived' type=Derived origin=null
     PROPERTY name:bar type:kotlin.String visibility:public modality:OPEN flags:val
       FUN name:<get-bar> visibility:public modality:OPEN <> ($this:Derived) returnType:String flags:
+        correspondingProperty: PROPERTY name:bar type:kotlin.String visibility:public modality:OPEN flags:val
         overridden:
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:Base) returnType:String flags:
         $this: VALUE_PARAMETER name:<this> type:Derived flags:

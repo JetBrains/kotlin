@@ -25,6 +25,7 @@ FILE fqName:<root> fileName:/contructorCall.kt
       EXPRESSION_BODY
         CALL 'constructor A()' type=A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:A flags:
+      correspondingProperty: PROPERTY name:test type:A visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test>(): A'
           GET_FIELD 'test: A' type=A origin=null

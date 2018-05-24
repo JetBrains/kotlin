@@ -164,7 +164,7 @@ fun IrClass.addFakeOverrides() {
     val startOffset = this.startOffset
     val endOffset = this.endOffset
 
-    fun FunctionDescriptor.createFunction(): IrFunction = IrFunctionImpl(
+    fun FunctionDescriptor.createFunction(): IrSimpleFunction = IrFunctionImpl(
         startOffset, endOffset,
         IrDeclarationOrigin.FAKE_OVERRIDE, this
     ).apply {

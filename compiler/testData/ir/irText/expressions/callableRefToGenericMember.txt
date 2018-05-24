@@ -18,6 +18,7 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:A<T>) returnType:Int flags:
+        correspondingProperty: PROPERTY name:bar type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A<T> flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
@@ -41,6 +42,7 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction1<A<kotlin.String>, kotlin.Unit> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:KFunction1<A<String>, Unit> flags:
+      correspondingProperty: PROPERTY name:test1 type:kotlin.reflect.KFunction1<A<kotlin.String>, kotlin.Unit> visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): KFunction1<A<String>, Unit>'
           GET_FIELD 'test1: KFunction1<A<String>, Unit>' type=kotlin.reflect.KFunction1<A<kotlin.String>, kotlin.Unit> origin=null
@@ -49,6 +51,7 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
       EXPRESSION_BODY
         PROPERTY_REFERENCE 'bar: Int' field=null getter='<get-bar>(): Int' setter=null type=kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:KProperty1<A<String>, Int> flags:
+      correspondingProperty: PROPERTY name:test2 type:kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): KProperty1<A<String>, Int>'
           GET_FIELD 'test2: KProperty1<A<String>, Int>' type=kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> origin=null

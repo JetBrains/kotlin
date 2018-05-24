@@ -16,6 +16,7 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
         CLASS_REFERENCE '<reified T : Any>' type=kotlin.reflect.KClass<T>
   PROPERTY name:classRefExtVal type:kotlin.reflect.KClass<T> visibility:public modality:FINAL flags:val
     FUN name:<get-classRefExtVal> visibility:public modality:FINAL <T> ($receiver:T) returnType:KClass<T> flags:inline
+      correspondingProperty: PROPERTY name:classRefExtVal type:kotlin.reflect.KClass<T> visibility:public modality:FINAL flags:val
       TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any]
         superClassifiers:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
@@ -50,6 +51,7 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
           CLASS_REFERENCE '<reified TF : Any>' type=kotlin.reflect.KClass<TF>
     PROPERTY name:classRefGenericMemberExtVal type:kotlin.reflect.KClass<TV> visibility:public modality:FINAL flags:val
       FUN name:<get-classRefGenericMemberExtVal> visibility:public modality:FINAL <TV> ($this:Host, $receiver:TV) returnType:KClass<TV> flags:inline
+        correspondingProperty: PROPERTY name:classRefGenericMemberExtVal type:kotlin.reflect.KClass<TV> visibility:public modality:FINAL flags:val
         TYPE_PARAMETER name:TV index:0 variance: upperBounds:[kotlin.Any]
           superClassifiers:
             CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:

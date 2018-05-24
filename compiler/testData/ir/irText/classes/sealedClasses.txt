@@ -21,6 +21,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
           EXPRESSION_BODY
             GET_VAR 'value-parameter number: Double' type=kotlin.Double origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-number> visibility:public modality:FINAL <> ($this:Expr.Const) returnType:Double flags:
+          correspondingProperty: PROPERTY name:number type:kotlin.Double visibility:public modality:FINAL flags:val
           $this: VALUE_PARAMETER name:<this> type:Expr.Const flags:
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-number>(): Double'
@@ -54,6 +55,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
           EXPRESSION_BODY
             GET_VAR 'value-parameter e1: Expr' type=Expr origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-e1> visibility:public modality:FINAL <> ($this:Expr.Sum) returnType:Expr flags:
+          correspondingProperty: PROPERTY name:e1 type:Expr visibility:public modality:FINAL flags:val
           $this: VALUE_PARAMETER name:<this> type:Expr.Sum flags:
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-e1>(): Expr'
@@ -64,6 +66,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
           EXPRESSION_BODY
             GET_VAR 'value-parameter e2: Expr' type=Expr origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-e2> visibility:public modality:FINAL <> ($this:Expr.Sum) returnType:Expr flags:
+          correspondingProperty: PROPERTY name:e2 type:Expr visibility:public modality:FINAL flags:val
           $this: VALUE_PARAMETER name:<this> type:Expr.Sum flags:
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-e2>(): Expr'
