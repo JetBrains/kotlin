@@ -26,7 +26,4 @@ interface IrSimpleFunction : IrFunction, IrSymbolDeclaration<IrSimpleFunctionSym
     val isSuspend: Boolean
 
     val overriddenSymbols: MutableList<IrSimpleFunctionSymbol>
-
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.FUNCTION
 }

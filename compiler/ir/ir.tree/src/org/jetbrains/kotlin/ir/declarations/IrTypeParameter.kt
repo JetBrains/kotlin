@@ -25,9 +25,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 
 interface IrTypeParameter : IrSymbolDeclaration<IrTypeParameterSymbol> {
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.TYPE_PARAMETER
-
     override val descriptor: TypeParameterDescriptor
 
     val name: Name

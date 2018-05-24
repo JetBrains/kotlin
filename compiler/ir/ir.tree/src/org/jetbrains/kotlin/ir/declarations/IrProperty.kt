@@ -40,7 +40,4 @@ interface IrProperty : IrDeclaration {
     var backingField: IrField?
     var getter: IrFunction?
     var setter: IrFunction?
-
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.PROPERTY
 }
