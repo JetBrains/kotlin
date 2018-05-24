@@ -18,7 +18,7 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmOverloads
+public actual annotation class JvmOverloads
 
 /**
  * Specifies that an additional static method needs to be generated from this element if it's a function.
@@ -30,7 +30,7 @@ public annotation class JvmOverloads
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-public annotation class JvmStatic
+public actual annotation class JvmStatic
 
 /**
  * Specifies the name for the Java class or method which is generated from this element.
@@ -124,7 +124,7 @@ public actual annotation class JvmField
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmSuppressWildcards(val suppress: Boolean = true)
+public actual annotation class JvmSuppressWildcards(actual val suppress: Boolean = true)
 
 /**
  * Instructs compiler to generate wildcard for annotated type arguments corresponding to parameters with declaration-site variance.
@@ -134,4 +134,4 @@ public annotation class JvmSuppressWildcards(val suppress: Boolean = true)
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmWildcard
+public actual annotation class JvmWildcard

@@ -53,6 +53,7 @@ compileKotlinCommon {
         freeCompilerArgs = [
                 "-module-name", project.name,
                 "-Xuse-experimental=kotlin.Experimental",
+                "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
                 "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
                 "-XXLanguage:+InlineClasses",
