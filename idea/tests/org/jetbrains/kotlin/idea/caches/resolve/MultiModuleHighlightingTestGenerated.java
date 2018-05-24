@@ -99,6 +99,11 @@ public class MultiModuleHighlightingTestGenerated extends AbstractMultiModuleHig
         runTest("idea/testData/multiModuleHighlighting/multiplatform/suppressHeaderWithoutImpl/");
     }
 
+    @TestMetadata("suspend")
+    public void testSuspend() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/suspend/");
+    }
+
     @TestMetadata("transitive")
     public void testTransitive() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/transitive/");
