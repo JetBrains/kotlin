@@ -1331,9 +1331,9 @@ ${"    "}
     }
 
     @Test fun unicodeCharArrayToString() {
-        val chars: CharArray = charArrayOf('Ц', '単', '語', '\u016C', '\u138D')
-        assertEquals("Ц単語Ŭᎍ", String(chars))
+        val chars: CharArray = charArrayOf('Ц', '単', '語', '\u016C', '\u138D', '\uD83C', '\uDC3A')
+        assertEquals("Ц単語Ŭᎍ🀺", String(chars))
         assertEquals("単", String(chars, 1, 1))
-        assertEquals("語Ŭᎍ", String(chars, 2, 3))
+        assertEquals("Ŭᎍ🀺", String(chars, 3, 4))
     }
 }
