@@ -148,7 +148,8 @@ compileKotlin2Js {
         sourceMapPrefix = "./"
         freeCompilerArgs += [
             "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir, commonSrcDir2].collect { file(it).absoluteFile }.join(File.pathSeparator),
-            "-Xuse-experimental=kotlin.Experimental"
+            "-Xuse-experimental=kotlin.Experimental",
+            "-Xuse-experimental=kotlin.ExperimentalMultiplatform"
         ]
     }
 }

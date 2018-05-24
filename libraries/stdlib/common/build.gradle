@@ -58,6 +58,7 @@ compileKotlinCommon {
         freeCompilerArgs = [
                 "-module-name", project.name,
                 "-Xuse-experimental=kotlin.Experimental",
+                "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
                 "-Xallow-kotlin-package"
         ]
     }

@@ -182,7 +182,8 @@ compileKotlin {
                 "-Xmultifile-parts-inherit",
                 "-Xnormalize-constructor-calls=enable",
                 "-module-name", "kotlin-stdlib",
-                "-Xuse-experimental=kotlin.Experimental"
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xuse-experimental=kotlin.ExperimentalMultiplatform"
         ]
     }
 }
