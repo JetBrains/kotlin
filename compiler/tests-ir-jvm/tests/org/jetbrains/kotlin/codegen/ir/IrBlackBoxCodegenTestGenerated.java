@@ -20585,6 +20585,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/toArray"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("incorrectToArrayDetection.kt")
+        public void testIncorrectToArrayDetection() throws Exception {
+            runTest("compiler/testData/codegen/box/toArray/incorrectToArrayDetection.kt");
+        }
+
         @TestMetadata("kt3177-toTypedArray.kt")
         public void testKt3177_toTypedArray() throws Exception {
             runTest("compiler/testData/codegen/box/toArray/kt3177-toTypedArray.kt");
