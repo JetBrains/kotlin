@@ -138,6 +138,7 @@ class JKJavaArrayTypeImpl(type: JKType) : JKJavaArrayType, JKBranchElementBase()
 }
 
 class JKReturnStatementImpl(expression: JKExpression) : JKBranchElementBase(), JKReturnStatement {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitReturnStatement(this, data)
     // TODO accept
     override val expression by child(expression)
 }
