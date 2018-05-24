@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.idea.actions.canBeDecompiledToJava
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import java.util.jar.Manifest
@@ -36,11 +37,14 @@ import java.util.jar.Manifest
 class KotlinDecompilerServiceImpl : KotlinDecompilerService {
     override fun decompile(file: KtFile): String? {
         try {
-            val bytecodeMap = when {
-                file.canBeDecompiledToJava() -> bytecodeMapForExistingClassfile(file.virtualFile)
-                !file.isCompiled -> bytecodeMapForSourceFile(file)
-                else -> return null
-            }
+            val bytecodeMap: Map<File, () -> ByteArray> = runReadAction {
+                when {
+                    file.canBeDecompiledToJava() -> bytecodeMapForExistingClassfile(file.virtualFile)
+                    !file.isCompiled -> bytecodeMapForSourceFile(file)
+                    else -> null
+                }
+            } ?: return null
+
             val resultSaver = KotlinResultSaver()
             val options = hashMapOf<String, Any>(
                 IFernflowerPreferences.REMOVE_BRIDGE to "0"
