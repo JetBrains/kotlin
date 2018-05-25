@@ -54,11 +54,16 @@ data class ArgumentParseErrors(
 
     var argumentWithoutValue: String? = null,
 
-    val argfileErrors: MutableList<String> = SmartList<String>()
+    val argfileErrors: MutableList<String> = SmartList()
 )
 
 // Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
 fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A) {
+    val preprocessed = preprocessCommandLineArguments(args, result.errors)
+    parsePreprocessedCommandLineArguments(preprocessed, result)
+}
+
+private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args: List<String>, result: A) {
     data class ArgumentField(val property: KMutableProperty1<A, Any?>, val argument: Argument)
 
     @Suppress("UNCHECKED_CAST")

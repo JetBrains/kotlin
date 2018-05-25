@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cli;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilKt;
 import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler;
-import org.jetbrains.kotlin.codegen.TestUtilsKt;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.test.CompilerTestUtil;
@@ -44,13 +42,13 @@ import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static final String TESTDATA_DIR = "$TESTDATA_DIR$";
+
+    private static final String EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX = "-Xargfile=";
 
     public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLITool<?> compiler, @NotNull List<String> args) {
         StringBuilder output = new StringBuilder();
@@ -202,21 +200,17 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
         String argWithTestPathsReplaced = replaceTestPaths(argWithColonsReplaced, testDataDir, tempDir);
 
-        if (isArgfileArgument(arg)) {
+        if (arg.startsWith(EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX)) {
             return mockArgfile(argWithTestPathsReplaced, testDataDir, tempDir);
-        } else {
+        }
+        else {
             return argWithTestPathsReplaced;
         }
     }
 
-    private static boolean isArgfileArgument(@NotNull String arg) {
-        return arg.startsWith("-Xargfile=");
-    }
-
     // Create new temp. argfile with all test paths replaced and return argfile-argument pointing to that file
     private static String mockArgfile(@NotNull String argfileArgument, @NotNull String testDataDir, @NotNull String tempDir) {
-        int firstIndexOfArgfilePath = "-Xargfile=".length();
-        String argfilePath = argfileArgument.substring(firstIndexOfArgfilePath);
+        String argfilePath = kotlin.text.StringsKt.substringAfter(argfileArgument, EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX, argfileArgument);
         File argfile = new File(argfilePath);
 
         if (argfile.exists()) {
@@ -224,7 +218,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             String oldArgfileContent = FilesKt.readText(argfile, Charsets.UTF_8);
             String newArgfileContent = replaceTestPaths(oldArgfileContent, testDataDir, tempDir);
             FilesKt.writeText(mockArgfile, newArgfileContent, Charsets.UTF_8);
-            return "-Xargfile=" + mockArgfile.getAbsolutePath();
+            return EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX + mockArgfile.getAbsolutePath();
         } else {
             return argfileArgument;
         }
