@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 
-public interface AccessorForCallableDescriptor<T extends CallableMemberDescriptor> {
-    @NotNull
-    T getCalleeDescriptor();
+interface AccessorForCallableDescriptor<T : CallableMemberDescriptor> {
+    val calleeDescriptor: T
 
-    @Nullable
-    ClassDescriptor getSuperCallTarget();
+    val superCallTarget: ClassDescriptor?
+
 }
