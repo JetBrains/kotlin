@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -36,8 +35,7 @@ class IrTypeParameterImpl(
     override val symbol: IrTypeParameterSymbol,
     override val name: Name,
     override val index: Int,
-    override val variance: Variance,
-    override val superTypes: List<IrType>
+    override val variance: Variance
 ) :
     IrDeclarationBase(startOffset, endOffset, origin),
     IrTypeParameter {
@@ -46,31 +44,30 @@ class IrTypeParameterImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrTypeParameterSymbol,
-        upperBounds: List<IrType>
+        symbol: IrTypeParameterSymbol
     ) :
             this(
                 startOffset, endOffset, origin, symbol,
                 symbol.descriptor.name,
                 symbol.descriptor.index,
-                symbol.descriptor.variance,
-                upperBounds
+                symbol.descriptor.variance
             )
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: TypeParameterDescriptor,
-        upperBounds: List<IrType>
+        descriptor: TypeParameterDescriptor
     ) :
-            this(startOffset, endOffset, origin, IrTypeParameterSymbolImpl(descriptor), upperBounds)
+            this(startOffset, endOffset, origin, IrTypeParameterSymbolImpl(descriptor))
 
     init {
         symbol.bind(this)
     }
 
     override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
+
+    override val superTypes: MutableList<IrType> = SmartList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeParameter(this, data)

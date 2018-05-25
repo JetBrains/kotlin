@@ -99,7 +99,7 @@ open class DeepCopyIrTreeWithSymbols(
             symbolRemapper.getDeclaredClass(declaration.symbol)
         ).apply {
             transformAnnotations(declaration)
-            declaration.typeParameters.transformTo(typeParameters)
+            copyTypeParametersFrom(declaration)
             declaration.superTypes.mapTo(superTypes) {
                 it.remapType()
             }
@@ -140,7 +140,7 @@ open class DeepCopyIrTreeWithSymbols(
     private fun <T : IrFunction> T.transformFunctionChildren(declaration: T): T =
         apply {
             transformAnnotations(declaration)
-            declaration.typeParameters.transformTo(typeParameters)
+            copyTypeParametersFrom(declaration)
             typeRemapper.withinScope(this) {
                 dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
                 extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
@@ -224,14 +224,33 @@ open class DeepCopyIrTreeWithSymbols(
         }
 
     override fun visitTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
+        copyTypeParameter(declaration).apply {
+            // TODO type parameter scopes?
+            declaration.superTypes.mapTo(superTypes) { it.remapType() }
+        }
+
+    private fun copyTypeParameter(declaration: IrTypeParameter) =
         IrTypeParameterImpl(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
-            symbolRemapper.getDeclaredTypeParameter(declaration.symbol),
-            declaration.superTypes.map { it.remapType() }
+            symbolRemapper.getDeclaredTypeParameter(declaration.symbol)
         ).apply {
             transformAnnotations(declaration)
         }
+
+    private fun IrTypeParametersContainer.copyTypeParametersFrom(other: IrTypeParametersContainer) {
+        other.typeParameters.mapTo(this.typeParameters) {
+            copyTypeParameter(it)
+        }
+
+        typeRemapper.withinScope(this) {
+            for ((thisTypeParameter, otherTypeParameter) in this.typeParameters.zip(other.typeParameters)) {
+                otherTypeParameter.superTypes.mapTo(thisTypeParameter.superTypes) {
+                    typeRemapper.remapType(it)
+                }
+            }
+        }
+    }
 
     override fun visitValueParameter(declaration: IrValueParameter): IrValueParameter =
         IrValueParameterImpl(

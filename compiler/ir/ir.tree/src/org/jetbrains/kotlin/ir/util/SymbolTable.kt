@@ -269,26 +269,24 @@ class SymbolTable {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: TypeParameterDescriptor,
-        upperBounds: List<IrType>
+        descriptor: TypeParameterDescriptor
     ): IrTypeParameter =
         globalTypeParameterSymbolTable.declare(
             descriptor,
             { IrTypeParameterSymbolImpl(descriptor) },
-            { IrTypeParameterImpl(startOffset, endOffset, origin, it, upperBounds) }
+            { IrTypeParameterImpl(startOffset, endOffset, origin, it) }
         )
 
     fun declareScopedTypeParameter(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: TypeParameterDescriptor,
-        upperBounds: List<IrType>
+        descriptor: TypeParameterDescriptor
     ): IrTypeParameter =
         scopedTypeParameterSymbolTable.declare(
             descriptor,
             { IrTypeParameterSymbolImpl(descriptor) },
-            { IrTypeParameterImpl(startOffset, endOffset, origin, it, upperBounds) }
+            { IrTypeParameterImpl(startOffset, endOffset, origin, it) }
         )
 
     val unboundTypeParameters: Set<IrTypeParameterSymbol> get() = globalTypeParameterSymbolTable.unboundSymbols
