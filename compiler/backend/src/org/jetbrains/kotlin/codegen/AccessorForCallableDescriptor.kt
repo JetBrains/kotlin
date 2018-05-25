@@ -24,4 +24,5 @@ interface AccessorForCallableDescriptor<T : CallableMemberDescriptor> {
 
     val superCallTarget: ClassDescriptor?
 
+    val accessorKind: AccessorKind
 }
