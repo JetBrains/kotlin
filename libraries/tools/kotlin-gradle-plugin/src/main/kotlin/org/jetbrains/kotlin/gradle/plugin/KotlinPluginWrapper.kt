@@ -95,7 +95,7 @@ open class KotlinMultiplatformPluginWrapper @Inject constructor(
     private val objectFactory: ObjectFactory
 ): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-        KotlinMultiplatformSingleModulePlugin(buildOutputCleanupRegistry, project.objects, fileResolver, instantiator)
+        KotlinMultiplatformPlugin(buildOutputCleanupRegistry, project.objects, fileResolver, instantiator)
 
     override val projectExtensionClass: KClass<out KotlinMultiplatformExtension>
         get() = KotlinMultiplatformExtension::class

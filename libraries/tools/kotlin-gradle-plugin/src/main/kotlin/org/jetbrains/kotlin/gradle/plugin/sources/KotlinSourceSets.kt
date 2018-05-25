@@ -16,6 +16,8 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformExtension
+import org.jetbrains.kotlin.gradle.dsl.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.base.classesTaskName
 import org.jetbrains.kotlin.gradle.plugin.base.processResourcesTaskName
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import java.lang.reflect.Constructor
@@ -167,7 +169,7 @@ open class KotlinOnlySourceSet(
 
     override val allSource: SourceDirectorySet = createDefaultSourceDirectorySet("$name.allSource", fileResolver)
 
-    override val classesTaskName: String get() = composeName(suffix = "classes")
+    override val classesTaskName: String get() = composeName(kotlinPlatformExtension.classesTaskName)
 
     override val jarTaskName: String get() = composeName(suffix = "jar")
 
@@ -175,19 +177,26 @@ open class KotlinOnlySourceSet(
 
     override val compileKotlinTaskName: String get() = composeName("compile", kotlinPlatformExtension.platformName)
 
-    override val compileConfigurationName: String get() = composeName(suffix = "compile")
+    override val compileConfigurationName: String
+        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "compile"))
 
-    override val runtimeConfigurationName: String get() = composeName(suffix = "runtime")
+    override val runtimeConfigurationName: String
+        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "runtime"))
 
-    override val compileOnlyConfigurationName: String get() = composeName(suffix = "compileOnly")
+    override val compileOnlyConfigurationName: String
+        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "compileOnly"))
 
-    override val runtimeOnlyConfigurationName: String get() = composeName(suffix = "runtimeOnly")
+    override val runtimeOnlyConfigurationName: String
+        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "runtimeOnly"))
 
-    override val implementationConfigurationName: String get() = composeName(suffix = "implementation")
+    override val implementationConfigurationName: String
+        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "implementation"))
 
-    override val compileClasspathConfigurationName: String get() = composeName(suffix = "compileClasspath")
+    override val compileClasspathConfigurationName: String
+        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "compileClasspath"))
 
-    override val runtimeClasspathConfigurationName: String get() = composeName(suffix = "runtimeClasspath")
+    override val runtimeClasspathConfigurationName: String
+        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "runtimeClasspath"))
 
     override fun compiledBy(vararg taskPaths: Any) {
         (output.classesDirs as ConfigurableFileCollection).from(project.files().builtBy(*taskPaths))

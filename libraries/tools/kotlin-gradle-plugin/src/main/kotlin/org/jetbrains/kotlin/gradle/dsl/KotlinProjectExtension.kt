@@ -16,22 +16,15 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import groovy.lang.Closure
 import org.gradle.api.Project
-import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.plugins.DslObject
-import org.gradle.api.internal.tasks.TaskResolver
-import org.gradle.api.model.ObjectFactory
-import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
-import org.gradle.internal.reflect.Instantiator
-import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.base.KotlinOnlyPlatformConfigurator
-import org.jetbrains.kotlin.gradle.plugin.registerKotlinSourceSetsIfAbsent
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.plugin.executeClosure
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.*
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinCommonTasksProvider
-import org.jetbrains.kotlin.gradle.utils.matchSymmetricallyByNames
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinJavaSourceSetContainer
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinOnlySourceSetContainer
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetContainer
 import kotlin.reflect.KClass
 
 private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
@@ -93,48 +86,18 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension() {
     private val platformExtensionsByPlatformClassifier: MutableMap<String, KotlinPlatformExtension> = mutableMapOf()
 
     internal lateinit var project: Project
-    internal lateinit var fileResolver: FileResolver
-    internal lateinit var instantiator: Instantiator
-    internal lateinit var buildOutputCleanupRegistry: BuildOutputCleanupRegistry
-    internal lateinit var objectFactory: ObjectFactory
+    internal lateinit var multiplatformPlugin: KotlinMultiplatformPlugin
 
-    private inline fun <reified T : KotlinPlatformExtension> configurePlatformExtensionByClassifier(
-        classifier: String,
-        crossinline createExtensionIfAbsent: () -> T,
-        configureAction: T.() -> Unit
-    ) {
-        val extension = platformExtensionsByPlatformClassifier.computeIfAbsent(classifier) { createExtensionIfAbsent() } as T
-        configureAction(extension)
-    }
-
-    private inline fun <reified T : KotlinSourceSet> configureSourceSetDefaults(
-        extension: KotlinPlatformExtension,
-        crossinline buildSourceSetProcessor: (T) -> KotlinSourceSetProcessor<*>
-    ) {
-        extension.sourceSets.all { sourceSet ->
-            sourceSet as T
-            buildSourceSetProcessor(sourceSet).run()
-        }
-    }
+    fun common(configure: Closure<*>) = common { executeClosure(configure) }
 
     fun common(configure: KotlinOnlyPlatformExtension.() -> Unit) {
-        fun createExtension(): KotlinOnlyPlatformExtension {
-            val extension = KotlinOnlyPlatformExtension().apply {
-                platformName = "kotlinCommon"
-                platformDisambiguationClassifier = "common"
-            }
-            val sourceSetContainer = KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver)
-            val tasksProvider = KotlinCommonTasksProvider()
-            registerKotlinSourceSetsIfAbsent(sourceSetContainer, extension)
-            KotlinOnlyPlatformConfigurator(buildOutputCleanupRegistry, objectFactory)
-            configureSourceSetDefaults(extension) { sourceSet: KotlinOnlySourceSet ->
-                KotlinCommonSourceSetProcessor(project, sourceSet, tasksProvider, sourceSetContainer)
-            }
-            return extension
-        }
-
-        configurePlatformExtensionByClassifier("common", ::createExtension, configure)
+        getOrCreatePlatformExtension("common") { multiplatformPlugin.createCommonExtension(project) }.apply { configure() }
     }
+
+    private inline fun <reified T : KotlinPlatformExtension> getOrCreatePlatformExtension(
+        classifier: String,
+        crossinline createExtensionIfAbsent: () -> T
+    ): T = platformExtensionsByPlatformClassifier.computeIfAbsent(classifier) { createExtensionIfAbsent() } as T
 
 
     fun withJava(configure: KotlinJvmPlatformExtension.() -> Unit) {
@@ -145,40 +108,10 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension() {
 
     }
 
+    fun js(configure: Closure<*>) = js f@{ this@f.executeClosure(configure) }
+
     fun js(configure: KotlinOnlyPlatformExtension.() -> Unit) {
-        fun createExtension(): KotlinOnlyPlatformExtension {
-            val extension = KotlinOnlyPlatformExtension().apply {
-                platformName = "kotlin2Js"
-                platformDisambiguationClassifier = "js"
-            }
-            val sourceSetContainer = KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver)
-            val tasksProvider = KotlinCommonTasksProvider()
-            registerKotlinSourceSetsIfAbsent(sourceSetContainer, extension)
-            configureSourceSetDefaults(extension) { sourceSet: KotlinOnlySourceSet ->
-                KotlinCommonSourceSetProcessor(project, sourceSet, tasksProvider, sourceSetContainer)
-            }
-
-            common {
-                matchSymmetricallyByNames(this@common.sourceSets, sourceSetContainer) { commonSourceSet: KotlinSourceSet, _ ->
-                    addCommonSourceSetToPlatformSourceSet(project, commonSourceSet)
-                }
-            }
-
-            return extension
-        }
-
-        configurePlatformExtensionByClassifier("js", ::createExtension, configure)
-    }
-
-    protected open fun addCommonSourceSetToPlatformSourceSet(
-        project: Project,
-        commonSourceSet: KotlinSourceSet
-    ) {
-        val platformTask = project.tasks
-            .filterIsInstance<AbstractKotlinCompile<*>>()
-            .firstOrNull { it.sourceSetName == commonSourceSet.name }
-
-        platformTask?.source(commonSourceSet.kotlin)
+        getOrCreatePlatformExtension("js") { multiplatformPlugin.createJsPlatformExtension(project) }.apply { configure() }
     }
 }
 

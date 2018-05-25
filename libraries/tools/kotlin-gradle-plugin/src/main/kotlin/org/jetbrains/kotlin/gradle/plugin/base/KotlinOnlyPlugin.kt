@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.base
 
-import org.gradle.api.*
+import org.gradle.api.DefaultTask
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
@@ -20,7 +23,6 @@ import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.plugins.JavaPlugin.*
 import org.gradle.api.plugins.ReportingBasePlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -50,11 +52,11 @@ open class KotlinOnlyPlatformConfigurator(
     }
 
     private fun configureSourceSets(project: Project, platformExtension: KotlinOnlyPlatformExtension) {
-        val main = platformExtension.sourceSets.create(platformExtension.mainSourceSetName)
+        val main = platformExtension.sourceSets.create(mainSourceSetName)
 
-        platformExtension.sourceSets.create(platformExtension.testSourceSetName).apply {
-            compileClasspath = project.files(main.output, project.configurations.getByName(TEST_COMPILE_CLASSPATH_CONFIGURATION_NAME))
-            runtimeClasspath = project.files(output, main.output, project.configurations.getByName(TEST_RUNTIME_CLASSPATH_CONFIGURATION_NAME))
+        platformExtension.sourceSets.create(testSourceSetName).apply {
+            compileClasspath = project.files(main.output, project.configurations.maybeCreate(platformExtension.testCompileClasspathConfigurationName))
+            runtimeClasspath = project.files(output, main.output, project.configurations.maybeCreate(platformExtension.testRuntimeClasspathConfigurationName))
         }
 
         platformExtension.sourceSets.all {
@@ -80,7 +82,7 @@ open class KotlinOnlyPlatformConfigurator(
         val jar = project.tasks.create(platformExtension.jarTaskName, Jar::class.java)
         jar.description = "Assembles a jar archive containing the main classes."
         jar.group = BasePlugin.BUILD_GROUP
-        jar.from(platformExtension.sourceSets.getByName(platformExtension.mainSourceSetName).output)
+        jar.from(platformExtension.sourceSets.getByName(mainSourceSetName).output)
 
         val jarArtifact = ArchivePublishArtifact(jar)
         val apiElementsConfiguration = project.configurations.getByName(platformExtension.apiElementsConfigurationName)
@@ -188,15 +190,15 @@ open class KotlinOnlyPlatformConfigurator(
     private fun configureConfigurations(project: Project, platformExtension: KotlinPlatformExtension) {
         val configurations = project.configurations
 
-        val defaultConfiguration = configurations.getByName(platformExtension.defaultConfigurationName)
-        val compileConfiguration = configurations.getByName(platformExtension.compileConfigurationName)
-        val implementationConfiguration = configurations.getByName(platformExtension.implementationConfigurationName)
-        val runtimeConfiguration = configurations.getByName(platformExtension.runtimeConfigurationName)
-        val runtimeOnlyConfiguration = configurations.getByName(platformExtension.runtimeOnlyConfigurationName)
-        val compileTestsConfiguration = configurations.getByName(platformExtension.testCompileConfigurationName)
-        val testImplementationConfiguration = configurations.getByName(platformExtension.testImplementationConfigurationName)
-        val testRuntimeConfiguration = configurations.getByName(platformExtension.testRuntimeConfigurationName)
-        val testRuntimeOnlyConfiguration = configurations.getByName(platformExtension.testRuntimeOnlyConfigurationName)
+        val defaultConfiguration = configurations.maybeCreate(platformExtension.defaultConfigurationName)
+        val compileConfiguration = configurations.maybeCreate(platformExtension.compileConfigurationName)
+        val implementationConfiguration = configurations.maybeCreate(platformExtension.implementationConfigurationName)
+        val runtimeConfiguration = configurations.maybeCreate(platformExtension.runtimeConfigurationName)
+        val runtimeOnlyConfiguration = configurations.maybeCreate(platformExtension.runtimeOnlyConfigurationName)
+        val compileTestsConfiguration = configurations.maybeCreate(platformExtension.testCompileConfigurationName)
+        val testImplementationConfiguration = configurations.maybeCreate(platformExtension.testImplementationConfigurationName)
+        val testRuntimeConfiguration = configurations.maybeCreate(platformExtension.testRuntimeConfigurationName)
+        val testRuntimeOnlyConfiguration = configurations.maybeCreate(platformExtension.testRuntimeOnlyConfigurationName)
 
         compileTestsConfiguration.extendsFrom(compileConfiguration)
         testImplementationConfiguration.extendsFrom(implementationConfiguration)
@@ -265,6 +267,11 @@ open class KotlinOnlyPlatformConfigurator(
             it.targetCompatibility = ""
             it.sourceCompatibility = ""
         }
+    }
+
+    companion object {
+        const val mainSourceSetName = "main"
+        const val testSourceSetName = "test"
     }
 }
 

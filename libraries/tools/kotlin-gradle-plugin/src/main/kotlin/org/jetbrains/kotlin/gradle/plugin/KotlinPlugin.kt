@@ -10,11 +10,10 @@ import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.InvalidPluginException
-import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.CompileClasspathNormalizer
@@ -414,7 +413,7 @@ internal fun registerKotlinSourceSetsIfAbsent(
     kotlinSourceSetContainer: KotlinSourceSetContainer<*>,
     kotlinPlatformExtension: KotlinPlatformExtension
 ) {
-    DslObject(kotlinPlatformExtension).extensions.run {
+    (kotlinPlatformExtension as ExtensionAware).extensions.run {
         if (findByName("sourceSets") == null) {
             kotlinSourceSetContainer.kotlinPlatformExtension = kotlinPlatformExtension
             // No type-safe way to do this providing actual runtime class of the extension, which is required for Gradle Kotlin DSL

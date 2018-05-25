@@ -131,7 +131,7 @@ open class KaptJavacOptionsDelegate {
     fun execute(closure: Closure<*>) = executeClosure(closure)
 }
 
-private fun Any?.executeClosure(closure: Closure<*>) {
+internal fun Any?.executeClosure(closure: Closure<*>) {
     closure.resolveStrategy = Closure.DELEGATE_FIRST
     closure.delegate = this
     closure.call()
