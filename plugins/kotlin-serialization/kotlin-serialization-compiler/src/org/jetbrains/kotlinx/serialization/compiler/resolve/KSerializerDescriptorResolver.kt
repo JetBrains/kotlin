@@ -366,7 +366,6 @@ object KSerializerDescriptorResolver {
 
         val args = mutableListOf<ValueParameterDescriptor>()
         var i = 0
-
         args.add(ValueParameterDescriptorImpl(
                 f,
                 null,
