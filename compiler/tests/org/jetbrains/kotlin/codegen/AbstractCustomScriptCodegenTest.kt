@@ -19,10 +19,9 @@ import kotlin.reflect.full.starProjectedType
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptDefaultCompilationConfiguration
 import kotlin.script.experimental.api.ScriptCompileConfigurationProperties
-import kotlin.script.experimental.misc.invoke
 import kotlin.script.experimental.util.TypedKey
 
-open class AbstractCustomScriptCodegenTest : CodegenTestCase() {
+abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     private lateinit var scriptDefinitions: List<String>
 
     override fun setUp() {
@@ -117,7 +116,7 @@ open class AbstractCustomScriptCodegenTest : CodegenTestCase() {
 
 object TestScriptWithReceiversConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
     listOf(
-        ScriptCompileConfigurationProperties.scriptImplicitReceivers(String::class.starProjectedType)
+        ScriptCompileConfigurationProperties.scriptImplicitReceivers to listOf(String::class.starProjectedType)
     )
 )
 
@@ -128,7 +127,7 @@ abstract class TestScriptWithReceivers
 
 object TestScriptWithSimpleEnvVarsConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
     listOf(
-        ScriptCompileConfigurationProperties.contextVariables("stringVar1" to String::class.starProjectedType)
+        ScriptCompileConfigurationProperties.contextVariables to mapOf("stringVar1" to String::class.starProjectedType)
     )
 )
 
