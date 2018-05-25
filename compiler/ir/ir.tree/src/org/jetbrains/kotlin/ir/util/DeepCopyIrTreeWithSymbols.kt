@@ -99,11 +99,11 @@ open class DeepCopyIrTreeWithSymbols(
             symbolRemapper.getDeclaredClass(declaration.symbol)
         ).apply {
             transformAnnotations(declaration)
+            declaration.typeParameters.transformTo(typeParameters)
             declaration.superTypes.mapTo(superTypes) {
                 it.remapType()
             }
             thisReceiver = declaration.thisReceiver?.transform()
-            declaration.typeParameters.transformTo(typeParameters)
             declaration.transformDeclarationsTo(this)
         }
 
