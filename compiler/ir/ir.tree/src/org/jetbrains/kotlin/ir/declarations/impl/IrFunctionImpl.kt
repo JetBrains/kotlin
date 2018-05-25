@@ -38,27 +38,24 @@ class IrFunctionImpl(
     name: Name,
     visibility: Visibility,
     override val modality: Modality,
-    returnType: IrType,
     isInline: Boolean,
     isExternal: Boolean,
     override val isTailrec: Boolean,
     override val isSuspend: Boolean
 ) :
-    IrFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, returnType),
+    IrFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal),
     IrSimpleFunction {
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrSimpleFunctionSymbol,
-        returnType: IrType
+        symbol: IrSimpleFunctionSymbol
     ) : this(
         startOffset, endOffset, origin, symbol,
         symbol.descriptor.name,
         symbol.descriptor.visibility,
         symbol.descriptor.modality,
-        returnType,
         symbol.descriptor.isInline,
         symbol.descriptor.isExternal,
         symbol.descriptor.isTailrec,
@@ -75,12 +72,10 @@ class IrFunctionImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: FunctionDescriptor,
-        returnType: IrType
+        descriptor: FunctionDescriptor
     ) : this(
         startOffset, endOffset, origin,
-        IrSimpleFunctionSymbolImpl(descriptor),
-        returnType
+        IrSimpleFunctionSymbolImpl(descriptor)
     )
 
     constructor(
@@ -88,9 +83,8 @@ class IrFunctionImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: FunctionDescriptor,
-        returnType: IrType,
         body: IrBody?
-    ) : this(startOffset, endOffset, origin, descriptor, returnType) {
+    ) : this(startOffset, endOffset, origin, descriptor) {
         this.body = body
     }
 

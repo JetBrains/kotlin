@@ -100,9 +100,9 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         context.symbolTable.declareSimpleFunctionWithOverrides(
             ktDelegate.startOffset, ktDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
-            accessorDescriptor, accessorDescriptor.returnType!!.toIrType()
+            accessorDescriptor
         ).buildWithScope { irAccessor ->
-            FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irAccessor, ktProperty, null)
+            FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irAccessor, ktProperty, null)
             irAccessor.body = generateBody(irAccessor)
         }
 
@@ -338,9 +338,9 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         context.symbolTable.declareSimpleFunctionWithOverrides(
             ktDelegate.startOffset, ktDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
-            getterDescriptor, getterDescriptor.returnType!!.toIrType()
+            getterDescriptor
         ).buildWithScope { irAccessor ->
-            FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irAccessor, ktDelegate, null)
+            FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irAccessor, ktDelegate, null)
             irAccessor.body = generateBody(irAccessor)
         }
 

@@ -120,8 +120,7 @@ open class DeepCopyIrTreeWithSymbols(
         IrFunctionImpl(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
-            symbolRemapper.getDeclaredFunction(declaration.symbol),
-            declaration.returnType.remapType()
+            symbolRemapper.getDeclaredFunction(declaration.symbol)
         ).apply {
             declaration.overriddenSymbols.mapTo(overriddenSymbols) {
                 symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol
@@ -133,8 +132,7 @@ open class DeepCopyIrTreeWithSymbols(
         IrConstructorImpl(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
-            symbolRemapper.getDeclaredConstructor(declaration.symbol),
-            declaration.returnType.remapType()
+            symbolRemapper.getDeclaredConstructor(declaration.symbol)
         ).apply {
             transformFunctionChildren(declaration)
         }
@@ -143,10 +141,13 @@ open class DeepCopyIrTreeWithSymbols(
         apply {
             transformAnnotations(declaration)
             declaration.typeParameters.transformTo(typeParameters)
-            dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
-            extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
-            declaration.valueParameters.transformTo(valueParameters)
-            body = declaration.body?.transform()
+            typeRemapper.withinScope(this) {
+                dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
+                extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
+                returnType = typeRemapper.remapType(declaration.returnType)
+                declaration.valueParameters.transformTo(valueParameters)
+                body = declaration.body?.transform()
+            }
         }
 
     private fun IrAnnotationContainer.transformAnnotations(declaration: IrAnnotationContainer) {

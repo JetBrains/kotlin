@@ -5,8 +5,18 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.types.IrType
 
 interface TypeRemapper {
+    fun enterScope(irTypeParametersContainer: IrTypeParametersContainer)
     fun remapType(type: IrType): IrType
+    fun leaveScope()
+}
+
+inline fun <T> TypeRemapper.withinScope(irTypeParametersContainer: IrTypeParametersContainer, fn: () -> T): T {
+    enterScope(irTypeParametersContainer)
+    val result = fn()
+    leaveScope()
+    return result
 }
