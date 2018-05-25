@@ -13242,9 +13242,19 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/removeRedundantCallsOfConversionMethods/nullable.kt");
         }
 
+        @TestMetadata("nullable2.kt")
+        public void testNullable2() throws Exception {
+            runTest("idea/testData/intentions/removeRedundantCallsOfConversionMethods/nullable2.kt");
+        }
+
         @TestMetadata("safeString.kt")
         public void testSafeString() throws Exception {
             runTest("idea/testData/intentions/removeRedundantCallsOfConversionMethods/safeString.kt");
+        }
+
+        @TestMetadata("safeString2.kt")
+        public void testSafeString2() throws Exception {
+            runTest("idea/testData/intentions/removeRedundantCallsOfConversionMethods/safeString2.kt");
         }
 
         @TestMetadata("short.kt")
