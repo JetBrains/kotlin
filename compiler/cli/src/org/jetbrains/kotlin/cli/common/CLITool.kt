@@ -41,8 +41,7 @@ abstract class CLITool<A : CommonToolArguments> {
         args: Array<out String>
     ): ExitCode {
         val arguments = createArguments()
-        val preprocessedArguments = preprocessCommandLineArguments(args.asList(), arguments)
-        parseCommandLineArguments(preprocessedArguments, arguments)
+        parseCommandLineArguments(args.asList(), arguments)
         val collector = PrintingMessageCollector(errStream, messageRenderer, arguments.verbose)
 
         try {
@@ -106,8 +105,7 @@ abstract class CLITool<A : CommonToolArguments> {
 
     // Used in kotlin-maven-plugin (KotlinCompileMojoBase) and in kotlin-gradle-plugin (KotlinJvmOptionsImpl, KotlinJsOptionsImpl)
     fun parseArguments(args: Array<out String>, arguments: A) {
-        val preprocessed = preprocessCommandLineArguments(args.asList(), arguments)
-        parseCommandLineArguments(preprocessed, arguments)
+        parseCommandLineArguments(args.asList(), arguments)
         val message = validateArguments(arguments.errors)
         if (message != null) {
             throw IllegalArgumentException(message)
