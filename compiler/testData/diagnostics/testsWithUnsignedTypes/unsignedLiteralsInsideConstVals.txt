@@ -1,0 +1,7 @@
+package
+
+public const val u0: kotlin.UInt = 1.toUInt()
+public const val u1: kotlin.UByte = 2.toUByte()
+public const val u2: kotlin.UShort = 3.toUShort()
+public const val u3: kotlin.UInt = 3.toUInt()
+public const val u4: kotlin.ULong = 4.toULong()
