@@ -81,7 +81,7 @@ class LazyAnnotations(
             }.iterator()
     }
 
-    override fun forceResolveAllContents() {
+    override fun forceResolveAllContents(forceReturnTypes: Boolean) {
         // To resolve all entries
         getAllAnnotations()
     }
@@ -122,7 +122,7 @@ class LazyAnnotationDescriptor(
         }.toMap()
     }
 
-    override fun forceResolveAllContents() {
+    override fun forceResolveAllContents(forceReturnTypes: Boolean) {
         ForceResolveUtil.forceResolveAllContents(type)
         allValueArguments
     }

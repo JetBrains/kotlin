@@ -24,16 +24,20 @@ import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.state.DeferredTypesTracker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 
-class KotlinLightClassBuilderFactory(private val javaFileStub: PsiJavaFileStub) : ClassBuilderFactory {
+class KotlinLightClassBuilderFactory(
+    private val javaFileStub: PsiJavaFileStub,
+    private val deferredTypesTracker: DeferredTypesTracker
+) : ClassBuilderFactory {
     private val stubStack = Stack<StubElement<PsiElement>>().apply {
         @Suppress("UNCHECKED_CAST")
         push(javaFileStub as StubElement<PsiElement>)
     }
 
     override fun getClassBuilderMode(): ClassBuilderMode = ClassBuilderMode.LIGHT_CLASSES
-    override fun newClassBuilder(origin: JvmDeclarationOrigin) = StubClassBuilder(stubStack, javaFileStub)
+    override fun newClassBuilder(origin: JvmDeclarationOrigin) = StubClassBuilder(stubStack, javaFileStub, deferredTypesTracker)
 
     override fun asText(builder: ClassBuilder) = throw UnsupportedOperationException("asText is not implemented")
     override fun asBytes(builder: ClassBuilder) = throw UnsupportedOperationException("asBytes is not implemented")

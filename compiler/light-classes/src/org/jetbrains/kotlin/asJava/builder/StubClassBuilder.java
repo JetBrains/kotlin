@@ -18,15 +18,22 @@ package org.jetbrains.kotlin.asJava.builder;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.compiled.InnerClassSourceStrategy;
+import com.intellij.psi.impl.compiled.SignatureParsing;
 import com.intellij.psi.impl.compiled.StubBuildingVisitor;
 import com.intellij.psi.impl.java.stubs.PsiClassStub;
+import com.intellij.psi.impl.java.stubs.PsiFieldStub;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
+import com.intellij.psi.impl.java.stubs.PsiMethodStub;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.util.cls.ClsFormatException;
 import com.intellij.util.containers.Stack;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.asJava.elements.DeferredPartsUtilsKt;
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder;
+import org.jetbrains.kotlin.codegen.state.DeferredTypesTracker;
 import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -35,6 +42,7 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 
+import java.text.StringCharacterIterator;
 import java.util.List;
 
 public class StubClassBuilder extends AbstractClassBuilder {
@@ -51,15 +59,17 @@ public class StubClassBuilder extends AbstractClassBuilder {
     };
     private final StubElement parent;
     private final PsiJavaFileStub fileStub;
-    private StubBuildingVisitor v;
+    private final DeferredTypesTracker deferredTypesTracker;
+    private StubBuildingVisitor<?> v;
     private final Stack<StubElement> parentStack;
     private boolean isPackageClass = false;
     private int memberIndex = 0;
 
-    public StubClassBuilder(@NotNull Stack<StubElement> parentStack, @NotNull PsiJavaFileStub fileStub) {
+    public StubClassBuilder(@NotNull Stack<StubElement> parentStack, @NotNull PsiJavaFileStub fileStub, DeferredTypesTracker deferredTypesTracker) {
         this.parentStack = parentStack;
         this.parent = parentStack.peek();
         this.fileStub = fileStub;
+        this.deferredTypesTracker = deferredTypesTracker;
     }
 
     @NotNull
@@ -187,7 +197,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
     }
 
     private void markLastChild(@NotNull JvmDeclarationOrigin origin) {
-        List children = v.getResult().getChildrenStubs();
+        List<StubElement> children = v.getResult().getChildrenStubs();
         StubBase last = (StubBase) children.get(children.size() - 1);
 
         LightElementOrigin oldOrigin = last.getUserData(ClsWrapperStubPsiFactory.ORIGIN);
@@ -195,6 +205,30 @@ public class StubClassBuilder extends AbstractClassBuilder {
             PsiElement originalElement = oldOrigin.getOriginalElement();
             throw new IllegalStateException("Rewriting origin element: " +
                                             (originalElement != null ? originalElement.getText() : null) + " for stub " + last.toString());
+        }
+
+        String typeText = null;
+        if (last instanceof PsiMethodStub) {
+            typeText = ((PsiMethodStub) last).getReturnTypeText(false).toString();
+        }
+        else if (last instanceof PsiFieldStub) {
+            typeText = ((PsiFieldStub) last).getType(false).toString();
+
+        }
+
+        if (typeText != null) {
+            Function0<String> function0 = deferredTypesTracker.getDeferredTypeComputation(typeText);
+            if (function0 != null) {
+                last.putUserData(DeferredPartsUtilsKt.DEFERRED_RETURN_TYPE, () -> {
+                    String signature = function0.invoke();
+                    try {
+                        return SignatureParsing.parseTypeString(new StringCharacterIterator(signature), StubBuildingVisitor.GUESSING_MAPPER);
+                    }
+                    catch (ClsFormatException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
         }
 
         last.putUserData(ClsWrapperStubPsiFactory.ORIGIN, LightElementOriginKt.toLightMemberOrigin(origin));

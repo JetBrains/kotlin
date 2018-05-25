@@ -38,7 +38,14 @@ public class ForceResolveUtil {
     private ForceResolveUtil() {}
 
     public static <T> T forceResolveAllContents(@NotNull T descriptor) {
-        doForceResolveAllContents(descriptor);
+        return forceResolveAllContents(descriptor, true);
+    }
+
+    public static <T> T forceResolveAllContents(
+            @NotNull T descriptor,
+            boolean forceReturnType
+    ) {
+        doForceResolveAllContents(descriptor, forceReturnType);
         return descriptor;
     }
 
@@ -47,8 +54,15 @@ public class ForceResolveUtil {
     }
 
     public static void forceResolveAllContents(@NotNull Iterable<? extends DeclarationDescriptor> descriptors) {
+        forceResolveAllContents(descriptors, true);
+    }
+
+    public static void forceResolveAllContents(
+            @NotNull Iterable<? extends DeclarationDescriptor> descriptors,
+            boolean forceReturnType
+    ) {
         for (DeclarationDescriptor descriptor : descriptors) {
-            forceResolveAllContents(descriptor);
+            forceResolveAllContents(descriptor, forceReturnType);
         }
     }
 
@@ -59,20 +73,34 @@ public class ForceResolveUtil {
     }
 
     public static void forceResolveAllContents(@NotNull TypeConstructor typeConstructor) {
-        doForceResolveAllContents(typeConstructor);
+        forceResolveAllContents(typeConstructor, true);
+    }
+
+    public static void forceResolveAllContents(
+            @NotNull TypeConstructor typeConstructor,
+            boolean forceReturnType
+    ) {
+        doForceResolveAllContents(typeConstructor, forceReturnType);
     }
 
     public static void forceResolveAllContents(@NotNull Annotations annotations) {
-        doForceResolveAllContents(annotations);
+        forceResolveAllContents(annotations, true);
+    }
+
+    public static void forceResolveAllContents(
+            @NotNull Annotations annotations,
+            boolean forceReturnType
+    ) {
+        doForceResolveAllContents(annotations, forceReturnType);
         for (AnnotationWithTarget annotationWithTarget : annotations.getAllAnnotations()) {
-            doForceResolveAllContents(annotationWithTarget.getAnnotation());
+            doForceResolveAllContents(annotationWithTarget.getAnnotation(), forceReturnType);
         }
     }
 
-    private static void doForceResolveAllContents(Object object) {
+    private static void doForceResolveAllContents(Object object, boolean forceReturnType) {
         if (object instanceof LazyEntity) {
             LazyEntity lazyEntity = (LazyEntity) object;
-            lazyEntity.forceResolveAllContents();
+            lazyEntity.forceResolveAllContents(forceReturnType);
         }
         else if (object instanceof ValueParameterDescriptorImpl.WithDestructuringDeclaration) {
             ((ValueParameterDescriptorImpl.WithDestructuringDeclaration) object).getDestructuringVariables();
@@ -89,7 +117,11 @@ public class ForceResolveUtil {
             for (TypeParameterDescriptor typeParameterDescriptor : callableDescriptor.getTypeParameters()) {
                 forceResolveAllContents(typeParameterDescriptor.getUpperBounds());
             }
-            forceResolveAllContents(callableDescriptor.getReturnType());
+
+            if (forceReturnType) {
+                forceResolveAllContents(callableDescriptor.getReturnType());
+            }
+
             forceResolveAllContents(callableDescriptor.getAnnotations());
         }
         else if (object instanceof TypeAliasDescriptor) {

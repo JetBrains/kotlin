@@ -27,6 +27,7 @@ import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
 import com.intellij.psi.impl.source.tree.TreeElement
+import org.jetbrains.kotlin.codegen.state.DeferredTypesTrackerImpl
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
@@ -48,15 +49,24 @@ fun buildLightClass(
     val project = files.first().project
 
     try {
-        val classBuilderFactory = KotlinLightClassBuilderFactory(createJavaFileStub(project, packageFqName, files))
+        val deferredTypesTracker = DeferredTypesTrackerImpl()
+        val classBuilderFactory = KotlinLightClassBuilderFactory(
+            createJavaFileStub(project, packageFqName, files), deferredTypesTracker
+        )
+
         val state = GenerationState.Builder(
-                project,
-                classBuilderFactory,
-                context.module,
-                context.bindingContext,
-                files.toList(),
-                CompilerConfiguration.EMPTY
-        ).generateDeclaredClassFilter(generateClassFilter).wantsDiagnostics(false).forLocalLightClassOrObject(isForLocalClass).build()
+            project,
+            classBuilderFactory,
+            context.module,
+            context.bindingContext,
+            files.toList(),
+            CompilerConfiguration.EMPTY
+        ).generateDeclaredClassFilter(generateClassFilter)
+            .wantsDiagnostics(false)
+            .forLocalLightClassOrObject(isForLocalClass)
+            .deferredTypesTracker(deferredTypesTracker)
+            .build()
+
         state.beforeCompile()
 
         generate(state, files)
@@ -65,11 +75,9 @@ fun buildLightClass(
 
         ServiceManager.getService(project, StubComputationTracker::class.java)?.onStubComputed(javaFileStub, context)
         return LightClassBuilderResult(javaFileStub, context.bindingContext, state.collectedExtraJvmDiagnostics)
-    }
-    catch (e: ProcessCanceledException) {
+    } catch (e: ProcessCanceledException) {
         throw e
-    }
-    catch (e: RuntimeException) {
+    } catch (e: RuntimeException) {
         logErrorWithOSInfo(e, packageFqName, null)
         throw e
     }
@@ -120,9 +128,9 @@ private fun createJavaFileStub(project: Project, packageFqName: FqName, files: C
 private fun logErrorWithOSInfo(cause: Throwable?, fqName: FqName, virtualFile: VirtualFile?) {
     val path = if (virtualFile == null) "<null>" else virtualFile.path
     LOG.error(
-            "Could not generate LightClass for $fqName declared in $path\n" +
-            "System: ${SystemInfo.OS_NAME} ${SystemInfo.OS_VERSION} Java Runtime: ${SystemInfo.JAVA_RUNTIME_VERSION}",
-            cause
+        "Could not generate LightClass for $fqName declared in $path\n" +
+                "System: ${SystemInfo.OS_NAME} ${SystemInfo.OS_VERSION} Java Runtime: ${SystemInfo.JAVA_RUNTIME_VERSION}",
+        cause
     )
 }
 
