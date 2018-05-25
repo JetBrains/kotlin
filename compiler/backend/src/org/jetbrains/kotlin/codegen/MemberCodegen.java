@@ -723,8 +723,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                         @Override
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                             markLineNumberForElement(element.getPsiOrParent(), codegen.v);
-                            if (accessor.getName().asString().endsWith("$" + AccessorKind.JVM_DEFAULT_COMPATIBILITY.getSuffix())) {
-                                //TODO pass kind
+                            if (accessorForCallableDescriptor.getAccessorKind() == AccessorKind.JVM_DEFAULT_COMPATIBILITY) {
                                 FunctionDescriptor descriptor = unwrapFakeOverrideToAnyDeclaration(original).getOriginal();
                                 if (descriptor != original) {
                                     descriptor = descriptor
@@ -826,7 +825,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(
                 functionDescriptor,
                 accessorDescriptor instanceof AccessorForCallableDescriptor &&
-                ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallTarget() != null
+                (((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallTarget() != null ||
+                 ((AccessorForCallableDescriptor) accessorDescriptor).getAccessorKind() == AccessorKind.JVM_DEFAULT_COMPATIBILITY)
         );
 
         boolean isJvmStaticInObjectOrClass = CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor);

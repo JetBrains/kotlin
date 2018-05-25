@@ -410,8 +410,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
 
     public  <D extends CallableMemberDescriptor> D getAccessorForJvmDefaultCompatibility(@NotNull D descriptor) {
-        return getAccessor(descriptor, AccessorKind.JVM_DEFAULT_COMPATIBILITY, null,
-                           (ClassDescriptor) descriptor.getContainingDeclaration());
+        return getAccessor(descriptor, AccessorKind.JVM_DEFAULT_COMPATIBILITY, null, null);
     }
 
     @NotNull
