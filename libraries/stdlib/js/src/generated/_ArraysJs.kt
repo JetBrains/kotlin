@@ -495,11 +495,11 @@ public actual fun CharArray.copyOf(): CharArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize],
- * truncating original values or padding new array with primitive default values if necessary.
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with zero values if necessary.
  * 
- * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
- * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
@@ -508,11 +508,11 @@ public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize],
- * truncating original values or padding new array with primitive default values if necessary.
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with zero values if necessary.
  * 
- * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
- * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
@@ -521,11 +521,11 @@ public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize],
- * truncating original values or padding new array with primitive default values if necessary.
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with zero values if necessary.
  * 
- * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
- * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
@@ -534,11 +534,11 @@ public actual fun IntArray.copyOf(newSize: Int): IntArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize],
- * truncating original values or padding new array with primitive default values if necessary.
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with zero values if necessary.
  * 
- * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
- * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
@@ -547,11 +547,11 @@ public actual fun LongArray.copyOf(newSize: Int): LongArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize],
- * truncating original values or padding new array with primitive default values if necessary.
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with zero values if necessary.
  * 
- * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
- * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
@@ -560,11 +560,11 @@ public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize],
- * truncating original values or padding new array with primitive default values if necessary.
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with zero values if necessary.
  * 
- * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
- * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
@@ -573,11 +573,11 @@ public actual fun DoubleArray.copyOf(newSize: Int): DoubleArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize],
- * truncating original values or padding new array with primitive default values if necessary.
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with `false` values if necessary.
  * 
- * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
- * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with `false` values.
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
@@ -586,11 +586,11 @@ public actual fun BooleanArray.copyOf(newSize: Int): BooleanArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize],
- * truncating original values or padding new array with primitive default values if necessary.
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with null char (`\u0000`) values if necessary.
  * 
- * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
- * For all indices that are valid in the copy, but not in the original, the copy will contain primitive default values.
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with null char (`\u0000`) values.
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
@@ -599,11 +599,11 @@ public actual fun CharArray.copyOf(newSize: Int): CharArray {
 }
 
 /**
- * Returns new array which is a copy of the original array, resized to the given [newSize],
- * truncating original values or padding new array with null values if necessary.
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with `null` values if necessary.
  * 
- * For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
- * For all indices that are valid in the copy, but not in the original, the copy will contain null values.
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with `null` values.
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
  */

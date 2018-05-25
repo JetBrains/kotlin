@@ -446,11 +446,11 @@ object ArrayOps : TemplateGroupBase() {
     } builder {
         doc {
             """
-            Returns new array which is a copy of the original array, resized to the given [newSize],
-            truncating original values or padding new array with ${if(family == ArraysOfPrimitives) "primitive default" else "null"} values if necessary.
+            Returns new array which is a copy of the original array, resized to the given [newSize].
+            The copy is either truncated or padded at the end with ${primitive.zero} values if necessary.
 
-            For all indices that are valid in both the original array and the copy, the two arrays contents will be identical.
-            For all indices that are valid in the copy, but not in the original, the copy will contain ${if(family == ArraysOfPrimitives) "primitive default" else "null"} values.
+            - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+            - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with ${primitive.zero} values.
             """
         }
         specialFor(ArraysOfPrimitives) {
