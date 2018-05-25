@@ -14,77 +14,63 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.codegen.coroutines.*
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-import java.util.LinkedHashMap;
+import java.util.LinkedHashMap
 
-public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDescriptor implements AccessorForCallableDescriptor<FunctionDescriptor> {
-    private final FunctionDescriptor calleeDescriptor;
-    private final ClassDescriptor superCallTarget;
-    private final String nameSuffix;
+class AccessorForFunctionDescriptor(
+    private val calleeDescriptor: FunctionDescriptor,
+    containingDeclaration: DeclarationDescriptor,
+    private val superCallTarget: ClassDescriptor?,
+    private val nameSuffix: String
+) : AbstractAccessorForFunctionDescriptor(containingDeclaration, Name.identifier("access$$nameSuffix")),
+    AccessorForCallableDescriptor<FunctionDescriptor> {
 
-    public AccessorForFunctionDescriptor(
-            @NotNull FunctionDescriptor descriptor,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @Nullable ClassDescriptor superCallTarget,
-            @NotNull String nameSuffix
-    ) {
-        super(containingDeclaration,
-              Name.identifier("access$" + nameSuffix));
-        this.calleeDescriptor = descriptor;
-        this.superCallTarget = superCallTarget;
-        this.nameSuffix = nameSuffix;
+    init {
+        initialize(
+            DescriptorUtils.getReceiverParameterType(calleeDescriptor.extensionReceiverParameter),
+            if (calleeDescriptor is ConstructorDescriptor || calleeDescriptor.isJvmStaticInObjectOrClassOrInterface())
+                null
+            else
+                calleeDescriptor.dispatchReceiverParameter,
+            copyTypeParameters(calleeDescriptor),
+            copyValueParameters(calleeDescriptor),
+            calleeDescriptor.returnType,
+            Modality.FINAL,
+            Visibilities.LOCAL
+        )
 
-        initialize(DescriptorUtils.getReceiverParameterType(descriptor.getExtensionReceiverParameter()),
-                   descriptor instanceof ConstructorDescriptor || CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(descriptor)
-                        ? null
-                        : descriptor.getDispatchReceiverParameter(),
-                   copyTypeParameters(descriptor),
-                   copyValueParameters(descriptor),
-                   descriptor.getReturnType(),
-                   Modality.FINAL,
-                   Visibilities.LOCAL);
-
-        setSuspend(descriptor.isSuspend());
-        if (descriptor.getUserData(CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) != null) {
-            userDataMap = new LinkedHashMap<>();
-            userDataMap.put(
-                    CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION,
-                    descriptor.getUserData(CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)
-            );
+        isSuspend = calleeDescriptor.isSuspend
+        if (calleeDescriptor.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) != null) {
+            userDataMap = LinkedHashMap<FunctionDescriptor.UserDataKey<*>, Any>()
+            userDataMap[INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION] =
+                    calleeDescriptor.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)
         }
     }
 
-    @NotNull
-    @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(
-            @NotNull DeclarationDescriptor newOwner,
-            @Nullable FunctionDescriptor original,
-            @NotNull Kind kind,
-            @Nullable Name newName,
-            @NotNull Annotations annotations,
-            @NotNull SourceElement source
-    ) {
-        return new AccessorForFunctionDescriptor(calleeDescriptor, newOwner, superCallTarget, nameSuffix);
+    override fun createSubstitutedCopy(
+        newOwner: DeclarationDescriptor,
+        original: FunctionDescriptor?,
+        kind: CallableMemberDescriptor.Kind,
+        newName: Name?,
+        annotations: Annotations,
+        source: SourceElement
+    ): FunctionDescriptorImpl {
+        return AccessorForFunctionDescriptor(calleeDescriptor, newOwner, superCallTarget, nameSuffix)
     }
 
-    @NotNull
-    @Override
-    public FunctionDescriptor getCalleeDescriptor() {
-        return calleeDescriptor;
+    override fun getCalleeDescriptor(): FunctionDescriptor {
+        return calleeDescriptor
     }
 
-    @Override
-    public ClassDescriptor getSuperCallTarget() {
-        return superCallTarget;
+    override fun getSuperCallTarget(): ClassDescriptor? {
+        return superCallTarget
     }
 }
