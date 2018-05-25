@@ -18,16 +18,14 @@ package org.jetbrains.kotlin.idea.findUsages
 
 import com.intellij.lang.findUsages.FindUsagesProvider
 import com.intellij.lang.java.JavaFindUsagesProvider
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiPackage
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class KotlinFindUsagesProvider : FindUsagesProvider {
@@ -82,6 +80,14 @@ class KotlinFindUsagesProvider : FindUsagesProvider {
             is KtLabeledExpression -> element.getLabelName() ?: ""
             is KtImportAlias -> element.getName() ?: ""
             is KtLightElement<*, *> -> element.kotlinOrigin?.let { getDescriptiveName(it) } ?: ""
+            is KtParameter -> {
+                if (element.isPropertyParameter()) {
+                    (element.name ?: "") + (element.containerDescription?.let { " of $it" } ?: "")
+                } else {
+                    element.name ?: ""
+                }
+            }
+            is PsiNamedElement -> element.name ?: ""
             else -> ""
         }
     }
