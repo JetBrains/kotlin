@@ -42,9 +42,9 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
             context.symbolTable.declareSimpleFunctionWithOverrides(
                 irClass.startOffset, irClass.endOffset,
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                valuesFunction, valuesFunction.returnType!!.toIrType()
+                valuesFunction
             ).also { irFunction ->
-                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irFunction, null, null)
+                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irFunction, null, null)
                 irFunction.body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUES)
             }
         )
@@ -61,9 +61,9 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
             context.symbolTable.declareSimpleFunctionWithOverrides(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                valueOfFunction, valueOfFunction.returnType!!.toIrType()
+                valueOfFunction
             ).also { irFunction ->
-                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irFunction, null, null)
+                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irFunction, null, null)
                 irFunction.body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUEOF)
             }
         )

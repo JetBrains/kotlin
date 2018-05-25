@@ -207,10 +207,13 @@ class ClassGenerator(
         context.symbolTable.declareSimpleFunctionWithOverrides(
             irDelegate.startOffset, irDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_MEMBER,
-            delegated,
-            delegated.returnType!!.toIrType()
+            delegated
         ).buildWithScope { irFunction ->
             FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irFunction)
+
+            // TODO could possibly refer to scoped type parameters for property accessors
+            irFunction.returnType = delegated.returnType!!.toIrType()
+
             irFunction.body = generateDelegateFunctionBody(irDelegate, delegated, overridden, irFunction)
         }
 
