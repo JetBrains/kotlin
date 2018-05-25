@@ -5070,6 +5070,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertLambdaToReference/argumentWithReceiver.kt");
         }
 
+        @TestMetadata("classReference.kt")
+        public void testClassReference() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/classReference.kt");
+        }
+
+        @TestMetadata("classReference2.kt")
+        public void testClassReference2() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/classReference2.kt");
+        }
+
         @TestMetadata("companion.kt")
         public void testCompanion() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/companion.kt");

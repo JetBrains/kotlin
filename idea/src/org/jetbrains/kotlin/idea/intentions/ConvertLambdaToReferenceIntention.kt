@@ -97,10 +97,13 @@ open class ConvertLambdaToReferenceIntention(text: String) :
             }
         }
 
+        val lambdaValueParameterDescriptors = context[FUNCTION, lambdaExpression.functionLiteral]?.valueParameters ?: return false
+        if (explicitReceiver is KtClassLiteralExpression
+            && explicitReceiver.receiverExpression?.getCallableDescriptor() in lambdaValueParameterDescriptors
+        ) return false
         val explicitReceiverDescriptor = (explicitReceiver as? KtNameReferenceExpression)?.let {
             context[REFERENCE_TARGET, it]
         } as? ValueDescriptor
-        val lambdaValueParameterDescriptors = context[FUNCTION, lambdaExpression.functionLiteral]?.valueParameters ?: return false
         val lambdaParameterAsExplicitReceiver = when (noBoundReferences) {
             true -> explicitReceiver != null
             false -> explicitReceiverDescriptor != null && explicitReceiverDescriptor == lambdaValueParameterDescriptors.firstOrNull()
