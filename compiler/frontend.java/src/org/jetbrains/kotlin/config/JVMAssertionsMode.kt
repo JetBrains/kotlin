@@ -17,5 +17,8 @@ enum class JVMAssertionsMode(val description: String) {
 
         @JvmStatic
         fun fromStringOrNull(string: String?) = values().find { it.description == string }
+
+        @JvmStatic
+        fun fromString(string: String?) = fromStringOrNull(string) ?: DEFAULT
     }
 }
