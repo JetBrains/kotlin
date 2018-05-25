@@ -91,8 +91,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                 startOffset,
                 endOffset,
                 IrDeclarationOrigin.DEFINED,
-                typeParameterDescriptor,
-                typeParameterDescriptor.upperBounds.map { it.toIrType() }
+                typeParameterDescriptor
             )
         }
     }
@@ -106,8 +105,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                 startOffset,
                 endOffset,
                 IrDeclarationOrigin.DEFINED,
-                typeParameterDescriptor,
-                typeParameterDescriptor.upperBounds.map { it.toIrType() }
+                typeParameterDescriptor
             )
         }
     }
@@ -117,7 +115,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         from: List<TypeParameterDescriptor>,
         declareTypeParameter: (Int, Int, TypeParameterDescriptor) -> IrTypeParameter
     ) {
-        val irTypeParameters = from.map { typeParameterDescriptor ->
+        from.mapTo(irTypeParametersOwner.typeParameters) { typeParameterDescriptor ->
             val ktTypeParameterDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameterDescriptor)
             val startOffset = ktTypeParameterDeclaration.startOffsetOrUndefined
             val endOffset = ktTypeParameterDeclaration.endOffsetOrUndefined
@@ -128,7 +126,11 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             )
         }
 
-        irTypeParametersOwner.typeParameters.addAll(irTypeParameters)
+        for (irTypeParameter in irTypeParametersOwner.typeParameters) {
+            irTypeParameter.descriptor.upperBounds.mapTo(irTypeParameter.superTypes) {
+                it.toIrType()
+            }
+        }
     }
 
     fun generateInitializerBody(scopeOwnerSymbol: IrSymbol, ktBody: KtExpression): IrExpressionBody =

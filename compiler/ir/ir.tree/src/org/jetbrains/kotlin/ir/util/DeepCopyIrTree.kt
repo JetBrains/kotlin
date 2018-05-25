@@ -190,10 +190,10 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
         IrTypeParameterImpl(
             originalTypeParameter.startOffset, originalTypeParameter.endOffset,
             mapDeclarationOrigin(originalTypeParameter.origin),
-            newTypeParameterDescriptor,
-            originalTypeParameter.superTypes // TODO
+            newTypeParameterDescriptor
         ).apply {
             transformAnnotations(originalTypeParameter)
+            superTypes.addAll(originalTypeParameter.superTypes) // TODO
         }
 
     protected fun createUnboundClassifierSymbol(classifier: ClassifierDescriptor): IrClassifierSymbol =
