@@ -19,15 +19,13 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.common
 import org.jetbrains.kotlin.backend.common.CodegenUtil.getMemberToGenerate
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperties
 
 abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContext: BindingContext) {
     protected val serializerDescriptor: ClassDescriptor = declaration.findClassDescriptor(bindingContext)
@@ -43,9 +41,28 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
         val load = generateLoadIfNeeded()
         if (save || load || prop)
             generateSerialDesc()
-        if (serializableDescriptor.declaredTypeParameters.isNotEmpty()) {
+        if (serializableDescriptor.declaredTypeParameters.isNotEmpty() && typedSerializerConstructorNotDeclared()) {
             generateGenericFieldsAndConstructor(createTypedSerializerConstructorDescriptor(serializerDescriptor, serializableDescriptor))
         }
+    }
+
+    // checks if user didn't declared constructor (KSerializer<T0>, KSerializer<T1>...) on a KSerializer<T<T0, T1...>>
+    private fun typedSerializerConstructorNotDeclared(): Boolean {
+        val kSerializerSupertype = serializerDescriptor.typeConstructor.supertypes
+            .find { isKSerializer(it) } ?: throw AssertionError("Serializer does not implement KSerializer??")
+        val serializableImplementationTypeArguments = kSerializerSupertype.arguments.first().type.arguments
+
+        val typeParamsCount = serializableImplementationTypeArguments.size
+        if (typeParamsCount == 0) return false //don't need it
+        val ctors = serializerDescriptor.constructors
+        val found =
+            ctors.any {
+                it.valueParameters.size == typeParamsCount && it.valueParameters.foldIndexed(false) { index, flag, parameterDescriptor ->
+                    val type = parameterDescriptor.type
+                    flag || (isKSerializer(type) && type.arguments.first() == serializableImplementationTypeArguments[index])
+                }
+            }
+        return !found
     }
 
     protected val serialDescPropertyDescriptor = getPropertyToGenerate(serializerDescriptor, KSerializerDescriptorResolver.SERIAL_DESC_FIELD,

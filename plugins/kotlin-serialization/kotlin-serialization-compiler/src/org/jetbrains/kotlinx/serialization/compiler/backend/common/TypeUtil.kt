@@ -47,6 +47,8 @@ open class SerialTypeInfo(
 
 fun getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
     val T = property.type
+    val serializableWith = property.serializableWith?.toClassDescriptor
+    if (serializableWith != null) return SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializableWith)
     return when {
         T.isTypeParameter() -> SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", null)
         T.isPrimitiveNumberType() or T.isBoolean() -> SerialTypeInfo(
@@ -63,8 +65,7 @@ fun getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
             SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
         T.toClassDescriptor?.kind == ClassKind.ENUM_CLASS -> {
-            val serializer =
-                property.serializableWith?.toClassDescriptor ?: property.module.findClassAcrossModuleDependencies(enumSerializerId)
+            val serializer = property.module.findClassAcrossModuleDependencies(enumSerializerId)
             SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
         else -> {
