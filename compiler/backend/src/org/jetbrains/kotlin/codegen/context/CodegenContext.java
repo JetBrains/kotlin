@@ -48,16 +48,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private static class AccessorKey {
         public final DeclarationDescriptor descriptor;
         public final ClassDescriptor superCallLabelTarget;
-        public final FieldAccessorKind fieldAccessorKind;
+        public final AccessorKind accessorKind;
 
         public AccessorKey(
                 @NotNull DeclarationDescriptor descriptor,
                 @Nullable ClassDescriptor superCallLabelTarget,
-                @NotNull FieldAccessorKind fieldAccessorKind
+                @NotNull AccessorKind accessorKind
         ) {
             this.descriptor = descriptor;
             this.superCallLabelTarget = superCallLabelTarget;
-            this.fieldAccessorKind = fieldAccessorKind;
+            this.accessorKind = accessorKind;
         }
 
         @Override
@@ -65,7 +65,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             if (!(obj instanceof AccessorKey)) return false;
             AccessorKey other = (AccessorKey) obj;
             return descriptor.equals(other.descriptor) &&
-                   fieldAccessorKind == other.fieldAccessorKind &&
+                   accessorKind == other.accessorKind &&
                    (superCallLabelTarget == null ? other.superCallLabelTarget == null
                                                  : superCallLabelTarget.equals(other.superCallLabelTarget));
         }
@@ -73,7 +73,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         @Override
         public int hashCode() {
             return 31 * descriptor.hashCode() +
-                   fieldAccessorKind.hashCode() +
+                   accessorKind.hashCode() +
                    (superCallLabelTarget == null ? 0 : superCallLabelTarget.hashCode());
         }
 
@@ -402,18 +402,18 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             boolean getterAccessorRequired,
             boolean setterAccessorRequired
     ) {
-        return getAccessor(propertyDescriptor, FieldAccessorKind.NORMAL, null, superCallTarget, getterAccessorRequired, setterAccessorRequired);
+        return getAccessor(propertyDescriptor, AccessorKind.NORMAL, null, superCallTarget, getterAccessorRequired, setterAccessorRequired);
     }
 
 
     public  <D extends CallableMemberDescriptor> D getAccessorForJvmDefaultCompatibility(@NotNull D descriptor) {
-        return getAccessor(descriptor, FieldAccessorKind.JVM_DEFAULT_COMPATIBILITY, null,
+        return getAccessor(descriptor, AccessorKind.JVM_DEFAULT_COMPATIBILITY, null,
                            (ClassDescriptor) descriptor.getContainingDeclaration());
     }
 
     @NotNull
     private <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor, @Nullable ClassDescriptor superCallTarget) {
-        return getAccessor(descriptor, FieldAccessorKind.NORMAL, null, superCallTarget);
+        return getAccessor(descriptor, AccessorKind.NORMAL, null, superCallTarget);
     }
 
     @SuppressWarnings("unchecked")
@@ -436,7 +436,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     public <D extends CallableMemberDescriptor> D getAccessor(
             @NotNull D possiblySubstitutedDescriptor,
-            @NotNull FieldAccessorKind accessorKind,
+            @NotNull AccessorKind accessorKind,
             @Nullable KotlinType delegateType,
             @Nullable ClassDescriptor superCallTarget
     ) {
@@ -451,7 +451,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     private <D extends CallableMemberDescriptor> D getAccessor(
             @NotNull D possiblySubstitutedDescriptor,
-            @NotNull FieldAccessorKind accessorKind,
+            @NotNull AccessorKind accessorKind,
             @Nullable KotlinType delegateType,
             @Nullable ClassDescriptor superCallTarget,
             boolean getterAccessorRequired,
@@ -474,7 +474,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
         if (accessors.containsKey(key)) {
             AccessorForCallableDescriptor<?> accessor = accessors.get(key);
-            assert accessorKind == FieldAccessorKind.NORMAL ||
+            assert accessorKind == AccessorKind.NORMAL ||
                    accessor instanceof AccessorForPropertyBackingField : "There is already exists accessor with isForBackingField = false in this context";
             return (D) accessor;
         }
@@ -489,7 +489,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
         else if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-            if (accessorKind == FieldAccessorKind.NORMAL) {
+            if (accessorKind == AccessorKind.NORMAL) {
                 AccessorForPropertyDescriptorFactory factory =
                         new AccessorForPropertyDescriptorFactory(propertyDescriptor, contextDescriptor, superCallTarget, nameSuffix);
                 propertyAccessorFactories.put(key, factory);
@@ -502,8 +502,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
             accessor = new AccessorForPropertyBackingField(
                     propertyDescriptor, contextDescriptor, delegateType,
-                    accessorKind == FieldAccessorKind.IN_CLASS_COMPANION ? null : propertyDescriptor.getExtensionReceiverParameter(),
-                    accessorKind == FieldAccessorKind.IN_CLASS_COMPANION ? null : propertyDescriptor.getDispatchReceiverParameter(),
+                    accessorKind == AccessorKind.IN_CLASS_COMPANION ? null : propertyDescriptor.getExtensionReceiverParameter(),
+                    accessorKind == AccessorKind.IN_CLASS_COMPANION ? null : propertyDescriptor.getDispatchReceiverParameter(),
                     nameSuffix, accessorKind
             );
         }

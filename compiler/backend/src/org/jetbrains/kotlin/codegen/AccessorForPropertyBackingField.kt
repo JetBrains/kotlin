@@ -28,7 +28,7 @@ class AccessorForPropertyBackingField(
         extensionReceiverParameter: ReceiverParameterDescriptor?,
         dispatchReceiverParameter: ReceiverParameterDescriptor?,
         nameSuffix: String,
-        val fieldAccessorKind: FieldAccessorKind
+        val fieldAccessorKind: AccessorKind
 ) : AccessorForPropertyDescriptor(
         property,
         delegateType ?: property.type,
