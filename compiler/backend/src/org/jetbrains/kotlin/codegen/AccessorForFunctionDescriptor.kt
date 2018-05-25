@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.LinkedHashMap
 
 class AccessorForFunctionDescriptor(
-    private val calleeDescriptor: FunctionDescriptor,
+    override val calleeDescriptor: FunctionDescriptor,
     containingDeclaration: DeclarationDescriptor,
-    private val superCallTarget: ClassDescriptor?,
+    override val superCallTarget: ClassDescriptor?,
     private val nameSuffix: String
 ) : AbstractAccessorForFunctionDescriptor(containingDeclaration, Name.identifier("access$$nameSuffix")),
     AccessorForCallableDescriptor<FunctionDescriptor> {
@@ -64,13 +64,5 @@ class AccessorForFunctionDescriptor(
         source: SourceElement
     ): FunctionDescriptorImpl {
         return AccessorForFunctionDescriptor(calleeDescriptor, newOwner, superCallTarget, nameSuffix)
-    }
-
-    override fun getCalleeDescriptor(): FunctionDescriptor {
-        return calleeDescriptor
-    }
-
-    override fun getSuperCallTarget(): ClassDescriptor? {
-        return superCallTarget
     }
 }
