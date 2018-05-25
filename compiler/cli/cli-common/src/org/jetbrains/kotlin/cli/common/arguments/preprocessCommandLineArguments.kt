@@ -48,28 +48,35 @@ private fun File.expand(errors: ArgumentParseErrors): List<String> {
 private fun Reader.parseNextArgument(): String? {
     val sb = StringBuilder()
 
-    var r: Int = read()
-    while (r != -1) {
-        when (r.toChar()) {
-            WHITESPACE, NEWLINE -> return sb.toString()
+    var r = nextChar()
+    while (r != null && (r == WHITESPACE || r == NEWLINE)) {
+        r = nextChar()
+    }
+
+    loop@ while (r != null) {
+        when (r) {
+            WHITESPACE, NEWLINE -> break@loop
             QUOTATION_MARK -> consumeRestOfEscapedSequence(sb)
-            BACKSLASH -> sb.append(read().toChar())
-            else -> sb.append(r.toChar())
+            BACKSLASH -> nextChar()?.apply(sb::append)
+            else -> sb.append(r)
         }
 
-        r = read()
+        r = nextChar()
     }
 
     return sb.toString().takeIf { it.isNotEmpty() }
 }
 
 private fun Reader.consumeRestOfEscapedSequence(sb: StringBuilder) {
-    var ch = read().toChar()
-    while (ch != QUOTATION_MARK) {
-        if (ch == BACKSLASH) sb.append(read().toChar()) else sb.append(ch)
-        ch = read().toChar()
+    var ch = nextChar()
+    while (ch != null && ch != QUOTATION_MARK) {
+        if (ch == BACKSLASH) nextChar()?.apply(sb::append) else sb.append(ch)
+        ch = nextChar()
     }
 }
+
+private fun Reader.nextChar(): Char? =
+    read().takeUnless { it == -1 }?.toChar()
 
 private val String.argfilePath: String
     get() = removePrefix("$EXPERIMENTAL_ARGFILE_ARGUMENT=")
