@@ -524,7 +524,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     private var extensionReceiver = resolvedCallAtom.extensionReceiverArgument?.receiver?.receiverValue
     private var dispatchReceiver = resolvedCallAtom.dispatchReceiverArgument?.receiver?.receiverValue
     private var smartCastDispatchReceiverType: KotlinType? = null
-    private var argumentToSamConvertedType: MutableMap<ValueArgument, UnwrappedType>? = null
+    private var argumentToSamConvertedType: MutableMap<ValueArgument, UnwrappedType>? = null // rename
 
 
     override val kotlinCall: KotlinCall get() = resolvedCallAtom.atom

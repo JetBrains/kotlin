@@ -182,7 +182,7 @@ class SamAdapterFunctionsScope(
 
         return getSamFunctions(scope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS), location = null)
     }
-
+// complition
     override fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor> {
         val classifiers = scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassifierDescriptor>()
 

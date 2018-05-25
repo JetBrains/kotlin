@@ -263,6 +263,7 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
     candidateParameter: ParameterDescriptor
 ): UnwrappedType? {
     val argumentIsFunctional = when (argument) {
+        // unstable = () -> Unit, stable = Runnable || stable = Function || stable = SuspendFunction
         is SimpleKotlinCallArgument -> argument.receiver.let { it.unstableType ?: it.stableType }.isSubtypeOfFunctionType()
         is LambdaKotlinCallArgument, is CallableReferenceKotlinCallArgument -> true
         else -> false
