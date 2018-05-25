@@ -286,24 +286,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
     }
 
-    @TestMetadata("compiler/testData/codegen/bytecodeListing/multiplatform")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Multiplatform extends AbstractBytecodeListingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInMultiplatform() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/multiplatform"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("optionalExpectation.kt")
-        public void testOptionalExpectation() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/multiplatform/optionalExpectation.kt");
-        }
-    }
-
     @TestMetadata("compiler/testData/codegen/bytecodeListing/specialBridges")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

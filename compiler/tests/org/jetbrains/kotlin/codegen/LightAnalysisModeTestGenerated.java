@@ -13294,11 +13294,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/multiplatform/noArgActualConstructor.kt");
         }
 
-        @TestMetadata("optionalExpectation.kt")
-        public void testOptionalExpectation() throws Exception {
-            runTest("compiler/testData/codegen/box/multiplatform/optionalExpectation.kt");
-        }
-
         @TestMetadata("compiler/testData/codegen/box/multiplatform/defaultArguments")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
