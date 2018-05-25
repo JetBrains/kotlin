@@ -113,80 +113,80 @@ fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.
 fun IrMemberAccessExpression.usesDefaultArguments(): Boolean =
     this.descriptor.valueParameters.any { this.getValueArgument(it) == null }
 
-fun IrFunction.createParameterDeclarations() {
-    fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(
-        innerStartOffset(this), innerEndOffset(this),
-        IrDeclarationOrigin.DEFINED,
-        this
-    ).also {
-        it.parent = this@createParameterDeclarations
-    }
-
-    dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.irValueParameter()
-    extensionReceiverParameter = descriptor.extensionReceiverParameter?.irValueParameter()
-
-    assert(valueParameters.isEmpty())
-    descriptor.valueParameters.mapTo(valueParameters) { it.irValueParameter() }
-
-    assert(typeParameters.isEmpty())
-    descriptor.typeParameters.mapTo(typeParameters) {
-        IrTypeParameterImpl(
-            innerStartOffset(it), innerEndOffset(it),
-            IrDeclarationOrigin.DEFINED,
-            it
-        ).also { typeParameter ->
-            typeParameter.parent = this
-        }
-    }
-}
-
-fun IrClass.createParameterDeclarations() {
-    descriptor.thisAsReceiverParameter.let {
-        thisReceiver = IrValueParameterImpl(
-            innerStartOffset(it), innerEndOffset(it),
-            IrDeclarationOrigin.INSTANCE_RECEIVER,
-            it
-        )
-    }
-
-    assert(typeParameters.isEmpty())
-    descriptor.declaredTypeParameters.mapTo(typeParameters) {
-        IrTypeParameterImpl(
-            innerStartOffset(it), innerEndOffset(it),
-            IrDeclarationOrigin.DEFINED,
-            it
-        )
-    }
-}
-
-fun IrClass.addFakeOverrides() {
-
-    val startOffset = this.startOffset
-    val endOffset = this.endOffset
-
-    fun FunctionDescriptor.createFunction(): IrSimpleFunction = IrFunctionImpl(
-        startOffset, endOffset,
-        IrDeclarationOrigin.FAKE_OVERRIDE, this
-    ).apply {
-        createParameterDeclarations()
-    }
-
-    descriptor.unsubstitutedMemberScope.getContributedDescriptors()
-        .filterIsInstance<CallableMemberDescriptor>()
-        .filter { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
-        .mapTo(this.declarations) {
-            when (it) {
-                is FunctionDescriptor -> it.createFunction()
-                is PropertyDescriptor ->
-                    IrPropertyImpl(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, it).apply {
-                        // TODO: add field if getter is missing?
-                        getter = it.getter?.createFunction()
-                        setter = it.setter?.createFunction()
-                    }
-                else -> TODO(it.toString())
-            }
-        }
-}
+//fun IrFunction.createParameterDeclarations() {
+//    fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(
+//        innerStartOffset(this), innerEndOffset(this),
+//        IrDeclarationOrigin.DEFINED,
+//        this
+//    ).also {
+//        it.parent = this@createParameterDeclarations
+//    }
+//
+//    dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.irValueParameter()
+//    extensionReceiverParameter = descriptor.extensionReceiverParameter?.irValueParameter()
+//
+//    assert(valueParameters.isEmpty())
+//    descriptor.valueParameters.mapTo(valueParameters) { it.irValueParameter() }
+//
+//    assert(typeParameters.isEmpty())
+//    descriptor.typeParameters.mapTo(typeParameters) {
+//        IrTypeParameterImpl(
+//            innerStartOffset(it), innerEndOffset(it),
+//            IrDeclarationOrigin.DEFINED,
+//            it
+//        ).also { typeParameter ->
+//            typeParameter.parent = this
+//        }
+//    }
+//}
+//
+//fun IrClass.createParameterDeclarations() {
+//    descriptor.thisAsReceiverParameter.let {
+//        thisReceiver = IrValueParameterImpl(
+//            innerStartOffset(it), innerEndOffset(it),
+//            IrDeclarationOrigin.INSTANCE_RECEIVER,
+//            it
+//        )
+//    }
+//
+//    assert(typeParameters.isEmpty())
+//    descriptor.declaredTypeParameters.mapTo(typeParameters) {
+//        IrTypeParameterImpl(
+//            innerStartOffset(it), innerEndOffset(it),
+//            IrDeclarationOrigin.DEFINED,
+//            it
+//        )
+//    }
+//}
+//
+//fun IrClass.addFakeOverrides() {
+//
+//    val startOffset = this.startOffset
+//    val endOffset = this.endOffset
+//
+//    fun FunctionDescriptor.createFunction(): IrSimpleFunction = IrFunctionImpl(
+//        startOffset, endOffset,
+//        IrDeclarationOrigin.FAKE_OVERRIDE, this
+//    ).apply {
+//        createParameterDeclarations()
+//    }
+//
+//    descriptor.unsubstitutedMemberScope.getContributedDescriptors()
+//        .filterIsInstance<CallableMemberDescriptor>()
+//        .filter { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
+//        .mapTo(this.declarations) {
+//            when (it) {
+//                is FunctionDescriptor -> it.createFunction()
+//                is PropertyDescriptor ->
+//                    IrPropertyImpl(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, it).apply {
+//                        // TODO: add field if getter is missing?
+//                        getter = it.getter?.createFunction()
+//                        setter = it.setter?.createFunction()
+//                    }
+//                else -> TODO(it.toString())
+//            }
+//        }
+//}
 
 private fun IrElement.innerStartOffset(descriptor: DeclarationDescriptorWithSource): Int =
     descriptor.startOffset ?: this.startOffset
