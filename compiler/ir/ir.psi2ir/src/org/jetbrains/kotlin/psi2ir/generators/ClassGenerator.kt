@@ -54,6 +54,8 @@ class ClassGenerator(
         return context.symbolTable.declareClass(
             startOffset, endOffset, IrDeclarationOrigin.DEFINED, classDescriptor
         ).buildWithScope { irClass ->
+            declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)
+
             classDescriptor.typeConstructor.supertypes.mapTo(irClass.superTypes) {
                 it.toIrType()
             }
@@ -64,8 +66,6 @@ class ClassGenerator(
                 classDescriptor.thisAsReceiverParameter,
                 classDescriptor.thisAsReceiverParameter.type.toIrType()
             )
-
-            declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)
 
             val irPrimaryConstructor = generatePrimaryConstructor(irClass, ktClassOrObject)
             if (irPrimaryConstructor != null) {

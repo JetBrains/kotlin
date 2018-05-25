@@ -138,12 +138,13 @@ class DeclarationStubGenerator(
 
     private fun generateClassStub(descriptor: ClassDescriptor): IrClass =
         symbolTable.declareClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irClass ->
+            generateTypeParameterStubs(descriptor.declaredTypeParameters, irClass)
+
             // TODO get rid of code duplication, see ClassGenerator#generateClass
             descriptor.typeConstructor.supertypes.mapNotNullTo(irClass.superTypes) {
                 it.toIrType()
             }
 
-            generateTypeParameterStubs(descriptor.declaredTypeParameters, irClass)
             irClass.thisReceiver = descriptor.thisAsReceiverParameter.generateReceiverParameterStub()
             generateChildStubs(descriptor.constructors, irClass)
             generateMemberStubs(descriptor.defaultType.memberScope, irClass)
