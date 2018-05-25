@@ -53,6 +53,9 @@ fun writeSyntheticClassMetadata(cb: ClassBuilder, state: GenerationState) {
     }
 }
 
+/**
+ * Adds [kotlin.Generated] annotation for a method that should be skipped by code coverage tools
+ */
 fun writeGeneratedAnnotation(mv: MethodVisitor) {
     mv.visitAnnotation(JvmAnnotationNames.GENERATED_DESC, false)
 }
