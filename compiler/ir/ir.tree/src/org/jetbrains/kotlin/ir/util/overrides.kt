@@ -14,10 +14,9 @@ fun SymbolTable.declareSimpleFunctionWithOverrides(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
-    descriptor: FunctionDescriptor,
-    returnType: IrType
+    descriptor: FunctionDescriptor
 ) =
-    declareSimpleFunction(startOffset, endOffset, origin, descriptor, returnType).also { declaration ->
+    declareSimpleFunction(startOffset, endOffset, origin, descriptor).also { declaration ->
         generateOverriddenSymbols(declaration, this)
     }
 

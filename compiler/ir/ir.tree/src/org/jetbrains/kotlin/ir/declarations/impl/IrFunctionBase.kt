@@ -36,9 +36,9 @@ abstract class IrFunctionBase(
     override val name: Name,
     override val visibility: Visibility,
     override val isInline: Boolean,
-    override val isExternal: Boolean,
-    override val returnType: IrType
-) : IrDeclarationBase(startOffset, endOffset, origin),
+    override val isExternal: Boolean
+) :
+    IrDeclarationBase(startOffset, endOffset, origin),
     IrFunction {
 
     override val typeParameters: MutableList<IrTypeParameter> = SmartList()
@@ -48,6 +48,8 @@ abstract class IrFunctionBase(
     override val valueParameters: MutableList<IrValueParameter> = ArrayList()
 
     final override var body: IrBody? = null
+
+    final override lateinit var returnType: IrType
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }

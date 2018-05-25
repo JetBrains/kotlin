@@ -190,13 +190,12 @@ class SymbolTable {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: ClassConstructorDescriptor,
-        returnType: IrType
+        descriptor: ClassConstructorDescriptor
     ): IrConstructor =
         constructorSymbolTable.declare(
             descriptor,
             { IrConstructorSymbolImpl(descriptor) },
-            { IrConstructorImpl(startOffset, endOffset, origin, it, returnType) }
+            { IrConstructorImpl(startOffset, endOffset, origin, it) }
         )
 
     fun referenceConstructor(descriptor: ClassConstructorDescriptor) =
@@ -250,13 +249,12 @@ class SymbolTable {
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: FunctionDescriptor,
-        returnType: IrType
+        descriptor: FunctionDescriptor
     ): IrSimpleFunction =
         simpleFunctionSymbolTable.declare(
             descriptor,
             { IrSimpleFunctionSymbolImpl(descriptor) },
-            { IrFunctionImpl(startOffset, endOffset, origin, it, returnType) }
+            { IrFunctionImpl(startOffset, endOffset, origin, it) }
         )
 
     fun referenceSimpleFunction(descriptor: FunctionDescriptor) =
