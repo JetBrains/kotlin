@@ -482,6 +482,7 @@ public class PropertyCodegen {
     }
 
     private boolean shouldWriteFieldInitializer(@NotNull PropertyDescriptor descriptor) {
+        if (!state.getClassBuilderMode().generateBodies) return false;
         //final field of primitive or String type
         if (!descriptor.isVar()) {
             Type type = typeMapper.mapType(descriptor);

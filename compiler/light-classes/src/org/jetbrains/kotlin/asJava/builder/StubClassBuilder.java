@@ -34,9 +34,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.elements.DeferredPartsUtilsKt;
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder;
 import org.jetbrains.kotlin.codegen.state.DeferredTypesTracker;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
@@ -214,6 +216,15 @@ public class StubClassBuilder extends AbstractClassBuilder {
         else if (last instanceof PsiFieldStub) {
             typeText = ((PsiFieldStub) last).getType(false).toString();
 
+            if (origin.getDescriptor() instanceof PropertyDescriptor) {
+                last.putUserData(
+                        DeferredPartsUtilsKt.DEFERRED_CONSTANT_INITIALIZER,
+                        () -> {
+                            ConstantValue<?> initializer = ((PropertyDescriptor) origin.getDescriptor()).getCompileTimeInitializer();
+                            return initializer != null ? initializer.getValue() : null;
+                        }
+                );
+            }
         }
 
         if (typeText != null) {

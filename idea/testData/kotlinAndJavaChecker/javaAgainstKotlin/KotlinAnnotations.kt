@@ -1,3 +1,3 @@
-class A : KotlinAnnotations() {
-    fun m(x: Int) = 1
+object A  {
+    val b = "abc"
 }

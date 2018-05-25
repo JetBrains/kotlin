@@ -1,6 +1,6 @@
 public class KotlinAnnotations {
     public int m(int x) {
-        new A().m(2);
+        if (A.INSTANCE.getB().isEmpty()) {}
         return x + 1;
     }
 }

@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 @JvmField
 val DEFERRED_RETURN_TYPE = Key.create<Function0<String>>("DEFERRED_RETURN_TYPE")
 
+@JvmField
+val DEFERRED_CONSTANT_INITIALIZER = Key.create<Function0<Any?>>("DEFERRED_CONSTANT_INITIALIZER")
+
 
 internal fun KtLightMember<*>.computeChildTypeElement(
     clsDelegate: PsiMember,
@@ -23,11 +26,14 @@ internal fun KtLightMember<*>.computeChildTypeElement(
 ): PsiTypeElement? {
     val delegateTypeElement = clsDelegateTypeElement as? ClsTypeElementImpl
     val canonicalText =
-        clsDelegate.safeAs<ClsRepositoryPsiElement<*>>()?.stub?.safeAs<UserDataHolder>()
-            ?.getUserData(DEFERRED_RETURN_TYPE)
+        clsDelegate.getUserDataFromStub(DEFERRED_RETURN_TYPE)
             ?.invoke()
                 ?: delegateTypeElement?.canonicalText
                 ?: return null
 
     return ClsTypeElementImpl(this, canonicalText, /*ClsTypeElementImpl.VARIANCE_NONE */ 0.toChar())
 }
+
+internal fun <T> PsiMember.getUserDataFromStub(key: Key<T>) =
+    safeAs<ClsRepositoryPsiElement<*>>()?.stub?.safeAs<UserDataHolder>()
+        ?.getUserData(key)
