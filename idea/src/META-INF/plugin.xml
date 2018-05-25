@@ -2927,6 +2927,7 @@
     <binaryExtension implementation="org.jetbrains.kotlin.idea.util.KotlinJsMetaBinary"/>
 
     <highlighterExtension implementation="org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension"/>
+    <pluginVersionChecker implementation="org.jetbrains.kotlin.idea.versionCheck.IdeaPluginVersionChecker"/>
   </extensions>
 
 </idea-plugin>
