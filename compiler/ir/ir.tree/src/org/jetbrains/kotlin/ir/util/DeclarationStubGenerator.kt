@@ -156,12 +156,19 @@ class DeclarationStubGenerator(
 
     private fun generateTypeParameterStubs(typeParameters: List<TypeParameterDescriptor>, container: IrTypeParametersContainer) {
         typeParameters.mapTo(container.typeParameters) { generateTypeParameterStub(it) }
+
+        typeTranslator.enterScope(container)
+        for (typeParameter in container.typeParameters) {
+            val descriptor = typeParameter.descriptor
+            descriptor.upperBounds.mapTo(typeParameter.superTypes) { it.toIrType() }
+        }
+        typeTranslator.leaveScope()
     }
 
     private fun generateTypeParameterStub(descriptor: TypeParameterDescriptor): IrTypeParameter =
         IrTypeParameterImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
-            descriptor, descriptor.upperBounds.map { it.toIrType() }
+            descriptor
         )
 
     private fun generateMemberStubs(memberScope: MemberScope, container: IrDeclarationContainer) {
