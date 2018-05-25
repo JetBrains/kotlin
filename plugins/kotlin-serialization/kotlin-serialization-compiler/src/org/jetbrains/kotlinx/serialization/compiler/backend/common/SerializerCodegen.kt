@@ -48,9 +48,8 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
 
     // checks if user didn't declared constructor (KSerializer<T0>, KSerializer<T1>...) on a KSerializer<T<T0, T1...>>
     private fun typedSerializerConstructorNotDeclared(): Boolean {
-        val kSerializerSupertype = serializerDescriptor.typeConstructor.supertypes
-            .find { isKSerializer(it) } ?: throw AssertionError("Serializer does not implement KSerializer??")
-        val serializableImplementationTypeArguments = kSerializerSupertype.arguments.first().type.arguments
+        val serializableImplementationTypeArguments = extractKSerializerArgumentFromImplementation(serializerDescriptor)?.arguments
+                ?: throw AssertionError("Serializer does not implement KSerializer??")
 
         val typeParamsCount = serializableImplementationTypeArguments.size
         if (typeParamsCount == 0) return false //don't need it

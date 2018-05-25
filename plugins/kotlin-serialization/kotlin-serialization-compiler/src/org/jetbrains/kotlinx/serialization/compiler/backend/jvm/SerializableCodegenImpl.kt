@@ -86,7 +86,7 @@ class SerializableCodegenImpl(
             load(serialDescI, descType)
             superTypeArguments.forEach {
                 val genericIdx = serializableDescriptor.defaultType.arguments.indexOf(it).let { if (it == -1) null else it }
-                val serial = findTypeSerializer(serializableDescriptor.module, it.type, classCodegen.typeMapper.mapType(it.type))
+                val serial = findTypeSerializerOrContext(serializableDescriptor.module, it.type, classCodegen.typeMapper.mapType(it.type))
                 stackValueSerializerInstance(classCodegen, serializableDescriptor.module, it.type, serial, this, genericIdx) {
                     load(offsetI + it, kSerializerType)
                 }

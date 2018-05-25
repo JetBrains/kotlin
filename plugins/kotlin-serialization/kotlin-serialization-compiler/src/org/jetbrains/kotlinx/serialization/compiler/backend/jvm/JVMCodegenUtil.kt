@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerialTypeInfo
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.findEnumTypeSerializer
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.findPolymorphicSerializer
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.requiresPolymorphism
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.typeArgPrefix
 import org.jetbrains.org.objectweb.asm.Type
@@ -153,7 +151,7 @@ internal fun stackValueSerializerInstance(codegen: ClassBodyCodegen, module: Mod
     val argSerializers = kType.arguments.map { projection ->
         // bail out from stackValueSerializerInstance if any type argument is not serializable
         val argType = projection.type
-        val argSerializer = findTypeSerializer(module, argType, codegen.typeMapper.mapType(argType)) ?: return false
+        val argSerializer = findTypeSerializerOrContext(module, argType, codegen.typeMapper.mapType(argType)) ?: return false
         // check if it can be properly serialized with its args recursively
         if (!stackValueSerializerInstance(codegen, module, argType, argSerializer, null, argType.genericIndex, genericSerializerFieldGetter))
             return false
@@ -243,7 +241,7 @@ fun getSerialTypeInfo(property: SerializableProperty, type: Type): JVMSerialType
             // todo: more efficient enum support here, but only for enums that don't define custom serializer
             // otherwise, it is a serializer for some other type
             val serializer = property.serializableWith?.toClassDescriptor
-                             ?: findTypeSerializer(property.module, property.type, type)
+                    ?: findTypeSerializerOrContext(property.module, property.type, type)
             return JVMSerialTypeInfo(property, Type.getType("Ljava/lang/Object;"),
                                      if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
@@ -251,12 +249,9 @@ fun getSerialTypeInfo(property: SerializableProperty, type: Type): JVMSerialType
     }
 }
 
-fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType, asmType: Type): ClassDescriptor? {
-    if (kType.requiresPolymorphism()) return findPolymorphicSerializer(module)
-    if (KotlinBuiltIns.isArray(kType)) return module.findClassAcrossModuleDependencies(referenceArraySerializerId)
-    return kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
+fun findTypeSerializerOrContext(module: ModuleDescriptor, kType: KotlinType, asmType: Type): ClassDescriptor? {
+    return findTypeSerializer(module, kType)
             ?: findStandardAsmTypeSerializer(module, asmType) // otherwise see if there is a standard serializer
-            ?: findEnumTypeSerializer(module, kType)
             ?: module.findClassAcrossModuleDependencies(contextSerializerId)
 }
 

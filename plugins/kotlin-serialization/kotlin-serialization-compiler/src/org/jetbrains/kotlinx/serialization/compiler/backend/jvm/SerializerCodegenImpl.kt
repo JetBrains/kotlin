@@ -89,6 +89,7 @@ class SerializerCodegenImpl(
                 invokevirtual(descImplType.internalName, "addElement", "(Ljava/lang/String;)V", false)
                 // pushing annotations
                 for ((annotationClass, args, consParams) in property.annotationsWithArguments) {
+                    if (args.size != consParams.size) throw IllegalArgumentException("Can't use arguments with defaults for serializable annotations yet")
                     load(classDescVar, descImplType)
                     val implType = codegen.typeMapper.mapType(annotationClass).internalName + "\$" + KSerializerDescriptorResolver.IMPL_NAME.identifier
                     // new Annotation$Impl(...)

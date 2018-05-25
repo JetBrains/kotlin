@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.getSerialTypeInfo
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
@@ -169,8 +169,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
     }
 
     private fun serializerInstance(serializerClass: ClassDescriptor?, module: ModuleDescriptor, kType: KotlinType, genericIndex: Int? = null): JsExpression? {
-        val nullableSerClass = context.translateQualifiedReference(requireNotNull(
-                module.findClassAcrossModuleDependencies(ClassId(internalPackageFqName, Name.identifier("NullableSerializer")))))
+        val nullableSerClass = context.translateQualifiedReference(module.getClassFromInternalSerializationPackage("NullableSerializer"))
         if (serializerClass == null) {
             if (genericIndex == null) return null
             return JsNameRef(context.scope().declareName("$typeArgPrefix$genericIndex"), JsThisRef())
@@ -182,7 +181,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
             var args = if (serializerClass.classId == enumSerializerId || serializerClass.classId == contextSerializerId)
                 listOf(createGetKClassExpression(kType.toClassDescriptor!!))
             else kType.arguments.map {
-                val argSer = findTypeSerializer(module, it.type)
+                val argSer = findTypeSerializerOrContext(module, it.type)
                 val expr = serializerInstance(argSer, module, it.type, it.type.genericIndex) ?: return null
                 if (it.type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
             }

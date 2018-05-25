@@ -77,6 +77,10 @@ object KSerializerDescriptorResolver {
         val interfaceDecl = declarationProvider.correspondingClassOrObject!!
         val scope = ctx.declarationScopeProvider.getResolutionScopeForDeclaration(declarationProvider.ownerInfo!!.scopeAnchor)
 
+        val props = interfaceDecl.primaryConstructorParameters
+        // if there is some properties, there will be a public synthetic constructor at the codegen phase
+        val primaryCtorVisibility = if (props.isEmpty()) Visibilities.PUBLIC else Visibilities.PRIVATE
+
         val descriptor = SyntheticClassOrObjectDescriptor(ctx,
                                                 interfaceDecl,
                                                 interfaceDesc,
@@ -85,7 +89,7 @@ object KSerializerDescriptorResolver {
                                                 scope,
                                                 Modality.FINAL,
                                                 Visibilities.PUBLIC,
-                                                Visibilities.PRIVATE,
+                                                primaryCtorVisibility,
                                                 ClassKind.CLASS,
                                                 false)
         descriptor.initialize()
@@ -216,7 +220,10 @@ object KSerializerDescriptorResolver {
                 companionDescriptor, Annotations.EMPTY, name, CallableMemberDescriptor.Kind.SYNTHESIZED, companionDescriptor.source
         )
 
-        val typeParam = listOf(createProjection(classDescriptor.defaultType, Variance.INVARIANT, null))
+        val serializableClassOnImplSite = extractKSerializerArgumentFromImplementation(companionDescriptor)
+                ?: throw AssertionError("Serializer does not implement KSerializer??")
+
+        val typeParam = listOf(createProjection(serializableClassOnImplSite, Variance.INVARIANT, null))
         val functionFromSerializer = companionDescriptor.getKSerializerDescriptor().getMemberScope(typeParam)
                 .getContributedFunctions(name, NoLookupLocation.FROM_BUILTINS).single()
 

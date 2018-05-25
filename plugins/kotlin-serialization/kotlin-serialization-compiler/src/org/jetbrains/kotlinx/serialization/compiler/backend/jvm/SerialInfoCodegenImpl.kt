@@ -34,6 +34,8 @@ class SerialInfoCodegenImpl(val codegen: ImplementationBodyCodegen, val thisClas
 
     fun generate() {
         val props = thisClass.unsubstitutedMemberScope.getDescriptorsFiltered().filterIsInstance<PropertyDescriptor>()
+        if (props.isEmpty()) return
+
         generateFieldsAndSetters(props)
         generateConstructor(props)
     }
