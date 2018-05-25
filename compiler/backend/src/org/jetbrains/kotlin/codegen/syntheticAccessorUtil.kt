@@ -28,10 +28,10 @@ enum class FieldAccessorKind(val suffix: String) {
 }
 
 private fun CallableMemberDescriptor.getJvmName() =
-        DescriptorUtils.getJvmName(this) ?: name.asString()
+    DescriptorUtils.getJvmName(this) ?: name.asString()
 
 fun getAccessorNameSuffix(
-        descriptor: CallableMemberDescriptor, superCallDescriptor: ClassDescriptor?, accessorKind: FieldAccessorKind
+    descriptor: CallableMemberDescriptor, superCallDescriptor: ClassDescriptor?, accessorKind: FieldAccessorKind
 ): String {
     val suffix = when (descriptor) {
         is ConstructorDescriptor ->
@@ -41,7 +41,7 @@ fun getAccessorNameSuffix(
         is PropertyDescriptor ->
             descriptor.getJvmName() + "$" + accessorKind.suffix
         else ->
-            throw UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor)
+            throw UnsupportedOperationException("Do not know how to create accessor for descriptor $descriptor")
     }
     if (accessorKind == FieldAccessorKind.JVM_DEFAULT_COMPATIBILITY) return suffix + "$" + FieldAccessorKind.JVM_DEFAULT_COMPATIBILITY.suffix
     return if (superCallDescriptor == null) suffix else "$suffix\$s${superCallDescriptor.name.asString().hashCode()}"
