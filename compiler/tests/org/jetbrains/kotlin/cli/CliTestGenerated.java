@@ -71,6 +71,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/argfileWithEscaping.args");
         }
 
+        @TestMetadata("argfileWithUnfinishedQuoteAndEscape.args")
+        public void testArgfileWithUnfinishedQuoteAndEscape() throws Exception {
+            runTest("compiler/testData/cli/jvm/argfileWithUnfinishedQuoteAndEscape.args");
+        }
+
         @TestMetadata("argumentPassedMultipleTimes.args")
         public void testArgumentPassedMultipleTimes() throws Exception {
             runTest("compiler/testData/cli/jvm/argumentPassedMultipleTimes.args");
