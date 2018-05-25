@@ -14,150 +14,137 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.KotlinType
 
-import java.util.Collections;
+open class AccessorForPropertyDescriptor private constructor(
+    override val calleeDescriptor: PropertyDescriptor,
+    propertyType: KotlinType,
+    receiverType: KotlinType?,
+    dispatchReceiverParameter: ReceiverParameterDescriptor?,
+    containingDeclaration: DeclarationDescriptor,
+    override val superCallTarget: ClassDescriptor?,
+    val accessorSuffix: String,
+    val isWithSyntheticGetterAccessor: Boolean,
+    val isWithSyntheticSetterAccessor: Boolean
+) : PropertyDescriptorImpl(
+    containingDeclaration,
+    null,
+    Annotations.EMPTY,
+    Modality.FINAL,
+    Visibilities.LOCAL,
+    calleeDescriptor.isVar,
+    Name.identifier("access$$accessorSuffix"),
+    CallableMemberDescriptor.Kind.DECLARATION,
+    SourceElement.NO_SOURCE,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+), AccessorForCallableDescriptor<PropertyDescriptor> {
 
-public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implements AccessorForCallableDescriptor<PropertyDescriptor> {
-    private final PropertyDescriptor calleeDescriptor;
-    private final ClassDescriptor superCallTarget;
-    private final String nameSuffix;
-    private final boolean withSyntheticGetterAccessor;
-    private final boolean withSyntheticSetterAccessor;
+    constructor(
+        property: PropertyDescriptor,
+        containingDeclaration: DeclarationDescriptor,
+        superCallTarget: ClassDescriptor?,
+        nameSuffix: String,
+        getterAccessorRequired: Boolean,
+        setterAccessorRequired: Boolean
+    ) : this(
+        property, property.type, DescriptorUtils.getReceiverParameterType(property.extensionReceiverParameter),
+        /* dispatchReceiverParameter = */
+        if (property.isJvmStaticInObjectOrClassOrInterface()) null else property.dispatchReceiverParameter,
+        containingDeclaration, superCallTarget, nameSuffix,
+        getterAccessorRequired, setterAccessorRequired
+    )
 
-    public AccessorForPropertyDescriptor(
-            @NotNull PropertyDescriptor property,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @Nullable ClassDescriptor superCallTarget,
-            @NotNull String nameSuffix,
-            boolean getterAccessorRequired,
-            boolean setterAccessorRequired
+    protected constructor(
+        original: PropertyDescriptor,
+        propertyType: KotlinType,
+        receiverType: KotlinType?,
+        dispatchReceiverParameter: ReceiverParameterDescriptor?,
+        containingDeclaration: DeclarationDescriptor,
+        superCallTarget: ClassDescriptor?,
+        nameSuffix: String
+    ) : this(
+        original,
+        propertyType,
+        receiverType,
+        dispatchReceiverParameter,
+        containingDeclaration,
+        superCallTarget,
+        nameSuffix,
+        true,
+        true
     ) {
-        this(property, property.getType(), DescriptorUtils.getReceiverParameterType(property.getExtensionReceiverParameter()),
-             /* dispatchReceiverParameter = */
-             CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(property) ? null : property.getDispatchReceiverParameter(),
-             containingDeclaration, superCallTarget, nameSuffix,
-             getterAccessorRequired, setterAccessorRequired);
     }
 
-    protected AccessorForPropertyDescriptor(
-            @NotNull PropertyDescriptor original,
-            @NotNull KotlinType propertyType,
-            @Nullable KotlinType receiverType,
-            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @Nullable ClassDescriptor superCallTarget,
-            @NotNull String nameSuffix
-    ) {
-        this(original, propertyType, receiverType, dispatchReceiverParameter, containingDeclaration, superCallTarget, nameSuffix, true, true);
+    init {
+        setType(propertyType, emptyList<TypeParameterDescriptorImpl>(), dispatchReceiverParameter, receiverType)
+
+        val getterDescriptor =
+            if (isWithSyntheticGetterAccessor) Getter(this) else calleeDescriptor.getter as PropertyGetterDescriptorImpl?
+        val setterDescriptor = if (isWithSyntheticSetterAccessor) Setter(this) else calleeDescriptor.setter
+        initialize(getterDescriptor, setterDescriptor)
     }
 
-    private AccessorForPropertyDescriptor(
-            @NotNull PropertyDescriptor original,
-            @NotNull KotlinType propertyType,
-            @Nullable KotlinType receiverType,
-            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @Nullable ClassDescriptor superCallTarget,
-            @NotNull String nameSuffix,
-            boolean getterAccessorRequired,
-            boolean setterAccessorRequired
-    ) {
-        super(containingDeclaration, null, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
-              original.isVar(), Name.identifier("access$" + nameSuffix), Kind.DECLARATION, SourceElement.NO_SOURCE,
-              false, false, false, false, false, false);
+    class Getter(property: AccessorForPropertyDescriptor) : PropertyGetterDescriptorImpl(
+        property,
+        Annotations.EMPTY,
+        Modality.FINAL,
+        Visibilities.LOCAL,
+        false,
+        false,
+        false,
+        CallableMemberDescriptor.Kind.DECLARATION,
+        null,
+        SourceElement.NO_SOURCE
+    ), AccessorForCallableDescriptor<PropertyGetterDescriptor> {
 
-        this.calleeDescriptor = original;
-        this.superCallTarget = superCallTarget;
-        this.nameSuffix = nameSuffix;
-        setType(propertyType, Collections.<TypeParameterDescriptorImpl>emptyList(), dispatchReceiverParameter, receiverType);
+        override val calleeDescriptor: PropertyGetterDescriptor
+            get() = (correspondingProperty as AccessorForPropertyDescriptor).calleeDescriptor.getter!!
 
-        this.withSyntheticGetterAccessor = getterAccessorRequired;
-        this.withSyntheticSetterAccessor = setterAccessorRequired;
+        override val superCallTarget: ClassDescriptor?
+            get() = (correspondingProperty as AccessorForPropertyDescriptor).superCallTarget
 
-        PropertyGetterDescriptorImpl getterDescriptor =
-                getterAccessorRequired ? new Getter(this) : (PropertyGetterDescriptorImpl) original.getGetter();
-        PropertySetterDescriptor setterDescriptor =
-                setterAccessorRequired ? new Setter(this) : original.getSetter();
-        initialize(getterDescriptor, setterDescriptor);
-    }
-
-    public static class Getter extends PropertyGetterDescriptorImpl implements AccessorForCallableDescriptor<PropertyGetterDescriptor> {
-        public Getter(AccessorForPropertyDescriptor property) {
-            super(property, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
-                  /* isDefault = */ false, /* isExternal = */ false, /* isInline = */false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
-            initialize(property.getType());
-        }
-
-        @NotNull
-        @Override
-        public PropertyGetterDescriptor getCalleeDescriptor() {
-            //noinspection ConstantConditions
-            return ((AccessorForPropertyDescriptor) getCorrespondingProperty()).getCalleeDescriptor().getGetter();
-        }
-
-        @Override
-        @Nullable
-        public ClassDescriptor getSuperCallTarget() {
-            return ((AccessorForPropertyDescriptor) getCorrespondingProperty()).getSuperCallTarget();
+        init {
+            initialize(property.type)
         }
 
     }
 
-    public static class Setter extends PropertySetterDescriptorImpl implements AccessorForCallableDescriptor<PropertySetterDescriptor>{
-        public Setter(AccessorForPropertyDescriptor property) {
-            super(property, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
-                  /* isDefault = */ false, /* isExternal = */ false, /* isInline = */ false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
-            initializeDefault();
+    class Setter(property: AccessorForPropertyDescriptor) : PropertySetterDescriptorImpl(
+        property,
+        Annotations.EMPTY,
+        Modality.FINAL,
+        Visibilities.LOCAL,
+        false,
+        false,
+        false,
+        CallableMemberDescriptor.Kind.DECLARATION,
+        null,
+        SourceElement.NO_SOURCE
+    ), AccessorForCallableDescriptor<PropertySetterDescriptor> {
+
+        override val calleeDescriptor: PropertySetterDescriptor
+            get() = (correspondingProperty as AccessorForPropertyDescriptor).calleeDescriptor.setter!!
+
+        override val superCallTarget: ClassDescriptor?
+            get() = (correspondingProperty as AccessorForPropertyDescriptor).superCallTarget
+
+        init {
+            initializeDefault()
         }
-
-        @NotNull
-        @Override
-        public PropertySetterDescriptor getCalleeDescriptor() {
-            //noinspection ConstantConditions
-            return ((AccessorForPropertyDescriptor) getCorrespondingProperty()).getCalleeDescriptor().getSetter();
-        }
-
-        @Override
-        @Nullable
-        public ClassDescriptor getSuperCallTarget() {
-            return ((AccessorForPropertyDescriptor) getCorrespondingProperty()).getSuperCallTarget();
-        }
-    }
-
-    @NotNull
-    @Override
-    public PropertyDescriptor getCalleeDescriptor() {
-        return calleeDescriptor;
-    }
-
-    @Override
-    public ClassDescriptor getSuperCallTarget() {
-        return superCallTarget;
-    }
-
-    @NotNull
-    public String getAccessorSuffix() {
-        return nameSuffix;
-    }
-
-    public boolean isWithSyntheticGetterAccessor() {
-        return withSyntheticGetterAccessor;
-    }
-
-    public boolean isWithSyntheticSetterAccessor() {
-        return withSyntheticSetterAccessor;
     }
 }
