@@ -85,17 +85,23 @@ class DeclarationStubGenerator(
             } else {
                 origin
             },
-            descriptor.original,
-            descriptor.returnType!!.toIrType()
+            descriptor.original
         ).also { irFunction ->
             generateTypeParameterStubs(descriptor.propertyIfAccessor.typeParameters, irFunction)
+
+            // TODO make sure that type parameters have proper scopes
+            irFunction.returnType = descriptor.returnType!!.toIrType()
+
             generateValueParametersStubs(irFunction)
         }
 
     private fun generateConstructorStub(descriptor: ClassConstructorDescriptor): IrConstructor =
         symbolTable.declareConstructor(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original, descriptor.returnType.toIrType()
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original
         ).also { irConstructor ->
+            // So far, constructors in Kotlin can't have type parameters of their own.
+            irConstructor.returnType = descriptor.returnType.toIrType()
+
             generateValueParametersStubs(irConstructor)
         }
 
