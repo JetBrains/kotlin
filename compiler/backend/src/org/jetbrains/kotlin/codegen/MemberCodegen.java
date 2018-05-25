@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
@@ -726,7 +725,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                         @Override
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                             markLineNumberForElement(element.getPsiOrParent(), codegen.v);
-                            if (accessor.getName().asString().endsWith("$" + FieldAccessorKind.JVM_DEFAULT_COMPATIBILITY.getSuffix())) {
+                            if (accessor.getName().asString().endsWith("$" + AccessorKind.JVM_DEFAULT_COMPATIBILITY.getSuffix())) {
                                 //TODO pass kind
                                 FunctionDescriptor descriptor = unwrapFakeOverrideToAnyDeclaration(original).getOriginal();
                                 if (descriptor != original) {
@@ -759,9 +758,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                    FieldAccessorKind fieldAccessorKind = accessor instanceof AccessorForPropertyBackingField
+                    AccessorKind fieldAccessorKind = accessor instanceof AccessorForPropertyBackingField
                                                           ? ((AccessorForPropertyBackingField) accessor).getFieldAccessorKind() : null;
-                    boolean syntheticBackingField = fieldAccessorKind == FieldAccessorKind.FIELD_FROM_LOCAL;
+                    boolean syntheticBackingField = fieldAccessorKind == AccessorKind.FIELD_FROM_LOCAL;
                     boolean forceFieldForCompanionProperty = JvmAbi.isPropertyWithBackingFieldInOuterClass(original) &&
                                                              !isCompanionObject(accessor.getContainingDeclaration());
                     boolean forceField = forceFieldForCompanionProperty ||
@@ -770,7 +769,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                     StackValue property = codegen.intermediateValueForProperty(
                             original, forceField, syntheticBackingField, accessor.getSuperCallTarget(),
                             forceFieldForCompanionProperty, StackValue.none(), null,
-                            fieldAccessorKind == FieldAccessorKind.LATEINIT_INTRINSIC
+                            fieldAccessorKind == AccessorKind.LATEINIT_INTRINSIC
                     );
 
                     InstructionAdapter iv = codegen.v;

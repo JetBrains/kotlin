@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-enum class FieldAccessorKind(val suffix: String) {
+enum class AccessorKind(val suffix: String) {
     NORMAL("p"),
     IN_CLASS_COMPANION("cp"),
     FIELD_FROM_LOCAL("lp"),
@@ -31,7 +31,7 @@ private fun CallableMemberDescriptor.getJvmName() =
     DescriptorUtils.getJvmName(this) ?: name.asString()
 
 fun getAccessorNameSuffix(
-    descriptor: CallableMemberDescriptor, superCallDescriptor: ClassDescriptor?, accessorKind: FieldAccessorKind
+    descriptor: CallableMemberDescriptor, superCallDescriptor: ClassDescriptor?, accessorKind: AccessorKind
 ): String {
     val suffix = when (descriptor) {
         is ConstructorDescriptor ->
@@ -43,6 +43,6 @@ fun getAccessorNameSuffix(
         else ->
             throw UnsupportedOperationException("Do not know how to create accessor for descriptor $descriptor")
     }
-    if (accessorKind == FieldAccessorKind.JVM_DEFAULT_COMPATIBILITY) return suffix + "$" + FieldAccessorKind.JVM_DEFAULT_COMPATIBILITY.suffix
+    if (accessorKind == AccessorKind.JVM_DEFAULT_COMPATIBILITY) return suffix + "$" + AccessorKind.JVM_DEFAULT_COMPATIBILITY.suffix
     return if (superCallDescriptor == null) suffix else "$suffix\$s${superCallDescriptor.name.asString().hashCode()}"
 }
