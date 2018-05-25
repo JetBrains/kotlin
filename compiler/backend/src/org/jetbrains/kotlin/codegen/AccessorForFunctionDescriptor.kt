@@ -29,7 +29,8 @@ class AccessorForFunctionDescriptor(
     override val calleeDescriptor: FunctionDescriptor,
     containingDeclaration: DeclarationDescriptor,
     override val superCallTarget: ClassDescriptor?,
-    private val nameSuffix: String
+    private val nameSuffix: String,
+    override val accessorKind: AccessorKind
 ) : AbstractAccessorForFunctionDescriptor(containingDeclaration, Name.identifier("access$$nameSuffix")),
     AccessorForCallableDescriptor<FunctionDescriptor> {
 
@@ -63,6 +64,6 @@ class AccessorForFunctionDescriptor(
         annotations: Annotations,
         source: SourceElement
     ): FunctionDescriptorImpl {
-        return AccessorForFunctionDescriptor(calleeDescriptor, newOwner, superCallTarget, nameSuffix)
+        return AccessorForFunctionDescriptor(calleeDescriptor, newOwner, superCallTarget, nameSuffix, accessorKind)
     }
 }

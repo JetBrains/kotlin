@@ -757,7 +757,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                     AccessorKind fieldAccessorKind = accessor instanceof AccessorForPropertyBackingField
-                                                          ? ((AccessorForPropertyBackingField) accessor).getFieldAccessorKind() : null;
+                                                          ? accessor.getAccessorKind() : null;
                     boolean syntheticBackingField = fieldAccessorKind == AccessorKind.FIELD_FROM_LOCAL;
                     boolean forceFieldForCompanionProperty = JvmAbi.isPropertyWithBackingFieldInOuterClass(original) &&
                                                              !isCompanionObject(accessor.getContainingDeclaration());

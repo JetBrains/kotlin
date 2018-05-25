@@ -88,6 +88,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         private final @NotNull DeclarationDescriptor containingDeclaration;
         private final @Nullable ClassDescriptor superCallTarget;
         private final @NotNull String nameSuffix;
+        private final @NotNull AccessorKind accessorKind;
 
         private AccessorForPropertyDescriptor withSyntheticGetterAndSetter = null;
         private AccessorForPropertyDescriptor withSyntheticGetter = null;
@@ -97,12 +98,14 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                 @NotNull PropertyDescriptor property,
                 @NotNull DeclarationDescriptor containingDeclaration,
                 @Nullable ClassDescriptor superCallTarget,
-                @NotNull String nameSuffix
+                @NotNull String nameSuffix,
+                @NotNull AccessorKind accessorKind
         ) {
             this.property = property;
             this.containingDeclaration = containingDeclaration;
             this.superCallTarget = superCallTarget;
             this.nameSuffix = nameSuffix;
+            this.accessorKind = accessorKind;
         }
 
         @SuppressWarnings("ConstantConditions")
@@ -114,7 +117,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                 if (withSyntheticGetter == null) {
                     withSyntheticGetter = new AccessorForPropertyDescriptor(
                             property, containingDeclaration, superCallTarget, nameSuffix,
-                            true, false);
+                            true, false, accessorKind);
                 }
                 return withSyntheticGetter;
             }
@@ -122,7 +125,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                 if (withSyntheticSetter == null) {
                     withSyntheticSetter = new AccessorForPropertyDescriptor(
                             property, containingDeclaration, superCallTarget, nameSuffix,
-                            false, true);
+                            false, true, accessorKind);
                 }
                 return withSyntheticSetter;
             }
@@ -136,7 +139,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             if (withSyntheticGetterAndSetter == null) {
                 withSyntheticGetterAndSetter = new AccessorForPropertyDescriptor(
                         property, containingDeclaration, superCallTarget, nameSuffix,
-                        true, true);
+                        true, true, accessorKind);
             }
             return withSyntheticGetterAndSetter;
         }
@@ -482,16 +485,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         String nameSuffix = SyntheticAccessorUtilKt.getAccessorNameSuffix(descriptor, key.superCallLabelTarget, accessorKind);
         AccessorForCallableDescriptor<?> accessor;
         if (descriptor instanceof SimpleFunctionDescriptor) {
-            accessor = new AccessorForFunctionDescriptor((FunctionDescriptor) descriptor, contextDescriptor, superCallTarget, nameSuffix);
+            accessor = new AccessorForFunctionDescriptor((FunctionDescriptor) descriptor, contextDescriptor, superCallTarget, nameSuffix, accessorKind);
         }
         else if (descriptor instanceof ClassConstructorDescriptor) {
-            accessor = new AccessorForConstructorDescriptor((ClassConstructorDescriptor) descriptor, contextDescriptor, superCallTarget);
+            accessor = new AccessorForConstructorDescriptor((ClassConstructorDescriptor) descriptor, contextDescriptor, superCallTarget, accessorKind);
         }
         else if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
             if (accessorKind == AccessorKind.NORMAL) {
                 AccessorForPropertyDescriptorFactory factory =
-                        new AccessorForPropertyDescriptorFactory(propertyDescriptor, contextDescriptor, superCallTarget, nameSuffix);
+                        new AccessorForPropertyDescriptorFactory(propertyDescriptor, contextDescriptor, superCallTarget, nameSuffix, accessorKind);
                 propertyAccessorFactories.put(key, factory);
 
                 // Record worst case accessor for accessor methods generation.
