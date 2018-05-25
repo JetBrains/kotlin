@@ -222,7 +222,7 @@ class StatementGenerator(
         )
 
     fun generateConstantExpression(expression: KtExpression, constant: CompileTimeConstant<*>): IrExpression =
-        ConstantValueGenerator(context.moduleDescriptor, context.symbolTable, null).generateConstantValueAsExpression(
+        ConstantValueGenerator(context.moduleDescriptor, context.symbolTable, null, null).generateConstantValueAsExpression(
             expression.startOffset,
             expression.endOffset,
             constant.toConstantValue(getInferredTypeWithImplicitCastsOrFail(expression))
