@@ -64,3 +64,18 @@ public inline val CharSequence.size: Int get() = length
 
 @kotlin.internal.InlineOnly
 internal inline fun String.nativeReplace(pattern: RegExp, replacement: String): String = asDynamic().replace(pattern, replacement)
+
+/**
+ * Converts the characters in the specified array to a string.
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun String(chars: CharArray): String {
+    return js("String.fromCharCode").apply(null, chars)
+}
+
+/**
+ * Converts the characters from a portion of the specified array to a string.
+ */
+public actual fun String(chars: CharArray, offset: Int, length: Int): String {
+    return String(chars.copyOfRange(offset, offset + length))
+}

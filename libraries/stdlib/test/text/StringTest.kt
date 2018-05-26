@@ -1336,4 +1336,26 @@ ${"    "}
         assertEquals("  ABC\n   \n  123", "ABC\n   \n123".prependIndent("  "))
         assertEquals("  ", "".prependIndent("  "))
     }
+
+    @Test fun charArrayToStringFullSlice() {
+        val chars: CharArray = charArrayOf().plus("Kotlin".toList())
+        assertEquals("Kotlin", String(chars, 0, chars.size))
+    }
+
+    @Test fun charArrayToStringSlice() {
+        val chars: CharArray = charArrayOf().plus("Some Longer String".toList())
+        assertEquals("Longer", String(chars, 5, 6))
+    }
+
+    @Test fun charArrayToString() {
+        val chars: CharArray = charArrayOf().plus("Some Text".toList())
+        assertEquals("Some Text", String(chars))
+    }
+
+    @Test fun unicodeCharArrayToString() {
+        val chars: CharArray = charArrayOf('Ц', '単', '語', '\u016C', '\u138D', '\uD83C', '\uDC3A')
+        assertEquals("Ц単語Ŭᎍ🀺", String(chars))
+        assertEquals("単", String(chars, 1, 1))
+        assertEquals("Ŭᎍ🀺", String(chars, 3, 4))
+    }
 }
