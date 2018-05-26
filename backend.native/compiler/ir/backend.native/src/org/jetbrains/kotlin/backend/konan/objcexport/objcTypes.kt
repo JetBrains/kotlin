@@ -29,19 +29,23 @@ sealed class ObjCType {
             if (attrsAndName.isEmpty()) this else "$this ${attrsAndName.trimStart()}"
 }
 
-internal class ObjCRawType(private val rawText: String) : ObjCType() {
+class ObjCRawType(
+        val rawText: String
+) : ObjCType() {
     override fun render(attrsAndName: String): String = rawText.withAttrsAndName(attrsAndName)
 }
 
-internal sealed class ObjCReferenceType : ObjCType()
+sealed class ObjCReferenceType : ObjCType()
 
-internal sealed class ObjCNonNullReferenceType : ObjCReferenceType()
+sealed class ObjCNonNullReferenceType : ObjCReferenceType()
 
-internal data class ObjCNullableReferenceType(val nonNullType: ObjCNonNullReferenceType) : ObjCReferenceType() {
+data class ObjCNullableReferenceType(
+        val nonNullType: ObjCNonNullReferenceType
+) : ObjCReferenceType() {
     override fun render(attrsAndName: String) = nonNullType.render(" _Nullable".withAttrsAndName(attrsAndName))
 }
 
-internal class ObjCClassType(
+class ObjCClassType(
         val className: String,
         val typeArguments: List<ObjCNonNullReferenceType> = emptyList()
 ) : ObjCNonNullReferenceType() {
@@ -58,21 +62,23 @@ internal class ObjCClassType(
     }
 }
 
-internal class ObjCProtocolType(val protocolName: String) : ObjCNonNullReferenceType() {
-
+class ObjCProtocolType(
+        val protocolName: String
+) : ObjCNonNullReferenceType() {
     override fun render(attrsAndName: String) = "id<$protocolName>".withAttrsAndName(attrsAndName)
 }
 
-internal object ObjCIdType : ObjCNonNullReferenceType() {
+object ObjCIdType : ObjCNonNullReferenceType() {
     override fun render(attrsAndName: String) = "id".withAttrsAndName(attrsAndName)
 }
 
-internal object ObjCInstanceType : ObjCNonNullReferenceType() {
+object ObjCInstanceType : ObjCNonNullReferenceType() {
     override fun render(attrsAndName: String): String = "instancetype".withAttrsAndName(attrsAndName)
 }
 
-internal class ObjCBlockPointerType(
-        val returnType: ObjCReferenceType, val parameterTypes: List<ObjCReferenceType>
+class ObjCBlockPointerType(
+        val returnType: ObjCReferenceType,
+        val parameterTypes: List<ObjCReferenceType>
 ) : ObjCNonNullReferenceType() {
 
     override fun render(attrsAndName: String) = returnType.render(buildString {
@@ -85,11 +91,16 @@ internal class ObjCBlockPointerType(
     })
 }
 
-internal class ObjCPrimitiveType(val cName: String) : ObjCType() {
+class ObjCPrimitiveType(
+        val cName: String
+) : ObjCType() {
     override fun render(attrsAndName: String) = cName.withAttrsAndName(attrsAndName)
 }
 
-internal class ObjCPointerType(val pointee: ObjCType, val nullable: Boolean = false) : ObjCType() {
+class ObjCPointerType(
+        val pointee: ObjCType,
+        val nullable: Boolean = false
+) : ObjCType() {
     override fun render(attrsAndName: String) =
             pointee.render("*${if (nullable) {
                 " _Nullable".withAttrsAndName(attrsAndName)
@@ -98,7 +109,7 @@ internal class ObjCPointerType(val pointee: ObjCType, val nullable: Boolean = fa
             }}")
 }
 
-internal object ObjCVoidType : ObjCType() {
+object ObjCVoidType : ObjCType() {
     override fun render(attrsAndName: String) = "void".withAttrsAndName(attrsAndName)
 }
 
