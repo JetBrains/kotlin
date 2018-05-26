@@ -89,18 +89,6 @@ public class Char private constructor() : Comparable<Char> {
          * The maximum value of a Unicode surrogate code unit.
          */
         public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
-
-        /**
-         * The minimum value of a character code unit
-         */
-        public val Char.Companion.MIN_VALUE: Char
-            get() = '\u0000'
-
-        /**
-         * The maximum value of a character code unit
-         */
-        public val Char.Companion.MAX_VALUE: Char
-            get() = '\uffff'
     }
 
 }
