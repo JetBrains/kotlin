@@ -6,5 +6,16 @@
 package org.jetbrains.kotlin.metadata.jvm.deserialization
 
 data class JvmMemberSignature(val name: String, val desc: String) {
-    override fun toString() = name + desc
+
+    /**
+     * Returns `true` when this signature represents a field.
+     */
+    val isField: Boolean = desc.indexOf(")") < 0
+
+    /**
+     * Returns `true` when this signature represents a method.
+     */
+    val isMethod: Boolean get() = !isField
+
+    override fun toString() = if (isField) name + ":" + desc else name + desc
 }

@@ -12,7 +12,18 @@ package kotlinx.metadata.jvm
  * @property desc JVM descriptor of a method, e.g. `(Ljava/lang/Object;)Z`, or a field type, e.g. `Ljava/lang/String;`
  */
 data class JvmMemberSignature(val name: String, val desc: String) {
-    override fun toString() = name + desc
+
+    /**
+     * Returns `true` when this signature represents a field.
+     */
+    val isField: Boolean get() = desc.indexOf("(") < 0
+
+    /**
+     * Returns `true` when this signature represents a method.
+     */
+    val isMethod: Boolean get() = desc.indexOf("(") >= 0
+
+    override fun toString() = if (isField) name + ":" + desc else name + desc
 }
 
 internal fun org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature.wrapAsPublic() = JvmMemberSignature(name, desc)

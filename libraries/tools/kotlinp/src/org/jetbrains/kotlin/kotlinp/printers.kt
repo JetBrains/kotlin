@@ -132,10 +132,7 @@ private fun visitProperty(
                 sb.appendln("  // $versionRequirement")
             }
             if (jvmFieldDesc != null) {
-                // TODO: support that case in jvmFieldDesc.toString()
-                sb.append("  // field: ${jvmFieldDesc!!.name}")
-                sb.append(":").append(jvmFieldDesc!!.desc)
-                sb.appendln()
+                sb.appendln("  // field: $jvmFieldDesc")
             }
             if (jvmGetterDesc != null) {
                 sb.appendln("  // getter: $jvmGetterDesc")

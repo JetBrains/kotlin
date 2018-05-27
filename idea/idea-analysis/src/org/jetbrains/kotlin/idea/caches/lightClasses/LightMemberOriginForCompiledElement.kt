@@ -157,7 +157,7 @@ private object ByJvmSignatureIndexer : DecompiledTextIndexer<ClassNameAndSignatu
 
         if (descriptor is DeserializedSimpleFunctionDescriptor) {
             JvmProtoBufUtil.getJvmMethodSignature(descriptor.proto, descriptor.nameResolver, descriptor.typeTable)?.let { it ->
-                val signature = MemberSignature.fromMethodNameAndDesc(it.toString())
+                val signature = MemberSignature.fromJvmMemberSignature(it)
                 save((descriptor.containingDeclaration as? ClassDescriptor)?.relativeClassName().orEmpty(), signature)
             }
         }

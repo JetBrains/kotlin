@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -52,17 +53,30 @@ import kotlin.reflect.jvm.internal.structure.*
 internal sealed class JvmFunctionSignature {
     abstract fun asString(): String
 
-    class KotlinFunction(val signature: String) : JvmFunctionSignature() {
-        val methodName: String get() = signature.substringBefore('(')
-        val methodDesc: String get() = signature.substring(signature.indexOf('('))
+    class KotlinFunction(val signature: JvmMemberSignature) : JvmFunctionSignature() {
+        private val _signature = signature.toString()
 
-        override fun asString(): String = signature
+        init {
+            require(signature.isMethod)
+        }
+
+
+        val methodName: String get() = signature.name
+        val methodDesc: String get() = signature.desc
+
+        override fun asString(): String = _signature
     }
 
-    class KotlinConstructor(val signature: String) : JvmFunctionSignature() {
-        val constructorDesc: String get() = signature.substring(signature.indexOf('('))
+    class KotlinConstructor(val signature: JvmMemberSignature) : JvmFunctionSignature() {
+        private val _signature = signature.toString()
 
-        override fun asString(): String = signature
+        init {
+            require(signature.isMethod)
+        }
+
+        val constructorDesc: String get() = signature.desc
+
+        override fun asString(): String = _signature
     }
 
     class JavaMethod(val method: Method) : JvmFunctionSignature() {
@@ -172,12 +186,12 @@ internal object RuntimeTypeMapper {
                 val proto = function.proto
                 if (proto is ProtoBuf.Function) {
                     JvmProtoBufUtil.getJvmMethodSignature(proto, function.nameResolver, function.typeTable)?.let { signature ->
-                        return JvmFunctionSignature.KotlinFunction(signature.toString())
+                        return JvmFunctionSignature.KotlinFunction(signature)
                     }
                 }
                 if (proto is ProtoBuf.Constructor) {
                     JvmProtoBufUtil.getJvmConstructorSignature(proto, function.nameResolver, function.typeTable)?.let { signature ->
-                        return JvmFunctionSignature.KotlinConstructor(signature.toString())
+                        return JvmFunctionSignature.KotlinConstructor(signature)
                     }
                 }
                 // If it's a deserialized function but has no JVM signature, it must be from built-ins
