@@ -396,6 +396,7 @@ tasks {
         (coreLibProjects + listOf(
                 ":kotlin-stdlib:samples",
                 ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
+                ":kotlinx-metadata-jvm",
                 ":tools:binary-compatibility-validator"
         )).forEach {
             dependsOn(it + ":check")
@@ -438,6 +439,10 @@ tasks {
         dependsOn(":compiler:incremental-compilation-impl:test")
     }
 
+    "toolsTest" {
+        dependsOn(":tools:kotlinp:test")
+    }
+
     "examplesTest" {
         dependsOn("dist")
         (project(":examples").subprojects + project(":kotlin-gradle-subplugin-example")).forEach { p ->
@@ -447,6 +452,7 @@ tasks {
 
     "distTest" {
         dependsOn("compilerTest")
+        dependsOn("toolsTest")
         dependsOn("gradlePluginTest")
         dependsOn("examplesTest")
     }
