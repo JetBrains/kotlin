@@ -30,7 +30,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
     override fun readFunctionExtensions(v: KmFunctionVisitor, proto: ProtoBuf.Function, strings: NameResolver, types: TypeTable) {
         val ext = v.visitExtensions(JvmFunctionExtensionVisitor.TYPE) as? JvmFunctionExtensionVisitor ?: return
-        ext.visit(JvmProtoBufUtil.getJvmMethodSignature(proto, strings, types))
+        ext.visit(JvmProtoBufUtil.getJvmMethodSignature(proto, strings, types)?.wrapAsPublic())
 
         val lambdaClassOriginName = proto.getExtensionOrNull(JvmProtoBuf.lambdaClassOriginName)
         if (lambdaClassOriginName != null) {
@@ -47,22 +47,21 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         val setterSignature =
             if (propertySignature != null && propertySignature.hasSetter()) propertySignature.setter else null
         ext.visit(
-            fieldSignature?.name,
-            fieldSignature?.desc,
-            getterSignature?.run { strings.getString(name) + strings.getString(desc) },
-            setterSignature?.run { strings.getString(name) + strings.getString(desc) }
+            fieldSignature?.wrapAsPublic(),
+            getterSignature?.run { JvmMemberSignature(strings.getString(name), strings.getString(desc)) },
+            setterSignature?.run { JvmMemberSignature(strings.getString(name), strings.getString(desc)) }
         )
 
         val syntheticMethod =
             if (propertySignature != null && propertySignature.hasSyntheticMethod()) propertySignature.syntheticMethod else null
-        ext.visitSyntheticMethodForAnnotations(syntheticMethod?.run { strings.getString(name) + strings.getString(desc) })
+        ext.visitSyntheticMethodForAnnotations(syntheticMethod?.run { JvmMemberSignature(strings.getString(name), strings.getString(desc)) })
 
         ext.visitEnd()
     }
 
     override fun readConstructorExtensions(v: KmConstructorVisitor, proto: ProtoBuf.Constructor, strings: NameResolver, types: TypeTable) {
         val ext = v.visitExtensions(JvmConstructorExtensionVisitor.TYPE) as? JvmConstructorExtensionVisitor ?: return
-        ext.visit(JvmProtoBufUtil.getJvmConstructorSignature(proto, strings, types))
+        ext.visit(JvmProtoBufUtil.getJvmConstructorSignature(proto, strings, types)?.wrapAsPublic())
     }
 
     override fun readTypeParameterExtensions(v: KmTypeParameterVisitor, proto: ProtoBuf.TypeParameter, strings: NameResolver) {
@@ -98,7 +97,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmFunctionExtensionVisitor? {
         if (type != JvmFunctionExtensionVisitor.TYPE) return null
         return object : JvmFunctionExtensionVisitor() {
-            override fun visit(desc: String?) {
+            override fun visit(desc: JvmMemberSignature?) {
                 if (desc != null) {
                     proto.setExtension(JvmProtoBuf.methodSignature, desc.toJvmMethodSignature(strings))
                 }
@@ -117,21 +116,17 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         return object : JvmPropertyExtensionVisitor() {
             var signature: JvmProtoBuf.JvmPropertySignature.Builder? = null
 
-            override fun visit(fieldName: String?, fieldTypeDesc: String?, getterDesc: String?, setterDesc: String?) {
-                if (fieldName == null && fieldTypeDesc == null && getterDesc == null && setterDesc == null) return
+            override fun visit(fieldDesc: JvmMemberSignature?, getterDesc: JvmMemberSignature?, setterDesc: JvmMemberSignature?) {
+                if (fieldDesc == null && getterDesc == null && setterDesc == null) return
 
                 if (signature == null) {
                     signature = JvmProtoBuf.JvmPropertySignature.newBuilder()
                 }
                 signature!!.apply {
-                    if (fieldName != null || fieldTypeDesc != null) {
+                    if (fieldDesc != null) {
                         field = JvmProtoBuf.JvmFieldSignature.newBuilder().also { field ->
-                            if (fieldName != null) {
-                                field.name = strings.getStringIndex(fieldName)
-                            }
-                            if (fieldTypeDesc != null) {
-                                field.desc = strings.getStringIndex(fieldTypeDesc)
-                            }
+                            field.name = strings.getStringIndex(fieldDesc.name)
+                            field.desc = strings.getStringIndex(fieldDesc.desc)
                         }.build()
                     }
                     if (getterDesc != null) {
@@ -143,7 +138,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
                 }
             }
 
-            override fun visitSyntheticMethodForAnnotations(desc: String?) {
+            override fun visitSyntheticMethodForAnnotations(desc: JvmMemberSignature?) {
                 if (desc == null) return
 
                 if (signature == null) {
@@ -166,7 +161,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmConstructorExtensionVisitor? {
         if (type != JvmConstructorExtensionVisitor.TYPE) return null
         return object : JvmConstructorExtensionVisitor() {
-            override fun visit(desc: String?) {
+            override fun visit(desc: JvmMemberSignature?) {
                 if (desc != null) {
                     proto.setExtension(JvmProtoBuf.constructorSignature, desc.toJvmMethodSignature(strings))
                 }
@@ -200,9 +195,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         }
     }
 
-    private fun String.toJvmMethodSignature(strings: StringTable): JvmProtoBuf.JvmMethodSignature =
+    private fun JvmMemberSignature.toJvmMethodSignature(strings: StringTable): JvmProtoBuf.JvmMethodSignature =
         JvmProtoBuf.JvmMethodSignature.newBuilder().apply {
-            name = strings.getStringIndex(substringBefore('('))
-            desc = strings.getStringIndex("(" + substringAfter('('))
+            name = strings.getStringIndex(this@toJvmMethodSignature.name)
+            desc = strings.getStringIndex(this@toJvmMethodSignature.desc)
         }.build()
 }

@@ -26,7 +26,7 @@ fun ClassVisibility.findMember(signature: MemberSignature): MemberVisibility? =
 
 
 data class MemberVisibility(val member: MemberSignature, val visibility: Flags?)
-data class MemberSignature(val name: String, val desc: String)
+typealias MemberSignature = kotlinx.metadata.jvm.JvmMemberSignature
 
 private fun isPublic(visibility: Flags?, isPublishedApi: Boolean) =
     visibility == null

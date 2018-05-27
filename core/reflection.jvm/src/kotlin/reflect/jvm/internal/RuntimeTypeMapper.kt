@@ -172,12 +172,12 @@ internal object RuntimeTypeMapper {
                 val proto = function.proto
                 if (proto is ProtoBuf.Function) {
                     JvmProtoBufUtil.getJvmMethodSignature(proto, function.nameResolver, function.typeTable)?.let { signature ->
-                        return JvmFunctionSignature.KotlinFunction(signature)
+                        return JvmFunctionSignature.KotlinFunction(signature.toString())
                     }
                 }
                 if (proto is ProtoBuf.Constructor) {
                     JvmProtoBufUtil.getJvmConstructorSignature(proto, function.nameResolver, function.typeTable)?.let { signature ->
-                        return JvmFunctionSignature.KotlinConstructor(signature)
+                        return JvmFunctionSignature.KotlinConstructor(signature.toString())
                     }
                 }
                 // If it's a deserialized function but has no JVM signature, it must be from built-ins

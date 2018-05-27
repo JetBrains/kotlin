@@ -334,10 +334,10 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
     ): MemberSignature? {
         return when {
             proto is ProtoBuf.Constructor -> {
-                MemberSignature.fromMethodNameAndDesc(JvmProtoBufUtil.getJvmConstructorSignature(proto, nameResolver, typeTable) ?: return null)
+                MemberSignature.fromMethodNameAndDesc(JvmProtoBufUtil.getJvmConstructorSignature(proto, nameResolver, typeTable)?.toString() ?: return null)
             }
             proto is ProtoBuf.Function -> {
-                MemberSignature.fromMethodNameAndDesc(JvmProtoBufUtil.getJvmMethodSignature(proto, nameResolver, typeTable) ?: return null)
+                MemberSignature.fromMethodNameAndDesc(JvmProtoBufUtil.getJvmMethodSignature(proto, nameResolver, typeTable)?.toString() ?: return null)
             }
             proto is ProtoBuf.Property -> {
                 val signature = proto.getExtensionOrNull(propertySignature) ?: return null

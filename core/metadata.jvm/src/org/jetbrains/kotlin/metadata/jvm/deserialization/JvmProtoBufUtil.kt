@@ -64,7 +64,7 @@ object JvmProtoBufUtil {
             proto: ProtoBuf.Function,
             nameResolver: NameResolver,
             typeTable: TypeTable
-    ): String? {
+    ): JvmMemberSignature? {
         val signature = proto.getExtensionOrNull(JvmProtoBuf.methodSignature)
         val name = if (signature != null && signature.hasName()) signature.name else proto.name
         val desc = if (signature != null && signature.hasDesc()) {
@@ -78,14 +78,14 @@ object JvmProtoBufUtil {
 
             parametersDesc.joinToString(separator = "", prefix = "(", postfix = ")") + returnTypeDesc
         }
-        return nameResolver.getString(name) + desc
+        return JvmMemberSignature(nameResolver.getString(name), desc)
     }
 
     fun getJvmConstructorSignature(
             proto: ProtoBuf.Constructor,
             nameResolver: NameResolver,
             typeTable: TypeTable
-    ): String? {
+    ): JvmMemberSignature? {
         val signature = proto.getExtensionOrNull(JvmProtoBuf.constructorSignature)
         val desc = if (signature != null && signature.hasDesc()) {
             nameResolver.getString(signature.desc)
@@ -95,14 +95,14 @@ object JvmProtoBufUtil {
                 mapTypeDefault(it.type(typeTable), nameResolver) ?: return null
             }.joinToString(separator = "", prefix = "(", postfix = ")V")
         }
-        return "<init>" + desc
+        return JvmMemberSignature("<init>", desc)
     }
 
     fun getJvmFieldSignature(
             proto: ProtoBuf.Property,
             nameResolver: NameResolver,
             typeTable: TypeTable
-    ): PropertySignature? {
+    ): JvmMemberSignature? {
         val signature = proto.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return null
         val field =
                 if (signature.hasField()) signature.field else null
@@ -112,10 +112,9 @@ object JvmProtoBufUtil {
                 if (field != null && field.hasDesc()) nameResolver.getString(field.desc)
                 else mapTypeDefault(proto.returnType(typeTable), nameResolver) ?: return null
 
-        return PropertySignature(nameResolver.getString(name), desc)
+        return JvmMemberSignature(nameResolver.getString(name), desc)
     }
 
-    data class PropertySignature(val name: String, val desc: String)
 
     private fun mapTypeDefault(type: ProtoBuf.Type, nameResolver: NameResolver): String? {
         return if (type.hasClassName()) ClassMapperLite.mapClass(nameResolver.getQualifiedClassName(type.className)) else null
