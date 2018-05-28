@@ -85,7 +85,7 @@ abstract class JKBranchElementBase : JKElementBase(), JKBranchElement {
         return JKListChild(childNum++)
     }
 
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+    final override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         children.forEach {
             if (it is JKTreeElement)
                 it.accept(visitor, data)
