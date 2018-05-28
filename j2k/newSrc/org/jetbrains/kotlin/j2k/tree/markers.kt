@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.j2k.tree
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.impl.JKSymbol
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 interface JKOperator
 
@@ -52,7 +53,7 @@ interface JKClassType : JKType {
 }
 
 interface JKJavaPrimitiveType : JKType {
-    val name: String
+    val jvmPrimitiveType: JvmPrimitiveType
 }
 
 interface JKJavaArrayType : JKType {

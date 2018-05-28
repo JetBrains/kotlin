@@ -199,12 +199,8 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                     parameters.map { it.toJK() }
                 )
                 is PsiArrayType -> JKJavaArrayTypeImpl(componentType.toJK())
-                is PsiPrimitiveType -> when (presentableText) {
-                    "int" -> JKJavaPrimitiveTypeImpl.INT
-                    "byte" -> JKJavaPrimitiveTypeImpl.BYTE
-                    "boolean" -> JKJavaPrimitiveTypeImpl.BOOLEAN
-                    else -> throw Exception("Invalid PSI")
-                }
+                is PsiPrimitiveType -> JKJavaPrimitiveTypeImpl.KEYWORD_TO_INSTANCE[presentableText]
+                        ?: error("Invalid primitive type $presentableText")
                 else -> throw Exception("Invalid PSI")
             }
         }

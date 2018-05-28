@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.j2k.tree.impl
 
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 class JKJavaFieldImpl(
     modifierList: JKModifierList,
@@ -111,11 +112,24 @@ class JKJavaNewArrayImpl(override var initializer: List<JKExpression>) : JKJavaN
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewArray(this, data)
 }
 
-sealed class JKJavaPrimitiveTypeImpl(override val name: String) : JKJavaPrimitiveType {
-    object BYTE : JKJavaPrimitiveTypeImpl("byte")
-    object BOOLEAN : JKJavaPrimitiveTypeImpl("boolean")
-    object INT : JKJavaPrimitiveTypeImpl("int")
+sealed class JKJavaPrimitiveTypeImpl(override val jvmPrimitiveType: JvmPrimitiveType) : JKJavaPrimitiveType {
+    object BOOLEAN : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.BOOLEAN)
+    object CHAR : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.CHAR)
+    object BYTE : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.BYTE)
+    object SHORT : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.SHORT)
+    object INT : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.INT)
+    object FLOAT : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.FLOAT)
+    object LONG : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.LONG)
+    object DOUBLE : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.DOUBLE)
+
+    companion object {
+        val KEYWORD_TO_INSTANCE = listOf(
+            BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE
+        ).associate { it.jvmPrimitiveType.javaKeywordName to it } + ("void" to JKJavaVoidType)
+    }
 }
+
+object JKJavaVoidType : JKType
 
 class JKJavaArrayTypeImpl(override val type: JKType) : JKJavaArrayType
 
