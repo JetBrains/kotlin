@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import kotlin.properties.Delegates
 
@@ -228,7 +229,7 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
                 .singleOrNull {
                     it.valueParameters.isEmpty()
                             && (it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor as? ClassDescriptor)?.defaultType == type
-                            && it.isActual
+                            && !it.isExpect
                 }
                 ?: throw Error(type.toString())
         return symbolTable.referenceSimpleFunction(descriptor)

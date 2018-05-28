@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 
 internal class LateinitLowering(
@@ -53,7 +54,7 @@ internal class LateinitLowering(
             .getContributedVariables(Name.identifier("isInitialized"), NoLookupLocation.FROM_BACKEND).single {
                 it.extensionReceiverParameter.let {
                     it != null && TypeUtils.getClassDescriptor(it.type) == context.reflectionTypes.kProperty0
-                } && it.isActual
+                } && !it.isExpect
             }
     private val isInitializedGetterDescriptor   = isInitializedPropertyDescriptor.getter!!
 
