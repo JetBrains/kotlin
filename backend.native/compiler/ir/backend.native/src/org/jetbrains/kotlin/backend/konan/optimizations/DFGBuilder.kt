@@ -380,11 +380,17 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             }
 
             if (expression is IrCall && expression.symbol == scheduleImplSymbol) {
-                // Producer of scheduleImpl is called externally, we need to reflect this somehow.
+                // Producer and job of scheduleImpl are called externally, we need to reflect this somehow.
                 val producerInvocation = IrCallImpl(expression.startOffset, expression.endOffset,
                         scheduleImplProducerInvoke.symbol, scheduleImplProducerInvoke.descriptor)
                 producerInvocation.dispatchReceiver = expression.getValueArgument(2)
-                expressions += producerInvocation
+                val jobFunctionReference = expression.getValueArgument(3) as? IrFunctionReference
+                        ?: error("A function reference expected")
+                val jobInvocation = IrCallImpl(expression.startOffset, expression.endOffset,
+                        jobFunctionReference.symbol, jobFunctionReference.descriptor)
+                jobInvocation.putValueArgument(0, producerInvocation)
+
+                expressions += jobInvocation
             }
 
             if (expression is IrReturnableBlock) {
