@@ -15,15 +15,15 @@ interface Test {
 }
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: Test, access$getTest$jd$jd
+// TESTED_OBJECTS: Test, access$getTest$jd
 // FLAGS: ACC_PUBLIC, ACC_STATIC, ACC_SYNTHETIC
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: Test, access$getTest2$jd$jd
+// TESTED_OBJECTS: Test, access$getTest2$jd
 // FLAGS: ACC_PUBLIC, ACC_STATIC, ACC_SYNTHETIC
 
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: Test, access$setTest2$jd$jd
+// TESTED_OBJECTS: Test, access$setTest2$jd
 // FLAGS: ACC_PUBLIC, ACC_STATIC, ACC_SYNTHETIC
 
