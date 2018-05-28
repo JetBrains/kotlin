@@ -160,7 +160,6 @@ open class DeepCopyIrTreeWithSymbols(
             mapDeclarationOrigin(declaration.origin),
             declaration.isDelegated,
             declaration.descriptor,
-            declaration.type.remapType(),
             declaration.backingField?.transform(),
             declaration.getter?.transform(),
             declaration.setter?.transform()

@@ -168,7 +168,6 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             IrDeclarationOrigin.FAKE_OVERRIDE,
             false,
             propertyDescriptor,
-            propertyDescriptor.type.toIrType(),
             backingField,
             propertyDescriptor.getter?.let { generateFakeOverrideFunction(it, ktElement) },
             propertyDescriptor.setter?.let { generateFakeOverrideFunction(it, ktElement) }

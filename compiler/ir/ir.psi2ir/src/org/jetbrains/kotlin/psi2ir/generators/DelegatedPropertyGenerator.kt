@@ -58,8 +58,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         val irProperty = IrPropertyImpl(
             ktProperty.startOffset, ktProperty.endOffset, IrDeclarationOrigin.DEFINED,
             isDelegated = true,
-            descriptor = propertyDescriptor,
-            type = propertyDescriptor.type.toIrType()
+            descriptor = propertyDescriptor
         ).apply {
             backingField = generateDelegateFieldForProperty(propertyDescriptor, kPropertyType, ktDelegate)
         }
