@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 class TypeMappingConversion(val context: ConversionContext) : MatchBasedConversion() {
     override fun onElementChanged(new: JKTreeElement, old: JKTreeElement) {
@@ -71,7 +70,7 @@ class TypeMappingConversion(val context: ConversionContext) : MatchBasedConversi
         return JKClassTypeImpl(context.symbolProvider.provideSymbol(newTarget) as JKClassSymbol, parameters, nullability)
     }
 
-    fun mapClassType(type: JKClassType, typeElement: JKTypeElement): JKTypeElement {
+    private fun mapClassType(type: JKClassType, typeElement: JKTypeElement): JKTypeElement {
         val fqNameStr = (type.classReference as? JKClassSymbol)?.fqName ?: return typeElement
 
         val newFqName = JavaToKotlinClassMap.mapJavaToKotlin(FqName(fqNameStr)) ?: return typeElement
@@ -81,8 +80,8 @@ class TypeMappingConversion(val context: ConversionContext) : MatchBasedConversi
         } ?: typeElement
     }
 
-    fun mapPrimitiveType(type: JKJavaPrimitiveType, typeElement: JKTypeElement): JKTypeElement {
-        val fqName = JvmPrimitiveType.get(type.name).primitiveType.typeFqName
+    private fun mapPrimitiveType(type: JKJavaPrimitiveType, typeElement: JKTypeElement): JKTypeElement {
+        val fqName = type.jvmPrimitiveType.primitiveType.typeFqName
 
         return classTypeByFqName(context.backAnnotator(typeElement), ClassId.topLevel(fqName), emptyList())?.let { JKTypeElementImpl(it) }
                 ?: typeElement

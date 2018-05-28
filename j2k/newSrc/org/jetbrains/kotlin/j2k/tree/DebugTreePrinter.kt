@@ -82,7 +82,7 @@ private class DebugTreePrinter : JKVisitorVoid {
                 printer.println((type.classReference as? JKClassSymbol)?.fqName ?: type.classReference?.let { it::class } ?: "Unbound")
             }
             if (type is JKJavaPrimitiveType) {
-                printer.println(type.name)
+                printer.println(type.jvmPrimitiveType.javaKeywordName)
             }
         }
         printer.println("\"")
