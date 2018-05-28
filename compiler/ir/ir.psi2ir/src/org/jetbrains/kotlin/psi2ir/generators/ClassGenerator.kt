@@ -171,21 +171,21 @@ class ClassGenerator(
 
     private fun generateDelegatedProperty(
         irDelegate: IrField,
-        delegated: PropertyDescriptor,
-        overridden: PropertyDescriptor
+        delegatedDescriptor: PropertyDescriptor,
+        overriddenDescriptor: PropertyDescriptor
     ): IrPropertyImpl {
         val startOffset = irDelegate.startOffset
         val endOffset = irDelegate.endOffset
 
         val irProperty = IrPropertyImpl(
             startOffset, endOffset, IrDeclarationOrigin.DELEGATED_MEMBER,
-            false, delegated, delegated.type.toIrType()
+            false, delegatedDescriptor
         )
 
-        irProperty.getter = generateDelegatedFunction(irDelegate, delegated.getter!!, overridden.getter!!)
+        irProperty.getter = generateDelegatedFunction(irDelegate, delegatedDescriptor.getter!!, overriddenDescriptor.getter!!)
 
-        if (delegated.isVar) {
-            irProperty.setter = generateDelegatedFunction(irDelegate, delegated.setter!!, overridden.setter!!)
+        if (delegatedDescriptor.isVar) {
+            irProperty.setter = generateDelegatedFunction(irDelegate, delegatedDescriptor.setter!!, overriddenDescriptor.setter!!)
         }
         return irProperty
     }

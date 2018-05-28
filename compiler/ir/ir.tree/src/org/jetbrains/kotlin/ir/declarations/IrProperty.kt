@@ -26,7 +26,6 @@ interface IrProperty : IrDeclaration {
     override val descriptor: PropertyDescriptor
 
     val name: Name
-    val type: IrType
     val modality: Modality
     val visibility: Visibility
     val isVar: Boolean

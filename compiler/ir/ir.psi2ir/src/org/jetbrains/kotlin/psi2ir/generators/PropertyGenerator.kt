@@ -48,8 +48,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         return IrPropertyImpl(
             ktParameter.startOffset, ktParameter.endOffset,
             IrDeclarationOrigin.DEFINED, false,
-            propertyDescriptor,
-            irPropertyType
+            propertyDescriptor
         ).also { irProperty ->
             irProperty.backingField =
                     generatePropertyBackingField(ktParameter, propertyDescriptor) {
@@ -104,8 +103,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             ktProperty.startOffset, ktProperty.endOffset,
             IrDeclarationOrigin.DEFINED,
             false,
-            propertyDescriptor,
-            propertyDescriptor.type.toIrType()
+            propertyDescriptor
         ).buildWithScope { irProperty ->
             irProperty.backingField =
                     if (propertyDescriptor.hasBackingField())
