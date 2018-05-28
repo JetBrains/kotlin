@@ -101,7 +101,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
         declaration.run {
             "PROPERTY ${renderOriginIfNonTrivial()}" +
-                    "name:$name type:${type.render()} visibility:$visibility modality:$modality " +
+                    "name:$name visibility:$visibility modality:$modality " +
                     "flags:${renderPropertyFlags()}"
         }
 

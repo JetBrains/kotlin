@@ -62,10 +62,7 @@ class DeclarationStubGenerator(
         }
 
     private fun generatePropertyStub(descriptor: PropertyDescriptor): IrProperty =
-        IrPropertyImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
-            descriptor, descriptor.type.toIrType()
-        ).also { irProperty ->
+        IrPropertyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irProperty ->
             val getterDescriptor = descriptor.getter
             if (getterDescriptor == null) {
                 irProperty.backingField =

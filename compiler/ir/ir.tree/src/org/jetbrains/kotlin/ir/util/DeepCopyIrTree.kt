@@ -227,7 +227,6 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             mapDeclarationOrigin(declaration.origin),
             declaration.isDelegated,
             mapPropertyDeclaration(declaration.descriptor),
-            declaration.type, // TODO
             declaration.backingField?.transform(),
             declaration.getter?.transform(),
             declaration.setter?.transform()
