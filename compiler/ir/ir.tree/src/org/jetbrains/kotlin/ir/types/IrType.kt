@@ -20,10 +20,14 @@ interface IrDynamicType : IrType
 interface IrSimpleType : IrType {
     val classifier: IrClassifierSymbol
     val hasQuestionMark: Boolean
-    val arguments: List<IrTypeProjection>
+    val arguments: List<IrTypeArgument>
 }
 
-interface IrTypeProjection {
+interface IrTypeArgument
+
+interface IrStarProjection : IrTypeArgument
+
+interface IrTypeProjection : IrTypeArgument {
     val variance: Variance
     val type: IrType
 }

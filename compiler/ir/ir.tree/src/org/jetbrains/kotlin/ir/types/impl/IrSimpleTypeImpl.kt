@@ -16,7 +16,7 @@ class IrSimpleTypeImpl(
     kotlinType: KotlinType?,
     override val classifier: IrClassifierSymbol,
     override val hasQuestionMark: Boolean,
-    override val arguments: List<IrTypeProjection>,
+    override val arguments: List<IrTypeArgument>,
     annotations: List<IrCall>,
     variance: Variance
 ) : IrTypeBase(kotlinType, annotations, variance), IrSimpleType, IrTypeProjection {
@@ -24,7 +24,7 @@ class IrSimpleTypeImpl(
     constructor(
         classifier: IrClassifierSymbol,
         hasQuestionMark: Boolean,
-        arguments: List<IrTypeProjection>,
+        arguments: List<IrTypeArgument>,
         annotations: List<IrCall>
     ) : this(null, classifier, hasQuestionMark, arguments, annotations, Variance.INVARIANT)
 
@@ -32,7 +32,7 @@ class IrSimpleTypeImpl(
         kotlinType: KotlinType?,
         classifier: IrClassifierSymbol,
         hasQuestionMark: Boolean,
-        arguments: List<IrTypeProjection>,
+        arguments: List<IrTypeArgument>,
         annotations: List<IrCall>
     ) : this(kotlinType, classifier, hasQuestionMark, arguments, annotations, Variance.INVARIANT)
 

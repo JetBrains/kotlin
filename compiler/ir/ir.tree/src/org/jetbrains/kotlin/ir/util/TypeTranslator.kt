@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 
@@ -89,8 +90,10 @@ class TypeTranslator(
 
     private fun translateTypeArguments(arguments: List<TypeProjection>) =
         arguments.map {
-            // TODO starProjection
-            translateType(it.type, it.projectionKind)
+            if (it.isStarProjection)
+                IrStarProjectionImpl
+            else
+                translateType(it.type, it.projectionKind)
         }
 }
 
