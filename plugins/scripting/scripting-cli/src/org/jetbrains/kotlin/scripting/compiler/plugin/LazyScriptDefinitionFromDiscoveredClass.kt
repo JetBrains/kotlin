@@ -34,7 +34,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         messageCollector: MessageCollector
     ) : this(loadAnnotationsFromClass(classBytes), className, classpath, messageCollector)
 
-    override val scriptDefinition: ScriptDefinition by lazy {
+    override val scriptDefinition: ScriptDefinition by lazy(LazyThreadSafetyMode.PUBLICATION) {
         messageCollector.report(
             CompilerMessageSeverity.LOGGING,
             "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
@@ -59,7 +59,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         }
     }
 
-    override val scriptFileExtensionWithDot: String by lazy {
+    override val scriptFileExtensionWithDot: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val ext = annotationsFromAsm.find { it.name == KotlinScriptFileExtension::class.simpleName!! }?.args?.first()
                 ?: scriptDefinition.properties.let {
                     it.getOrNull(ScriptDefinitionProperties.fileExtension) ?: "kts"
@@ -67,7 +67,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         ".$ext"
     }
 
-    override val name: String by lazy {
+    override val name: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
         annotationsFromAsm.find { it.name == KotlinScript::class.simpleName!! }?.args?.first()
                 ?: super.name
     }

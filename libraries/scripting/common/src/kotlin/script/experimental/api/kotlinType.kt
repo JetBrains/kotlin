@@ -8,13 +8,27 @@ package kotlin.script.experimental.api
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
-class KotlinType(
+/**
+ * A Kotlin type representation for using in the scripting API
+ */
+class KotlinType private constructor(
     val typeName: String,
-    val fromClass: KClass<*>? = null
+    val fromClass: KClass<*>?
     // TODO: copy properties from KType
 ) {
-    // TODO: implement other approach for non-class types
-    constructor(type: KType) : this((type.classifier as KClass<*>).qualifiedName!!, type.classifier as KClass<*>)
+    /**
+     * Constructs KotlinType from fully-qualified [qualifiedTypeName] in a dot-separated form, e.g. "org.acme.Outer.Inner"
+     */
+    constructor(qualifiedTypeName: String) : this(qualifiedTypeName, null)
 
+    /**
+     * Constructs KotlinType from reflected [kclass]
+     */
     constructor(kclass: KClass<*>) : this(kclass.qualifiedName!!, kclass)
+
+    // TODO: implement other approach for non-class types
+    /**
+     * Constructs KotlinType from reflected [ktype]
+     */
+    constructor(type: KType) : this(type.classifier as KClass<*>)
 }

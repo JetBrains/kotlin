@@ -52,7 +52,7 @@ internal fun discoverScriptTemplatesInClasspath(
     messageCollector: MessageCollector
 ): Sequence<KotlinScriptDefinition> = buildSequence {
     // TODO: try to find a way to reduce classpath (and classloader) to minimal one needed to load script definition and its dependencies
-    val classLoader by lazy {
+    val classLoader by lazy(LazyThreadSafetyMode.PUBLICATION) {
         URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), baseClassLoader)
     }
     for (dep in classpath) {
@@ -89,10 +89,10 @@ internal fun discoverScriptTemplatesInClasspath(
                 dep.isDirectory -> {
                     val dir = File(dep, SCRIPT_DEFINITION_MARKERS_PATH)
                     if (dir.isDirectory) {
-                        val templateClasspath by lazy {
+                        val templateClasspath by lazy(LazyThreadSafetyMode.PUBLICATION) {
                             listOf(dep) + defaultScriptDefinitionClasspath
                         }
-                        val classLoader by lazy {
+                        val classLoader by lazy(LazyThreadSafetyMode.PUBLICATION) {
                             URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassLoader)
                         }
                         dir.listFiles().forEach { templateClassNmae ->
@@ -154,10 +154,10 @@ internal fun loadScriptTemplatesFromClasspath(
     }
     // then searching the remaining templates in the supplied classpath
     if (templatesLeftToFind.isNotEmpty()) {
-        val templateClasspath by lazy {
+        val templateClasspath by lazy(LazyThreadSafetyMode.PUBLICATION) {
             classpath + dependenciesClasspath
         }
-        val classLoader by lazy {
+        val classLoader by lazy(LazyThreadSafetyMode.PUBLICATION) {
             URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassLoader)
         }
         for (dep in classpath) {
