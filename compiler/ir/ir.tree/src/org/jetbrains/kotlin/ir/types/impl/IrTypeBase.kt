@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.ir.types.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.IrErrorType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -39,3 +36,6 @@ class IrDynamicTypeImpl(
 
 val IrType.originalKotlinType: KotlinType?
     get() = safeAs<IrTypeBase>()?.kotlinType
+
+
+object IrStarProjectionImpl : IrStarProjection
