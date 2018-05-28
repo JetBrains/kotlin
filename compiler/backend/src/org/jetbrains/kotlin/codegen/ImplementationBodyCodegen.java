@@ -541,6 +541,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
+            WriteAnnotationUtilKt.writeGeneratedAnnotation(mv);
             mv.visitCode();
             Label eq = new Label();
             Label ne = new Label();
@@ -617,6 +618,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "hashCode", "()I", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
+            WriteAnnotationUtilKt.writeGeneratedAnnotation(mv);
             mv.visitCode();
             boolean first = true;
             for (PropertyDescriptor propertyDescriptor : properties) {
@@ -667,6 +669,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
+            WriteAnnotationUtilKt.writeGeneratedAnnotation(mv);
             mv.visitCode();
             genStringBuilderConstructor(iv);
 
@@ -722,6 +725,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 ) {
                     Type componentType = signature.getReturnType();
                     InstructionAdapter iv = new InstructionAdapter(mv);
+
                     if (!componentType.equals(Type.VOID_TYPE)) {
                         PropertyDescriptor property =
                                 bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, descriptorToDeclaration(parameter));
@@ -737,7 +741,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 public boolean skipNotNullAssertionsForParameters() {
                     return false;
                 }
-            });
+            }, true);
         }
 
         @Override
@@ -816,7 +820,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         capturedValue.put(sharedVarType, iv);
                     }
                 }
-            });
+            }, true);
 
             functionCodegen.generateDefaultIfNeeded(
                     context.intoFunction(function), function, OwnerKind.IMPLEMENTATION,

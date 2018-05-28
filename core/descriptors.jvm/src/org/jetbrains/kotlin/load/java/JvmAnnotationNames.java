@@ -25,6 +25,9 @@ public final class JvmAnnotationNames {
     public static final FqName METADATA_FQ_NAME = new FqName("kotlin.Metadata");
     public static final String METADATA_DESC = "L" + JvmClassName.byFqNameWithoutInnerClasses(METADATA_FQ_NAME).getInternalName() + ";";
 
+    public static final FqName GENERATED_FQ_NAME = new FqName("kotlin.Generated");
+    public static final String GENERATED_DESC = "L" + JvmClassName.byFqNameWithoutInnerClasses(GENERATED_FQ_NAME).getInternalName() + ";";
+
     public static final String METADATA_VERSION_FIELD_NAME = "mv";
     public static final String BYTECODE_VERSION_FIELD_NAME = "bv";
     public static final String KIND_FIELD_NAME = "k";

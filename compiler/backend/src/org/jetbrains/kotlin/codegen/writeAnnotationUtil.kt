@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 
 fun writeKotlinMetadata(
         cb: ClassBuilder,
@@ -50,4 +51,11 @@ fun writeSyntheticClassMetadata(cb: ClassBuilder, state: GenerationState) {
     writeKotlinMetadata(cb, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) { _ ->
         // Do nothing
     }
+}
+
+/**
+ * Adds [kotlin.Generated] annotation for a method that should be skipped by code coverage tools
+ */
+fun writeGeneratedAnnotation(mv: MethodVisitor) {
+    mv.visitAnnotation(JvmAnnotationNames.GENERATED_DESC, false)
 }

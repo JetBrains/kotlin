@@ -12,14 +12,18 @@ public final class Wrapper {
 
         public Equals(@org.jetbrains.annotations.NotNull p.G code) { /* compiled code */ }
 
+        @kotlin.Generated
         @org.jetbrains.annotations.NotNull
         public final p.G component1() { /* compiled code */ }
 
+        @kotlin.Generated
         @org.jetbrains.annotations.NotNull
         public final p.Wrapper.Equals copy(@org.jetbrains.annotations.NotNull p.G code) { /* compiled code */ }
 
+        @kotlin.Generated
         public java.lang.String toString() { /* compiled code */ }
 
+        @kotlin.Generated
         public int hashCode() { /* compiled code */ }
     }
 
@@ -34,14 +38,18 @@ public final class Wrapper {
 
         public HashCode(@org.jetbrains.annotations.NotNull p.G code) { /* compiled code */ }
 
+        @kotlin.Generated
         @org.jetbrains.annotations.NotNull
         public final p.G component1() { /* compiled code */ }
 
+        @kotlin.Generated
         @org.jetbrains.annotations.NotNull
         public final p.Wrapper.HashCode copy(@org.jetbrains.annotations.NotNull p.G code) { /* compiled code */ }
 
+        @kotlin.Generated
         public java.lang.String toString() { /* compiled code */ }
 
+        @kotlin.Generated
         public boolean equals(java.lang.Object p) { /* compiled code */ }
     }
 
@@ -57,14 +65,18 @@ public final class Wrapper {
 
         public ToString(@org.jetbrains.annotations.NotNull p.G code) { /* compiled code */ }
 
+        @kotlin.Generated
         @org.jetbrains.annotations.NotNull
         public final p.G component1() { /* compiled code */ }
 
+        @kotlin.Generated
         @org.jetbrains.annotations.NotNull
         public final p.Wrapper.ToString copy(@org.jetbrains.annotations.NotNull p.G code) { /* compiled code */ }
 
+        @kotlin.Generated
         public int hashCode() { /* compiled code */ }
 
+        @kotlin.Generated
         public boolean equals(java.lang.Object p) { /* compiled code */ }
     }
 }
