@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.j2k.tree.JKJavaMethod
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKTypeElementImpl
 
 class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
     override fun visitTreeElement(element: JKTreeElement) {
@@ -31,7 +32,7 @@ class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
         somethingChanged = true
         klass.declarationList = klass.declarationList.map {
             if (it is JKJavaMethod) JKKtFunctionImpl(
-                JKJavaPrimitiveTypeImpl.BOOLEAN,
+                JKTypeElementImpl(JKJavaPrimitiveTypeImpl.BOOLEAN),
                 it.name,
                 it.valueArguments,
                 it.block,

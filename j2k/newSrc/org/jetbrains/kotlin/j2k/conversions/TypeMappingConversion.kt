@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.j2k.conversions
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.j2k.tree.JKClassType
-import org.jetbrains.kotlin.j2k.tree.JKJavaPrimitiveType
-import org.jetbrains.kotlin.j2k.tree.JKTreeElement
-import org.jetbrains.kotlin.j2k.tree.JKType
+import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassTypeImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKTypeElementImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -40,11 +38,14 @@ class TypeMappingConversion(val context: ConversionContext) : MatchBasedConversi
 
 
     fun applyToElement(element: JKTreeElement): JKTreeElement {
-        return when (element) {
-            is JKJavaPrimitiveType -> mapPrimitiveType(element)
-            is JKClassType -> mapClassType(element)
-            else -> applyRecursive(element, this::applyToElement)
-        }
+        return if (element is JKTypeElement) {
+            val type = element.type
+            when (type) {
+                is JKJavaPrimitiveType -> mapPrimitiveType(type, element)
+                is JKClassType -> mapClassType(type, element)
+                else -> applyRecursive(element, this::applyToElement)
+            }
+        } else applyRecursive(element, this::applyToElement)
     }
 
     private fun resolveFqName(classId: ClassId, element: PsiElement): PsiElement? {
@@ -70,17 +71,20 @@ class TypeMappingConversion(val context: ConversionContext) : MatchBasedConversi
         return JKClassTypeImpl(context.symbolProvider.provideSymbol(newTarget) as JKClassSymbol, parameters, nullability)
     }
 
-    fun mapClassType(type: JKClassType): JKType {
-        val fqNameStr = (type.classReference as? JKClassSymbol)?.fqName ?: return type
+    fun mapClassType(type: JKClassType, typeElement: JKTypeElement): JKTypeElement {
+        val fqNameStr = (type.classReference as? JKClassSymbol)?.fqName ?: return typeElement
 
-        val newFqName = JavaToKotlinClassMap.mapJavaToKotlin(FqName(fqNameStr)) ?: return type
+        val newFqName = JavaToKotlinClassMap.mapJavaToKotlin(FqName(fqNameStr)) ?: return typeElement
 
-        return classTypeByFqName(context.backAnnotator(type), newFqName, type.parameters, type.nullability) ?: type
+        return classTypeByFqName(context.backAnnotator(typeElement), newFqName, type.parameters, type.nullability)?.let {
+            JKTypeElementImpl(it)
+        } ?: typeElement
     }
 
-    fun mapPrimitiveType(type: JKJavaPrimitiveType): JKType {
+    fun mapPrimitiveType(type: JKJavaPrimitiveType, typeElement: JKTypeElement): JKTypeElement {
         val fqName = JvmPrimitiveType.get(type.name).primitiveType.typeFqName
 
-        return classTypeByFqName(context.backAnnotator(type), ClassId.topLevel(fqName), emptyList()) ?: type
+        return classTypeByFqName(context.backAnnotator(typeElement), ClassId.topLevel(fqName), emptyList())?.let { JKTypeElementImpl(it) }
+                ?: typeElement
     }
 }

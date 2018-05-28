@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-interface JKOperator : JKTreeElement
+import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.j2k.tree.impl.JKSymbol
+
+interface JKOperator
 
 interface JKQualifier
 
@@ -38,4 +41,20 @@ interface JKModifierListOwner {
 
 interface JKReferenceTarget {
     val valid: Boolean
+}
+
+interface JKType
+
+interface JKClassType : JKType {
+    val classReference: JKSymbol?
+    val nullability: Nullability
+    val parameters: List<JKType>
+}
+
+interface JKJavaPrimitiveType : JKType {
+    val name: String
+}
+
+interface JKJavaArrayType : JKType {
+    val type: JKType
 }

@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.impl.JKFieldSymbol
 import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
-import org.jetbrains.kotlin.j2k.tree.impl.JKSymbol
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 interface JKTreeElement : JKElement {
@@ -43,11 +41,11 @@ interface JKClass : JKDeclaration, JKModifierListOwner {
 interface JKMethod : JKDeclaration, JKModifierListOwner {
     val name: JKNameIdentifier
     var valueArguments: List<JKValueArgument>
-    val returnType: JKType
+    val returnType: JKTypeElement
 }
 
 interface JKField : JKDeclaration, JKModifierListOwner {
-    val type: JKType
+    val type: JKTypeElement
     val name: JKNameIdentifier
 }
 
@@ -61,12 +59,8 @@ interface JKAccessModifier : JKModifier
 
 interface JKModalityModifier : JKModifier
 
-interface JKType : JKTreeElement
-
-interface JKClassType : JKType {
-    val classReference: JKSymbol?
-    val nullability: Nullability
-    val parameters: List<JKType>
+interface JKTypeElement : JKTreeElement {
+    val type: JKType
 }
 
 interface JKStatement : JKTreeElement
@@ -130,7 +124,7 @@ interface JKParenthesizedExpression : JKExpression {
 
 interface JKTypeCastExpression : JKExpression {
     val expression: JKExpression
-    val type: JKType
+    val type: JKTypeElement
 }
 
 interface JKExpressionList : JKTreeElement {
@@ -147,7 +141,7 @@ interface JKLiteralExpression : JKExpression {
 }
 
 interface JKValueArgument : JKTreeElement {
-    var type: JKType
+    var type: JKTypeElement
     val name: String
 }
 

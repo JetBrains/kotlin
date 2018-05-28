@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 class JKJavaFieldImpl(
     modifierList: JKModifierList,
-    type: JKType,
+    type: JKTypeElement,
     name: JKNameIdentifier,
     initializer: JKExpression
 ) : JKJavaField, JKBranchElementBase() {
@@ -32,9 +32,23 @@ class JKJavaFieldImpl(
 
     override var initializer: JKExpression by child(initializer)
     override var modifierList: JKModifierList by child(modifierList)
+    override var type by child(type)
     override var name: JKNameIdentifier by child(name)
-    override var type: JKType by child(type)
+}
 
+class JKJavaMethodImpl(
+    override var modifierList: JKModifierList,
+    override var name: JKNameIdentifier,
+    override var valueArguments: List<JKValueArgument>,
+    override var block: JKBlock
+) : JKJavaMethod, JKElementBase() {
+    override val returnType: JKTypeElement
+        get() = TODO()
+
+    override val valid: Boolean
+        get() = true
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethod(this, data)
 }
 
 class JKJavaLiteralExpressionImpl(
@@ -52,27 +66,12 @@ class JKJavaModifierImpl(override val type: JKJavaModifier.JavaModifierType) : J
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaModifier(this, data)
 }
 
-class JKJavaMethodImpl(
-    override var modifierList: JKModifierList,
-    override var name: JKNameIdentifier,
-    override var valueArguments: List<JKValueArgument>,
-    override var block: JKBlock
-) : JKJavaMethod, JKElementBase() {
-    override val returnType: JKType
-        get() = TODO()
-
-    override val valid: Boolean
-        get() = true
-
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethod(this, data)
-}
-
-sealed class JKJavaOperatorImpl : JKOperator, JKElementBase() {
+sealed class JKJavaOperatorImpl : JKOperator {
     object PLUS : JKJavaOperatorImpl()
     object MINUS : JKJavaOperatorImpl()
 }
 
-sealed class JKJavaQualifierImpl : JKQualifier, JKElementBase() {
+sealed class JKJavaQualifierImpl : JKQualifier {
     object DOT : JKJavaQualifierImpl()
 }
 
@@ -80,18 +79,10 @@ class JKJavaMethodCallExpressionImpl(
     override var identifier: JKMethodSymbol, override var arguments: JKExpressionList
 ) : JKJavaMethodCallExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodCallExpression(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        arguments.accept(visitor, data)
-    }
 }
 
 class JKJavaFieldAccessExpressionImpl(override var identifier: JKFieldSymbol) : JKJavaFieldAccessExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaFieldAccessExpression(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
 }
 
 class JKJavaNewExpressionImpl(
@@ -105,37 +96,19 @@ class JKJavaNewExpressionImpl(
 
 class JKJavaNewEmptyArrayImpl(override var initializer: List<JKLiteralExpression?>) : JKJavaNewEmptyArray, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewEmptyArray(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
 }
 
 class JKJavaNewArrayImpl(override var initializer: List<JKExpression>) : JKJavaNewArray, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewArray(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
 }
 
-sealed class JKJavaPrimitiveTypeImpl(override val name: String) : JKJavaPrimitiveType, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaPrimitiveType(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
-
+sealed class JKJavaPrimitiveTypeImpl(override val name: String) : JKJavaPrimitiveType {
     object BYTE : JKJavaPrimitiveTypeImpl("byte")
     object BOOLEAN : JKJavaPrimitiveTypeImpl("boolean")
     object INT : JKJavaPrimitiveTypeImpl("int")
 }
 
-class JKJavaArrayTypeImpl(type: JKType) : JKJavaArrayType, JKBranchElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaArrayType(this, data)
-
-    override val type: JKType by child(type)
-}
+class JKJavaArrayTypeImpl(override val type: JKType) : JKJavaArrayType
 
 class JKReturnStatementImpl(expression: JKExpression) : JKBranchElementBase(), JKReturnStatement {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitReturnStatement(this, data)

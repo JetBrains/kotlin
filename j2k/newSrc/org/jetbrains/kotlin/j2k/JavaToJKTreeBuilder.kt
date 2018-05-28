@@ -186,8 +186,8 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             return JKExpressionListImpl(this?.expressions?.map { it.toJK() } ?: emptyList())
         }
 
-        fun PsiTypeElement.toJK(): JKType {
-            return type.toJK().also {
+        fun PsiTypeElement.toJK(): JKTypeElement {
+            return JKTypeElementImpl(type.toJK()).also {
                 backAnnotation[it] = this
             }
         }

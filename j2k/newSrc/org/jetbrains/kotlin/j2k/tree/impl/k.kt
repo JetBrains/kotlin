@@ -21,19 +21,18 @@ import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 class JKKtPropertyImpl(
     modifierList: JKModifierList,
-    type: JKType,
+    type: JKTypeElement,
     name: JKNameIdentifier,
     initializer: JKExpression,
     getter: JKBlock,
     setter: JKBlock
 ) : JKBranchElementBase(), JKKtProperty {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtProperty(this, data)
-
     override val valid: Boolean
         get() = true
 
     override var modifierList: JKModifierList by child(modifierList)
-    override var type: JKType by child(type)
+    override var type by child(type)
     override var name: JKNameIdentifier by child(name)
     override val initializer: JKExpression by child(initializer)
     override val getter: JKBlock by child(getter)
@@ -41,7 +40,7 @@ class JKKtPropertyImpl(
 }
 
 class JKKtFunctionImpl(
-    returnType: JKType,
+    returnType: JKTypeElement,
     name: JKNameIdentifier,
     valueArguments: List<JKValueArgument>,
     block: JKBlock,
@@ -50,7 +49,7 @@ class JKKtFunctionImpl(
     override val valid: Boolean
         get() = true
 
-    override var returnType: JKType by child(returnType)
+    override var returnType: JKTypeElement by child(returnType)
     override var name: JKNameIdentifier by child(name)
     override var valueArguments: List<JKValueArgument> by children(valueArguments)
     override var block: JKBlock by child(block)
@@ -58,7 +57,6 @@ class JKKtFunctionImpl(
 }
 
 sealed class JKKtQualifierImpl : JKQualifier, JKElementBase() {
-
     object DOT : JKKtQualifierImpl()
     object SAFE : JKKtQualifierImpl()
 }
