@@ -33,6 +33,8 @@ private fun CallableMemberDescriptor.getJvmName() =
 fun getAccessorNameSuffix(
     descriptor: CallableMemberDescriptor, superCallDescriptor: ClassDescriptor?, accessorKind: AccessorKind
 ): String {
+    if (accessorKind == AccessorKind.JVM_DEFAULT_COMPATIBILITY) return descriptor.getJvmName() + "$" + AccessorKind.JVM_DEFAULT_COMPATIBILITY.suffix
+
     val suffix = when (descriptor) {
         is ConstructorDescriptor ->
             return "will be ignored"
@@ -43,6 +45,5 @@ fun getAccessorNameSuffix(
         else ->
             throw UnsupportedOperationException("Do not know how to create accessor for descriptor $descriptor")
     }
-    if (accessorKind == AccessorKind.JVM_DEFAULT_COMPATIBILITY) return suffix + "$" + AccessorKind.JVM_DEFAULT_COMPATIBILITY.suffix
     return if (superCallDescriptor == null) suffix else "$suffix\$s${superCallDescriptor.name.asString().hashCode()}"
 }
