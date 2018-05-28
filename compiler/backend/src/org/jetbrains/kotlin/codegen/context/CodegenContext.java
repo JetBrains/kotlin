@@ -405,6 +405,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return getAccessor(propertyDescriptor, FieldAccessorKind.NORMAL, null, superCallTarget, getterAccessorRequired, setterAccessorRequired);
     }
 
+
+    public  <D extends CallableMemberDescriptor> D getAccessorForJvmDefaultCompatibility(@NotNull D descriptor) {
+        return getAccessor(descriptor, FieldAccessorKind.JVM_DEFAULT_COMPATIBILITY, null,
+                           (ClassDescriptor) descriptor.getContainingDeclaration());
+    }
+
     @NotNull
     private <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor, @Nullable ClassDescriptor superCallTarget) {
         return getAccessor(descriptor, FieldAccessorKind.NORMAL, null, superCallTarget);

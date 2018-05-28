@@ -51,4 +51,45 @@ public class BytecodeTextJava8TestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/java8/bytecodeText/hashCode/hashCode.kt");
         }
     }
+
+    @TestMetadata("compiler/testData/codegen/java8/bytecodeText/jvmDefault")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmDefault extends AbstractBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJvmDefault() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/bytecodeText/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("compiler/testData/codegen/java8/bytecodeText/jvmDefault/compatibility")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Compatibility extends AbstractBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCompatibility() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/bytecodeText/jvmDefault/compatibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("defaultArgs.kt")
+            public void testDefaultArgs() throws Exception {
+                runTest("compiler/testData/codegen/java8/bytecodeText/jvmDefault/compatibility/defaultArgs.kt");
+            }
+
+            @TestMetadata("simpleFunction.kt")
+            public void testSimpleFunction() throws Exception {
+                runTest("compiler/testData/codegen/java8/bytecodeText/jvmDefault/compatibility/simpleFunction.kt");
+            }
+
+            @TestMetadata("simpleFunctionWithAbstractOverride.kt")
+            public void testSimpleFunctionWithAbstractOverride() throws Exception {
+                runTest("compiler/testData/codegen/java8/bytecodeText/jvmDefault/compatibility/simpleFunctionWithAbstractOverride.kt");
+            }
+        }
+    }
 }
