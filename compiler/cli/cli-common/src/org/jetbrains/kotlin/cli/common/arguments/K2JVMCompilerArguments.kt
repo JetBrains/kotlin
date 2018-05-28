@@ -224,11 +224,16 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
 
     @Argument(
-        value = "-Xjvm-default-mode",
+        value = "-Xjvm-default",
         valueDescription = "{disable|enable|compatibility}",
-        description = "Allow to use '@JvmDefault' for JVM default method support"
+        description = "Allow to use '@JvmDefault' annotation for JVM default method support.\n" +
+                "-Xjvm-default=disable         Prohibit usages of @JvmDefault\n" +
+                "-Xjvm-default=enable          Allow usages of @JvmDefault; only generate the default method\n" +
+                "                              in the interface (annotating an existing method can break binary compatibility)\n" +
+                "-Xjvm-default=compatibility   Allow usages of @JvmDefault; generate a compatibility accessor\n" +
+                "                              in the 'DefaultImpls' class in addition to the interface method\n"
     )
-    var jvmDefaultMode: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
+    var jvmDefault: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
 
     @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
     var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
@@ -246,10 +251,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             supportCompatqualCheckerFrameworkAnnotations
         )
         result[AnalysisFlag.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
-        JvmDefaultMode.fromStringOrNull(jvmDefaultMode)?.let { result[AnalysisFlag.jvmDefaultMode] = it }
+        JvmDefaultMode.fromStringOrNull(jvmDefault)?.let { result[AnalysisFlag.jvmDefaultMode] = it }
                 ?: collector.report(
                     CompilerMessageSeverity.ERROR,
-                    "Unknown @JvmDefault mode: $jvmDefaultMode, " +
+                    "Unknown @JvmDefault mode: $jvmDefault, " +
                             "supported modes: ${JvmDefaultMode.values().map { it.description }}"
                 )
         return result
