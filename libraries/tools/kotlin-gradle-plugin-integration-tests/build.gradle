@@ -54,7 +54,8 @@ test.dependsOn(":kotlin-allopen:install",
                ":kotlin-stdlib-jre8:install",
                ":examples:annotation-processor-example:install",
                ":kotlin-scripting-common:install",
-               ":kotlin-scripting-jvm:install")
+               ":kotlin-scripting-jvm:install",
+               ":kotlin-scripting-gradle:install")
 
 
 // Validate that all dependencies 'install' tasks are added to 'test' dependencies

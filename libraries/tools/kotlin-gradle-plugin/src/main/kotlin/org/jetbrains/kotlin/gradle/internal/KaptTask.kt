@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
+import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.incremental.isJavaFile
+import org.jetbrains.kotlin.incremental.toSortedPathsArray
 import java.io.File
 
 @CacheableTask
@@ -64,7 +66,7 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
         kotlinCompileTask.setupCompilerArgs(args)
 
-        args.pluginClasspaths = (pluginClasspath + args.pluginClasspaths!!).toSet().toTypedArray()
+        args.pluginClasspaths = pluginClasspath.toSortedPathsArray()
 
         val pluginOptionsWithKapt: CompilerPluginOptions = pluginOptions.withWrappedKaptOptions(withApClasspath = kaptClasspath)
         args.pluginOptions = (pluginOptionsWithKapt.arguments + args.pluginOptions!!).toTypedArray()
@@ -79,11 +81,10 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
     @get:Internal
     var useBuildCache: Boolean = false
 
-    @get:Classpath @get:InputFiles @Suppress("unused")
-    internal val kotlinTaskPluginClasspaths get() = kotlinCompileTask.pluginClasspath
-
-    @get:Classpath @get:InputFiles
-    internal val pluginClasspath get() = pluginOptions.classpath
+    @get:Classpath
+    @get:InputFiles
+    val pluginClasspath: FileCollection
+        get() = project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
 
     @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
     val source: Collection<File>

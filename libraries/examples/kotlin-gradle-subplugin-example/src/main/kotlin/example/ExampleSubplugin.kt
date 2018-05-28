@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.plugin.JetBrainsSubpluginArtifact
+import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 class ExampleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
@@ -44,11 +46,6 @@ class ExampleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         return "example.plugin"
     }
 
-    override fun getGroupName(): String {
-        return "org.jetbrains.kotlin"
-    }
-
-    override fun getArtifactName(): String {
-        return "kotlin-gradle-subplugin-example"
-    }
+    override fun getPluginArtifact(): SubpluginArtifact =
+        JetBrainsSubpluginArtifact("kotlin-gradle-subplugin-example")
 }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import org.gradle.api.Project
 import java.io.File
+import java.util.*
 
 // todo: Move all files under org.jetbrains.kotlin.gradle package to avoid class clash (KT-18621, KT-20516)
 
@@ -44,3 +45,6 @@ internal fun Iterable<File>.pathsAsStringRelativeTo(base: File): String =
 
 internal fun File.relativeToRoot(project: Project): String =
         relativeOrCanonical(project.rootProject.rootDir)
+
+internal fun Iterable<File>.toSortedPathsArray(): Array<String> =
+    map { it.canonicalPath }.toTypedArray().also { Arrays.sort(it) }

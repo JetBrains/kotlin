@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.*
@@ -36,7 +37,6 @@ import java.io.File
 import java.util.*
 import kotlin.properties.Delegates
 
-const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin incremental compilation"
 const val USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using experimental Kotlin/JS incremental compilation"
@@ -96,6 +96,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     protected val multiModuleICSettings: MultiModuleICSettings
         get() = MultiModuleICSettings(buildHistoryFile, useModuleDetection)
 
+    @get:Classpath
+    @get:InputFiles
+    val pluginClasspath: FileCollection
+        get() = project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
+
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
@@ -106,9 +111,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     protected val compileClasspath: Iterable<File>
         get() = (classpath + additionalClasspath)
                 .filterTo(LinkedHashSet(), File::exists)
-
-    @get:Classpath @get:InputFiles
-    internal val pluginClasspath get() = pluginOptions.classpath
 
     private val kotlinExt: KotlinProjectExtension
             get() = project.extensions.findByType(KotlinProjectExtension::class.java)!!
@@ -243,8 +245,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         setupPlugins(args)
     }
 
-    open fun setupPlugins(compilerArgs: T) {
-        compilerArgs.pluginClasspaths = pluginClasspath.toTypedArray()
+    fun setupPlugins(compilerArgs: T) {
+        compilerArgs.pluginClasspaths = pluginClasspath.toSortedPathsArray()
         compilerArgs.pluginOptions = pluginOptions.arguments.toTypedArray()
     }
 
@@ -291,11 +293,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
     override fun createCompilerArgs(): K2JVMCompilerArguments =
             K2JVMCompilerArguments()
-
-    override fun setupPlugins(compilerArgs: K2JVMCompilerArguments) {
-        compilerArgs.pluginClasspaths = pluginClasspath.toTypedArray()
-        compilerArgs.pluginOptions = pluginOptions.arguments.toTypedArray()
-    }
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
         args.apply { fillDefaultValues() }

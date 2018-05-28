@@ -75,8 +75,6 @@ open class KaptGenerateStubsTask : KotlinCompile() {
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
         kotlinCompileTask.setupCompilerArgs(args)
 
-        args.pluginClasspaths = (pluginClasspath + args.pluginClasspaths!!).toSet().toTypedArray()
-
         val pluginOptionsWithKapt = pluginOptions.withWrappedKaptOptions(withApClasspath = kaptClasspath)
         args.pluginOptions = (pluginOptionsWithKapt.arguments + args.pluginOptions!!).toTypedArray()
 

@@ -20,27 +20,13 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import java.io.File
 
 internal class CompilerPluginOptions {
-    private val mutableClasspath = arrayListOf<String>()
     private val mutableArguments = arrayListOf<String>()
 
     internal val subpluginOptionsByPluginId =
-            mutableMapOf<String, MutableList<SubpluginOption>>()
-
-    val classpath: List<String>
-        get() = mutableClasspath
+        mutableMapOf<String, MutableList<SubpluginOption>>()
 
     val arguments: List<String>
         get() = mutableArguments
-
-    // used in kotlin-gradle-plugin
-    @Suppress("unused")
-    fun addClasspathEntry(file: File) {
-        mutableClasspath.add(file.canonicalPath)
-    }
-
-    internal fun removeClasspathEntry(file: File) {
-        mutableClasspath.remove(file.canonicalPath)
-    }
 
     fun addPluginArgument(pluginId: String, option: SubpluginOption) {
         mutableArguments.add("plugin:$pluginId:${option.key}=${option.value}")

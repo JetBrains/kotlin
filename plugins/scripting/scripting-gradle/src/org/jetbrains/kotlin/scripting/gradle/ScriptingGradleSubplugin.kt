@@ -9,7 +9,9 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.plugin.JetBrainsSubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
+import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 class ScriptingGradleSubplugin : Plugin<Project>
@@ -23,8 +25,7 @@ class ScriptingGradleSubplugin : Plugin<Project>
 
 class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     companion object {
-        val SCRIPTING_GROUP_NAME = "org.jetbrains.kotlin"
-        val SCRIPTING_ARTIFACT_NAME = "kotlin-scripting"
+        const val SCRIPTING_ARTIFACT_NAME = "kotlin-scripting"
 
         val SCRIPT_DEFINITIONS_OPTION = "script-definitions"
         val SCRIPT_DEFINITIONS_CLASSPATH_OPTION = "script-definitions-classpath"
@@ -65,7 +66,7 @@ class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         return options
     }
 
-    override fun getArtifactName() = "kotlin-scripting-gradle"
-    override fun getGroupName() = "org.jetbrains.kotlin"
     override fun getCompilerPluginId() = "kotlin.scripting"
+    override fun getPluginArtifact(): SubpluginArtifact =
+        JetBrainsSubpluginArtifact(artifactId = SCRIPTING_ARTIFACT_NAME)
 }

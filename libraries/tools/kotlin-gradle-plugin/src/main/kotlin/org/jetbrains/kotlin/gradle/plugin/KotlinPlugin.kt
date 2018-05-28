@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.incremental.stackTraceStr
 import org.jetbrains.kotlin.scripting.gradle.ScriptingGradleSubplugin
 import java.io.File
 import java.net.URL
@@ -36,6 +37,7 @@ import java.util.*
 import java.util.concurrent.Callable
 import java.util.jar.Manifest
 
+internal const val PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerPluginClasspath"
 val KOTLIN_DSL_NAME = "kotlin"
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
@@ -150,11 +152,9 @@ internal class Kotlin2JvmSourceSetProcessor(
             if (project != null) {
                 val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName)
 
-                val subpluginEnvironment = loadSubplugins(project)
+                val subpluginEnvironment = loadSubplugins(project, kotlinPluginVersion)
                 val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
                         project, kotlinTask, javaTask as JavaCompile, null, null, sourceSet)
-
-                removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
 
                 // KotlinCompile.source(kotlinDirSet) should be called only after all java roots are added to kotlinDirSet
                 // otherwise some java roots can be ignored
@@ -235,7 +235,8 @@ internal class Kotlin2JsSourceSetProcessor(
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
         tasksProvider: KotlinTasksProvider,
-        kotlinSourceSetProvider: KotlinSourceSetProvider
+        kotlinSourceSetProvider: KotlinSourceSetProvider,
+        private val kotlinPluginVersion: String
 ) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
         project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider,
         dslExtensionName = KOTLIN_JS_DSL_NAME,
@@ -254,7 +255,7 @@ internal class Kotlin2JsSourceSetProcessor(
 
         // outputFile can be set later during the configuration phase, get it only after the phase:
         project.afterEvaluate { project ->
-            val subpluginEnvironment: SubpluginEnvironment = loadSubplugins(project)
+            val subpluginEnvironment: SubpluginEnvironment = loadSubplugins(project, kotlinPluginVersion)
             val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
                     project, kotlinTask, kotlinTask, null, null, sourceSet)
 
@@ -296,7 +297,8 @@ internal class KotlinCommonSourceSetProcessor(
         javaBasePlugin: JavaBasePlugin,
         sourceSet: SourceSet,
         tasksProvider: KotlinTasksProvider,
-        kotlinSourceSetProvider: KotlinSourceSetProvider
+        kotlinSourceSetProvider: KotlinSourceSetProvider,
+        private val kotlinPluginVersion: String
 ) : KotlinSourceSetProcessor<KotlinCompileCommon>(
         project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider,
         dslExtensionName = KOTLIN_DSL_NAME,
@@ -309,7 +311,7 @@ internal class KotlinCommonSourceSetProcessor(
         project.afterEvaluate { project ->
             kotlinTask.source(kotlinSourceSet.kotlin)
 
-            val subpluginEnvironment: SubpluginEnvironment = loadSubplugins(project)
+            val subpluginEnvironment: SubpluginEnvironment = loadSubplugins(project, kotlinPluginVersion)
             val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
                     project, kotlinTask, kotlinTask, null, null, sourceSet)
 
@@ -327,6 +329,7 @@ internal class KotlinCommonSourceSetProcessor(
             tasksProvider.createKotlinCommonTask(project, taskName, sourceSet.name)
 }
 
+
 internal abstract class AbstractKotlinPlugin(
         val tasksProvider: KotlinTasksProvider,
         val kotlinSourceSetProvider: KotlinSourceSetProvider,
@@ -335,6 +338,8 @@ internal abstract class AbstractKotlinPlugin(
     internal abstract fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String): KotlinSourceSetProcessor<*>
 
     override fun apply(project: Project) {
+        project.configurations.create(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
+
         val javaBasePlugin = project.plugins.apply(JavaBasePlugin::class.java)
         val javaPluginConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
 
@@ -415,7 +420,7 @@ internal open class KotlinCommonPlugin(
         kotlinPluginVersion: String
 ) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion) {
     override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String) =
-            KotlinCommonSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider)
+            KotlinCommonSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion)
 }
 
 internal open class Kotlin2JsPlugin(
@@ -424,7 +429,7 @@ internal open class Kotlin2JsPlugin(
         kotlinPluginVersion: String
 ) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion) {
     override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String) =
-            Kotlin2JsSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider)
+            Kotlin2JsSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion)
 }
 
 internal open class KotlinAndroidPlugin(
@@ -522,7 +527,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                                                              "plugins to be applied to the project:\n\t" +
                                                              androidPluginIds.joinToString("\n\t") { "* $it" })
 
-                val subpluginEnvironment = loadSubplugins(project)
+                val subpluginEnvironment = loadSubplugins(project, kotlinConfigurationTools.kotlinPluginVersion)
 
                 checkAndroidAnnotationProcessorDependencyUsage(project)
 
@@ -540,7 +545,8 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                                androidPlugin: BasePlugin,
                                aptConfigurations: Map<String, Configuration>,
                                rootKotlinOptions: KotlinJvmOptionsImpl,
-                               tasksProvider: KotlinTasksProvider, subpluginEnvironment: SubpluginEnvironment) {
+                               tasksProvider: KotlinTasksProvider,
+                               subpluginEnvironment: SubpluginEnvironment) {
 
         checkVariantIsValid(variantData)
 
@@ -562,8 +568,6 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         // store kotlin classes in separate directory. They will serve as class-path to java compiler
         kotlinTask.destinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
         kotlinTask.description = "Compiles the $variantDataName kotlin."
-
-        removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
 
         configureSources(kotlinTask, variantData)
         wireKotlinTasks(project, androidPlugin, androidExt, variantData, javaTask, kotlinTask)
@@ -662,64 +666,23 @@ private fun SourceSet.clearJavaSrcDirs() {
     java.setSrcDirs(emptyList<File>())
 }
 
-private val KOTLIN_ANNOTATION_PROCESSING_FILE_REGEX = "kotlin-annotation-processing-[\\-0-9A-Za-z.]+\\.jar".toRegex()
-
-private fun removeAnnotationProcessingPluginClasspathEntry(kotlinCompile: KotlinCompile) {
-    kotlinCompile.pluginOptions.classpath
-        .map(::File)
-        .filter { it.name.matches(KOTLIN_ANNOTATION_PROCESSING_FILE_REGEX) }
-        .forEach {
-            kotlinCompile.logger.kotlinDebug("Removing plugin classpath dependency $it")
-            kotlinCompile.pluginOptions.removeClasspathEntry(it)
-        }
-}
-
-private fun loadSubplugins(project: Project): SubpluginEnvironment {
+private fun loadSubplugins(project: Project, kotlinPluginVersion: String): SubpluginEnvironment =
     try {
         val subplugins = ServiceLoader.load(KotlinGradleSubplugin::class.java, project.buildscript.classLoader)
-                .map { @Suppress("UNCHECKED_CAST") (it as KotlinGradleSubplugin<AbstractCompile>) }
+            .map { @Suppress("UNCHECKED_CAST") (it as KotlinGradleSubplugin<AbstractCompile>) }
 
-        return SubpluginEnvironment(project.resolveSubpluginArtifacts(subplugins), subplugins)
+        SubpluginEnvironment(subplugins, kotlinPluginVersion)
     } catch (e: NoClassDefFoundError) {
         // Skip plugin loading if KotlinGradleSubplugin is not defined.
         // It is true now for tests in kotlin-gradle-plugin-core.
-        return SubpluginEnvironment(mapOf(), listOf())
+        project.logger.error("Could not load subplugins", e)
+        SubpluginEnvironment(listOf(), kotlinPluginVersion)
     }
-}
-
-internal fun <T: AbstractCompile> Project.resolveSubpluginArtifacts(
-        subplugins: List<KotlinGradleSubplugin<T>>
-): Map<KotlinGradleSubplugin<T>, List<File>> {
-    fun Project.getResolvedArtifacts() = buildscript.configurations.getByName("classpath")
-            .resolvedConfiguration.resolvedArtifacts
-
-    val resolvedClasspathArtifacts = getResolvedArtifacts().toMutableList()
-    val rootProject = rootProject
-    if (rootProject != this) {
-        resolvedClasspathArtifacts += rootProject.getResolvedArtifacts()
-    }
-
-    val subpluginClasspaths = hashMapOf<KotlinGradleSubplugin<T>, List<File>>()
-
-    for (subplugin in subplugins) {
-        val file = resolvedClasspathArtifacts
-                .firstOrNull {
-                    val id = it.moduleVersion.id
-                    subplugin.getGroupName() == id.group && subplugin.getArtifactName() == id.name
-                }?.file
-        if (file != null) {
-            subpluginClasspaths.put(subplugin, listOf(file))
-        }
-    }
-
-    return subpluginClasspaths
-}
 
 internal class SubpluginEnvironment(
-        val subpluginClasspaths: Map<KotlinGradleSubplugin<AbstractCompile>, List<File>>,
-        val subplugins: List<KotlinGradleSubplugin<AbstractCompile>>
+    private val subplugins: List<KotlinGradleSubplugin<AbstractCompile>>,
+    private val kotlinPluginVersion: String
 ) {
-
     fun <C: CommonCompilerArguments> addSubpluginOptions(
             project: Project,
             kotlinTask: AbstractKotlinCompile<C>,
@@ -734,12 +697,13 @@ internal class SubpluginEnvironment(
         for (subplugin in appliedSubplugins) {
             if (!subplugin.isApplicable(project, kotlinTask)) continue
 
-            with(subplugin) {
-                project.logger.kotlinDebug("Subplugin ${getCompilerPluginId()} (${getGroupName()}:${getArtifactName()}) loaded.")
-            }
+            val pluginId = subplugin.getCompilerPluginId()
+            project.logger.kotlinDebug { "Loading subplugin $pluginId" }
 
-            val subpluginClasspath = subpluginClasspaths[subplugin] ?: continue
-            subpluginClasspath.forEach { pluginOptions.addClasspathEntry(it) }
+            val artifact = subplugin.getPluginArtifact()
+            val mavenCoordinate = "${artifact.groupId}:${artifact.artifactId}:$kotlinPluginVersion"
+            project.logger.kotlinDebug { "Adding '$mavenCoordinate' to '$PLUGIN_CLASSPATH_CONFIGURATION_NAME' configuration" }
+            project.dependencies.add(PLUGIN_CLASSPATH_CONFIGURATION_NAME, mavenCoordinate)
 
             val subpluginOptions = subplugin.apply(project, kotlinTask, javaTask, variantData, androidProjectHandler, javaSourceSet)
             val subpluginId = subplugin.getCompilerPluginId()
@@ -748,6 +712,7 @@ internal class SubpluginEnvironment(
             for (option in subpluginOptions) {
                 pluginOptions.addPluginArgument(subpluginId, option)
             }
+            project.logger.kotlinDebug("Subplugin $pluginId loaded")
         }
 
         return appliedSubplugins
