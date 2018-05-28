@@ -1809,6 +1809,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/cast/castToNullable.kt");
             }
 
+            @TestMetadata("checkThrowCCE.kt")
+            public void testCheckThrowCCE() throws Exception {
+                runTest("js/js.translator/testData/box/expression/cast/checkThrowCCE.kt");
+            }
+
             @TestMetadata("explicitUpcast.kt")
             public void testExplicitUpcast() throws Exception {
                 runTest("js/js.translator/testData/box/expression/cast/explicitUpcast.kt");
