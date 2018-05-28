@@ -53,7 +53,7 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
 
     override fun getId(): String = ID
 
-    override fun getDisplayName(): String = "Kotlin Updates"
+    override fun getDisplayName(): String = "Kotlin"
 
     override fun isModified() = false
 

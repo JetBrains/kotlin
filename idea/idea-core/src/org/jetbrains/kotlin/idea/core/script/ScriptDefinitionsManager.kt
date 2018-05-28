@@ -124,7 +124,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         updateDefinitions()
     }
 
-    fun getAllDefinitions() = currentDefinitions
+    fun getAllDefinitions() = currentDefinitions.toList()
 
     override fun getDefaultScriptDefinition(): KotlinScriptDefinition {
         return StandardIdeScriptDefinition(project)

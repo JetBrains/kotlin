@@ -490,8 +490,12 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                          displayName="Kotlin Compiler"
                          parentId="project.propCompiler"/>
 
-    <applicationConfigurable groupId="language" displayName="Kotlin Updates" id="preferences.language.Kotlin"
+    <applicationConfigurable groupId="language" displayName="Kotlin" id="preferences.language.Kotlin"
                              instance="org.jetbrains.kotlin.idea.configuration.KotlinUpdatesSettingsConfigurable"/>
+
+    <projectConfigurable groupId="language" displayName="Kotlin Scripting" id="preferences.language.Kotlin.scripting"
+                             instance="org.jetbrains.kotlin.idea.script.configuration.KotlinScriptingSettingsConfigurable"
+                             parentId="preferences.language.Kotlin"/>
 
     <qualifiedNameProvider implementation="org.jetbrains.kotlin.idea.actions.KotlinQualifiedNameProvider"/>
 
