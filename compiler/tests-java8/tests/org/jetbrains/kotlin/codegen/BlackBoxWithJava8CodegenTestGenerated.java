@@ -518,6 +518,11 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
                     runTest("compiler/testData/codegen/java8/box/jvm8/defaults/compatibility/inheritedJvmDefault.kt");
                 }
 
+                @TestMetadata("propertyAnnotation.kt")
+                public void testPropertyAnnotation() throws Exception {
+                    runTest("compiler/testData/codegen/java8/box/jvm8/defaults/compatibility/propertyAnnotation.kt");
+                }
+
                 @TestMetadata("simpleFunction.kt")
                 public void testSimpleFunction() throws Exception {
                     runTest("compiler/testData/codegen/java8/box/jvm8/defaults/compatibility/simpleFunction.kt");

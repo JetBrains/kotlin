@@ -60,5 +60,33 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         public void testDefaultProperty() throws Exception {
             runTest("compiler/testData/codegen/java8/writeFlags/defaults/defaultProperty.kt");
         }
+
+        @TestMetadata("propertyAnnotation.kt")
+        public void testPropertyAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/java8/writeFlags/defaults/propertyAnnotation.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/java8/writeFlags/defaults/compatibility")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Compatibility extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCompatibility() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/writeFlags/defaults/compatibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("propertyAccessors.kt")
+            public void testPropertyAccessors() throws Exception {
+                runTest("compiler/testData/codegen/java8/writeFlags/defaults/compatibility/propertyAccessors.kt");
+            }
+
+            @TestMetadata("propertyAnnotation.kt")
+            public void testPropertyAnnotation() throws Exception {
+                runTest("compiler/testData/codegen/java8/writeFlags/defaults/compatibility/propertyAnnotation.kt");
+            }
+        }
     }
 }

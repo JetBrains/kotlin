@@ -410,6 +410,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
 
     public  <D extends CallableMemberDescriptor> D getAccessorForJvmDefaultCompatibility(@NotNull D descriptor) {
+        if (descriptor instanceof PropertyAccessorDescriptor) {
+            PropertyDescriptor propertyAccessor = getAccessor(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty(),
+                                                              AccessorKind.JVM_DEFAULT_COMPATIBILITY, null, null,
+                                                              descriptor instanceof PropertyGetterDescriptor,
+                                                              descriptor instanceof PropertySetterDescriptor);
+            return descriptor instanceof PropertyGetterDescriptor ? (D) propertyAccessor.getGetter() : (D) propertyAccessor.getSetter();
+        }
         return getAccessor(descriptor, AccessorKind.JVM_DEFAULT_COMPATIBILITY, null, null);
     }
 
@@ -491,7 +498,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
         else if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-            if (accessorKind == AccessorKind.NORMAL) {
+            if (accessorKind == AccessorKind.NORMAL || accessorKind == AccessorKind.JVM_DEFAULT_COMPATIBILITY) {
                 AccessorForPropertyDescriptorFactory factory =
                         new AccessorForPropertyDescriptorFactory(propertyDescriptor, contextDescriptor, superCallTarget, nameSuffix, accessorKind);
                 propertyAccessorFactories.put(key, factory);
