@@ -231,10 +231,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
         outputConsumer: ModuleLevelBuilder.OutputConsumer
     ): ModuleLevelBuilder.ExitCode {
-        JavaBuilderUtil.registerFilterToSkipMarkingAffectedFileDirty(context) {
-            it.isKotlinSourceFile
-        }
-
         if (chunk.isDummy(context))
             return NOTHING_DONE
 
