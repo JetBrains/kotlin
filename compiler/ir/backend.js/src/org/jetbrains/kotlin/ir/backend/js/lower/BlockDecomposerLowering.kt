@@ -108,6 +108,33 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression, data: VisitData): VisitResult {
+            if (expression is IrReturnableBlock) {
+                val block = IrBlockImpl(
+                    expression.startOffset,
+                    expression.endOffset,
+                    context.builtIns.unitType,
+                    expression.origin
+                )
+
+                val loop = IrWhileLoopImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, expression.origin).apply {
+                    label = "l_${labelCnt++}"
+                    condition = constTrue
+                    body = block
+                }
+
+                returnMap[expression.symbol] = ReturnInfo(null, loop)
+
+                block.statements += expression.statements
+
+                block.statements.transformFlat {
+                    processStatement(it, data)
+                }
+
+                block.statements += JsIrBuilder.buildBreak(context.builtIns.unitType, loop)
+
+                return DecomposedResult(mutableListOf(loop), unitValue)
+            }
+
             expression.statements.transformFlat {
                 processStatement(it, data)
             }
@@ -130,7 +157,9 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
             val target = expression.returnTargetSymbol
             return returnMap[target]?.let { (variable, loop) ->
                 val (st, result) = expressionResult.runIfChangedOrDefault(mutableListOf<IrStatement>() to expression.value) { statements to resultValue }
-                st += JsIrBuilder.buildSetVariable(variable, result)
+                if (variable != null) {
+                    st += JsIrBuilder.buildSetVariable(variable, result)
+                }
                 st += JsIrBuilder.buildBreak(context.builtIns.unitType, loop)
                 DecomposedResult(st, unitValue)
             } ?: expressionResult.runIfChanged {
@@ -353,15 +382,14 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
         }
     }
 
-    data class ReturnInfo(val resultVariable: IrVariableSymbol,
+    data class ReturnInfo(val resultVariable: IrVariableSymbol?,
                           val loop: IrLoop)
 
     private val returnMap = mutableMapOf<IrReturnableBlockSymbol, ReturnInfo>()
+    private var labelCnt = 0
 
     inner class ExpressionVisitor : DecomposerVisitor() {
         override fun visitExpression(expression: IrExpression, data: VisitData) = KeptResult
-
-        private var labelCnt = 0
 
         //
         // val x = block {
@@ -661,8 +689,12 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
             { v ->
                 val target = expression.returnTargetSymbol
                 returnMap[target]?.let { (variable, loop) ->
-                    listOf(JsIrBuilder.buildSetVariable(variable, v),
-                           JsIrBuilder.buildBreak(context.builtIns.unitType, loop))
+                    val result = mutableListOf<IrStatement>()
+                    if (variable != null) {
+                        result += JsIrBuilder.buildSetVariable(variable, v)
+                    }
+                    result += JsIrBuilder.buildBreak(context.builtIns.unitType, loop)
+                    result
                 } ?: listOf(IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, expression.returnTargetSymbol, v))
             },
             data
