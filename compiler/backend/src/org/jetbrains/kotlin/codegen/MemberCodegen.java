@@ -723,8 +723,19 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                         @Override
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                             markLineNumberForElement(element.getPsiOrParent(), codegen.v);
-
-                            generateMethodCallTo(original, accessor, codegen.v).coerceTo(signature.getReturnType(), null, codegen.v);
+                            if (accessor.getName().asString().endsWith("$" + FieldAccessorKind.JVM_DEFAULT_COMPATIBILITY.getSuffix())) {
+                                //TODO pass kind
+                                FunctionDescriptor descriptor = unwrapFakeOverrideToAnyDeclaration(original).getOriginal();
+                                if (descriptor != original) {
+                                    descriptor = descriptor
+                                            .copy(original.getContainingDeclaration(), descriptor.getModality(), descriptor.getVisibility(),
+                                                  descriptor.getKind(), false);
+                                }
+                                generateMethodCallTo(descriptor, accessor, codegen.v).coerceTo(signature.getReturnType(), null, codegen.v);
+                            }
+                            else {
+                                generateMethodCallTo(original, accessor, codegen.v).coerceTo(signature.getReturnType(), null, codegen.v);
+                            }
 
                             codegen.v.areturn(signature.getReturnType());
                         }

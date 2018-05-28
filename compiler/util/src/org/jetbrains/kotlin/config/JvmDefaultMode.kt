@@ -13,6 +13,9 @@ enum class JvmDefaultMode(val description: String) {
     val isEnabled
         get() = this != DISABLE
 
+    val isCompatibility
+        get() = this == ENABLE_WITH_DEFAULT_IMPLS
+
     companion object {
         @JvmField
         val DEFAULT = DISABLE

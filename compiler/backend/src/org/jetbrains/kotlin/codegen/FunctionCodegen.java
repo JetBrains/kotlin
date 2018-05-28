@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.SuspendFunctionGenerationStrategy;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
@@ -179,7 +180,10 @@ public class FunctionCodegen {
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
-        if (isInterface(containingDeclaration) && !processInterfaceMethod(functionDescriptor, contextKind, false)) return;
+        if (isInterface(containingDeclaration) &&
+            !processInterfaceMethod(functionDescriptor, contextKind, false, state.getJvmDefaultMode())) {
+            return;
+        }
 
         boolean hasSpecialBridge = hasSpecialBridgeMethod(functionDescriptor);
         JvmMethodGenericSignature jvmSignature = strategy.mapMethodSignature(functionDescriptor, typeMapper, contextKind, hasSpecialBridge);
@@ -392,7 +396,7 @@ public class FunctionCodegen {
         }
 
         if (!functionDescriptor.isExternal()) {
-            generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, memberCodegen);
+            generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, memberCodegen, state.getJvmDefaultMode());
         }
         else if (staticInCompanionObject) {
             // native @JvmStatic foo() in companion object should delegate to the static native function moved to the outer class
@@ -402,7 +406,7 @@ public class FunctionCodegen {
             Method accessorMethod =
                     typeMapper.mapAsmMethod(memberCodegen.getContext().accessibleDescriptor(staticFunctionDescriptor, null));
             Type owningType = typeMapper.mapClass((ClassifierDescriptor) staticFunctionDescriptor.getContainingDeclaration());
-            generateDelegateToStaticMethodBody(false, mv, accessorMethod, owningType.getInternalName());
+            generateDelegateToStaticMethodBody(false, mv, accessorMethod, owningType.getInternalName(), false);
         }
 
         endVisit(mv, null, origin.getElement());
@@ -574,7 +578,8 @@ public class FunctionCodegen {
             @NotNull MethodContext context,
             @NotNull JvmMethodSignature signature,
             @NotNull FunctionGenerationStrategy strategy,
-            @NotNull MemberCodegen<?> parentCodegen
+            @NotNull MemberCodegen<?> parentCodegen,
+            @NotNull JvmDefaultMode jvmDefaultMode
     ) {
         mv.visitCode();
 
@@ -594,6 +599,20 @@ public class FunctionCodegen {
 
         if (context.getParentContext() instanceof MultifileClassFacadeContext) {
             generateFacadeDelegateMethodBody(mv, signature.getAsmMethod(), (MultifileClassFacadeContext) context.getParentContext());
+            methodEnd = new Label();
+        }
+        else if (isCompatibilityStubInDefaultImpls(functionDescriptor, context, jvmDefaultMode)) {
+            FunctionDescriptor compatibility = ((DefaultImplsClassContext) context.getParentContext()).getInterfaceContext()
+                    .getAccessorForJvmDefaultCompatibility(functionDescriptor);
+            int flags = AsmUtil.getMethodAsmFlags(functionDescriptor, OwnerKind.DEFAULT_IMPLS, context.getState());
+            assert (flags & Opcodes.ACC_ABSTRACT) == 0 : "Interface method with body should be non-abstract" + functionDescriptor;
+            CallableMethod method = typeMapper.mapToCallableMethod(compatibility, false);
+
+            generateDelegateToStaticMethodBody(
+                    true, mv,
+                    method.getAsmMethod(),
+                    method.getOwner().getInternalName(),
+                    true);
             methodEnd = new Label();
         }
         else {
@@ -688,6 +707,16 @@ public class FunctionCodegen {
                         lambdaFakeIndex);
             }
         }
+    }
+
+    private static boolean isCompatibilityStubInDefaultImpls(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull MethodContext context,
+            @NotNull JvmDefaultMode jvmDefaultMode
+    ) {
+        return OwnerKind.DEFAULT_IMPLS == context.getContextKind() &&
+               hasJvmDefaultAnnotation(functionDescriptor) &&
+               jvmDefaultMode.isCompatibility();
     }
 
     private static void generateLocalVariableTable(
@@ -869,7 +898,7 @@ public class FunctionCodegen {
             @NotNull Method asmMethod,
             @NotNull MultifileClassFacadeContext context
     ) {
-        generateDelegateToStaticMethodBody(true, mv, asmMethod, context.getFilePartType().getInternalName());
+        generateDelegateToStaticMethodBody(true, mv, asmMethod, context.getFilePartType().getInternalName(), false);
     }
 
     private static void generateDelegateToMethodBody(
@@ -937,9 +966,10 @@ public class FunctionCodegen {
             boolean isStatic,
             @NotNull MethodVisitor mv,
             @NotNull Method asmMethod,
-            @NotNull String classToDelegateTo
+            @NotNull String classToDelegateTo,
+            boolean isInterfaceMethodCall
     ) {
-        generateDelegateToMethodBody(isStatic ? 0 : 1, mv, asmMethod, classToDelegateTo, Opcodes.INVOKESTATIC, false);
+        generateDelegateToMethodBody(isStatic ? 0 : 1, mv, asmMethod, classToDelegateTo, Opcodes.INVOKESTATIC, isInterfaceMethodCall);
     }
 
     private static boolean needIndexForVar(JvmMethodParameterKind kind) {
@@ -1119,7 +1149,7 @@ public class FunctionCodegen {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
 
         if (isInterface(contextClass) &&
-            !processInterfaceMethod(functionDescriptor, kind, true)) {
+            !processInterfaceMethod(functionDescriptor, kind, true, state.getJvmDefaultMode())) {
             return;
         }
 
@@ -1163,6 +1193,17 @@ public class FunctionCodegen {
             mv.visitCode();
             generateFacadeDelegateMethodBody(mv, defaultMethod, (MultifileClassFacadeContext) this.owner);
             endVisit(mv, "default method delegation", getSourceFromDescriptor(functionDescriptor));
+        }
+        else if (isCompatibilityStubInDefaultImpls(functionDescriptor, owner, state.getJvmDefaultMode())) {
+            mv.visitCode();
+            Method interfaceDefaultMethod = typeMapper.mapDefaultMethod(functionDescriptor, OwnerKind.IMPLEMENTATION);
+            generateDelegateToStaticMethodBody(
+                    true, mv,
+                    interfaceDefaultMethod,
+                    typeMapper.mapOwner(functionDescriptor).getInternalName(),
+                    true
+            );
+            endVisit(mv, "default method delegation to interface one", getSourceFromDescriptor(functionDescriptor));
         }
         else {
             mv.visitCode();
@@ -1538,14 +1579,15 @@ public class FunctionCodegen {
     public static boolean processInterfaceMethod(
             @NotNull CallableMemberDescriptor memberDescriptor,
             @NotNull OwnerKind kind,
-            boolean isDefaultOrSynthetic
+            boolean isDefaultOrSynthetic,
+            JvmDefaultMode mode
     ) {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
         assert isInterface(containingDeclaration) : "'processInterfaceMethod' method should be called only for interfaces, but: " +
                                                     containingDeclaration;
 
         if (hasJvmDefaultAnnotation(memberDescriptor)) {
-           return kind != OwnerKind.DEFAULT_IMPLS;
+           return kind != OwnerKind.DEFAULT_IMPLS || mode.isCompatibility();
         } else {
             switch (kind) {
                 case DEFAULT_IMPLS: return true;
