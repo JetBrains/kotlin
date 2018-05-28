@@ -11,7 +11,6 @@ where advanced options include:
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
   -Xdisable-standard-script  Disable standard kotlin script support
-  -Xenable-jvm-default       Allow to use '@JvmDefault' for JVM default method support
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
   -Xjavac-arguments=<option[,]> Java compiler arguments
@@ -24,6 +23,12 @@ where advanced options include:
                                * ignore
                                * strict (experimental; treat as other supported nullability annotations)
                                * warn (report a warning)
+  -Xjvm-default={disable|enable|compatibility}
+                             Allow to use '@JvmDefault' annotation for JVM default method support.
+                             Adding '@JvmDefault' annotation to existing interface member would break binary compatibility,
+                             to avoid this problem there is special 'compatibility' option
+                             that generates old-like behavior stubs in 'DefaultImpls' class.
+                             Stubs are working via additional synthetic accessors in interface.
   -Xload-builtins-from-dependencies
                              Load definitions of built-in declarations from module dependencies, instead of from the compiler
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types

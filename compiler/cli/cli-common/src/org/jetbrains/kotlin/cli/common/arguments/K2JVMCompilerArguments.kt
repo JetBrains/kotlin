@@ -224,18 +224,15 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
 
     @Argument(
-        value = "-Xoutput-imports",
-        valueDescription = "<path>",
-        description = "Output imports from all compiled files to the specified file in JSON format"
-    )
-    var outputImports: String? by FreezableVar(null)
-
-    @Argument(
-        value = "-Xjvm-default-mode",
+        value = "-Xjvm-default",
         valueDescription = "{disable|enable|compatibility}",
-        description = "Allow to use '@JvmDefault' for JVM default method support"
+        description = "Allow to use '@JvmDefault' annotation for JVM default method support.\n" +
+                "Adding '@JvmDefault' annotation to existing interface member would break binary compatibility,\n" +
+                "to avoid this problem there is special 'compatibility' option\n" +
+                "that generates old-like behavior stubs in 'DefaultImpls' class.\n" +
+                "Stubs are working via additional synthetic accessors in interface."
     )
-    var jvmDefaultMode: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
+    var jvmDefault: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
 
     @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
     var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
@@ -252,10 +249,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             jsr305,
             supportCompatqualCheckerFrameworkAnnotations
         )
-        JvmDefaultMode.fromStringOrNull(jvmDefaultMode)?.let { result[AnalysisFlag.jvmDefaultMode] = it }
+        JvmDefaultMode.fromStringOrNull(jvmDefault)?.let { result[AnalysisFlag.jvmDefaultMode] = it }
                 ?: collector.report(
                     CompilerMessageSeverity.ERROR,
-                    "Unknown @JvmDefault mode: $jvmDefaultMode, " +
+                    "Unknown @JvmDefault mode: $jvmDefault, " +
                             "supported modes: ${JvmDefaultMode.values().map { it.description }}"
                 )
         return result
