@@ -42,9 +42,9 @@ abstract class JKElementBase : JKTreeElement {
 
     final override fun detach(from: JKElement) {
         val prevParent = parent
-        assert(prevParent != null)
+        require(from == prevParent)
         parent = null
-        onDetach(prevParent!!)
+        onDetach(prevParent)
     }
 
     open fun onDetach(from: JKElement) {
@@ -52,7 +52,7 @@ abstract class JKElementBase : JKTreeElement {
     }
 
     final override fun attach(to: JKElement) {
-        assert(parent == null)
+        check(parent == null)
         parent = to
         onAttach()
     }
