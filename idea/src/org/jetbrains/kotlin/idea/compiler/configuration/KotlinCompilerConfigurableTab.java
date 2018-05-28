@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.compiler.configuration;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -125,6 +126,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         this.compilerWorkspaceSettings = compilerWorkspaceSettings;
         this.k2jvmCompilerArguments = k2jvmCompilerArguments;
         this.isProjectSettings = isProjectSettings;
+
+        warningLabel.setIcon(AllIcons.General.WarningDialog);
 
         if (isProjectSettings) {
             languageVersionComboBox.addActionListener(
