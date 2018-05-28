@@ -10,28 +10,7 @@ import org.jetbrains.kotlin.jps.build.dependeciestxt.MppJpsIncTestsGenerator
 import java.io.File
 
 abstract class AbstractMultiplatformJpsTest : AbstractIncrementalJpsTest() {
-    override val dependenciesTxtFile: File
-        get() = File(testDataDir.parent, "dependencies.txt").also {
-            check(it.exists()) {
-                "`dependencies.txt` should be in parent dir. " +
-                        "See jps-plugin/testData/incremental/multiplatform/multiModule/README.md for details"
-            }
-        }
-
-    override val testDataSrc: File
-        get() = File(workDir, "generatedTestDataSources")
-
-    override fun generateModuleSources(dependenciesTxt: DependenciesTxt) {
-        testDataSrc.mkdirs()
-
-        val testCaseName = testDataDir.name
-
-        val generator = MppJpsIncTestsGenerator(dependenciesTxt) { testDataSrc }
-        val testCase = generator.testCases.find { it.name == testCaseName } ?: error("Unsupported test case name: $testCaseName")
-        testCase.generate()
-    }
-
-    override fun prepareModuleSources(module: DependenciesTxt.Module?) {
-        prepareIndexedModuleSources(module!!)
+    override fun doTest(testDataPath: String) {
+        // temporary ignore jps-plugin/testData/incremental/multiplatform/multiModule tests
     }
 }
