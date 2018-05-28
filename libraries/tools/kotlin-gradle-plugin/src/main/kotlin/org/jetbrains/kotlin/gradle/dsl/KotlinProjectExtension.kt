@@ -16,12 +16,8 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
-import org.gradle.api.plugins.ExtensionAware
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformProjectConfigurator
-import org.jetbrains.kotlin.gradle.plugin.executeClosure
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinJavaSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinOnlySourceSetContainer
@@ -81,40 +77,6 @@ open class KotlinOnlyPlatformExtension: KotlinProjectExtension(), KotlinPlatform
 
     override val sourceSets: KotlinOnlySourceSetContainer
         get() = DslObject(this).extensions.getByType(KotlinOnlySourceSetContainer::class.java)
-}
-
-open class KotlinMultiplatformExtension : KotlinProjectExtension() {
-    internal lateinit var projectConfigurator: KotlinMultiplatformProjectConfigurator
-
-    fun common(configure: Closure<*>) = common { executeClosure(configure) }
-
-    fun common(configure: KotlinOnlyPlatformExtension.() -> Unit) {
-        getOrCreatePlatformExtension("common") { projectConfigurator.createCommonExtension() }.apply { configure() }
-    }
-
-    private inline fun <reified T : KotlinPlatformExtension> getOrCreatePlatformExtension(
-        classifier: String,
-        crossinline createExtensionIfAbsent: () -> T
-    ): T {
-        this as ExtensionAware
-        val result = extensions.findByName(classifier) ?: extensions.add(classifier, createExtensionIfAbsent())
-        return result as T
-    }
-
-
-    fun withJava(configure: KotlinWithJavaPlatformExtension.() -> Unit) {
-
-    }
-
-    fun jvm(configure: KotlinWithJavaPlatformExtension.() -> Unit) {
-        getOrCreatePlatformExtension("jvm") { projectConfigurator.createCommonExtension() }
-    }
-
-    fun js(configure: Closure<*>) = js f@{ this@f.executeClosure(configure) }
-
-    fun js(configure: KotlinOnlyPlatformExtension.() -> Unit) {
-        getOrCreatePlatformExtension("js") { projectConfigurator.createJsPlatformExtension() }.apply { configure() }
-    }
 }
 
 open class ExperimentalExtension {

@@ -26,9 +26,10 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetContainer
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCommonTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.matchSymmetricallyByNames
 
-private val Project.multiplatformExtension get() = kotlinExtension as KotlinMultiplatformExtension
+private val Project.multiplatformExtension get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
 
 internal class KotlinMultiplatformProjectConfigurator(
     private val project: Project,
@@ -64,9 +65,15 @@ internal class KotlinMultiplatformProjectConfigurator(
         val platformClassifier = "jvm$platformSuffix"
         val extension = createKotlinOnlyExtension<KotlinOnlyPlatformExtension>(platformName, platformClassifier, sourceSets)
 
-        val tasksProvider = KotlinCommonTasksProvider()
+        val tasksProvider = KotlinTasksProvider()
         configureSourceSetDefaults(extension) { sourceSet: KotlinOnlySourceSet ->
-            Kotlin2JvmSourceSetProcessor(project, sourceSet, tasksProvider, sourceSets, kotlinPluginVersion, kotlinGradleBuildServices)
+            Kotlin2JvmSourceSetProcessor(
+                project, sourceSet, tasksProvider, sourceSets, kotlinPluginVersion, kotlinGradleBuildServices, extension
+            )
+        }
+
+        project.multiplatformExtension.common {
+            linkCommonAndPlatformExtensions(this@common, extension)
         }
 
         return extension
@@ -78,7 +85,7 @@ internal class KotlinMultiplatformProjectConfigurator(
 
         val tasksProvider = KotlinCommonTasksProvider()
         configureSourceSetDefaults(extension) { sourceSet: KotlinOnlySourceSet ->
-            KotlinCommonSourceSetProcessor(project, sourceSet, tasksProvider, sourceSets)
+            KotlinCommonSourceSetProcessor(project, sourceSet, tasksProvider, sourceSets, extension)
         }
 
         return extension
@@ -93,7 +100,7 @@ internal class KotlinMultiplatformProjectConfigurator(
 
         val tasksProvider = Kotlin2JsTasksProvider()
         configureSourceSetDefaults(extension) { sourceSet: KotlinOnlySourceSet ->
-            Kotlin2JsSourceSetProcessor(project, sourceSet, tasksProvider, sourceSets)
+            Kotlin2JsSourceSetProcessor(project, sourceSet, tasksProvider, sourceSets, extension)
         }
 
         project.multiplatformExtension.common {
@@ -117,12 +124,9 @@ internal class KotlinMultiplatformProjectConfigurator(
         commonExtension: KotlinPlatformExtension,
         platformExtension: KotlinPlatformExtension
     ) {
-        matchSymmetricallyByNames(commonExtension.sourceSets, platformExtension.sourceSets) { commonSourceSet: KotlinSourceSet, _ ->
-            val platformTask = project.tasks
-                .filterIsInstance<AbstractKotlinCompile<*>>()
-                .firstOrNull { it.sourceSetName == commonSourceSet.name }
-
-            platformTask?.source(commonSourceSet.kotlin)
+        matchSymmetricallyByNames(commonExtension.sourceSets, platformExtension.sourceSets) {
+                commonSourceSet: KotlinSourceSet, platformSourceSet: KotlinSourceSet ->
+            platformSourceSet.kotlin.source(commonSourceSet.kotlin)
         }
     }
 }
@@ -145,6 +149,7 @@ internal class KotlinMultiplatformPlugin(
             kotlinGradleBuildServices, kotlinPluginVersion, buildOutputCleanupRegistry
         )
 
+        configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
         kotlinMultiplatformExtension.common { } // make it configure by default
     }
 }

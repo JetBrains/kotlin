@@ -29,12 +29,12 @@ abstract class KotlinSourceSetContainer<T : KotlinSourceSet> internal constructo
     // Needs setting when the plugin is applied. See `registerKotlinSourceSetsIfAbsent`.
     lateinit var kotlinPlatformExtension: KotlinPlatformExtension
 
-    protected open fun defaultSourceRoots(sourceSetName: String): List<File> =
-        listOf(project.file("src/$sourceSetName/kotlin"))
+    protected open fun defaultSourceLocation(sourceSetName: String): File =
+        project.file("src/$sourceSetName")
 
     protected open fun setUpSourceSetDefaults(sourceSet: T) {
         with(sourceSet) {
-            sourceSet.kotlin.srcDirs(defaultSourceRoots(sourceSet.name))
+            sourceSet.kotlin.srcDir(File(defaultSourceLocation(sourceSet.name), "kotlin"))
         }
     }
 
@@ -87,6 +87,17 @@ class KotlinOnlySourceSetContainer(
     instantiator: Instantiator,
     private val taskResolver: TaskResolver
 ) : KotlinSourceSetContainer<KotlinOnlySourceSet>(KotlinOnlySourceSet::class.java, instantiator, fileResolver, project) {
+
+    override fun defaultSourceLocation(sourceSetName: String): File =
+        if (kotlinPlatformExtension.platformDisambiguationClassifier == null)
+            super.defaultSourceLocation(sourceSetName)
+        else
+            project.file("src/${kotlinPlatformExtension.platformDisambiguationClassifier}/$sourceSetName")
+
+    override fun setUpSourceSetDefaults(sourceSet: KotlinOnlySourceSet) {
+        super.setUpSourceSetDefaults(sourceSet)
+        sourceSet.resources.srcDir(File(defaultSourceLocation(sourceSet.name), "resources"))
+    }
 
     override fun doCreateSourceSet(name: String): KotlinOnlySourceSet {
         val newSourceSetOutput = instantiator.newInstance(

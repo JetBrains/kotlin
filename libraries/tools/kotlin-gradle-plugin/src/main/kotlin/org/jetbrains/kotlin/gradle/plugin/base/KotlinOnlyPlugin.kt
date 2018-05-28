@@ -88,11 +88,16 @@ open class KotlinOnlyPlatformConfigurator(
         val apiElementsConfiguration = project.configurations.getByName(platformExtension.apiElementsConfigurationName)
         val runtimeConfiguration = project.configurations.getByName(platformExtension.runtimeConfigurationName)
 
+        platformExtension.platformDisambiguationClassifier?.let { jar.classifier = it }
+
         project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(jarArtifact)
 
         addJar(apiElementsConfiguration, jarArtifact)
         addJar(runtimeConfiguration, jarArtifact)
         // note: there's no variant configuration for now
+
+        // FIXME ensure this dependency through configurations instead:
+        project.tasks.getByName("assemble").dependsOn(jar)
     }
 
     private fun addJar(configuration: Configuration, jarArtifact: ArchivePublishArtifact) {

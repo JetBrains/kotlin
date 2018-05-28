@@ -56,8 +56,6 @@ interface KotlinBaseSourceSet : KotlinSourceSet {
     val runtimeClasspathConfigurationName: String
 
     fun compiledBy(vararg taskPaths: Any)
-
-    fun getCompileTaskName(suffix: String): String
 }
 
 abstract class AbstractKotlinSourceSet(
@@ -87,8 +85,6 @@ class KotlinJavaSourceSet(
     fileResolver: FileResolver,
     val javaSourceSet: SourceSet
 ) : AbstractKotlinSourceSet(displayName, fileResolver), KotlinBaseSourceSet {
-    override fun getCompileTaskName(suffix: String): String = composeName("compile", "Kotlin")
-
     val java: SourceDirectorySet get() = javaSourceSet.java
 
     val allJava: SourceDirectorySet get() = javaSourceSet.allJava
@@ -157,7 +153,9 @@ open class KotlinOnlySourceSet(
     val kotlinPlatformExtension: KotlinPlatformExtension
 ) : AbstractKotlinSourceSet(name, fileResolver), KotlinBaseSourceSet {
 
-    override fun getCompileTaskName(suffix: String): String = composeName("compile", suffix)
+    override fun toString(): String =
+        "source set '$name'" +
+                kotlinPlatformExtension.platformDisambiguationClassifier?.let { " ($it)" }.orEmpty()
 
     override var compileClasspath: FileCollection = project.files()
 
