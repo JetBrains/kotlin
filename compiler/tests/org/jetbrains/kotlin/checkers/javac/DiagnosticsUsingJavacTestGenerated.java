@@ -10721,6 +10721,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/propertiesWithBackingFieldsInsideInlineClass.kt");
             }
 
+            @TestMetadata("unsignedLiteralsWithoutArtifactOnClasspath.kt")
+            public void testUnsignedLiteralsWithoutArtifactOnClasspath() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/unsignedLiteralsWithoutArtifactOnClasspath.kt");
+            }
+
             @TestMetadata("varargsOnParametersOfInlineClassType.kt")
             public void testVarargsOnParametersOfInlineClassType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/varargsOnParametersOfInlineClassType.kt");

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -39,6 +38,12 @@ class IntegerValueTypeConstructor(
         // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type
         // for expected type 'Any' result type 'Int' should be returned
         val isUnsigned = parameters.isUnsigned
+
+        if (isUnsigned) {
+            assert(hasUnsignedTypesInModuleDependencies(module)) {
+                "Unsigned types should be on classpath to create an unsigned type constructor"
+            }
+        }
 
         // TODO: fix value ranges for unsigned types
         checkBoundsAndAddSuperType(
@@ -68,8 +73,7 @@ class IntegerValueTypeConstructor(
         }
     }
 
-    private fun unsignedType(classId: ClassId): SimpleType =
-        module.findClassAcrossModuleDependencies(classId)?.defaultType ?: ErrorUtils.createErrorType("Error type for $classId")
+    private fun unsignedType(classId: ClassId): SimpleType = module.findClassAcrossModuleDependencies(classId)!!.defaultType
 
     override fun getSupertypes(): Collection<KotlinType> = supertypes
 

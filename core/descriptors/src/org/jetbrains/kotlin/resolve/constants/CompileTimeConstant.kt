@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.resolve.constants
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.types.*
 
 interface CompileTimeConstant<out T> {
     val isError: Boolean
@@ -83,6 +81,39 @@ class TypedCompileTimeConstant<out T>(
         result = 31 * result + type.hashCode()
         return result
     }
+}
+
+fun createIntegerValueTypeConstant(
+    value: Number,
+    module: ModuleDescriptor,
+    parameters: CompileTimeConstant.Parameters
+): CompileTimeConstant<*> {
+    return if (parameters.isUnsigned && !hasUnsignedTypesInModuleDependencies(module)) {
+        UnsignedErrorValueTypeConstant(value, parameters)
+    } else {
+        IntegerValueTypeConstant(value, module, parameters)
+    }
+}
+
+fun hasUnsignedTypesInModuleDependencies(module: ModuleDescriptor): Boolean {
+    return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt) != null
+}
+
+class UnsignedErrorValueTypeConstant(
+    private val value: Number,
+    override val parameters: CompileTimeConstant.Parameters
+) : CompileTimeConstant<Unit> {
+    val errorValue = ErrorValue.ErrorValueWithMessage(
+        "Type cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath"
+    )
+
+    override fun toConstantValue(expectedType: KotlinType): ConstantValue<Unit> {
+        return errorValue
+    }
+
+    override fun equals(other: Any?) = other is UnsignedErrorValueTypeConstant && value == other.value
+
+    override fun hashCode() = value.hashCode()
 }
 
 class IntegerValueTypeConstant(

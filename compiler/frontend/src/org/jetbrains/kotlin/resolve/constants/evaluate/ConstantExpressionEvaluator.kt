@@ -935,7 +935,7 @@ private class ConstantExpressionEvaluatorVisitor(
         expectedType: KotlinType
     ): CompileTimeConstant<*>? {
         if (TypeUtils.noExpectedType(expectedType) || expectedType.isError) {
-            return IntegerValueTypeConstant(value, constantExpressionEvaluator.module, parameters)
+            return createIntegerValueTypeConstant(value, constantExpressionEvaluator.module, parameters)
         }
         val integerValue = ConstantValueFactory.createIntegerConstantValue(value, expectedType, parameters.isUnsigned)
         if (integerValue != null) {
