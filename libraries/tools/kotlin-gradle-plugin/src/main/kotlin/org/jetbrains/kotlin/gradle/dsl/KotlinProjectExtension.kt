@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.gradle.dsl
 import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPlugin
+import org.gradle.api.plugins.ExtensionAware
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformProjectConfigurator
 import org.jetbrains.kotlin.gradle.plugin.executeClosure
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinJavaSourceSetContainer
@@ -57,7 +58,7 @@ open class KotlinAndroidPlatformExtension : KotlinProjectExtension(), KotlinPlat
     override val platformName: String = "kotlin"
 }
 
-open class KotlinJvmPlatformExtension : KotlinProjectExtension(), KotlinPlatformExtension {
+open class KotlinWithJavaPlatformExtension : KotlinProjectExtension(), KotlinPlatformExtension {
     override val platformName: String get() = "kotlin"
     /**
      * With Gradle 4.0+, disables the separate output directory for Kotlin, falling back to sharing the deprecated
@@ -83,35 +84,36 @@ open class KotlinOnlyPlatformExtension: KotlinProjectExtension(), KotlinPlatform
 }
 
 open class KotlinMultiplatformExtension : KotlinProjectExtension() {
-    private val platformExtensionsByPlatformClassifier: MutableMap<String, KotlinPlatformExtension> = mutableMapOf()
-
-    internal lateinit var project: Project
-    internal lateinit var multiplatformPlugin: KotlinMultiplatformPlugin
+    internal lateinit var projectConfigurator: KotlinMultiplatformProjectConfigurator
 
     fun common(configure: Closure<*>) = common { executeClosure(configure) }
 
     fun common(configure: KotlinOnlyPlatformExtension.() -> Unit) {
-        getOrCreatePlatformExtension("common") { multiplatformPlugin.createCommonExtension(project) }.apply { configure() }
+        getOrCreatePlatformExtension("common") { projectConfigurator.createCommonExtension() }.apply { configure() }
     }
 
     private inline fun <reified T : KotlinPlatformExtension> getOrCreatePlatformExtension(
         classifier: String,
         crossinline createExtensionIfAbsent: () -> T
-    ): T = platformExtensionsByPlatformClassifier.computeIfAbsent(classifier) { createExtensionIfAbsent() } as T
+    ): T {
+        this as ExtensionAware
+        val result = extensions.findByName(classifier) ?: extensions.add(classifier, createExtensionIfAbsent())
+        return result as T
+    }
 
 
-    fun withJava(configure: KotlinJvmPlatformExtension.() -> Unit) {
+    fun withJava(configure: KotlinWithJavaPlatformExtension.() -> Unit) {
 
     }
 
-    fun jvm(configure: KotlinJvmPlatformExtension.() -> Unit) {
-
+    fun jvm(configure: KotlinWithJavaPlatformExtension.() -> Unit) {
+        getOrCreatePlatformExtension("jvm") { projectConfigurator.createCommonExtension() }
     }
 
     fun js(configure: Closure<*>) = js f@{ this@f.executeClosure(configure) }
 
     fun js(configure: KotlinOnlyPlatformExtension.() -> Unit) {
-        getOrCreatePlatformExtension("js") { multiplatformPlugin.createJsPlatformExtension(project) }.apply { configure() }
+        getOrCreatePlatformExtension("js") { projectConfigurator.createJsPlatformExtension() }.apply { configure() }
     }
 }
 

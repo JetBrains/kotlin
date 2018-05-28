@@ -4,7 +4,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmPlatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinWithJavaPlatformExtension
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import java.util.*
 
@@ -48,6 +48,6 @@ object CopyClassesToJavaOutputStatus {
     const val gradleVersionTooLowWarningMessage = "The 'kotlin.copyClassesToJavaOutput' option has no effect when " +
             "used with Gradle < 4.0"
 
-    private val Project.kotlinJvmExt: KotlinJvmPlatformExtension?
-        get() = extensions.findByType(KotlinJvmPlatformExtension::class.java)
+    private val Project.kotlinJvmExt: KotlinWithJavaPlatformExtension?
+        get() = extensions.findByType(KotlinWithJavaPlatformExtension::class.java)
 }

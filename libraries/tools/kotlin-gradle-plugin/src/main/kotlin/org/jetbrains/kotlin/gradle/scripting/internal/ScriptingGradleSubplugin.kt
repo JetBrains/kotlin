@@ -39,7 +39,7 @@ class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     override fun apply(
         project: Project,
         kotlinCompile: AbstractCompile,
-        javaCompile: AbstractCompile,
+        javaCompile: AbstractCompile?,
         variantData: Any?,
         androidProjectHandler: Any?,
         kotlinSourceSet: KotlinSourceSet?

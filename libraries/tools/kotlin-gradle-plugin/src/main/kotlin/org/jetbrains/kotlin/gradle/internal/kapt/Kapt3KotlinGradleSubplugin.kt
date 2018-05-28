@@ -145,7 +145,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     private inner class Kapt3SubpluginContext(
         val project: Project,
         val kotlinCompile: KotlinCompile,
-        val javaCompile: AbstractCompile,
+        val javaCompile: AbstractCompile?,
         val kaptVariantData: KaptVariantData<*>?,
         val sourceSetName: String,
         val kotlinSourceSet: KotlinSourceSet?,
@@ -158,12 +158,12 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     override fun apply(
-            project: Project,
-            kotlinCompile: KotlinCompile,
-            javaCompile: AbstractCompile,
-            variantData: Any?,
-            androidProjectHandler: Any?,
-            kotlinSourceSet: KotlinSourceSet?
+        project: Project,
+        kotlinCompile: KotlinCompile,
+        javaCompile: AbstractCompile?,
+        variantData: Any?,
+        androidProjectHandler: Any?,
+        kotlinSourceSet: KotlinSourceSet?
     ): List<SubpluginOption> {
         assert((variantData != null) xor (kotlinSourceSet != null))
 
@@ -232,7 +232,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         pluginOptions += SubpluginOption("aptMode", aptMode)
         disableAnnotationProcessingInJavaTask()
 
-        javaCompile.source(generatedFilesDir)
+        javaCompile?.source(generatedFilesDir)
 
         pluginOptions += FilesSubpluginOption("sources", listOf(generatedFilesDir))
         pluginOptions += FilesSubpluginOption("classes", listOf(getKaptGeneratedClassesDir(project, sourceSetName)))
@@ -359,10 +359,12 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         kotlinCompile.source(sourcesOutputDir, kotlinSourcesOutputDir)
 
-        if (kaptVariantData != null) {
-            kaptVariantData.registerGeneratedJavaSource(project, kaptTask, javaCompile)
-        } else {
-            registerGeneratedJavaSource(kaptTask, javaCompile)
+        if (javaCompile != null) {
+            if (kaptVariantData != null) {
+                kaptVariantData.registerGeneratedJavaSource(project, kaptTask, javaCompile)
+            } else {
+                registerGeneratedJavaSource(kaptTask, javaCompile)
+            }
         }
 
         kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
