@@ -109,7 +109,7 @@ We need to add buildscript dependencies to be able to use Kotlin plugins for Gra
     // Set up a buildscript dependency on the Kotlin plugin.
     buildscript {
         // Specify a Kotlin version you need.
-        ext.kotlin_version = '1.2.31'
+        ext.kotlin_version = '1.2.41'
 
         repositories {
             jcenter()
@@ -119,7 +119,7 @@ We need to add buildscript dependencies to be able to use Kotlin plugins for Gra
         // Specify all the plugins used as dependencies
         dependencies {
             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-            classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.7-dev-1613"
+            classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.7"
 
         }
     }
@@ -147,7 +147,7 @@ The `common` subproject contains a platform-independent code. To build it, add t
 
     dependencies {
         // Set up compilation dependency on common Kotlin stdlib
-        compile "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version"
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version"
     }
 
 Now we can write some logic available for all platforms. Create `common/src/main/kotlin/common.kt` and add some
@@ -235,8 +235,15 @@ As well as `android`, this project contains platform-dependent implementations o
 ### 3. Android application
 
 Now we can create an Android application which will use the library we implemented on the previous step. Open Android
-Studio and create a new project in the `androidApp` directory. Android Studio generates all necessary files and
-directories so we only need to add a dependency on our library. There are 2 actions we need to do:
+Studio and create a new project in the `androidApp` directory. Android Studio will generate all necessary files and
+directories.
+
+Kotlin/Native requires Gradle 4.7 or higher so you need to make sure that the AS project uses the correct
+Gradle version. To do this, open `androidApp/gradle/gradle-wrapper.properties` and check the `distributionUrl`
+property. Upgrade the wrapper if necessary
+(see [Gradle documentation](https://docs.gradle.org/current/userguide/gradle_wrapper.html#sec:upgrading_wrapper)).
+ 
+Now we only need to add a dependency on our library. There are 2 actions we need to do:
 
 1. Add dependency on the library. To do this just open `androidApp/app/build.gradle` and add the following snippet in
 the `dependencies` script block:
@@ -357,3 +364,9 @@ framework in order to get code completion). Let's print our greeting:
     func foo() {
         print(GreetingGreeting().greeting())
     }
+
+### Sample
+
+A sample implementation which follows these documenation can be found [here](https://github.com/JetBrains/kotlin-mpp-example).
+You may also look at the [calculator sample](samples/calculator). It has a simpler structure (particularly both Android app
+and Kotlin/Native library are combined in a single Gradle build) but also uses the multiplatform support provided by Kotlin. 
