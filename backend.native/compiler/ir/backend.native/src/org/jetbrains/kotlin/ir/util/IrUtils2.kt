@@ -108,8 +108,8 @@ private fun createFakeOverride(descriptor: CallableMemberDescriptor, startOffset
         is PropertyDescriptor ->
             IrPropertyImpl(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, descriptor).apply {
                 // TODO: add field if getter is missing?
-                getter = descriptor.getter?.createFunction()
-                setter = descriptor.setter?.createFunction()
+                getter = descriptor.getter?.createFunction() as IrSimpleFunction?
+                setter = descriptor.setter?.createFunction() as IrSimpleFunction?
             }
         else -> TODO(descriptor.toString())
     }
