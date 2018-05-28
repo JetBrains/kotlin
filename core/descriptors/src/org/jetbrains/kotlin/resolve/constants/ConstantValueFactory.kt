@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -51,10 +50,10 @@ object ConstantValueFactory {
 
     fun createUnsignedValue(constantValue: ConstantValue<*>, type: KotlinType): UnsignedValueConstant<*>? {
         return when (constantValue) {
-            is ByteValue -> UByteValue(constantValue, type)
-            is ShortValue -> UShortValue(constantValue, type)
-            is IntValue -> UIntValue(constantValue, type)
-            is LongValue -> ULongValue(constantValue, type)
+            is ByteValue -> UByteValue(constantValue.value)
+            is ShortValue -> UShortValue(constantValue.value)
+            is IntValue -> UIntValue(constantValue.value)
+            is LongValue -> ULongValue(constantValue.value)
             else -> null
         }
     }
@@ -66,16 +65,27 @@ object ConstantValueFactory {
 
     fun createIntegerConstantValue(
             value: Long,
-            expectedType: KotlinType
+            expectedType: KotlinType,
+            isUnsigned: Boolean
     ): ConstantValue<*>? {
         val notNullExpected = TypeUtils.makeNotNullable(expectedType)
-        return when {
-            KotlinBuiltIns.isLong(notNullExpected) -> LongValue(value)
-            KotlinBuiltIns.isInt(notNullExpected) && value == value.toInt().toLong() -> IntValue(value.toInt())
-            KotlinBuiltIns.isShort(notNullExpected) && value == value.toShort().toLong() -> ShortValue(value.toShort())
-            KotlinBuiltIns.isByte(notNullExpected) && value == value.toByte().toLong() -> ByteValue(value.toByte())
-            KotlinBuiltIns.isChar(notNullExpected) -> IntValue(value.toInt())
-            else -> null
+        return if (isUnsigned) {
+            when {
+                KotlinBuiltIns.isUByte(notNullExpected) && value == value.toByte().toLong() -> UByteValue(value.toByte())
+                KotlinBuiltIns.isUShort(notNullExpected) && value == value.toShort().toLong() -> UShortValue(value.toShort())
+                KotlinBuiltIns.isUInt(notNullExpected) && value == value.toInt().toLong() -> UIntValue(value.toInt())
+                KotlinBuiltIns.isULong(notNullExpected) -> ULongValue(value)
+                else -> null
+            }
+        } else {
+            when {
+                KotlinBuiltIns.isLong(notNullExpected) -> LongValue(value)
+                KotlinBuiltIns.isInt(notNullExpected) && value == value.toInt().toLong() -> IntValue(value.toInt())
+                KotlinBuiltIns.isShort(notNullExpected) && value == value.toShort().toLong() -> ShortValue(value.toShort())
+                KotlinBuiltIns.isByte(notNullExpected) && value == value.toByte().toLong() -> ByteValue(value.toByte())
+                KotlinBuiltIns.isChar(notNullExpected) -> IntValue(value.toInt())
+                else -> null
+            }
         }
     }
 }

@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -444,6 +447,27 @@ public class TypeUtils {
         KotlinType longType = builtIns.getLongType();
         if (supertypes.contains(longType)) {
             return longType;
+        }
+
+        KotlinType uIntType = findByFqName(supertypes, KotlinBuiltIns.FQ_NAMES.uIntFqName);
+        if (uIntType != null) return uIntType;
+
+        KotlinType uLongType = findByFqName(supertypes, KotlinBuiltIns.FQ_NAMES.uLongFqName);
+        if (uLongType != null) return uLongType;
+
+        return null;
+    }
+
+    @Nullable
+    private static KotlinType findByFqName(@NotNull Collection<KotlinType> supertypes, FqName fqName) {
+        for (KotlinType supertype : supertypes) {
+            ClassifierDescriptor descriptor = supertype.getConstructor().getDeclarationDescriptor();
+            if (descriptor == null) continue;
+
+            FqNameUnsafe descriptorFqName = DescriptorUtils.getFqName(descriptor);
+            if (descriptorFqName.equals(fqName.toUnsafe())) {
+                return supertype;
+            }
         }
         return null;
     }

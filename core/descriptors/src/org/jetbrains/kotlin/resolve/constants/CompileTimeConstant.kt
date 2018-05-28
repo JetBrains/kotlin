@@ -42,9 +42,12 @@ interface CompileTimeConstant<out T> {
 
     val isPure: Boolean get() = parameters.isPure
 
+    val isUnsigned: Boolean get() = parameters.isUnsigned
+
     class Parameters(
             val canBeUsedInAnnotation: Boolean,
             val isPure: Boolean,
+            val isUnsigned: Boolean,
             val usesVariableAsConstant: Boolean,
             val usesNonConstValAsConstant: Boolean
     )
@@ -84,10 +87,10 @@ class TypedCompileTimeConstant<out T>(
 
 class IntegerValueTypeConstant(
         private val value: Number,
-        builtIns: KotlinBuiltIns,
+        module: ModuleDescriptor,
         override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<Number> {
-    private val typeConstructor = IntegerValueTypeConstructor(value.toLong(), builtIns)
+    private val typeConstructor = IntegerValueTypeConstructor(value.toLong(), module, parameters)
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<Number> {
         val type = getType(expectedType)
@@ -95,6 +98,13 @@ class IntegerValueTypeConstant(
             KotlinBuiltIns.isInt(type) -> IntValue(value.toInt())
             KotlinBuiltIns.isByte(type) -> ByteValue(value.toByte())
             KotlinBuiltIns.isShort(type) -> ShortValue(value.toShort())
+            KotlinBuiltIns.isLong(type) -> LongValue(value.toLong())
+
+            KotlinBuiltIns.isUInt(type) -> UIntValue(value.toInt())
+            KotlinBuiltIns.isUByte(type) -> UByteValue(value.toByte())
+            KotlinBuiltIns.isUShort(type) -> UShortValue(value.toShort())
+            KotlinBuiltIns.isULong(type) -> ULongValue(value.toLong())
+
             else -> LongValue(value.toLong())
         }
     }
