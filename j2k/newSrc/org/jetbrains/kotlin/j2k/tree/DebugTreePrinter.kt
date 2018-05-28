@@ -74,14 +74,12 @@ private class DebugTreePrinter : JKVisitorVoid {
         printer.println("]")
     }
 
-    override fun visitType(type: JKType) {
+    override fun visitTypeElement(typeElement: JKTypeElement) {
+        val type = typeElement.type
         printer.println(type.classNameWithoutJK(), " \"")
         printer.indented {
             if (type is JKClassType) {
                 printer.println((type.classReference as? JKClassSymbol)?.fqName ?: type.classReference?.let { it::class } ?: "Unbound")
-            }
-            if (type is JKJavaArrayType) {
-                type.type.accept(this, null)
             }
             if (type is JKJavaPrimitiveType) {
                 printer.println(type.name)

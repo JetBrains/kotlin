@@ -127,7 +127,7 @@ class JKModifierListImpl(modifiers: List<JKModifier> = emptyList()) : JKModifier
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitModifierList(this, data)
 }
 
-class JKValueArgumentImpl(type: JKType, override val name: String) : JKValueArgument, JKBranchElementBase() {
+class JKValueArgumentImpl(type: JKTypeElement, override val name: String) : JKValueArgument, JKBranchElementBase() {
     override var type by child(type)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitValueArgument(this, data)
 }
@@ -144,8 +144,7 @@ class JKBinaryExpressionImpl(left: JKExpression, right: JKExpression, override v
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBinaryExpression(this, data)
 }
 
-class JKPrefixExpressionImpl(expression: JKExpression, operator: JKOperator) : JKPrefixExpression, JKBranchElementBase() {
-    override var operator by child(operator)
+class JKPrefixExpressionImpl(expression: JKExpression, override var operator: JKOperator) : JKPrefixExpression, JKBranchElementBase() {
     override var expression by child(expression)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPrefixExpression(this, data)
 }
@@ -192,25 +191,18 @@ class JKParenthesizedExpressionImpl(override var expression: JKExpression) : JKP
 
 }
 
-class JKTypeCastExpressionImpl(override var expression: JKExpression, override var type: JKType) : JKTypeCastExpression,
+class JKTypeCastExpressionImpl(override var expression: JKExpression, type: JKTypeElement) : JKTypeCastExpression,
     JKBranchElementBase() {
+    override var type by child(type)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeCastExpression(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        expression.accept(visitor, data)
-        type.accept(visitor, data)
-    }
 }
+
+class JKTypeElementImpl(override val type: JKType) : JKTypeElement, JKElementBase()
 
 class JKClassTypeImpl(
     override val classReference: JKClassSymbol,
-    parameters: List<JKType>,
+    override var parameters: List<JKType>,
     override val nullability: Nullability = Nullability.Default
-) : JKClassType, JKBranchElementBase() {
-
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClassType(this, data)
-
-    override var parameters: List<JKType> by children(parameters)
-}
+) : JKClassType
 
 class JKNullLiteral : JKExpression, JKElementBase()

@@ -33,14 +33,6 @@ interface JKJavaAssignmentExpression : JKExpression {
     var rExpression: JKExpression
 }
 
-interface JKJavaPrimitiveType : JKType {
-    val name: String
-}
-
-interface JKJavaArrayType : JKType {
-    val type: JKType
-}
-
 interface JKJavaMethodCallExpression : JKMethodCallExpression
 
 interface JKJavaFieldAccessExpression : JKFieldAccessExpression
