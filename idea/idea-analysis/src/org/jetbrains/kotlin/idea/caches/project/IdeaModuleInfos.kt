@@ -21,7 +21,6 @@ import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import org.jetbrains.jps.model.java.JavaSourceRootType
@@ -131,8 +130,15 @@ fun Module.findImplementedModuleNames(modelsProvider: IdeModifiableModelsProvide
     return facet?.configuration?.settings?.implementedModuleNames ?: emptyList()
 }
 
-fun Module.findImplementedModules(modelsProvider: IdeModifiableModelsProvider) =
-    findImplementedModuleNames(modelsProvider).mapNotNull { modelsProvider.findIdeModule(it) }
+fun Module.findImplementedModules() = this.cached<List<Module>>(
+    CachedValueProvider {
+        val modelsProvider = IdeModifiableModelsProviderImpl(project)
+        CachedValueProvider.Result(
+            findImplementedModuleNames(modelsProvider).mapNotNull { modelsProvider.findIdeModule(it) },
+            ProjectRootModificationTracker.getInstance(project)
+        )
+    }
+)
 
 interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
     val module: Module
@@ -154,8 +160,7 @@ interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
 sealed class ModuleSourceInfoWithExpectedBy(private val forProduction: Boolean) : ModuleSourceInfo {
     override val expectedBy: List<ModuleSourceInfo>
         get() {
-            val modelsProvider = IdeModifiableModelsProviderImpl(module.project)
-            val expectedByModules = module.findImplementedModules(modelsProvider)
+            val expectedByModules = module.findImplementedModules()
             return expectedByModules.mapNotNull { if (forProduction) it.productionSourceInfo() else it.testSourceInfo() }
         }
 
