@@ -37,22 +37,28 @@ class JKJavaFieldImpl(
 }
 
 class JKJavaMethodImpl(
-    override var modifierList: JKModifierList,
-    override var name: JKNameIdentifier,
-    override var valueArguments: List<JKValueArgument>,
-    override var block: JKBlock
-) : JKJavaMethod, JKElementBase() {
-    override val returnType: JKTypeElement
-        get() = TODO()
+    modifierList: JKModifierList,
+    returnType: JKTypeElement,
+    name: JKNameIdentifier,
+    valueArguments: List<JKValueArgument>,
+    block: JKBlock
+) : JKJavaMethod, JKBranchElementBase() {
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethod(this, data)
+
+    override var modifierList: JKModifierList by child(modifierList)
+    override var returnType: JKTypeElement by child(returnType)
+    override var name: JKNameIdentifier by child(name)
+    override var valueArguments: List<JKValueArgument> by children(valueArguments)
+    override var block: JKBlock by child(block)
 
     override val valid: Boolean
         get() = true
-
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethod(this, data)
 }
 
 class JKJavaLiteralExpressionImpl(
-    override val literal: String, override val type: JKLiteralExpression.LiteralType
+    override val literal: String,
+    override val type: JKLiteralExpression.LiteralType
 ) : JKJavaLiteralExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaLiteralExpression(this, data)
 }
@@ -76,9 +82,12 @@ sealed class JKJavaQualifierImpl : JKQualifier {
 }
 
 class JKJavaMethodCallExpressionImpl(
-    override var identifier: JKMethodSymbol, override var arguments: JKExpressionList
-) : JKJavaMethodCallExpression, JKElementBase() {
+    override var identifier: JKMethodSymbol,
+    arguments: JKExpressionList
+) : JKJavaMethodCallExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodCallExpression(this, data)
+
+    override val arguments: JKExpressionList by child(arguments)
 }
 
 class JKJavaFieldAccessExpressionImpl(override var identifier: JKFieldSymbol) : JKJavaFieldAccessExpression, JKElementBase() {
@@ -112,7 +121,7 @@ class JKJavaArrayTypeImpl(override val type: JKType) : JKJavaArrayType
 
 class JKReturnStatementImpl(expression: JKExpression) : JKBranchElementBase(), JKReturnStatement {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitReturnStatement(this, data)
-    // TODO accept
+
     override val expression by child(expression)
 }
 
@@ -121,6 +130,8 @@ class JKJavaAssignmentExpressionImpl(
     rExpression: JKExpression/*,
     TODO operation:? */
 ) : JKBranchElementBase(), JKJavaAssignmentExpression {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaAssignmentExpression(this, data)
+
     override var lExpression: JKExpression by child(lExpression)
     override var rExpression: JKExpression by child(rExpression)
 }

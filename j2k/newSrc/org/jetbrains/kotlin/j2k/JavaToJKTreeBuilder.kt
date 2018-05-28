@@ -241,8 +241,11 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiMethod.toJK(): JKJavaMethod {
             return JKJavaMethodImpl(
-                with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name),
-                parameterList.parameters.map { it -> it.toJK() }, body?.toJK() ?: TODO()
+                with(modifierMapper) { modifierList.toJK() },
+                with(expressionTreeMapper) { returnTypeElement?.toJK() ?: TODO() },
+                JKNameIdentifierImpl(name),
+                parameterList.parameters.map { it -> it.toJK() },
+                body?.toJK() ?: TODO()
             ).also {
                 (symbolProvider.provideSymbol(this) as? JKUniverseMethodSymbol)?.run { target = it }
             }

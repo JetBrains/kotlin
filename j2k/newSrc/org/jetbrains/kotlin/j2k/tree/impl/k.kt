@@ -63,24 +63,21 @@ sealed class JKKtQualifierImpl : JKQualifier, JKElementBase() {
 
 class JKKtCallExpressionImpl(
     override val identifier: JKMethodSymbol,
-    override val arguments: JKExpressionList
-) : JKKtMethodCallExpression, JKElementBase() {
+    arguments: JKExpressionList
+) : JKKtMethodCallExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtMethodCallExpression(this, data)
 
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        arguments.accept(visitor, data)
-    }
+    override var arguments: JKExpressionList by child(arguments)
 }
 
 class JKKtFieldAccessExpressionImpl(override val identifier: JKFieldSymbol) : JKKtFieldAccessExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtFieldAccessExpression(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
 }
 
-class JKKtLiteralExpressionImpl(override val literal: String, override val type: JKLiteralExpression.LiteralType) : JKKtLiteralExpression,
+class JKKtLiteralExpressionImpl(
+    override val literal: String,
+    override val type: JKLiteralExpression.LiteralType
+) : JKKtLiteralExpression,
     JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtLiteralExpression(this, data)
 }
