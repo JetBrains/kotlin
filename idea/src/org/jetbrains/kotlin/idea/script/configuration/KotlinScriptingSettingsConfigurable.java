@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager;
+import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,13 +22,16 @@ import java.awt.*;
 public class KotlinScriptingSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
     private JPanel root;
     private JPanel panelScriptDefinitionsChooser;
+    private JCheckBox scriptDependenciesAutoReload;
 
     private KotlinScriptDefinitionsModel model;
 
     private final ScriptDefinitionsManager manager;
+    private final KotlinScriptingSettings settings;
 
     public KotlinScriptingSettingsConfigurable(Project project) {
         manager = ScriptDefinitionsManager.Companion.getInstance(project);
+        settings = KotlinScriptingSettings.Companion.getInstance(project);
     }
 
     @Nullable
@@ -48,19 +52,24 @@ public class KotlinScriptingSettingsConfigurable implements SearchableConfigurab
 
     @Override
     public boolean isModified() {
-        return !model.getItems().equals(manager.getAllDefinitions());
+        return isModified(scriptDependenciesAutoReload, settings.isAutoReloadEnabled())
+               || !model.getItems().equals(manager.getAllDefinitions());
     }
 
     @Override
     public void apply() {
+        settings.setAutoReloadEnabled(scriptDependenciesAutoReload.isSelected());
+
+
         // todo
     }
 
     @Override
     public void reset() {
+        scriptDependenciesAutoReload.setSelected(settings.isAutoReloadEnabled());
+
         // todo
     }
-
 
     @Override
     @Nls
