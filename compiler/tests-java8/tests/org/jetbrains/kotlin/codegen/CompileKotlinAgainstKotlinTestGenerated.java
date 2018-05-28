@@ -81,6 +81,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
                 runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8/defaults/superCallFromInterface.kt");
             }
 
+            @TestMetadata("superCallFromInterface2.kt")
+            public void testSuperCallFromInterface2() throws Exception {
+                runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8/defaults/superCallFromInterface2.kt");
+            }
+
             @TestMetadata("superPropAccess.kt")
             public void testSuperPropAccess() throws Exception {
                 runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccess.kt");
@@ -89,6 +94,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
             @TestMetadata("superPropAccessFromInterface.kt")
             public void testSuperPropAccessFromInterface() throws Exception {
                 runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface.kt");
+            }
+
+            @TestMetadata("superPropAccessFromInterface2.kt")
+            public void testSuperPropAccessFromInterface2() throws Exception {
+                runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface2.kt");
             }
         }
     }
