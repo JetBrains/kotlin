@@ -227,10 +227,11 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         value = "-Xjvm-default",
         valueDescription = "{disable|enable|compatibility}",
         description = "Allow to use '@JvmDefault' annotation for JVM default method support.\n" +
-                "Adding '@JvmDefault' annotation to existing interface member would break binary compatibility,\n" +
-                "to avoid this problem there is special 'compatibility' option\n" +
-                "that generates old-like behavior stubs in 'DefaultImpls' class.\n" +
-                "Stubs are working via additional synthetic accessors in interface."
+                "-Xjvm-default=disable         Prohibit usages of @JvmDefault\n" +
+                "-Xjvm-default=enable          Allow usages of @JvmDefault; only generate the default method\n" +
+                "                              in the interface (annotating an existing method can break binary compatibility)\n" +
+                "-Xjvm-default=compatibility   Allow usages of @JvmDefault; generate a compatibility accessor\n" +
+                "                              in the 'DefaultImpls' class in addition to the interface method"
     )
     var jvmDefault: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
 
