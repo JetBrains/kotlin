@@ -15,7 +15,7 @@ private const val ILLEGAL_CONFIG_ANN_ARG =
 
 open class AnnotationsBasedCompilationConfigurator(val environment: ScriptingEnvironment) : ScriptCompilationConfigurator {
 
-    override val defaultConfiguration by lazy {
+    override val defaultConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val baseClass = environment.getScriptBaseClass(this)
         val cfg = baseClass.annotations.filterIsInstance(KotlinScriptDefaultCompilationConfiguration::class.java).flatMap { ann ->
             val params = try {

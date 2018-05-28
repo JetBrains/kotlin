@@ -13,6 +13,7 @@ class JvmGetScriptingClass : GetScriptingClass {
 
     private var dependencies: List<ScriptDependency>? = null
     private var classLoader: ClassLoader? = null
+    private var baseClassLoaderIsInitialized = false
     private var baseClassLoader: ClassLoader? = null
 
     @Synchronized
@@ -20,10 +21,11 @@ class JvmGetScriptingClass : GetScriptingClass {
 
         // checking if class already loaded in the same context
         val contextClassloader = contextClass.java.classLoader
-        if (classType.fromClass != null) {
-            if (classType.fromClass!!.java.classLoader == null) return classType.fromClass!! // root classloader
-            val actualClassLoadersChain = generateSequence(classType.fromClass!!.java.classLoader) { it.parent }
-            if (actualClassLoadersChain.any { it == contextClassloader }) return classType.fromClass!!
+        val fromClass = classType.fromClass
+        if (fromClass != null) {
+            if (fromClass.java.classLoader == null) return fromClass // root classloader
+            val actualClassLoadersChain = generateSequence(contextClassloader) { it.parent }
+            if (actualClassLoadersChain.any { it == fromClass.java.classLoader }) return fromClass
         }
 
         val newDeps = environment.getOrNull(ScriptingEnvironmentProperties.configurationDependencies)
@@ -33,9 +35,10 @@ class JvmGetScriptingClass : GetScriptingClass {
             if (newDeps != dependencies) throw IllegalArgumentException("scripting environment dependencies changed")
         }
 
-        if (baseClassLoader == null) {
+        if (!baseClassLoaderIsInitialized) {
             baseClassLoader = contextClassloader
-        } else {
+            baseClassLoaderIsInitialized = true
+        } else if (baseClassLoader != null) {
             val baseClassLoadersChain = generateSequence(baseClassLoader) { it.parent }
             if (baseClassLoadersChain.none { it == contextClassloader }) throw IllegalArgumentException("scripting class instantiation context changed")
         }

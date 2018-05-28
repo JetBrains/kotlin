@@ -19,7 +19,7 @@ private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
 open class ScriptDefinitionFromAnnotatedBaseClass(val environment: ScriptingEnvironment) : ScriptDefinition {
 
     private val getScriptingClass = environment.getOrNull(ScriptingEnvironmentProperties.getScriptingClass)
-            ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting 'getClass' parameter in the scripting environment")
+            ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting 'getScriptingClass' parameter in the scripting environment")
 
     private val baseClass: KClass<*> = run {
         val baseClassType = environment.getOrNull(ScriptingEnvironmentProperties.baseClass)

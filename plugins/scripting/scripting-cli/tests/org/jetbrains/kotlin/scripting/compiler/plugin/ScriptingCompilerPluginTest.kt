@@ -36,7 +36,7 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
         const val TEST_DATA_DIR = "plugins/scripting/scripting-cli/testData"
     }
 
-    private val kotlinPaths: KotlinPaths by lazy {
+    private val kotlinPaths: KotlinPaths by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val paths = PathUtil.kotlinPathsForDistDirectory
         TestCase.assertTrue("Lib directory doesn't exist. Run 'ant dist'", paths.libPath.absoluteFile.isDirectory)
         paths

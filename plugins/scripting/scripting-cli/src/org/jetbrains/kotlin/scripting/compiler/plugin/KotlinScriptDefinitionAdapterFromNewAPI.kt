@@ -26,7 +26,7 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
 
     protected abstract val scriptFileExtensionWithDot: String
 
-    open val baseClass: KClass<*> by lazy {
+    open val baseClass: KClass<*> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         getScriptingClass(scriptDefinition.compilationConfigurator.defaultConfiguration[ScriptingEnvironmentProperties.baseClass])
     }
 
@@ -48,33 +48,30 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
     override val annotationsForSamWithReceivers: List<String>
         get() = emptyList()
 
-    override val dependencyResolver: DependenciesResolver by lazy {
+    override val dependencyResolver: DependenciesResolver by lazy(LazyThreadSafetyMode.PUBLICATION) {
         BridgeDependenciesResolver(scriptDefinition.compilationConfigurator)
     }
 
-    override val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
-        val annNames =
-            scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)
-                    ?: emptyList()
-        annNames.map { getScriptingClass(it) as KClass<out Annotation> }
+    override val acceptedAnnotations: List<KClass<out Annotation>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)
+            .orEmpty()
+            .map { getScriptingClass(it) as KClass<out Annotation> }
     }
 
-    override val implicitReceivers: List<KType> by lazy {
-        val rcNames =
-            scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.scriptImplicitReceivers)
-                    ?: emptyList()
-        rcNames.map { getScriptingClass(it).starProjectedType }
+    override val implicitReceivers: List<KType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.scriptImplicitReceivers)
+            .orEmpty()
+            .map { getScriptingClass(it).starProjectedType }
     }
 
-    override val environmentVariables: List<Pair<String, KType>> by lazy {
+    override val environmentVariables: List<Pair<String, KType>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.contextVariables)
-            ?.map { (k, v) -> k to getScriptingClass(v).starProjectedType }
-                ?: emptyList()
+            ?.map { (k, v) -> k to getScriptingClass(v).starProjectedType }.orEmpty()
     }
 
     override val additionalCompilerArguments: List<String>
         get() = scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.compilerOptions)
-                ?: emptyList()
+            .orEmpty()
 
     override val scriptExpectedLocations: List<ScriptExpectedLocation> =
         listOf(
@@ -82,7 +79,7 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
             ScriptExpectedLocation.TestsOnly
         )
 
-    private val scriptingClassGetter by lazy {
+    private val scriptingClassGetter by lazy(LazyThreadSafetyMode.PUBLICATION) {
         scriptDefinition.properties.getOrNull(ScriptingEnvironmentProperties.getScriptingClass)
                 ?: throw IllegalArgumentException("Expecting 'getScriptingClass' property in the scripting environment")
     }

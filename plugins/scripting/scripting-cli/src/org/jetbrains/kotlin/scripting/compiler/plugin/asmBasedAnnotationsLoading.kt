@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.*
 
 internal class BinAnnData(
     val name: String,
@@ -25,19 +20,12 @@ private class TemplateAnnotationVisitor(val anns: ArrayList<BinAnnData> = arrayL
 
 private class TemplateClassVisitor(val annVisitor: TemplateAnnotationVisitor) : ClassVisitor(Opcodes.ASM5) {
     override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
-        val shortName = jvmDescToClassId(desc).shortClassName.asString()
+        val shortName = Type.getType(desc).internalName.substringAfterLast("/")
         if (shortName.startsWith("KotlinScript")) {
             annVisitor.anns.add(BinAnnData(shortName))
         }
         return annVisitor
     }
-}
-
-private fun jvmDescToClassId(desc: String): ClassId {
-    assert(desc.startsWith("L") && desc.endsWith(";")) { "Not a JVM descriptor: $desc" }
-    val name = desc.substring(1, desc.length - 1)
-    val cid = ClassId.topLevel(FqName(name.replace('/', '.')))
-    return cid
 }
 
 internal fun loadAnnotationsFromClass(fileContents: ByteArray): ArrayList<BinAnnData> {

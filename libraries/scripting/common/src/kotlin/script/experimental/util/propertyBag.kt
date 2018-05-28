@@ -33,13 +33,7 @@ open class ChainedPropertyBag private constructor(private val parent: ChainedPro
 
     inline operator fun <reified T> get(key: TypedKey<T>): T = getRaw(key) as T
 
-    fun <T> getRaw(key: TypedKey<T>): Any? =
-        when {
-            data.containsKey(key) -> data[key]
-            parent != null -> parent.getRaw(key)
-            key.defaultValue != null -> key.defaultValue
-            else -> throw IllegalArgumentException("Unknown key $key")
-        }
+    fun <T> getRaw(key: TypedKey<T>): Any? = getOrNullRaw(key) ?: throw IllegalArgumentException("Unknown key $key")
 
     inline fun <reified T> getOrNull(key: TypedKey<T>): T? = getOrNullRaw(key)?.let { it as T }
 
