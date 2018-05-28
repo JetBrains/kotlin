@@ -181,7 +181,7 @@ public class FunctionCodegen {
         OwnerKind contextKind = methodContext.getContextKind();
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
         if (isInterface(containingDeclaration) &&
-            !processInterfaceMethod(functionDescriptor, contextKind, false, state.getJvmDefaultMode())) {
+            !processInterfaceMethod(functionDescriptor, contextKind, false, false, state.getJvmDefaultMode())) {
             return;
         }
 
@@ -1149,7 +1149,7 @@ public class FunctionCodegen {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
 
         if (isInterface(contextClass) &&
-            !processInterfaceMethod(functionDescriptor, kind, true, state.getJvmDefaultMode())) {
+            !processInterfaceMethod(functionDescriptor, kind, true, false, state.getJvmDefaultMode())) {
             return;
         }
 
@@ -1579,7 +1579,8 @@ public class FunctionCodegen {
     public static boolean processInterfaceMethod(
             @NotNull CallableMemberDescriptor memberDescriptor,
             @NotNull OwnerKind kind,
-            boolean isDefaultOrSynthetic,
+            boolean isDefault,
+            boolean isSynthetic,
             JvmDefaultMode mode
     ) {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
@@ -1587,11 +1588,12 @@ public class FunctionCodegen {
                                                     containingDeclaration;
 
         if (hasJvmDefaultAnnotation(memberDescriptor)) {
-           return kind != OwnerKind.DEFAULT_IMPLS || mode.isCompatibility();
+            return (kind != OwnerKind.DEFAULT_IMPLS && !isSynthetic) ||
+                   (kind == OwnerKind.DEFAULT_IMPLS && (isSynthetic || mode.isCompatibility()));
         } else {
             switch (kind) {
                 case DEFAULT_IMPLS: return true;
-                case IMPLEMENTATION: return !Visibilities.isPrivate(memberDescriptor.getVisibility()) && !isDefaultOrSynthetic;
+                case IMPLEMENTATION: return !Visibilities.isPrivate(memberDescriptor.getVisibility()) && !isDefault && !isSynthetic;
                 default: return false;
             }
         }

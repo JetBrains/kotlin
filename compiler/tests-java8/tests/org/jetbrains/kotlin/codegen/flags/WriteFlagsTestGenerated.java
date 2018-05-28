@@ -61,6 +61,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             runTest("compiler/testData/codegen/java8/writeFlags/defaults/defaultProperty.kt");
         }
 
+        @TestMetadata("propertyAnnotation.kt")
+        public void testPropertyAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/java8/writeFlags/defaults/propertyAnnotation.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/java8/writeFlags/defaults/compatibility")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -76,6 +81,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @TestMetadata("propertyAccessors.kt")
             public void testPropertyAccessors() throws Exception {
                 runTest("compiler/testData/codegen/java8/writeFlags/defaults/compatibility/propertyAccessors.kt");
+            }
+
+            @TestMetadata("propertyAnnotation.kt")
+            public void testPropertyAnnotation() throws Exception {
+                runTest("compiler/testData/codegen/java8/writeFlags/defaults/compatibility/propertyAnnotation.kt");
             }
         }
     }
