@@ -214,7 +214,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         return if (getterSymbol != null || setterSymbol != null) {
             val typeArgumentsList =
                 typeArgumentsMap?.let { typeArguments ->
-                    descriptor.typeParameters.map { typeArguments[it]!!.toIrType() }
+                    descriptor.original.typeParameters.map { typeArguments[it]!!.toIrType() }
                 }
             AccessorPropertyLValue(
                 context,
