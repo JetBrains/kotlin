@@ -941,11 +941,17 @@ private class ConstantExpressionEvaluatorVisitor(
         if (integerValue != null) {
             return integerValue.wrap(parameters)
         }
-        return when (value) {
-            value.toInt().toLong() ->
-                if (parameters.isUnsigned) UIntValue(value.toInt()) else IntValue(value.toInt())
-            else ->
-                if (parameters.isUnsigned) ULongValue(value) else LongValue(value)
+
+        return if (parameters.isUnsigned) {
+            when (value) {
+                value.toInt().fromUIntToLong() -> UIntValue(value.toInt())
+                else -> ULongValue(value)
+            }
+        } else {
+            when (value) {
+                value.toInt().toLong() -> IntValue(value.toInt())
+                else -> LongValue(value)
+            }
         }.wrap(parameters)
     }
 
@@ -975,14 +981,19 @@ private fun parseNumericLiteral(text: String, type: IElementType): Any? {
 }
 
 private fun parseLong(text: String): Long? {
-    try {
-        fun substringSuffix(s: String) = if (hasLongSuffix(text) || hasUnsignedSuffix(text)) s.substring(0, s.length - 1) else s
-        fun parseLong(text: String, radix: Int) = java.lang.Long.parseLong(substringSuffix(text), radix)
+    return try {
+        val hasUnsignedSuffix = hasUnsignedSuffix(text)
+        val hasLongSuffix = hasLongSuffix(text)
+        val textWithoutSuffix = if (hasUnsignedSuffix || hasLongSuffix) text.substring(0, text.length - 1) else text
+        val (number, radix) = extractRadix(textWithoutSuffix)
 
-        val (number, radix) = extractRadix(text)
-        return parseLong(number, radix)
+        if (hasUnsignedSuffix) {
+            java.lang.Long.parseUnsignedLong(number, radix)
+        } else {
+            java.lang.Long.parseLong(number, radix)
+        }
     } catch (e: NumberFormatException) {
-        return null
+        null
     }
 }
 

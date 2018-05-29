@@ -71,9 +71,9 @@ object ConstantValueFactory {
         val notNullExpected = TypeUtils.makeNotNullable(expectedType)
         return if (isUnsigned) {
             when {
-                KotlinBuiltIns.isUByte(notNullExpected) && value == value.toByte().toLong() -> UByteValue(value.toByte())
-                KotlinBuiltIns.isUShort(notNullExpected) && value == value.toShort().toLong() -> UShortValue(value.toShort())
-                KotlinBuiltIns.isUInt(notNullExpected) && value == value.toInt().toLong() -> UIntValue(value.toInt())
+                KotlinBuiltIns.isUByte(notNullExpected) && value == value.toByte().fromUByteToLong() -> UByteValue(value.toByte())
+                KotlinBuiltIns.isUShort(notNullExpected) && value == value.toShort().fromUShortToLong() -> UShortValue(value.toShort())
+                KotlinBuiltIns.isUInt(notNullExpected) && value == value.toInt().fromUIntToLong() -> UIntValue(value.toInt())
                 KotlinBuiltIns.isULong(notNullExpected) -> ULongValue(value)
                 else -> null
             }
@@ -89,3 +89,7 @@ object ConstantValueFactory {
         }
     }
 }
+
+fun Byte.fromUByteToLong(): Long = this.toLong() and 0xFF
+fun Short.fromUShortToLong(): Long = this.toLong() and 0xFFFF
+fun Int.fromUIntToLong(): Long = this.toLong() and 0xFFFF_FFFF

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -45,30 +46,14 @@ class IntegerValueTypeConstructor(
             }
         }
 
-        // TODO: fix value ranges for unsigned types
-        checkBoundsAndAddSuperType(
-            value,
-            Integer.MIN_VALUE.toLong(),
-            Integer.MAX_VALUE.toLong(),
-            if (isUnsigned) unsignedType(KotlinBuiltIns.FQ_NAMES.uInt) else builtIns.intType
-        )
-        checkBoundsAndAddSuperType(
-            value,
-            java.lang.Byte.MIN_VALUE.toLong(),
-            java.lang.Byte.MAX_VALUE.toLong(),
-            if (isUnsigned) unsignedType(KotlinBuiltIns.FQ_NAMES.uByte) else builtIns.byteType
-        )
-        checkBoundsAndAddSuperType(
-            value,
-            java.lang.Short.MIN_VALUE.toLong(),
-            java.lang.Short.MAX_VALUE.toLong(),
-            if (isUnsigned) unsignedType(KotlinBuiltIns.FQ_NAMES.uShort) else builtIns.shortType
-        )
+        checkBoundsAndAddSuperType(value, if (isUnsigned) unsignedType(KotlinBuiltIns.FQ_NAMES.uInt) else builtIns.intType)
+        checkBoundsAndAddSuperType(value, if (isUnsigned) unsignedType(KotlinBuiltIns.FQ_NAMES.uByte) else builtIns.byteType)
+        checkBoundsAndAddSuperType(value, if (isUnsigned) unsignedType(KotlinBuiltIns.FQ_NAMES.uShort) else builtIns.shortType)
         supertypes.add(if (isUnsigned) unsignedType(KotlinBuiltIns.FQ_NAMES.uLong) else builtIns.longType)
     }
 
-    private fun checkBoundsAndAddSuperType(value: Long, minValue: Long, maxValue: Long, kotlinType: KotlinType) {
-        if (value >= minValue && value <= maxValue) {
+    private fun checkBoundsAndAddSuperType(value: Long, kotlinType: KotlinType) {
+        if (value in kotlinType.minValue()..kotlinType.maxValue()) {
             supertypes.add(kotlinType)
         }
     }
@@ -93,3 +78,32 @@ class IntegerValueTypeConstructor(
 
     override fun toString() = "IntegerValueType($value)"
 }
+
+private fun KotlinType.minValue(): Long {
+    if (UnsignedTypes.isUnsignedType(this)) return 0
+    return when {
+        KotlinBuiltIns.isByte(this) -> Byte.MIN_VALUE.toLong()
+        KotlinBuiltIns.isShort(this) -> Short.MIN_VALUE.toLong()
+        KotlinBuiltIns.isInt(this) -> Int.MIN_VALUE.toLong()
+        else -> error("Can't get min value for type: $this")
+    }
+}
+
+private fun KotlinType.maxValue(): Long {
+    return when {
+        KotlinBuiltIns.isByte(this) -> Byte.MAX_VALUE.toLong()
+        KotlinBuiltIns.isShort(this) -> Short.MAX_VALUE.toLong()
+        KotlinBuiltIns.isInt(this) -> Int.MAX_VALUE.toLong()
+
+        KotlinBuiltIns.isUByte(this) -> UBYTE_MAX_VALUE
+        KotlinBuiltIns.isUShort(this) -> USHORT_MAX_VALUE
+        KotlinBuiltIns.isUInt(this) -> UINT_MAX_VALUE
+
+        else -> error("Can't get max value for type: $this")
+    }
+}
+
+private val UBYTE_MAX_VALUE = (-1).toByte().fromUByteToLong()
+private val USHORT_MAX_VALUE = (-1).toShort().fromUShortToLong()
+private val UINT_MAX_VALUE = (-1).fromUIntToLong()
+
