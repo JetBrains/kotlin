@@ -6,7 +6,7 @@
 
 # Kotlin 프로그래밍 언어
 
-[Kotlin]에 어서오세요 (https://kotlinlang.org/)! 몇몇 쓸만한 링크는 다음과 같습니다:
+[Kotlin](https://kotlinlang.org/)에 어서오세요! 몇몇 쓸만한 링크는 다음과 같습니다:
 
  * [Kotlin 사이트](https://kotlinlang.org/)
  * [입문 가이드](https://kotlinlang.org/docs/tutorials/getting-started.html)
@@ -40,7 +40,7 @@ Kotlin 배포판을 빌드하기 위해서는 다음과 같은 것들이 필요�
 
 바이트코드를 생성하지 않거나, 표준 라이브러리를 갖고 개발하지 않는 경우(예: 개인 또는 소규모 단위의 개발)에는, JDK 1.8 과 JDK 9 만 설치하고, JDK_16 과 JDK_17 환경변수가 본인이 설치한 JDK 1.8을 가리키도록 하면 됩니다.
 
-[Gradle 속성](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_properties_and_system_properties) 를 이용해서 JDK_* 변수들을 설정할 수도 있습니다.
+[Gradle 속성](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_properties_and_system_properties) 을 이용해서 JDK_* 변수들을 설정할 수도 있습니다.
 
 > 참고: MacOS 용 JDK 6 은 Oracle의 사이트에서 구할 수 없습니다. [여기](https://support.apple.com/kb/DL1572) 에서 다운받을 수 있습니다. 
 
