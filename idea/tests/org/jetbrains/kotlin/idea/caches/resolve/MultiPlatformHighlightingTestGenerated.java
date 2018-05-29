@@ -94,6 +94,11 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         runTest("idea/testData/multiModuleHighlighting/multiplatform/javaUsesPlatformFacade/");
     }
 
+    @TestMetadata("multifileFacade")
+    public void testMultifileFacade() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/multifileFacade/");
+    }
+
     @TestMetadata("nestedClassWithoutImpl")
     public void testNestedClassWithoutImpl() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/nestedClassWithoutImpl/");
