@@ -54,11 +54,11 @@ Windows에서는 다음과 같습니다:
 
     gradlew <tasks-and-options>
 
-On the first project configuration gradle will download and setup the dependencies on
+첫 프로젝트 설정에서 gradle은 다음과 같은 의존성들을 내려받고 설치할 것입니다:
 
 
-* `intellij-core` is a part of command line compiler and contains only necessary APIs.
-* `idea-full` is a full blown IntelliJ IDEA Community Edition to be used in the plugin module.
+* `intellij-core` 은 커맨드 라인 컴파일러의 일부분이고 가장 핵심적인 API만을 가지고 있습니다.
+* `idea-full` 은 플러그인 모듈에서 사용될 완전한 IntelliJ IDEA Community Edition입니다.
 
 These dependencies are quite large, so depending on the quality of your internet connection 
 you might face timeouts getting them. In this case you can increase timeout by specifying the following 
