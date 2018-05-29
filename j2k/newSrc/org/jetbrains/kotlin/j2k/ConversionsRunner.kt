@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k
 
+import org.jetbrains.kotlin.j2k.conversions.AssignmentAsExpressionToAlsoConversion
 import org.jetbrains.kotlin.j2k.conversions.FieldToPropertyConversion
 import org.jetbrains.kotlin.j2k.conversions.JavaMethodToKotlinFunctionConversion
 import org.jetbrains.kotlin.j2k.conversions.TypeMappingConversion
@@ -28,6 +29,7 @@ object ConversionsRunner {
         trees.forEach {
             FieldToPropertyConversion().runConversion(it, context)
             TypeMappingConversion(context).runConversion(it, context)
+            AssignmentAsExpressionToAlsoConversion(context).runConversion(it, context)
             JavaMethodToKotlinFunctionConversion().runConversion(it, context)
         }
     }
