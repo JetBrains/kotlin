@@ -1475,6 +1475,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/addPropertyAccessors/both/local.kt");
             }
 
+            @TestMetadata("noType.kt")
+            public void testNoType() throws Exception {
+                runTest("idea/testData/intentions/addPropertyAccessors/both/noType.kt");
+            }
+
             @TestMetadata("top.kt")
             public void testTop() throws Exception {
                 runTest("idea/testData/intentions/addPropertyAccessors/both/top.kt");
@@ -1543,6 +1548,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/addPropertyAccessors/getter/local.kt");
             }
 
+            @TestMetadata("noType.kt")
+            public void testNoType() throws Exception {
+                runTest("idea/testData/intentions/addPropertyAccessors/getter/noType.kt");
+            }
+
             @TestMetadata("top.kt")
             public void testTop() throws Exception {
                 runTest("idea/testData/intentions/addPropertyAccessors/getter/top.kt");
@@ -1604,6 +1614,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("local.kt")
             public void testLocal() throws Exception {
                 runTest("idea/testData/intentions/addPropertyAccessors/setter/local.kt");
+            }
+
+            @TestMetadata("noType.kt")
+            public void testNoType() throws Exception {
+                runTest("idea/testData/intentions/addPropertyAccessors/setter/noType.kt");
             }
 
             @TestMetadata("top.kt")
