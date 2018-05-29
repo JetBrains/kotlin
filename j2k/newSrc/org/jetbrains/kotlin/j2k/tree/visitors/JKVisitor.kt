@@ -37,6 +37,7 @@ interface JKVisitor<out R, in D> {
     fun visitValueArgument(valueArgument: JKValueArgument, data: D): R = visitTreeElement(valueArgument, data)
     fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression, data: D): R = visitLiteralExpression(stringLiteralExpression, data)
     fun visitStubExpression(stubExpression: JKStubExpression, data: D): R = visitExpression(stubExpression, data)
+    fun visitAssertStatement(assertStatement: JKAssertStatement, data: D): R = visitStatement(assertStatement, data)
     fun visitJavaField(javaField: JKJavaField, data: D): R = visitField(javaField, data)
     fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): R = visitMethod(javaMethod, data)
     fun visitJavaForLoop(javaForLoop: JKJavaForLoop, data: D): R = visitLoop(javaForLoop, data)

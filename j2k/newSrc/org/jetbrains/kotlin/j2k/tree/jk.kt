@@ -157,3 +157,8 @@ interface JKStringLiteralExpression : JKLiteralExpression {
 }
 
 interface JKStubExpression : JKExpression
+
+interface JKAssertStatement : JKStatement {
+    val condition: JKExpression
+    val description: JKExpression
+}

@@ -71,6 +71,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression, data: Nothing?) = visitStringLiteralExpression(stringLiteralExpression)
     fun visitStubExpression(stubExpression: JKStubExpression) = visitExpression(stubExpression, null)
     override fun visitStubExpression(stubExpression: JKStubExpression, data: Nothing?) = visitStubExpression(stubExpression)
+    fun visitAssertStatement(assertStatement: JKAssertStatement) = visitStatement(assertStatement, null)
+    override fun visitAssertStatement(assertStatement: JKAssertStatement, data: Nothing?) = visitAssertStatement(assertStatement)
     fun visitJavaField(javaField: JKJavaField) = visitField(javaField, null)
     override fun visitJavaField(javaField: JKJavaField, data: Nothing?) = visitJavaField(javaField)
     fun visitJavaMethod(javaMethod: JKJavaMethod) = visitMethod(javaMethod, null)

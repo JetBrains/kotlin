@@ -107,6 +107,12 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         fun PsiJavaToken.toJK(): JKOperator = when (tokenType) {
             JavaTokenType.PLUS -> JKJavaOperatorImpl.PLUS
             JavaTokenType.MINUS -> JKJavaOperatorImpl.MINUS
+            JavaTokenType.EQEQ -> JKJavaOperatorImpl.EQEQ
+            JavaTokenType.NE -> JKJavaOperatorImpl.NE
+            JavaTokenType.GT -> JKJavaOperatorImpl.GT
+            JavaTokenType.LT -> JKJavaOperatorImpl.LT
+            JavaTokenType.GE -> JKJavaOperatorImpl.GE
+            JavaTokenType.LE -> JKJavaOperatorImpl.LE
             else -> throw RuntimeException("Not supported")
         }
 
@@ -283,6 +289,9 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiExpressionStatement -> JKExpressionStatementImpl(with(expressionTreeMapper) { expression.toJK() })
                 is PsiReturnStatement -> JKReturnStatementImpl(with(expressionTreeMapper) { returnValue?.toJK() ?: JKStubExpressionImpl() })
                 is PsiDeclarationStatement -> JKDeclarationStatementImpl(declaredElements.toJK())
+                is PsiAssertStatement -> JKAssertStatementImpl(
+                    with(expressionTreeMapper) { assertCondition?.toJK() } ?: JKStubExpressionImpl(),
+                    with(expressionTreeMapper) { assertDescription?.toJK() } ?: JKStubExpressionImpl())
                 else -> TODO("for ${this::class}")
             }
         }

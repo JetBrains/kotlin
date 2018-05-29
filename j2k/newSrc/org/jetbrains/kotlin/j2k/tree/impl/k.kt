@@ -81,4 +81,6 @@ class JKKtLiteralExpressionImpl(
 sealed class JKKtOperatorImpl : JKOperator, JKElementBase() {
     object PLUS : JKKtOperatorImpl()
     object MINUS : JKKtOperatorImpl()
+    object EQEQ : JKKtOperatorImpl()
+    object NE : JKKtOperatorImpl()
 }
