@@ -174,3 +174,22 @@ class JKAssertStatementImpl(condition: JKExpression, description: JKExpression) 
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAssertStatement(this, data)
 }
+
+object JKBodyStub : JKBlock, JKTreeElement {
+    override var statements: List<JKStatement>
+        get() = emptyList()
+        set(value) {}
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlock(this, data)
+
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {}
+
+    override val parent: JKElement?
+        get() = null
+
+    override fun detach(from: JKElement) {
+    }
+
+    override fun attach(to: JKElement) {
+    }
+}
