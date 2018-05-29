@@ -29,6 +29,11 @@ public class DiagnosticsWithUnsignedTypesGenerated extends AbstractDiagnosticsWi
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithUnsignedTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("overloadResolutionOfBasicOperations.kt")
+    public void testOverloadResolutionOfBasicOperations() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/overloadResolutionOfBasicOperations.kt");
+    }
+
     @TestMetadata("unsignedLiteralsInsideConstVals.kt")
     public void testUnsignedLiteralsInsideConstVals() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/unsignedLiteralsInsideConstVals.kt");
