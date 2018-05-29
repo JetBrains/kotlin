@@ -28,7 +28,7 @@ interface JKJavaMethod : JKMethod, JKBranchElement {
 
 interface JKJavaForLoop : JKLoop
 
-interface JKJavaAssignmentExpression : JKExpression {
+interface JKJavaAssignmentExpression : JKExpression, JKBranchElement {
     var lExpression: JKExpression
     var rExpression: JKExpression
 }
