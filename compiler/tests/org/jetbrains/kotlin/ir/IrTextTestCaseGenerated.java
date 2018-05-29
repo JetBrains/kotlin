@@ -867,6 +867,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/implicitCastOnPlatformType.kt");
         }
 
+        @TestMetadata("implicitCastToNonNull.kt")
+        public void testImplicitCastToNonNull() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/implicitCastToNonNull.kt");
+        }
+
         @TestMetadata("implicitCastToTypeParameter.kt")
         public void testImplicitCastToTypeParameter() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/implicitCastToTypeParameter.kt");

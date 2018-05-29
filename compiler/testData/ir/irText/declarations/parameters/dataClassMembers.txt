@@ -101,9 +101,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'hashCode(): Int' type=kotlin.Int origin=null
-                  $this: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                    typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-                    GET_VAR 'tmp1: T' type=T origin=null
+                  $this: GET_VAR 'tmp1: T' type=T origin=null
         SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
           CALL 'plus(Int): Int' type=kotlin.Int origin=null
             $this: CALL 'times(Int): Int' type=kotlin.Int origin=null

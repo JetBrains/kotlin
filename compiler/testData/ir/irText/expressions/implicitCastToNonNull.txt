@@ -1,0 +1,89 @@
+FILE fqName:<root> fileName:/implicitCastToNonNull.kt
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:Int flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.String? flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test1(String?): Int'
+        WHEN type=kotlin.Int origin=null
+          BRANCH
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'value-parameter x: String?' type=kotlin.String? origin=null
+              arg1: CONST Null type=kotlin.Nothing? value=null
+            then: CONST Int type=kotlin.Int value=0
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
+              $this: GET_VAR 'value-parameter x: String?' type=kotlin.String? origin=null
+  FUN name:test2 visibility:public modality:FINAL <T> (x:T) returnType:Int flags:
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.CharSequence?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:CharSequence modality:ABSTRACT visibility:public flags:
+    VALUE_PARAMETER name:x index:0 type:T flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test2(T): Int'
+        WHEN type=kotlin.Int origin=null
+          BRANCH
+            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'value-parameter x: T' type=T origin=null
+              arg1: CONST Null type=kotlin.Nothing? value=null
+            then: CONST Int type=kotlin.Int value=0
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
+              $this: GET_VAR 'value-parameter x: T' type=T origin=null
+  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:Int flags:inline
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.CharSequence?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:CharSequence modality:ABSTRACT visibility:public flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test3(Any): Int'
+        WHEN type=kotlin.Int origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T
+              typeOperand: TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.CharSequence?]
+              GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+            then: CONST Int type=kotlin.Int value=0
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
+              $this: TYPE_OP type=kotlin.CharSequence origin=IMPLICIT_CAST typeOperand=kotlin.CharSequence
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:CharSequence modality:ABSTRACT visibility:public flags:
+                GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
+  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any?) returnType:Int flags:inline
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.CharSequence]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:CharSequence modality:ABSTRACT visibility:public flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test4(Any?): Int'
+        WHEN type=kotlin.Int origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T
+              typeOperand: TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.CharSequence]
+              GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+            then: CONST Int type=kotlin.Int value=0
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
+              $this: TYPE_OP type=kotlin.CharSequence origin=IMPLICIT_CAST typeOperand=kotlin.CharSequence
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:CharSequence modality:ABSTRACT visibility:public flags:
+                GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+  FUN name:test5 visibility:public modality:FINAL <T, S> (x:T, fn:(S) -> kotlin.Unit) returnType:Unit flags:
+    TYPE_PARAMETER name:T index:0 variance: upperBounds:[S?]
+      superClassifiers:
+        TYPE_PARAMETER name:S index:1 variance: upperBounds:[kotlin.Any?]
+    TYPE_PARAMETER name:S index:1 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+    VALUE_PARAMETER name:x index:0 type:T flags:
+    VALUE_PARAMETER name:fn index:1 type:(S) -> kotlin.Unit flags:
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'value-parameter x: T' type=T origin=null
+              arg1: CONST Null type=kotlin.Nothing? value=null
+          then: CALL 'invoke(S): Unit' type=kotlin.Unit origin=INVOKE
+            $this: GET_VAR 'value-parameter fn: (S) -> Unit' type=(S) -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
+            p1: GET_VAR 'value-parameter x: T' type=T origin=null
