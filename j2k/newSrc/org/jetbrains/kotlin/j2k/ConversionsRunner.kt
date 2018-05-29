@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.j2k
 
-import org.jetbrains.kotlin.j2k.conversions.AssignmentAsExpressionToAlsoConversion
-import org.jetbrains.kotlin.j2k.conversions.FieldToPropertyConversion
-import org.jetbrains.kotlin.j2k.conversions.JavaMethodToKotlinFunctionConversion
-import org.jetbrains.kotlin.j2k.conversions.TypeMappingConversion
+import org.jetbrains.kotlin.j2k.conversions.*
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 
 object ConversionsRunner {
@@ -31,6 +28,7 @@ object ConversionsRunner {
             TypeMappingConversion(context).runConversion(it, context)
             AssignmentAsExpressionToAlsoConversion(context).runConversion(it, context)
             JavaMethodToKotlinFunctionConversion().runConversion(it, context)
+            LiteralConversion().runConversion(it, context)
         }
     }
 
