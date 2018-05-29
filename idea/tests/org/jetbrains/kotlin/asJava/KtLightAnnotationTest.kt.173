@@ -555,6 +555,24 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
 
     }
 
+    fun testJavaKeywordsInName() {
+        myFixture.configureByText(
+            "AnnotatedClass.kt", """
+            package my.public.place
+
+            annotation class Anno1(val import: String)
+
+            @Anno1(import = "full")
+            class AnnotatedClass
+        """.trimIndent()
+        )
+
+        val annotations = myFixture.findClass("my.public.place.AnnotatedClass").expectAnnotations(1)
+        val annotation = annotations.first()
+        TestCase.assertEquals("my.public.place.Anno1", annotation.qualifiedName)
+        assertTextAndRange("\"full\"", annotation.findAttributeValue("import")!!)
+    }
+
     fun testWrongNamesPassed() {
         myFixture.configureByText("AnnotatedClass.kt", """
             annotation class Anno1(val i:Int , val j: Int)
