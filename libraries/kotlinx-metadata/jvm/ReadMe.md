@@ -99,7 +99,7 @@ val header = KotlinClassMetadata.Class.Writer().run {
     visitConstructor(flagsOf(Flag.IS_PUBLIC, Flag.Constructor.IS_PRIMARY))!!.run {
         // Visiting JVM signature (for example, to be used by kotlin-reflect)
         (visitExtensions(JvmConstructorExtensionVisitor.TYPE) as JvmConstructorExtensionVisitor).run {
-            visit("<init>()V")
+            visit(JvmMethodSignature("<init>", "()V"))
         }
         
         // Not forgetting to call visitEnd at the end of visit of the declaration

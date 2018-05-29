@@ -42,7 +42,7 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
         override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? {
             if (type != JvmFunctionExtensionVisitor.TYPE) return null
             return object : JvmFunctionExtensionVisitor() {
-                override fun visit(desc: JvmMemberSignature?) {
+                override fun visit(desc: JvmMethodSignature?) {
                     jvmDesc = desc
                 }
 
@@ -114,13 +114,13 @@ private fun visitProperty(
         override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? {
             if (type != JvmPropertyExtensionVisitor.TYPE) return null
             return object : JvmPropertyExtensionVisitor() {
-                override fun visit(fieldDesc: JvmMemberSignature?, getterDesc: JvmMemberSignature?, setterDesc: JvmMemberSignature?) {
+                override fun visit(fieldDesc: JvmFieldSignature?, getterDesc: JvmMethodSignature?, setterDesc: JvmMethodSignature?) {
                     jvmFieldDesc = fieldDesc
                     jvmGetterDesc = getterDesc
                     jvmSetterDesc = setterDesc
                 }
 
-                override fun visitSyntheticMethodForAnnotations(desc: JvmMemberSignature?) {
+                override fun visitSyntheticMethodForAnnotations(desc: JvmMethodSignature?) {
                     jvmSyntheticMethodForAnnotationsDesc = desc
                 }
             }
@@ -193,7 +193,7 @@ private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisi
         override fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? {
             if (type != JvmConstructorExtensionVisitor.TYPE) return null
             return object : JvmConstructorExtensionVisitor() {
-                override fun visit(desc: JvmMemberSignature?) {
+                override fun visit(desc: JvmMethodSignature?) {
                     jvmDesc = desc
                 }
             }

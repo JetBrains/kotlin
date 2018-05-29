@@ -48,13 +48,13 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             if (propertySignature != null && propertySignature.hasSetter()) propertySignature.setter else null
         ext.visit(
             fieldSignature?.wrapAsPublic(),
-            getterSignature?.run { JvmMemberSignature.Method(strings.getString(name), strings.getString(desc)) },
-            setterSignature?.run { JvmMemberSignature.Method(strings.getString(name), strings.getString(desc)) }
+            getterSignature?.run { JvmMethodSignature(strings.getString(name), strings.getString(desc)) },
+            setterSignature?.run { JvmMethodSignature(strings.getString(name), strings.getString(desc)) }
         )
 
         val syntheticMethod =
             if (propertySignature != null && propertySignature.hasSyntheticMethod()) propertySignature.syntheticMethod else null
-        ext.visitSyntheticMethodForAnnotations(syntheticMethod?.run { JvmMemberSignature.Method(strings.getString(name), strings.getString(desc)) })
+        ext.visitSyntheticMethodForAnnotations(syntheticMethod?.run { JvmMethodSignature(strings.getString(name), strings.getString(desc)) })
 
         ext.visitEnd()
     }
@@ -97,7 +97,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmFunctionExtensionVisitor? {
         if (type != JvmFunctionExtensionVisitor.TYPE) return null
         return object : JvmFunctionExtensionVisitor() {
-            override fun visit(desc: JvmMemberSignature?) {
+            override fun visit(desc: JvmMethodSignature?) {
                 if (desc != null) {
                     proto.setExtension(JvmProtoBuf.methodSignature, desc.toJvmMethodSignature(strings))
                 }
@@ -116,7 +116,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         return object : JvmPropertyExtensionVisitor() {
             var signature: JvmProtoBuf.JvmPropertySignature.Builder? = null
 
-            override fun visit(fieldDesc: JvmMemberSignature?, getterDesc: JvmMemberSignature?, setterDesc: JvmMemberSignature?) {
+            override fun visit(fieldDesc: JvmFieldSignature?, getterDesc: JvmMethodSignature?, setterDesc: JvmMethodSignature?) {
                 if (fieldDesc == null && getterDesc == null && setterDesc == null) return
 
                 if (signature == null) {
@@ -138,7 +138,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
                 }
             }
 
-            override fun visitSyntheticMethodForAnnotations(desc: JvmMemberSignature?) {
+            override fun visitSyntheticMethodForAnnotations(desc: JvmMethodSignature?) {
                 if (desc == null) return
 
                 if (signature == null) {
@@ -161,7 +161,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmConstructorExtensionVisitor? {
         if (type != JvmConstructorExtensionVisitor.TYPE) return null
         return object : JvmConstructorExtensionVisitor() {
-            override fun visit(desc: JvmMemberSignature?) {
+            override fun visit(desc: JvmMethodSignature?) {
                 if (desc != null) {
                     proto.setExtension(JvmProtoBuf.constructorSignature, desc.toJvmMethodSignature(strings))
                 }

@@ -6,10 +6,7 @@
 package kotlinx.metadata.test
 
 import kotlinx.metadata.*
-import kotlinx.metadata.jvm.JvmConstructorExtensionVisitor
-import kotlinx.metadata.jvm.JvmFunctionExtensionVisitor
-import kotlinx.metadata.jvm.KotlinClassHeader
-import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.*
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert.assertEquals
@@ -44,9 +41,9 @@ class MetadataSmokeTest {
                         if (type != JvmFunctionExtensionVisitor.TYPE) return null
 
                         return object : JvmFunctionExtensionVisitor() {
-                            override fun visit(desc: String?) {
+                            override fun visit(desc: JvmMethodSignature?) {
                                 if (Flag.Function.IS_INLINE(flags) && desc != null) {
-                                    inlineFunctions += desc
+                                    inlineFunctions += desc.asString()
                                 }
                             }
                         }
@@ -72,7 +69,7 @@ class MetadataSmokeTest {
             visit(flagsOf(Flag.IS_PUBLIC), "Hello")
             visitConstructor(flagsOf(Flag.IS_PUBLIC, Flag.Constructor.IS_PRIMARY))!!.run {
                 (visitExtensions(JvmConstructorExtensionVisitor.TYPE) as JvmConstructorExtensionVisitor).run {
-                    visit("<init>()V")
+                    visit(JvmMethodSignature("<init>", "()V"))
                 }
                 visitEnd()
             }
@@ -82,7 +79,7 @@ class MetadataSmokeTest {
                     visitEnd()
                 }
                 (visitExtensions(JvmFunctionExtensionVisitor.TYPE) as JvmFunctionExtensionVisitor).run {
-                    visit("hello()Ljava/lang/String;")
+                    visit(JvmMethodSignature("hello", "()Ljava/lang/String;"))
                 }
                 visitEnd()
             }

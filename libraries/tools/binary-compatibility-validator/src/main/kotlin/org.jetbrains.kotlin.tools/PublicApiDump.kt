@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.tools
 
+import kotlinx.metadata.jvm.JvmFieldSignature
+import kotlinx.metadata.jvm.JvmMethodSignature
 import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
 import java.io.InputStream
 import java.util.jar.JarFile
-import kotlinx.metadata.jvm.JvmMemberSignature as MemberSignature
 
 fun main(args: Array<String>) {
     val src = args[0]
@@ -44,8 +45,8 @@ fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityFilter: (String)
                 val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
 
                 val memberSignatures = (
-                        fields.map { with(it) { FieldBinarySignature(MemberSignature.Field(name, desc), isPublishedApi(), AccessFlags(access)) } } +
-                        methods.map { with(it) { MethodBinarySignature(MemberSignature.Method(name, desc), isPublishedApi(), AccessFlags(access)) } }
+                        fields.map { with(it) { FieldBinarySignature(JvmFieldSignature(name, desc), isPublishedApi(), AccessFlags(access)) } } +
+                        methods.map { with(it) { MethodBinarySignature(JvmMethodSignature(name, desc), isPublishedApi(), AccessFlags(access)) } }
                 ).filter {
                     it.isEffectivelyPublic(classAccess, mVisibility)
                 }
