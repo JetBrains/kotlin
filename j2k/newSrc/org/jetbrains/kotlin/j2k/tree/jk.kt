@@ -47,7 +47,10 @@ interface JKMethod : JKDeclaration, JKModifierListOwner {
 interface JKField : JKDeclaration, JKModifierListOwner {
     val type: JKTypeElement
     val name: JKNameIdentifier
+    val initializer: JKExpression
 }
+
+interface JKLocalVariable : JKField
 
 interface JKModifier : JKTreeElement
 
@@ -81,6 +84,10 @@ interface JKExpression : JKTreeElement
 
 interface JKExpressionStatement : JKStatement {
     val expression: JKExpression
+}
+
+interface JKDeclarationStatement : JKStatement {
+    val declaredStatements: List<JKDeclaration>
 }
 
 interface JKBinaryExpression : JKExpression {
@@ -148,3 +155,5 @@ interface JKValueArgument : JKTreeElement {
 interface JKStringLiteralExpression : JKLiteralExpression {
     val text: String
 }
+
+interface JKStubExpression : JKExpression

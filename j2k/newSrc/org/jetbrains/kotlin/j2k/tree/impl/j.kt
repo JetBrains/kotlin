@@ -21,13 +21,8 @@ import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
-class JKJavaFieldImpl(
-    modifierList: JKModifierList,
-    type: JKTypeElement,
-    name: JKNameIdentifier,
-    initializer: JKExpression
-) : JKJavaField, JKBranchElementBase() {
-
+class JKJavaFieldImpl(modifierList: JKModifierList, type: JKTypeElement, name: JKNameIdentifier, initializer: JKExpression) : JKJavaField,
+    JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaField(this, data)
 
     override var initializer: JKExpression by child(initializer)
@@ -37,13 +32,8 @@ class JKJavaFieldImpl(
 }
 
 class JKJavaMethodImpl(
-    modifierList: JKModifierList,
-    returnType: JKTypeElement,
-    name: JKNameIdentifier,
-    valueArguments: List<JKValueArgument>,
-    block: JKBlock
+    modifierList: JKModifierList, returnType: JKTypeElement, name: JKNameIdentifier, valueArguments: List<JKValueArgument>, block: JKBlock
 ) : JKJavaMethod, JKBranchElementBase() {
-
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethod(this, data)
 
     override var modifierList: JKModifierList by child(modifierList)
@@ -64,7 +54,6 @@ class JKJavaLiteralExpressionImpl(
         require(type in setOf(STRING, CHAR, INT, LONG, FLOAT, DOUBLE))
     }
 }
-
 
 class JKJavaAccessModifierImpl(override val type: JKJavaAccessModifier.AccessModifierType) : JKJavaAccessModifier, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaAccessModifier(this, data)

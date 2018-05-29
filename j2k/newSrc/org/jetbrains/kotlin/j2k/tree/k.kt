@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.j2k.tree
 
 interface JKKtProperty : JKField {
-    val initializer: JKExpression
     val getter: JKBlock
     val setter: JKBlock
 }
