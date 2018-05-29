@@ -1,8 +1,4 @@
-The Apache 2 license (given in full in LICENSE.txt) applies to all code in this repository which is copyright
-by JetBrains. The following sections of the repository contain third-party code, to which different licenses
-may apply:
-
-이 저장소 중에서 JetBrains에게 저작권이 있는 모든 코드에는 아파치2 라이센스(LICENSE.txt에 전체 내용이 있음)가 적용됩니다.
+이 저장소에서 JetBrains에게 저작권이 있는 모든 코드에는 아파치2 라이센스(LICENSE.txt에 전체 내용이 있음)가 적용됩니다.
 저장소의 다음 섹션에는 다른 라이센스가 적용될 수있는 제 3자 코드가 들어 있습니다.
 
 ## Kotlin Compiler
