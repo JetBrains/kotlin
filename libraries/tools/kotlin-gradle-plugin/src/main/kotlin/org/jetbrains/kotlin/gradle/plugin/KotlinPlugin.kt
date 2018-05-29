@@ -29,8 +29,7 @@ import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.incremental.stackTraceStr
-import org.jetbrains.kotlin.scripting.gradle.ScriptingGradleSubplugin
+import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -338,7 +337,10 @@ internal abstract class AbstractKotlinPlugin(
     internal abstract fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String): KotlinSourceSetProcessor<*>
 
     override fun apply(project: Project) {
-        project.configurations.create(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
+        project.configurations.create(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
+            // todo: Consider removing if org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser stops using parent last classloader
+            isTransitive = false
+        }
 
         val javaBasePlugin = project.plugins.apply(JavaBasePlugin::class.java)
         val javaPluginConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
