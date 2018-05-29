@@ -168,7 +168,7 @@ private object ByJvmSignatureIndexer : DecompiledTextIndexer<ClassNameAndSignatu
             if (signature != null) {
                 val fieldSignature = JvmProtoBufUtil.getJvmFieldSignature(proto, descriptor.nameResolver, descriptor.typeTable)
                 if (fieldSignature != null) {
-                    save(className, MemberSignature.fromFieldNameAndDesc(fieldSignature.name, fieldSignature.desc))
+                    save(className, MemberSignature.fromJvmMemberSignature(fieldSignature))
                 }
                 if (signature.hasGetter()) {
                     save(className, MemberSignature.fromMethod(descriptor.nameResolver, signature.getter))

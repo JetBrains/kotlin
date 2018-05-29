@@ -64,7 +64,7 @@ object JvmProtoBufUtil {
             proto: ProtoBuf.Function,
             nameResolver: NameResolver,
             typeTable: TypeTable
-    ): JvmMemberSignature? {
+    ): JvmMemberSignature.Method? {
         val signature = proto.getExtensionOrNull(JvmProtoBuf.methodSignature)
         val name = if (signature != null && signature.hasName()) signature.name else proto.name
         val desc = if (signature != null && signature.hasDesc()) {
@@ -78,14 +78,14 @@ object JvmProtoBufUtil {
 
             parametersDesc.joinToString(separator = "", prefix = "(", postfix = ")") + returnTypeDesc
         }
-        return JvmMemberSignature(nameResolver.getString(name), desc)
+        return JvmMemberSignature.Method(nameResolver.getString(name), desc)
     }
 
     fun getJvmConstructorSignature(
             proto: ProtoBuf.Constructor,
             nameResolver: NameResolver,
             typeTable: TypeTable
-    ): JvmMemberSignature? {
+    ): JvmMemberSignature.Method? {
         val signature = proto.getExtensionOrNull(JvmProtoBuf.constructorSignature)
         val desc = if (signature != null && signature.hasDesc()) {
             nameResolver.getString(signature.desc)
@@ -95,14 +95,14 @@ object JvmProtoBufUtil {
                 mapTypeDefault(it.type(typeTable), nameResolver) ?: return null
             }.joinToString(separator = "", prefix = "(", postfix = ")V")
         }
-        return JvmMemberSignature("<init>", desc)
+        return JvmMemberSignature.Method("<init>", desc)
     }
 
     fun getJvmFieldSignature(
             proto: ProtoBuf.Property,
             nameResolver: NameResolver,
             typeTable: TypeTable
-    ): JvmMemberSignature? {
+    ): JvmMemberSignature.Field? {
         val signature = proto.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return null
         val field =
                 if (signature.hasField()) signature.field else null
@@ -112,7 +112,7 @@ object JvmProtoBufUtil {
                 if (field != null && field.hasDesc()) nameResolver.getString(field.desc)
                 else mapTypeDefault(proto.returnType(typeTable), nameResolver) ?: return null
 
-        return JvmMemberSignature(nameResolver.getString(name), desc)
+        return JvmMemberSignature.Field(nameResolver.getString(name), desc)
     }
 
 

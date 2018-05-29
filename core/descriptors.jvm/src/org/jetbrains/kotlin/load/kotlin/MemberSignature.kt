@@ -40,9 +40,9 @@ data class MemberSignature private constructor(internal val signature: String) {
         }
 
         @JvmStatic
-        fun fromJvmMemberSignature(signature: JvmMemberSignature): MemberSignature = when {
-            signature.isField -> fromFieldNameAndDesc(signature.name, signature.desc)
-            else -> fromMethodNameAndDesc(signature.name, signature.desc)
+        fun fromJvmMemberSignature(signature: JvmMemberSignature): MemberSignature = when (signature) {
+            is JvmMemberSignature.Method -> fromMethodNameAndDesc(signature.name, signature.desc)
+            is JvmMemberSignature.Field -> fromFieldNameAndDesc(signature.name, signature.desc)
         }
 
         @JvmStatic

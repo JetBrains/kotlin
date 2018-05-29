@@ -53,13 +53,8 @@ import kotlin.reflect.jvm.internal.structure.*
 internal sealed class JvmFunctionSignature {
     abstract fun asString(): String
 
-    class KotlinFunction(val signature: JvmMemberSignature) : JvmFunctionSignature() {
-        private val _signature = signature.toString()
-
-        init {
-            require(signature.isMethod)
-        }
-
+    class KotlinFunction(val signature: JvmMemberSignature.Method) : JvmFunctionSignature() {
+        private val _signature = signature.asString()
 
         val methodName: String get() = signature.name
         val methodDesc: String get() = signature.desc
@@ -67,12 +62,8 @@ internal sealed class JvmFunctionSignature {
         override fun asString(): String = _signature
     }
 
-    class KotlinConstructor(val signature: JvmMemberSignature) : JvmFunctionSignature() {
-        private val _signature = signature.toString()
-
-        init {
-            require(signature.isMethod)
-        }
+    class KotlinConstructor(val signature: JvmMemberSignature.Method) : JvmFunctionSignature() {
+        private val _signature = signature.asString()
 
         val constructorDesc: String get() = signature.desc
 

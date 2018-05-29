@@ -4,6 +4,7 @@
  */
 
 package kotlinx.metadata.jvm
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature as JvmMemberSignatureImpl
 
 /**
  * A signature of JVM method or field
@@ -11,19 +12,24 @@ package kotlinx.metadata.jvm
  * @property name name of method or field
  * @property desc JVM descriptor of a method, e.g. `(Ljava/lang/Object;)Z`, or a field type, e.g. `Ljava/lang/String;`
  */
-data class JvmMemberSignature(val name: String, val desc: String) {
+sealed class JvmMemberSignature {
 
-    /**
-     * Returns `true` when this signature represents a field.
-     */
-    val isField: Boolean get() = desc.indexOf("(") < 0
+    abstract val name: String
+    abstract val desc: String
 
-    /**
-     * Returns `true` when this signature represents a method.
-     */
-    val isMethod: Boolean get() = desc.indexOf("(") >= 0
+    data class Method(override val name: String, override val desc: String) : JvmMemberSignature() {
+        override fun asString() = name + desc
+    }
 
-    override fun toString() = if (isField) name + ":" + desc else name + desc
+    data class Field(override val name: String, override val desc: String) : JvmMemberSignature() {
+        override fun asString() = name + ":" + desc
+    }
+
+    final override fun toString() = asString()
+    abstract fun asString(): String
 }
 
-internal fun org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature.wrapAsPublic() = JvmMemberSignature(name, desc)
+internal fun JvmMemberSignatureImpl.wrapAsPublic() = when (this) {
+    is JvmMemberSignatureImpl.Method -> JvmMemberSignature.Method(name, desc)
+    is JvmMemberSignatureImpl.Field -> JvmMemberSignature.Field(name, desc)
+}

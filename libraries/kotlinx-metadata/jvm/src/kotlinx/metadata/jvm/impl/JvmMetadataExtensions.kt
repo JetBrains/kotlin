@@ -48,13 +48,13 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             if (propertySignature != null && propertySignature.hasSetter()) propertySignature.setter else null
         ext.visit(
             fieldSignature?.wrapAsPublic(),
-            getterSignature?.run { JvmMemberSignature(strings.getString(name), strings.getString(desc)) },
-            setterSignature?.run { JvmMemberSignature(strings.getString(name), strings.getString(desc)) }
+            getterSignature?.run { JvmMemberSignature.Method(strings.getString(name), strings.getString(desc)) },
+            setterSignature?.run { JvmMemberSignature.Method(strings.getString(name), strings.getString(desc)) }
         )
 
         val syntheticMethod =
             if (propertySignature != null && propertySignature.hasSyntheticMethod()) propertySignature.syntheticMethod else null
-        ext.visitSyntheticMethodForAnnotations(syntheticMethod?.run { JvmMemberSignature(strings.getString(name), strings.getString(desc)) })
+        ext.visitSyntheticMethodForAnnotations(syntheticMethod?.run { JvmMemberSignature.Method(strings.getString(name), strings.getString(desc)) })
 
         ext.visitEnd()
     }
