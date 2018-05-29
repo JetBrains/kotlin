@@ -806,15 +806,4 @@ class KotlinGradleIT : BaseGradleIT() {
             assertNotNull(metaInfDir.listFiles().singleOrNull { it.name.endsWith(".kotlin_module") })
         }
     }
-
-    @Test
-    fun testScripting() {
-        Project("kotlinScripting").build("build") {
-            assertSuccessful()
-            assertCompiledKotlinSources(
-                listOf("app/src/main/kotlin/world.greet.kts", "script-template/src/main/kotlin/GreetScriptTemplate.kt")
-            )
-            assertFileExists("${kotlinClassesDir("app", "main")}World_greet.class")
-        }
-    }
 }
