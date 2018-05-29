@@ -31,7 +31,7 @@ class JvmRuntimeTypes(module: ModuleDescriptor, private val languageVersionSetti
     private fun klass(name: String) = lazy { createClass(kotlinJvmInternalPackage, name) }
 
     private val lambda: ClassDescriptor by klass("Lambda")
-    private val functionReference: ClassDescriptor by klass("FunctionReference")
+    val functionReference: ClassDescriptor by klass("FunctionReference")
     private val localVariableReference: ClassDescriptor by klass("LocalVariableReference")
     private val mutableLocalVariableReference: ClassDescriptor by klass("MutableLocalVariableReference")
     private val coroutineImplClass by lazy { createClass(kotlinCoroutinesJvmInternalPackage, "CoroutineImpl") }
@@ -94,12 +94,14 @@ class JvmRuntimeTypes(module: ModuleDescriptor, private val languageVersionSetti
         val receivers = computeExpectedNumberOfReceivers(referencedFunction, isBound)
 
         val functionType = createFunctionType(
-                referencedFunction.builtIns,
-                Annotations.EMPTY,
-                if (isBound) null else referencedFunction.extensionReceiverParameter?.type ?: referencedFunction.dispatchReceiverParameter?.type,
-                anonymousFunctionDescriptor.valueParameters.drop(receivers).map { it.type },
-                null,
-                referencedFunction.returnType!!
+            referencedFunction.builtIns,
+            Annotations.EMPTY,
+            if (isBound) null else referencedFunction.extensionReceiverParameter?.type
+                    ?: referencedFunction.dispatchReceiverParameter?.type,
+            anonymousFunctionDescriptor.valueParameters.drop(receivers).map { it.type },
+            null,
+            referencedFunction.returnType!!,
+            referencedFunction.isSuspend
         )
 
         return listOf(functionReference.defaultType, functionType)

@@ -39,7 +39,8 @@ class FunctionClassDescriptor(
     enum class Kind(val packageFqName: FqName, val classNamePrefix: String) {
         Function(BUILT_INS_PACKAGE_FQ_NAME, "Function"),
         SuspendFunction(BUILT_INS_PACKAGE_FQ_NAME, "SuspendFunction"),
-        KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction");
+        KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction"),
+        KSuspendFunction(KOTLIN_REFLECT_FQ_NAME, "KSuspendFunction");
 
         fun numberedClassName(arity: Int) = Name.identifier("$classNamePrefix$arity")
 
@@ -118,13 +119,13 @@ class FunctionClassDescriptor(
             }
 
 
-            if (functionKind == Kind.SuspendFunction) {
-                // SuspendFunction$N<...> <: Any
-                result.add(containingDeclaration.builtIns.anyType)
-            }
-            else {
-                // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
-                add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
+            when (functionKind) {
+                Kind.SuspendFunction -> // SuspendFunction$N<...> <: Function
+                    add(containingDeclaration, Name.identifier("Function"))
+                Kind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
+                    add(containingDeclaration, Name.identifier("KFunction"))
+                else -> // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
+                    add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
             }
 
             // For KFunction{n}, add corresponding numbered Function{n} class, e.g. Function2 for KFunction2
@@ -133,6 +134,11 @@ class FunctionClassDescriptor(
                 val kotlinPackageFragment = packageView.fragments.filterIsInstance<BuiltInsPackageFragment>().first()
 
                 add(kotlinPackageFragment, Kind.Function.numberedClassName(arity))
+            } else if (functionKind == Kind.KSuspendFunction) {
+                val packageView = containingDeclaration.containingDeclaration.getPackage(BUILT_INS_PACKAGE_FQ_NAME)
+                val kotlinPackageFragment = packageView.fragments.filterIsInstance<BuiltInsPackageFragment>().first()
+
+                add(kotlinPackageFragment, Kind.SuspendFunction.numberedClassName(arity))
             }
 
             return result.toList()

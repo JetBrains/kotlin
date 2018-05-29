@@ -30,6 +30,7 @@ import kotlin.reflect.KProperty
 
 val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 val K_FUNCTION_PREFIX = "KFunction"
+val K_SUSPEND_FUNCTION_PREFIX = "KSuspendFunction"
 
 class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: NotFoundClasses) {
     private val kotlinReflectScope: MemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -49,6 +50,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
     }
 
     fun getKFunction(n: Int): ClassDescriptor = find("$K_FUNCTION_PREFIX$n", n + 1)
+    fun getKSuspendFunction(n: Int): ClassDescriptor = find("$K_SUSPEND_FUNCTION_PREFIX$n", n + 1)
 
     val kClass: ClassDescriptor by ClassLookup(1)
     val kProperty0: ClassDescriptor by ClassLookup(1)
@@ -71,6 +73,19 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
     ): SimpleType {
         val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, parameterNames, returnType, builtIns)
         val classDescriptor = getKFunction(arguments.size - 1 /* return type */)
+        return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
+    }
+
+    fun getKSuspendFunctionType(
+        annotations: Annotations,
+        receiverType: KotlinType?,
+        parameterTypes: List<KotlinType>,
+        parameterNames: List<Name>?,
+        returnType: KotlinType,
+        builtIns: KotlinBuiltIns
+    ): SimpleType {
+        val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, parameterNames, returnType, builtIns)
+        val classDescriptor = getKSuspendFunction(arguments.size - 1 /* return type */)
         return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
     }
 
@@ -102,7 +117,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
         }
 
         fun isCallableType(type: KotlinType): Boolean =
-                type.isFunctionTypeOrSubtype || isKCallableType(type)
+                type.isFunctionTypeOrSubtype || type.isSuspendFunctionType || isKCallableType(type)
 
         @JvmStatic
         fun isNumberedKPropertyOrKMutablePropertyType(type: KotlinType): Boolean =
@@ -130,9 +145,14 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
             val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return false
             val shortName = descriptor.name.asString()
 
-            return shortName.length > K_FUNCTION_PREFIX.length &&
-                   shortName.startsWith(K_FUNCTION_PREFIX) &&
-                   DescriptorUtils.getFqName(descriptor).parent().toSafe() == KOTLIN_REFLECT_FQ_NAME
+            return (shortName.length > K_FUNCTION_PREFIX.length && shortName.startsWith(K_FUNCTION_PREFIX) || isKSuspendFunction(type)) &&
+                    DescriptorUtils.getFqName(descriptor).parent().toSafe() == KOTLIN_REFLECT_FQ_NAME
+        }
+
+        fun isKSuspendFunction(type: KotlinType): Boolean {
+            val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return false
+            val shortName = descriptor.name.asString()
+            return shortName.length > K_SUSPEND_FUNCTION_PREFIX.length && shortName.startsWith(K_SUSPEND_FUNCTION_PREFIX)
         }
 
         private fun hasFqName(typeConstructor: TypeConstructor, fqName: FqNameUnsafe): Boolean {
@@ -162,6 +182,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
             val packageName = fqName.parent().toSafe()
             if (packageName == KOTLIN_REFLECT_FQ_NAME) {
                 return shortName.startsWith("KFunction") // KFunctionN, KFunction
+                       || shortName.startsWith("KSuspendFunction") // KPropertyN, KProperty
                        || shortName.startsWith("KProperty") // KPropertyN, KProperty
                        || shortName.startsWith("KMutableProperty") // KMutablePropertyN, KMutableProperty
                        || shortName == "KCallable" || shortName == "KAnnotatedElement"
@@ -169,6 +190,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
             }
             if (packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) {
                 return shortName.startsWith("Function") // FunctionN, Function
+                        || shortName.startsWith("SuspendFunction")
             }
 
             return false

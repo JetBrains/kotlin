@@ -20,11 +20,16 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.model.*;
+import org.jetbrains.kotlin.resolve.calls.model.DelegatingResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -73,8 +78,21 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
     ) {
         super(state);
         this.resolvedCall = resolvedCall;
-        this.referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
-        this.functionDescriptor = functionDescriptor;
+        if (resolvedCall.getResultingDescriptor() instanceof FunctionDescriptor &&
+            ((FunctionDescriptor) resolvedCall.getResultingDescriptor()).isSuspend()) {
+            this.referencedFunction = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
+                    (FunctionDescriptor) resolvedCall.getResultingDescriptor(),
+                    state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines),
+                    state.getBindingContext());
+            this.functionDescriptor = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
+                    functionDescriptor,
+                    state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines),
+                    state.getBindingContext());
+        }
+        else {
+            this.referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+            this.functionDescriptor = functionDescriptor;
+        }
         this.receiverType = receiverType;
         this.receiverValue = receiverValue;
         this.isInliningStrategy = isInliningStrategy;
@@ -137,6 +155,18 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
             public Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments() {
                 return argumentMap;
             }
+
+            @NotNull
+            @Override
+            public CallableDescriptor getCandidateDescriptor() {
+                return referencedFunction;
+            }
+
+            @NotNull
+            @Override
+            public CallableDescriptor getResultingDescriptor() {
+                return referencedFunction;
+            }
         };
 
         StackValue result;
@@ -172,7 +202,12 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
 
             Type type = state.getTypeMapper().mapType(parameter);
             int localIndex = codegen.myFrameMap.getIndex(parameter);
-            codegen.tempVariables.put(fakeArgument.getArgumentExpression(), StackValue.local(localIndex, type));
+            if (localIndex > 0) {
+                codegen.tempVariables.put(fakeArgument.getArgumentExpression(), StackValue.local(localIndex, type));
+            }
+            else {
+                codegen.tempVariables.put(fakeArgument.getArgumentExpression(), StackValue.local(parameter.getIndex() + 1 + receivers, type));
+            }
         }
     }
 

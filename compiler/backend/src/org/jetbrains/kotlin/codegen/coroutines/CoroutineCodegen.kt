@@ -332,7 +332,7 @@ class CoroutineCodegenForLambda private constructor(
                 declaration: KtElement,
                 classBuilder: ClassBuilder
         ): ClosureCodegen? {
-            if (!originalSuspendLambdaDescriptor.isSuspendLambdaOrLocalFunction()) return null
+            if (!originalSuspendLambdaDescriptor.isSuspendLambdaOrLocalFunction() || declaration is KtCallableReferenceExpression) return null
 
             return CoroutineCodegenForLambda(
                     expressionCodegen,

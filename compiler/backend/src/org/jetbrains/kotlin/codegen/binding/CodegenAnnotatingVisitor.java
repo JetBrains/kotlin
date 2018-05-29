@@ -404,6 +404,26 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         ClassDescriptor classDescriptor = recordClassForCallable(expression, callableDescriptor, supertypes, name);
         MutableClosure closure = recordClosure(classDescriptor, name);
 
+        if (callableDescriptor instanceof SimpleFunctionDescriptor) {
+            SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) callableDescriptor;
+            if (functionDescriptor.isSuspend()){
+                SimpleFunctionDescriptor jvmSuspendFunctionView =
+                        CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
+                                functionDescriptor,
+                                languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+                                /*bindingContext*/ null
+                        );
+
+                bindingTrace.record(
+                        CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
+                        functionDescriptor,
+                        jvmSuspendFunctionView
+                );
+
+                closure.setSuspend(true);
+            }
+        }
+
         if (receiverType != null) {
             closure.setCaptureReceiverType(receiverType);
         }

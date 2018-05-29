@@ -96,6 +96,13 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
             val kFun = kFunction.packageFqName.toString() + "." + kFunction.classNamePrefix
             addKotlinToJava(FqName(kFun + i), ClassId.topLevel(FqName(kFun)))
         }
+        for (i in 0 until 22) {
+            val kSuspendFunction = FunctionClassDescriptor.Kind.KSuspendFunction
+            val kFunction = FunctionClassDescriptor.Kind.KFunction
+            val kSuspendFun = kSuspendFunction.packageFqName.toString() + "." + kSuspendFunction.classNamePrefix
+            val kFun = kFunction.packageFqName.toString() + "." + kFunction.classNamePrefix
+            addKotlinToJava(FqName(kSuspendFun + i), ClassId.topLevel(FqName(kFun)))
+        }
 
         addKotlinToJava(FQ_NAMES.nothing.toSafe(), classId(Void::class.java))
     }

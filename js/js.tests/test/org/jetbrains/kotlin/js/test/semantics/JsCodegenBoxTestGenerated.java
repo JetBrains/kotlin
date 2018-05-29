@@ -5487,6 +5487,851 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlus.kt", "kotlin.coroutines.experimental");
             }
 
+            @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CallableReference extends AbstractJsCodegenBoxTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInCallableReference() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                }
+
+                @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Bound extends AbstractJsCodegenBoxTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInBound() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                    }
+
+                    @TestMetadata("companionObjectReceiver.kt")
+                    public void testCompanionObjectReceiver_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/companionObjectReceiver.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("coroutineContext.kt")
+                    public void testCoroutineContext_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/coroutineContext.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("emptyLHS.kt")
+                    public void testEmptyLHS() throws Exception {
+                        runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/emptyLHS.kt");
+                    }
+
+                    @TestMetadata("enumEntryMember.kt")
+                    public void testEnumEntryMember_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/enumEntryMember.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("multiCase.kt")
+                    public void testMultiCase_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/multiCase.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("nullReceiver.kt")
+                    public void testNullReceiver_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/nullReceiver.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("objectReceiver.kt")
+                    public void testObjectReceiver_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/objectReceiver.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("primitiveReceiver.kt")
+                    public void testPrimitiveReceiver_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/primitiveReceiver.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("smartCastForExtensionReceiver.kt")
+                    public void testSmartCastForExtensionReceiver_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/smartCastForExtensionReceiver.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/equals")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Equals extends AbstractJsCodegenBoxTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInEquals() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/equals"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                        }
+
+                        @TestMetadata("nullableReceiverInEquals.kt")
+                        public void testNullableReceiverInEquals_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/equals/nullableReceiverInEquals.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("receiverInEquals.kt")
+                        public void testReceiverInEquals_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/equals/receiverInEquals.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("reflectionReference.kt")
+                        public void testReflectionReference_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/equals/reflectionReference.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/inline")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Inline extends AbstractJsCodegenBoxTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInInline() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                        }
+
+                        @TestMetadata("simpleVal.kt")
+                        public void testSimpleVal_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/inline/simpleVal.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("simple.kt")
+                        public void testSimple_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/inline/simple.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+                    }
+                }
+
+                @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Function extends AbstractJsCodegenBoxTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+                    }
+
+                    @TestMetadata("abstractClassMember.kt")
+                    public void testAbstractClassMember_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/abstractClassMember.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    public void testAllFilesPresentInFunction() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                    }
+
+                    @TestMetadata("classMemberFromClass.kt")
+                    public void testClassMemberFromClass_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/classMemberFromClass.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("classMemberFromExtension.kt")
+                    public void testClassMemberFromExtension_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/classMemberFromExtension.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("classMemberFromTopLevelStringNoArgs.kt")
+                    public void testClassMemberFromTopLevelStringNoArgs_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/classMemberFromTopLevelStringNoArgs.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("classMemberFromTopLevelStringOneStringArg.kt")
+                    public void testClassMemberFromTopLevelStringOneStringArg_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/classMemberFromTopLevelStringOneStringArg.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("classMemberFromTopLevelUnitNoArgs.kt")
+                    public void testClassMemberFromTopLevelUnitNoArgs_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/classMemberFromTopLevelUnitNoArgs.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("classMemberFromTopLevelUnitOneStringArg.kt")
+                    public void testClassMemberFromTopLevelUnitOneStringArg_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/classMemberFromTopLevelUnitOneStringArg.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("extensionFromClass.kt")
+                    public void testExtensionFromClass_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/extensionFromClass.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("extensionFromExtension.kt")
+                    public void testExtensionFromExtension_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/extensionFromExtension.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("extensionFromTopLevelStringNoArgs.kt")
+                    public void testExtensionFromTopLevelStringNoArgs_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/extensionFromTopLevelStringNoArgs.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("extensionFromTopLevelStringOneStringArg.kt")
+                    public void testExtensionFromTopLevelStringOneStringArg_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/extensionFromTopLevelStringOneStringArg.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("extensionFromTopLevelUnitNoArgs.kt")
+                    public void testExtensionFromTopLevelUnitNoArgs_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/extensionFromTopLevelUnitNoArgs.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("extensionFromTopLevelUnitOneStringArg.kt")
+                    public void testExtensionFromTopLevelUnitOneStringArg_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/extensionFromTopLevelUnitOneStringArg.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("genericCallableReferenceArguments.kt")
+                    public void testGenericCallableReferenceArguments_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/genericCallableReferenceArguments.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("genericCallableReferencesWithNullableTypes.kt")
+                    public void testGenericCallableReferencesWithNullableTypes_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/genericCallableReferencesWithNullableTypes.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("genericCallableReferencesWithOverload.kt")
+                    public void testGenericCallableReferencesWithOverload_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/genericCallableReferencesWithOverload.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("genericMember.kt")
+                    public void testGenericMember_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/genericMember.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("getArityViaFunctionImpl.kt")
+                    public void testGetArityViaFunctionImpl() throws Exception {
+                        runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/getArityViaFunctionImpl.kt");
+                    }
+
+                    @TestMetadata("overloadedFunVsVal.kt")
+                    public void testOverloadedFunVsVal_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/overloadedFunVsVal.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("overloadedFun.kt")
+                    public void testOverloadedFun_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/overloadedFun.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("privateClassMember.kt")
+                    public void testPrivateClassMember_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/privateClassMember.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("specialCalls.kt")
+                    public void testSpecialCalls_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/specialCalls.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("topLevelFromClass.kt")
+                    public void testTopLevelFromClass_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/topLevelFromClass.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("topLevelFromExtension.kt")
+                    public void testTopLevelFromExtension_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/topLevelFromExtension.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("topLevelFromTopLevelStringNoArgs.kt")
+                    public void testTopLevelFromTopLevelStringNoArgs_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/topLevelFromTopLevelStringNoArgs.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("topLevelFromTopLevelStringOneStringArg.kt")
+                    public void testTopLevelFromTopLevelStringOneStringArg_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/topLevelFromTopLevelStringOneStringArg.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("topLevelFromTopLevelUnitNoArgs.kt")
+                    public void testTopLevelFromTopLevelUnitNoArgs_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/topLevelFromTopLevelUnitNoArgs.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("topLevelFromTopLevelUnitOneStringArg.kt")
+                    public void testTopLevelFromTopLevelUnitOneStringArg_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/topLevelFromTopLevelUnitOneStringArg.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("traitImplMethodWithClassReceiver.kt")
+                    public void testTraitImplMethodWithClassReceiver_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/traitImplMethodWithClassReceiver.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("traitMember.kt")
+                    public void testTraitMember_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/traitMember.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Local extends AbstractJsCodegenBoxTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInLocal() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                        }
+
+                        @TestMetadata("captureOuter.kt")
+                        public void testCaptureOuter_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/captureOuter.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("classMember.kt")
+                        public void testClassMember_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/classMember.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("closureWithSideEffect.kt")
+                        public void testClosureWithSideEffect_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/closureWithSideEffect.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("enumExtendsTrait.kt")
+                        public void testEnumExtendsTrait_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/enumExtendsTrait.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("equalsHashCode.kt")
+                        public void testEqualsHashCode_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/equalsHashCode.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("extensionToLocalClass.kt")
+                        public void testExtensionToLocalClass_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/extensionToLocalClass.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("extensionToPrimitive.kt")
+                        public void testExtensionToPrimitive_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/extensionToPrimitive.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("extensionWithClosure.kt")
+                        public void testExtensionWithClosure_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/extensionWithClosure.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("extension.kt")
+                        public void testExtension_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/extension.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("genericMember.kt")
+                        public void testGenericMember_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/genericMember.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("localClassMember.kt")
+                        public void testLocalClassMember_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/localClassMember.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("localFunctionName.kt")
+                        public void testLocalFunctionName_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/localFunctionName.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("localLocal.kt")
+                        public void testLocalLocal_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/localLocal.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("simpleClosure.kt")
+                        public void testSimpleClosure_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/simpleClosure.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("simpleWithArg.kt")
+                        public void testSimpleWithArg_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/simpleWithArg.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("simple.kt")
+                        public void testSimple_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/simple.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+
+                        @TestMetadata("unitWithSideEffect.kt")
+                        public void testUnitWithSideEffect_1_2() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/unitWithSideEffect.kt");
+                            try {
+                                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            }
+                            catch (Throwable ignore) {
+                                return;
+                            }
+                            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                        }
+                    }
+                }
+
+                @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/serializability")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Serializability extends AbstractJsCodegenBoxTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInSerializability() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/serializability"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                    }
+
+                    @TestMetadata("noReflect.kt")
+                    public void testNoReflect_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/serializability/noReflect.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("reflectedIsNotSerialized.kt")
+                    public void testReflectedIsNotSerialized_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/serializability/reflectedIsNotSerialized.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+
+                    @TestMetadata("withReflect.kt")
+                    public void testWithReflect_1_2() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/serializability/withReflect.kt");
+                        try {
+                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        }
+                        catch (Throwable ignore) {
+                            return;
+                        }
+                        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    }
+                }
+            }
+
             @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

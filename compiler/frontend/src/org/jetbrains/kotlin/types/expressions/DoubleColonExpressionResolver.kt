@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.createValueParametersForInvokeInFunctionType
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
@@ -585,7 +587,7 @@ class DoubleColonExpressionResolver(
             Annotations.EMPTY,
             CallableMemberDescriptor.Kind.DECLARATION,
             expression.toSourceElement(),
-            /* isCoroutine = */ false
+            /* isCoroutine = */ ReflectionTypes.isKSuspendFunction(type)
         )
 
         functionDescriptor.initialize(
@@ -636,8 +638,8 @@ class DoubleColonExpressionResolver(
     ) {
         val descriptor =
             if (resolutionResults?.isSingleResult == true) resolutionResults.resultingDescriptor as? FunctionDescriptor else null
-        if (descriptor?.isSuspend == true) {
-            context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable references to suspend functions"))
+        if (descriptor?.isSuspend == true && descriptor is PropertyDescriptor) {
+            context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable references to suspend property"))
         }
 
         val expressionResult = lhsResult as? DoubleColonLHS.Expression ?: return
@@ -783,7 +785,11 @@ class DoubleColonExpressionResolver(
                     val returnType = descriptor.returnType ?: return null
                     val parametersTypes = descriptor.valueParameters.map { it.type }
                     val parametersNames = descriptor.valueParameters.map { it.name }
-                    return reflectionTypes.getKFunctionType(
+                    return if (descriptor.isSuspend) reflectionTypes.getKSuspendFunctionType(
+                        Annotations.EMPTY, receiverType,
+                        parametersTypes, parametersNames, returnType, descriptor.builtIns
+                    )
+                    else reflectionTypes.getKFunctionType(
                         Annotations.EMPTY, receiverType,
                         parametersTypes, parametersNames, returnType, descriptor.builtIns
                     )

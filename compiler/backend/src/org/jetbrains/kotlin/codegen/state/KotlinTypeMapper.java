@@ -42,10 +42,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentPr
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion;
 import org.jetbrains.kotlin.name.*;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtFunctionLiteral;
-import org.jetbrains.kotlin.psi.KtLambdaExpression;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -56,6 +53,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -1017,12 +1015,19 @@ public class KotlinTypeMapper {
 
             return OperatorNameConventions.INVOKE.asString();
         }
-        else if (isLocalFunction(descriptor) || isFunctionExpression(descriptor)) {
+        else if (isLocalFunction(descriptor) || isFunctionExpression(descriptor) || isSuspendFunctionReference(descriptor)) {
             return OperatorNameConventions.INVOKE.asString();
         }
         else {
             return mangleMemberNameIfRequired(descriptor.getName().asString(), descriptor);
         }
+    }
+
+    private static boolean isSuspendFunctionReference(FunctionDescriptor descriptor) {
+        return descriptor.getSource() instanceof KotlinSourceElement &&
+               ((KotlinSourceElement) descriptor.getSource()).getPsi() instanceof KtCallableReferenceExpression &&
+               CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(descriptor) != null &&
+               CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(descriptor).isSuspend();
     }
 
     @NotNull

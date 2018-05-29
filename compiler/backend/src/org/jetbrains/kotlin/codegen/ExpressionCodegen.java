@@ -981,8 +981,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         );
 
         ClosureCodegen coroutineCodegen = CoroutineCodegenForLambda.create(this, descriptor, declaration, cv);
+        ClosureContext closureContext = descriptor.isSuspend() ? this.context.intoCoroutineClosure(
+                CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
+                        descriptor,
+                        state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines),
+                        state.getBindingContext()
+                ),
+                descriptor, this, state.getTypeMapper()
+        ) : this.context.intoClosure(descriptor, this, typeMapper);
         ClosureCodegen closureCodegen = coroutineCodegen != null ? coroutineCodegen : new ClosureCodegen(
-                state, declaration, samType, context.intoClosure(descriptor, this, typeMapper),
+                state, declaration, samType, closureContext,
                 functionReferenceTarget, strategy, parentCodegen, cv
         );
 
@@ -1120,6 +1128,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 if (!isCrossinlineLambda) {
                     v.aconst(null);
                 }
+            } else if (superClass != null && superClass.equals(state.getJvmRuntimeTypes().getFunctionReference())) {
+                // Constructor of callable reference to suspend function does not accept continuation:
+                // do nothing.
             }
             else {
                 assert context.getFunctionDescriptor().isSuspend() : "Coroutines closure must be created only inside suspend functions";
@@ -1128,7 +1139,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 assert continuationValue != null : "Couldn't find a value for continuation parameter of " + context.getFunctionDescriptor();
 
-                callGenerator.putCapturedValueOnStack(continuationValue, continuationValue.type, paramIndex++);
+                callGenerator.putCapturedValueOnStack(continuationValue, continuationValue.type, paramIndex);
             }
         }
     }
