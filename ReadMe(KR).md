@@ -6,7 +6,7 @@
 
 # Kotlin 프로그래밍 언어
 
-[Kotlin]에 어서오세요! (https://kotlinlang.org/)! 몇몇 쓸만한 링크는 다음과 같습니다:
+[Kotlin]에 어서오세요 (https://kotlinlang.org/)! 몇몇 쓸만한 링크는 다음과 같습니다:
 
  * [Kotlin 사이트](https://kotlinlang.org/)
  * [입문 가이드](https://kotlinlang.org/docs/tutorials/getting-started.html)
@@ -46,7 +46,7 @@ Kotlin 배포판을 빌드하기 위해서는 다음과 같은 것들이 필요�
 
 ## 빌드하기
 
-이 프로젝트는 Gradle로 개발되었습니다. Gradle을 실행하여 프로젝트를 빌드하고 Unix/macOS에서 다음과 같은 명령어를 통해 테스트를 합니다:
+이 프로젝트는 Gradle로 빌드되었습니다. Gradle을 실행하여 프로젝트를 빌드하고 Unix/macOS에서 다음과 같은 명령어를 통해 테스트를 합니다:
 
     ./gradlew <tasks-and-options>
     
