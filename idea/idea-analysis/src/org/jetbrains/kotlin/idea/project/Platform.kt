@@ -62,6 +62,10 @@ private val newInferenceArg: String by lazy {
     CommonCompilerArguments::newInference.annotations.filterIsInstance<Argument>().single().value
 }
 
+private val progressiveModeArg: String by lazy {
+    CommonCompilerArguments::progressiveMode.annotations.filterIsInstance<Argument>().single().value
+}
+
 fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
     val languageLevel = getLibraryLanguageLevel(this, null, facetSettings.targetPlatformKind)
@@ -197,6 +201,12 @@ private fun getExtraLanguageFeatures(
 
         if (compilerSettings?.additionalArguments?.contains(newInferenceArg) == true) {
             put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
+        }
+
+        if (compilerSettings?.additionalArguments?.contains(progressiveModeArg) == true) {
+            LanguageFeature.values().filter { it.kind.enabledInProgressiveMode }.forEach {
+                if (!contains(it)) put(it, LanguageFeature.State.ENABLED)
+            }
         }
     }
 }
