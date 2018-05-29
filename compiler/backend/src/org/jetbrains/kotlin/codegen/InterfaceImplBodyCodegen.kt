@@ -72,17 +72,23 @@ class InterfaceImplBodyCodegen(
             // If implementation is a default interface method (JVM 8 only)
             if (implementation.isDefinitelyNotDefaultImplsMethod()) continue
 
+            // TODO: we need to copy descriptor otherwise declaration clash diagnostic is missed, see testTraitFunctionOverriddenByPropertyInTrait
+            val copy = memberDescriptor.copy(
+                memberDescriptor.containingDeclaration, Modality.OPEN, memberDescriptor.visibility,
+                CallableMemberDescriptor.Kind.DECLARATION, true
+            )
+
             if (memberDescriptor is FunctionDescriptor) {
-                generateDelegationToSuperDefaultImpls(memberDescriptor, implementation as FunctionDescriptor)
+                generateDelegationToSuperDefaultImpls(copy as FunctionDescriptor, implementation as FunctionDescriptor)
             }
             else if (memberDescriptor is PropertyDescriptor) {
                 implementation as PropertyDescriptor
-                val getter = memberDescriptor.getter
+                val getter = (copy as PropertyDescriptor).getter
                 val implGetter = implementation.getter
                 if (getter != null && implGetter != null) {
                     generateDelegationToSuperDefaultImpls(getter, implGetter)
                 }
-                val setter = memberDescriptor.setter
+                val setter = copy.setter
                 val implSetter = implementation.setter
                 if (setter != null && implSetter != null) {
                     generateDelegationToSuperDefaultImpls(setter, implSetter)
