@@ -33,7 +33,9 @@ class AssignmentAsExpressionToAlsoConversion(val context: ConversionContext) : R
         return JKQualifiedExpressionImpl(
             element.rExpression,
             JKKtQualifierImpl.DOT,
-            JKKtCallExpressionImpl(alsoSymbol, JKExpressionListImpl())
+            JKKtCallExpressionImpl(alsoSymbol, JKExpressionListImpl(
+                // TODO: Lambda expression here
+            ))
         )
     }
 
