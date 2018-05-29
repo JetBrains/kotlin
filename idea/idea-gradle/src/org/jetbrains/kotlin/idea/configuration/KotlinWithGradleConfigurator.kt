@@ -267,6 +267,8 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         val GROUP_ID = "org.jetbrains.kotlin"
         val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"
 
+        val CLASSPATH = "classpath \"$GROUP_ID:$GRADLE_PLUGIN_ID:\$kotlin_version\""
+
         private val KOTLIN_BUILD_SCRIPT_NAME = "build.gradle.kts"
         private val KOTLIN_SETTINGS_SCRIPT_NAME = "settings.gradle.kts"
 

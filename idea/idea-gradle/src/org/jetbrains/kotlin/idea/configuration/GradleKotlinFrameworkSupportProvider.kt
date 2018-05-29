@@ -121,6 +121,8 @@ abstract class GradleKotlinFrameworkSupportProvider(
 
         if (useNewSyntax) {
             updateSettingsScript(module) { updateSettingsScript(it, specifyPluginVersionIfNeeded) }
+        } else {
+            buildScriptData.addBuildscriptDependencyNotation(KotlinWithGradleConfigurator.CLASSPATH)
         }
     }
 
