@@ -18,26 +18,24 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType.Companion.ID
 
-fun Module.findImplementingModules() =
-    ModuleManager.getInstance(project).modules.filter { name in it.findImplementedModuleNames() }
-
 val Module.implementingModules: List<Module>
     get() = cached(CachedValueProvider {
         CachedValueProvider.Result(
-                findImplementingModules(),
-                ProjectRootModificationTracker.getInstance(project)
+            ModuleManager.getInstance(project).modules.filter { name in it.findImplementedModuleNames() },
+            ProjectRootModificationTracker.getInstance(project)
         )
     })
 
-private fun Module.getModuleInfo(baseModuleSourceInfo: ModuleSourceInfo): ModuleSourceInfo? =
-    when (baseModuleSourceInfo) {
-        is ModuleProductionSourceInfo -> productionSourceInfo()
-        is ModuleTestSourceInfo -> testSourceInfo()
-        else -> null
-    }
-
-private fun Module.findImplementingModuleInfos(moduleSourceInfo: ModuleSourceInfo) =
-    findImplementingModules().mapNotNull { it.getModuleInfo(moduleSourceInfo) }
+val Module.implementedModules: List<Module>
+    get() = cached<List<Module>>(
+        CachedValueProvider {
+            val modelsProvider = IdeModelsProviderImpl(project)
+            CachedValueProvider.Result(
+                findImplementedModuleNames().mapNotNull { modelsProvider.findIdeModule(it) },
+                ProjectRootModificationTracker.getInstance(project)
+            )
+        }
+    )
 
 val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
     get() {
@@ -48,7 +46,7 @@ val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
         val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return emptyList()
         val module = moduleSourceInfo.module
         return module.cached(CachedValueProvider {
-            val implementingModuleInfos = module.findImplementingModuleInfos(moduleSourceInfo)
+            val implementingModuleInfos = module.findImplementingModuleInfos(moduleSourceInfo.isTests())
             val implementingModuleDescriptors = implementingModuleInfos.mapNotNull {
                 KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
             }
@@ -59,6 +57,13 @@ val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
             )
         })
     }
+
+
+private fun Module.findImplementingModuleInfos(isTests: Boolean) =
+    implementingModules.mapNotNull { it.toInfo(isTests) }
+
+private fun Module.toInfo(isTests: Boolean): ModuleSourceInfo? =
+    if (isTests) testSourceInfo() else productionSourceInfo()
 
 val ModuleDescriptor.implementedDescriptors: List<ModuleDescriptor>
     get() {
@@ -80,13 +85,3 @@ fun Module.findImplementedModuleNames(): List<String> {
     )
     return facet?.configuration?.settings?.implementedModuleNames ?: emptyList()
 }
-
-fun Module.findImplementedModules() = this.cached<List<Module>>(
-    CachedValueProvider {
-        val modelsProvider = IdeModelsProviderImpl(project)
-        CachedValueProvider.Result(
-            findImplementedModuleNames().mapNotNull { modelsProvider.findIdeModule(it) },
-            ProjectRootModificationTracker.getInstance(project)
-        )
-    }
-)

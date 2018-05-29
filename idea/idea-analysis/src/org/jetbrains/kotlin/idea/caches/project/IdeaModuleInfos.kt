@@ -136,7 +136,7 @@ interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
 sealed class ModuleSourceInfoWithExpectedBy(private val forProduction: Boolean) : ModuleSourceInfo {
     override val expectedBy: List<ModuleSourceInfo>
         get() {
-            val expectedByModules = module.findImplementedModules()
+            val expectedByModules = module.implementedModules
             return expectedByModules.mapNotNull { if (forProduction) it.productionSourceInfo() else it.testSourceInfo() }
         }
 
