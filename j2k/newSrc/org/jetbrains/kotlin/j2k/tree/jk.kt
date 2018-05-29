@@ -136,7 +136,7 @@ interface JKLiteralExpression : JKExpression {
     val type: LiteralType
 
     enum class LiteralType {
-        STRING, BOOLEAN, NULL
+        STRING, CHAR, BOOLEAN, NULL, INT, LONG, FLOAT, DOUBLE
     }
 }
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.j2k.tree.impl
 
 import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
@@ -58,6 +59,10 @@ class JKJavaLiteralExpressionImpl(
     override val type: JKLiteralExpression.LiteralType
 ) : JKJavaLiteralExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaLiteralExpression(this, data)
+
+    init {
+        require(type in setOf(STRING, CHAR, INT, LONG, FLOAT, DOUBLE))
+    }
 }
 
 

@@ -23,6 +23,7 @@ import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
 import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
 
@@ -87,17 +88,20 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         }
 
         fun PsiLiteralExpression.toJK(): JKLiteralExpression {
-            if (this !is PsiLiteralExpressionImpl) {
-                throw RuntimeException("Not supported")
+            require(this is PsiLiteralExpressionImpl)
+
+            return when (this.literalElementType) {
+                JavaTokenType.NULL_KEYWORD -> JKNullLiteral()
+                JavaTokenType.TRUE_KEYWORD -> JKBooleanLiteral(true)
+                JavaTokenType.FALSE_KEYWORD -> JKBooleanLiteral(false)
+                JavaTokenType.STRING_LITERAL -> JKJavaLiteralExpressionImpl(innerText!!, STRING)
+                JavaTokenType.CHARACTER_LITERAL -> JKJavaLiteralExpressionImpl(innerText!!, CHAR)
+                JavaTokenType.INTEGER_LITERAL -> JKJavaLiteralExpressionImpl(text, INT)
+                JavaTokenType.LONG_LITERAL -> JKJavaLiteralExpressionImpl(text, LONG)
+                JavaTokenType.FLOAT_LITERAL -> JKJavaLiteralExpressionImpl(text, FLOAT)
+                JavaTokenType.DOUBLE_LITERAL -> JKJavaLiteralExpressionImpl(text, DOUBLE)
+                else -> error("Unknown literal element type: ${this.literalElementType}")
             }
-            return JKJavaLiteralExpressionImpl(
-                innerText!!, when (this.literalElementType) {
-                    JavaTokenType.STRING_LITERAL -> JKLiteralExpression.LiteralType.STRING
-                    JavaTokenType.TRUE_KEYWORD, JavaTokenType.FALSE_KEYWORD -> JKLiteralExpression.LiteralType.BOOLEAN
-                    JavaTokenType.NULL_KEYWORD -> JKLiteralExpression.LiteralType.NULL
-                    else -> throw RuntimeException("Not supported")
-                }
-            )
         }
 
         fun PsiJavaToken.toJK(): JKOperator = when (tokenType) {
