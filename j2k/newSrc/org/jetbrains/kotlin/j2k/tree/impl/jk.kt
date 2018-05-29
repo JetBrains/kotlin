@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.j2k.tree.impl
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType
+import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.BOOLEAN
+import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.NULL
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 class JKClassImpl(
@@ -135,4 +138,16 @@ class JKClassTypeImpl(
     override val nullability: Nullability = Nullability.Default
 ) : JKClassType
 
-class JKNullLiteral : JKExpression, JKElementBase()
+class JKNullLiteral : JKLiteralExpression, JKElementBase() {
+    override val literal: String
+        get() = "null"
+    override val type: LiteralType
+        get() = NULL
+}
+
+class JKBooleanLiteral(val value: Boolean) : JKLiteralExpression, JKElementBase() {
+    override val literal: String
+        get() = value.toString()
+    override val type: LiteralType
+        get() = BOOLEAN
+}
