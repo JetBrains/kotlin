@@ -52,7 +52,7 @@ private fun visitFunction(flags: Flags, name: String, addMember: (MemberVisibili
         override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? {
             if (type != JvmFunctionExtensionVisitor.TYPE) return null
             return object : JvmFunctionExtensionVisitor() {
-                override fun visit(desc: JvmMemberSignature?) {
+                override fun visit(desc: JvmMethodSignature?) {
                     jvmDesc = desc
                 }
             }
@@ -71,7 +71,7 @@ private fun visitConstructor(flags: Flags, addMember: (MemberVisibility) -> Unit
         override fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? {
             if (type != JvmConstructorExtensionVisitor.TYPE) return null
             return object : JvmConstructorExtensionVisitor() {
-                override fun visit(desc: JvmMemberSignature?) {
+                override fun visit(desc: JvmMethodSignature?) {
                     jvmDesc = desc
                 }
             }
@@ -86,14 +86,14 @@ private fun visitConstructor(flags: Flags, addMember: (MemberVisibility) -> Unit
 
 private fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags, addMember: (MemberVisibility) -> Unit) =
     object : KmPropertyVisitor() {
-        var _fieldDesc: MemberSignature? = null
-        var _getterDesc: MemberSignature? = null
-        var _setterDesc: MemberSignature? = null
+        var _fieldDesc: JvmMemberSignature? = null
+        var _getterDesc: JvmMemberSignature? = null
+        var _setterDesc: JvmMemberSignature? = null
 
         override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? {
             if (type != JvmPropertyExtensionVisitor.TYPE) return null
             return object : JvmPropertyExtensionVisitor() {
-                override fun visit(fieldDesc: JvmMemberSignature?, getterDesc: JvmMemberSignature?, setterDesc: JvmMemberSignature?) {
+                override fun visit(fieldDesc: JvmFieldSignature?, getterDesc: JvmMethodSignature?, setterDesc: JvmMethodSignature?) {
                     _fieldDesc = fieldDesc
                     _getterDesc = getterDesc
                     _setterDesc = setterDesc
