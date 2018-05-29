@@ -224,13 +224,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
 
     @Argument(
-        value = "-Xoutput-imports",
-        valueDescription = "<path>",
-        description = "Output imports from all compiled files to the specified file in JSON format"
-    )
-    var outputImports: String? by FreezableVar(null)
-
-    @Argument(
         value = "-Xjvm-default-mode",
         valueDescription = "{disable|enable|compatibility}",
         description = "Allow to use '@JvmDefault' for JVM default method support"
