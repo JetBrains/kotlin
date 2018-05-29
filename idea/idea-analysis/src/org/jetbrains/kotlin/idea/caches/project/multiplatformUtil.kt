@@ -46,7 +46,7 @@ val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
         val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return emptyList()
         val module = moduleSourceInfo.module
         return module.cached(CachedValueProvider {
-            val implementingModuleInfos = module.findImplementingModuleInfos(moduleSourceInfo.isTests())
+            val implementingModuleInfos = module.implementingModules.mapNotNull { it.toInfo(moduleSourceInfo.isTests()) }
             val implementingModuleDescriptors = implementingModuleInfos.mapNotNull {
                 KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
             }
@@ -57,10 +57,6 @@ val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
             )
         })
     }
-
-
-private fun Module.findImplementingModuleInfos(isTests: Boolean) =
-    implementingModules.mapNotNull { it.toInfo(isTests) }
 
 private fun Module.toInfo(isTests: Boolean): ModuleSourceInfo? =
     if (isTests) testSourceInfo() else productionSourceInfo()
@@ -78,7 +74,7 @@ val ModuleDescriptor.implementedDescriptors: List<ModuleDescriptor>
         }
     }
 
-fun Module.findImplementedModuleNames(): List<String> {
+private fun Module.findImplementedModuleNames(): List<String> {
     val facet = FacetManager.getInstance(this).findFacet(
         KotlinFacetType.TYPE_ID,
         FacetTypeRegistry.getInstance().findFacetType(ID)!!.defaultFacetName
