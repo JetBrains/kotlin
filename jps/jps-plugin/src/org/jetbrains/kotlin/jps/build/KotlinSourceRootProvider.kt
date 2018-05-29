@@ -20,11 +20,10 @@ import org.jetbrains.kotlin.jps.model.expectedByModules
 import java.io.File
 
 /**
- * Required for Multiplatform Projects.
- *
- * Adds all the source roots of the expectedBy modules to the platform modules.
+ * - adds roots with KotlinSourceRootType
+ * - for Multiplatform Projects: adds all the source roots of the expectedBy modules to the platform modules.
  */
-class KotlinMppCommonSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDescriptor>(JavaModuleBuildTargetType.ALL_TYPES) {
+class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDescriptor>(JavaModuleBuildTargetType.ALL_TYPES) {
     override fun getAdditionalRoots(
         target: BuildTarget<JavaSourceRootDescriptor>,
         dataPaths: BuildDataPaths?
@@ -34,14 +33,30 @@ class KotlinMppCommonSourceRootProvider : AdditionalRootsProviderService<JavaSou
 
         val result = mutableListOf<JavaSourceRootDescriptor>()
 
+        // add source roots with type KotlinSourceRootType
+        val kotlinSourceRootType = if (target.isTests) KotlinSourceRootType.TestSource else KotlinSourceRootType.Source
+        module.getSourceRoots(kotlinSourceRootType).forEach {
+            result.add(
+                JavaSourceRootDescriptor(
+                    it.file,
+                    target,
+                    false,
+                    false,
+                    it.properties.packagePrefix,
+                    setOf()
+                )
+            )
+        }
+
+        // add source roots of the expectedBy modules
         module.expectedByModules.forEach { commonModule ->
-            addSourceRoots(result, commonModule, target)
+            addCommonModuleSourceRoots(result, commonModule, target)
         }
 
         return result
     }
 
-    private fun addSourceRoots(
+    private fun addCommonModuleSourceRoots(
         result: MutableList<JavaSourceRootDescriptor>,
         commonModule: JpsModule,
         target: ModuleBuildTarget
