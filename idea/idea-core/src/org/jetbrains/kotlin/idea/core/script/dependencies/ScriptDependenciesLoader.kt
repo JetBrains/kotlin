@@ -13,12 +13,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.containers.SLRUMap
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
@@ -30,7 +30,7 @@ abstract class ScriptDependenciesLoader(
     private val shouldNotifyRootsChanged: Boolean
 ) {
     companion object {
-        private val loaders = SLRUMap<VirtualFile, ScriptDependenciesLoader>(10, 10)
+        private val loaders = ConcurrentHashMap<VirtualFile, ScriptDependenciesLoader>()
 
         fun updateDependencies(
             file: VirtualFile,
