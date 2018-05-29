@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.idea.caches.project
 
-import com.intellij.facet.FacetManager
-import com.intellij.facet.FacetTypeRegistry
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.externalSystem.service.project.IdeModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.project.Project
@@ -34,8 +31,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
-import org.jetbrains.kotlin.idea.facet.KotlinFacetType
-import org.jetbrains.kotlin.idea.facet.KotlinFacetType.Companion.ID
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -120,24 +115,6 @@ private fun ideaModelDependencies(
     }
     return result.filterNot { it is LibraryInfo && it.platform != platform }
 }
-
-fun Module.findImplementedModuleNames(): List<String> {
-    val facet = FacetManager.getInstance(this).findFacet(
-            KotlinFacetType.TYPE_ID,
-            FacetTypeRegistry.getInstance().findFacetType(ID)!!.defaultFacetName
-    )
-    return facet?.configuration?.settings?.implementedModuleNames ?: emptyList()
-}
-
-fun Module.findImplementedModules() = this.cached<List<Module>>(
-    CachedValueProvider {
-        val modelsProvider = IdeModelsProviderImpl(project)
-        CachedValueProvider.Result(
-                findImplementedModuleNames().mapNotNull { modelsProvider.findIdeModule(it) },
-                ProjectRootModificationTracker.getInstance(project)
-        )
-    }
-)
 
 interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
     val module: Module
