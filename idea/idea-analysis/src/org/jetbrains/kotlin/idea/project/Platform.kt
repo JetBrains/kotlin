@@ -76,8 +76,7 @@ fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
                 apiVersion = languageLevel.versionString
             }
         }
-    }
-    else {
+    } else {
         with(facetSettings) {
             if (this.languageLevel == null) {
                 this.languageLevel = languageLevel
@@ -92,24 +91,28 @@ fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
 }
 
 @JvmOverloads
-fun Project.getLanguageVersionSettings(contextModule: Module? = null,
-                                       extraAnalysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()): LanguageVersionSettings {
+fun Project.getLanguageVersionSettings(
+    contextModule: Module? = null,
+    extraAnalysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()
+): LanguageVersionSettings {
     val arguments = KotlinCommonCompilerArgumentsHolder.getInstance(this).settings
     val languageVersion =
-            LanguageVersion.fromVersionString(arguments.languageVersion)
-            ?: contextModule?.getAndCacheLanguageLevelByDependencies()
-            ?: LanguageVersion.LATEST_STABLE
+        LanguageVersion.fromVersionString(arguments.languageVersion)
+                ?: contextModule?.getAndCacheLanguageLevelByDependencies()
+                ?: LanguageVersion.LATEST_STABLE
     val apiVersion = ApiVersion.createByLanguageVersion(LanguageVersion.fromVersionString(arguments.apiVersion) ?: languageVersion)
     val compilerSettings = KotlinCompilerSettings.getInstance(this).settings
     val extraLanguageFeatures = getExtraLanguageFeatures(
-            null,
-            CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this).settings),
-            compilerSettings,
-            null
+        null,
+        CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this).settings),
+        compilerSettings,
+        null
     )
-    return LanguageVersionSettingsImpl(languageVersion, apiVersion,
-                                       arguments.configureAnalysisFlags(MessageCollector.NONE) + extraAnalysisFlags,
-                                       extraLanguageFeatures)
+    return LanguageVersionSettingsImpl(
+        languageVersion, apiVersion,
+        arguments.configureAnalysisFlags(MessageCollector.NONE) + extraAnalysisFlags,
+        extraLanguageFeatures
+    )
 }
 
 private val LANGUAGE_VERSION_SETTINGS = Key.create<CachedValue<LanguageVersionSettings>>("LANGUAGE_VERSION_SETTINGS")
@@ -172,17 +175,18 @@ private val Module.implementsCommonModule: Boolean
             && ModuleRootManager.getInstance(this).dependencies.any { it.targetPlatform == TargetPlatformKind.Common }
 
 private fun getExtraLanguageFeatures(
-        targetPlatformKind: TargetPlatformKind<*>?,
-        coroutineSupport: LanguageFeature.State,
-        compilerSettings: CompilerSettings?,
-        module: Module?
+    targetPlatformKind: TargetPlatformKind<*>?,
+    coroutineSupport: LanguageFeature.State,
+    compilerSettings: CompilerSettings?,
+    module: Module?
 ): Map<LanguageFeature, LanguageFeature.State> {
     return mutableMapOf<LanguageFeature, LanguageFeature.State>().apply {
         put(LanguageFeature.Coroutines, coroutineSupport)
         if (targetPlatformKind == TargetPlatformKind.Common ||
             // TODO: this is a dirty hack, parse arguments correctly here
             compilerSettings?.additionalArguments?.contains(multiPlatformProjectsArg) == true ||
-            (module != null && module.implementsCommonModule)) {
+            (module != null && module.implementsCommonModule)
+        ) {
             put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
         }
 
