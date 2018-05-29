@@ -9,7 +9,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
@@ -45,7 +44,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -728,22 +726,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                             markLineNumberForElement(element.getPsiOrParent(), codegen.v);
                             if (accessorForCallableDescriptor.getAccessorKind() == AccessorKind.JVM_DEFAULT_COMPATIBILITY) {
-                                FunctionDescriptor descriptor;
-                                CallableMemberDescriptor directMember = getDirectMember(original);
-                                Collection<DeclarationDescriptor> existingDescriptors =
-                                        ((ClassDescriptor) directMember.getContainingDeclaration()).getUnsubstitutedMemberScope()
-                                                .getContributedDescriptors(
-                                                        DescriptorKindFilter.CALLABLES, name -> name.equals(directMember.getName()));
-                                if (!existingDescriptors.contains(original)) {
-                                    //TODO: don't try to copy descriptros in InterfaceImplBodyCodegen.generateSyntheticPartsAfterBody,
-                                    // investigate problem with diagnostic and remove this HACK code
-                                    descriptor = unwrapFakeOverrideSkipFirst(original).getOriginal();
+                                FunctionDescriptor descriptor = unwrapFakeOverrideToAnyDeclaration(original).getOriginal();
+                                if (descriptor != original) {
                                     descriptor = descriptor
                                             .copy(original.getContainingDeclaration(), descriptor.getModality(), descriptor.getVisibility(),
                                                   descriptor.getKind(), false);
-                                }
-                                else {
-                                    descriptor = original;
                                 }
                                 generateMethodCallTo(descriptor, accessor, codegen.v).coerceTo(signature.getReturnType(), null, codegen.v);
                             }
@@ -906,12 +893,4 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         jvmAssertFieldGenerated = true;
     }
 
-    private static <D extends CallableMemberDescriptor> D unwrapFakeOverrideSkipFirst(@NotNull D descriptor) {
-        Collection<? extends CallableMemberDescriptor> overridden = descriptor.getOverriddenDescriptors();
-        if (overridden.isEmpty()) {
-            throw new IllegalStateException("Fake override should have at least one overridden descriptor: " + descriptor);
-        }
-        descriptor = (D) overridden.iterator().next();
-        return unwrapFakeOverride(descriptor);
-    }
 }
