@@ -22,21 +22,9 @@ import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.resolve.ImportPath
 
-class TypeMappingConversion(val context: ConversionContext) : MatchBasedConversion() {
-    override fun onElementChanged(new: JKTreeElement, old: JKTreeElement) {
-        somethingChanged = true
-    }
+class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicableConversionBase() {
 
-    override fun runConversion(treeRoot: JKTreeElement, context: ConversionContext): Boolean {
-        val root = applyToElement(treeRoot)
-        assert(root === treeRoot)
-        return somethingChanged
-    }
-
-    var somethingChanged = false
-
-
-    fun applyToElement(element: JKTreeElement): JKTreeElement {
+    override fun applyToElement(element: JKTreeElement): JKTreeElement {
         return if (element is JKTypeElement) {
             val type = element.type
             when (type) {
