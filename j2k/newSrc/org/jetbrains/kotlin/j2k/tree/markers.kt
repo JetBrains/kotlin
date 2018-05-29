@@ -34,14 +34,13 @@ interface JKElement {
 
 interface JKBranchElement : JKElement {
     val children: List<Any>
+
+    val valid: Boolean
+    fun invalidate()
 }
 
 interface JKModifierListOwner {
     var modifierList: JKModifierList
-}
-
-interface JKReferenceTarget {
-    val valid: Boolean
 }
 
 interface JKType

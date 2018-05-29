@@ -26,8 +26,6 @@ class JKJavaFieldImpl(
     name: JKNameIdentifier,
     initializer: JKExpression
 ) : JKJavaField, JKBranchElementBase() {
-    override val valid: Boolean
-        get() = true
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaField(this, data)
 
@@ -53,8 +51,6 @@ class JKJavaMethodImpl(
     override var valueArguments: List<JKValueArgument> by children(valueArguments)
     override var block: JKBlock by child(block)
 
-    override val valid: Boolean
-        get() = true
 }
 
 class JKJavaLiteralExpressionImpl(

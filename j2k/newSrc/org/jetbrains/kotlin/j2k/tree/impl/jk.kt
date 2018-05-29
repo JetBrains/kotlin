@@ -31,7 +31,6 @@ class JKClassImpl(
     override var modifierList by child(modifierList)
     override var declarationList by children<JKDeclaration>()
 
-    override val valid: Boolean = true
 }
 
 

@@ -60,6 +60,7 @@ class FieldToPropertyConversion : MatchBasedConversion() {
 
             if (field != null) {
                 // TODO: proper accessors
+                field.invalidate()
                 val property =
                     JKKtPropertyImpl(field.modifierList, field.type, field.name, field.initializer, JKBlockImpl(), JKBlockImpl())
 

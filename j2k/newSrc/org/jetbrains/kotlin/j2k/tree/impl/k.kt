@@ -28,8 +28,6 @@ class JKKtPropertyImpl(
     setter: JKBlock
 ) : JKBranchElementBase(), JKKtProperty {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtProperty(this, data)
-    override val valid: Boolean
-        get() = true
 
     override var modifierList: JKModifierList by child(modifierList)
     override var type by child(type)
@@ -46,8 +44,6 @@ class JKKtFunctionImpl(
     block: JKBlock,
     modifierList: JKModifierList
 ) : JKBranchElementBase(), JKKtFunction {
-    override val valid: Boolean
-        get() = true
 
     override var returnType: JKTypeElement by child(returnType)
     override var name: JKNameIdentifier by child(name)
