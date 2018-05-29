@@ -50,8 +50,7 @@ private val KOTLIN_REFLECT = "kotlin-reflect"
 internal fun findKotlinJvmCompilerClasspath(project: Project): List<File> =
         findKotlinModuleJar(project, K2JVM_COMPILER_CLASS, KOTLIN_COMPILER_EMBEDDABLE).let {
             if (it.isEmpty()) it
-            else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project) +
-                    findKotlinScriptCommonClasspath(project) + findKotlinScriptJvmClasspath(project) + findCoroutinesClasspath()
+            else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project)
         }
 
 internal fun findKotlinJsCompilerClasspath(project: Project): List<File> =
