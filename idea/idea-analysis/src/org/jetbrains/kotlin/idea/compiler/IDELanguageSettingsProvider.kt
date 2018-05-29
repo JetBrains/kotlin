@@ -38,31 +38,32 @@ import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.targetPlatform
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.utils.Jsr305State
 
 object IDELanguageSettingsProvider : LanguageSettingsProvider {
     override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings =
         when (moduleInfo) {
             is ModuleSourceInfo -> moduleInfo.module.languageVersionSettings
-            is LibraryInfo -> project.getLanguageVersionSettings(extraAnalysisFlags = getExtraAnalysisFlags(project))
+            is LibraryInfo -> project.getLanguageVersionSettings(jsr305State = computeJsr305State(project))
             is ScriptModuleInfo -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
             is ScriptDependenciesInfo.ForFile -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
             is PlatformModuleInfo -> moduleInfo.platformModule.module.languageVersionSettings
             else -> project.getLanguageVersionSettings()
         }
 
-    private fun getExtraAnalysisFlags(project: Project): Map<AnalysisFlag<*>, Any?> {
-        val map = mutableMapOf<AnalysisFlag<*>, Any>()
+    private fun computeJsr305State(project: Project): Jsr305State? {
+        var result: Jsr305State? = null
         for (module in ModuleManager.getInstance(project).modules) {
             val settings = KotlinFacetSettingsProvider.getInstance(project).getSettings(module) ?: continue
             val compilerArguments = settings.mergedCompilerArguments as? K2JVMCompilerArguments ?: continue
 
-            val jsr305State = Jsr305Parser(MessageCollector.NONE).parse(
+            result = Jsr305Parser(MessageCollector.NONE).parse(
                 compilerArguments.jsr305,
                 compilerArguments.supportCompatqualCheckerFrameworkAnnotations
             )
-            map.put(AnalysisFlag.jsr305, jsr305State)
+
         }
-        return map
+        return result
     }
 
     override fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion {
