@@ -90,6 +90,11 @@ public class BytecodeTextJava8TestGenerated extends AbstractBytecodeTextTest {
             public void testSimpleFunctionWithAbstractOverride() throws Exception {
                 runTest("compiler/testData/codegen/java8/bytecodeText/jvmDefault/compatibility/simpleFunctionWithAbstractOverride.kt");
             }
+
+            @TestMetadata("simpleProperty.kt")
+            public void testSimpleProperty() throws Exception {
+                runTest("compiler/testData/codegen/java8/bytecodeText/jvmDefault/compatibility/simpleProperty.kt");
+            }
         }
     }
 }
