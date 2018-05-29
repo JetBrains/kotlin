@@ -4040,6 +4040,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/arrow.kt");
             }
 
+            @TestMetadata("capturedIt.kt")
+            public void testCapturedIt() throws Exception {
+                runTest("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/capturedIt.kt");
+            }
+
             @TestMetadata("doubleNestedLambdas.kt")
             public void testDoubleNestedLambdas() throws Exception {
                 runTest("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/doubleNestedLambdas.kt");
@@ -4144,6 +4149,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
             public void testAllFilesPresentInRunToLet() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/scopeFunctions/runToLet"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("capturedIt.kt")
+            public void testCapturedIt() throws Exception {
+                runTest("idea/testData/inspectionsLocal/scopeFunctions/runToLet/capturedIt.kt");
             }
 
             @TestMetadata("simple.kt")
