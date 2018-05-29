@@ -313,3 +313,100 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
           CONST Boolean type=kotlin.Boolean value=true
+  CLASS CLASS name:Test4 modality:FINAL visibility:public flags:data
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test4 flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.collections.List<kotlin.String>) returnType:Test4 flags:primary
+      VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<kotlin.String> flags:
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test4'
+    PROPERTY name:x type:kotlin.collections.List<kotlin.String> visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<kotlin.String> visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: List<String>' type=kotlin.collections.List<kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test4) returnType:List<String> flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.collections.List<kotlin.String> visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:Test4 flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): List<String>'
+            GET_FIELD 'x: List<String>' type=kotlin.collections.List<kotlin.String> origin=null
+              receiver: GET_VAR 'this@Test4: Test4' type=Test4 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:Test4) returnType:List<String> flags:
+      $this: VALUE_PARAMETER name:<this> type:Test4 flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component1(): List<String>'
+          CALL '<get-x>(): List<String>' type=kotlin.collections.List<kotlin.String> origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test4: Test4' type=Test4 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:Test4, x:kotlin.collections.List<kotlin.String>) returnType:Test4 flags:
+      $this: VALUE_PARAMETER name:<this> type:Test4 flags:
+      VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<kotlin.String> flags:
+        EXPRESSION_BODY
+          CALL '<get-x>(): List<String>' type=kotlin.collections.List<kotlin.String> origin=GET_PROPERTY
+            $this: GET_VAR 'this@Test4: Test4' type=Test4 origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='copy(List<String> = ...): Test4'
+          CALL 'constructor Test4(List<String>)' type=Test4 origin=null
+            x: GET_VAR 'value-parameter x: List<String> = ...' type=kotlin.collections.List<kotlin.String> origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:Test4) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:Test4 flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='toString(): String'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value=Test4(
+            CONST String type=kotlin.String value=x=
+            CALL '<get-x>(): List<String>' type=kotlin.collections.List<kotlin.String> origin=GET_PROPERTY
+              $this: GET_VAR 'this@Test4: Test4' type=Test4 origin=null
+            CONST String type=kotlin.String value=)
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test4) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:Test4 flags:
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
+          CONST Int type=kotlin.Int value=0
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'hashCode(): Int' type=kotlin.Int origin=null
+            $this: CALL '<get-x>(): List<String>' type=kotlin.collections.List<kotlin.String> origin=GET_PROPERTY
+              $this: GET_VAR 'this@Test4: Test4' type=Test4 origin=null
+        RETURN type=kotlin.Nothing from='hashCode(): Int'
+          GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:Test4, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:Test4 flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
+              arg0: GET_VAR 'this@Test4: Test4' type=Test4 origin=null
+              arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=true
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test4
+              typeOperand: CLASS CLASS name:Test4 modality:FINAL visibility:public flags:data
+              GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test4 flags:val
+          TYPE_OP type=Test4 origin=CAST typeOperand=Test4
+            typeOperand: CLASS CLASS name:Test4 modality:FINAL visibility:public flags:data
+            GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-x>(): List<String>' type=kotlin.collections.List<kotlin.String> origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test4: Test4' type=Test4 origin=null
+                arg1: CALL '<get-x>(): List<String>' type=kotlin.collections.List<kotlin.String> origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test4' type=Test4 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+          CONST Boolean type=kotlin.Boolean value=true
