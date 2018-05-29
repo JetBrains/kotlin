@@ -69,7 +69,11 @@ class JKMultiverseMethodSymbol(override val target: PsiMethod) : JKMethodSymbol 
 
 }
 
-class JKUniverseFieldSymbol : JKFieldSymbol {
+class JKUniverseFieldSymbol() : JKFieldSymbol {
+    constructor(target: JKField) : this() {
+        this.target = target
+    }
+
     override lateinit var target: JKField
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.

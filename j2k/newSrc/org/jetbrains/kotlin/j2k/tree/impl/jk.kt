@@ -36,7 +36,6 @@ class JKClassImpl(
 
 }
 
-
 class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKElementBase() {}
 
 class JKModifierListImpl(
@@ -58,6 +57,7 @@ class JKBlockImpl(statements: List<JKStatement> = emptyList()) : JKBlock, JKBran
 
     override var statements by children(statements)
 }
+
 
 class JKBinaryExpressionImpl(
     left: JKExpression,
@@ -100,12 +100,16 @@ class JKQualifiedExpressionImpl(
     override var selector: JKExpression by child(selector)
 }
 
-class JKExpressionStatementImpl(
-    expression: JKExpression
-) : JKExpressionStatement, JKBranchElementBase() {
+class JKExpressionStatementImpl(expression: JKExpression) : JKExpressionStatement, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitExpressionStatement(this, data)
 
     override val expression: JKExpression by child(expression)
+}
+
+class JKDeclarationStatementImpl(declaredStatements: List<JKDeclaration>) : JKDeclarationStatement, JKBranchElementBase() {
+    override val declaredStatements by children(declaredStatements)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitDeclarationStatement(this, data)
 }
 
 class JKArrayAccessExpressionImpl(
@@ -151,3 +155,15 @@ class JKBooleanLiteral(val value: Boolean) : JKLiteralExpression, JKElementBase(
     override val type: LiteralType
         get() = BOOLEAN
 }
+
+class JKLocalVariableImpl(modifierList: JKModifierList, type: JKTypeElement, name: JKNameIdentifier, initializer: JKExpression) :
+    JKLocalVariable, JKBranchElementBase() {
+    override var modifierList by child(modifierList)
+    override val initializer by child(initializer)
+    override val name by child(name)
+    override val type by child(type)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLocalVariable(this, data)
+}
+
+class JKStubExpressionImpl() : JKStubExpression, JKElementBase()

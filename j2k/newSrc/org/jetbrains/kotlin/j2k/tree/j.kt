@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.j2k.tree
 
 import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
 
-interface JKJavaField : JKField, JKBranchElement {
-    val initializer: JKExpression
-}
+interface JKJavaField : JKField, JKBranchElement
 
 interface JKJavaMethod : JKMethod, JKBranchElement {
     val block: JKBlock

@@ -232,8 +232,8 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             return JKJavaFieldImpl(
                 with(modifierMapper) { modifierList.toJK() },
                 with(expressionTreeMapper) { typeElement?.toJK() } ?: TODO(),
-                JKNameIdentifierImpl(this.name),
-                with(expressionTreeMapper) { initializer?.toJK() } ?: TODO()
+                JKNameIdentifierImpl(name),
+                with(expressionTreeMapper) { initializer?.toJK() } ?: JKStubExpressionImpl()
             ).also {
                 (symbolProvider.provideSymbol(this) as? JKUniverseFieldSymbol)?.run { target = it }
             }
@@ -265,14 +265,26 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             return JKBlockImpl(statements.map { it.toJK() })
         }
 
+        fun Array<out PsiElement>.toJK(): List<JKDeclaration> {
+            return this.map {
+                if (it is PsiLocalVariable) {
+                    JKLocalVariableImpl(
+                        with(modifierMapper) { it.modifierList.toJK() },
+                        with(expressionTreeMapper) { it.typeElement.toJK() },
+                        JKNameIdentifierImpl(it.name ?: TODO()),
+                        with(expressionTreeMapper) { it.initializer?.toJK() } ?: JKStubExpressionImpl()
+                    ).also { i -> symbolProvider.symbols[it] = JKUniverseFieldSymbol(i) }
+                } else TODO()
+            }
+        }
+
         fun PsiStatement.toJK(): JKStatement {
-            if (this is PsiExpressionStatement) {
-                return JKExpressionStatementImpl(with(expressionTreeMapper) { expression.toJK() })
+            return when (this) {
+                is PsiExpressionStatement -> JKExpressionStatementImpl(with(expressionTreeMapper) { expression.toJK() })
+                is PsiReturnStatement -> JKReturnStatementImpl(with(expressionTreeMapper) { returnValue?.toJK() ?: JKStubExpressionImpl() })
+                is PsiDeclarationStatement -> JKDeclarationStatementImpl(declaredElements.toJK())
+                else -> TODO("for ${this::class}")
             }
-            if (this is PsiReturnStatement) {
-                return JKReturnStatementImpl(with(expressionTreeMapper) { returnValue?.toJK() ?: TODO() })
-            }
-            TODO("for ${this::class}")
         }
     }
 
