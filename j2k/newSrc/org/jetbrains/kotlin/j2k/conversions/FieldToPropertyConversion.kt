@@ -5,25 +5,12 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKBlockImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtPropertyImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
 
-class FieldToPropertyConversion : MatchBasedConversion() {
-    override fun onElementChanged(new: JKTreeElement, old: JKTreeElement) {
-        somethingChanged = true
-    }
-
-
-    var somethingChanged = false
-
-    override fun runConversion(treeRoot: JKTreeElement, context: ConversionContext): Boolean {
-        val root = applyToElement(treeRoot)
-        assert(root === treeRoot)
-        return somethingChanged
-    }
+class FieldToPropertyConversion : RecursiveApplicableConversionBase() {
 
     data class PropertyInfo(
         val name: String,
@@ -32,7 +19,7 @@ class FieldToPropertyConversion : MatchBasedConversion() {
         var field: JKJavaField? = null
     )
 
-    fun applyToElement(element: JKTreeElement): JKTreeElement {
+    override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClass) return applyRecursive(element, this::applyToElement)
 
         val propertyInfos = mutableMapOf<String, PropertyInfo>()
