@@ -166,4 +166,11 @@ class JKLocalVariableImpl(modifierList: JKModifierList, type: JKTypeElement, nam
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLocalVariable(this, data)
 }
 
-class JKStubExpressionImpl() : JKStubExpression, JKElementBase()
+class JKStubExpressionImpl : JKStubExpression, JKElementBase()
+
+class JKAssertStatementImpl(condition: JKExpression, description: JKExpression) : JKAssertStatement, JKBranchElementBase() {
+    override val description by child(description)
+    override val condition by child(condition)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAssertStatement(this, data)
+}

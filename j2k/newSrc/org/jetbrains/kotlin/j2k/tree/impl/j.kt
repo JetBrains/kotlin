@@ -66,6 +66,12 @@ class JKJavaModifierImpl(override val type: JKJavaModifier.JavaModifierType) : J
 sealed class JKJavaOperatorImpl : JKOperator {
     object PLUS : JKJavaOperatorImpl()
     object MINUS : JKJavaOperatorImpl()
+    object EQEQ : JKJavaOperatorImpl()
+    object NE : JKJavaOperatorImpl()
+    object GT : JKJavaOperatorImpl()
+    object LT : JKJavaOperatorImpl()
+    object GE : JKJavaOperatorImpl()
+    object LE : JKJavaOperatorImpl()
 }
 
 sealed class JKJavaQualifierImpl : JKQualifier {
