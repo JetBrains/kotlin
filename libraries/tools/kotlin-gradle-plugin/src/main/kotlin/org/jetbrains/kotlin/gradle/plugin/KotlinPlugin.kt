@@ -37,6 +37,7 @@ import java.util.concurrent.Callable
 import java.util.jar.Manifest
 
 internal const val PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerPluginClasspath"
+internal const val COMPILER_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerClasspath"
 val KOTLIN_DSL_NAME = "kotlin"
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
@@ -337,6 +338,9 @@ internal abstract class AbstractKotlinPlugin(
     internal abstract fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String): KotlinSourceSetProcessor<*>
 
     override fun apply(project: Project) {
+        project.configurations.create(COMPILER_CLASSPATH_CONFIGURATION_NAME).defaultDependencies {
+            it.add(project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:$kotlinPluginVersion"))
+        }
         project.configurations.create(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
             // todo: Consider removing if org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser stops using parent last classloader
             isTransitive = false

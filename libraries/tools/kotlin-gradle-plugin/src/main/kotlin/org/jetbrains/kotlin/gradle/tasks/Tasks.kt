@@ -42,12 +42,31 @@ const val USING_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin incremental comp
 const val USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using experimental Kotlin/JS incremental compilation"
 
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCompile(), CompilerArgumentAwareWithInput<T> {
-    // TODO: deprecate and remove
+    private fun useCompilerClasspathConfigurationMessage(propertyName: String) {
+        project.logger.kotlinWarn(
+            "'$path.$propertyName' is deprecated and will be removed soon. " +
+                    "Use '$COMPILER_CLASSPATH_CONFIGURATION_NAME' " +
+                    "configuration for customizing compiler classpath."
+        )
+    }
+
+    // TODO: remove
     @get:Internal
     var compilerJarFile: File? = null
+        @Deprecated("Use $COMPILER_CLASSPATH_CONFIGURATION_NAME configuration")
+        set(value) {
+            useCompilerClasspathConfigurationMessage("compilerJarFile")
+            field = value
+        }
 
+    // TODO: remove
     @get:Internal
     var compilerClasspath: List<File>? = null
+        @Deprecated("Use $COMPILER_CLASSPATH_CONFIGURATION_NAME configuration")
+        set(value) {
+            useCompilerClasspathConfigurationMessage("compilerClasspath")
+            field = value
+        }
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -60,8 +79,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCo
                     // a hack to remove compiler jar from the cp, will be dropped when compilerJarFile will be removed
                     listOf(it) + findKotlinCompilerClasspath(project).filter { !it.name.startsWith("kotlin-compiler") }
                 }
-                ?: findKotlinCompilerClasspath(project).takeIf { it.isNotEmpty() }
-                ?: throw IllegalStateException("Could not find Kotlin Compiler classpath. Please specify $name.compilerClasspath")
+                ?: project.configurations.getByName(COMPILER_CLASSPATH_CONFIGURATION_NAME).resolve().toList()
 
     protected abstract fun findKotlinCompilerClasspath(project: Project): List<File>
 }
