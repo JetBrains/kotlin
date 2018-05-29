@@ -86,12 +86,28 @@ abstract class JKBranchElementBase : JKElementBase(), JKBranchElement {
     }
 
     final override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
+        forEachChild { it.accept(visitor, data) }
+    }
+
+    protected inline fun forEachChild(block: (JKTreeElement) -> Unit) {
         children.forEach {
             if (it is JKTreeElement)
-                it.accept(visitor, data)
+                block(it)
             else
-                (it as? List<JKTreeElement>)?.forEach { it.accept(visitor, data) }
+                (it as? List<JKTreeElement>)?.forEach { block(it) }
         }
+    }
+
+
+    final override var valid: Boolean = true
+
+    final override fun invalidate() {
+        forEachChild { it.detach(this) }
+        valid = false
+    }
+
+    override fun onAttach() {
+        check(valid)
     }
 
     override val children: MutableList<Any> = mutableListOf()

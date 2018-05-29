@@ -31,13 +31,18 @@ class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
     override fun visitClass(klass: JKClass) {
         somethingChanged = true
         klass.declarationList = klass.declarationList.map {
-            if (it is JKJavaMethod) JKKtFunctionImpl(
-                JKTypeElementImpl(JKJavaPrimitiveTypeImpl.BOOLEAN),
-                it.name,
-                it.valueArguments,
-                it.block,
-                it.modifierList
-            ) else it
+            if (it is JKJavaMethod) {
+                it.invalidate()
+                JKKtFunctionImpl(
+                    JKTypeElementImpl(JKJavaPrimitiveTypeImpl.BOOLEAN),
+                    it.name,
+                    it.valueArguments,
+                    it.block,
+                    it.modifierList
+                )
+            } else {
+                it
+            }
         }
     }
 }

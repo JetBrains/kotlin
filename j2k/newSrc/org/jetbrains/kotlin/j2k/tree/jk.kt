@@ -26,7 +26,7 @@ interface JKTreeElement : JKElement {
     fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
 }
 
-interface JKDeclaration : JKTreeElement, JKReferenceTarget
+interface JKDeclaration : JKTreeElement
 
 interface JKClass : JKDeclaration, JKModifierListOwner {
     val name: JKNameIdentifier
