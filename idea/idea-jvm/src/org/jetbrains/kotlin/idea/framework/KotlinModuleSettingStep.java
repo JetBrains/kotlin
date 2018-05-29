@@ -20,6 +20,7 @@ import com.intellij.CommonBundle;
 import com.intellij.facet.impl.ui.libraries.LibraryCompositionSettings;
 import com.intellij.facet.impl.ui.libraries.LibraryOptionsPanel;
 import com.intellij.framework.library.FrameworkLibraryVersionFilter;
+import com.intellij.ide.util.projectWizard.JavaSettingsStep;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.SettingsStep;
@@ -71,6 +72,10 @@ public class KotlinModuleSettingStep extends ModuleWizardStep {
     private final String basePath;
 
     public KotlinModuleSettingStep(TargetPlatform targetPlatform, ModuleBuilder moduleBuilder, @NotNull SettingsStep settingsStep) {
+        if (!(targetPlatform instanceof JvmPlatform)) {
+            KotlinSdkType.Companion.setUpIfNeeded();
+        }
+
         this.targetPlatform = targetPlatform;
 
         myJavaStep = JavaModuleType.getModuleType().modifyProjectTypeStep(settingsStep, moduleBuilder);
