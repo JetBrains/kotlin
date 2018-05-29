@@ -160,7 +160,7 @@ include ":kotlin-build-common",
         ":kotlin-scripting-jvm-host",
         ":kotlin-scripting-compiler",
         ":kotlin-scripting-idea",
-        ":kotlin-scripting-gradle",
+        ":kotlin-scripting-compiler-embeddable",
         ":examples:scripting-jvm-simple-script",
         ":examples:scripting-jvm-simple-script-host",
         ":examples:scripting-jvm-maven-deps",
@@ -172,7 +172,6 @@ include ":kotlin-build-common",
         ':kotlin-gradle-plugin:plugin-marker',
         ':kotlin-allopen:plugin-marker',
         ':kotlin-noarg:plugin-marker',
-        ':kotlin-scripting-gradle:plugin-marker',
         ":test-instrumenter"
 
 def isTeamcityBuild = hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
@@ -267,8 +266,8 @@ project(':kotlin-scripting-misc').projectDir = "$rootDir/libraries/scripting/mis
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
 project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
 project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-cli" as File
+project(':kotlin-scripting-compiler-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-embeddable" as File
 project(':kotlin-scripting-idea').projectDir = "$rootDir/plugins/scripting/scripting-idea" as File
-project(':kotlin-scripting-gradle').projectDir = "$rootDir/plugins/scripting/scripting-gradle" as File
 project(':examples:scripting-jvm-simple-script').projectDir = "$rootDir/libraries/examples/scripting/jvm-simple-script/script" as File
 project(':examples:scripting-jvm-simple-script-host').projectDir = "$rootDir/libraries/examples/scripting/jvm-simple-script/host" as File
 project(':examples:scripting-jvm-maven-deps').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps/script" as File
@@ -280,5 +279,3 @@ project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins
 project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")
 project(':kotlin-allopen:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-allopen/plugin-marker")
 project(':kotlin-noarg:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-noarg/plugin-marker")
-project(':kotlin-scripting-gradle:plugin-marker').projectDir = file("$rootDir/plugins/scripting/scripting-gradle/plugin-marker")
-

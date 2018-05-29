@@ -1,9 +1,9 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.gradle
+package org.jetbrains.kotlin.gradle.scripting.internal
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.gradle.plugin.JetBrainsSubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 
-class ScriptingGradleSubplugin : Plugin<Project>
-{
+class ScriptingGradleSubplugin : Plugin<Project> {
     companion object {
         fun isEnabled(project: Project) = project.plugins.findPlugin(ScriptingGradleSubplugin::class.java) != null
     }
@@ -25,7 +25,7 @@ class ScriptingGradleSubplugin : Plugin<Project>
 
 class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     companion object {
-        const val SCRIPTING_ARTIFACT_NAME = "kotlin-scripting"
+        const val SCRIPTING_ARTIFACT_NAME = "kotlin-scripting-compiler-embeddable"
 
         val SCRIPT_DEFINITIONS_OPTION = "script-definitions"
         val SCRIPT_DEFINITIONS_CLASSPATH_OPTION = "script-definitions-classpath"
@@ -33,7 +33,8 @@ class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION = "script-resolver-environment"
     }
 
-    override fun isApplicable(project: Project, task: AbstractCompile) = ScriptingGradleSubplugin.isEnabled(project)
+    override fun isApplicable(project: Project, task: AbstractCompile) =
+        ScriptingGradleSubplugin.isEnabled(project)
 
     override fun apply(
         project: Project,
