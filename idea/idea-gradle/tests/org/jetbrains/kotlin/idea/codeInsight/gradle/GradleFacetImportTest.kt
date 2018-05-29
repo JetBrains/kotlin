@@ -25,8 +25,6 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.PathUtil
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
@@ -43,9 +41,11 @@ import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import org.junit.Test
+import java.util.*
 
 internal fun GradleImportingTestCase.facetSettings(moduleName: String) = KotlinFacet.get(getModule(moduleName))!!.configuration.settings
 
@@ -73,6 +73,13 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     override fun tearDown() {
         currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
         super.tearDown()
+    }
+
+    private fun assertKotlinSdk(vararg moduleNames: String) {
+        val sdks = moduleNames.map { getModule(it).sdk!! }
+        val refSdk = sdks.firstOrNull() ?: return
+        Assert.assertTrue(refSdk.sdkType is KotlinSdkType)
+        Assert.assertTrue(sdks.all { it === refSdk })
     }
 
     @Test
@@ -611,8 +618,7 @@ compileTestKotlin {
         assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
         assertTrue(stdlib.getFiles(OrderRootType.CLASSES).isNotEmpty())
 
-        Assert.assertTrue(ModuleRootManager.getInstance(getModule("project_main")).sdk!!.sdkType is KotlinSdkType)
-        Assert.assertTrue(ModuleRootManager.getInstance(getModule("project_test")).sdk!!.sdkType is KotlinSdkType)
+        assertKotlinSdk("project_main", "project_test")
 
         Assert.assertEquals(
                 listOf("file:///src/main/java" to KotlinSourceRootType.Source,
@@ -2077,8 +2083,7 @@ compileTestKotlin {
         val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
         assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
 
-        Assert.assertTrue(ModuleRootManager.getInstance(getModule("project_main")).sdk!!.sdkType is KotlinSdkType)
-        Assert.assertTrue(ModuleRootManager.getInstance(getModule("project_test")).sdk!!.sdkType is KotlinSdkType)
+        assertKotlinSdk("project_main", "project_test")
 
         Assert.assertEquals(
                 listOf("file:///src/main/kotlin" to KotlinSourceRootType.Source,
