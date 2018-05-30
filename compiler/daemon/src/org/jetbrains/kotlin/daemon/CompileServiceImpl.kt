@@ -45,7 +45,10 @@ import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapter
 import org.jetbrains.kotlin.daemon.report.RemoteICReporter
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
@@ -944,6 +947,16 @@ class CompileServiceImpl(
         if (facade.hasCompilationCanceledStatus()) {
             builder.register(CompilationCanceledStatus::class.java, RemoteCompilationCanceledStatusClient(facade, rpcProfiler))
         }
+        if (facade.hasExpectActualTracker()) {
+            builder.register(ExpectActualTracker::class.java, RemoteExpectActualTracker(facade, rpcProfiler))
+        }
+        if (facade.hasIncrementalResultsConsumer()) {
+            builder.register(IncrementalResultsConsumer::class.java, RemoteIncrementalResultsConsumer(facade, rpcProfiler))
+        }
+        if (facade.hasIncrementalDataProvider()) {
+            builder.register(IncrementalDataProvider::class.java, RemoteIncrementalDataProvider(facade, rpcProfiler))
+        }
+
         return builder.build()
     }
 
