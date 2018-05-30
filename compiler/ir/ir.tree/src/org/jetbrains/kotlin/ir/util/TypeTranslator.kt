@@ -45,7 +45,12 @@ class TypeTranslator(
 
     private fun translateType(ktType0: KotlinType, variance: Variance): IrTypeProjection {
         // TODO "old" JVM BE does this for reified type arguments. Is it ok for arbitrary subexpressions?
-        val ktTypeUpper = approximateCapturedTypes(ktType0).upper
+        
+        val ktTypeUpper =
+            if (ktType0.constructor.isDenotable)
+                ktType0
+            else
+                approximateCapturedTypes(ktType0).upper
 
         when {
             ktTypeUpper.isError -> return IrErrorTypeImpl(ktTypeUpper, translateTypeAnnotations(ktTypeUpper.annotations), variance)
