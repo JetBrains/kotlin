@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
+import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
@@ -125,9 +126,13 @@ sealed class JKJavaPrimitiveTypeImpl(override val jvmPrimitiveType: JvmPrimitive
     }
 }
 
-object JKJavaVoidType : JKType
+object JKJavaVoidType : JKType {
+    override val nullability: Nullability
+        get() = Nullability.NotNull
+}
 
-class JKJavaArrayTypeImpl(override val type: JKType) : JKJavaArrayType
+class JKJavaArrayTypeImpl(override val type: JKType, override val nullability: Nullability = Nullability.Default) : JKJavaArrayType {
+}
 
 class JKReturnStatementImpl(expression: JKExpression) : JKBranchElementBase(), JKReturnStatement {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitReturnStatement(this, data)
