@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.createKotlinExtension
 import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetProviderImpl
-import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.KotlinCommonTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.FileNotFoundException
 import java.util.*
 import javax.inject.Inject
@@ -39,6 +36,14 @@ abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver)
     val kotlinPluginVersion = loadKotlinVersionFromResource(log)
 
     override fun apply(project: Project) {
+        project.configurations.maybeCreate(COMPILER_CLASSPATH_CONFIGURATION_NAME).defaultDependencies {
+            it.add(project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:$kotlinPluginVersion"))
+        }
+        project.configurations.maybeCreate(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
+            // todo: Consider removing if org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser stops using parent last classloader
+            isTransitive = false
+        }
+
         // TODO: consider only set if if daemon or parallel compilation are enabled, though this way it should be safe too
         System.setProperty(org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
         val kotlinGradleBuildServices = KotlinGradleBuildServices.getInstance(project.gradle)
