@@ -539,6 +539,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         public void generateEqualsMethod(@NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> properties) {
             MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(function);
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
+            mv.visitParameterAnnotation(0, Type.getDescriptor(Nullable.class), true);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
@@ -665,6 +666,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         public void generateToStringMethod(@NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> properties) {
             MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(function);
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
+            mv.visitAnnotation(Type.getDescriptor(NotNull.class), true);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
