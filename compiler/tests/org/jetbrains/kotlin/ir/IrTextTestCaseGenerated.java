@@ -381,6 +381,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/declarations/annotations/functionsWithAnnotations.kt");
             }
 
+            @TestMetadata("javaAnnotation.kt")
+            public void testJavaAnnotation() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/javaAnnotation.kt");
+            }
+
             @TestMetadata("localDelegatedPropertiesWithAnnotations.kt")
             public void testLocalDelegatedPropertiesWithAnnotations() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/localDelegatedPropertiesWithAnnotations.kt");
