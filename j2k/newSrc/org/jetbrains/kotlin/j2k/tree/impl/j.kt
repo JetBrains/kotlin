@@ -101,6 +101,10 @@ class JKJavaNewExpressionImpl(
     override var arguments by child(arguments)
 }
 
+class JKJavaDefaultNewExpressionImpl(
+    override val classSymbol: JKClassSymbol
+) : JKJavaDefaultNewExpression, JKElementBase()
+
 class JKJavaNewEmptyArrayImpl(override var initializer: List<JKLiteralExpression?>) : JKJavaNewEmptyArray, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewEmptyArray(this, data)
 }

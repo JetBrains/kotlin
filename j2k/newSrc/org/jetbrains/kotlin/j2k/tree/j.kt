@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
+import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
 
 interface JKJavaField : JKField, JKBranchElement
@@ -36,6 +37,10 @@ interface JKJavaFieldAccessExpression : JKFieldAccessExpression
 interface JKJavaNewExpression : JKExpression {
     val constructorSymbol: JKMethodSymbol
     val arguments: JKExpressionList
+}
+
+interface JKJavaDefaultNewExpression : JKExpression {
+    val classSymbol: JKClassSymbol
 }
 
 interface JKJavaAccessModifier : JKAccessModifier {

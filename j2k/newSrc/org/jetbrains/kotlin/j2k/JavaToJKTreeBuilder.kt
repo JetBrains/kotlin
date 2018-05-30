@@ -161,8 +161,17 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                     return JKJavaNewEmptyArrayImpl(dimensions.map { it?.toJK() })
                 }
             }
+            val constructedClass = classOrAnonymousClassReference?.resolve()
+            val constructor = constructorFakeReference.resolve()
+            if (constructor == null && constructedClass != null) {
+                return JKJavaDefaultNewExpressionImpl(
+                    symbolProvider.provideSymbol(constructedClass) as JKClassSymbol
+
+                )
+            }
+
             return JKJavaNewExpressionImpl(
-                symbolProvider.provideSymbol(constructorFakeReference.resolve()!!) as JKMethodSymbol,
+                symbolProvider.provideSymbol(constructor!!) as JKMethodSymbol,
                 argumentList.toJK()
             )
         }
