@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.idea.references.KotlinDefaultAnnotationMethodImplicitReferenceContributor.ReferenceImpl as ImplicitReference
 
-class DefaultAnnotationMethodKotlinImplicitReferenceSearcher : QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>(true) {
+class DefaultAnnotationMethodKotlinImplicitReferenceSearcher :
+    QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>(true) {
     private val PsiMethod.isDefaultAnnotationMethod: Boolean
         get() = PsiUtil.isAnnotationMethod(this) && name == PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME && parameterList.parametersCount == 0
 

@@ -63,22 +63,29 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
             val nameCandidates = getPropertyNamesCandidatesByAccessorName(Name.identifier(method.name))
             for (name in nameCandidates) {
                 p.optimizer.searchWord(
-                        name.asString(),
-                        searchScope,
-                        UsageSearchContext.IN_CODE,
-                        true,
-                        method,
-                        getTextOccurrenceProcessor(arrayOf(method), containingClass, false)
+                    name.asString(),
+                    searchScope,
+                    UsageSearchContext.IN_CODE,
+                    true,
+                    method,
+                    getTextOccurrenceProcessor(arrayOf(method), containingClass, false)
                 )
             }
         }
     }
 
-    override fun getTextOccurrenceProcessor(methods: Array<out PsiMethod>,
-                                            aClass: PsiClass,
-                                            strictSignatureSearch: Boolean): MethodTextOccurrenceProcessor {
-        return object: MethodTextOccurrenceProcessor(aClass, strictSignatureSearch, *methods) {
-            override fun processInexactReference(ref: PsiReference, refElement: PsiElement?, method: PsiMethod, consumer: ExecutorProcessor<PsiReference>): Boolean {
+    override fun getTextOccurrenceProcessor(
+        methods: Array<out PsiMethod>,
+        aClass: PsiClass,
+        strictSignatureSearch: Boolean
+    ): MethodTextOccurrenceProcessor {
+        return object : MethodTextOccurrenceProcessor(aClass, strictSignatureSearch, *methods) {
+            override fun processInexactReference(
+                ref: PsiReference,
+                refElement: PsiElement?,
+                method: PsiMethod,
+                consumer: ExecutorProcessor<PsiReference>
+            ): Boolean {
                 val isGetter = JvmAbi.isGetterName(method.name)
 
                 fun isWrongAccessorReference(): Boolean {
