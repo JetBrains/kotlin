@@ -166,13 +166,8 @@ class JKLocalVariableImpl(modifierList: JKModifierList, type: JKTypeElement, nam
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLocalVariable(this, data)
 }
 
-class JKStubExpressionImpl : JKStubExpression, JKElementBase()
-
-class JKAssertStatementImpl(condition: JKExpression, description: JKExpression) : JKAssertStatement, JKBranchElementBase() {
-    override val description by child(description)
-    override val condition by child(condition)
-
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAssertStatement(this, data)
+class JKStubExpressionImpl : JKStubExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitStubExpression(this, data)
 }
 
 object JKBodyStub : JKBlock, JKTreeElement {
@@ -192,4 +187,10 @@ object JKBodyStub : JKBlock, JKTreeElement {
 
     override fun attach(to: JKElement) {
     }
+}
+
+class JKBlockStatementImpl(block: JKBlock) : JKBlockStatement, JKBranchElementBase() {
+    override var block by child(block)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlockStatement(this, data)
 }
