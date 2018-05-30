@@ -24,6 +24,7 @@ import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.psi.util.TypeConversionUtil
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -31,8 +32,10 @@ import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.demangleInternalName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -45,6 +48,26 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
         val isConstructor = p.project.runReadActionInSmartMode { method.isConstructor }
         if (isConstructor) {
             return
+        }
+
+        if (method is KtLightMethod) {
+            method.kotlinOrigin?.let { ktElement ->
+                val (mayBeMangled, name) = p.project.runReadActionInSmartMode {
+                    ktElement.hasModifier(KtTokens.PRIVATE_KEYWORD) || ktElement.hasModifier(KtTokens.INTERNAL_KEYWORD)
+                } to method.name
+                if (mayBeMangled && name != null) {
+                    val demangledName = demangleInternalName(name)
+                    if (demangledName != null) {
+                        val wrappedMethod = object : KtLightMethod by method {
+                            override fun getName(): String = demangledName
+                        }
+                        processQuery(
+                                MethodReferencesSearch.SearchParameters(wrappedMethod, p.scopeDeterminedByUser, p.isStrictSignatureSearch, p.optimizer),
+                                consumer
+                        )
+                    }
+                }
+            }
         }
 
         val searchScope = p.project.runReadActionInSmartMode {

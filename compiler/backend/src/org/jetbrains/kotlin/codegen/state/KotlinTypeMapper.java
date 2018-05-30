@@ -1676,13 +1676,21 @@ public class KotlinTypeMapper {
         }
 
         @Nullable
-        public static String internalNameWithoutModuleSuffix(@NotNull String name) {
+        public static String demangleInternalName(@NotNull String name) {
             int indexOfDollar = name.indexOf('$');
-            if (indexOfDollar == -1) {
-                return null;
-            }
+            return indexOfDollar >= 0 ? name.substring(0, indexOfDollar) : null;
+        }
 
-            return name.substring(0, indexOfDollar) + '$';
+        @Nullable
+        public static String getModuleNameSuffix(@NotNull String name) {
+            int indexOfDollar = name.indexOf('$');
+            return indexOfDollar >=0 ? name.substring(indexOfDollar + 1) : null;
+        }
+
+        @Nullable
+        public static String internalNameWithoutModuleSuffix(@NotNull String name) {
+            String demangledName = demangleInternalName(name);
+            return demangledName != null ? demangledName + '$' : null;
         }
     }
 }

@@ -121,7 +121,7 @@ class RenameKotlinClassifierProcessor : RenameKotlinPsiProcessor() {
         else -> null
     }
 
-    override fun renameElement(element: PsiElement, newName: String, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
+    override fun renameElement(element: PsiElement, newName: String, usages: Array<UsageInfo>, listener: RefactoringElementListener?) {
         val simpleUsages = ArrayList<UsageInfo>(usages.size)
         val ambiguousImportUsages = com.intellij.util.SmartList<UsageInfo>()
         for (usage in usages) {
