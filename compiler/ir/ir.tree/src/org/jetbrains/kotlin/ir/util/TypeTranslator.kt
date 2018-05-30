@@ -36,6 +36,13 @@ class TypeTranslator(
         typeParametersResolver.leaveTypeParameterScope()
     }
 
+    inline fun <T> buildWithScope(container: IrTypeParametersContainer, builder: () -> T): T {
+        enterScope(container)
+        val result = builder()
+        leaveScope()
+        return result
+    }
+
     private fun resolveTypeParameter(typeParameterDescriptor: TypeParameterDescriptor) =
         typeParametersResolver.resolveScopedTypeParameter(typeParameterDescriptor)
                 ?: symbolTable.referenceTypeParameter(typeParameterDescriptor)
@@ -101,4 +108,3 @@ class TypeTranslator(
                 translateType(it.type, it.projectionKind)
         }
 }
-
