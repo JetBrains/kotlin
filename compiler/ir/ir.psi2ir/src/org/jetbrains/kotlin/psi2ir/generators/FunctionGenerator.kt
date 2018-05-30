@@ -120,6 +120,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     ): IrSimpleFunction =
         declareSimpleFunctionInner(descriptor, ktParameter, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR).buildWithScope { irAccessor ->
             declarationGenerator.generateScopedTypeParameterDeclarations(irAccessor, descriptor.typeParameters)
+            irAccessor.returnType = descriptor.returnType!!.toIrType()
             FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irAccessor)
             irAccessor.body = generateDefaultAccessorBody(ktParameter, descriptor, irAccessor)
         }
@@ -296,6 +297,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         context.symbolTable.declareValueParameter(
             ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
             IrDeclarationOrigin.DEFINED,
-            descriptor, descriptor.type.toIrType()
+            descriptor, descriptor.type.toIrType(),
+            (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType()
         )
 }
