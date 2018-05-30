@@ -200,10 +200,18 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiType.toJK(): JKType {
             return when (this) {
-                is PsiClassType -> JKClassTypeImpl(
-                    resolve()?.let { symbolProvider.provideSymbol(it) as? JKClassSymbol }!!,
-                    parameters.map { it.toJK() }
-                )
+                is PsiClassType -> {
+                    val target = resolve()
+                    val parameters = parameters.map { it.toJK() }
+                    if (target != null) {
+                        JKClassTypeImpl(
+                            target.let { symbolProvider.provideSymbol(it) as JKClassSymbol },
+                            parameters
+                        )
+                    } else {
+                        JKUnresolvedClassType(parameters)
+                    }
+                }
                 is PsiArrayType -> JKJavaArrayTypeImpl(componentType.toJK())
                 is PsiPrimitiveType -> JKJavaPrimitiveTypeImpl.KEYWORD_TO_INSTANCE[presentableText]
                         ?: error("Invalid primitive type $presentableText")
