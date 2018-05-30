@@ -131,4 +131,13 @@ class SubpluginsIT : BaseGradleIT() {
             assertFileExists("${kotlinClassesDir(subproject = "a/b", sourceSet = "test")}MyTestClass.class")
         }
     }
+
+    @Test
+    fun testAllopenFromScript() {
+        Project("allOpenFromScript").build("build") {
+            assertSuccessful()
+            assertFileExists("${kotlinClassesDir(sourceSet = "main")}MyClass.class")
+            assertFileExists("${kotlinClassesDir(sourceSet = "test")}MyTestClass.class")
+        }
+    }
 }

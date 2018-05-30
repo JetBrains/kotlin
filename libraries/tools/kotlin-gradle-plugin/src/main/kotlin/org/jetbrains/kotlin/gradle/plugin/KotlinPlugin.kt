@@ -666,7 +666,21 @@ private fun SourceSet.clearJavaSrcDirs() {
 
 private fun loadSubplugins(project: Project, kotlinPluginVersion: String): SubpluginEnvironment =
     try {
-        val subplugins = ServiceLoader.load(KotlinGradleSubplugin::class.java, project.buildscript.classLoader)
+        val klass = KotlinGradleSubplugin::class.java
+        val buildscriptClassloader = project.buildscript.classLoader
+        val klassFromBuildscript = try {
+            buildscriptClassloader.loadClass(klass.canonicalName)
+        } catch (e: ClassNotFoundException) {
+            null
+        }
+
+        val classloader = if (klass == klassFromBuildscript) {
+            buildscriptClassloader
+        } else {
+            klass.classLoader
+        }
+
+        val subplugins = ServiceLoader.load(KotlinGradleSubplugin::class.java, classloader)
             .map { @Suppress("UNCHECKED_CAST") (it as KotlinGradleSubplugin<AbstractCompile>) }
 
         SubpluginEnvironment(subplugins, kotlinPluginVersion)
