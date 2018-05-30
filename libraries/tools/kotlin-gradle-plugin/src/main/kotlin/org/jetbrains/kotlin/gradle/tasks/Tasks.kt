@@ -72,6 +72,9 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCo
     @PathSensitive(PathSensitivity.RELATIVE)
     override fun getSource() = super.getSource()
 
+    @get:Input
+    internal var useFallbackCompilerSearch: Boolean = false
+
     @get:Classpath @get:InputFiles
     internal val computedCompilerClasspath: List<File>
         get() = compilerClasspath?.takeIf { it.isNotEmpty() }
@@ -79,7 +82,21 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCo
                     // a hack to remove compiler jar from the cp, will be dropped when compilerJarFile will be removed
                     listOf(it) + findKotlinCompilerClasspath(project).filter { !it.name.startsWith("kotlin-compiler") }
                 }
-                ?: project.configurations.getByName(COMPILER_CLASSPATH_CONFIGURATION_NAME).resolve().toList()
+                ?: if (!useFallbackCompilerSearch) {
+                    try {
+                        project.configurations.getByName(COMPILER_CLASSPATH_CONFIGURATION_NAME).resolve().toList()
+                    } catch (e: Exception) {
+                        project.logger.error(
+                            "Could not resolve compiler classpath. " +
+                                    "Check if Kotlin Gradle plugin repository is configured in $project."
+                        )
+                        throw e
+                    }
+                } else {
+                    findKotlinCompilerClasspath(project)
+                }
+                ?: throw IllegalStateException("Could not find Kotlin Compiler classpath")
+
 
     protected abstract fun findKotlinCompilerClasspath(project: Project): List<File>
 }
