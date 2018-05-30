@@ -166,6 +166,10 @@ fun IrBuilderWithScope.irGet(type: IrType, receiver: IrExpression, getterSymbol:
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType): IrCall =
     IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor)
 
+fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDescriptor, type: IrType): IrCall =
+    IrCallImpl(startOffset, endOffset, type, callee, descriptor)
+
+
 fun IrBuilderWithScope.irCallOp(
     callee: IrFunctionSymbol,
     type: IrType,
