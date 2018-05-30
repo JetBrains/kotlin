@@ -34,6 +34,8 @@ class DependenciesCollector {
     fun getTopLevelDescriptors(packageFragmentDescriptor: PackageFragmentDescriptor): Collection<DeclarationDescriptor> =
         topLevelDescriptors[packageFragmentDescriptor] ?: emptyList()
 
+    val isEmpty get() = topLevelDescriptors.isEmpty()
+
     fun collectTopLevelDescriptorsForUnboundSymbols(symbolTable: SymbolTable) {
         assert(symbolTable.unboundTypeParameters.isEmpty()) { "Unbound type parameters: ${symbolTable.unboundTypeParameters}" }
         assert(symbolTable.unboundValueParameters.isEmpty()) { "Unbound value parameters: ${symbolTable.unboundValueParameters}" }
