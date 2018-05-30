@@ -43,16 +43,20 @@ interface JKModifierListOwner {
     var modifierList: JKModifierList
 }
 
-interface JKType
+interface JKType {
+    val nullability: Nullability
+}
 
 interface JKClassType : JKType {
     val classReference: JKSymbol?
-    val nullability: Nullability
+    override val nullability: Nullability
     val parameters: List<JKType>
 }
 
 interface JKJavaPrimitiveType : JKType {
     val jvmPrimitiveType: JvmPrimitiveType
+    override val nullability: Nullability
+        get() = Nullability.NotNull
 }
 
 interface JKJavaArrayType : JKType {
