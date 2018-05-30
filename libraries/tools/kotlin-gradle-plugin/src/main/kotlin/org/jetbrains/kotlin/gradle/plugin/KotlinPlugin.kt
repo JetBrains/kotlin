@@ -144,6 +144,7 @@ internal class Kotlin2JvmSourceSetProcessor(
 
     override fun doTargetSpecificProcessing() {
         kotlinSourceSet.kotlin.source(sourceSet.java)
+        Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, sourceSet.name)
 
         project.afterEvaluate { project ->
             if (project != null) {
@@ -503,6 +504,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
             val kotlinSourceSet = kotlinConfigurationTools.kotlinSourceSetProvider.create(sourceSet.name)
             kotlinSourceSet.kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
             sourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
+            Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, sourceSet.name)
         }
 
         val kotlinOptions = KotlinJvmOptionsImpl()
