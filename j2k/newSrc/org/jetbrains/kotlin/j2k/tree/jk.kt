@@ -167,3 +167,33 @@ interface JKBlockStatement : JKStatement {
 interface JKThisExpression : JKExpression
 
 interface JKSuperExpression : JKExpression
+
+interface JKWhileStatement : JKLoopStatement {
+    var condition: JKExpression
+}
+
+interface JKDoWhileStatement : JKLoopStatement {
+    var condition: JKExpression
+}
+
+interface JKSwitchStatement : JKStatement {
+    var expression: JKExpression
+    var block: JKBlock
+}
+
+interface JKSwitchLabelStatement : JKStatement {
+    var expression: JKExpression
+}
+
+interface JKSwitchDefaultLabelStatement : JKStatement
+
+interface JKBreakStatement : JKStatement
+
+interface JKIfExpression : JKExpression {
+    var condition: JKExpression
+    var thenBranch: JKStatement
+}
+
+interface JKIfElseExpression : JKIfExpression {
+    var elseBranch: JKStatement
+}

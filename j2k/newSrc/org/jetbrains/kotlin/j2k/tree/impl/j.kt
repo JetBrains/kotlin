@@ -162,22 +162,6 @@ class JKJavaAssertStatementImpl(condition: JKExpression, description: JKExpressi
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaAssertStatement(this, data)
 }
 
-class JKJavaIfStatementImpl(condition: JKExpression, thenBranch: JKStatement) : JKJavaIfStatement, JKBranchElementBase() {
-    override var thenBranch by child(thenBranch)
-    override var condition by child(condition)
-
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaIfStatement(this, data)
-}
-
-class JKJavaIfElseStatementImpl(condition: JKExpression, thenBranch: JKStatement, elseBranch: JKStatement) : JKJavaIfElseStatement,
-    JKBranchElementBase() {
-    override var elseBranch by child(elseBranch)
-    override var thenBranch by child(thenBranch)
-    override var condition by child(condition)
-
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaIfElseStatement(this, data)
-}
-
 class JKJavaForLoopStatementImpl(initializer: JKStatement, condition: JKExpression, updater: JKStatement, body: JKStatement) :
     JKJavaForLoopStatement, JKBranchElementBase() {
     override var body by child(body)
