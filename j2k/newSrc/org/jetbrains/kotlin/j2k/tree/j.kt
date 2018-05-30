@@ -78,15 +78,6 @@ interface JKJavaAssertStatement : JKStatement {
     val description: JKExpression
 }
 
-interface JKJavaIfStatement : JKStatement {
-    var condition: JKExpression
-    var thenBranch: JKStatement
-}
-
-interface JKJavaIfElseStatement : JKJavaIfStatement {
-    var elseBranch: JKStatement
-}
-
 interface JKJavaForLoopStatement : JKLoopStatement {
     var initializer: JKStatement
     var condition: JKExpression

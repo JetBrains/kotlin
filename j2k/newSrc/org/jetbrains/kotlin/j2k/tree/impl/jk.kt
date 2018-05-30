@@ -209,3 +209,50 @@ class JKThisExpressionImpl : JKThisExpression, JKElementBase() {
 class JKSuperExpressionImpl : JKSuperExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitSuperExpression(this, data)
 }
+
+class JKWhileStatementImpl(condition: JKExpression, body: JKStatement) : JKWhileStatement, JKBranchElementBase() {
+    override var condition by child(condition)
+    override var body by child(body)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitWhileStatement(this, data)
+}
+
+class JKDoWhileStatementImpl(body: JKStatement, condition: JKExpression) : JKDoWhileStatement, JKBranchElementBase() {
+    override var condition by child(condition)
+    override var body by child(body)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitDoWhileStatement(this, data)
+}
+
+class JKSwitchStatementImpl(expression: JKExpression, block: JKBlock) : JKSwitchStatement, JKBranchElementBase() {
+    override var block by child(block)
+    override var expression by child(expression)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitSwitchStatement(this, data)
+}
+
+class JKSwitchLabelStatementImpl(expression: JKExpression) : JKSwitchLabelStatement, JKBranchElementBase() {
+    override var expression by child(expression)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitSwitchLabelStatement(this, data)
+}
+
+class JKSwitchDefaultLabelStatementImpl : JKSwitchDefaultLabelStatement, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitSwitchDefaultLabelStatement(this, data)
+}
+
+class JKBreakStatementImpl : JKBreakStatement, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBreakStatement(this, data)
+}
+
+class JKIfExpressionImpl(condition: JKExpression, thenBranch: JKStatement) : JKIfExpression, JKBranchElementBase() {
+    override var thenBranch by child(thenBranch)
+    override var condition by child(condition)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitIfExpression(this, data)
+}
+
+class JKIfElseExpressionImpl(condition: JKExpression, thenBranch: JKStatement, elseBranch: JKStatement) : JKIfElseExpression,
+    JKBranchElementBase() {
+    override var elseBranch by child(elseBranch)
+    override var thenBranch by child(thenBranch)
+    override var condition by child(condition)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitIfElseExpression(this, data)
+}

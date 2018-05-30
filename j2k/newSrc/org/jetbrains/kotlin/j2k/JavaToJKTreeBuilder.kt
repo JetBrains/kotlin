@@ -55,6 +55,9 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiInstanceOfExpression -> toJK()
                 is PsiThisExpression -> JKThisExpressionImpl()
                 is PsiSuperExpression -> JKSuperExpressionImpl()
+                is PsiConditionalExpression -> JKIfElseExpressionImpl(
+                    condition.toJK(), JKExpressionStatementImpl(thenExpression.toJK()), JKExpressionStatementImpl(elseExpression.toJK())
+                )
                 else -> {
                     throw RuntimeException("Not supported: ${this::class}")
                 }
@@ -300,14 +303,25 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiDeclarationStatement -> JKDeclarationStatementImpl(declaredElements.toJK())
                 is PsiAssertStatement -> JKJavaAssertStatementImpl(with(expressionTreeMapper) { assertCondition.toJK() },
                                                                    with(expressionTreeMapper) { assertDescription.toJK() })
-                is PsiIfStatement -> if (elseElement == null)
-                    JKJavaIfStatementImpl(with(expressionTreeMapper) { condition.toJK() }, thenBranch.toJK())
-                else
-                    JKJavaIfElseStatementImpl(with(expressionTreeMapper) { condition.toJK() }, thenBranch.toJK(), elseBranch.toJK())
+                is PsiIfStatement -> JKExpressionStatementImpl(
+                    if (elseElement == null)
+                        JKIfExpressionImpl(with(expressionTreeMapper) { condition.toJK() }, thenBranch.toJK())
+                    else
+                        JKIfElseExpressionImpl(with(expressionTreeMapper) { condition.toJK() }, thenBranch.toJK(), elseBranch.toJK())
+                )
                 is PsiForStatement -> JKJavaForLoopStatementImpl(
                     initialization.toJK(), with(expressionTreeMapper) { condition.toJK() }, update.toJK(), body.toJK()
                 )
                 is PsiBlockStatement -> JKBlockStatementImpl(codeBlock.toJK())
+                is PsiWhileStatement -> JKWhileStatementImpl(with(expressionTreeMapper) { condition.toJK() }, body.toJK())
+                is PsiDoWhileStatement -> JKDoWhileStatementImpl(body.toJK(), with(expressionTreeMapper) { condition.toJK() })
+                is PsiSwitchStatement -> JKSwitchStatementImpl(with(expressionTreeMapper) { expression.toJK() }, body?.toJK() ?: TODO())
+                is PsiSwitchLabelStatement -> if (isDefaultCase) JKSwitchDefaultLabelStatementImpl() else
+                    JKSwitchLabelStatementImpl(with(expressionTreeMapper) { caseValue.toJK() })
+                is PsiBreakStatement -> {
+                    labelIdentifier?.also { TODO("Label break") }
+                    JKBreakStatementImpl()
+                }
                 else -> TODO("for ${this::class}")
             }
         }
