@@ -86,10 +86,10 @@ class DeclarationStubGenerator(
         ).also { irFunction ->
             generateTypeParameterStubs(descriptor.propertyIfAccessor.typeParameters, irFunction)
 
-            // TODO make sure that type parameters have proper scopes
-            irFunction.returnType = descriptor.returnType!!.toIrType()
-
-            generateValueParametersStubs(irFunction)
+            typeTranslator.buildWithScope(irFunction) {
+                irFunction.returnType = descriptor.returnType!!.toIrType()
+                generateValueParametersStubs(irFunction)
+            }
         }
 
     private fun generateConstructorStub(descriptor: ClassConstructorDescriptor): IrConstructor =
@@ -98,7 +98,6 @@ class DeclarationStubGenerator(
         ).also { irConstructor ->
             // So far, constructors in Kotlin can't have type parameters of their own.
             irConstructor.returnType = descriptor.returnType.toIrType()
-
             generateValueParametersStubs(irConstructor)
         }
 
@@ -137,15 +136,17 @@ class DeclarationStubGenerator(
         symbolTable.declareClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irClass ->
             generateTypeParameterStubs(descriptor.declaredTypeParameters, irClass)
 
-            // TODO get rid of code duplication, see ClassGenerator#generateClass
-            descriptor.typeConstructor.supertypes.mapNotNullTo(irClass.superTypes) {
-                it.toIrType()
-            }
+            typeTranslator.buildWithScope(irClass) {
+                // TODO get rid of code duplication, see ClassGenerator#generateClass
+                descriptor.typeConstructor.supertypes.mapNotNullTo(irClass.superTypes) {
+                    it.toIrType()
+                }
 
-            irClass.thisReceiver = descriptor.thisAsReceiverParameter.generateReceiverParameterStub()
-            generateChildStubs(descriptor.constructors, irClass)
-            generateMemberStubs(descriptor.defaultType.memberScope, irClass)
-            generateMemberStubs(descriptor.staticScope, irClass)
+                irClass.thisReceiver = descriptor.thisAsReceiverParameter.generateReceiverParameterStub()
+                generateChildStubs(descriptor.constructors, irClass)
+                generateMemberStubs(descriptor.defaultType.memberScope, irClass)
+                generateMemberStubs(descriptor.staticScope, irClass)
+            }
         }
 
     private fun generateEnumEntryStub(descriptor: ClassDescriptor): IrEnumEntry =
@@ -154,12 +155,12 @@ class DeclarationStubGenerator(
     private fun generateTypeParameterStubs(typeParameters: List<TypeParameterDescriptor>, container: IrTypeParametersContainer) {
         typeParameters.mapTo(container.typeParameters) { generateTypeParameterStub(it) }
 
-        typeTranslator.enterScope(container)
-        for (typeParameter in container.typeParameters) {
-            val descriptor = typeParameter.descriptor
-            descriptor.upperBounds.mapTo(typeParameter.superTypes) { it.toIrType() }
+        typeTranslator.buildWithScope(container) {
+            for (typeParameter in container.typeParameters) {
+                val descriptor = typeParameter.descriptor
+                descriptor.upperBounds.mapTo(typeParameter.superTypes) { it.toIrType() }
+            }
         }
-        typeTranslator.leaveScope()
     }
 
     private fun generateTypeParameterStub(descriptor: TypeParameterDescriptor): IrTypeParameter =
