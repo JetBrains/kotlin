@@ -172,7 +172,7 @@ class DataClassMembersGenerator(
                 for (property in properties) {
                     val irPropertyType = property.type.toIrType()
                     val arg1 = irGet(irPropertyType, irThis(), getPropertyGetterSymbol(property))
-                    val arg2 = irGet(irPropertyType, irGet(irPropertyType, otherWithCast.symbol), getPropertyGetterSymbol(property))
+                    val arg2 = irGet(irPropertyType, irGet(irType, otherWithCast.symbol), getPropertyGetterSymbol(property))
                     +irIfThenReturnFalse(irNotEquals(arg1, arg2))
                 }
                 +irReturnTrue()
