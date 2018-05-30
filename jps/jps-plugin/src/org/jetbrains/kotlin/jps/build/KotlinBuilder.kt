@@ -538,7 +538,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                     removedAndDirtyFiles.addAll(roundDirtyFilesHolder.getRemovedFilesSet(target))
 
                     val complementaryFiles = cache.clearComplementaryFilesMapping(targetDirtyFiles.dirtyOrRemovedFiles)
-                    targetDirtyFiles.markDirty(complementaryFiles)
+                    targetDirtyFiles.addComplementaryFiles(complementaryFiles)
 
                     cache.markDirty(targetDirtyFiles.dirtyOrRemovedFiles)
                 }

@@ -51,8 +51,8 @@ class KotlinRoundDirtySourceFilesHolder(
                 return result
             }
 
-        fun markDirty(files: Collection<File>) {
-            fsOperations.markFiles(files)
+        fun addComplementaryFiles(files: Collection<File>) {
+            fsOperations.markComplementaryFiles(files)
             files.forEach {
                 dirty.add(DirtyFile(it, null))
             }
