@@ -107,7 +107,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
             val constructorSymbol = context.symbolTable.referenceConstructor(descriptor.original)
             val irCall = IrDelegatingConstructorCallImpl(
                 startOffset, endOffset,
-                descriptor.returnType.toIrType(),
+                context.irBuiltIns.unitType,
                 constructorSymbol,
                 descriptor
             ).apply {
