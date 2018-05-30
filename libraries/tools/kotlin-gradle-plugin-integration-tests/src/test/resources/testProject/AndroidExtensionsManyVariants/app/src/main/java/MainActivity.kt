@@ -12,7 +12,6 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         viewMain
-        text_view
     }
 }
 
