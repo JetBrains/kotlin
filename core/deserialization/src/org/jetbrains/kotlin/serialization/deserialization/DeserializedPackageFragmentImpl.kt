@@ -30,16 +30,20 @@ abstract class DeserializedPackageFragmentImpl(
     fqName: FqName,
     storageManager: StorageManager,
     module: ModuleDescriptor,
-    protected val proto: ProtoBuf.PackageFragment,
+    proto: ProtoBuf.PackageFragment,
     private val containerSource: DeserializedContainerSource?
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
     protected val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
 
     override val classDataFinder = ProtoBasedClassDataFinder(proto, nameResolver) { containerSource ?: SourceElement.NO_SOURCE }
 
+    // Temporary storage: until `initialize` is called
+    private var _proto: ProtoBuf.PackageFragment? = proto
     private lateinit var _memberScope: MemberScope
 
     override fun initialize(components: DeserializationComponents) {
+        val proto = _proto ?: error("Repeated call to DeserializedPackageFragmentImpl::initialize")
+        _proto = null
         _memberScope = DeserializedPackageMemberScope(
             this, proto.`package`, nameResolver, containerSource, components,
             classNames = {
