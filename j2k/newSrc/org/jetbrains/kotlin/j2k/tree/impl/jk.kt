@@ -142,6 +142,13 @@ class JKClassTypeImpl(
     override val nullability: Nullability = Nullability.Default
 ) : JKClassType
 
+
+class JKUnresolvedClassType(
+    var parameters: List<JKType>,
+    override val nullability: Nullability = Nullability.Default
+) : JKType
+
+
 class JKNullLiteral : JKLiteralExpression, JKElementBase() {
     override val literal: String
         get() = "null"
