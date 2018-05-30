@@ -41,7 +41,7 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
         return importDirective.getChildOfType<KtDotQualifiedExpression>()
             ?.selectorExpression
             ?.let {
-                it.references.mapNotNull { it.resolve() }.first()
+                it.references.mapNotNull { it.resolve() }.firstOrNull()
             }
     }
 
