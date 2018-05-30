@@ -38,53 +38,37 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
     val backAnnotation = mutableMapOf<JKElement, PsiElement>()
 
     private inner class ExpressionTreeMapper {
-        fun PsiExpression.toJK(): JKExpression {
-            when (this) {
-                is PsiBinaryExpression -> {
-                    return toJK()
-                }
-                is PsiPrefixExpression -> {
-                    return toJK()
-                }
-                is PsiPostfixExpression -> {
-                    return toJK()
-                }
-                is PsiLiteralExpression -> {
-                    return toJK()
-                }
-                is PsiMethodCallExpression -> {
-                    return toJK()
-                }
-                is PsiReferenceExpression -> {
-                    return toJK()
-                }
-                is PsiNewExpression -> {
-                    return toJK()
-                }
-                is PsiArrayAccessExpression -> {
-                    return toJK()
-                }
-                is PsiTypeCastExpression -> {
-                    return toJK()
-                }
-                is PsiParenthesizedExpression -> {
-                    return toJK()
-                }
-                is PsiAssignmentExpression -> {
-                    return toJK()
-                }
+        fun PsiExpression?.toJK(): JKExpression {
+            return when (this) {
+                null -> JKStubExpressionImpl()
+                is PsiBinaryExpression -> toJK()
+                is PsiPrefixExpression -> toJK()
+                is PsiPostfixExpression -> toJK()
+                is PsiLiteralExpression -> toJK()
+                is PsiMethodCallExpression -> toJK()
+                is PsiReferenceExpression -> toJK()
+                is PsiNewExpression -> toJK()
+                is PsiArrayAccessExpression -> toJK()
+                is PsiTypeCastExpression -> toJK()
+                is PsiParenthesizedExpression -> toJK()
+                is PsiAssignmentExpression -> toJK()
+                is PsiInstanceOfExpression -> toJK()
                 else -> {
                     throw RuntimeException("Not supported: ${this::class}")
                 }
             }
         }
 
+        fun PsiInstanceOfExpression.toJK(): JKJavaInstanceOfExpression {
+            return JKJavaInstanceOfExpressionImpl(operand.toJK(), checkType?.toJK() ?: TODO())
+        }
+
         fun PsiAssignmentExpression.toJK(): JKJavaAssignmentExpression {
-            return JKJavaAssignmentExpressionImpl(lExpression.toJK(), rExpression?.toJK() ?: TODO())
+            return JKJavaAssignmentExpressionImpl(lExpression.toJK(), rExpression.toJK())
         }
 
         fun PsiBinaryExpression.toJK(): JKExpression {
-            return JKBinaryExpressionImpl(lOperand.toJK(), rOperand?.toJK() ?: TODO(), operationSign.toJK())
+            return JKBinaryExpressionImpl(lOperand.toJK(), rOperand.toJK(), operationSign.toJK())
         }
 
         fun PsiLiteralExpression.toJK(): JKLiteralExpression {
@@ -117,7 +101,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         }
 
         fun PsiPrefixExpression.toJK(): JKExpression {
-            return JKPrefixExpressionImpl(operand?.toJK() ?: TODO(), operationSign.toJK())
+            return JKPrefixExpressionImpl(operand.toJK(), operationSign.toJK())
         }
 
         fun PsiPostfixExpression.toJK(): JKExpression {
@@ -156,7 +140,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             if ((this as PsiNewExpressionImpl).findChildByRole(ChildRole.LBRACKET) != null) {
                 val arrayInitializer = arrayInitializer
                 if (arrayInitializer != null) {
-                    return JKJavaNewArrayImpl(arrayInitializer.initializers.map { toJK() })
+                    return JKJavaNewArrayImpl(arrayInitializer.initializers.map { it.toJK() })
                 } else {
                     val dimensions = mutableListOf<PsiLiteralExpression?>()
                     var child = firstChild
@@ -239,7 +223,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 with(modifierMapper) { modifierList.toJK() },
                 with(expressionTreeMapper) { typeElement?.toJK() } ?: TODO(),
                 JKNameIdentifierImpl(name),
-                with(expressionTreeMapper) { initializer?.toJK() } ?: JKStubExpressionImpl()
+                with(expressionTreeMapper) { initializer.toJK() }
             ).also {
                 (symbolProvider.provideSymbol(this) as? JKUniverseFieldSymbol)?.run { target = it }
             }
@@ -282,20 +266,29 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                         with(modifierMapper) { it.modifierList.toJK() },
                         with(expressionTreeMapper) { it.typeElement.toJK() },
                         JKNameIdentifierImpl(it.name ?: TODO()),
-                        with(expressionTreeMapper) { it.initializer?.toJK() } ?: JKStubExpressionImpl()
+                        with(expressionTreeMapper) { it.initializer.toJK() }
                     ).also { i -> symbolProvider.symbols[it] = JKUniverseFieldSymbol(i) }
                 } else TODO()
             }
         }
 
-        fun PsiStatement.toJK(): JKStatement {
+        fun PsiStatement?.toJK(): JKStatement {
             return when (this) {
+                null -> JKExpressionStatementImpl(JKStubExpressionImpl())
                 is PsiExpressionStatement -> JKExpressionStatementImpl(with(expressionTreeMapper) { expression.toJK() })
-                is PsiReturnStatement -> JKReturnStatementImpl(with(expressionTreeMapper) { returnValue?.toJK() ?: JKStubExpressionImpl() })
+                is PsiReturnStatement -> JKReturnStatementImpl(with(expressionTreeMapper) { returnValue.toJK() })
                 is PsiDeclarationStatement -> JKDeclarationStatementImpl(declaredElements.toJK())
-                is PsiAssertStatement -> JKAssertStatementImpl(
-                    with(expressionTreeMapper) { assertCondition?.toJK() } ?: JKStubExpressionImpl(),
-                    with(expressionTreeMapper) { assertDescription?.toJK() } ?: JKStubExpressionImpl())
+                is PsiAssertStatement -> JKJavaAssertStatementImpl(
+                    with(expressionTreeMapper) { assertCondition.toJK() },
+                    with(expressionTreeMapper) { assertDescription.toJK() })
+                is PsiIfStatement -> if (elseElement == null)
+                    JKJavaIfStatementImpl(with(expressionTreeMapper) { condition.toJK() }, thenBranch.toJK())
+                else
+                    JKJavaIfElseStatementImpl(with(expressionTreeMapper) { condition.toJK() }, thenBranch.toJK(), elseBranch.toJK())
+                is PsiForStatement -> JKJavaForLoopStatementImpl(
+                    initialization.toJK(), with(expressionTreeMapper) { condition.toJK() }, update.toJK(), body.toJK()
+                )
+                is PsiBlockStatement -> JKBlockStatementImpl(codeBlock.toJK())
                 else -> TODO("for ${this::class}")
             }
         }

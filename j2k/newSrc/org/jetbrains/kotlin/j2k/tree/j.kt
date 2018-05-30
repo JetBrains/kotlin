@@ -24,8 +24,6 @@ interface JKJavaMethod : JKMethod, JKBranchElement {
     val block: JKBlock
 }
 
-interface JKJavaForLoop : JKLoop
-
 interface JKJavaAssignmentExpression : JKExpression, JKBranchElement {
     var lExpression: JKExpression
     var rExpression: JKExpression
@@ -68,4 +66,29 @@ interface JKJavaLiteralExpression : JKLiteralExpression
 
 interface JKReturnStatement : JKStatement {
     val expression: JKExpression
+}
+
+interface JKJavaAssertStatement : JKStatement {
+    val condition: JKExpression
+    val description: JKExpression
+}
+
+interface JKJavaIfStatement : JKStatement {
+    var condition: JKExpression
+    var thenBranch: JKStatement
+}
+
+interface JKJavaIfElseStatement : JKJavaIfStatement {
+    var elseBranch: JKStatement
+}
+
+interface JKJavaForLoopStatement : JKLoopStatement {
+    var initializer: JKStatement
+    var condition: JKExpression
+    var updater: JKStatement
+}
+
+interface JKJavaInstanceOfExpression : JKExpression {
+    var expression: JKExpression
+    var type: JKTypeElement
 }

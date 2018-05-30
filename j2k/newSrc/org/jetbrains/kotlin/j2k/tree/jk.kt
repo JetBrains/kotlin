@@ -68,8 +68,6 @@ interface JKTypeElement : JKTreeElement {
 
 interface JKStatement : JKTreeElement
 
-interface JKLoop : JKStatement
-
 interface JKBlock : JKTreeElement {
     var statements: List<JKStatement>
 }
@@ -158,7 +156,10 @@ interface JKStringLiteralExpression : JKLiteralExpression {
 
 interface JKStubExpression : JKExpression
 
-interface JKAssertStatement : JKStatement {
-    val condition: JKExpression
-    val description: JKExpression
+interface JKLoopStatement : JKStatement {
+    var body: JKStatement
+}
+
+interface JKBlockStatement : JKStatement {
+    var block: JKBlock
 }

@@ -145,3 +145,43 @@ class JKJavaAssignmentExpressionImpl(
     override var lExpression: JKExpression by child(lExpression)
     override var rExpression: JKExpression by child(rExpression)
 }
+
+class JKJavaAssertStatementImpl(condition: JKExpression, description: JKExpression) : JKJavaAssertStatement, JKBranchElementBase() {
+    override val description by child(description)
+    override val condition by child(condition)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaAssertStatement(this, data)
+}
+
+class JKJavaIfStatementImpl(condition: JKExpression, thenBranch: JKStatement) : JKJavaIfStatement, JKBranchElementBase() {
+    override var thenBranch by child(thenBranch)
+    override var condition by child(condition)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaIfStatement(this, data)
+}
+
+class JKJavaIfElseStatementImpl(condition: JKExpression, thenBranch: JKStatement, elseBranch: JKStatement) : JKJavaIfElseStatement,
+    JKBranchElementBase() {
+    override var elseBranch by child(elseBranch)
+    override var thenBranch by child(thenBranch)
+    override var condition by child(condition)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaIfElseStatement(this, data)
+}
+
+class JKJavaForLoopStatementImpl(initializer: JKStatement, condition: JKExpression, updater: JKStatement, body: JKStatement) :
+    JKJavaForLoopStatement, JKBranchElementBase() {
+    override var body by child(body)
+    override var updater by child(updater)
+    override var condition by child(condition)
+    override var initializer by child(initializer)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaForLoopStatement(this, data)
+}
+
+class JKJavaInstanceOfExpressionImpl(expression: JKExpression, type: JKTypeElement) : JKJavaInstanceOfExpression, JKBranchElementBase() {
+    override var type by child(type)
+    override var expression by child(expression)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaInstanceOfExpression(this, data)
+}
