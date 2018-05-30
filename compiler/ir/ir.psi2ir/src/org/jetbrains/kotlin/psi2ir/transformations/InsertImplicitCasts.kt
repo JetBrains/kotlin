@@ -50,13 +50,6 @@ class InsertImplicitCasts(context: GeneratorContext) : IrElementTransformerVoid(
     private val typeTranslator = TypeTranslator(context.moduleDescriptor, symbolTable)
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    private inline fun <T> runInTypeParameterScope(typeParametersContainer: IrTypeParametersContainer, fn: () -> T): T {
-        typeTranslator.enterScope(typeParametersContainer)
-        val result = fn()
-        typeTranslator.leaveScope()
-        return result
-    }
-
     override fun visitCallableReference(expression: IrCallableReference): IrExpression =
         expression.transformPostfix {
             transformReceiverArguments()
@@ -128,7 +121,7 @@ class InsertImplicitCasts(context: GeneratorContext) : IrElementTransformerVoid(
         }
 
     override fun visitFunction(declaration: IrFunction): IrStatement =
-        runInTypeParameterScope(declaration) {
+        typeTranslator.buildWithScope(declaration) {
             declaration.transformPostfix {
                 valueParameters.forEach {
                     it.defaultValue?.coerceInnerExpression(it.descriptor.type)
@@ -137,7 +130,7 @@ class InsertImplicitCasts(context: GeneratorContext) : IrElementTransformerVoid(
         }
 
     override fun visitClass(declaration: IrClass): IrStatement =
-        runInTypeParameterScope(declaration) {
+        typeTranslator.buildWithScope(declaration) {
             super.visitClass(declaration)
         }
 
