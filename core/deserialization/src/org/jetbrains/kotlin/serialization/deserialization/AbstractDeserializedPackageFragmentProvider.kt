@@ -32,7 +32,7 @@ abstract class AbstractDeserializedPackageFragmentProvider(
 
     private val fragments = storageManager.createMemoizedFunctionWithNullableValues<FqName, PackageFragmentDescriptor> { fqName ->
         findPackage(fqName)?.apply {
-            components = this@AbstractDeserializedPackageFragmentProvider.components
+            initialize(components)
         }
     }
 

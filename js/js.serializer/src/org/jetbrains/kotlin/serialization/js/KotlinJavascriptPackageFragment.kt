@@ -46,8 +46,11 @@ class KotlinJavascriptPackageFragment(
         }
     }
 
-    private val annotationDeserializer: AnnotationDeserializer by storageManager.createLazyValue {
-        AnnotationDeserializer(module, components.notFoundClasses)
+    private lateinit var annotationDeserializer: AnnotationDeserializer
+
+    override fun initialize(components: DeserializationComponents) {
+        super.initialize(components)
+        this.annotationDeserializer = AnnotationDeserializer(components.moduleDescriptor, components.notFoundClasses)
     }
 
     fun getContainingFileAnnotations(descriptor: DeclarationDescriptor): List<AnnotationDescriptor> {
