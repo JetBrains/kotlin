@@ -38,6 +38,8 @@ interface JKVisitor<out R, in D> {
     fun visitStubExpression(stubExpression: JKStubExpression, data: D): R = visitExpression(stubExpression, data)
     fun visitLoopStatement(loopStatement: JKLoopStatement, data: D): R = visitStatement(loopStatement, data)
     fun visitBlockStatement(blockStatement: JKBlockStatement, data: D): R = visitStatement(blockStatement, data)
+    fun visitThisExpression(thisExpression: JKThisExpression, data: D): R = visitExpression(thisExpression, data)
+    fun visitSuperExpression(superExpression: JKSuperExpression, data: D): R = visitExpression(superExpression, data)
     fun visitJavaField(javaField: JKJavaField, data: D): R = visitField(javaField, data)
     fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): R = visitMethod(javaMethod, data)
     fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression, data: D): R = visitExpression(javaAssignmentExpression, data)

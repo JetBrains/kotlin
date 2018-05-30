@@ -163,3 +163,7 @@ interface JKLoopStatement : JKStatement {
 interface JKBlockStatement : JKStatement {
     var block: JKBlock
 }
+
+interface JKThisExpression : JKExpression
+
+interface JKSuperExpression : JKExpression

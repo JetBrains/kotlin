@@ -194,3 +194,11 @@ class JKBlockStatementImpl(block: JKBlock) : JKBlockStatement, JKBranchElementBa
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlockStatement(this, data)
 }
+
+class JKThisExpressionImpl : JKThisExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitThisExpression(this, data)
+}
+
+class JKSuperExpressionImpl : JKSuperExpression, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitSuperExpression(this, data)
+}
