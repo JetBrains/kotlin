@@ -53,6 +53,8 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiParenthesizedExpression -> toJK()
                 is PsiAssignmentExpression -> toJK()
                 is PsiInstanceOfExpression -> toJK()
+                is PsiThisExpression -> JKThisExpressionImpl()
+                is PsiSuperExpression -> JKSuperExpressionImpl()
                 else -> {
                     throw RuntimeException("Not supported: ${this::class}")
                 }
@@ -278,9 +280,8 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiExpressionStatement -> JKExpressionStatementImpl(with(expressionTreeMapper) { expression.toJK() })
                 is PsiReturnStatement -> JKReturnStatementImpl(with(expressionTreeMapper) { returnValue.toJK() })
                 is PsiDeclarationStatement -> JKDeclarationStatementImpl(declaredElements.toJK())
-                is PsiAssertStatement -> JKJavaAssertStatementImpl(
-                    with(expressionTreeMapper) { assertCondition.toJK() },
-                    with(expressionTreeMapper) { assertDescription.toJK() })
+                is PsiAssertStatement -> JKJavaAssertStatementImpl(with(expressionTreeMapper) { assertCondition.toJK() },
+                                                                   with(expressionTreeMapper) { assertDescription.toJK() })
                 is PsiIfStatement -> if (elseElement == null)
                     JKJavaIfStatementImpl(with(expressionTreeMapper) { condition.toJK() }, thenBranch.toJK())
                 else
