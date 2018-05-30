@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
+import com.intellij.psi.impl.source.tree.ElementType.OPERATION_BIT_SET
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
@@ -64,15 +66,12 @@ class JKJavaModifierImpl(override val type: JKJavaModifier.JavaModifierType) : J
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaModifier(this, data)
 }
 
-sealed class JKJavaOperatorImpl : JKOperator {
-    object PLUS : JKJavaOperatorImpl()
-    object MINUS : JKJavaOperatorImpl()
-    object EQEQ : JKJavaOperatorImpl()
-    object NE : JKJavaOperatorImpl()
-    object GT : JKJavaOperatorImpl()
-    object LT : JKJavaOperatorImpl()
-    object GE : JKJavaOperatorImpl()
-    object LE : JKJavaOperatorImpl()
+class JKJavaOperatorImpl private constructor(val token: IElementType) : JKOperator {
+    companion object {
+        val tokenToOperator = OPERATION_BIT_SET.types.associate {
+            it to JKJavaOperatorImpl(it)
+        }
+    }
 }
 
 sealed class JKJavaQualifierImpl : JKQualifier {
