@@ -179,7 +179,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             }
         }
 
-    private fun IrAnnotationContainer.transformAnnotations(original: IrAnnotationContainer) {
+    protected fun IrAnnotationContainer.transformAnnotations(original: IrAnnotationContainer) {
         original.annotations.mapTo(annotations) { it.transform() }
     }
 
