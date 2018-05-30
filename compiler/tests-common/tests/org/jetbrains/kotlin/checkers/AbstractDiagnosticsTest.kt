@@ -84,11 +84,11 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         if (files.any(TestFile::checkLazyLog)) {
             lazyOperationsLog = LazyOperationsLog(HASH_SANITIZER)
             storageManager = LoggingStorageManager(
-                LockBasedStorageManager.createWithExceptionHandling(tracker),
+                LockBasedStorageManager.createWithExceptionHandling("AbstractDiagnosticTest", tracker),
                 lazyOperationsLog.addRecordFunction
             )
         } else {
-            storageManager = LockBasedStorageManager.createWithExceptionHandling(tracker)
+            storageManager = LockBasedStorageManager.createWithExceptionHandling("AbstractDiagnosticTest", tracker)
         }
 
         val context = SimpleGlobalContext(storageManager, tracker)

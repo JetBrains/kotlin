@@ -55,7 +55,7 @@ public class JsConfig {
 
     private final Project project;
     private final CompilerConfiguration configuration;
-    private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
+    private final LockBasedStorageManager storageManager = new LockBasedStorageManager("JsConfig");
 
     private final List<KotlinJavascriptMetadata> metadata = new SmartList<>();
     private final List<KotlinJavascriptMetadata> friends = new SmartList<>();

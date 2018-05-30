@@ -83,7 +83,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
 
     @NotNull
     private static PackageFragmentProvider createBuiltInsPackageFragmentProvider() {
-        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+        LockBasedStorageManager storageManager = new LockBasedStorageManager("LoadBuiltinsTest");
         ModuleDescriptorImpl builtInsModule =
                 new ModuleDescriptorImpl(KotlinBuiltIns.BUILTINS_MODULE_NAME, storageManager, DefaultBuiltIns.getInstance());
 
