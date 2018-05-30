@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.j2k.tree.JKLocalVariable
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
@@ -28,6 +29,10 @@ class JKSymbolProvider {
                 else -> TODO()
             }
         }
+    }
+
+    fun provideLocalVarSymbol(psi: PsiLocalVariable, variable: JKLocalVariable): JKSymbol {
+        return symbols.getOrPut(psi) { JKUniverseFieldSymbol(variable) }
     }
 
     private inner class ElementVisitor : JavaElementVisitor() {

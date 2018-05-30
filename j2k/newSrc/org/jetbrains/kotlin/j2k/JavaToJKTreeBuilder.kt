@@ -113,8 +113,9 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         fun PsiMethodCallExpression.toJK(): JKExpression {
             val method = methodExpression as PsiReferenceExpressionImpl
 
-            val identifier = JKMultiverseMethodSymbol(method.reference?.resolve() as PsiMethod)
-            val call = JKJavaMethodCallExpressionImpl(identifier as JKMethodSymbol, argumentList.toJK())
+            val call = JKJavaMethodCallExpressionImpl(
+                symbolProvider.provideSymbol(method.reference?.resolve() ?: TODO()) as JKMethodSymbol, argumentList.toJK()
+            )
             return if (method.findChildByRole(ChildRole.DOT) != null) {
                 JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, call)
             } else {
@@ -269,7 +270,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                         with(expressionTreeMapper) { it.typeElement.toJK() },
                         JKNameIdentifierImpl(it.name ?: TODO()),
                         with(expressionTreeMapper) { it.initializer.toJK() }
-                    ).also { i -> symbolProvider.symbols[it] = JKUniverseFieldSymbol(i) }
+                    ).also { i -> symbolProvider.provideLocalVarSymbol(it, i) }
                 } else TODO()
             }
         }
