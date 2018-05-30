@@ -400,11 +400,9 @@ class KotlinImporterComponent : PersistentStateComponent<KotlinImporterComponent
 
     val addedSources: MutableSet<String> = Collections.synchronizedSet(HashSet<String>())
 
-    override fun loadState(state: State?) {
+    override fun loadState(state: State) {
         addedSources.clear()
-        if (state != null) {
-            addedSources.addAll(state.directories)
-        }
+        addedSources.addAll(state.directories)
     }
 
     override fun getState(): State {
