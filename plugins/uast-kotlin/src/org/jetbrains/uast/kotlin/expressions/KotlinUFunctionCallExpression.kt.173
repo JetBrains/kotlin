@@ -40,21 +40,6 @@ class KotlinUFunctionCallExpression(
         givenParent: UElement?,
         private val _resolvedCall: ResolvedCall<*>?
 ) : KotlinAbstractUExpression(givenParent), UCallExpression, KotlinUElementWithType {
-    companion object {
-        fun resolveSource(descriptor: DeclarationDescriptor, source: PsiElement?): PsiMethod? {
-            if (descriptor is ConstructorDescriptor && descriptor.isPrimary
-                    && source is KtClassOrObject && source.primaryConstructor == null
-                    && source.secondaryConstructors.isEmpty()) {
-                return source.toLightClass()?.constructors?.firstOrNull()
-            }
-
-            return when (source) {
-                is KtFunction -> LightClassUtil.getLightClassMethod(source)
-                is PsiMethod -> source
-                else -> null
-            }
-        }
-    }
 
     constructor(psi: KtCallElement, uastParent: UElement?) : this(psi, uastParent, null)
 
@@ -106,8 +91,8 @@ class KotlinUFunctionCallExpression(
 
     override fun resolve(): PsiMethod? {
         val descriptor = resolvedCall?.resultingDescriptor ?: return null
-        val source = descriptor.toSource() ?: return null
-        return resolveSource(descriptor, source)
+        val source = descriptor.toSource()
+        return resolveSource(psi, descriptor, source)
     }
 
     override fun accept(visitor: UastVisitor) {
