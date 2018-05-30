@@ -85,7 +85,7 @@ class MutableModuleContextImpl(
 
 fun GlobalContext(): GlobalContextImpl {
     val tracker = ExceptionTracker()
-    return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(tracker), tracker)
+    return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling("GlobalContext", tracker), tracker)
 }
 
 fun ProjectContext(project: Project): ProjectContext = ProjectContextImpl(project, GlobalContext())

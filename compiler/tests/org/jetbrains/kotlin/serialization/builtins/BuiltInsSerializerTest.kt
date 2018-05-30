@@ -41,7 +41,7 @@ class BuiltInsSerializerTest : TestCaseWithTmpdir() {
         val module = KotlinTestUtils.createEmptyModule("<module>", DefaultBuiltIns.Instance)
 
         val packageFragmentProvider = BuiltInsLoaderImpl().createBuiltInPackageFragmentProvider(
-                LockBasedStorageManager(), module, setOf(TEST_PACKAGE_FQNAME), emptyList(), PlatformDependentDeclarationFilter.All
+                LockBasedStorageManager("BuiltInsSerializerTest"), module, setOf(TEST_PACKAGE_FQNAME), emptyList(), PlatformDependentDeclarationFilter.All
         ) {
             val file = File(tmpdir, it)
             if (file.exists()) FileInputStream(file) else null

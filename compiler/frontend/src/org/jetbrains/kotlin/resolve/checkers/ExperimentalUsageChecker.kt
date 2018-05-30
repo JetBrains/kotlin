@@ -215,7 +215,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             // "-Xuse-experimental" arguments. However, it's not easy to do this. This should be solved in the future with the support of
             // module annotations. For now, we only check deprecations because this is needed to correctly retire unneeded compiler arguments.
             val deprecationResolver =
-                DeprecationResolver(LockBasedStorageManager(), languageVersionSettings, CoroutineCompatibilitySupport.ENABLED)
+                DeprecationResolver(LockBasedStorageManager("ExperimentalUsageChecker"), languageVersionSettings, CoroutineCompatibilitySupport.ENABLED)
 
             // Returns true if fqName refers to a valid experimental API marker.
             fun checkAnnotation(fqName: String): Boolean {

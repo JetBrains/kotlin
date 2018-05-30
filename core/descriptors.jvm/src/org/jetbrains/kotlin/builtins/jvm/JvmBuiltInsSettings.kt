@@ -494,7 +494,7 @@ open class JvmBuiltInsSettings(
     }
 }
 
-private class FallbackBuiltIns private constructor() : KotlinBuiltIns(LockBasedStorageManager()) {
+private class FallbackBuiltIns private constructor() : KotlinBuiltIns(LockBasedStorageManager("FallbackBuiltIns")) {
     init {
         createBuiltInsModule()
     }
