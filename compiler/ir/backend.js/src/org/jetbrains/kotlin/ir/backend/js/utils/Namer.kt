@@ -40,8 +40,6 @@ object Namer {
     val OUTER_NAME = "\$outer"
     val UNREACHABLE_NAME = "\$unreachable"
 
-    val OUTER_FIELD_NAME = "\$outer"
-
     val DELEGATE = "\$delegate"
 
     val ROOT_PACKAGE = "_"
