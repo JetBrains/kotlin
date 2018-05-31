@@ -26,7 +26,7 @@ class RemoteIncrementalResultsConsumer(val facade: CompilerCallbackServicesFacad
 
     override fun processInlineFunction(sourceFile: File, fqName: String, inlineFunction: Any, line: Int, column: Int) {
         rpcProfiler.withMeasure(this) {
-            facade.incrementalResultsConsumer_processInlineFunction(sourceFile.path, fqName, inlineFunction, line, column)
+            facade.incrementalResultsConsumer_processInlineFunction(sourceFile.path, fqName, inlineFunction.toString(), line, column)
         }
     }
 }
