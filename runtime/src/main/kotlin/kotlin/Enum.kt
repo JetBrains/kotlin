@@ -36,7 +36,7 @@ public abstract class Enum<E: Enum<E>>(public val name: String, public val ordin
     }
 
     public override final fun equals(other: Any?): Boolean {
-        return other is Enum<*> && ordinal == other.ordinal
+        return this === other
     }
 
     public override final fun hashCode(): Int {

@@ -516,6 +516,11 @@ task hello4(type: RunKonanTest) {
     source = "runtime/basic/hello4.kt"
 }
 
+task enumEquals(type: RunKonanTest) {
+    goldValue = "true\nfalse\nfalse\n"
+    source = "runtime/basic/enum_equals.kt"
+}
+
 task entry0(type: RunStandaloneKonanTest) {
     goldValue = "Hello.\n"
     source = "runtime/basic/entry0.kt"
@@ -656,6 +661,12 @@ task freeze_stress(type: RunKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No exceptions on WASM.
     goldValue = "OK\n"
     source = "runtime/workers/freeze_stress.kt"
+}
+
+task enumIdentity(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
+    goldValue = "true\n"
+    source = "runtime/workers/enum_identity.kt"
 }
 
 task superFunCall(type: RunKonanTest) {
