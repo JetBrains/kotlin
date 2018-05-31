@@ -141,17 +141,14 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         val getKotlin = kotlinSourceSetIface?.methods?.find { it.name == "getKotlin" } ?: return null
         return getKotlin(from) as? SourceDirectorySet
     }
+}
 
-    companion object {
-        @JvmStatic
-        protected fun <T> Project.whenEvaluated(fn: Project.() -> T) {
-            if (state.executed) {
-                fn()
-            }
-            else {
-                afterEvaluate { it.fn() }
-            }
-        }
+internal fun <T> Project.whenEvaluated(fn: Project.() -> T) {
+    if (state.executed) {
+        fn()
+    }
+    else {
+        afterEvaluate { it.fn() }
     }
 }
 

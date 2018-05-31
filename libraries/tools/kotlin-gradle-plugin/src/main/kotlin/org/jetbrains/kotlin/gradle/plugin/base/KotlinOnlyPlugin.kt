@@ -12,6 +12,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.SourceDirectorySet
@@ -30,8 +31,9 @@ import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinOnlyPlatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.PlatformConfigurationUsage
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinBaseSourceSet
 import java.io.File
 import javax.inject.Inject
@@ -71,7 +73,7 @@ open class KotlinOnlyPlatformConfigurator(
             val configurations = project.configurations
 
             definePathsForSourceSet(sourceSet, outputConventionMapping, project)
-            defineConfigurationsForSourceSet(sourceSet, configurations)
+            defineConfigurationsForSourceSet(sourceSet, platformExtension, configurations)
 
             createProcessResourcesTask(sourceSet, sourceSet.resources, project)
             createLifecycleTask(sourceSet, project)
@@ -140,13 +142,18 @@ open class KotlinOnlyPlatformConfigurator(
         }
     }
 
-    private fun defineConfigurationsForSourceSet(sourceSet: KotlinBaseSourceSet, configurations: ConfigurationContainer) {
+    private fun defineConfigurationsForSourceSet(
+        sourceSet: KotlinBaseSourceSet,
+        platformExtension: KotlinOnlyPlatformExtension,
+        configurations: ConfigurationContainer
+    ) {
         val compileConfiguration = configurations.maybeCreate(sourceSet.compileConfigurationName)
         compileConfiguration.isVisible = false
         compileConfiguration.description = "Dependencies for $sourceSet (deprecated, use '${sourceSet.implementationConfigurationName} ' instead)."
 
         val implementationConfiguration = configurations.maybeCreate(sourceSet.implementationConfigurationName).apply {
             extendsFrom(compileConfiguration)
+            usesPlatformOf(platformExtension)
             isVisible = false
             isCanBeConsumed = false
             isCanBeResolved = false
@@ -155,17 +162,20 @@ open class KotlinOnlyPlatformConfigurator(
 
         val runtimeConfiguration = configurations.maybeCreate(sourceSet.runtimeConfigurationName).apply {
             extendsFrom(compileConfiguration)
+            usesPlatformOf(platformExtension)
             isVisible = false
             description = "Runtime dependencies for $sourceSet (deprecated, use '${sourceSet.runtimeOnlyConfigurationName} ' instead)."
         }
 
         val compileOnlyConfiguration = configurations.maybeCreate(sourceSet.compileConfigurationName).apply {
+            usesPlatformOf(platformExtension)
             isVisible = false
             description = "Compile only dependencies for $sourceSet."
         }
 
         val compileClasspathConfiguration = configurations.maybeCreate(sourceSet.compileClasspathConfigurationName).apply {
             extendsFrom(compileOnlyConfiguration, implementationConfiguration)
+            usesPlatformOf(platformExtension)
             isVisible = false
             isCanBeConsumed = false
             attributes.attribute(USAGE_ATTRIBUTE, objectFactory.named(Usage::class.java, Usage.JAVA_API))
@@ -173,6 +183,7 @@ open class KotlinOnlyPlatformConfigurator(
         }
 
         val runtimeOnlyConfiguration = configurations.maybeCreate(sourceSet.runtimeOnlyConfigurationName).apply {
+            usesPlatformOf(platformExtension)
             isVisible = false
             isCanBeConsumed = false
             isCanBeResolved = false
@@ -181,6 +192,7 @@ open class KotlinOnlyPlatformConfigurator(
 
         val runtimeClasspathConfiguration = configurations.maybeCreate(sourceSet.runtimeClasspathConfigurationName).apply {
             extendsFrom(runtimeOnlyConfiguration, runtimeConfiguration, implementationConfiguration)
+            usesPlatformOf(platformExtension)
             isVisible = false
             isCanBeConsumed = false
             isCanBeResolved = true
@@ -192,7 +204,7 @@ open class KotlinOnlyPlatformConfigurator(
         sourceSet.runtimeClasspath = sourceSet.output.plus(runtimeClasspathConfiguration)
     }
 
-    private fun configureConfigurations(project: Project, platformExtension: KotlinPlatformExtension) {
+    private fun configureConfigurations(project: Project, platformExtension: KotlinOnlyPlatformExtension) {
         val configurations = project.configurations
 
         val defaultConfiguration = configurations.maybeCreate(platformExtension.defaultConfigurationName)
@@ -205,10 +217,12 @@ open class KotlinOnlyPlatformConfigurator(
         val testRuntimeConfiguration = configurations.maybeCreate(platformExtension.testRuntimeConfigurationName)
         val testRuntimeOnlyConfiguration = configurations.maybeCreate(platformExtension.testRuntimeOnlyConfigurationName)
 
-        compileTestsConfiguration.extendsFrom(compileConfiguration)
-        testImplementationConfiguration.extendsFrom(implementationConfiguration)
-        testRuntimeConfiguration.extendsFrom(runtimeConfiguration)
-        testRuntimeOnlyConfiguration.extendsFrom(runtimeOnlyConfiguration)
+        compileTestsConfiguration.extendsFrom(compileConfiguration).usesPlatformOf(platformExtension)
+        testImplementationConfiguration.extendsFrom(implementationConfiguration).usesPlatformOf(platformExtension)
+        testRuntimeConfiguration.extendsFrom(runtimeConfiguration).usesPlatformOf(platformExtension)
+        testRuntimeOnlyConfiguration.extendsFrom(runtimeOnlyConfiguration).usesPlatformOf(platformExtension)
+
+        val usageAttribute = PlatformConfigurationUsage.attributeForModule(project)
 
         configurations.maybeCreate(platformExtension.apiElementsConfigurationName).apply {
             description = "API elements for main."
@@ -219,6 +233,8 @@ open class KotlinOnlyPlatformConfigurator(
                 USAGE_ATTRIBUTE,
                 objectFactory.named(Usage::class.java, Usage.JAVA_API))
             extendsFrom(runtimeConfiguration)
+            usesPlatformOf(platformExtension)
+            attributes.attribute(usageAttribute, PlatformConfigurationUsage.PLATFORM_IMPLEMENTATION)
         }
 
         val runtimeElementsConfiguration = configurations.maybeCreate(platformExtension.runtimeElementsConfigurationName).apply {
@@ -231,13 +247,15 @@ open class KotlinOnlyPlatformConfigurator(
                 objectFactory.named(Usage::class.java, Usage.JAVA_RUNTIME_JARS)
             )
             extendsFrom(implementationConfiguration, runtimeOnlyConfiguration, runtimeConfiguration)
+            usesPlatformOf(platformExtension)
+            attributes.attribute(usageAttribute, PlatformConfigurationUsage.PLATFORM_IMPLEMENTATION)
         }
 
-        defaultConfiguration.extendsFrom(runtimeElementsConfiguration)
+        defaultConfiguration.extendsFrom(runtimeElementsConfiguration).usesPlatformOf(platformExtension)
     }
 
 
-    private fun configureBuild(project: Project, platformExtension: KotlinPlatformExtension) {
+    private fun configureBuild(project: Project, platformExtension: KotlinOnlyPlatformExtension) {
         project.tasks.maybeCreate(JavaBasePlugin.BUILD_NEEDED_TASK_NAME, DefaultTask::class.java).apply {
             description = "Assembles and tests this project and all projects it depends on."
             group = "build"
@@ -274,10 +292,24 @@ open class KotlinOnlyPlatformConfigurator(
         }
     }
 
-    companion object {
+
+    internal companion object {
         const val mainSourceSetName = "main"
         const val testSourceSetName = "test"
+
+        // We need both to be able to seamlessly use a single implementation for a certain platform as a dependency in a module which
+        // has more than one implmentation for the same platform
+        val kotlinPlatformTypeAttribute = Attribute.of("org.jetbrains.kotlin.platform.type", KotlinPlatformType::class.java)
+        val kotlinPlatformIdentifierAttribute = Attribute.of("org.jetbrains.kotlin.platform.identifier", String::class.java)
     }
+}
+
+internal fun Configuration.usesPlatformOf(extension: KotlinOnlyPlatformExtension): Configuration {
+    extension.userDefinedPlatformId?.let {
+        attributes.attribute(KotlinOnlyPlatformConfigurator.kotlinPlatformIdentifierAttribute, it)
+    }
+    attributes.attribute(KotlinOnlyPlatformConfigurator.kotlinPlatformTypeAttribute, extension.platformType)
+    return this
 }
 
 class KotlinOnlyPlugin @Inject constructor(

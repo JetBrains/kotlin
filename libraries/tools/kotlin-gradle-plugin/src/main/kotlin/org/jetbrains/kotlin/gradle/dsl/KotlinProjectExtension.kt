@@ -43,6 +43,8 @@ interface KotlinPlatformExtension {
     val platformName: String
     val platformDisambiguationClassifier: String? get() = null
 
+    val platformType: KotlinPlatformType
+
     val sourceSets: KotlinSourceSetContainer<out KotlinSourceSet>
         get() = DslObject(this).extensions.getByType(KotlinSourceSetContainer::class.java)
 }
@@ -52,10 +54,12 @@ internal fun KotlinPlatformExtension.disambiguateName(simpleName: String) =
 
 open class KotlinAndroidPlatformExtension : KotlinProjectExtension(), KotlinPlatformExtension {
     override val platformName: String = "kotlin"
+    override val platformType = KotlinPlatformType.JVM
 }
 
 open class KotlinWithJavaPlatformExtension : KotlinProjectExtension(), KotlinPlatformExtension {
-    override val platformName: String get() = "kotlin"
+    override val platformName: String = "kotlin"
+    override val platformType = KotlinPlatformType.JVM
     /**
      * With Gradle 4.0+, disables the separate output directory for Kotlin, falling back to sharing the deprecated
      * single classes directory per source set. With Gradle < 4.0, has no effect.
@@ -67,13 +71,18 @@ open class KotlinWithJavaPlatformExtension : KotlinProjectExtension(), KotlinPla
 }
 
 open class KotlinOnlyPlatformExtension: KotlinProjectExtension(), KotlinPlatformExtension {
-    /** A non-null value if all entities connected to this extension, such as configurations, should contain the
-     * platform classifier in their names. Null otherwise. */
+    override lateinit var platformType: KotlinPlatformType
+        internal set
+
     override lateinit var platformName: String
         internal set
 
+    /** A non-null value if all project-global entities connected to this extension, such as configurations, should contain the
+     * platform classifier in their names. Null otherwise. */
     override var platformDisambiguationClassifier: String? = null
         internal set
+
+    var userDefinedPlatformId: String? = null
 
     override val sourceSets: KotlinOnlySourceSetContainer
         get() = DslObject(this).extensions.getByType(KotlinOnlySourceSetContainer::class.java)
