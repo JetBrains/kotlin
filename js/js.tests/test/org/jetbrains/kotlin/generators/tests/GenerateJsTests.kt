@@ -72,6 +72,30 @@ fun main(args: Array<String>) {
             model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractIrNonLocalReturnsTest> {
+            model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS_IR)
+        }
+
+        testClass<AbstractIrPropertyAccessorsInlineTests> {
+            model("codegen/boxInline/property/", targetBackend = TargetBackend.JS_IR)
+        }
+
+        testClass<AbstractIrNoInlineTests> {
+            model("codegen/boxInline/noInline/", targetBackend = TargetBackend.JS_IR)
+        }
+
+        testClass<AbstractIrCallableReferenceInlineTests> {
+            model("codegen/boxInline/callableReference/", targetBackend = TargetBackend.JS_IR)
+        }
+
+        testClass<AbstractIrEnumValuesInlineTests> {
+            model("codegen/boxInline/enum/", targetBackend = TargetBackend.JS_IR)
+        }
+
+        testClass<AbstractIrInlineDefaultValuesTests> {
+            model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS_IR)
+        }
+
         testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
             model("codegen/box/arrays", targetBackend = TargetBackend.JS)
         }
