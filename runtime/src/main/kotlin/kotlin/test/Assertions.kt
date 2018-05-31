@@ -61,6 +61,16 @@ fun <@OnlyInputTypes T> assertNotEquals(illegal: T, actual: T, message: String? 
     asserter.assertNotEquals(message, illegal, actual)
 }
 
+/** Asserts that [expected] is the same instance as [actual], with an optional [message]. */
+fun <@OnlyInputTypes T> assertSame(expected: T, actual: T, message: String? = null) {
+    asserter.assertSame(message, expected, actual)
+}
+
+/** Asserts that [actual] is not the same instance as [illegal], with an optional [message]. */
+fun <@OnlyInputTypes T> assertNotSame(illegal: T, actual: T, message: String? = null) {
+    asserter.assertNotSame(message, illegal, actual)
+}
+
 /** Asserts that the [actual] value is not `null`, with an optional [message]. */
 fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
     asserter.assertNotNull(message, actual)
@@ -201,6 +211,24 @@ interface Asserter {
      */
     fun assertNotEquals(message: String?, illegal: Any?, actual: Any?): Unit {
         assertTrue({ messagePrefix(message) + "Illegal value: <$actual>." }, actual != illegal)
+    }
+
+    /**
+     * Asserts that the specified values are the same instance.
+     *
+     * @param message the message to report if the assertion fails.
+     */
+    fun assertSame(message: String?, expected: Any?, actual: Any?): Unit {
+        assertTrue({ messagePrefix(message) + "Expected <$expected>, actual <$actual> is not same." }, actual === expected)
+    }
+
+    /**
+     * Asserts that the specified values are not the same instance.
+     *
+     * @param message the message to report if the assertion fails.
+     */
+    fun assertNotSame(message: String?, illegal: Any?, actual: Any?): Unit {
+        assertTrue({ messagePrefix(message) + "Expected not same as <$actual>." }, actual !== illegal)
     }
 
     /**

@@ -67,7 +67,7 @@ fun Properties.keepOnlyDefaultProfiles() {
     // Force build to use only 'default' profile:
     this.setProperty(DEPENDENCY_PROFILES_KEY, "default")
     // Force build to use fixed Xcode version:
-    this.setProperty("useFixedXcodeVersion", "9.3.1")
+    this.setProperty("useFixedXcodeVersion", "9.4")
     // TODO: it actually affects only resolution made in :dependencies,
     // that's why we assume that 'default' profile comes first (and check this above).
 }

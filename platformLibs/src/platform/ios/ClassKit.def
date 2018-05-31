@@ -1,0 +1,9 @@
+depends = CoreFoundation Foundation darwin posix
+language = Objective-C
+package = platform.ClassKit
+headers = ClassKit/ClassKit.h
+
+headerFilter = ClassKit/**
+
+compilerOpts = -framework ClassKit
+linkerOpts = -framework ClassKit
