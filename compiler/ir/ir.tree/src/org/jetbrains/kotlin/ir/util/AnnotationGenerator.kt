@@ -5,33 +5,24 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class AnnotationGenerator(
     moduleDescriptor: ModuleDescriptor,
-    private val symbolTable: SymbolTable
+    symbolTable: SymbolTable
 ) : IrElementVisitorVoid {
 
     private val typeTranslator = TypeTranslator(moduleDescriptor, symbolTable)
     private val scopedTypeParameterResolver = ScopedTypeParametersResolver()
-    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, this, scopedTypeParameterResolver)
+    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, scopedTypeParameterResolver)
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -73,56 +64,11 @@ class AnnotationGenerator(
 
     private fun List<AnnotationWithTarget>.generateAnnotationConstructorCalls(declaration: IrDeclaration) {
         mapTo(declaration.annotations) {
-            generateAnnotationConstructorCall(it.annotation)
+            constantValueGenerator.generateAnnotationConstructorCall(it.annotation)
         }
     }
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
-
-    fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor): IrCall {
-        val annotationType = annotationDescriptor.type
-        val annotationClassDescriptor = annotationType.constructor.declarationDescriptor as? ClassDescriptor
-                ?: throw AssertionError("No declaration descriptor for annotation $annotationDescriptor")
-
-        if (annotationClassDescriptor !is ClassDescriptor) {
-            throw AssertionError("Annotation type descriptor is not a class: $annotationClassDescriptor")
-        }
-
-        assert(DescriptorUtils.isAnnotationClass(annotationClassDescriptor)) {
-            "Annotation class expected: $annotationClassDescriptor"
-        }
-
-        val primaryConstructorDescriptor = annotationClassDescriptor.unsubstitutedPrimaryConstructor
-                ?: annotationClassDescriptor.constructors.singleOrNull()
-                ?: throw AssertionError("No constructor for annotation class $annotationClassDescriptor")
-        val primaryConstructorSymbol = symbolTable.referenceConstructor(primaryConstructorDescriptor)
-
-        val psi = annotationDescriptor.source.safeAs<PsiSourceElement>()?.psi
-        val startOffset = psi?.startOffset ?: UNDEFINED_OFFSET
-        val endOffset = psi?.startOffset ?: UNDEFINED_OFFSET
-
-        val irCall = IrCallImpl(
-            startOffset, endOffset,
-            annotationType.toIrType(),
-            primaryConstructorSymbol, primaryConstructorDescriptor,
-            typeArgumentsCount = 0
-        )
-
-        for (valueParameter in primaryConstructorDescriptor.valueParameters) {
-            val argumentIndex = valueParameter.index
-            val argumentValue = annotationDescriptor.allValueArguments[valueParameter.name] ?: continue
-            val irArgument =
-                constantValueGenerator.generateConstantValueAsExpression(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    argumentValue,
-                    valueParameter.varargElementType
-                )
-            irCall.putValueArgument(argumentIndex, irArgument)
-        }
-
-        return irCall
-    }
 
     private fun isAnnotationTargetMatchingDeclaration(target: AnnotationUseSiteTarget?, element: IrElement): Boolean =
         when (element) {

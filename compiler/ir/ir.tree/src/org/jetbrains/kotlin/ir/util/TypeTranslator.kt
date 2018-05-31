@@ -25,8 +25,8 @@ class TypeTranslator(
     private val symbolTable: SymbolTable
 ) {
 
-    private val annotationGenerator = AnnotationGenerator(moduleDescriptor, symbolTable)
     private val typeParametersResolver = ScopedTypeParametersResolver()
+    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, typeParametersResolver)
 
     fun enterScope(irElement: IrTypeParametersContainer) {
         typeParametersResolver.enterTypeParameterScope(irElement)
@@ -97,7 +97,7 @@ class TypeTranslator(
     private fun translateTypeAnnotations(annotations: Annotations): List<IrCall> =
         annotations.getAllAnnotations().map {
             // TODO filter out annotation targets
-            annotationGenerator.generateAnnotationConstructorCall(it.annotation)
+            constantValueGenerator.generateAnnotationConstructorCall(it.annotation)
         }
 
     private fun translateTypeArguments(arguments: List<TypeProjection>) =
