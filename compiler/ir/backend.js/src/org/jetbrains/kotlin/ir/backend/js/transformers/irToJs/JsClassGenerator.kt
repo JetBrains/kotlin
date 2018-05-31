@@ -29,7 +29,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private val baseClass = irClass.superClasses.firstOrNull { !it.owner.isInterface }
     private val baseClassName = baseClass?.let { context.getNameForSymbol(it) }
     private val classPrototypeRef = prototypeOf(classNameRef)
-    private val classBlock = JsBlock()
+    private val classBlock = JsGlobalBlock()
     private val classModel = JsClassModel(className, baseClassName)
 
     fun generate(): JsStatement {
@@ -73,7 +73,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         val memberName = context.getNameForSymbol(declaration.symbol)
         val memberRef = JsNameRef(memberName, classPrototypeRef)
 
-        translatedFunction?.let { return jsAssignment(memberRef, it).makeStmt() }
+        translatedFunction?.let { return jsAssignment(memberRef, it.apply { name = null }).makeStmt() }
 
         // do not generate code like
         // interface I { foo() = "OK" }

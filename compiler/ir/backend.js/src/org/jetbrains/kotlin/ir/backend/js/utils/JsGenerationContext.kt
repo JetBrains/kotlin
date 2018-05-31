@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 
 class JsGenerationContext {
     fun newDeclaration(scope: JsScope, func: IrFunction? = null): JsGenerationContext {
-        return JsGenerationContext(this, JsBlock(), scope, func)
+        return JsGenerationContext(this, if (func != null) JsBlock() else JsGlobalBlock(), scope, func)
     }
 
     val currentBlock: JsBlock
