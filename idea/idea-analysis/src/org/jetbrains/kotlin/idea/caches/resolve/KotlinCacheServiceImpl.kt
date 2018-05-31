@@ -186,6 +186,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val specialModuleInfo = files.map(KtFile::getModuleInfo).toSet().single()
         val sdk = specialModuleInfo.sdk
         val settings = PlatformAnalysisSettings(targetPlatform, sdk, specialModuleInfo.supportsAdditionalBuiltInsMembers())
+
         // File copies are created during completion and receive correct modification events through POM.
         // Dummy files created e.g. by J2K do not receive events.
         val filesModificationTracker = if (files.all { it.originalFile != it }) {
@@ -343,7 +344,6 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         false
     )
 
-    private val specialFileCachesLock = Any()
     private val specialFilesCacheProvider = CachedValueProvider {
         // NOTE: computations inside createFacadeForFilesWithSpecialModuleInfo depend on project root structure
         // so we additionally drop the whole slru cache on change
@@ -357,10 +357,11 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 
     private fun getFacadeForSpecialFiles(files: Set<KtFile>): ProjectResolutionFacade {
-        val cachedValue = synchronized(specialFileCachesLock) {
+        val cachedValue: SLRUCache<Set<KtFile>, ProjectResolutionFacade> = synchronized(specialFilesCacheProvider) {
             CachedValuesManager.getManager(project).getCachedValue(project, specialFilesCacheProvider)
         }
         // In Upsource, we create multiple instances of KotlinCacheService, which all access the same CachedValue instance (UP-8046)
+        // This is so because class name of provider is used as a key when fetching cached value, see CachedValueManager.getKeyForClass.
         // To avoid race conditions, we can't use the local lock to access the cached value contents.
         synchronized(cachedValue) {
             return cachedValue.get(files)
@@ -379,7 +380,13 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 
     private fun getFacadeForScripts(files: Set<KtFile>): ProjectResolutionFacade {
-        return CachedValuesManager.getManager(project).getCachedValue(project, scriptsCacheProvider).get(files)
+        val cachedValue: SLRUCache<Set<KtFile>, ProjectResolutionFacade> = synchronized(scriptsCacheProvider) {
+            CachedValuesManager.getManager(project).getCachedValue(project, scriptsCacheProvider)
+        }
+
+        synchronized(cachedValue) {
+            return cachedValue.get(files)
+        }
     }
 
     private fun getFacadeToAnalyzeFiles(files: Collection<KtFile>): ResolutionFacade {
