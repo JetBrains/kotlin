@@ -99,18 +99,21 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
     val eqeqeqFun = defineOperator("EQEQEQ", bool, listOf(anyN, anyN))
     val eqeqFun = defineOperator("EQEQ", bool, listOf(anyN, anyN))
     val throwNpeFun = defineOperator("THROW_NPE", nothing, listOf())
+    val throwCceFun = defineOperator("THROW_CCE", nothing, listOf())
     val booleanNotFun = defineOperator("NOT", bool, listOf(bool))
     val noWhenBranchMatchedExceptionFun = defineOperator("noWhenBranchMatchedException", unit, listOf())
 
     val eqeqeq = eqeqeqFun.descriptor
     val eqeq = eqeqFun.descriptor
     val throwNpe = throwNpeFun.descriptor
+    val throwCce = throwCceFun.descriptor
     val booleanNot = booleanNotFun.descriptor
     val noWhenBranchMatchedException = noWhenBranchMatchedExceptionFun.descriptor
 
     val eqeqeqSymbol = eqeqeqFun.symbol
     val eqeqSymbol = eqeqFun.symbol
     val throwNpeSymbol = throwNpeFun.symbol
+    val throwCceSymbol = throwCceFun.symbol
     val booleanNotSymbol = booleanNotFun.symbol
     val noWhenBranchMatchedExceptionSymbol = noWhenBranchMatchedExceptionFun.symbol
 

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -70,7 +69,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         body.expression.accept(this, context)
 
     override fun visitFunctionReference(expression: IrFunctionReference, context: JsGenerationContext): JsExpression {
-        val irFunction = expression.symbol.owner as IrFunction
+        val irFunction = expression.symbol.owner
         return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
     }
 
@@ -111,7 +110,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext) = when (expression.symbol.owner.kind) {
         ClassKind.OBJECT -> {
-            // TODO:
+            // TODO: return unit instance instead of null
             if (expression.type.isUnit()) JsNullLiteral()
             else {
                 val className = context.getNameForSymbol(expression.symbol)
@@ -175,7 +174,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return if (symbol is IrConstructorSymbol) {
             JsNew(context.getNameForSymbol(symbol).makeRef(), arguments)
         } else {
-            // TODO sanitize name
             val symbolName = context.getNameForSymbol(symbol)
             val ref = if (jsDispatchReceiver != null) JsNameRef(symbolName, jsDispatchReceiver) else JsNameRef(symbolName)
             JsInvocation(ref, jsExtensionReceiver?.let { listOf(jsExtensionReceiver) + arguments } ?: arguments)

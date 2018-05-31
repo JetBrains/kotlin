@@ -7,25 +7,23 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileLoweringPass {
 
@@ -48,36 +46,36 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
         memberToIrFunction.run {
             for (type in primitiveNumbers) {
-                op(type, OperatorNameConventions.UNARY_PLUS, context.intrinsics.jsUnaryPlus)
-                op(type, OperatorNameConventions.UNARY_MINUS, context.intrinsics.jsUnaryMinus)
+                op(type, OperatorNames.UNARY_PLUS, context.intrinsics.jsUnaryPlus)
+                op(type, OperatorNames.UNARY_MINUS, context.intrinsics.jsUnaryMinus)
 
-                op(type, OperatorNameConventions.PLUS, context.intrinsics.jsPlus)
-                op(type, OperatorNameConventions.MINUS, context.intrinsics.jsMinus)
-                op(type, OperatorNameConventions.TIMES, context.intrinsics.jsMult)
-                op(type, OperatorNameConventions.DIV, context.intrinsics.jsDiv)
-                op(type, OperatorNameConventions.MOD, context.intrinsics.jsMod)
-                op(type, OperatorNameConventions.REM, context.intrinsics.jsMod)
+                op(type, OperatorNames.ADD, context.intrinsics.jsPlus)
+                op(type, OperatorNames.SUB, context.intrinsics.jsMinus)
+                op(type, OperatorNames.MUL, context.intrinsics.jsMult)
+                op(type, OperatorNames.DIV, context.intrinsics.jsDiv)
+                op(type, OperatorNames.MOD, context.intrinsics.jsMod)
+                op(type, OperatorNames.REM, context.intrinsics.jsMod)
             }
 
             context.irBuiltIns.string.let {
-                op(it, OperatorNameConventions.PLUS, context.intrinsics.jsPlus)
+                op(it, OperatorNames.ADD, context.intrinsics.jsPlus)
             }
 
             context.irBuiltIns.int.let {
-                op(it, "shl", context.intrinsics.jsBitShiftL)
-                op(it, "shr", context.intrinsics.jsBitShiftR)
-                op(it, "ushr", context.intrinsics.jsBitShiftRU)
-                op(it, "and", context.intrinsics.jsBitAnd)
-                op(it, "or", context.intrinsics.jsBitOr)
-                op(it, "xor", context.intrinsics.jsBitXor)
-                op(it, "inv", context.intrinsics.jsBitNot)
+                op(it, OperatorNames.SHL, context.intrinsics.jsBitShiftL)
+                op(it, OperatorNames.SHR, context.intrinsics.jsBitShiftR)
+                op(it, OperatorNames.SHRU, context.intrinsics.jsBitShiftRU)
+                op(it, OperatorNames.AND, context.intrinsics.jsBitAnd)
+                op(it, OperatorNames.OR, context.intrinsics.jsBitOr)
+                op(it, OperatorNames.XOR, context.intrinsics.jsBitXor)
+                op(it, OperatorNames.INV, context.intrinsics.jsBitNot)
             }
 
             context.irBuiltIns.bool.let {
-                op(it, OperatorNameConventions.AND, context.intrinsics.jsAnd)
-                op(it, OperatorNameConventions.OR, context.intrinsics.jsOr)
-                op(it, OperatorNameConventions.NOT, context.intrinsics.jsNot)
-                op(it, "xor", context.intrinsics.jsBitXor)
+                op(it, OperatorNames.AND, context.intrinsics.jsAnd)
+                op(it, OperatorNames.OR, context.intrinsics.jsOr)
+                op(it, OperatorNames.NOT, context.intrinsics.jsNot)
+                op(it, OperatorNames.XOR, context.intrinsics.jsBitXor)
             }
         }
 
@@ -99,14 +97,14 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
         memberToTransformer.run {
             for (type in primitiveNumbers) {
                 // TODO: use increment and decrement when it's possible
-                op(type, OperatorNameConventions.INC) {
+                op(type, OperatorNames.INC) {
                     irCall(it, context.intrinsics.jsPlus.symbol, dispatchReceiverAsFirstArgument = true).apply {
-                        putValueArgument(1, IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.int, IrConstKind.Int, 1))
+                        putValueArgument(1, JsIrBuilder.buildInt(context.irBuiltIns.int, 1))
                     }
                 }
-                op(type, OperatorNameConventions.DEC) {
+                op(type, OperatorNames.DEC) {
                     irCall(it, context.intrinsics.jsMinus.symbol, dispatchReceiverAsFirstArgument = true).apply {
-                        putValueArgument(1, IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.int, IrConstKind.Int, 1))
+                        putValueArgument(1, JsIrBuilder.buildInt(context.irBuiltIns.int, 1))
                     }
                 }
             }

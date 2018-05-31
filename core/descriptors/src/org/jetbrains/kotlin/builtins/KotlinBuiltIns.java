@@ -944,6 +944,10 @@ public abstract class KotlinBuiltIns {
         return classFqNameEquals(classDescriptor, FQ_NAMES._boolean);
     }
 
+    public static boolean isNumber(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.number);
+    }
+
     public static boolean isChar(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._char);
     }

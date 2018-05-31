@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
+// TODO: generate $metadata$ property and fill it with corresponding KFunction/KProperty interface
 class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     private data class CallableReferenceKey(

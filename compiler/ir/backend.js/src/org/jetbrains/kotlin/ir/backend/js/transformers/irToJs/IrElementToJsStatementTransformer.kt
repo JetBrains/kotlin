@@ -14,14 +14,6 @@ import org.jetbrains.kotlin.js.backend.ast.*
 
 class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
 
-    // TODO: is it right place for this logic? Or should it be implemented as a separate lowering?
-    override fun visitTypeOperator(expression: IrTypeOperatorCall, context: JsGenerationContext): JsStatement {
-        if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
-            return expression.argument.accept(this, context)
-        }
-        return super.visitTypeOperator(expression, context)
-    }
-
     override fun visitBlockBody(body: IrBlockBody, context: JsGenerationContext): JsStatement {
         return JsBlock(body.statements.map { it.accept(this, context) })
     }

@@ -68,9 +68,12 @@ object JsSymbolBuilder {
     )
 
     fun buildTempVar(containingSymbol: IrFunctionSymbol, type: KotlinType, name: String? = null, mutable: Boolean = false) =
+        buildTempVar(containingSymbol.descriptor, type, name, mutable)
+
+    fun buildTempVar(containingDeclaration: DeclarationDescriptor, type: KotlinType, name: String? = null, mutable: Boolean = false) =
         IrVariableSymbolImpl(
             IrTemporaryVariableDescriptorImpl(
-                containingSymbol.descriptor,
+                containingDeclaration,
                 Name.identifier(name ?: "tmp"),
                 type, mutable
             )

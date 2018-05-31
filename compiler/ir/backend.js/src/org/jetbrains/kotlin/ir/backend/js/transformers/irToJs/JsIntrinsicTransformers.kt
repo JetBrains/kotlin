@@ -37,6 +37,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             binOp(intrinsics.jsLtEq, JsBinaryOperator.LTE)
 
             prefixOp(intrinsics.jsNot, JsUnaryOperator.NOT)
+            binOp(intrinsics.jsAnd, JsBinaryOperator.AND)
+            binOp(intrinsics.jsOr, JsBinaryOperator.OR)
 
             prefixOp(intrinsics.jsUnaryPlus, JsUnaryOperator.POS)
             prefixOp(intrinsics.jsUnaryMinus, JsUnaryOperator.NEG)
@@ -63,6 +65,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             binOp(intrinsics.jsInstanceOf, JsBinaryOperator.INSTANCEOF)
 
+            prefixOp(intrinsics.jsTypeOf, JsUnaryOperator.TYPEOF)
+
             add(intrinsics.jsObjectCreate) { call, context ->
                 val classToCreate = call.getTypeArgument(0)!!
                 val className = context.getNameForSymbol(IrClassSymbolImpl(classToCreate.constructor.declarationDescriptor as ClassDescriptor))
@@ -79,6 +83,12 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val fieldNameLiteral = fieldName.value!!
 
                 jsAssignment(JsNameRef(fieldNameLiteral, receiver), fieldValue)
+            }
+
+            add(intrinsics.jsToJsType) { call, context ->
+                val typeParameter = call.getTypeArgument(0)!!
+                val typeName = context.getNameForSymbol(IrClassSymbolImpl(typeParameter.constructor.declarationDescriptor as ClassDescriptor))
+                typeName.makeRef()
             }
 
             add(backendContext.sharedVariablesManager.closureBoxConstructorTypeSymbol) { call, context ->
