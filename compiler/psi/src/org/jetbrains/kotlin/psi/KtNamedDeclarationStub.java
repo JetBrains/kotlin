@@ -141,6 +141,12 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
             return new LocalSearchScope(enclosingBlock);
         }
 
+        PsiElement parent = getParent();
+        PsiElement grandParent = parent != null ? parent.getParent() : null;
+        if (parent instanceof KtBlockExpression && grandParent instanceof KtScript) {
+            return new LocalSearchScope(getContainingFile());
+        }
+
         if (hasModifier(KtTokens.PRIVATE_KEYWORD)) {
             KtElement containingClass = PsiTreeUtil.getParentOfType(this, KtClassOrObject.class);
             if (containingClass instanceof KtObjectDeclaration && ((KtObjectDeclaration) containingClass).isCompanion()) {
