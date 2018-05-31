@@ -85,9 +85,27 @@ class NewCodeBuilder {
             ktFunction.returnType.accept(this, data)
             if (ktFunction.block !== JKBodyStub) {
                 printer.printlnWithNoIndent("{")
+                printer.pushIndent()
                 ktFunction.block.accept(this, data)
+                printer.popIndent()
                 printer.printWithNoIndent("}")
             }
+        }
+
+        override fun visitBlock(block: JKBlock, data: Unit) {
+            block.acceptChildren(this, data)
+        }
+
+        override fun visitExpressionStatement(expressionStatement: JKExpressionStatement, data: Unit) {
+            printer.printIndent()
+            expressionStatement.expression.accept(this, data)
+            printer.printlnWithNoIndent()
+        }
+
+        override fun visitReturnStatement(returnStatement: JKReturnStatement, data: Unit) {
+            printer.print("return ")
+            returnStatement.expression.accept(this, data)
+            printer.printlnWithNoIndent()
         }
 
         override fun visitKtProperty(ktProperty: JKKtProperty, data: Unit) {
