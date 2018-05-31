@@ -67,6 +67,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     override fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade {
         return getFacadeToAnalyzeFiles(elements.map {
             // in theory `containingKtFile` is `@NotNull` but in practice EA-114080
+            @Suppress("USELESS_ELVIS")
             it.containingKtFile ?: throw IllegalStateException("containingKtFile was null for $it of ${it.javaClass}")
         })
     }
@@ -266,7 +267,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 )
             }
 
-            specialModuleInfo is LibrarySourceInfo || specialModuleInfo is NotUnderContentRootModuleInfo -> {
+            specialModuleInfo is LibrarySourceInfo || specialModuleInfo === NotUnderContentRootModuleInfo -> {
                 val librariesFacade = librariesFacade(settings)
                 val globalContext = librariesFacade.globalContext.contextWithNewLockAndCompositeExceptionTracker()
                 makeProjectResolutionFacade(
@@ -293,7 +294,6 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         }
     }
 
-    private val suppressAnnotationShortName = KotlinBuiltIns.FQ_NAMES.suppress.shortName().identifier
     private val kotlinSuppressCache: CachedValue<KotlinSuppressCache> = CachedValuesManager.getManager(project).createCachedValue(
         {
             CachedValueProvider.Result<KotlinSuppressCache>(
@@ -344,17 +344,20 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     )
 
     private val specialFileCachesLock = Any()
-
     private val specialFilesCacheProvider = CachedValueProvider {
-        CachedValueProvider.Result(object : SLRUCache<Set<KtFile>, ProjectResolutionFacade>(2, 3) {
-            override fun createValue(files: Set<KtFile>) = createFacadeForFilesWithSpecialModuleInfo(files)
-        }, LibraryModificationTracker.getInstance(project), ProjectRootModificationTracker.getInstance(project))
+        // NOTE: computations inside createFacadeForFilesWithSpecialModuleInfo depend on project root structure
+        // so we additionally drop the whole slru cache on change
+        CachedValueProvider.Result(
+            object : SLRUCache<Set<KtFile>, ProjectResolutionFacade>(2, 3) {
+                override fun createValue(files: Set<KtFile>) = createFacadeForFilesWithSpecialModuleInfo(files)
+            },
+            LibraryModificationTracker.getInstance(project),
+            ProjectRootModificationTracker.getInstance(project)
+        )
     }
 
     private fun getFacadeForSpecialFiles(files: Set<KtFile>): ProjectResolutionFacade {
         val cachedValue = synchronized(specialFileCachesLock) {
-            //NOTE: computations inside createFacadeForFilesWithSpecialModuleInfo depend on project root structure
-            // so we additionally drop the whole slru cache on change
             CachedValuesManager.getManager(project).getCachedValue(project, specialFilesCacheProvider)
         }
         // In Upsource, we create multiple instances of KotlinCacheService, which all access the same CachedValue instance (UP-8046)
@@ -371,7 +374,8 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             },
             LibraryModificationTracker.getInstance(project),
             ProjectRootModificationTracker.getInstance(project),
-            ScriptDependenciesModificationTracker.getInstance(project))
+            ScriptDependenciesModificationTracker.getInstance(project)
+        )
     }
 
     private fun getFacadeForScripts(files: Set<KtFile>): ProjectResolutionFacade {
@@ -422,7 +426,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     override fun getResolutionFacadeByModuleInfo(moduleInfo: ModuleInfo, platform: TargetPlatform): ResolutionFacade? =
         (moduleInfo as? IdeaModuleInfo)?.let { getResolutionFacadeByModuleInfo(it, platform) }
 
-    private fun Collection<KtFile>.filterNotInProjectSource (moduleInfo: IdeaModuleInfo): Set<KtFile> {
+    private fun Collection<KtFile>.filterNotInProjectSource(moduleInfo: IdeaModuleInfo): Set<KtFile> {
         return mapNotNull {
             if (it is KtCodeFragment) it.getContextFile() else it
         }.filter {
