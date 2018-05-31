@@ -136,7 +136,7 @@ internal class KonanLower(val context: Context) {
             DefaultParameterInjector(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.LOWER_BUILTIN_OPERATORS) {
-            BuiltinOperatorLowering(context).runOnFilePostfix(irFile)
+            BuiltinOperatorLowering(context).lower(irFile)
         }
         phaser.phase(KonanPhase.LOWER_INNER_CLASSES) {
             InnerClassLowering(context).runOnFilePostfix(irFile)

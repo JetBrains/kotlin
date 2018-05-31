@@ -30,25 +30,6 @@ import kotlinx.cinterop.NativePtr
 @Intrinsic external fun ieee754Equals(first: Float, second: Float): Boolean
 @Intrinsic external fun ieee754Equals(first: Double, second: Double): Boolean
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun ieee754NullableEquals(first: Float?, second: Float?): Boolean = when {
-    first == null   -> second == null
-    second == null  -> false
-    else            -> ieee754Equals(first, second)
-}
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun ieee754NullableEquals(first: Double?, second: Double?): Boolean = when {
-    first == null   -> second == null
-    second == null  -> false
-    else            -> ieee754Equals(first, second)
-}
-
 @Intrinsic external fun areEqualByValue(first: NativePtr, second: NativePtr): Boolean
 @Intrinsic external fun areEqualByValue(first: NativePointed?, second: NativePointed?): Boolean
 @Intrinsic external fun areEqualByValue(first: CPointer<*>?, second: CPointer<*>?): Boolean
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun areEqual(first: Any?, second: Any?): Boolean {
-    return if (first == null) second == null else first.equals(second)
-}
