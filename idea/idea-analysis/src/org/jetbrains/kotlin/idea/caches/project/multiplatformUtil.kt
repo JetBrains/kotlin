@@ -5,23 +5,22 @@
 
 package org.jetbrains.kotlin.idea.caches.project
 
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
-fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsProvider) =
-    modelsProvider.modules.filter { name in it.findImplementedModuleNames(modelsProvider) }
+fun Module.findImplementingModules() =
+    ModuleManager.getInstance(project).modules.filter { name in it.findImplementedModuleNames() }
 
 val Module.implementingModules: List<Module>
     get() = cached(CachedValueProvider {
         CachedValueProvider.Result(
-            findImplementingModules(IdeModifiableModelsProviderImpl(project)),
-            ProjectRootModificationTracker.getInstance(project)
+                findImplementingModules(),
+                ProjectRootModificationTracker.getInstance(project)
         )
     })
 
@@ -32,11 +31,8 @@ private fun Module.getModuleInfo(baseModuleSourceInfo: ModuleSourceInfo): Module
         else -> null
     }
 
-private fun Module.findImplementingModuleInfos(moduleSourceInfo: ModuleSourceInfo): List<ModuleSourceInfo> {
-    val modelsProvider = IdeModifiableModelsProviderImpl(project)
-    val implementingModules = findImplementingModules(modelsProvider)
-    return implementingModules.mapNotNull { it.getModuleInfo(moduleSourceInfo) }
-}
+private fun Module.findImplementingModuleInfos(moduleSourceInfo: ModuleSourceInfo) =
+    findImplementingModules().mapNotNull { it.getModuleInfo(moduleSourceInfo) }
 
 val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
     get() {
