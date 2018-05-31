@@ -206,7 +206,7 @@ abstract class AbstractKotlinAndroidGradleTests(
         val getSomethingKt = project.projectDir.walk().filter { it.isFile && it.name.endsWith("getSomething.kt") }.first()
         getSomethingKt.writeText(
             """
-package foo
+package com.example
 
 fun getSomething() = 10
 """
@@ -214,8 +214,12 @@ fun getSomething() = 10
 
         project.build("assembleDebug", options = options) {
             assertSuccessful()
-            assertCompiledKotlinSources(listOf("app/src/main/kotlin/foo/KotlinActivity1.kt", "app/src/main/kotlin/foo/getSomething.kt"))
-            assertCompiledJavaSources(listOf("app/src/main/java/foo/JavaActivity.java"), weakTesting = true)
+            val affectedKotlinFiles = listOf(
+                "app/src/main/kotlin/com/example/KotlinActivity1.kt",
+                "app/src/main/kotlin/com/example/getSomething.kt"
+            )
+            assertCompiledKotlinSources(affectedKotlinFiles)
+            assertCompiledJavaSources(listOf("app/src/main/java/com/example/JavaActivity.java"), weakTesting = true)
         }
     }
 
