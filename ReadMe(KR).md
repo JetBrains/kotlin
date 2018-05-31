@@ -54,53 +54,52 @@ Windows에서는 다음과 같습니다:
 
     gradlew <tasks-and-options>
 
-첫 프로젝트 설정에서 gradle은 다음과 같은 의존성들을 내려받고 설치할 것입니다:
+첫 프로젝트 설정에서 gradle은 다음과 같은 의존성들(의존하는 패키지 등)을 내려받고 설치할 것입니다:
 
 
 * `intellij-core` 은 커맨드 라인 컴파일러의 일부분이고 가장 핵심적인 API만을 가지고 있습니다.
 * `idea-full` 은 플러그인 모듈에서 사용될 완전한 IntelliJ IDEA Community Edition입니다.
 
-These dependencies are quite large, so depending on the quality of your internet connection 
-you might face timeouts getting them. In this case you can increase timeout by specifying the following 
-command line parameters on the first run: 
+이 의존성들은 꽤 크기 때문에, 인터넷 연결 상태에 따라서는 
+이들을 가져오다가 시간 초과가 발생할 수 있습니다. 이 경우에는 다음과 같은 명령어 인자(parameter)를 첫 실행에 추가함으로써 해결할 수 있습니다: 
     
     ./gradlew -Dhttp.socketTimeout=60000 -Dhttp.connectionTimeout=60000
 
-## Important gradle tasks
+## 중요한 gradle 태스크들
 
-- `clean` - clean build results
-- `dist` - assembles the compiler distribution into `dist/kotlinc/` folder
-- `ideaPlugin` - assembles the Kotlin IDEA plugin distribution into `dist/artifacts/Kotlin` folder
-- `install` - build and install all public artifacts into local maven repository
-- `runIde` - build IDEA plugin and run IDEA with it
-- `coreLibsTest` - build and run stdlib, reflect and kotlin-test tests
-- `gradlePluginTest` - build and run gradle plugin tests
-- `compilerTest` - build and run all compiler tests
-- `ideaPluginTest` - build and run all IDEA plugin tests
+- `clean` - 빌드 결과를 지웁니다.
+- `dist` - 배포 컴파일러들을 `dist/kotlinc/` 폴더 안에 모읍니다.
+- `ideaPlugin` - Kotlin IDEA 배포 플러그인들을 `dist/artifacts/Kotlin` 폴더 안에 모읍니다.
+- `install` - 모든 공유(public) 아티팩트들을 maven 로컬 저장소 안에 빌드하고 설치합니다.
+- `runIde` - IDEA 플러그인을 빌드하고, IDEA를 플러그인과 함께 실행합니다.
+- `coreLibsTest` - 표준 라이브러리(stdlib)를 빌드하고 실행하며, 테스트들(또는 유닛 테스트)을 reflect, kotlin-test합니다.
+- `gradlePluginTest` - gradle 플러그인 테스트들을 빌드하고 실행합니다.
+- `compilerTest` - 모든 컴파일러 테스트들을 빌드하고 실행합니다.
+- `ideaPluginTest` - 모든 IDEA 플러그인 테스트들을 빌드하고 실행합니다.
 
-**OPTIONAL:** Some artifacts, mainly Maven plugin ones, are built separately with Maven.
-Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
+**참고:** Maven 플러그인들을 포함한 몇몇 아티팩트들은 Maven과 별개로 빌드되었습니다.
+자세한 사항은 [libraries/ReadMe.md](libraries/ReadMe.md)를 참조하시기 바랍니다.
 
-## <a name="working-in-idea"></a> Working with the project in IntelliJ IDEA
+## <a name="working-in-idea"></a> IntelliJ IDEA 환경에서 Kotlin 프로젝트 이용하기
 
-Working with the Kotlin project requires IntelliJ IDEA 2017.3. You can download IntelliJ IDEA 2017.3 [here](https://www.jetbrains.com/idea/download).
+Kotlin 프로젝트를 이용하려면 IntelliJ IDEA 2017.3이 필요합니다. IntelliJ IDEA 2017.3은 [여기](https://www.jetbrains.com/idea/download)에서 다운받을 수 있습니다.
 
-To import the project in Intellij choose project directory in Open project dialog. Then, after project opened, Select 
-`File` -> `New...` -> `Module from Existing Sources` in the menu, and select `build.gradle.kts` file in the project's root folder.
+Intellij에서 프로젝트를 import하기 위해 Open project 다이얼로그에서 프로젝트 디렉토리를 선택합니다. 프로젝트가 열린 뒤, 메뉴에서 
+`File` -> `New...` -> `Module from Existing Sources`를 선택하고, 프로젝트의 최상위(root) 폴더에 있는 `build.gradle.kts`파일을 선택합니다.
 
-In the import dialog, select `use default gradle wrapper`.
+import 다이얼로그에서, `use default gradle wrapper`를 선택합니다.
 
-To be able to run tests from IntelliJ easily, check `Delegate IDE build/run actions to Gradle` in the Gradle runner settings.
+IntelliJ를 통해 테스트를 쉽게 실행하기 위해서, Gradle runner 설정에서 `Delegate IDE build/run actions to Gradle`를 체크합니다.
 
-At this time, you can use the latest released 1.2.x version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use Tools | Kotlin | Configure Kotlin Plugin Updates and press "Check for updates now".
+이제, Kotlin 플러그인의 최신 배포 1.2.x 버전을 이용할 수 있습니다. 최신 버전을 설치했는지 확인하려면, Tools | Kotlin | Configure Kotlin Plugin Updates 에서 "Check for updates now"를 눌러서 확인할 수 있습니다.
 
-### Compiling and running
+### 컴파일과 실행
 
-From this root project there are Run/Debug Configurations for running IDEA or the Compiler Tests for example; so if you want to try out the latest and greatest IDEA plugin
+이 최상위(root) 프로젝트에는 IDEA 실행 또는 컴파일러 테스트를 위한 Run/Debug 설정 예제가 있습니다; 만약 최신 IDEA 플러그인을 시도해보고 싶다면
 
 * VCS -> Git -> Pull
-* Run the "IDEA" run configuration in the project
-* a child IntelliJ IDEA with the Kotlin plugin will then startup
+* 프로젝트의 "IDEA" 실행 설정(run configuration)을 실행합니다.
+* 또 다른 IntelliJ IDEA가 Kotlin 플러그인과 함께 시작됩니다.
 
 ### Including into composite build
 
