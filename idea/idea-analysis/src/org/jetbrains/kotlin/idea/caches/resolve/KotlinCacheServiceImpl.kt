@@ -357,14 +357,14 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 
     private fun getFacadeForSpecialFiles(files: Set<KtFile>): ProjectResolutionFacade {
-        val cachedValue: SLRUCache<Set<KtFile>, ProjectResolutionFacade> = synchronized(specialFilesCacheProvider) {
+        val cachedValue: SLRUCache<Set<KtFile>, ProjectResolutionFacade> =
             CachedValuesManager.getManager(project).getCachedValue(project, specialFilesCacheProvider)
-        }
+
         // In Upsource, we create multiple instances of KotlinCacheService, which all access the same CachedValue instance (UP-8046)
         // This is so because class name of provider is used as a key when fetching cached value, see CachedValueManager.getKeyForClass.
-        // To avoid race conditions, we can't use the local lock to access the cached value contents.
-        synchronized(cachedValue) {
-            return cachedValue.get(files)
+        // To avoid race conditions, we can't use any local lock to access the cached value contents.
+        return synchronized(cachedValue) {
+            cachedValue.get(files)
         }
     }
 
@@ -380,12 +380,11 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 
     private fun getFacadeForScripts(files: Set<KtFile>): ProjectResolutionFacade {
-        val cachedValue: SLRUCache<Set<KtFile>, ProjectResolutionFacade> = synchronized(scriptsCacheProvider) {
+        val cachedValue: SLRUCache<Set<KtFile>, ProjectResolutionFacade> =
             CachedValuesManager.getManager(project).getCachedValue(project, scriptsCacheProvider)
-        }
 
-        synchronized(cachedValue) {
-            return cachedValue.get(files)
+        return synchronized(cachedValue) {
+            cachedValue.get(files)
         }
     }
 
