@@ -34,7 +34,7 @@ class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
             if (it is JKJavaMethod) {
                 it.invalidate()
                 JKKtFunctionImpl(
-                    JKTypeElementImpl(JKJavaPrimitiveTypeImpl.BOOLEAN),
+                    it.returnType,
                     it.name,
                     it.valueArguments,
                     it.block,
