@@ -110,10 +110,14 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
                 val sdkVersion = module.sdk?.version
                 if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
                     val modelsProvider = IdeModifiableModelsProviderImpl(project)
-                    val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false, commitModel = true)
-                    val facetSettings = facet.configuration.settings
-                    facetSettings.initializeIfNeeded(module, null, TargetPlatformKind.Jvm(JvmTarget.JVM_1_8))
-                    (facetSettings.compilerArguments as? K2JVMCompilerArguments)?.jvmTarget = "1.8"
+                    try {
+                        val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false, commitModel = true)
+                        val facetSettings = facet.configuration.settings
+                        facetSettings.initializeIfNeeded(module, null, TargetPlatformKind.Jvm(JvmTarget.JVM_1_8))
+                        (facetSettings.compilerArguments as? K2JVMCompilerArguments)?.jvmTarget = "1.8"
+                    } finally {
+                        modelsProvider.dispose()
+                    }
                 }
             }
         }

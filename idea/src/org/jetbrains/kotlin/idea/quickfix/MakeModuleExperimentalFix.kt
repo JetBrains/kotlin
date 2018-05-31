@@ -35,14 +35,18 @@ class MakeModuleExperimentalFix(
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
-        val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false, commitModel = true)
-        val facetSettings = facet.configuration.settings
-        val compilerSettings = facetSettings.compilerSettings ?: CompilerSettings().also {
-            facetSettings.compilerSettings = it
-        }
+        try {
+            val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false, commitModel = true)
+            val facetSettings = facet.configuration.settings
+            val compilerSettings = facetSettings.compilerSettings ?: CompilerSettings().also {
+                facetSettings.compilerSettings = it
+            }
 
-        compilerSettings.additionalArguments += " $compilerArgument"
-        facetSettings.updateMergedArguments()
+            compilerSettings.additionalArguments += " $compilerArgument"
+            facetSettings.updateMergedArguments()
+        } finally {
+            modelsProvider.dispose()
+        }
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {

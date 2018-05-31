@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea
 
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
@@ -24,7 +23,7 @@ class CommonModuleResolveScopeEnlarger : ResolveScopeEnlarger() {
         val module = ProjectFileIndex.getInstance(project).getModuleForFile(file)
         if (module?.targetPlatform != TargetPlatformKind.Common) return null
 
-        val implementingModule = module.findImplementingModules(IdeModifiableModelsProviderImpl(project)).find {
+        val implementingModule = module.findImplementingModules().find {
             it.targetPlatform is TargetPlatformKind.Jvm
         } ?: return null
 
