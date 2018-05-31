@@ -84,6 +84,11 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         runTest("idea/testData/multiModuleHighlighting/multiplatform/internal/");
     }
 
+    @TestMetadata("internalDependencyFromTests")
+    public void testInternalDependencyFromTests() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/internalDependencyFromTests/");
+    }
+
     @TestMetadata("nestedClassWithoutImpl")
     public void testNestedClassWithoutImpl() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/nestedClassWithoutImpl/");
