@@ -3782,6 +3782,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             runTest("idea/testData/refactoring/introduceTypeAlias/constructorCalls.kt");
         }
 
+        @TestMetadata("deeplyNestedClass.kt")
+        public void testDeeplyNestedClass() throws Exception {
+            runTest("idea/testData/refactoring/introduceTypeAlias/deeplyNestedClass.kt");
+        }
+
         @TestMetadata("emptyName.kt")
         public void testEmptyName() throws Exception {
             runTest("idea/testData/refactoring/introduceTypeAlias/emptyName.kt");
@@ -3825,6 +3830,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("localWithVisibility.kt")
         public void testLocalWithVisibility() throws Exception {
             runTest("idea/testData/refactoring/introduceTypeAlias/localWithVisibility.kt");
+        }
+
+        @TestMetadata("nestedClass.kt")
+        public void testNestedClass() throws Exception {
+            runTest("idea/testData/refactoring/introduceTypeAlias/nestedClass.kt");
         }
 
         @TestMetadata("nestedTypesExtracted.kt")
