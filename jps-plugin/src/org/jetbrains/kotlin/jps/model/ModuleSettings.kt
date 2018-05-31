@@ -81,6 +81,7 @@ private inline fun <reified T : CommonCompilerArguments> JpsModule.getCompilerAr
 
     val facetSettings = kotlinFacet?.settings ?: return projectSettingsCopy
     if (facetSettings.useProjectSettings) return projectSettingsCopy
+    facetSettings.updateMergedArguments()
     return facetSettings.mergedCompilerArguments as? T ?: projectSettingsCopy
 }
 
