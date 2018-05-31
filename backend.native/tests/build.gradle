@@ -1720,6 +1720,9 @@ task chars0(type: RunKonanTest) {
     expectedExitStatus = 0
 }
 
+task indexof(type: RunKonanTest) {
+    source = "runtime/text/indexof.kt"
+}
 
 task utf8(type: RunKonanTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.

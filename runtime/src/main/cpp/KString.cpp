@@ -1056,7 +1056,10 @@ KInt Kotlin_Char_digitOfChecked(KChar ch, KInt radix) {
 }
 
 KInt Kotlin_String_indexOfChar(KString thiz, KChar ch, KInt fromIndex) {
-  if (fromIndex < 0 || fromIndex > thiz->count_) {
+  if (fromIndex < 0) {
+    fromIndex = 0;
+  }
+  if (fromIndex > thiz->count_) {
     return -1;
   }
   KInt count = thiz->count_;
@@ -1087,8 +1090,13 @@ KInt Kotlin_String_lastIndexOfChar(KString thiz, KChar ch, KInt fromIndex) {
 
 // TODO: or code up Knuth-Moris-Pratt.
 KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
-  if (fromIndex < 0 || fromIndex > thiz->count_ ||
-      other->count_ > thiz->count_ - fromIndex) {
+  if (fromIndex < 0) {
+    fromIndex = 0;
+  }
+  if (fromIndex >= thiz->count_) {
+    return (other->count_ == 0) ? thiz->count_ : -1;
+  }
+  if (other->count_ > thiz->count_ - fromIndex) {
     return -1;
   }
   // An empty string can be always found.
