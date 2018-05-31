@@ -44,6 +44,7 @@ class JKKtFunctionImpl(
     block: JKBlock,
     modifierList: JKModifierList
 ) : JKBranchElementBase(), JKKtFunction {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtFunction(this, data)
 
     override var returnType: JKTypeElement by child(returnType)
     override var name: JKNameIdentifier by child(name)
