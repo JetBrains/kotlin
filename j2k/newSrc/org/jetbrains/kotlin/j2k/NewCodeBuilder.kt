@@ -16,9 +16,13 @@
 
 package org.jetbrains.kotlin.j2k
 
-import org.jetbrains.kotlin.j2k.tree.JKClass
-import org.jetbrains.kotlin.j2k.tree.JKTreeElement
+import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.impl.JKBodyStub
+import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
+import org.jetbrains.kotlin.j2k.tree.impl.JKJavaModifierImpl
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
 
 class NewCodeBuilder {
@@ -51,6 +55,57 @@ class NewCodeBuilder {
                 printer.popIndent()
                 printer.println("}")
             }
+        }
+
+        override fun visitBinaryExpression(binaryExpression: JKBinaryExpression, data: Unit) {
+            binaryExpression.left.accept(this, data)
+            printer.printWithNoIndent(binaryExpression.operator)
+            binaryExpression.right.accept(this, data)
+        }
+
+        override fun visitKtLiteralExpression(ktLiteralExpression: JKKtLiteralExpression, data: Unit) {
+            printer.printWithNoIndent(ktLiteralExpression.literal)
+        }
+
+        override fun visitTypeElement(typeElement: JKTypeElement, data: Unit) {
+            val type = typeElement.type
+            when (type) {
+                is JKClassType -> (type.classReference as JKClassSymbol).fqName?.let { printer.printWithNoIndent(FqName(it).shortName().asString()) }
+                else -> printer.printWithNoIndent("Unit /* TODO: ${type::class} */")
+            }
+            when (type.nullability) {
+                Nullability.Nullable -> printer.printWithNoIndent("?")
+                Nullability.Default -> printer.printWithNoIndent("? /* TODO: Default */")
+                else -> {
+                }
+            }
+        }
+
+        override fun visitKtFunction(ktFunction: JKKtFunction, data: Unit) {
+            printer.print("fun ", ktFunction.name.value, "(", "): ")
+            ktFunction.returnType.accept(this, data)
+            if (ktFunction.block !== JKBodyStub) {
+                printer.printlnWithNoIndent("{")
+                ktFunction.block.accept(this, data)
+                printer.printWithNoIndent("}")
+            }
+        }
+
+        override fun visitKtProperty(ktProperty: JKKtProperty, data: Unit) {
+            // TODO: Fix this
+            if (ktProperty.modifierList.modifiers.any { (it as? JKJavaModifier)?.type == JKJavaModifier.JavaModifierType.FINAL }) {
+                printer.print("val")
+            } else {
+                printer.print("var")
+            }
+
+            printer.printWithNoIndent(" ", ktProperty.name.value, ": ")
+            ktProperty.type.accept(this, data)
+            if (ktProperty.initializer !is JKStubExpression) {
+                printer.printWithNoIndent(" = ")
+                ktProperty.initializer.accept(this, data)
+            }
+            printer.printlnWithNoIndent()
         }
     }
 
