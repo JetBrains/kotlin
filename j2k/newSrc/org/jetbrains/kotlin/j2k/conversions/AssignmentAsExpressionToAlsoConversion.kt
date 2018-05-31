@@ -5,18 +5,11 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.JKJavaAssignmentExpression
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.analysisContext
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
-import org.jetbrains.kotlin.resolve.ImportPath
 
 class AssignmentAsExpressionToAlsoConversion(val context: ConversionContext) : RecursiveApplicableConversionBase() {
 
@@ -26,7 +19,7 @@ class AssignmentAsExpressionToAlsoConversion(val context: ConversionContext) : R
         // TODO: Check if inside variable initializer
         //if (element.parent)
 
-        val alsoElement = resolveFqName(ClassId.fromString("kotlin/also"), element) ?: return recurse(element)
+        val alsoElement = resolveFqName(ClassId.fromString("kotlin/also"), element, context) ?: return recurse(element)
         val alsoSymbol = context.symbolProvider.provideSymbol(alsoElement) as? JKMethodSymbol ?: return recurse(element)
         element.invalidate()
 
@@ -38,16 +31,4 @@ class AssignmentAsExpressionToAlsoConversion(val context: ConversionContext) : R
             ))
         )
     }
-
-    private fun resolveFqName(classId: ClassId, contextElement: JKTreeElement): PsiElement? {
-        val element = context.backAnnotator(contextElement) ?: return null
-        val importDirective = KtPsiFactory(element).createImportDirective(ImportPath(classId.asSingleFqName(), false))
-        importDirective.containingKtFile.analysisContext = element.containingFile
-        return importDirective.getChildOfType<KtDotQualifiedExpression>()
-            ?.selectorExpression
-            ?.let {
-                it.references.mapNotNull { it.resolve() }.first()
-            }
-    }
-
 }

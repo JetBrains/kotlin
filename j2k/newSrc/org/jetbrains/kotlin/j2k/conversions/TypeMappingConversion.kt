@@ -35,16 +35,6 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
         } else applyRecursive(element, this::applyToElement)
     }
 
-    private fun resolveFqName(classId: ClassId, element: PsiElement): PsiElement? {
-        val importDirective = KtPsiFactory(element).createImportDirective(ImportPath(classId.asSingleFqName(), false))
-        importDirective.containingKtFile.analysisContext = element.containingFile
-        return importDirective.getChildOfType<KtDotQualifiedExpression>()
-            ?.selectorExpression
-            ?.let {
-                it.references.mapNotNull { it.resolve() }.firstOrNull()
-            }
-    }
-
     private fun classTypeByFqName(
         contextElement: PsiElement?,
         fqName: ClassId,
