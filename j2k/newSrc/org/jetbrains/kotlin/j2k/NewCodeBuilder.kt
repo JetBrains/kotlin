@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKBodyStub
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
-import org.jetbrains.kotlin.j2k.tree.impl.JKJavaModifierImpl
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
@@ -40,18 +39,18 @@ class NewCodeBuilder {
 
 
     inner class Visitor : JKVisitor<Unit, Unit> {
-        override fun visitTreeElement(element: JKTreeElement, data: Unit) {
-            printer.print("/* !!! Hit visitElement for element type: ${element::class} !!! */")
+        override fun visitTreeElement(treeElement: JKTreeElement, data: Unit) {
+            printer.print("/* !!! Hit visitElement for element type: ${treeElement::class} !!! */")
         }
 
-        override fun visitClass(universeClass: JKClass, data: Unit) {
-            printer.print(classKindString(universeClass.classKind))
+        override fun visitClass(klass: JKClass, data: Unit) {
+            printer.print(classKindString(klass.classKind))
             builder.append(" ")
-            printer.print(universeClass.name.value)
-            if (universeClass.declarationList.isNotEmpty()) {
+            printer.print(klass.name.value)
+            if (klass.declarationList.isNotEmpty()) {
                 printer.println("{")
                 printer.pushIndent()
-                universeClass.declarationList.forEach { it.accept(this, data) }
+                klass.declarationList.forEach { it.accept(this, data) }
                 printer.popIndent()
                 printer.println("}")
             }
