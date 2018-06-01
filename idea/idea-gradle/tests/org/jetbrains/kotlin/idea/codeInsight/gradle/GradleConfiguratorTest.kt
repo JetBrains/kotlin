@@ -526,6 +526,9 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
 
                             repositories {
                                 mavenCentral()
+                                maven {
+                                    url 'http://dl.bintray.com/kotlin/kotlin-eap'
+                                }
                             }
 
                             dependencies {
@@ -615,6 +618,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
 
                             repositories {
                                 mavenCentral()
+                                maven { setUrl("http://dl.bintray.com/kotlin/kotlin-eap") }
                             }
 
                             dependencies {
@@ -814,6 +818,9 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
 
                             repositories {
                                 mavenCentral()
+                                maven {
+                                    url 'http://dl.bintray.com/kotlin/kotlin-eap'
+                                }
                             }
                             dependencies {
                                 compile "org.jetbrains.kotlin:kotlin-stdlib-js"
@@ -882,6 +889,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
 
                             repositories {
                                 mavenCentral()
+                                maven { setUrl("http://dl.bintray.com/kotlin/kotlin-eap") }
                             }
                             dependencies {
                                 compile(kotlin("stdlib-js"))
