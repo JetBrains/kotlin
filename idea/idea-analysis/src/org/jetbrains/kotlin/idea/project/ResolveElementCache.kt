@@ -457,9 +457,8 @@ class ResolveElementCache(
             BodyResolveMode.PARTIAL_FOR_COMPLETION
         else
             bodyResolveMode
-        codeFragmentAnalyzer.analyzeCodeFragment(codeFragment, trace, contextResolveMode)
 
-        return trace
+        return codeFragmentAnalyzer.analyzeCodeFragment(codeFragment, trace, contextResolveMode)
     }
 
     private fun annotationAdditionalResolve(resolveSession: ResolveSession, ktAnnotationEntry: KtAnnotationEntry): BindingTrace {
