@@ -288,7 +288,6 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
                 // Wrong!
                 bodyResult?.run { assert(status == VisitStatus.KEPT) }
 
-                // Is it nullable for no reason?
                 val body = loop.body!!
 
                 val innerLoop = IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, unitType, loop.origin, body, constFalse).apply {
