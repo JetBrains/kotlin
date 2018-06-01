@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 enum class TypeNullability {
@@ -224,3 +225,5 @@ fun UnwrappedType.canHaveUndefinedNullability(): Boolean =
     constructor is NewTypeVariableConstructor ||
             constructor.declarationDescriptor is TypeParameterDescriptor ||
             this is NewCapturedType
+
+fun KotlinType.isWrappedNotComputedType() = safeAs<WrappedType>()?.isComputed() == false

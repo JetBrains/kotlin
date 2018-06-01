@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.asJava.elements
 
 import com.intellij.psi.*
-import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.*
 import org.jetbrains.kotlin.asJava.LightClassUtil
@@ -42,8 +41,7 @@ class KtLightMethodImpl private constructor(
         private val dummyDelegate: PsiMethod? = null
 ) : KtLightMemberImpl<PsiMethod>(computeRealDelegate, lightMemberOrigin, containingClass, dummyDelegate), KtLightMethod {
     private val returnTypeElem by lazyPub {
-        val delegateTypeElement = clsDelegate.returnTypeElement as? ClsTypeElementImpl
-        delegateTypeElement?.let { ClsTypeElementImpl(this, it.canonicalText, /*ClsTypeElementImpl.VARIANCE_NONE */ 0.toChar()) }
+        computeChildTypeElement(clsDelegate.returnTypeElement)
     }
 
     private val calculatingReturnType = ThreadLocal<Boolean>()
@@ -125,9 +123,6 @@ class KtLightMethodImpl private constructor(
             typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
     override fun getSignature(substitutor: PsiSubstitutor): MethodSignature {
-        if (substitutor == PsiSubstitutor.EMPTY) {
-            return clsDelegate.getSignature(substitutor)
-        }
         return MethodSignatureBackedByPsiMethod.create(this, substitutor)
     }
 

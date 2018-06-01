@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.signature
 
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.state.DeferredTypesTracker
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -17,7 +18,8 @@ class KotlinToJvmSignatureMapperImpl : KotlinToJvmSignatureMapper {
     // We use empty BindingContext, because it is only used by KotlinTypeMapper for purposes irrelevant to the needs of this class
     private val typeMapper = KotlinTypeMapper(
         BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES,
-        IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, false, KotlinTypeMapper.RELEASE_COROUTINES_DEFAULT
+        IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, false, KotlinTypeMapper.RELEASE_COROUTINES_DEFAULT,
+        DeferredTypesTracker.Throwing
     )
 
     override fun mapToJvmMethodSignature(function: FunctionDescriptor) = typeMapper.mapAsmMethod(function)

@@ -51,7 +51,8 @@ class GenerationState private constructor(
     moduleName: String?,
     val outDirectory: File?,
     private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
-    wantsDiagnostics: Boolean
+    wantsDiagnostics: Boolean,
+    deferredTypesTracker: DeferredTypesTracker
 ) {
 
     class Builder(
@@ -94,11 +95,16 @@ class GenerationState private constructor(
         fun wantsDiagnostics(v: Boolean) =
             apply { wantsDiagnostics = v }
 
+        private var deferredTypesTracker: DeferredTypesTracker = DeferredTypesTracker.Throwing
+        fun deferredTypesTracker(v: DeferredTypesTracker) =
+            apply { deferredTypesTracker = v }
+
         fun build() =
             GenerationState(
                 project, builderFactory, module, bindingContext, files, configuration,
                 generateDeclaredClassFilter, codegenFactory, targetId,
-                moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics
+                moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics,
+                deferredTypesTracker
             )
     }
 
@@ -180,7 +186,8 @@ class GenerationState private constructor(
         IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
         this.moduleName,
         isJvm8Target,
-        configuration.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+        configuration.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+        deferredTypesTracker
     )
     val intrinsics: IntrinsicMethods = run {
         val shouldUseConsistentEquals = languageVersionSettings.supportsFeature(LanguageFeature.ThrowNpeOnExplicitEqualsForBoxedNull) &&

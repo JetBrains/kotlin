@@ -49,8 +49,8 @@ public class LazyPackageDescriptor extends PackageFragmentDescriptorImpl impleme
     }
 
     @Override
-    public void forceResolveAllContents() {
-        ForceResolveUtil.forceResolveAllContents(memberScope);
+    public void forceResolveAllContents(boolean forceReturnTypes) {
+        ForceResolveUtil.forceResolveAllContents(memberScope, forceReturnTypes);
     }
 
     @NotNull

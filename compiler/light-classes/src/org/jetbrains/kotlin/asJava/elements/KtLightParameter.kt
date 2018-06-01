@@ -15,6 +15,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
@@ -31,6 +32,12 @@ class KtLightParameter(
 
     private val modifierList: PsiModifierList
     private var lightIdentifier: KtLightIdentifier? = null
+
+    private val deferredTypeElem by lazyPub {
+        computeChildTypeElement(null)
+    }
+
+    override fun getType(): PsiType = deferredTypeElem?.type ?: super.getType()
 
     override val kotlinOrigin: KtParameter?
         get() {

@@ -17,16 +17,21 @@
 package org.jetbrains.kotlin.asJava.builder;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiParameterList;
+import com.intellij.psi.impl.cache.TypeInfo;
 import com.intellij.psi.impl.compiled.InnerClassSourceStrategy;
 import com.intellij.psi.impl.compiled.StubBuildingVisitor;
-import com.intellij.psi.impl.java.stubs.PsiClassStub;
-import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
+import com.intellij.psi.impl.java.stubs.*;
+import com.intellij.psi.impl.java.stubs.impl.PsiParameterStubImpl;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.containers.Stack;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.asJava.elements.DeferredPartsUtilsKt;
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder;
+import org.jetbrains.kotlin.codegen.state.DeferredTypesTracker;
 import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -51,15 +56,17 @@ public class StubClassBuilder extends AbstractClassBuilder {
     };
     private final StubElement parent;
     private final PsiJavaFileStub fileStub;
-    private StubBuildingVisitor v;
+    private final DeferredTypesTracker deferredTypesTracker;
+    private StubBuildingVisitor<?> v;
     private final Stack<StubElement> parentStack;
     private boolean isPackageClass = false;
     private int memberIndex = 0;
 
-    public StubClassBuilder(@NotNull Stack<StubElement> parentStack, @NotNull PsiJavaFileStub fileStub) {
+    public StubClassBuilder(@NotNull Stack<StubElement> parentStack, @NotNull PsiJavaFileStub fileStub, DeferredTypesTracker deferredTypesTracker) {
         this.parentStack = parentStack;
         this.parent = parentStack.peek();
         this.fileStub = fileStub;
+        this.deferredTypesTracker = deferredTypesTracker;
     }
 
     @NotNull
@@ -187,7 +194,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
     }
 
     private void markLastChild(@NotNull JvmDeclarationOrigin origin) {
-        List children = v.getResult().getChildrenStubs();
+        List<StubElement> children = v.getResult().getChildrenStubs();
         StubBase last = (StubBase) children.get(children.size() - 1);
 
         LightElementOrigin oldOrigin = last.getUserData(ClsWrapperStubPsiFactory.ORIGIN);
@@ -197,8 +204,38 @@ public class StubClassBuilder extends AbstractClassBuilder {
                                             (originalElement != null ? originalElement.getText() : null) + " for stub " + last.toString());
         }
 
+        if (last instanceof PsiMethodStub) {
+            TypeInfo returnTypeText = ((PsiMethodStub) last).getReturnTypeText(false);
+            recordDeferredTypeInfoByTypeText(last, returnTypeText);
+
+            // Check the case of property setter with deferred type
+            if ("void".equals(returnTypeText.toString())) {
+                PsiParameterListStub type =
+                        (PsiParameterListStub) last.<PsiParameterList, PsiParameterListStub>findChildStubByType(JavaStubElementTypes.PARAMETER_LIST);
+                if (type != null && type.getChildrenStubs().size() == 1) {
+                    PsiParameterStubImpl parameter = (PsiParameterStubImpl) type.getChildrenStubs().get(0);
+                    TypeInfo parameterType = parameter.getType(false);
+                    recordDeferredTypeInfoByTypeText(parameter, parameterType);
+                }
+            }
+        }
+        else if (last instanceof PsiFieldStub) {
+            recordDeferredTypeInfoByTypeText(last, ((PsiFieldStub) last).getType(false));
+
+        }
+
         last.putUserData(ClsWrapperStubPsiFactory.ORIGIN, LightElementOriginKt.toLightMemberOrigin(origin));
         last.putUserData(MemberIndex.KEY, new MemberIndex(memberIndex++));
+    }
+
+    private void recordDeferredTypeInfoByTypeText(StubBase last, TypeInfo typeInfo) {
+        String typeText = typeInfo != null ? typeInfo.toString() : null;
+        if (typeText != null) {
+            Function0<DeferredTypesTracker.TypeInfo> deferredTypeInfo = deferredTypesTracker.getDeferredTypeInfoComputation(typeText);
+            if (deferredTypeInfo != null) {
+                last.putUserData(DeferredPartsUtilsKt.DEFERRED_TYPE_INFO, deferredTypeInfo);
+            }
+        }
     }
 
     @Override

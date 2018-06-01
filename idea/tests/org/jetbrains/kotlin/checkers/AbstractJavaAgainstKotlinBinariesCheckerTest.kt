@@ -43,6 +43,7 @@ abstract class AbstractJavaAgainstKotlinBinariesCheckerTest : AbstractJavaAgains
 
     fun doTest(path: String) {
         val ktFileText = FileUtil.loadFile(File(path), true)
+        if (InTextDirectivesUtils.isDirectiveDefined(ktFileText, "SKIP_BINARY_TEST")) return
         val allowAstForCompiledFile = InTextDirectivesUtils.isDirectiveDefined(ktFileText, AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE)
 
         if (allowAstForCompiledFile) {

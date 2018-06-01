@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAnd
 import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.FrameMap
+import org.jetbrains.kotlin.codegen.state.DeferredTypesTracker
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -24,8 +25,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
@@ -174,7 +175,8 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             IncompatibleClassTracker.DoNothing,
             descriptor.module.name.asString(),
             /* isJvm8Target */ false,
-            /* isReleaseCoroutines */ KotlinTypeMapper.RELEASE_COROUTINES_DEFAULT
+            /* isReleaseCoroutines */ KotlinTypeMapper.RELEASE_COROUTINES_DEFAULT,
+            DeferredTypesTracker.Throwing
         )
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty()) {

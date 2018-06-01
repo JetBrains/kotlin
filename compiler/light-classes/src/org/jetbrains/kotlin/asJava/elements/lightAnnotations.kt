@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.nullability
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val LOG = Logger.getInstance("#org.jetbrains.kotlin.asJava.elements.lightAnnotations")
 
@@ -221,8 +222,13 @@ class KtLightNullabilityAnnotation(val member: KtLightElement<*, PsiModifierList
     // searching for last because nullability annotations are generated after backend generates source annotations
         getClsNullabilityAnnotation(member) ?: KtLightNonExistentAnnotation(member)
 }) {
+    private val deferredTypeInfo by lazyPub {
+        member.safeAs<KtLightElement<*, *>>()?.getDeferredTypeInfoIfExists()
+    }
+
     override fun fqNameMatches(fqName: String): Boolean {
         if (!isNullabilityAnnotation(fqName)) return false
+        deferredTypeInfo?.let { return it.nullabilityAnnotation?.canonicalName == fqName }
 
         return super.fqNameMatches(fqName)
     }
@@ -234,8 +240,12 @@ class KtLightNullabilityAnnotation(val member: KtLightElement<*, PsiModifierList
 
     override fun getQualifiedName(): String? {
         val annotatedElement = member.kotlinOrigin
-                ?: // it is out of our hands
-                return getClsNullabilityAnnotation(member)?.qualifiedName
+
+        if (annotatedElement == null) {
+            // it is out of our hands
+            deferredTypeInfo?.let { return it.nullabilityAnnotation?.canonicalName }
+            return getClsNullabilityAnnotation(member)?.qualifiedName
+        }
 
         // all data-class generated members are not-null
         if (annotatedElement is KtClass && annotatedElement.isData()) return NotNull::class.java.name

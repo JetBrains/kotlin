@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.codegen.context.CodegenContextUtil;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.context.MultifileClassFacadeContext;
 import org.jetbrains.kotlin.codegen.context.MultifileClassPartContext;
+import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -396,7 +397,8 @@ public class PropertyCodegen {
             modifiers |= ACC_SYNTHETIC;
         }
 
-        Type type = typeMapper.mapType(kotlinType);
+        JvmSignatureWriter signatureWriter = typeMapper.mapFieldSignatureToWriter(kotlinType, propertyDescriptor);
+        Type type = signatureWriter.getJvmCurrentType();
 
         ClassBuilder builder = v;
 
@@ -423,7 +425,7 @@ public class PropertyCodegen {
 
         FieldVisitor fv = builder.newField(
                 JvmDeclarationOriginKt.OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
-                isDelegate ? null : typeMapper.mapFieldSignature(kotlinType, propertyDescriptor), defaultValue
+                isDelegate ? null : signatureWriter.makeJavaGenericSignature(), defaultValue
         );
 
         Annotated fieldAnnotated = new AnnotatedWithFakeAnnotations(propertyDescriptor, annotations);

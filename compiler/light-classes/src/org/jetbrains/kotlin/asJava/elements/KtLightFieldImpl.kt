@@ -35,6 +35,9 @@ sealed class KtLightFieldImpl<D : PsiField>(
         containingClass: KtLightClass,
         dummyDelegate: PsiField?
 ) : KtLightMemberImpl<PsiField>(computeRealDelegate, lightMemberOrigin, containingClass, dummyDelegate), KtLightField {
+    private val returnTypeElem by lazyPub {
+        computeChildTypeElement(clsDelegate.typeElement)
+    }
 
     override val clsDelegate: D
         @Suppress("UNCHECKED_CAST")
@@ -42,9 +45,9 @@ sealed class KtLightFieldImpl<D : PsiField>(
 
     override fun setInitializer(initializer: PsiExpression?) = cannotModify()
 
-    override fun getType() = clsDelegate.type
+    override fun getType() = typeElement?.type ?: clsDelegate.type
 
-    override fun getTypeElement() = clsDelegate.typeElement
+    override fun getTypeElement() = returnTypeElem
 
     override fun getInitializer() = clsDelegate.initializer
 

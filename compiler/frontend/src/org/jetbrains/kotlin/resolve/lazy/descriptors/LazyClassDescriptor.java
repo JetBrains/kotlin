@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
@@ -94,6 +93,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final MemberScope staticScope;
 
     private final NullableLazyValue<Void> forceResolveAllContents;
+    private final NullableLazyValue<Void> forceResolveAllContentsNoReturnTypes;
     private final boolean isCompanionObject;
 
     private final ClassResolutionScopesSupport resolutionScopesSupport;
@@ -218,7 +218,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         );
         this.extraCompanionObjectDescriptors = storageManager.createMemoizedFunction(this::computeCompanionObjectDescriptor);
         this.forceResolveAllContents = storageManager.createRecursionTolerantNullableLazyValue(() -> {
-            doForceResolveAllContents();
+            doForceResolveAllContents(true);
+            return null;
+        }, null);
+
+        this.forceResolveAllContentsNoReturnTypes = storageManager.createRecursionTolerantNullableLazyValue(() -> {
+            doForceResolveAllContents(false);
             return null;
         }, null);
 
@@ -535,21 +540,26 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     @Override
-    public void forceResolveAllContents() {
-        forceResolveAllContents.invoke();
+    public void forceResolveAllContents(boolean forceReturnTypes) {
+        if (forceReturnTypes) {
+            forceResolveAllContents.invoke();
+        }
+        else {
+            forceResolveAllContentsNoReturnTypes.invoke();
+        }
     }
 
-    private void doForceResolveAllContents() {
+    private void doForceResolveAllContents(boolean forceReturnTypes) {
         resolveMemberHeaders();
         ClassDescriptor companionObjectDescriptor = getCompanionObjectDescriptor();
         if (companionObjectDescriptor != null) {
-            ForceResolveUtil.forceResolveAllContents(companionObjectDescriptor);
+            ForceResolveUtil.forceResolveAllContents(companionObjectDescriptor, forceReturnTypes);
         }
 
-        ForceResolveUtil.forceResolveAllContents(getConstructors());
-        ForceResolveUtil.forceResolveAllContents(getDescriptorsForExtraCompanionObjects());
-        ForceResolveUtil.forceResolveAllContents(getUnsubstitutedMemberScope());
-        ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
+        ForceResolveUtil.forceResolveAllContents(getConstructors(), forceReturnTypes);
+        ForceResolveUtil.forceResolveAllContents(getDescriptorsForExtraCompanionObjects(), forceReturnTypes);
+        ForceResolveUtil.forceResolveAllContents(getUnsubstitutedMemberScope(), forceReturnTypes);
+        ForceResolveUtil.forceResolveAllContents(getTypeConstructor(), forceReturnTypes);
     }
 
     // Note: headers of member classes' members are not resolved

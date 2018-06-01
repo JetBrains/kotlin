@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.frontend.java.di
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.JvmBuiltInsPackageFragmentProvider
@@ -41,11 +42,13 @@ import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.types.WrappedTypeFactory
 
 private fun StorageComponentContainer.configureJavaTopDownAnalysis(
         moduleContentScope: GlobalSearchScope,
@@ -63,6 +66,9 @@ private fun StorageComponentContainer.configureJavaTopDownAnalysis(
     useImpl<DeserializationComponentsForJava>()
 
     useInstance(VirtualFileFinderFactory.getInstance(project).create(moduleContentScope))
+
+    ServiceManager.getService(project, WrappedTypeFactory::class.java)?.let(::useInstance)
+    ServiceManager.getService(project, ConstantExpressionEvaluator::class.java)?.let(::useInstance)
 
     useImpl<JavaPropertyInitializerEvaluatorImpl>()
     useImpl<AnnotationResolverImpl>()

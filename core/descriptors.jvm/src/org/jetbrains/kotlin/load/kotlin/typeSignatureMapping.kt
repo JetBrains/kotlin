@@ -270,7 +270,7 @@ private fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): Ko
 
 open class JvmDescriptorTypeWriter<T : Any>(private val jvmTypeFactory: JvmTypeFactory<T>) {
     private var jvmCurrentTypeArrayLevel: Int = 0
-    protected var jvmCurrentType: T? = null
+    var jvmCurrentType: T? = null
         private set
 
     protected fun clearCurrentType() {
