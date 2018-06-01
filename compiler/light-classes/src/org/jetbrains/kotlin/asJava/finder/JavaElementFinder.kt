@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.asJava.finder
 
-import com.google.common.collect.Collections2
 import com.google.common.collect.Sets
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
@@ -25,7 +24,6 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.SmartList
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -41,16 +39,9 @@ class JavaElementFinder(
     private val project: Project,
     private val kotlinAsJavaSupport: KotlinAsJavaSupport
 ) : PsiElementFinder(), KotlinFinderMarker {
-    private val psiManager: PsiManager
+    private val psiManager = PsiManager.getInstance(project)
 
-    init {
-        this.psiManager = PsiManager.getInstance(project)
-    }
-
-    override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
-        val allClasses = findClasses(qualifiedName, scope)
-        return if (allClasses.size > 0) allClasses[0] else null
-    }
+    override fun findClass(qualifiedName: String, scope: GlobalSearchScope) = findClasses(qualifiedName, scope).firstOrNull()
 
     override fun findClasses(qualifiedNameString: String, scope: GlobalSearchScope): Array<PsiClass> {
         if (!isValidJavaFqName(qualifiedNameString)) {
@@ -65,7 +56,7 @@ class JavaElementFinder(
         answer.addAll(kotlinAsJavaSupport.getFacadeClasses(qualifiedName, scope))
         answer.addAll(kotlinAsJavaSupport.getKotlinInternalClasses(qualifiedName, scope))
 
-        return sortByClasspath(answer, scope).toTypedArray()
+        return answer.sortByClasspath(scope).toTypedArray()
     }
 
     // Finds explicitly declared classes and objects, not package classes
@@ -93,13 +84,9 @@ class JavaElementFinder(
         for (classOrObject in kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
             //NOTE: can't filter out more interfaces right away because decompiled declarations do not have member bodies
             if (classOrObject is KtClass && classOrObject.isInterface()) {
-                val interfaceClass = classOrObject.toLightClass()
-                if (interfaceClass != null) {
-                    val implsClass = interfaceClass!!.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false)
-                    if (implsClass != null) {
-                        answer.add(implsClass)
-                    }
-                }
+                val interfaceClass = classOrObject.toLightClass() ?: continue
+                val implsClass = interfaceClass.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false) ?: continue
+                answer.add(implsClass)
             }
         }
     }
@@ -113,10 +100,8 @@ class JavaElementFinder(
         answer.addAll(kotlinAsJavaSupport.getFacadeNames(packageFQN, scope))
 
         for (declaration in declarations) {
-            val name = declaration.name
-            if (name != null) {
-                answer.add(name)
-            }
+            val name = declaration.name ?: continue
+            answer.add(name)
         }
 
         return answer
@@ -138,13 +123,8 @@ class JavaElementFinder(
     }
 
     override fun getSubPackages(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiPackage> {
-        val packageFQN = FqName(psiPackage.qualifiedName)
-
-        val subpackages = kotlinAsJavaSupport.getSubPackages(packageFQN, scope)
-
-        val answer = Collections2.transform<FqName, PsiPackage>(subpackages) { input -> KtLightPackage(psiManager, input, scope) }
-
-        return answer.toTypedArray()
+        val subpackages = kotlinAsJavaSupport.getSubPackages(FqName(psiPackage.qualifiedName), scope)
+        return subpackages.map { KtLightPackage(psiManager, it, scope) }.toTypedArray()
     }
 
     override fun getClasses(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiClass> {
@@ -155,29 +135,25 @@ class JavaElementFinder(
 
         val declarations = kotlinAsJavaSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope)
         for (declaration in declarations) {
-            val aClass = declaration.toLightClass()
-            if (aClass != null) {
-                answer.add(aClass)
-            }
+            val aClass = declaration.toLightClass() ?: continue
+            answer.add(aClass)
         }
 
-        return sortByClasspath(answer, scope).toTypedArray()
+        return answer.sortByClasspath(scope).toTypedArray()
     }
 
     override fun getPackageFiles(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiFile> {
         val packageFQN = FqName(psiPackage.qualifiedName)
         // TODO: this does not take into account JvmPackageName annotation
-        val result = kotlinAsJavaSupport.findFilesForPackage(packageFQN, scope)
-        return result.toTypedArray()
+        return kotlinAsJavaSupport.findFilesForPackage(packageFQN, scope).toTypedArray()
     }
 
     override fun getPackageFilesFilter(psiPackage: PsiPackage, scope: GlobalSearchScope): Condition<PsiFile>? {
         return Condition { input ->
             if (input !is KtFile) {
                 true
-            }
-            else {
-                psiPackage.qualifiedName == (input as KtFile).packageFqName.asString()
+            } else {
+                psiPackage.qualifiedName == input.packageFqName.asString()
             }
         }
     }
@@ -202,17 +178,13 @@ class JavaElementFinder(
                     f1 === f2 -> 0
                     f1 == null -> -1
                     f2 == null -> 1
-                    else -> searchScope.compare(f2!!, f1!!)
+                    else -> searchScope.compare(f2, f1)
                 }
             }
         }
 
-        private fun sortByClasspath(classes: List<PsiClass>, searchScope: GlobalSearchScope): Collection<PsiClass> {
-            if (classes.size > 1) {
-                ContainerUtil.quickSort(classes, byClasspathComparator(searchScope))
-            }
-
-            return classes
+        private fun List<PsiClass>.sortByClasspath(searchScope: GlobalSearchScope): Collection<PsiClass> {
+            return this.sortedWith(byClasspathComparator(searchScope))
         }
     }
 }
