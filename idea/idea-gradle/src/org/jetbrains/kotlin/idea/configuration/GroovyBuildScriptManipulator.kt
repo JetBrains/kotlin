@@ -78,7 +78,6 @@ class GroovyBuildScriptManipulator(
                         }
                     }
                 }
-                addMavenCentralIfMissing()
             }
         }
         else {
@@ -97,11 +96,11 @@ class GroovyBuildScriptManipulator(
                     }
                 }
             }
+        }
 
-            scriptFile.getRepositoriesBlock().apply {
-                addRepository(version)
-                addMavenCentralIfMissing()
-            }
+        scriptFile.getRepositoriesBlock().apply {
+            addRepository(version)
+            addMavenCentralIfMissing()
         }
 
         scriptFile.getDependenciesBlock().apply {
