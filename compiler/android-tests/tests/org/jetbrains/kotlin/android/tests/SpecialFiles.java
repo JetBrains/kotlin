@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.android.tests;
 
-import com.google.common.collect.Sets;
-
+import java.util.HashSet;
 import java.util.Set;
 
 public class SpecialFiles {
-    private static final Set<String> excludedFiles = Sets.newHashSet();
+    private static final Set<String> excludedFiles = new HashSet<>();
 
     static {
         fillExcludedFiles();

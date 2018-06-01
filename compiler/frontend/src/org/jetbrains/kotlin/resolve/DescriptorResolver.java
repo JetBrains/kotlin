@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import kotlin.Pair;
@@ -504,7 +503,7 @@ public class DescriptorResolver {
         List<UpperBoundCheckRequest> upperBoundCheckRequests = Lists.newArrayList();
 
         List<KtTypeParameter> typeParameters = declaration.getTypeParameters();
-        Map<Name, TypeParameterDescriptorImpl> parameterByName = Maps.newHashMap();
+        Map<Name, TypeParameterDescriptorImpl> parameterByName = new HashMap<>();
         for (int i = 0; i < typeParameters.size(); i++) {
             KtTypeParameter ktTypeParameter = typeParameters.get(i);
             TypeParameterDescriptorImpl typeParameterDescriptor = parameters.get(i);

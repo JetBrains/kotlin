@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
@@ -50,6 +49,7 @@ import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.*;
@@ -147,7 +147,7 @@ public class CompileEnvironmentUtil {
     ) throws IOException {
         VirtualFileSystem localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
 
-        Set<VirtualFile> processedFiles = Sets.newHashSet();
+        Set<VirtualFile> processedFiles = new HashSet<>();
         List<KtFile> result = Lists.newArrayList();
 
         PreprocessedFileCreator virtualFileCreator = new PreprocessedFileCreator(project);
