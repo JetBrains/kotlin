@@ -189,11 +189,17 @@ interface JKSwitchDefaultLabelStatement : JKStatement
 
 interface JKBreakStatement : JKStatement
 
-interface JKIfExpression : JKExpression {
+interface JKIfStatement : JKStatement {
     var condition: JKExpression
     var thenBranch: JKStatement
 }
 
-interface JKIfElseExpression : JKIfExpression {
+interface JKIfElseStatement : JKIfStatement {
     var elseBranch: JKStatement
+}
+
+interface JKIfElseExpression : JKExpression {
+    var condition: JKExpression
+    var thenBranch: JKExpression
+    var elseBranch: JKExpression
 }

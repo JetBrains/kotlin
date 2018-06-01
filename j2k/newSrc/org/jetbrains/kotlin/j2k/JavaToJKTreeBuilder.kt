@@ -56,7 +56,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiThisExpression -> JKThisExpressionImpl()
                 is PsiSuperExpression -> JKSuperExpressionImpl()
                 is PsiConditionalExpression -> JKIfElseExpressionImpl(
-                    condition.toJK(), JKExpressionStatementImpl(thenExpression.toJK()), JKExpressionStatementImpl(elseExpression.toJK())
+                    condition.toJK(), thenExpression.toJK(), elseExpression.toJK()
                 )
                 else -> {
                     throw RuntimeException("Not supported: ${this::class}")
@@ -122,7 +122,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 return JKNullLiteral() // TODO !!!
             }
 
-            val access = JKJavaFieldAccessExpressionImpl(JKMultiverseFieldSymbol(impl.resolve() as PsiField))
+            val access = JKJavaFieldAccessExpressionImpl(symbolProvider.provideSymbol(impl.resolve() ?: TODO()) as JKFieldSymbol)
             return when {
                 impl.findChildByRole(ChildRole.DOT) != null &&
                         (impl.qualifierExpression as? PsiReferenceExpression)?.resolve() !is PsiClass ->
@@ -293,12 +293,12 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiDeclarationStatement -> JKDeclarationStatementImpl(declaredElements.toJK())
                 is PsiAssertStatement -> JKJavaAssertStatementImpl(with(expressionTreeMapper) { assertCondition.toJK() },
                                                                    with(expressionTreeMapper) { assertDescription.toJK() })
-                is PsiIfStatement -> JKExpressionStatementImpl(
+                is PsiIfStatement ->
                     if (elseElement == null)
-                        JKIfExpressionImpl(with(expressionTreeMapper) { condition.toJK() }, thenBranch.toJK())
+                        JKIfStatementImpl(with(expressionTreeMapper) { condition.toJK() }, thenBranch.toJK())
                     else
-                        JKIfElseExpressionImpl(with(expressionTreeMapper) { condition.toJK() }, thenBranch.toJK(), elseBranch.toJK())
-                )
+                        JKIfElseStatementImpl(with(expressionTreeMapper) { condition.toJK() }, thenBranch.toJK(), elseBranch.toJK())
+
                 is PsiForStatement -> JKJavaForLoopStatementImpl(
                     initialization.toJK(), with(expressionTreeMapper) { condition.toJK() }, update.toJK(), body.toJK()
                 )
