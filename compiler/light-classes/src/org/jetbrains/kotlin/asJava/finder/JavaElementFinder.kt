@@ -25,6 +25,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
@@ -56,7 +57,7 @@ class JavaElementFinder(
         answer.addAll(kotlinAsJavaSupport.getFacadeClasses(qualifiedName, scope))
         answer.addAll(kotlinAsJavaSupport.getKotlinInternalClasses(qualifiedName, scope))
 
-        return answer.sortByClasspath(scope).toTypedArray()
+        return answer.sortByClasspathPreferringNonFakeFiles(scope).toTypedArray()
     }
 
     // Finds explicitly declared classes and objects, not package classes
@@ -139,7 +140,7 @@ class JavaElementFinder(
             answer.add(aClass)
         }
 
-        return answer.sortByClasspath(scope).toTypedArray()
+        return answer.sortByClasspathPreferringNonFakeFiles(scope).toTypedArray()
     }
 
     override fun getPackageFiles(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiFile> {
@@ -183,8 +184,10 @@ class JavaElementFinder(
             }
         }
 
-        private fun List<PsiClass>.sortByClasspath(searchScope: GlobalSearchScope): Collection<PsiClass> {
-            return this.sortedWith(byClasspathComparator(searchScope))
+        private fun List<PsiClass>.sortByClasspathPreferringNonFakeFiles(searchScope: GlobalSearchScope): List<PsiClass> {
+            return this.sortedWith(byClasspathComparator(searchScope)).sortedBy {
+                this is FakeLightClassForFileOfPackage
+            }
         }
     }
 }
