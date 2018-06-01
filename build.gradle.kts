@@ -22,7 +22,7 @@ buildscript {
             "https://jcenter.bintray.com/",
             "https://plugins.gradle.org/m2",
             "http://dl.bintray.com/kotlin/kotlinx",
-            "https://repo.gradle.org/gradle/libs-releases-local", // for native-platform
+            "https://repo.gradle.org/gradle/ext-releases-local", // for native-platform
             "https://jetbrains.bintray.com/intellij-third-party-dependencies", // for jflex
             "https://dl.bintray.com/jetbrains/markdown" // for org.jetbrains:markdown
     )
