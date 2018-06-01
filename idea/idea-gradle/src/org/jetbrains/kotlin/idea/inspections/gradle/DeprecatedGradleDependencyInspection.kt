@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections.gradle
 
+import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
@@ -39,7 +40,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrC
 
 private val LibInfo.gradleMarker get() = "$groupId:$name"
 
-class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
+class DeprecatedGradleDependencyInspection : GradleBaseInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(): BaseInspectionVisitor = DependencyFinder()
 
     private open class DependencyFinder : KotlinGradleInspectionVisitor() {

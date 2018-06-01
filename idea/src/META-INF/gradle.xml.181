@@ -54,6 +54,7 @@
             displayName="Deprecated library is used in Gradle"
             groupName="Kotlin"
             enabledByDefault="true"
+            cleanupTool="true"
             language="Groovy"
             hasStaticDescription="true"
             level="WARNING"/>
