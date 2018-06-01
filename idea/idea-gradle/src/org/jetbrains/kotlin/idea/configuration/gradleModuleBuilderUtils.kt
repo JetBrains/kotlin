@@ -9,6 +9,7 @@ import com.intellij.framework.addSupport.FrameworkSupportInModuleConfigurable
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
 import com.intellij.openapi.externalSystem.model.project.ProjectId
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.util.Key
@@ -45,7 +46,7 @@ internal fun updateSettingsScript(module: Module, updater: (PsiFile) -> Unit) {
     if (storedCopy == null) {
         module.editableSettingsPsiFileCopy = settingsPsiCopy
     }
-    updater(settingsPsiCopy)
+    DumbService.getInstance(module.project).runWithAlternativeResolveEnabled<Throwable> { updater(settingsPsiCopy) }
 }
 
 internal fun flushSettingsGradleCopy(module: Module) {
