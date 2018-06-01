@@ -83,6 +83,7 @@
                      displayName="Deprecated library is used in Maven"
                      groupName="Kotlin"
                      enabledByDefault="true"
+                     cleanupTool="true"
                      language="XML"
                      hasStaticDescription="true"
                      level="WARNING" />
