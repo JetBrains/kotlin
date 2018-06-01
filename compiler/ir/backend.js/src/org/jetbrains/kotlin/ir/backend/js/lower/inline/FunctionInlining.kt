@@ -5,7 +5,7 @@
 
 @file:Suppress("FoldInitializerAndIfToElvis")
 
-package org.jetbrains.kotlin.ir.backend.js.lower
+package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.utils.propertyIfAccessor
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -71,7 +72,12 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         }
 
         functionDeclaration.transformChildrenVoid(this)                                     // Process recursive inline.
-        val inliner = Inliner(globalSubstituteMap, functionDeclaration, currentScope!!, context)    // Create inliner for this scope.
+        val inliner = Inliner(
+            globalSubstituteMap,
+            functionDeclaration,
+            currentScope!!,
+            context
+        )    // Create inliner for this scope.
         return inliner.inline(irCall )                                  // Return newly created IrInlineBody instead of IrCall.
     }
 
@@ -100,9 +106,14 @@ private val FunctionDescriptor.isInlineConstructor get() = annotations.hasAnnota
 private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor, SubstitutedDescriptor>,
                       val functionDeclaration: IrFunction,                                  // Function to substitute.
                       val currentScope: ScopeWithIr,
-                      val context: Context) {
+                      val context: Context
+) {
 
-    val copyIrElement = DeepCopyIrTreeWithDescriptors(functionDeclaration.descriptor, currentScope.scope.scopeOwner, context) // Create DeepCopy for current scope.
+    val copyIrElement = DeepCopyIrTreeWithDescriptors(
+        functionDeclaration.descriptor,
+        currentScope.scope.scopeOwner,
+        context
+    ) // Create DeepCopy for current scope.
     val substituteMap = mutableMapOf<ValueDescriptor, IrExpression>()
 
     //-------------------------------------------------------------------------//
@@ -275,7 +286,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             functionDescriptor.dispatchReceiverParameter != null)                           // on call site and in function declaration.
             parameterToArgument += ParameterToArgument(
                 parameterDescriptor = functionDescriptor.dispatchReceiverParameter!!,
-                argumentExpression  = irCall.dispatchReceiver!!
+                argumentExpression = irCall.dispatchReceiver!!
             )
 
         val valueArguments =
@@ -303,7 +314,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
                 argument != null -> {                                                       // Argument is good enough.
                     parameterToArgument += ParameterToArgument(                             // Associate current parameter with the argument.
                         parameterDescriptor = parameterDescriptor,
-                        argumentExpression  = argument
+                        argumentExpression = argument
                     )
                 }
 
@@ -311,7 +322,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
                     val defaultArgument = irFunction.getDefault(parameterDescriptor)!!
                     parametersWithDefaultToArgument += ParameterToArgument(
                         parameterDescriptor = parameterDescriptor,
-                        argumentExpression  = defaultArgument.expression
+                        argumentExpression = defaultArgument.expression
                     )
                 }
 
@@ -324,7 +335,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
                     )
                     parameterToArgument += ParameterToArgument(
                         parameterDescriptor = parameterDescriptor,
-                        argumentExpression  = emptyArray
+                        argumentExpression = emptyArray
                     )
                 }
 
