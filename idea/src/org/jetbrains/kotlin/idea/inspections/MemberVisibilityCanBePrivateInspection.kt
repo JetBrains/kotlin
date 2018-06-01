@@ -28,23 +28,26 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.effectiveVisibility
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
-import org.jetbrains.kotlin.idea.util.isEffectivelyActual
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
 
@@ -119,19 +122,26 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
             val usage = it.element
             if (classOrObject != usage.getParentOfType<KtClassOrObject>(false)) {
                 otherUsageFound = true
+                return@Processor false
+            }
+            val classOrObjectDescriptor = classOrObject.descriptor as? ClassDescriptor
+            if (classOrObjectDescriptor != null) {
+                val receiver = usage.getStrictParentOfType<KtQualifiedExpression>()?.receiverExpression
+                val receiverDescriptor = (receiver?.getCallableDescriptor()?.returnType?.constructor?.declarationDescriptor
+                        ?: (receiver?.mainReference?.resolve() as? KtClassOrObject)?.descriptor) as? ClassDescriptor
+                if (receiverDescriptor != null && DescriptorUtils.isSubclass(receiverDescriptor, classOrObjectDescriptor)) {
+                    otherUsageFound = true
+                    return@Processor false
+                }
+            }
+            val function = usage.getParentOfType<KtCallableDeclaration>(false)
+            val insideInlineFun = function?.modifierList?.let { it.hasModifier(KtTokens.INLINE_KEYWORD) && !function.isPrivate() } ?: false
+            if (insideInlineFun) {
+                otherUsageFound = true
                 false
             } else {
-                val function = usage.getParentOfType<KtCallableDeclaration>(false)
-                val insideInlineFun = function?.modifierList?.let {
-                    it.hasModifier(KtTokens.INLINE_KEYWORD) && !function.isPrivate()
-                } ?: false
-                if (insideInlineFun) {
-                    otherUsageFound = true
-                    false
-                } else {
-                    inClassUsageFound = true
-                    true
-                }
+                inClassUsageFound = true
+                true
             }
         })
         return inClassUsageFound && !otherUsageFound
