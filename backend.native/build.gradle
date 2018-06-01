@@ -205,7 +205,7 @@ targetList.each { target ->
                 project(':runtime').file('src/launcher/kotlin')]
 
         inputs.dir(project(':runtime').file('src/launcher/kotlin'))
-        outputs.dir(project(':runtime').file("build/${target}Start"))
+        outputs.file(project(':runtime').file("build/${target}Start.bc"))
 
         dependsOn ":runtime:${target}Runtime", "${target}Stdlib"
     }
