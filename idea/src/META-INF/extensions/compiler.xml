@@ -47,5 +47,7 @@
                         interface="com.intellij.ide.util.projectWizard.ModuleBuilder"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.renameHandler"
                         interface="com.intellij.refactoring.rename.RenameHandler"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.pluginVersionChecker"
+                        interface="org.jetbrains.kotlin.idea.versionCheck.PluginVersionChecker"/>
     </extensionPoints>
 </idea-plugin>
