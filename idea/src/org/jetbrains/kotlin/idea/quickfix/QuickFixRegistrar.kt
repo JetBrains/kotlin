@@ -386,6 +386,7 @@ class QuickFixRegistrar : QuickFixContributor {
             CreateDataClassPropertyFromDestructuringActionFactory
         )
 
+        DELEGATE_SPECIAL_FUNCTION_MISSING.registerFactory(ChangeVariableMutabilityFix.DELEGATED_PROPERTY_VAL_FACTORY)
         DELEGATE_SPECIAL_FUNCTION_MISSING.registerFactory(CreatePropertyDelegateAccessorsActionFactory)
         DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE.registerFactory(CreatePropertyDelegateAccessorsActionFactory)
 

@@ -12085,6 +12085,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/const.kt");
                 }
 
+                @TestMetadata("delegatedProperty.kt")
+                public void testDelegatedProperty() throws Exception {
+                    runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/delegatedProperty.kt");
+                }
+
+                @TestMetadata("delegatedProperty2.kt")
+                public void testDelegatedProperty2() throws Exception {
+                    runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/delegatedProperty2.kt");
+                }
+
+                @TestMetadata("delegatedProperty3.kt")
+                public void testDelegatedProperty3() throws Exception {
+                    runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/delegatedProperty3.kt");
+                }
+
                 @TestMetadata("multiVariable.kt")
                 public void testMultiVariable() throws Exception {
                     runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/multiVariable.kt");
