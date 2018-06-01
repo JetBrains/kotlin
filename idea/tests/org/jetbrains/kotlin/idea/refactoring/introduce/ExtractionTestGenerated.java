@@ -3557,6 +3557,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             runTest("idea/testData/refactoring/introduceLambdaParameter/lambdaParamWithDefaultValue.kt");
         }
 
+        @TestMetadata("suspendCalls.kt")
+        public void testSuspendCalls() throws Exception {
+            runTest("idea/testData/refactoring/introduceLambdaParameter/suspendCalls.kt");
+        }
+
         @TestMetadata("idea/testData/refactoring/introduceLambdaParameter/multiline")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
