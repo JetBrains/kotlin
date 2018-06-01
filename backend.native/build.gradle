@@ -117,6 +117,7 @@ configurations {
     kotlin_stdlib_jar
     kotlin_reflect_jar
     kotlin_script_runtime_jar
+    kotlin_common_stdlib_src
 
     cli_bcRuntime {
         extendsFrom compilerRuntime
@@ -133,6 +134,7 @@ dependencies {
     kotlin_stdlib_jar "$kotlinStdLibModule@jar"
     kotlin_reflect_jar "$kotlinReflectModule@jar"
     kotlin_script_runtime_jar "$kotlinScriptRuntimeModule@jar"
+    kotlin_common_stdlib_src kotlinCommonStdlibModule
 
     compilerCompile "com.google.protobuf:protobuf-java:${protobufVersion}"
 
@@ -157,6 +159,11 @@ classes.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
 // These are just a couple of aliases
 task stdlib(dependsOn: "${hostName}Stdlib")
 task start(dependsOn: "${hostName}Start")
+
+def commonSrc = zipTree(configurations.kotlin_common_stdlib_src.singleFile).matching {
+    include 'generated/**/*.kt'
+    include 'kotlin/**/*.kt'
+}
 
 // These files are built before the 'dist' is complete,
 // so we provide custom values for
@@ -183,8 +190,8 @@ targetList.each { target ->
                 '-output', project(':runtime').file("build/${target}Stdlib"),
                 '-produce', 'library', '-module_name', 'stdlib',
                 '-Xmulti-platform', '-Xuse-experimental=kotlin.Experimental',
-                rootProject.file('libraries/generated'),
-                rootProject.file('libraries'),
+                '--disable', 'devirtualization',
+                *commonSrc.files.toList(),
                 project(':Interop:Runtime').file('src/main/kotlin'),
                 project(':Interop:Runtime').file('src/native/kotlin'),
                 project(':Interop:JsRuntime').file('src/main/kotlin'),
@@ -193,8 +200,7 @@ targetList.each { target ->
         inputs.dir(project(':Interop:Runtime').file('src/main/kotlin'))
         inputs.dir(project(':Interop:Runtime').file('src/native/kotlin'))
         inputs.dir(project(':Interop:JsRuntime').file('src/main/kotlin'))
-        inputs.dir(rootProject.file('libraries/generated'))
-        inputs.dir(rootProject.file('libraries/kotlin'))
+        inputs.files(commonSrc)
         outputs.dir(project(':runtime').file("build/${target}Stdlib"))
 
         dependsOn ":runtime:${target}Runtime"

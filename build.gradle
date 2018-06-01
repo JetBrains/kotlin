@@ -42,6 +42,7 @@ ext {
     dependenciesDir = DependencyProcessor.defaultDependenciesRoot
     platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath))
 
+    kotlinCommonStdlibModule="org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion}:sources"
     kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinVersion}"
     kotlinStdLibModule="org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
     kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
