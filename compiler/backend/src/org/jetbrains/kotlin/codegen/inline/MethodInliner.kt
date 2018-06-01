@@ -347,12 +347,12 @@ class MethodInliner(
                                 // 'This' in outer context corresponds to outer instance in current
                                 visitFieldInsn(
                                     Opcodes.GETSTATIC, owner,
-                                    CAPTURED_FIELD_FOLD_PREFIX + AsmUtil.CAPTURED_THIS_FIELD, capturedParamDesc.type.descriptor
+                                    FieldRemapper.foldName(AsmUtil.CAPTURED_THIS_FIELD), capturedParamDesc.type.descriptor
                                 )
                             } else {
                                 visitFieldInsn(
                                     Opcodes.GETSTATIC, capturedParamDesc.containingLambdaName,
-                                    CAPTURED_FIELD_FOLD_PREFIX + capturedParamDesc.fieldName, capturedParamDesc.type.descriptor
+                                    FieldRemapper.foldName(capturedParamDesc.fieldName), capturedParamDesc.type.descriptor
                                 )
                             }
                         }
@@ -1076,7 +1076,7 @@ class MethodInliner(
             val lambdaAccessChain = mutableListOf<AbstractInsnNode>(aload0).apply {
                 addAll(InsnSequence(aload0.next, null).filter { it.isMeaningful }.takeWhile {
                     insnNode ->
-                    insnNode is FieldInsnNode && "this$0" == insnNode.name
+                    insnNode is FieldInsnNode && AsmUtil.CAPTURED_THIS_FIELD == insnNode.name
                 }.toList())
             }
 
