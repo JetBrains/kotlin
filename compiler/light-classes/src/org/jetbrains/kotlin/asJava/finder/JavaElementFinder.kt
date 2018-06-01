@@ -14,230 +14,205 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava.finder;
+package org.jetbrains.kotlin.asJava.finder
 
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Sets;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport;
-import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNamesUtilKt;
-import org.jetbrains.kotlin.psi.KtClass;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtEnumEntry;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker;
+import com.google.common.collect.Collections2
+import com.google.common.collect.Sets
+import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Condition
+import com.intellij.psi.*
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.PsiUtilCore
+import com.intellij.util.SmartList
+import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isValidJavaFqName
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
+import java.util.*
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+class JavaElementFinder(
+    private val project: Project,
+    private val kotlinAsJavaSupport: KotlinAsJavaSupport
+) : PsiElementFinder(), KotlinFinderMarker {
+    private val psiManager: PsiManager
 
-import static org.jetbrains.kotlin.asJava.LightClassUtilsKt.toLightClass;
-
-public class JavaElementFinder extends PsiElementFinder implements KotlinFinderMarker {
-
-    @NotNull
-    public static JavaElementFinder getInstance(@NotNull Project project) {
-        PsiElementFinder[] extensions = Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).getExtensions();
-        for (PsiElementFinder extension : extensions) {
-            if (extension instanceof JavaElementFinder) {
-                return (JavaElementFinder) extension;
-            }
-        }
-        throw new IllegalStateException(JavaElementFinder.class.getSimpleName() + " is not found for project " + project);
+    init {
+        this.psiManager = PsiManager.getInstance(project)
     }
 
-    private final Project project;
-    private final PsiManager psiManager;
-    private final KotlinAsJavaSupport kotlinAsJavaSupport;
-
-    public JavaElementFinder(
-            @NotNull Project project,
-            @NotNull KotlinAsJavaSupport kotlinAsJavaSupport
-    ) {
-        this.project = project;
-        this.psiManager = PsiManager.getInstance(project);
-        this.kotlinAsJavaSupport = kotlinAsJavaSupport;
+    override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
+        val allClasses = findClasses(qualifiedName, scope)
+        return if (allClasses.size > 0) allClasses[0] else null
     }
 
-    @Override
-    public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
-        PsiClass[] allClasses = findClasses(qualifiedName, scope);
-        return allClasses.length > 0 ? allClasses[0] : null;
-    }
-
-    @NotNull
-    @Override
-    public PsiClass[] findClasses(@NotNull String qualifiedNameString, @NotNull GlobalSearchScope scope) {
-        if (!FqNamesUtilKt.isValidJavaFqName(qualifiedNameString)) {
-            return PsiClass.EMPTY_ARRAY;
+    override fun findClasses(qualifiedNameString: String, scope: GlobalSearchScope): Array<PsiClass> {
+        if (!isValidJavaFqName(qualifiedNameString)) {
+            return PsiClass.EMPTY_ARRAY
         }
 
-        List<PsiClass> answer = new SmartList<>();
+        val answer = SmartList<PsiClass>()
 
-        FqName qualifiedName = new FqName(qualifiedNameString);
+        val qualifiedName = FqName(qualifiedNameString)
 
-        findClassesAndObjects(qualifiedName, scope, answer);
-        answer.addAll(kotlinAsJavaSupport.getFacadeClasses(qualifiedName, scope));
-        answer.addAll(kotlinAsJavaSupport.getKotlinInternalClasses(qualifiedName, scope));
+        findClassesAndObjects(qualifiedName, scope, answer)
+        answer.addAll(kotlinAsJavaSupport.getFacadeClasses(qualifiedName, scope))
+        answer.addAll(kotlinAsJavaSupport.getKotlinInternalClasses(qualifiedName, scope))
 
-        return sortByClasspath(answer, scope).toArray(new PsiClass[answer.size()]);
+        return sortByClasspath(answer, scope).toTypedArray()
     }
 
     // Finds explicitly declared classes and objects, not package classes
     // Also DefaultImpls classes of interfaces
-    private void findClassesAndObjects(FqName qualifiedName, GlobalSearchScope scope, List<PsiClass> answer) {
-        findInterfaceDefaultImpls(qualifiedName, scope, answer);
+    private fun findClassesAndObjects(qualifiedName: FqName, scope: GlobalSearchScope, answer: MutableList<PsiClass>) {
+        findInterfaceDefaultImpls(qualifiedName, scope, answer)
 
-        Collection<KtClassOrObject> classOrObjectDeclarations =
-                kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName, scope);
+        val classOrObjectDeclarations = kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName, scope)
 
-        for (KtClassOrObject declaration : classOrObjectDeclarations) {
-            if (!(declaration instanceof KtEnumEntry)) {
-                PsiClass lightClass = toLightClass(declaration);
+        for (declaration in classOrObjectDeclarations) {
+            if (declaration !is KtEnumEntry) {
+                val lightClass = declaration.toLightClass()
                 if (lightClass != null) {
-                    answer.add(lightClass);
+                    answer.add(lightClass)
                 }
             }
         }
     }
 
-    private void findInterfaceDefaultImpls(FqName qualifiedName, GlobalSearchScope scope, List<PsiClass> answer) {
-        if (qualifiedName.isRoot()) return;
+    private fun findInterfaceDefaultImpls(qualifiedName: FqName, scope: GlobalSearchScope, answer: MutableList<PsiClass>) {
+        if (qualifiedName.isRoot) return
 
-        if (!qualifiedName.shortName().asString().equals(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)) return;
+        if (qualifiedName.shortName().asString() != JvmAbi.DEFAULT_IMPLS_CLASS_NAME) return
 
-        for (KtClassOrObject classOrObject : kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
+        for (classOrObject in kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
             //NOTE: can't filter out more interfaces right away because decompiled declarations do not have member bodies
-            if (classOrObject instanceof KtClass && ((KtClass) classOrObject).isInterface()) {
-                PsiClass interfaceClass = toLightClass(classOrObject);
+            if (classOrObject is KtClass && classOrObject.isInterface()) {
+                val interfaceClass = classOrObject.toLightClass()
                 if (interfaceClass != null) {
-                    PsiClass implsClass = interfaceClass.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false);
+                    val implsClass = interfaceClass!!.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false)
                     if (implsClass != null) {
-                        answer.add(implsClass);
+                        answer.add(implsClass)
                     }
                 }
             }
         }
     }
 
-    @NotNull
-    @Override
-    public Set<String> getClassNames(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        FqName packageFQN = new FqName(psiPackage.getQualifiedName());
+    override fun getClassNames(psiPackage: PsiPackage, scope: GlobalSearchScope): Set<String> {
+        val packageFQN = FqName(psiPackage.qualifiedName)
 
-        Collection<KtClassOrObject> declarations = kotlinAsJavaSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
+        val declarations = kotlinAsJavaSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope)
 
-        Set<String> answer = Sets.newHashSet();
-        answer.addAll(kotlinAsJavaSupport.getFacadeNames(packageFQN, scope));
+        val answer = Sets.newHashSet<String>()
+        answer.addAll(kotlinAsJavaSupport.getFacadeNames(packageFQN, scope))
 
-        for (KtClassOrObject declaration : declarations) {
-            String name = declaration.getName();
+        for (declaration in declarations) {
+            val name = declaration.name
             if (name != null) {
-                answer.add(name);
+                answer.add(name)
             }
         }
 
-        return answer;
+        return answer
     }
 
-    @Override
-    public PsiPackage findPackage(@NotNull String qualifiedNameString) {
-        if (!FqNamesUtilKt.isValidJavaFqName(qualifiedNameString)) {
-            return null;
+    override fun findPackage(qualifiedNameString: String): PsiPackage? {
+        if (!isValidJavaFqName(qualifiedNameString)) {
+            return null
         }
 
-        FqName fqName = new FqName(qualifiedNameString);
+        val fqName = FqName(qualifiedNameString)
 
         // allScope() because the contract says that the whole project
-        GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
-        if (kotlinAsJavaSupport.packageExists(fqName, allScope)) {
-            return new KtLightPackage(psiManager, fqName, allScope);
-        }
+        val allScope = GlobalSearchScope.allScope(project)
+        return if (kotlinAsJavaSupport.packageExists(fqName, allScope)) {
+            KtLightPackage(psiManager, fqName, allScope)
+        } else null
 
-        return null;
     }
 
-    @NotNull
-    @Override
-    public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        FqName packageFQN = new FqName(psiPackage.getQualifiedName());
+    override fun getSubPackages(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiPackage> {
+        val packageFQN = FqName(psiPackage.qualifiedName)
 
-        Collection<FqName> subpackages = kotlinAsJavaSupport.getSubPackages(packageFQN, scope);
+        val subpackages = kotlinAsJavaSupport.getSubPackages(packageFQN, scope)
 
-        Collection<PsiPackage> answer = Collections2.transform(subpackages, input -> new KtLightPackage(psiManager, input, scope));
+        val answer = Collections2.transform<FqName, PsiPackage>(subpackages) { input -> KtLightPackage(psiManager, input, scope) }
 
-        return answer.toArray(new PsiPackage[answer.size()]);
+        return answer.toTypedArray()
     }
 
-    @NotNull
-    @Override
-    public PsiClass[] getClasses(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        List<PsiClass> answer = new SmartList<>();
-        FqName packageFQN = new FqName(psiPackage.getQualifiedName());
+    override fun getClasses(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiClass> {
+        val answer = SmartList<PsiClass>()
+        val packageFQN = FqName(psiPackage.qualifiedName)
 
-        answer.addAll(kotlinAsJavaSupport.getFacadeClassesInPackage(packageFQN, scope));
+        answer.addAll(kotlinAsJavaSupport.getFacadeClassesInPackage(packageFQN, scope))
 
-        Collection<KtClassOrObject> declarations = kotlinAsJavaSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
-        for (KtClassOrObject declaration : declarations) {
-            PsiClass aClass = toLightClass(declaration);
+        val declarations = kotlinAsJavaSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope)
+        for (declaration in declarations) {
+            val aClass = declaration.toLightClass()
             if (aClass != null) {
-                answer.add(aClass);
+                answer.add(aClass)
             }
         }
 
-        return sortByClasspath(answer, scope).toArray(new PsiClass[answer.size()]);
+        return sortByClasspath(answer, scope).toTypedArray()
     }
 
-    @Override
-    @NotNull
-    public PsiFile[] getPackageFiles(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        FqName packageFQN = new FqName(psiPackage.getQualifiedName());
+    override fun getPackageFiles(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiFile> {
+        val packageFQN = FqName(psiPackage.qualifiedName)
         // TODO: this does not take into account JvmPackageName annotation
-        Collection<KtFile> result = kotlinAsJavaSupport.findFilesForPackage(packageFQN, scope);
-        return result.toArray(new PsiFile[result.size()]);
+        val result = kotlinAsJavaSupport.findFilesForPackage(packageFQN, scope)
+        return result.toTypedArray()
     }
 
-    @Override
-    @Nullable
-    public Condition<PsiFile> getPackageFilesFilter(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        return input -> {
-            if (!(input instanceof KtFile)) {
-                return true;
+    override fun getPackageFilesFilter(psiPackage: PsiPackage, scope: GlobalSearchScope): Condition<PsiFile>? {
+        return Condition { input ->
+            if (input !is KtFile) {
+                true
             }
-            return psiPackage.getQualifiedName().equals(((KtFile) input).getPackageFqName().asString());
-        };
+            else {
+                psiPackage.qualifiedName == (input as KtFile).packageFqName.asString()
+            }
+        }
     }
 
-    @NotNull
-    public static Comparator<PsiElement> byClasspathComparator(@NotNull GlobalSearchScope searchScope) {
-        return (o1, o2) -> {
-            VirtualFile f1 = PsiUtilCore.getVirtualFile(o1);
-            VirtualFile f2 = PsiUtilCore.getVirtualFile(o2);
-            if (f1 == f2) return 0;
-            if (f1 == null) return -1;
-            if (f2 == null) return 1;
-            return searchScope.compare(f2, f1);
-        };
-    }
+    companion object {
 
-    private static Collection<PsiClass> sortByClasspath(@NotNull List<PsiClass> classes, @NotNull GlobalSearchScope searchScope) {
-        if (classes.size() > 1) {
-            ContainerUtil.quickSort(classes, byClasspathComparator(searchScope));
+        fun getInstance(project: Project): JavaElementFinder {
+            val extensions = Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).extensions
+            for (extension in extensions) {
+                if (extension is JavaElementFinder) {
+                    return extension
+                }
+            }
+            throw IllegalStateException(JavaElementFinder::class.java.simpleName + " is not found for project " + project)
         }
 
-        return classes;
+        fun byClasspathComparator(searchScope: GlobalSearchScope): Comparator<PsiElement> {
+            return Comparator { o1, o2 ->
+                val f1 = PsiUtilCore.getVirtualFile(o1)
+                val f2 = PsiUtilCore.getVirtualFile(o2)
+                when {
+                    f1 === f2 -> 0
+                    f1 == null -> -1
+                    f2 == null -> 1
+                    else -> searchScope.compare(f2!!, f1!!)
+                }
+            }
+        }
+
+        private fun sortByClasspath(classes: List<PsiClass>, searchScope: GlobalSearchScope): Collection<PsiClass> {
+            if (classes.size > 1) {
+                ContainerUtil.quickSort(classes, byClasspathComparator(searchScope))
+            }
+
+            return classes
+        }
     }
 }
