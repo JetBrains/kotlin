@@ -31,7 +31,8 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(KtForExpression::class.java, "Add indices to 'for' loop"), LowPriorityAction {
+class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(KtForExpression::class.java, "Add indices to 'for' loop"),
+    LowPriorityAction {
     private val WITH_INDEX_NAME = "withIndex"
     private val WITH_INDEX_FQ_NAMES = listOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$WITH_INDEX_NAME" }.toSet()
 
@@ -61,7 +62,10 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
 
         loopRange.replace(createWithIndexExpression(loopRange, reformat = true))
 
-        var multiParameter = (psiFactory.createExpressionByPattern("for((index, $0) in x){}", loopParameter.text) as KtForExpression).destructuringDeclaration!!
+        var multiParameter = (psiFactory.createExpressionByPattern(
+            "for((index, $0) in x){}",
+            loopParameter.text
+        ) as KtForExpression).destructuringDeclaration!!
 
         multiParameter = loopParameter.replaced(multiParameter)
 
@@ -83,8 +87,7 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
                 val statement = body.statements.firstOrNull()
                 if (statement != null) {
                     templateBuilder.setEndVariableBefore(statement)
-                }
-                else {
+                } else {
                     templateBuilder.setEndVariableAfter(body.lBrace)
                 }
             }
@@ -98,7 +101,9 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
     }
 
     private fun createWithIndexExpression(originalExpression: KtExpression, reformat: Boolean): KtExpression {
-        return KtPsiFactory(originalExpression).createExpressionByPattern("$0.$WITH_INDEX_NAME()", originalExpression,
-                                                                          reformat = reformat)
+        return KtPsiFactory(originalExpression).createExpressionByPattern(
+            "$0.$WITH_INDEX_NAME()", originalExpression,
+            reformat = reformat
+        )
     }
 }
