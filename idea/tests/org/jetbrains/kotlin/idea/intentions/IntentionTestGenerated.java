@@ -801,6 +801,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addForLoopIndices/explicitParamType.kt");
         }
 
+        @TestMetadata("inapplicableDestructuringDeclaration.kt")
+        public void testInapplicableDestructuringDeclaration() throws Exception {
+            runTest("idea/testData/intentions/addForLoopIndices/inapplicableDestructuringDeclaration.kt");
+        }
+
         @TestMetadata("inapplicableExistingIndices.kt")
         public void testInapplicableExistingIndices() throws Exception {
             runTest("idea/testData/intentions/addForLoopIndices/inapplicableExistingIndices.kt");
