@@ -8,6 +8,9 @@ where advanced options include:
   -Xnormalize-constructor-calls={disable|enable}
                              Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
+  -Xdisable-default-scripting-plugin
+                             Do not enable scripting plugin by default
+  -Xenable-jvm-default       Allow to use '@JvmDefault' for JVM default method support
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
   -Xjavac-arguments=<option[,]> Java compiler arguments

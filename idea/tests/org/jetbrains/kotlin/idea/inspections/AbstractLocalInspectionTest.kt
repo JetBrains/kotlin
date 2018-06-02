@@ -26,7 +26,7 @@ import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.configureLanguageVersion
+import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -83,7 +83,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         val fileText = FileUtil.loadFile(mainFile, true)
         TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFile\"", fileText.contains("<caret>"))
 
-        configureLanguageVersion(fileText, project, module)
+        configureCompilerOptions(fileText, project, module)
 
         val minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ")
         if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return

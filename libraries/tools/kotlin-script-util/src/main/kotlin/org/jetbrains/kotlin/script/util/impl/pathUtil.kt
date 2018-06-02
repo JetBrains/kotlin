@@ -71,7 +71,7 @@ private fun splitJarUrl(url: String): Pair<String, String>? {
     return Pair(jarPath, resourcePath)
 }
 
-internal fun getResourcePathForClass(aClass: Class<*>): File {
+fun getResourcePathForClass(aClass: Class<*>): File {
     val path = "/" + aClass.name.replace('.', '/') + ".class"
     val resourceRoot = getResourceRoot(aClass, path) ?: throw IllegalStateException("Resource not found: $path")
     return File(resourceRoot).absoluteFile

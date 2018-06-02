@@ -54,13 +54,16 @@ abstract class IncrementalCacheCommon<ClassName>(workingDir: File) : BasicMapsOw
     internal abstract val sourceToClassesMap: AbstractSourceToOutputMap<ClassName>
     internal abstract val dirtyOutputClassesMap: AbstractDirtyClassesMap<ClassName>
 
+    fun classesFqNamesBySources(files: Iterable<File>): Collection<FqName> =
+        files.flatMapTo(HashSet()) { sourceToClassesMap.getFqNames(it) }
+
     fun getSubtypesOf(className: FqName): Sequence<FqName> =
             subtypesMap[className].asSequence()
 
     fun getSourceFileIfClass(fqName: FqName): File? =
             classFqNameToSourceMap[fqName]
 
-    open fun markDirty(removedAndCompiledSources: List<File>) {
+    open fun markDirty(removedAndCompiledSources: Collection<File>) {
         for (sourceFile in removedAndCompiledSources) {
             val classes = sourceToClassesMap[sourceFile]
             classes.forEach {

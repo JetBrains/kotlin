@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.idea.caches.project.implementingModules
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.facet.implementingModules
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.targetPlatform
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil

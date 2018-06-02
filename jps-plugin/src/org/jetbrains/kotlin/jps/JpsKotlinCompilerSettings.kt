@@ -69,9 +69,9 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
             val facetArguments = facetSettings.compilerArguments ?: return defaultArguments
             return copyBean(facetArguments).apply {
                 multiPlatform = module
-                        .dependenciesList
-                        .dependencies
-                        .any { (it as? JpsModuleDependency)?.module?.targetPlatform == TargetPlatformKind.Common }
+                    .dependenciesList
+                    .dependencies
+                    .any { (it as? JpsModuleDependency)?.module?.targetPlatform == TargetPlatformKind.Common }
             }
         }
 

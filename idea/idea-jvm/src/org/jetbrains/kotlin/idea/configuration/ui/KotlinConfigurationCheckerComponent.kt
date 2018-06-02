@@ -48,6 +48,8 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
         val connection = project.messageBus.connect()
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
             override fun rootsChanged(event: ModuleRootEvent?) {
+                if (!project.isInitialized) return
+
                 if (notificationPostponed && !isSyncing) {
                     ApplicationManager.getApplication().executeOnPooledThread {
                         DumbService.getInstance(myProject).waitForSmartMode()

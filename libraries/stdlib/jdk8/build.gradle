@@ -29,10 +29,17 @@ sourceSets {
             }
         }
     }
+    java9 {
+        java {
+            srcDir 'java9'
+        }
+    }
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Main')
+    manifestAttributes(manifest, project, 'Main', true)
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
 }
 
 artifacts {
@@ -62,6 +69,8 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
+
+compileJava9Sources(project, 'kotlin.stdlib.jdk8')
 
 kotlin.experimental.coroutines 'enable'
 

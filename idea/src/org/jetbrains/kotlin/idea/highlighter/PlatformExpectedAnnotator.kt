@@ -21,9 +21,9 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.psi.KtClassOrObject

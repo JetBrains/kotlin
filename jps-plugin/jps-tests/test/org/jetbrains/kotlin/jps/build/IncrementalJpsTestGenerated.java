@@ -1494,6 +1494,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("classMovedIntoOtherClass")
+        public void testClassMovedIntoOtherClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/classMovedIntoOtherClass/");
+            doTest(fileName);
+        }
+
         @TestMetadata("classRemoved")
         public void testClassRemoved() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/classRemoved/");

@@ -54,9 +54,9 @@ class GroovyBuildScriptManipulator(private val groovyScript: GroovyFile) : Gradl
             if (applyStatement != null) {
                 groovyScript.addAfter(apply, applyStatement)
             } else {
-                val buildScriptBlock = groovyScript.getBlockByName("buildscript")
-                if (buildScriptBlock != null) {
-                    groovyScript.addAfter(apply, buildScriptBlock.parent)
+                val anchorBlock = groovyScript.getBlockByName("plugins") ?: groovyScript.getBlockByName("buildscript")
+                if (anchorBlock != null) {
+                    groovyScript.addAfter(apply, anchorBlock.parent)
                 } else {
                     groovyScript.addAfter(apply, groovyScript.statements.lastOrNull() ?: groovyScript.firstChild)
                 }
@@ -219,7 +219,11 @@ class GroovyBuildScriptManipulator(private val groovyScript: GroovyFile) : Gradl
 
     private fun GrStatementOwner.getDependenciesBlock(): GrClosableBlock = getBlockOrCreate("dependencies")
 
-    private fun GrStatementOwner.getBuildScriptBlock() = getBlockOrCreate("buildscript")
+    private fun GrStatementOwner.getBuildScriptBlock() = getBlockOrCreate("buildscript") { newBlock ->
+        val pluginsBlock = getBlockByName("plugins") ?: return@getBlockOrCreate false
+        addBefore(newBlock, pluginsBlock.parent)
+        true
+    }
 
     private fun GrStatementOwner.getBuildScriptRepositoriesBlock(): GrClosableBlock =
         getBuildScriptBlock().getBlockOrCreate("repositories")
@@ -227,12 +231,17 @@ class GroovyBuildScriptManipulator(private val groovyScript: GroovyFile) : Gradl
     private fun GrStatementOwner.getBuildScriptDependenciesBlock(): GrClosableBlock =
         getBuildScriptBlock().getBlockOrCreate("dependencies")
 
-    private fun GrStatementOwner.getBlockOrCreate(name: String): GrClosableBlock {
+    private fun GrStatementOwner.getBlockOrCreate(
+        name: String,
+        customInsert: GrStatementOwner.(newBlock: PsiElement) -> Boolean = { false }
+    ): GrClosableBlock {
         var block = getBlockByName(name)
         if (block == null) {
             val factory = GroovyPsiElementFactory.getInstance(project)
             val newBlock = factory.createExpressionFromText("$name{\n}\n")
-            addAfter(newBlock, statements.lastOrNull() ?: firstChild)
+            if (!customInsert(newBlock)) {
+                addAfter(newBlock, statements.lastOrNull() ?: firstChild)
+            }
             block = getBlockByName(name)!!
         }
         return block

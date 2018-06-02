@@ -31,8 +31,10 @@ import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class FunctionGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
+
     constructor(context: GeneratorContext) : this(DeclarationGenerator(context))
 
     fun generateFunctionDeclaration(ktFunction: KtNamedFunction): IrFunction =
@@ -198,7 +200,10 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktClassOrObject: KtClassOrObject
     ): IrConstructor =
         declareConstructor(ktClassOrObject, ktClassOrObject.primaryConstructor ?: ktClassOrObject, primaryConstructorDescriptor) {
-            if (primaryConstructorDescriptor.isExpect)
+            if (
+                primaryConstructorDescriptor.isExpect ||
+                DescriptorUtils.isAnnotationClass(primaryConstructorDescriptor.constructedClass)
+            )
                 null
             else
                 generatePrimaryConstructorBody(ktClassOrObject)

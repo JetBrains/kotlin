@@ -23,9 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
-import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenForLambda;
-import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
-import org.jetbrains.kotlin.codegen.coroutines.ResolvedCallWithRealDescriptor;
+import org.jetbrains.kotlin.codegen.coroutines.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.*;
@@ -1238,7 +1236,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Nullable
     public StackValue genCoroutineInstanceForSuspendLambda(@NotNull FunctionDescriptor suspendFunction) {
-        if (!(suspendFunction instanceof AnonymousFunctionDescriptor)) return null;
+        if (!CoroutineCodegenUtilKt.isSuspendLambdaOrLocalFunction(suspendFunction)) return null;
 
         ClassDescriptor suspendLambdaClassDescriptor = bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, suspendFunction);
         assert suspendLambdaClassDescriptor != null : "Coroutine class descriptor should not be null";
@@ -2749,7 +2747,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
             else {
                 cur = getNotNullParentContextForMethod(cur);
-                result = cur.getOuterExpression(result, false);
+                // for now the script codegen only passes this branch, since the method context for script constructor is defined using function context
+                if (cur instanceof ScriptContext && !(thisOrOuterClass instanceof ScriptDescriptor)) {
+                    return ((ScriptContext) cur).getOuterReceiverExpression(result, thisOrOuterClass);
+                }
+                else {
+                    result = cur.getOuterExpression(result, false);
+                }
             }
 
             cur = cur.getEnclosingClassContext();

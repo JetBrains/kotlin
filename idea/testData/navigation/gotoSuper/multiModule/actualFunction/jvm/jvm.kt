@@ -6,5 +6,5 @@ actual class Expected {
     actual val bar = "Hello"
 }
 
-// REF: [common] (in test.Expected).foo()
+// REF: [testModule_Common] (in test.Expected).foo()
 

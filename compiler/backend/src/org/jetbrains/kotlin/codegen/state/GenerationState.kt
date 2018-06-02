@@ -177,8 +177,6 @@ class GenerationState private constructor(
 
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     val isJvm8Target: Boolean = target == JvmTarget.JVM_1_8
-    val isJvm8TargetWithDefaults: Boolean = isJvm8Target && configuration.getBoolean(JVMConfigurationKeys.JVM8_TARGET_WITH_DEFAULTS)
-    val generateDefaultImplsForJvm8: Boolean = configuration.getBoolean(JVMConfigurationKeys.INTERFACE_COMPATIBILITY)
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
@@ -189,7 +187,7 @@ class GenerationState private constructor(
     val bindingContext: BindingContext = bindingTrace.bindingContext
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
         this.bindingContext, classBuilderMode, IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
-        this.moduleName, isJvm8Target, isJvm8TargetWithDefaults
+        this.moduleName, isJvm8Target
     )
     val intrinsics: IntrinsicMethods = run {
         val shouldUseConsistentEquals = languageVersionSettings.supportsFeature(LanguageFeature.ThrowNpeOnExplicitEqualsForBoxedNull) &&

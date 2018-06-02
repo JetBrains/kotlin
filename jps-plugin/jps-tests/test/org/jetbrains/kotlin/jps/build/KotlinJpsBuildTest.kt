@@ -371,27 +371,27 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     fun testKotlinJavaScriptProjectWithEmptyDependencies() {
         initProject(JS_STDLIB)
-        makeAll().assertSuccessful()
+        buildAllModules().assertSuccessful()
     }
 
     fun testKotlinJavaScriptInternalFromSpecialRelatedModule() {
         initProject(JS_STDLIB)
-        makeAll().assertSuccessful()
+        buildAllModules().assertSuccessful()
     }
 
     fun testKotlinJavaScriptProjectWithTests() {
         initProject(JS_STDLIB)
-        makeAll().assertSuccessful()
+        buildAllModules().assertSuccessful()
     }
 
     fun testKotlinJavaScriptProjectWithTestsAndSeparateTestAndSrcModuleDependencies() {
         initProject(JS_STDLIB)
-        makeAll().assertSuccessful()
+        buildAllModules().assertSuccessful()
     }
 
     fun testKotlinJavaScriptProjectWithTestsAndTestAndSrcModuleDependency() {
         initProject(JS_STDLIB)
-        val buildResult = makeAll()
+        val buildResult = buildAllModules()
         buildResult.assertSuccessful()
 
         val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
@@ -400,7 +400,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     fun testKotlinJavaScriptProjectWithTwoSrcModuleDependency() {
         initProject(JS_STDLIB)
-        val buildResult = makeAll()
+        val buildResult = buildAllModules()
         buildResult.assertSuccessful()
 
         val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
@@ -956,16 +956,18 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         val actual = StringBuilder()
         buildCustom(CanceledStatus.NULL, TestProjectBuilderLogger(), BuildResult()) {
-            project.setTestingContext(TestingContext(LookupTracker.DO_NOTHING, object: BuildLogger {
+            project.setTestingContext(TestingContext(LookupTracker.DO_NOTHING, object : BuildLogger {
                 override fun buildStarted(context: CompileContext, chunk: ModuleChunk) {
                     actual.append("Targets dependent on ${chunk.targets.joinToString() }:\n")
                     actual.append(getDependentTargets(chunk, context).map { it.toString() }.sorted().joinToString("\n"))
                     actual.append("\n---------\n")
                 }
 
+                override fun afterBuildStarted(context: CompileContext, chunk: ModuleChunk) {}
                 override fun actionsOnCacheVersionChanged(actions: List<CacheVersion.Action>) {}
                 override fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) {}
-                override fun markedAsDirty(files: Iterable<File>) {}
+                override fun markedAsDirtyBeforeRound(files: Iterable<File>) {}
+                override fun markedAsDirtyAfterRound(files: Iterable<File>) {}
             }))
         }
 
@@ -975,10 +977,10 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     fun testJre9() {
-        val path = KotlinTestUtils.getJdk9HomeIfPossible()?.absolutePath ?: return
+        val jdk9Path = KotlinTestUtils.getJdk9Home().absolutePath
 
-        val jdk = myModel.global.addSdk(JDK_NAME, path, "9", JpsJavaSdkType.INSTANCE)
-        jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + path + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
+        val jdk = myModel.global.addSdk(JDK_NAME, jdk9Path, "9", JpsJavaSdkType.INSTANCE)
+        jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + jdk9Path + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
 
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
         addKotlinStdlibDependency()

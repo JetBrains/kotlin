@@ -18,12 +18,14 @@ package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirement.VersionKind.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -46,8 +48,20 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
             vararg fqNames: String
     ) {
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(
-                listOf(File("compiler/testData/versionRequirement/${getTestName(true)}.kt")), tmpdir,
-                KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(testRootDisposable)
+            listOf(File("compiler/testData/versionRequirement/${getTestName(true)}.kt")), tmpdir,
+            KotlinCoreEnvironment.createForTests(
+                testRootDisposable,
+                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir).apply {
+                    put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
+                    languageVersionSettings = LanguageVersionSettingsImpl(
+                        LanguageVersionSettingsImpl.DEFAULT.languageVersion,
+                        LanguageVersionSettingsImpl.DEFAULT.apiVersion,
+                        mapOf(AnalysisFlag.enableJvmDefault to true),
+                        emptyMap()
+                    )
+                },
+                EnvironmentConfigFiles.JVM_CONFIG_FILES
+            )
         )
 
         val (_, module) = JvmResolveUtil.analyze(
@@ -99,7 +113,7 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
     }
 
     fun testSuspendFun() {
-        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
+        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,
                "test.topLevel",
                "test.Foo.member",
                "test.Foo.<init>",
@@ -112,7 +126,7 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
     }
 
     fun testLanguageVersionViaAnnotation() {
-        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, 42,
+        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", LANGUAGE_VERSION, 42,
                "test.Klass",
                "test.Konstructor.<init>",
                "test.Typealias",
@@ -122,7 +136,7 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
     }
 
     fun testApiVersionViaAnnotation() {
-        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", ProtoBuf.VersionRequirement.VersionKind.API_VERSION, 42,
+        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", API_VERSION, 42,
                "test.Klass",
                "test.Konstructor.<init>",
                "test.Typealias",
@@ -132,7 +146,7 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
     }
 
     fun testCompilerVersionViaAnnotation() {
-        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, 42,
+        doTest(VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", COMPILER_VERSION, 42,
                "test.Klass",
                "test.Konstructor.<init>",
                "test.Typealias",
@@ -142,8 +156,16 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
     }
 
     fun testPatchVersion() {
-        doTest(VersionRequirement.Version(1, 1, 50), DeprecationLevel.HIDDEN, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
+        doTest(VersionRequirement.Version(1, 1, 50), DeprecationLevel.HIDDEN, null, LANGUAGE_VERSION, null,
                "test.Klass"
+        )
+    }
+
+    fun testJvmDefault() {
+        doTest(
+            VersionRequirement.Version(1, 2, 40), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
+            "test.Base",
+            "test.Derived"
         )
     }
 }

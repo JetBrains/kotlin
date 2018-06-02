@@ -86,19 +86,14 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
                     val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
                     val type = bindingContext.getType(expression)!!
 
-                    if (KotlinBuiltIns.isChar(type)) {
-                        return expressionText
-                            .removePrefix("'")
-                            .removeSuffix("'")
-                            .replace("\"", "\\\"")
-                            .replace("\\'", "'")
-                            .run { if (forceBraces) replace("$", "\\$") else this }
-                    }
-
                     val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext)
-                    val stringValue = constant?.getValue(type).toString()
-                    if (stringValue == expressionText) {
-                        return StringUtil.escapeStringCharacters(stringValue)
+                    if (constant != null) {
+                        val stringValue = constant.getValue(type).toString()
+                        if (KotlinBuiltIns.isChar(type) || stringValue == expressionText) {
+                            return buildString {
+                                StringUtil.escapeStringCharacters(stringValue.length, stringValue, if (forceBraces) "\"$" else "\"", this)
+                            }
+                        }
                     }
                 }
 

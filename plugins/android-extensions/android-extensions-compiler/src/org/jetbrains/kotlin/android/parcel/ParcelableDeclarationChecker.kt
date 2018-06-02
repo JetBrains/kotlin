@@ -180,12 +180,11 @@ class ParcelableDeclarationChecker : DeclarationChecker {
         }
 
         val typeMapper = KotlinTypeMapper(
-                bindingContext,
-                ClassBuilderMode.full(false),
-                IncompatibleClassTracker.DoNothing,
-                descriptor.module.name.asString(),
-                /* isJvm8Target */ false,
-                /* isJvm8TargetWithDefaults */ false)
+            bindingContext,
+            ClassBuilderMode.full(false),
+            IncompatibleClassTracker.DoNothing,
+            descriptor.module.name.asString(),
+                /* isJvm8Target */ false)
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty()) {
             checkParcelableClassProperty(parameter, descriptor, diagnosticHolder, typeMapper)

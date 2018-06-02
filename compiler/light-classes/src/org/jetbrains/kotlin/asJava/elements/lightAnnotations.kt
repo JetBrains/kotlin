@@ -97,6 +97,7 @@ class KtLightAnnotationForSourceEntry(
         override fun getNavigationElement() = originalExpression
         override fun isPhysical(): Boolean = originalExpression?.containingFile == kotlinOrigin.containingFile
         override fun getTextRange() = originalExpression?.textRange ?: TextRange.EMPTY_RANGE
+        override fun getStartOffsetInParent() = originalExpression?.startOffsetInParent ?: 0
         override fun getParent() = parent
         override fun getText() = originalExpression?.text.orEmpty()
         override fun getContainingFile(): PsiFile? = if (isPhysical) kotlinOrigin.containingFile else delegate.containingFile

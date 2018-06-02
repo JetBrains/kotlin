@@ -337,6 +337,24 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Defaults extends AbstractBlackBoxCodegenTest {
+            @TestMetadata("accessor.kt")
+            public void testAccessor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/accessor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("accessorFromCompanion.kt")
+            public void testAccessorFromCompanion() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/accessorFromCompanion.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("accessorsFromDefaultImpls.kt")
+            public void testAccessorsFromDefaultImpls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/accessorsFromDefaultImpls.kt");
+                doTest(fileName);
+            }
+
             public void testAllFilesPresentInDefaults() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
@@ -350,6 +368,36 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             @TestMetadata("bridgeInInterface.kt")
             public void testBridgeInInterface() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/bridgeInInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("bridgeInInterface2.kt")
+            public void testBridgeInInterface2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/bridgeInInterface2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("bridgeInInterfaceWithProperties.kt")
+            public void testBridgeInInterfaceWithProperties() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/bridgeInInterfaceWithProperties.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("bridgeInInterfaceWithProperties2.kt")
+            public void testBridgeInInterfaceWithProperties2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/bridgeInInterfaceWithProperties2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("bridgeWithJava.kt")
+            public void testBridgeWithJava() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/bridgeWithJava.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("callableReference.kt")
+            public void testCallableReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/callableReference.kt");
                 doTest(fileName);
             }
 
@@ -368,6 +416,18 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             @TestMetadata("diamond.kt")
             public void testDiamond() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/diamond.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inline.kt")
+            public void testInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/inline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineProperty.kt")
+            public void testInlineProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/inlineProperty.kt");
                 doTest(fileName);
             }
 
@@ -407,6 +467,18 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
                 doTest(fileName);
             }
 
+            @TestMetadata("privateDefaultFromDefaultImpl.kt")
+            public void testPrivateDefaultFromDefaultImpl() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/privateDefaultFromDefaultImpl.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateInDefaultImpls.kt")
+            public void testPrivateInDefaultImpls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/privateInDefaultImpls.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simpleCall.kt")
             public void testSimpleCall() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/simpleCall.kt");
@@ -423,6 +495,27 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             public void testSuperCall() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/superCall.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/delegationBy")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class DelegationBy extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInDelegationBy() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/jvm8/defaults/delegationBy"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/delegationBy/simple.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleProperty.kt")
+                public void testSimpleProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/delegationBy/simpleProperty.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/noDelegation")
@@ -463,12 +556,6 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
                 @TestMetadata("propertyAnnotations.kt")
                 public void testPropertyAnnotations() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/reflection/propertyAnnotations.kt");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("propertyAnnotationsCompatibility.kt")
-                public void testPropertyAnnotationsCompatibility() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/reflection/propertyAnnotationsCompatibility.kt");
                     doTest(fileName);
                 }
             }

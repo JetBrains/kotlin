@@ -68,14 +68,14 @@ enum class LanguageFeature(
     InlineClasses(KOTLIN_1_3),
     ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion(KOTLIN_1_3),
     ProhibitNonConstValuesAsVarargsInAnnotations(KOTLIN_1_3),
-
-    StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
-    ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED),
-
     ReadDeserializedContracts(KOTLIN_1_3),
     UseReturnsEffect(KOTLIN_1_3),
     UseCallsInPlaceEffect(KOTLIN_1_3),
     AllowContractsForCustomFunctions(KOTLIN_1_3),
+    ProhibitLocalAnnotations(KOTLIN_1_3),
+
+    StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
+    ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED),
 
     // Experimental features
 

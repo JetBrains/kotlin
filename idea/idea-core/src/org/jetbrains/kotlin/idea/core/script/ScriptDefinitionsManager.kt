@@ -28,15 +28,21 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptTemplatesProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
+import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
+import kotlin.script.experimental.api.ScriptingEnvironment
+import kotlin.script.experimental.api.ScriptingEnvironmentProperties
+import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.asSuccess
@@ -91,7 +97,7 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
         val fromDeprecatedEP = Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.toList()
                 .map(::ScriptTemplatesProviderAdapter)
         val fromNewEp = Extensions.getArea(project).getExtensionPoint(ScriptDefinitionContributor.EP_NAME).extensions.toList()
-        return fromDeprecatedEP + fromNewEp
+        return fromNewEp.dropLast(1) + fromDeprecatedEP + fromNewEp.last()
     }
 
     fun reloadScriptDefinitions() = lock.write {
@@ -139,18 +145,46 @@ fun loadDefinitionsFromTemplates(
          * i.e. gradle resolver may depend on some jars that 'built.gradle.kts' files should not depend on.
          */
         additionalResolverClasspath: List<File> = emptyList()
-): List<KotlinScriptDefinitionFromAnnotatedTemplate> = try {
+): List<KotlinScriptDefinition> = try {
     val classpath = templateClasspath + additionalResolverClasspath
     LOG.info("[kts] loading script definitions $templateClassNames using cp: ${classpath.joinToString(File.pathSeparator)}")
     val baseLoader = ScriptDefinitionContributor::class.java.classLoader
     val loader = if (classpath.isEmpty()) baseLoader else URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), baseLoader)
 
-    templateClassNames.map {
-        KotlinScriptDefinitionFromAnnotatedTemplate(
-                loader.loadClass(it).kotlin,
-                environment,
-                templateClasspath
-        )
+    templateClassNames.mapNotNull {
+        try {
+            val template = loader.loadClass(it).kotlin
+            when {
+                template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>() != null ||
+                        template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() != null -> {
+                    KotlinScriptDefinitionFromAnnotatedTemplate(
+                        template,
+                        environment,
+                        templateClasspath
+                    )
+                }
+                template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
+                    KotlinScriptDefinitionAdapterFromNewAPI(
+                        ScriptDefinitionFromAnnotatedBaseClass(ScriptingEnvironment(ScriptingEnvironmentProperties.baseClass to template))
+                    )
+                }
+                else -> {
+                    LOG.error("[kts] cannot find a valid script definition annotation on the class $template")
+                    null
+                }
+            }
+        } catch (e: ClassNotFoundException) {
+            // Assuming that direct ClassNotFoundException is the result of versions mismatch and missing subsystems, e.g. gradle
+            // so, it only results in warning, while other errors are severe misconfigurations, resulting it user-visible error
+            LOG.warn("[kts] cannot load script definition class $it", e)
+            null
+        } catch (e: NoClassDefFoundError) {
+            LOG.error("[kts] cannot load script definition class $it", e)
+            null
+        } catch (e: InvocationTargetException) {
+            LOG.error("[kts] cannot load script definition class $it", e)
+            null
+        }
     }
 }
 catch (ex: Throwable) {
@@ -208,4 +242,3 @@ class BundledKotlinScriptDependenciesResolver(private val project: Project) : De
         return jdk?.homePath
     }
 }
-

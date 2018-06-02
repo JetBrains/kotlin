@@ -210,7 +210,10 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
             additionalResolverClasspath(gradleLibDir)
         ).map {
             // Expand scope for old gradle script definition
-            if (!it.scriptExpectedLocations.contains(ScriptExpectedLocation.Project)) GradleKotlinScriptDefinitionFromAnnotatedTemplate(it) else it
+            if (it is KotlinScriptDefinitionFromAnnotatedTemplate && !it.scriptExpectedLocations.contains(ScriptExpectedLocation.Project))
+                GradleKotlinScriptDefinitionFromAnnotatedTemplate(it)
+            else
+                it
         }
     }
 

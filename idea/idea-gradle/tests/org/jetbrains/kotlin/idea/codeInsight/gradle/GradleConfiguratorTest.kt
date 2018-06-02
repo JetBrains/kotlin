@@ -111,6 +111,76 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
+    @Test
+    fun testConfigureKotlinWithPluginsBlock() {
+        createProjectSubFile("settings.gradle", "include ':app'")
+        val file = createProjectSubFile(
+                "app/build.gradle", """
+        plugins {
+            id 'java'
+        }
+
+        group 'testgroup'
+        version '1.0-SNAPSHOT'
+
+        sourceCompatibility = 1.8
+
+        repositories {
+            mavenCentral()
+        }
+
+        dependencies {
+            testCompile group: 'junit', name: 'junit', version: '4.12'
+        }
+        """.trimIndent()
+        )
+
+        importProject()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.0.6", collector)
+
+                FileDocumentManager.getInstance().saveAllDocuments()
+                val content = LoadTextUtil.loadText(file).toString()
+                assertEquals(
+                        """
+                buildscript {
+                    ext.kotlin_version = '1.0.6'
+                    repositories {
+                        mavenCentral()
+                    }
+                    dependencies {
+                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${"$"}kotlin_version"
+                    }
+                }
+                plugins {
+                    id 'java'
+                }
+                apply plugin: 'kotlin'
+
+                group 'testgroup'
+                version '1.0-SNAPSHOT'
+
+                sourceCompatibility = 1.8
+
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    testCompile group: 'junit', name: 'junit', version: '4.12'
+                    compile "org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version"
+                }
+                """.trimIndent(), content
+                )
+            }
+        }
+    }
+
     private fun findGradleModuleConfigurator() = Extensions.findExtension(
         KotlinProjectConfigurator.EP_NAME,
         KotlinGradleModuleConfigurator::class.java

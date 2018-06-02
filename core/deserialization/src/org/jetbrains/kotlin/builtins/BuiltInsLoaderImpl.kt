@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
 class BuiltInsLoaderImpl : BuiltInsLoader {
-    private val classLoader = this::class.java.classLoader
+    private val resourceLoader = BuiltInsResourceLoader()
 
     override fun createPackageFragmentProvider(
             storageManager: StorageManager,
@@ -45,10 +45,9 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
                 KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAMES,
                 classDescriptorFactories,
                 platformDependentDeclarationFilter,
-                additionalClassPartsProvider
-        ) { path ->
-            classLoader?.getResourceAsStream(path) ?: ClassLoader.getSystemResourceAsStream(path)
-        }
+                additionalClassPartsProvider,
+                resourceLoader::loadResource
+        )
     }
 
     fun createBuiltInPackageFragmentProvider(

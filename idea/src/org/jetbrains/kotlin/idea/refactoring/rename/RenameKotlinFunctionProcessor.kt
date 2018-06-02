@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethodsWithPopup
@@ -47,6 +46,7 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.findDeepestSuperMetho
 import org.jetbrains.kotlin.idea.search.declarationsSearch.findDeepestSuperMethodsNoWrapping
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.lang.IllegalStateException

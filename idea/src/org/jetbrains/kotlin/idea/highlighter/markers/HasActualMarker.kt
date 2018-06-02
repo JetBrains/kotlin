@@ -18,36 +18,17 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
-import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.facet.implementingDescriptors
+import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.hasActualsFor
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import java.awt.event.MouseEvent
-
-fun ModuleDescriptor.hasActualsFor(descriptor: MemberDescriptor) =
-        actualsFor(descriptor).isNotEmpty()
-
-fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor, checkCompatible: Boolean = false): List<DeclarationDescriptor> =
-        with(ExpectedActualResolver) {
-            if (checkCompatible) {
-                descriptor.findCompatibleActualForExpected(this@actualsFor)
-            }
-            else {
-                descriptor.findAnyActualForExpected(this@actualsFor)
-            }
-        }
 
 fun getPlatformActualTooltip(declaration: KtDeclaration?): String? {
     val descriptor = declaration?.toDescriptor() as? MemberDescriptor ?: return null
@@ -76,26 +57,3 @@ fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration?) {
                                         "Actuals for ${declaration.name}",
                                         renderer)
 }
-
-private fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDescriptor> {
-    if (this is MemberDescriptor) {
-        if (!this.isExpect) return emptyList()
-
-        return module.implementingDescriptors.flatMap { it.actualsFor(this) }
-    }
-
-    if (this is ValueParameterDescriptor) {
-        return containingDeclaration.actualsForExpected().mapNotNull { (it as? CallableDescriptor)?.valueParameters?.getOrNull(index) }
-    }
-
-    return emptyList()
-}
-
-// null means "any platform" here
-internal fun KtDeclaration.actualsForExpected(module: Module? = null): Set<KtDeclaration> =
-    resolveToDescriptorIfAny(BodyResolveMode.FULL)
-        ?.actualsForExpected()
-        ?.filter { module == null || (it.module.getCapability(ModuleInfo.Capability) as? ModuleSourceInfo)?.module == module }
-        ?.mapNotNullTo(LinkedHashSet()) {
-            DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
-        } ?: emptySet()

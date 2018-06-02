@@ -33,7 +33,7 @@ import java.util.Objects;
 import static kotlin.LazyThreadSafetyMode.PUBLICATION;
 
 public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implements KtDeclarationContainer {
-    private final Lazy<KotlinScriptDefinition> kotlinScriptDefinition = LazyKt.lazy(PUBLICATION, () -> Objects.requireNonNull(
+    public final Lazy<KotlinScriptDefinition> kotlinScriptDefinition = LazyKt.lazy(PUBLICATION, () -> Objects.requireNonNull(
             KotlinScriptDefinitionProviderKt.getScriptDefinition(getContainingKtFile()),
             () -> "Should not parse a script without definition: " + getContainingKtFile().getVirtualFile().getPath()
     ));

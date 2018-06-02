@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
+import org.jetbrains.kotlin.resolve.jvm.annotations.isCallableMemberWithJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.Label
@@ -60,21 +61,23 @@ interface SourceCompilerForInline {
 
     val lazySourceMapper: DefaultSourceMapper
 
-    fun generateLambdaBody(adapter: MethodVisitor,
-                           jvmMethodSignature: JvmMethodSignature,
-                           lambdaInfo: ExpressionLambda): SMAP
+    fun generateLambdaBody(
+        adapter: MethodVisitor,
+        jvmMethodSignature: JvmMethodSignature,
+        lambdaInfo: ExpressionLambda
+    ): SMAP
 
     fun doCreateMethodNodeFromSource(
-            callableDescriptor: FunctionDescriptor,
-            jvmSignature: JvmMethodSignature,
-            callDefault: Boolean,
-            asmMethod: Method
+        callableDescriptor: FunctionDescriptor,
+        jvmSignature: JvmMethodSignature,
+        callDefault: Boolean,
+        asmMethod: Method
     ): SMAPAndMethodNode
 
     fun generateAndInsertFinallyBlocks(
-            intoNode: MethodNode,
-            insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
-            offsetForFinallyLocalVar: Int
+        intoNode: MethodNode,
+        insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
+        offsetForFinallyLocalVar: Int
     )
 
     fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean
@@ -91,7 +94,7 @@ interface SourceCompilerForInline {
 }
 
 
-class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, override val callElement: KtElement): SourceCompilerForInline {
+class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, override val callElement: KtElement) : SourceCompilerForInline {
 
     override val state = codegen.state
 
@@ -130,51 +133,53 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
             val signature = codegen.state.typeMapper.mapSignatureSkipGeneric(context.functionDescriptor, context.contextKind)
             return InlineCallSiteInfo(
-                    parentCodegen.className, signature.asmMethod.name, signature.asmMethod.descriptor
+                parentCodegen.className, signature.asmMethod.name, signature.asmMethod.descriptor
             )
         }
 
     override val lazySourceMapper
         get() = codegen.parentCodegen.orCreateSourceMapper
 
-    override fun generateLambdaBody(adapter: MethodVisitor,
-                           jvmMethodSignature: JvmMethodSignature,
-                           lambdaInfo: ExpressionLambda): SMAP {
+    override fun generateLambdaBody(
+        adapter: MethodVisitor,
+        jvmMethodSignature: JvmMethodSignature,
+        lambdaInfo: ExpressionLambda
+    ): SMAP {
         lambdaInfo as? PsiExpressionLambda ?: error("TODO")
         val invokeMethodDescriptor = lambdaInfo.invokeMethodDescriptor
         val closureContext =
-                if (lambdaInfo.isPropertyReference)
-                    codegen.getContext().intoAnonymousClass(lambdaInfo.classDescriptor, codegen, OwnerKind.IMPLEMENTATION)
-                else
-                    codegen.getContext().intoClosure(invokeMethodDescriptor, codegen, state.typeMapper)
+            if (lambdaInfo.isPropertyReference)
+                codegen.getContext().intoAnonymousClass(lambdaInfo.classDescriptor, codegen, OwnerKind.IMPLEMENTATION)
+            else
+                codegen.getContext().intoClosure(invokeMethodDescriptor, codegen, state.typeMapper)
         val context = closureContext.intoInlinedLambda(invokeMethodDescriptor, lambdaInfo.isCrossInline, lambdaInfo.isPropertyReference)
 
         return generateMethodBody(
-                adapter, invokeMethodDescriptor, context,
-                lambdaInfo.functionWithBodyOrCallableReference,
-                jvmMethodSignature, lambdaInfo
+            adapter, invokeMethodDescriptor, context,
+            lambdaInfo.functionWithBodyOrCallableReference,
+            jvmMethodSignature, lambdaInfo
         )
     }
 
     private fun generateMethodBody(
-            adapter: MethodVisitor,
-            descriptor: FunctionDescriptor,
-            context: MethodContext,
-            expression: KtExpression,
-            jvmMethodSignature: JvmMethodSignature,
-            lambdaInfo: PsiExpressionLambda?
+        adapter: MethodVisitor,
+        descriptor: FunctionDescriptor,
+        context: MethodContext,
+        expression: KtExpression,
+        jvmMethodSignature: JvmMethodSignature,
+        lambdaInfo: PsiExpressionLambda?
     ): SMAP {
         val isLambda = lambdaInfo != null
 
         // Wrapping for preventing marking actual parent codegen as containing reified markers
         val parentCodegen = FakeMemberCodegen(
-                codegen.parentCodegen, expression, context.parentContext as FieldOwnerContext<*>,
-                if (isLambda)
-                    codegen.parentCodegen.className
-                else
-                    state.typeMapper.mapImplementationOwner(descriptor).internalName,
-                if (isLambda) emptyList() else additionalInnerClasses,
-                isLambda
+            codegen.parentCodegen, expression, context.parentContext as FieldOwnerContext<*>,
+            if (isLambda)
+                codegen.parentCodegen.className
+            else
+                state.typeMapper.mapImplementationOwner(descriptor).internalName,
+            if (isLambda) emptyList() else additionalInnerClasses,
+            isLambda
         )
 
         val strategy = when (expression) {
@@ -186,11 +191,10 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                     val asmType = state.typeMapper.mapClass(lambdaInfo.classDescriptor)
                     val info = lambdaInfo.propertyReferenceInfo
                     PropertyReferenceCodegen.PropertyReferenceGenerationStrategy(
-                            true, info!!.getFunction, info.target, asmType, receiverType,
-                            lambdaInfo.functionWithBodyOrCallableReference, state, true
+                        true, info!!.getFunction, info.target, asmType, receiverType,
+                        lambdaInfo.functionWithBodyOrCallableReference, state, true
                     )
-                }
-                else {
+                } else {
                     FunctionReferenceGenerationStrategy(state, descriptor, resolvedCall, receiverType, null, true)
                 }
             }
@@ -209,8 +213,8 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
 
     private fun createSMAPWithDefaultMapping(
-            declaration: KtExpression,
-            mappings: List<FileMapping>
+        declaration: KtExpression,
+        mappings: List<FileMapping>
     ): SMAP {
         val containingFile = declaration.containingFile
         CodegenUtil.getLineNumberForElement(containingFile, true) ?: error("Couldn't extract line count in " + containingFile)
@@ -220,12 +224,12 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
     @Suppress("UNCHECKED_CAST")
     private class FakeMemberCodegen(
-            internal val delegate: MemberCodegen<*>,
-            declaration: KtElement,
-            codegenContext: FieldOwnerContext<*>,
-            private val className: String,
-            private val parentAsInnerClasses: List<ClassDescriptor>,
-            private val isInlineLambdaCodegen: Boolean
+        internal val delegate: MemberCodegen<*>,
+        declaration: KtElement,
+        codegenContext: FieldOwnerContext<*>,
+        private val className: String,
+        private val parentAsInnerClasses: List<ClassDescriptor>,
+        private val isInlineLambdaCodegen: Boolean
     ) : MemberCodegen<KtPureElement>(delegate as MemberCodegen<KtPureElement>, declaration, codegenContext) {
 
         override fun generateDeclaration() {
@@ -252,18 +256,17 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         override fun addParentsToInnerClassesIfNeeded(innerClasses: MutableCollection<ClassDescriptor>) {
             if (isInlineLambdaCodegen) {
                 super.addParentsToInnerClassesIfNeeded(innerClasses)
-            }
-            else {
+            } else {
                 innerClasses.addAll(parentAsInnerClasses)
             }
         }
     }
 
     override fun doCreateMethodNodeFromSource(
-            callableDescriptor: FunctionDescriptor,
-            jvmSignature: JvmMethodSignature,
-            callDefault: Boolean,
-            asmMethod: Method
+        callableDescriptor: FunctionDescriptor,
+        jvmSignature: JvmMethodSignature,
+        callDefault: Boolean,
+        asmMethod: Method
     ): SMAPAndMethodNode {
         val element = DescriptorToSourceUtils.descriptorToDeclaration(callableDescriptor)
 
@@ -273,10 +276,10 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         val inliningFunction = element as KtDeclarationWithBody?
 
         val node = MethodNode(
-                API,
-                AsmUtil.getMethodAsmFlags(callableDescriptor, context.contextKind, state) or if (callDefault) Opcodes.ACC_STATIC else 0,
-                asmMethod.name,
-                asmMethod.descriptor, null, null
+            API,
+            AsmUtil.getMethodAsmFlags(callableDescriptor, context.contextKind, state) or if (callDefault) Opcodes.ACC_STATIC else 0,
+            asmMethod.name,
+            asmMethod.descriptor, null, null
         )
 
         //for maxLocals calculation
@@ -287,10 +290,10 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         val smap = if (callDefault) {
             val implementationOwner = state.typeMapper.mapImplementationOwner(callableDescriptor)
             val parentCodegen = FakeMemberCodegen(
-                    codegen.parentCodegen, inliningFunction!!, methodContext.parentContext as FieldOwnerContext<*>,
-                    implementationOwner.internalName,
-                    additionalInnerClasses,
-                    false
+                codegen.parentCodegen, inliningFunction!!, methodContext.parentContext as FieldOwnerContext<*>,
+                implementationOwner.internalName,
+                additionalInnerClasses,
+                false
             )
             if (element !is KtNamedFunction) {
                 throw IllegalStateException("Property accessors with default parameters not supported " + callableDescriptor)
@@ -300,8 +303,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 inliningFunction as KtNamedFunction?, parentCodegen, asmMethod
             )
             createSMAPWithDefaultMapping(inliningFunction, parentCodegen.orCreateSourceMapper.resultMappings)
-        }
-        else {
+        } else {
             generateMethodBody(maxCalcAdapter, callableDescriptor, methodContext, inliningFunction!!, jvmSignature, null)
         }
         maxCalcAdapter.visitMaxs(-1, -1)
@@ -311,9 +313,9 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
     }
 
     override fun generateAndInsertFinallyBlocks(
-            intoNode: MethodNode,
-            insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
-            offsetForFinallyLocalVar: Int
+        intoNode: MethodNode,
+        insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
+        offsetForFinallyLocalVar: Int
     ) {
         if (!codegen.hasFinallyBlocks()) return
 
@@ -340,8 +342,10 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 val finallyNode = createEmptyMethodNode()
                 finallyNode.visitLabel(start)
 
-                val finallyCodegen = ExpressionCodegen(finallyNode, codegen.frameMap, codegen.returnType,
-                                                       codegen.getContext(), codegen.state, codegen.parentCodegen)
+                val finallyCodegen = ExpressionCodegen(
+                    finallyNode, codegen.frameMap, codegen.returnType,
+                    codegen.getContext(), codegen.state, codegen.parentCodegen
+                )
                 finallyCodegen.addBlockStackElementsForNonLocalReturns(codegen.blockStackElements, curFinallyDepth)
 
                 val frameMap = finallyCodegen.frameMap
@@ -394,19 +398,28 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         val parentContext = context.parentContext
         val descriptor = if (parentContext is ClosureContext && parentContext.originalSuspendLambdaDescriptor != null) {
             parentContext.originalSuspendLambdaDescriptor!!
-        }
-        else context.contextDescriptor
+        } else context.contextDescriptor
 
         return InlineCodegen.getDeclarationLabels(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor)
     }
 
     override fun initializeInlineFunctionContext(functionDescriptor: FunctionDescriptor) {
-        context = getContext(functionDescriptor, functionDescriptor, state, DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)?.containingFile as? KtFile, additionalInnerClasses)
+        context = getContext(
+            functionDescriptor,
+            functionDescriptor,
+            state,
+            DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)?.containingFile as? KtFile,
+            additionalInnerClasses
+        )
     }
 
     companion object {
         fun getContext(
-                descriptor: DeclarationDescriptor, innerDescriptor: DeclarationDescriptor, state: GenerationState, sourceFile: KtFile?, additionalInners: MutableList<ClassDescriptor>
+            descriptor: DeclarationDescriptor,
+            innerDescriptor: DeclarationDescriptor,
+            state: GenerationState,
+            sourceFile: KtFile?,
+            additionalInners: MutableList<ClassDescriptor>
         ): CodegenContext<*> {
             if (descriptor is PackageFragmentDescriptor) {
                 //no inners
@@ -415,30 +428,32 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
             val container = descriptor.containingDeclaration ?: error("No container for descriptor: " + descriptor)
             val parent = getContext(
-                    container,
-                    descriptor,
-                    state,
-                    sourceFile,
-                    additionalInners
+                container,
+                descriptor,
+                state,
+                sourceFile,
+                additionalInners
             )
 
             return when (descriptor) {
                 is ScriptDescriptor -> {
                     val earlierScripts = state.replSpecific.earlierScriptsForReplInterpreter
                     parent.intoScript(
-                            descriptor,
-                            earlierScripts ?: emptyList(),
-                            descriptor as ClassDescriptor, state.typeMapper
+                        descriptor,
+                        earlierScripts ?: emptyList(),
+                        descriptor as ClassDescriptor, state.typeMapper
                     )
                 }
                 is ClassDescriptor -> {
                     val kind =
-                            if (DescriptorUtils.isInterface(descriptor) && innerDescriptor !is ClassDescriptor)
-                                OwnerKind.DEFAULT_IMPLS
-                            else OwnerKind.IMPLEMENTATION
+                        if (DescriptorUtils.isInterface(descriptor) &&
+                            innerDescriptor !is ClassDescriptor && !innerDescriptor.isCallableMemberWithJvmDefaultAnnotation()
+                        )
+                            OwnerKind.DEFAULT_IMPLS
+                        else OwnerKind.IMPLEMENTATION
 
                     additionalInners.addIfNotNull(
-                            InnerClassConsumer.classForInnerClassRecord(descriptor, kind == OwnerKind.DEFAULT_IMPLS)
+                        InnerClassConsumer.classForInnerClassRecord(descriptor, kind == OwnerKind.DEFAULT_IMPLS)
                     )
                     parent.intoClass(descriptor, kind, state)
                 }

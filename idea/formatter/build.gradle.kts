@@ -7,7 +7,7 @@ plugins {
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
-    compileOnly(intellijDep()) { includeJars("idea", "openapi", "util", "jdom") }
+    compileOnly(intellijDep())
 }
 
 sourceSets {

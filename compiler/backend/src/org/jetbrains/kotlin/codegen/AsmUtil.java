@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionInfo;
@@ -58,6 +59,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAn
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -180,9 +182,9 @@ public class AsmUtil {
         return new Method(name, Type.getMethodDescriptor(returnType, parameterTypes));
     }
 
-    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {
+    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT ||
-                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !state.isJvm8TargetWithDefaults()))
+                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !hasJvmDefaultAnnotation(functionDescriptor)))
                && !isStaticMethod(kind, functionDescriptor);
     }
 
@@ -226,7 +228,7 @@ public class AsmUtil {
             flags |= ACC_STATIC;
         }
 
-        if (isAbstractMethod(functionDescriptor, kind, state)) {
+        if (isAbstractMethod(functionDescriptor, kind)) {
             flags |= ACC_ABSTRACT;
         }
 
@@ -505,7 +507,7 @@ public class AsmUtil {
         });
     }
 
-    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
+    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget, boolean isInterface) {
         if (type.getSort() == Type.ARRAY) {
             Type elementType = correctElementType(type);
             if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
@@ -516,7 +518,7 @@ public class AsmUtil {
             }
         }
         else if (type.getSort() == Type.OBJECT) {
-            iv.invokevirtual("java/lang/Object", "hashCode", "()I", false);
+            iv.invokevirtual((isInterface ? AsmTypes.OBJECT_TYPE : type).getInternalName(), "hashCode", "()I", false);
         }
         else if (type.getSort() == Type.BOOLEAN) {
             Label end = new Label();

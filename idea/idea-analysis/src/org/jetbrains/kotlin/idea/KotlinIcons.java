@@ -49,8 +49,8 @@ public interface KotlinIcons {
 
     Icon SUSPEND_CALL = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/suspendCall.png");
 
-    Icon FROM_EXPECTED = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/actual.png");
-    Icon FROM_ACTUAL = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/expect.png");
+    Icon ACTUAL = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/actual.png");
+    Icon EXPECT = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/expect.png");
 
     Icon LAUNCH = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_launch_configuration.png");
 

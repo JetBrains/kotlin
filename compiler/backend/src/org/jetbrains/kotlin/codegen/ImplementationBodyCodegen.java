@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
@@ -71,6 +72,7 @@ import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationCons
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -216,7 +218,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateDefaultImplsIfNeeded() {
-        if (isInterface(descriptor) && !isLocal && (!JvmCodegenUtil.isJvm8InterfaceWithDefaults(descriptor, state) || state.getGenerateDefaultImplsForJvm8())) {
+        if (isInterface(descriptor) && !isLocal) {
             Type defaultImplsType = state.getTypeMapper().mapDefaultImpls(descriptor);
             ClassBuilder defaultImplsBuilder =
                     state.getFactory().newVisitor(JvmDeclarationOriginKt.DefaultImpls(myClass.getPsiOrParent(), descriptor), defaultImplsType, myClass.getContainingKtFile());
@@ -400,9 +402,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateDelegates(delegationFieldsInfo);
 
-        if (!isInterface(descriptor)  || kind == OwnerKind.DEFAULT_IMPLS) {
-            generateSyntheticAccessors();
-        }
+        generateSyntheticAccessors();
 
         generateEnumMethods();
 
@@ -574,8 +574,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifne(ne);
                 }
                 else {
-                    StackValue value = genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
-                    value.put(Type.BOOLEAN_TYPE, iv);
+                    if (isPrimitive(asmType)) {
+                        StackValue value = StackValue.cmp(KtTokens.EQEQ, asmType, StackValue.onStack(asmType), StackValue.onStack(asmType));
+                        value.put(Type.BOOLEAN_TYPE, iv);
+                    } else {
+                        Type owner =
+                                DescriptorUtils.isInterface(propertyDescriptor.getType().getConstructor().getDeclarationDescriptor())
+                                ? AsmTypes.OBJECT_TYPE
+                                : asmType;
+                        iv.invokevirtual(owner.getInternalName(), "equals",
+                                         Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE), false);
+                    }
                     iv.ifeq(ne);
                 }
             }
@@ -616,7 +625,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifnull(ifNull);
                 }
 
-                genHashCode(mv, iv, asmType, state.getTarget());
+                genHashCode(mv, iv, asmType, state.getTarget(),
+                            DescriptorUtils.isInterface(propertyDescriptor.getType().getConstructor().getDeclarationDescriptor()));
 
                 if (ifNull != null) {
                     Label end = new Label();
@@ -1405,23 +1415,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateTraitMethods() {
-        if (isInterfaceWithoutDefaults(descriptor, state)) return;
+        if (isInterface(descriptor)) return;
 
-        List<FunctionDescriptor> restrictedInheritance = new ArrayList<>();
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
             FunctionDescriptor interfaceFun = entry.getKey();
             //skip java 8 default methods
-            if (!CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) && !isJvm8InterfaceWithDefaultsMember(interfaceFun, state)) {
-                if (state.isJvm8TargetWithDefaults() && !JvmCodegenUtil.isJvm8InterfaceWithDefaults(interfaceFun.getContainingDeclaration(), state)) {
-                    restrictedInheritance.add(interfaceFun);
-                }
-                else {
-                    generateDelegationToDefaultImpl(interfaceFun, entry.getValue());
-                }
+            if (!CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) && !hasJvmDefaultAnnotation(interfaceFun)) {
+                generateDelegationToDefaultImpl(interfaceFun, entry.getValue());
             }
         }
-
-        CodegenUtilKt.reportTarget6InheritanceErrorIfNeeded(descriptor, myClass.getPsiOrParent(), restrictedInheritance, state);
     }
 
     private void generateDelegationToDefaultImpl(@NotNull  FunctionDescriptor interfaceFun, @NotNull  FunctionDescriptor inheritedFun) {

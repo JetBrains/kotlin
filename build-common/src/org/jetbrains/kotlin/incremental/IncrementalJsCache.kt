@@ -60,7 +60,7 @@ open class IncrementalJsCache(cachesDir: File) : IncrementalCacheCommon<FqName>(
             headerFile.writeBytes(value)
         }
 
-    override fun markDirty(removedAndCompiledSources: List<File>) {
+    override fun markDirty(removedAndCompiledSources: Collection<File>) {
         super.markDirty(removedAndCompiledSources)
         dirtySources.addAll(removedAndCompiledSources)
     }

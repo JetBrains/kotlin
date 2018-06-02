@@ -1225,6 +1225,21 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/dataClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DataClasses extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInDataClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/dataClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("kt12330.kt")
+        public void testKt12330() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/dataClasses/kt12330.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/deadCodeElimination")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -10,16 +10,19 @@ sourceSets {
             srcDir "${rootDir}/core/reflection.jvm/src"
         }
     }
+    java9
 }
 
 dependencies {
-    compileOnly project(':kotlin-stdlib')
+    compile project(':kotlin-stdlib')
     compileOnly project(':core:descriptors')
     compileOnly project(':core:descriptors.jvm')
     compileOnly project(':core:deserialization')
     compileOnly project(':core:descriptors.runtime')
     compileOnly project(':core:util.runtime')
 }
+
+compileJava9Sources(project, 'kotlin.reflect', [sourceSets.main.output, configurations.compileOnly])
 
 compileKotlin {
     kotlinOptions {
@@ -33,4 +36,15 @@ compileKotlin {
 
 jar {
     manifestAttributes(manifest, project, "internal")
+}
+
+task java9Jar(type: Jar) {
+    classifier = "java9"
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
+}
+
+artifacts {
+    archives java9Jar
+    runtime java9Jar
 }

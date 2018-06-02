@@ -506,7 +506,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         String nameForClassOrPackageMember = getNameForClassOrPackageMember(functionDescriptor);
 
-        if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend()) {
+        if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend() &&
+            !functionDescriptor.getVisibility().equals(Visibilities.LOCAL)) {
             SimpleFunctionDescriptor jvmSuspendFunctionView =
                     CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
                             (SimpleFunctionDescriptor) functionDescriptor
@@ -563,11 +564,29 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         else {
             String name = inventAnonymousClassName();
             ClassDescriptor classDescriptor = recordClassForFunction(function, functionDescriptor, name, null);
-            recordClosure(classDescriptor, name);
+            MutableClosure closure = recordClosure(classDescriptor, name);
 
             classStack.push(classDescriptor);
-            functionsStack.push(functionDescriptor);
             nameStack.push(name);
+
+            if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend()) {
+                SimpleFunctionDescriptor jvmSuspendFunctionView =
+                        CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
+                                (SimpleFunctionDescriptor) functionDescriptor,
+                                /*bindingContext*/ null,
+                                /*dropSuspend*/ true
+                        );
+
+                bindingTrace.record(
+                        CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
+                        functionDescriptor,
+                        jvmSuspendFunctionView
+                );
+                closure.setSuspend(true);
+                closure.setSuspendLambda();
+            }
+
+            functionsStack.push(functionDescriptor);
             super.visitNamedFunction(function);
             functionsStack.pop();
             nameStack.pop();

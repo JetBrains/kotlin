@@ -53,7 +53,12 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
     }
 
     override fun visitElement(element: IrElement, data: String) {
-        element.dumpLabeledSubTree(data)
+        element.dumpLabeledElementWith(data) {
+            if (element is IrAnnotationContainer) {
+                dumpAnnotations(element)
+            }
+            element.acceptChildren(this@DumpIrTreeVisitor, "")
+        }
     }
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: String) {
@@ -73,12 +78,14 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
                     }
                 }
             }
+            dumpAnnotations(declaration)
             declaration.declarations.dumpElements()
         }
     }
 
     override fun visitClass(declaration: IrClass, data: String) {
         declaration.dumpLabeledElementWith(data) {
+            dumpAnnotations(declaration)
             declaration.thisReceiver?.accept(this, "\$this")
             declaration.superClasses.renderDeclarationElementsOrDescriptors("superClasses")
             declaration.typeParameters.dumpElements()
@@ -88,18 +95,28 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: String) {
         declaration.dumpLabeledElementWith(data) {
+            dumpAnnotations(declaration)
             declaration.superClassifiers.renderDeclarationElementsOrDescriptors("superClassifiers")
         }
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
         declaration.dumpLabeledElementWith(data) {
+            dumpAnnotations(declaration)
             declaration.overriddenSymbols.renderDeclarationElementsOrDescriptors("overridden")
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$this")
             declaration.extensionReceiverParameter?.accept(this, "\$receiver")
             declaration.valueParameters.dumpElements()
             declaration.body?.accept(this, "")
+        }
+    }
+
+    private fun dumpAnnotations(element: IrAnnotationContainer) {
+        if (element.annotations.isNotEmpty()) {
+            indented("annotations") {
+                element.annotations.dumpElements()
+            }
         }
     }
 
@@ -114,19 +131,19 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
     }
 
     private fun IrSymbol.renderDeclarationElementOrDescriptor(label: String? = null) {
-        if (isBound)
-            owner.render(label)
-        else {
-            if (label != null) {
+        when {
+            isBound ->
+                owner.render(label)
+            label != null ->
                 printer.println("$label: ", "UNBOUND: ", DescriptorRenderer.COMPACT.render(descriptor))
-            } else {
+            else ->
                 printer.println("UNBOUND: ", DescriptorRenderer.COMPACT.render(descriptor))
-            }
         }
     }
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
         declaration.dumpLabeledElementWith(data) {
+            dumpAnnotations(declaration)
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$outer")
             declaration.valueParameters.dumpElements()
@@ -136,6 +153,7 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
 
     override fun visitProperty(declaration: IrProperty, data: String) {
         declaration.dumpLabeledElementWith(data) {
+            dumpAnnotations(declaration)
             declaration.typeParameters.dumpElements()
             declaration.backingField?.accept(this, "")
             declaration.getter?.accept(this, "")
@@ -156,6 +174,7 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: String) {
         declaration.dumpLabeledElementWith(data) {
+            dumpAnnotations(declaration)
             declaration.initializerExpression?.accept(this, "init")
             declaration.correspondingClass?.accept(this, "class")
         }

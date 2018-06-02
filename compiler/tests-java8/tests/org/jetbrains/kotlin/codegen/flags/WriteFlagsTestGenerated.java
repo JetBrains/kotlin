@@ -51,21 +51,9 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("defaultMethodCompatibility.kt")
-        public void testDefaultMethodCompatibility() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaults/defaultMethodCompatibility.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("defaultProperty.kt")
         public void testDefaultProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaults/defaultProperty.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("defaultPropertyCompatibility.kt")
-        public void testDefaultPropertyCompatibility() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaults/defaultPropertyCompatibility.kt");
             doTest(fileName);
         }
     }

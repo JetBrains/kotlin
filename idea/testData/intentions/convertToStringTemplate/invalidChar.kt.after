@@ -1,2 +1,2 @@
 // DISABLE-ERRORS
-val foo = "foo \"bar \"\""<caret>
+val foo = "foo${' "'}bar${' ""'}"

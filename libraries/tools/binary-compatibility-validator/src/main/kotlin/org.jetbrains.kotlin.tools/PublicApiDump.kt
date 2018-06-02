@@ -15,8 +15,9 @@ fun main(args: Array<String>) {
 }
 
 
-fun JarFile.classEntries() = entries().asSequence().filter { !it.isDirectory && it.name.endsWith(".class") }
-
+fun JarFile.classEntries() = entries().asSequence().filter {
+    !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
+}
 
 fun getBinaryAPI(jar: JarFile, visibilityMap: Map<String, ClassVisibility>): List<ClassBinarySignature> =
         getBinaryAPI(jar.classEntries().map { entry -> jar.getInputStream(entry) }, visibilityMap)

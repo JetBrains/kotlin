@@ -425,8 +425,8 @@ abstract class AbstractIncrementalJpsTest(
     override fun doGetProjectDir(): File? = workDir
 
     private class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase(), BuildLogger {
-
-        private val dirtyFiles = ArrayList<File>()
+        private val markedDirtyBeforeRound = ArrayList<File>()
+        private val markedDirtyAfterRound = ArrayList<File>()
 
         override fun actionsOnCacheVersionChanged(actions: List<CacheVersion.Action>) {
             if (actions.size > 1 && actions.any { it != CacheVersion.Action.DO_NOTHING }) {
@@ -434,8 +434,12 @@ abstract class AbstractIncrementalJpsTest(
             }
         }
 
-        override fun markedAsDirty(files: Iterable<File>) {
-            dirtyFiles.addAll(files)
+        override fun markedAsDirtyBeforeRound(files: Iterable<File>) {
+            markedDirtyBeforeRound.addAll(files)
+        }
+
+        override fun markedAsDirtyAfterRound(files: Iterable<File>) {
+            markedDirtyAfterRound.addAll(files)
         }
 
         override fun buildStarted(context: CompileContext, chunk: ModuleChunk) {
@@ -444,18 +448,27 @@ abstract class AbstractIncrementalJpsTest(
             }
         }
 
-        override fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) {
+        override fun afterBuildStarted(context: CompileContext, chunk: ModuleChunk) {
+            logDirtyFiles(markedDirtyBeforeRound)
+        }
 
-            if (dirtyFiles.isNotEmpty()) {
-                logLine("Marked as dirty by Kotlin:")
-                dirtyFiles
-                        .map { FileUtil.toSystemIndependentName(it.path) }
-                        .sorted()
-                        .forEach { logLine(it) }
-                dirtyFiles.clear()
-            }
+        override fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) {
+            logDirtyFiles(markedDirtyAfterRound)
             logLine("Exit code: $exitCode")
             logLine("------------------------------------------")
+        }
+
+        private fun logDirtyFiles(files: MutableList<File>) {
+            if (files.isEmpty()) return
+
+            logLine("Marked as dirty by Kotlin:")
+            files.apply {
+                map { FileUtil.toSystemIndependentName(it.path) }
+                    .sorted()
+                    .forEach { logLine(it) }
+
+                clear()
+            }
         }
 
         private val logBuf = StringBuilder()

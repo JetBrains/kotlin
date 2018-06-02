@@ -33,17 +33,16 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
+import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
+import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.facet.implementedDescriptors
-import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
@@ -124,18 +123,12 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
             if (element.isExpectDeclaration()) {
                 collectActualMarkers(element, result)
             }
-            else if (element.isActualDeclaration()) {
+            else if (element.isEffectivelyActual()) {
                 collectExpectedMarkers(element, result)
             }
         }
     }
 }
-
-internal fun KtNamedDeclaration.isExpectDeclaration(): Boolean =
-        (toDescriptor() as? MemberDescriptor)?.isExpect == true
-
-internal fun KtNamedDeclaration.isActualDeclaration(): Boolean =
-        (toDescriptor() as? MemberDescriptor)?.isActual == true
 
 private val OVERRIDING_MARK: Icon = AllIcons.Gutter.OverridingMethod
 private val IMPLEMENTING_MARK: Icon = AllIcons.Gutter.ImplementingMethod
@@ -360,7 +353,7 @@ private fun collectActualMarkers(declaration: KtNamedDeclaration,
     val lineMarkerInfo = LineMarkerInfo(
         anchor,
         anchor.textRange,
-        KotlinIcons.FROM_EXPECTED,
+        KotlinIcons.ACTUAL,
         Pass.LINE_MARKERS,
         PLATFORM_ACTUAL.tooltip,
         PLATFORM_ACTUAL.navigationHandler,
@@ -386,7 +379,7 @@ private fun collectExpectedMarkers(declaration: KtNamedDeclaration,
     val lineMarkerInfo = LineMarkerInfo(
         anchor,
         anchor.textRange,
-        KotlinIcons.FROM_ACTUAL,
+        KotlinIcons.EXPECT,
         Pass.LINE_MARKERS,
         EXPECTED_DECLARATION.tooltip,
         EXPECTED_DECLARATION.navigationHandler,

@@ -7443,6 +7443,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("escapedQuote.kt")
+        public void testEscapedQuote() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/escapedQuote.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("escapedQuote2.kt")
+        public void testEscapedQuote2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/escapedQuote2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("insertBracesForSimpleNamedExpression.kt")
         public void testInsertBracesForSimpleNamedExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/insertBracesForSimpleNamedExpression.kt");
@@ -7536,6 +7548,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("multilineString.kt")
         public void testMultilineString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/multilineString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("newLine.kt")
+        public void testNewLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/newLine.kt");
             doTest(fileName);
         }
 
@@ -8380,159 +8398,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/declarations/split/simpleInitWithType2.kt");
                 doTest(fileName);
             }
-        }
-    }
-
-    @TestMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class DeprecatedCallableAddReplaceWith extends AbstractIntentionTest {
-        public void testAllFilesPresentInDeprecatedCallableAddReplaceWith() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/deprecatedCallableAddReplaceWith"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("AlreadyWithReplaceWith.kt")
-        public void testAlreadyWithReplaceWith() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/AlreadyWithReplaceWith.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("CommentInBody.kt")
-        public void testCommentInBody() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/CommentInBody.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DeclarationInside.kt")
-        public void testDeclarationInside() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/DeclarationInside.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DeprecationLevelHidden.kt")
-        public void testDeprecationLevelHidden() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/DeprecationLevelHidden.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("destructuringWithLambdaInScript.kts")
-        public void testDestructuringWithLambdaInScript() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/destructuringWithLambdaInScript.kts");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ExceptionInPropertyDestructuringEntry.kt")
-        public void testExceptionInPropertyDestructuringEntry() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/ExceptionInPropertyDestructuringEntry.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ExpressionBody.kt")
-        public void testExpressionBody() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/ExpressionBody.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("If.kt")
-        public void testIf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/If.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("Imports.kt")
-        public void testImports() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/Imports.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("justLambdaInScript.kts")
-        public void testJustLambdaInScript() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/justLambdaInScript.kts");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoCompanionObjectImport.kt")
-        public void testNoCompanionObjectImport() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/NoCompanionObjectImport.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoDefaultImport.kt")
-        public void testNoDefaultImport() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/NoDefaultImport.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoReturn.kt")
-        public void testNoReturn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/NoReturn.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NotAvailableOnDocComment.kt")
-        public void testNotAvailableOnDocComment() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/NotAvailableOnDocComment.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("PrivateSymbolUsed.kt")
-        public void testPrivateSymbolUsed() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/PrivateSymbolUsed.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("QualifiedCall.kt")
-        public void testQualifiedCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/QualifiedCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("Return.kt")
-        public void testReturn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/Return.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ReturnInside.kt")
-        public void testReturnInside() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/ReturnInside.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("Simple.kt")
-        public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/Simple.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("StringLiteral.kt")
-        public void testStringLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/StringLiteral.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("StringTemplate.kt")
-        public void testStringTemplate() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/StringTemplate.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("TwoStatements.kt")
-        public void testTwoStatements() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/TwoStatements.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ValProperty.kt")
-        public void testValProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/ValProperty.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ValPropertyWithReturn.kt")
-        public void testValPropertyWithReturn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/ValPropertyWithReturn.kt");
-            doTest(fileName);
         }
     }
 
@@ -14145,6 +14010,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeRedundantCallsOfConversionMethods"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("booleanToInt.kt")
+        public void testBooleanToInt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/booleanToInt.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("byte.kt")
         public void testByte() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/byte.kt");
@@ -15534,6 +15405,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nullableComplex2.kt")
+        public void testNullableComplex2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/nullableComplex2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("reduceableBinary.kt")
         public void testReduceableBinary() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/reduceableBinary.kt");
@@ -15873,12 +15750,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("unitType.kt")
         public void testUnitType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/unitType.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("unknownType.kt")
-        public void testUnknownType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/unknownType.kt");
             doTest(fileName);
         }
     }

@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.js
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.CompilerModuleExtension
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.idea.caches.project.implementingModules
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.idea.facet.implementingModules
 import org.jetbrains.kotlin.idea.framework.isGradleModule
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.js.resolve.JsPlatform

@@ -29,11 +29,11 @@ class KotlinJsr223JvmLocalScriptEngineFactory : KotlinJsr223JvmScriptEngineFacto
 
     override fun getScriptEngine(): ScriptEngine =
             KotlinJsr223JvmLocalScriptEngine(
-                    this,
-                    scriptCompilationClasspathFromContext("kotlin-script-util.jar"),
-                    KotlinStandardJsr223ScriptTemplate::class.qualifiedName!!,
-                    { ctx, types -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), types ?: emptyArray()) },
-                    arrayOf(Bindings::class)
+                this,
+                scriptCompilationClasspathFromContextOrStlib("kotlin-script-util.jar", wholeClasspath = true),
+                KotlinStandardJsr223ScriptTemplate::class.qualifiedName!!,
+                { ctx, types -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), types ?: emptyArray()) },
+                arrayOf(Bindings::class)
             )
 }
 
@@ -41,12 +41,12 @@ class KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory : KotlinJsr223JvmScriptE
 
     override fun getScriptEngine(): ScriptEngine =
             KotlinJsr223JvmDaemonCompileScriptEngine(
-                    this,
-                    KotlinJars.compilerClasspath,
-                    scriptCompilationClasspathFromContext("kotlin-script-util.jar"),
-                    KotlinStandardJsr223ScriptTemplate::class.qualifiedName!!,
-                    { ctx, types -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), types ?: emptyArray()) },
-                    arrayOf(Bindings::class)
+                this,
+                KotlinJars.compilerClasspath,
+                scriptCompilationClasspathFromContextOrStlib("kotlin-script-util.jar", wholeClasspath = true),
+                KotlinStandardJsr223ScriptTemplate::class.qualifiedName!!,
+                { ctx, types -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), types ?: emptyArray()) },
+                arrayOf(Bindings::class)
             )
 }
 

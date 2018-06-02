@@ -1205,11 +1205,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.AddNameToArgumentIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -1606,7 +1601,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DeprecatedCallableAddReplaceWithInspection"
                      displayName="@Deprecated annotation without 'replaceWith' argument"
                      groupPath="Kotlin"
                      groupName="Other problems"

@@ -39,12 +39,6 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("deprecatedCallableAddReplaceWith/inspectionData/inspections.test")
-        public void testDeprecatedCallableAddReplaceWith_inspectionData_Inspections_test() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/inspectionData/inspections.test");
-            doTest(fileName);
-        }
-
         @TestMetadata("destructuringInLambda/inspectionData/inspections.test")
         public void testDestructuringInLambda_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/inspectionData/inspections.test");
@@ -504,6 +498,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test")
         public void testConventionNameCalls_replaceGetOrSet_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deprecatedCallableAddReplaceWith/inspectionData/inspections.test")
+        public void testDeprecatedCallableAddReplaceWith_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/inspectionData/inspections.test");
             doTest(fileName);
         }
 

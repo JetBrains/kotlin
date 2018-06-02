@@ -2024,6 +2024,9 @@ public final class kotlin/io/TextStreamsKt {
 	public static final fun useLines (Ljava/io/Reader;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
+public abstract interface annotation class kotlin/jvm/JvmDefault : java/lang/annotation/Annotation {
+}
+
 public final class kotlin/math/MathKt {
 	public static final field E D
 	public static final field PI D

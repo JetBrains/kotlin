@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.parsing.util.classesFqNames
 import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
@@ -139,6 +140,12 @@ interface CompileService : Remote {
             servicesFacade: CompilerServicesFacadeBase,
             compilationResults: CompilationResults?
     ): CallResult<Int>
+
+    @Throws(RemoteException::class)
+    fun classesFqNamesByFiles(
+        sessionId: Int,
+        sourceFiles: Set<File>
+    ): CallResult<Set<String>>
 
     @Throws(RemoteException::class)
     fun clearJarCache()

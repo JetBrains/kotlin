@@ -16,7 +16,7 @@ import com.intellij.psi.ResolveScopeEnlarger
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.idea.facet.findImplementingModules
+import org.jetbrains.kotlin.idea.caches.project.findImplementingModules
 import org.jetbrains.kotlin.idea.project.targetPlatform
 
 class CommonModuleResolveScopeEnlarger : ResolveScopeEnlarger() {

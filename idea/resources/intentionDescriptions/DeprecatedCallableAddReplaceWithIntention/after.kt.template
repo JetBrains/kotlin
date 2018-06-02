@@ -1,4 +1,0 @@
-@deprecated("Use newFun instead", <spot>ReplaceWith("newFun(null)")</spot>)
-fun oldFun(): Int {
-    return newFun(null)
-}

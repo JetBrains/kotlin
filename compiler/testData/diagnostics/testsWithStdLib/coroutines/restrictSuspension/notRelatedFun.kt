@@ -43,7 +43,7 @@ fun A.test() {
         }
     }
 
-    <!WRONG_MODIFIER_TARGET!>suspend<!> fun SuperInterface.fun1() {
+    suspend fun SuperInterface.fun1() {
         topLevel()
         member()
         with(A()) {
@@ -51,7 +51,7 @@ fun A.test() {
             member()
         }
     }
-    <!WRONG_MODIFIER_TARGET!>suspend<!> fun RestrictedController.fun2() {
+    suspend fun RestrictedController.fun2() {
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>topLevel<!>()
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
         with(A()) {
@@ -59,7 +59,7 @@ fun A.test() {
             <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
         }
     }
-    <!WRONG_MODIFIER_TARGET!>suspend<!> fun SubClass.fun3() {
+    suspend fun SubClass.fun3() {
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>topLevel<!>()
         <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
         with(A()) {

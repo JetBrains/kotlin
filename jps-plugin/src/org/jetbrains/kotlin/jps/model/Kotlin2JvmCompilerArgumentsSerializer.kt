@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUM
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 
 internal class Kotlin2JvmCompilerArgumentsSerializer : BaseJpsCompilerSettingsSerializer<K2JVMCompilerArguments>(
-        KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION, ::K2JVMCompilerArguments
+    KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION, ::K2JVMCompilerArguments
 ) {
     override fun onLoad(project: JpsProject, settings: K2JVMCompilerArguments) {
         JpsKotlinCompilerSettings.setK2JvmCompilerArguments(project, settings)

@@ -48,11 +48,11 @@ import org.jetbrains.kotlin.types.isError
 import java.util.*
 
 class VariableOrParameterNameWithTypeCompletion(
-        private val collector: LookupElementsCollector,
-        private val lookupElementFactory: BasicLookupElementFactory,
-        private val prefixMatcher: PrefixMatcher,
-        private val resolutionFacade: ResolutionFacade,
-        private val withType: Boolean
+    private val collector: LookupElementsCollector,
+    private val lookupElementFactory: BasicLookupElementFactory,
+    private val prefixMatcher: PrefixMatcher,
+    private val resolutionFacade: ResolutionFacade,
+    private val withType: Boolean
 ) {
     private val userPrefixes: List<String>
     private val classNamePrefixMatchers: List<PrefixMatcher>
@@ -72,11 +72,13 @@ class VariableOrParameterNameWithTypeCompletion(
     }
 
     private val suggestionsByTypesAdded = HashSet<Type>()
+    private val lookupNamesAdded = HashSet<String>()
 
     fun addFromImportedClasses(position: PsiElement, bindingContext: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
         for ((classNameMatcher, userPrefix) in classNamePrefixMatchers.zip(userPrefixes)) {
             val resolutionScope = position.getResolutionScope(bindingContext, resolutionFacade)
-            val classifiers = resolutionScope.collectDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, classNameMatcher.asNameFilter())
+            val classifiers =
+                resolutionScope.collectDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, classNameMatcher.asNameFilter())
 
             for (classifier in classifiers) {
                 if (visibilityFilter(classifier)) {
@@ -91,21 +93,25 @@ class VariableOrParameterNameWithTypeCompletion(
     fun addFromAllClasses(parameters: CompletionParameters, indicesHelper: KotlinIndicesHelper) {
         for ((classNameMatcher, userPrefix) in classNamePrefixMatchers.zip(userPrefixes)) {
             AllClassesCompletion(
-                    parameters, indicesHelper, classNameMatcher, resolutionFacade, { !it.isSingleton },
-                    includeTypeAliases = true, includeJavaClassesNotToBeUsed = false
+                parameters, indicesHelper, classNameMatcher, resolutionFacade, { !it.isSingleton },
+                includeTypeAliases = true, includeJavaClassesNotToBeUsed = false
             ).collect(
-                    { addSuggestionsForClassifier(it, userPrefix, notImported = true) },
-                    { addSuggestionsForJavaClass(it, userPrefix, notImported = true) }
+                { addSuggestionsForClassifier(it, userPrefix, notImported = true) },
+                { addSuggestionsForJavaClass(it, userPrefix, notImported = true) }
             )
 
             collector.flushToResultSet()
         }
     }
 
-    fun addFromParametersInFile(position: PsiElement, resolutionFacade: ResolutionFacade, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
-        val lookupElementToCount = LinkedHashMap<LookupElement, Int>()
+    fun addFromParametersInFile(
+        position: PsiElement,
+        resolutionFacade: ResolutionFacade,
+        visibilityFilter: (DeclarationDescriptor) -> Boolean
+    ) {
+        val lookupElementToCount = LinkedHashMap<LookupElement, Pair<Int, String>>()
         position.containingFile.forEachDescendantOfType<KtParameter>(
-                canGoInside = { it !is KtExpression || it is KtDeclaration } // we analyze parameters inside bodies to not resolve too much
+            canGoInside = { it !is KtExpression || it is KtDeclaration } // we analyze parameters inside bodies to not resolve too much
         ) { parameter ->
             ProgressManager.checkCanceled()
 
@@ -116,16 +122,18 @@ class VariableOrParameterNameWithTypeCompletion(
                     val parameterType = descriptor.type
                     if (parameterType.isVisible(visibilityFilter)) {
                         val lookupElement = MyLookupElement.create(name, ArbitraryType(parameterType), withType, lookupElementFactory)!!
-                        val count = lookupElementToCount[lookupElement] ?: 0
-                        lookupElementToCount[lookupElement] = count + 1
+                        val (count, name) = lookupElementToCount[lookupElement] ?: Pair(0, name)
+                        lookupElementToCount[lookupElement] = Pair(count + 1, name)
                     }
                 }
             }
         }
 
-        for ((lookupElement, count) in lookupElementToCount) {
+        for ((lookupElement, countAndName) in lookupElementToCount) {
+            val (count, name) = countAndName
             lookupElement.putUserData(PRIORITY_KEY, -count)
-            collector.addElement(lookupElement)
+            if (withType || !lookupNamesAdded.contains(name)) collector.addElement(lookupElement)
+            lookupNamesAdded.add(name)
         }
     }
 
@@ -148,8 +156,9 @@ class VariableOrParameterNameWithTypeCompletion(
                 val lookupElement = MyLookupElement.create(parameterName, type, withType, lookupElementFactory)
                 if (lookupElement != null) {
                     lookupElement.putUserData(PRIORITY_KEY, userPrefix.length) // suggestions with longer user prefix get lower priority
-                    collector.addElement(lookupElement, notImported)
+                    if (withType || !lookupNamesAdded.contains(parameterName)) collector.addElement(lookupElement, notImported)
                     suggestionsByTypesAdded.add(type)
+                    lookupNamesAdded.add(parameterName)
                 }
             }
         }
@@ -168,26 +177,27 @@ class VariableOrParameterNameWithTypeCompletion(
         override fun hashCode() = idString.hashCode()
     }
 
-    private class DescriptorType(private val classifier: ClassifierDescriptor) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier)) {
-        override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory)
-                = lookupElementFactory.createLookupElement(classifier, qualifyNestedClasses = true)
+    private class DescriptorType(private val classifier: ClassifierDescriptor) :
+        Type(IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier)) {
+        override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory) =
+            lookupElementFactory.createLookupElement(classifier, qualifyNestedClasses = true)
     }
 
     private class JavaClassType(private val psiClass: PsiClass) : Type(psiClass.qualifiedName!!) {
-        override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory)
-                = lookupElementFactory.createLookupElementForJavaClass(psiClass, qualifyNestedClasses = true)
+        override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory) =
+            lookupElementFactory.createLookupElementForJavaClass(psiClass, qualifyNestedClasses = true)
     }
 
     private class ArbitraryType(private val type: KotlinType) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)) {
-        override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory)
-                = lookupElementFactory.createLookupElementForType(type)
+        override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory) =
+            lookupElementFactory.createLookupElementForType(type)
     }
 
     private class MyLookupElement private constructor(
-            private val parameterName: String,
-            private val type: Type,
-            typeLookupElement: LookupElement,
-            private val shouldInsertType: Boolean
+        private val parameterName: String,
+        private val type: Type,
+        typeLookupElement: LookupElement,
+        private val shouldInsertType: Boolean
     ) : LookupElementDecorator<LookupElement>(typeLookupElement) {
 
         companion object {
@@ -212,8 +222,7 @@ class VariableOrParameterNameWithTypeCompletion(
             super.renderElement(presentation)
             if (shouldInsertType) {
                 presentation.itemText = parameterName + ": " + presentation.itemText
-            }
-            else {
+            } else {
                 presentation.prependTailText(": " + presentation.itemText, true)
                 presentation.itemText = parameterName
             }
@@ -236,7 +245,8 @@ class VariableOrParameterNameWithTypeCompletion(
                 }
             }
 
-            val settings = CodeStyleSettingsManager.getInstance(context.project).currentSettings.getCustomSettings(KotlinCodeStyleSettings::class.java)
+            val settings =
+                CodeStyleSettingsManager.getInstance(context.project).currentSettings.getCustomSettings(KotlinCodeStyleSettings::class.java)
             val spaceBefore = if (settings.SPACE_BEFORE_TYPE_COLON) " " else ""
             val spaceAfter = if (settings.SPACE_AFTER_TYPE_COLON) " " else ""
 
@@ -249,16 +259,16 @@ class VariableOrParameterNameWithTypeCompletion(
                 context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, startOffset + text.length)
 
                 super.handleInsert(context)
-            }
-            else {
+            } else {
                 context.document.replaceString(startOffset, context.tailOffset, parameterName)
 
                 context.commitDocument()
             }
         }
 
-        override fun equals(other: Any?)
-                = other is MyLookupElement && parameterName == other.parameterName && type == other.type && shouldInsertType == other.shouldInsertType
+        override fun equals(other: Any?) =
+            other is MyLookupElement && parameterName == other.parameterName && type == other.type && shouldInsertType == other.shouldInsertType
+
         override fun hashCode() = parameterName.hashCode()
     }
 

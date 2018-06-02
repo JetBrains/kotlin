@@ -118,6 +118,7 @@ include ":kotlin-build-common",
         ":prepare:formatter",
         ":prepare:ide-lazy-resolver",
         ":prepare:idea-plugin",
+        ":prepare:cidr-plugin",
         ":android-lint",
         ":kotlin-compiler",
         ":kotlin-compiler-embeddable",
@@ -150,6 +151,17 @@ include ":kotlin-build-common",
         ":examples:kotlin-jsr223-daemon-local-eval-example",
         ":kotlin-annotations-jvm",
         ":kotlin-annotations-android",
+        ":kotlin-scripting-common",
+        ":kotlin-scripting-misc",
+        ":kotlin-scripting-jvm",
+        ":kotlin-scripting-jvm-host",
+        ":kotlin-scripting-compiler",
+        ":kotlin-scripting-idea",
+        ":kotlin-scripting-gradle",
+        ":examples:scripting-jvm-simple-script",
+        ":examples:scripting-jvm-simple-script-host",
+        ":examples:scripting-jvm-maven-deps",
+        ":examples:scripting-jvm-maven-deps-host",
         ":pill:generate-all-tests",
         ":include:kotlin-compiler",
 
@@ -157,6 +169,7 @@ include ":kotlin-build-common",
         ':kotlin-gradle-plugin:plugin-marker',
         ':kotlin-allopen:plugin-marker',
         ':kotlin-noarg:plugin-marker',
+        ':kotlin-scripting-gradle:plugin-marker',
         ":test-instrumenter"
 
 def isTeamcityBuild = hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
@@ -243,10 +256,22 @@ project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/librarie
 project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-daemon-local-eval-example" as File
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File
 project(':kotlin-annotations-android').projectDir = "$rootDir/libraries/tools/kotlin-annotations-android" as File
+project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
+project(':kotlin-scripting-misc').projectDir = "$rootDir/libraries/scripting/misc" as File
+project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
+project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
+project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-cli" as File
+project(':kotlin-scripting-idea').projectDir = "$rootDir/plugins/scripting/scripting-idea" as File
+project(':kotlin-scripting-gradle').projectDir = "$rootDir/plugins/scripting/scripting-gradle" as File
+project(':examples:scripting-jvm-simple-script').projectDir = "$rootDir/libraries/examples/scripting/jvm-simple-script/script" as File
+project(':examples:scripting-jvm-simple-script-host').projectDir = "$rootDir/libraries/examples/scripting/jvm-simple-script/host" as File
+project(':examples:scripting-jvm-maven-deps').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps/script" as File
+project(':examples:scripting-jvm-maven-deps-host').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps/host" as File
 project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate-all-tests" as File
 
 // plugin markers:
 project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")
 project(':kotlin-allopen:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-allopen/plugin-marker")
 project(':kotlin-noarg:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-noarg/plugin-marker")
+project(':kotlin-scripting-gradle:plugin-marker').projectDir = file("$rootDir/plugins/scripting/scripting-gradle/plugin-marker")
 

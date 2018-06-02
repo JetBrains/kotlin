@@ -18,11 +18,12 @@ dependencies {
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":plugins:android-extensions-compiler"))
+    compile(project(":kotlin-scripting-idea"))
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("util", "openapi", "idea", "asm-all", "jdom", "annotations", "trove4j", "guava", rootProject = rootProject) }
-    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-api", "gradle", rootProject = rootProject) }
+    compileOnly(intellijDep())
+    compileOnly(intellijPluginDep("gradle"))
 }
 
 sourceSets {
