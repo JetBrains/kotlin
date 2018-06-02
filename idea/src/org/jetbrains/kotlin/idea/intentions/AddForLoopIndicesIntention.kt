@@ -38,6 +38,7 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
 
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         if (element.loopParameter == null) return null
+        if (element.loopParameter?.destructuringDeclaration != null) return null
         val loopRange = element.loopRange ?: return null
 
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
