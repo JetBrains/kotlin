@@ -38,7 +38,7 @@ class IntegerValueTypeConstructor(
         // order of types matters
         // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type
         // for expected type 'Any' result type 'Int' should be returned
-        val isUnsigned = parameters.isUnsigned
+        val isUnsigned = parameters.isUnsignedNumberLiteral
 
         if (isUnsigned) {
             assert(hasUnsignedTypesInModuleDependencies(module)) {

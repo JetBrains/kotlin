@@ -395,7 +395,7 @@ private class ConstantExpressionEvaluatorVisitor(
             CompileTimeConstant.Parameters(
                 canBeUsedInAnnotation = true,
                 isPure = !typedConstant,
-                isUnsigned = isUnsigned,
+                isUnsignedNumberLiteral = isUnsigned,
                 usesVariableAsConstant = false,
                 usesNonConstValAsConstant = false
             )
@@ -442,7 +442,7 @@ private class ConstantExpressionEvaluatorVisitor(
                 expectedType,
                 CompileTimeConstant.Parameters(
                     isPure = false,
-                    isUnsigned = false,
+                    isUnsignedNumberLiteral = false,
                     canBeUsedInAnnotation = canBeUsedInAnnotation,
                     usesVariableAsConstant = usesVariableAsConstant,
                     usesNonConstValAsConstant = usesNonConstantVariableAsConstant
@@ -505,7 +505,7 @@ private class ConstantExpressionEvaluatorVisitor(
                 CompileTimeConstant.Parameters(
                     canBeUsedInAnnotation = true,
                     isPure = false,
-                    isUnsigned = false,
+                    isUnsignedNumberLiteral = false,
                     usesVariableAsConstant = leftConstant.usesVariableAsConstant || rightConstant.usesVariableAsConstant,
                     usesNonConstValAsConstant = leftConstant.usesNonConstValAsConstant || rightConstant.usesNonConstValAsConstant
                 )
@@ -707,7 +707,7 @@ private class ConstantExpressionEvaluatorVisitor(
                     CompileTimeConstant.Parameters(
                         canBeUsedInAnnotation = isPropertyCompileTimeConstant(callableDescriptor),
                         isPure = false,
-                        isUnsigned = false,
+                        isUnsignedNumberLiteral = false,
                         usesVariableAsConstant = true,
                         usesNonConstValAsConstant = !callableDescriptor.isConst
                     )
@@ -911,7 +911,7 @@ private class ConstantExpressionEvaluatorVisitor(
         expectedType: KotlinType?,
         parameters: CompileTimeConstant.Parameters
     ): CompileTimeConstant<*>? {
-        return if (parameters.isPure || parameters.isUnsigned) {
+        return if (parameters.isPure || parameters.isUnsignedNumberLiteral) {
             return createCompileTimeConstant(value, parameters, expectedType ?: TypeUtils.NO_EXPECTED_TYPE)
         } else {
             ConstantValueFactory.createConstantValue(value)?.wrap(parameters)
@@ -937,12 +937,12 @@ private class ConstantExpressionEvaluatorVisitor(
         if (TypeUtils.noExpectedType(expectedType) || expectedType.isError) {
             return createIntegerValueTypeConstant(value, constantExpressionEvaluator.module, parameters)
         }
-        val integerValue = ConstantValueFactory.createIntegerConstantValue(value, expectedType, parameters.isUnsigned)
+        val integerValue = ConstantValueFactory.createIntegerConstantValue(value, expectedType, parameters.isUnsignedNumberLiteral)
         if (integerValue != null) {
             return integerValue.wrap(parameters)
         }
 
-        return if (parameters.isUnsigned) {
+        return if (parameters.isUnsignedNumberLiteral) {
             when (value) {
                 value.toInt().fromUIntToLong() -> UIntValue(value.toInt())
                 else -> ULongValue(value)

@@ -40,14 +40,15 @@ interface CompileTimeConstant<out T> {
 
     val isPure: Boolean get() = parameters.isPure
 
-    val isUnsigned: Boolean get() = parameters.isUnsigned
+    val isUnsignedNumberLiteral: Boolean get() = parameters.isUnsignedNumberLiteral
 
     class Parameters(
-            val canBeUsedInAnnotation: Boolean,
-            val isPure: Boolean,
-            val isUnsigned: Boolean,
-            val usesVariableAsConstant: Boolean,
-            val usesNonConstValAsConstant: Boolean
+        val canBeUsedInAnnotation: Boolean,
+        val isPure: Boolean,
+        // `isUnsignedNumberLiteral` means that this constant represents simple number literal with `u` suffix (123u, 0xFEu)
+        val isUnsignedNumberLiteral: Boolean,
+        val usesVariableAsConstant: Boolean,
+        val usesNonConstValAsConstant: Boolean
     )
 
     override fun equals(other: Any?): Boolean
@@ -88,7 +89,7 @@ fun createIntegerValueTypeConstant(
     module: ModuleDescriptor,
     parameters: CompileTimeConstant.Parameters
 ): CompileTimeConstant<*> {
-    return if (parameters.isUnsigned && !hasUnsignedTypesInModuleDependencies(module)) {
+    return if (parameters.isUnsignedNumberLiteral && !hasUnsignedTypesInModuleDependencies(module)) {
         UnsignedErrorValueTypeConstant(value, parameters)
     } else {
         IntegerValueTypeConstant(value, module, parameters)
