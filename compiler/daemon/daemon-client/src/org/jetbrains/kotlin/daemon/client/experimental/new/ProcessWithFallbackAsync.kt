@@ -3,8 +3,9 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.daemon.client.experimental
+package org.jetbrains.kotlin.daemon.client.experimental.new
 
+import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.NativePlatformLauncherWrapper
 import org.jetbrains.kotlin.daemon.common.DaemonReportCategory
 import java.io.IOException

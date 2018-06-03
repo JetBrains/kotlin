@@ -40,13 +40,18 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     private val compilerLibDir = getCompilerLib()
 
     val compilerClassPath = listOf(
-            File(compilerLibDir, "kotlin-compiler.jar"))
+        File(compilerLibDir, "kotlin-compiler.jar")
+    )
     val scriptRuntimeClassPath = listOf(
-            File(compilerLibDir, "kotlin-runtime.jar"),
-            File(compilerLibDir, "kotlin-script-runtime.jar"))
+        File(compilerLibDir, "kotlin-runtime.jar"),
+        File(compilerLibDir, "kotlin-script-runtime.jar")
+    )
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
-    private fun compileLocally(messageCollector: TestMessageCollector, vararg args: String): Pair<Int, Collection<OutputMessageUtil.Output>> {
+    private fun compileLocally(
+        messageCollector: TestMessageCollector,
+        vararg args: String
+    ): Pair<Int, Collection<OutputMessageUtil.Output>> {
         val application = ApplicationManager.getApplication()
         try {
             val code = K2JVMCompiler().exec(messageCollector,
@@ -58,25 +63,32 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                 }
             }
             return code to outputs
-        }
-        finally {
+        } finally {
             KtUsefulTestCase.resetApplicationToNull(application)
         }
     }
 
-    private fun compileOnDaemon(clientAliveFile: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions,
-                                messageCollector: MessageCollector, vararg args: String): Pair<Int, Collection<OutputMessageUtil.Output>> {
-        val daemon = KotlinCompilerClient.connectToCompileService(compilerId, clientAliveFile, daemonJVMOptions, daemonOptions,
-                                                                  DaemonReportingTargets(messageCollector = messageCollector), autostart = true)
+    private fun compileOnDaemon(
+        clientAliveFile: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions,
+        messageCollector: MessageCollector, vararg args: String
+    ): Pair<Int, Collection<OutputMessageUtil.Output>> {
+        val daemon = KotlinCompilerClient.connectToCompileService(
+            compilerId, clientAliveFile, daemonJVMOptions, daemonOptions,
+            DaemonReportingTargets(
+                messageCollector = messageCollector
+            ), autostart = true
+        )
         assertNotNull("failed to connect daemon", daemon)
 
         daemon?.registerClient(clientAliveFile.absolutePath)
 
         val outputs = arrayListOf<OutputMessageUtil.Output>()
 
-        val code = KotlinCompilerClient.compile(daemon!!, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, args, messageCollector,
-                                                { outFile, srcFiles -> outputs.add(OutputMessageUtil.Output(srcFiles, outFile)) },
-                                                reportSeverity = ReportSeverity.DEBUG)
+        val code = KotlinCompilerClient.compile(
+            daemon!!, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, args, messageCollector,
+            { outFile, srcFiles -> outputs.add(OutputMessageUtil.Output(srcFiles, outFile)) },
+            reportSeverity = ReportSeverity.DEBUG
+        )
         return code to outputs
     }
 
@@ -85,7 +97,13 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
     private fun run(baseDir: String, logName: String, vararg args: String): Int = runJava(baseDir, logName, *args)
 
-    private fun runScriptWithArgs(testDataDir: String, logName: String?, scriptClassName: String, classpath: List<File>, vararg arguments: String) {
+    private fun runScriptWithArgs(
+        testDataDir: String,
+        logName: String?,
+        scriptClassName: String,
+        classpath: List<File>,
+        vararg arguments: String
+    ) {
 
         val cl = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray())
         val scriptClass = cl.loadClass(scriptClassName)
@@ -103,22 +121,27 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     fun testScriptResolverEnvironmentArgsParsing() {
 
         fun args(body: K2JVMCompilerArguments.() -> Unit): K2JVMCompilerArguments =
-                K2JVMCompilerArguments().apply(body)
+            K2JVMCompilerArguments().apply(body)
 
         val longStr = (1..100).joinToString { """\" $it aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \\""" }
         val unescapeRe = """\\(["\\])""".toRegex()
         val messageCollector = TestMessageCollector()
-        Assert.assertEquals(hashMapOf("abc" to "def", "11" to "ab cd \\ \"", "long" to unescapeRe.replace(longStr, "\$1")),
-                            K2JVMCompiler.createScriptResolverEnvironment(
-                                args { scriptResolverEnvironment = arrayOf("abc=def", """11="ab cd \\ \""""", "long=\"$longStr\"") },
-                                messageCollector))
+        Assert.assertEquals(
+            hashMapOf("abc" to "def", "11" to "ab cd \\ \"", "long" to unescapeRe.replace(longStr, "\$1")),
+            K2JVMCompiler.createScriptResolverEnvironment(
+                args { scriptResolverEnvironment = arrayOf("abc=def", """11="ab cd \\ \""""", "long=\"$longStr\"") },
+                messageCollector
+            )
+        )
     }
 
     fun testHelloAppLocal() {
         val messageCollector = TestMessageCollector()
         val jar = tmpdir.absolutePath + File.separator + "hello.jar"
-        val (code, outputs) = compileLocally(messageCollector, "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath,
-                                             "-d", jar, "-Xreport-output-files")
+        val (code, outputs) = compileLocally(
+            messageCollector, "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath,
+            "-d", jar, "-Xreport-output-files"
+        )
         Assert.assertEquals(0, code)
         Assert.assertTrue(outputs.isNotEmpty())
         Assert.assertEquals(jar, outputs.first().outputFile?.absolutePath)
@@ -127,27 +150,30 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
     fun testHelloApp() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
-            val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
-                                              verbose = true,
-                                              reportPerf = true)
+            val daemonOptions = DaemonOptions(
+                runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
+                verbose = true,
+                reportPerf = true
+            )
 
             val logFile = createTempFile("kotlin-daemon-test.", ".log")
 
-            val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
-                                                             inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
+            val daemonJVMOptions = configureDaemonJVMOptions(
+                "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+                inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false
+            )
             val jar = tmpdir.absolutePath + File.separator + "hello.jar"
 
             try {
                 val (code, outputs) = compileOnDaemon(
-                        flagFile, compilerId, daemonJVMOptions, daemonOptions, TestMessageCollector(), "-include-runtime",
-                        File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar, "-Xreport-output-files"
+                    flagFile, compilerId, daemonJVMOptions, daemonOptions, TestMessageCollector(), "-include-runtime",
+                    File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar, "-Xreport-output-files"
                 )
                 Assert.assertEquals(0, code)
                 Assert.assertTrue(outputs.isNotEmpty())
                 Assert.assertEquals(jar, outputs.first().outputFile?.absolutePath)
                 run(getHelloAppBaseDir(), "hello.run", "-cp", jar, "Hello.HelloKt")
-            }
-            finally {
+            } finally {
                 KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
                 logFile.delete()
             }
@@ -156,8 +182,10 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
     fun testSimpleScriptLocal() {
         val messageCollector = TestMessageCollector()
-        val (code, outputs) = compileLocally(messageCollector, File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
-                                             "-d", tmpdir.absolutePath, "-Xreport-output-files")
+        val (code, outputs) = compileLocally(
+            messageCollector, File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
+            "-d", tmpdir.absolutePath, "-Xreport-output-files"
+        )
         Assert.assertEquals(0, code)
         Assert.assertTrue(outputs.isNotEmpty())
         Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
@@ -166,25 +194,28 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
     fun testSimpleScript() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
-            val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
-                                              verbose = true,
-                                              reportPerf = true)
+            val daemonOptions = DaemonOptions(
+                runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
+                verbose = true,
+                reportPerf = true
+            )
 
             val logFile = createTempFile("kotlin-daemon-test.", ".log")
 
-            val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
-                                                             inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
+            val daemonJVMOptions = configureDaemonJVMOptions(
+                "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+                inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false
+            )
             try {
                 val (code, outputs) = compileOnDaemon(
-                        flagFile, compilerId, daemonJVMOptions, daemonOptions, TestMessageCollector(),
-                        File(getSimpleScriptBaseDir(), "script.kts").absolutePath, "-Xreport-output-files", "-d", tmpdir.absolutePath
+                    flagFile, compilerId, daemonJVMOptions, daemonOptions, TestMessageCollector(),
+                    File(getSimpleScriptBaseDir(), "script.kts").absolutePath, "-Xreport-output-files", "-d", tmpdir.absolutePath
                 )
                 Assert.assertEquals(0, code)
                 Assert.assertTrue(outputs.isNotEmpty())
                 Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
                 runScriptWithArgs(getSimpleScriptBaseDir(), "script", "Script", scriptRuntimeClassPath + tmpdir, "hi", "there")
-            }
-            finally {
+            } finally {
                 KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
                 logFile.delete()
             }
@@ -205,17 +236,18 @@ class TestMessageCollector : MessageCollector {
         messages.add(Message(severity, message, location))
     }
 
-    override fun hasErrors(): Boolean = messages.any { it.severity == CompilerMessageSeverity.EXCEPTION || it.severity == CompilerMessageSeverity.ERROR }
+    override fun hasErrors(): Boolean =
+        messages.any { it.severity == CompilerMessageSeverity.EXCEPTION || it.severity == CompilerMessageSeverity.ERROR }
 
     override fun toString(): String {
-        return messages.joinToString("\n") { "${it.severity}: ${it.message}${it.location?.let{" at $it"} ?: ""}" }
+        return messages.joinToString("\n") { "${it.severity}: ${it.message}${it.location?.let { " at $it" } ?: ""}" }
     }
 }
 
 fun TestMessageCollector.assertHasMessage(msg: String, desiredSeverity: CompilerMessageSeverity? = null) {
     assert(messages.any { it.message.contains(msg) && (desiredSeverity == null || it.severity == desiredSeverity) }) {
         "Expecting message \"$msg\" with severity ${desiredSeverity?.toString() ?: "Any"}, actual:\n" +
-        messages.joinToString("\n") { it.severity.toString() + ": " + it.message }
+                messages.joinToString("\n") { it.severity.toString() + ": " + it.message }
     }
 }
 

@@ -135,7 +135,7 @@ private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCateg
         }
         when (daemon) {
             null -> report(DaemonReportCategory.INFO, "daemon not found")
-            is CompileService -> return daemon.toClient(port)
+            is CompileService -> return daemon.toClient()
             else -> report(DaemonReportCategory.INFO, "Unable to cast compiler service, actual class received: ${daemon::class.java.name}")
         }
     } catch (e: Throwable) {

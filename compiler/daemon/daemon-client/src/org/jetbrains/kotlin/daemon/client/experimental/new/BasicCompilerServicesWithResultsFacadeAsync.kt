@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.daemon.client.experimental
+package org.jetbrains.kotlin.daemon.client.experimental.new
 
 import io.ktor.network.sockets.Socket
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
