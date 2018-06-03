@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.experimental.unit
 
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.*
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -29,6 +27,7 @@ import java.io.File
 import java.io.IOException
 import java.io.PrintStream
 import java.util.*
+import java.util.concurrent.CountDownLatch
 import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.schedule
@@ -180,29 +179,38 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         DaemonJVMOptionsMemoryComparator(),
         { it.jvmOptions }
     )
+        .thenBy {
+            when (it.daemon) {
+                is CompileServiceAsyncWrapper -> 0
+                else -> 1
+            }
+        }
         .thenBy(FileAgeComparator()) { it.runFile }
-        .thenBy { -it.daemon.serverPort }
+        .thenBy { it.daemon.serverPort }
 
-    private fun <DM, D> expectDaemon(
-        getDaemons: () -> List<DM>,
-        chooseDaemon: (List<DM>) -> D,
-        getInfo: (D) -> CompileService.CallResult<String>,
-        registerClient: (D) -> Unit,
-        port: (D) -> Int,
+    private fun <DaemonWithMeta, Daemon> expectDaemon(
+        getDaemons: () -> List<DaemonWithMeta>,
+        chooseDaemon: (List<DaemonWithMeta>) -> Daemon,
+        getInfo: (Daemon) -> CompileService.CallResult<String>,
+        registerClient: (Daemon) -> Unit,
+        port: (Daemon) -> Int,
         expectedDaemonCount: Int?,
-        extraAction: (D) -> Unit = {}
+        extraAction: (Daemon) -> Unit = {}
     ) {
         val daemons = getDaemons()
         log.info("daemons (${daemons.size}) : ${daemons.map { (it ?: 0)::class.java.name }.toList()}\n\n")
         expectedDaemonCount?.let {
             log.info("expected $it daemons, found ${daemons.size}")
-            assert(daemons.size == it)
+            assertTrue(
+                "daemons.size : ${daemons.size}, but expected : $expectedDaemonCount",
+                daemons.size == it
+            )
         }
         val daemon = chooseDaemon(daemons)
         log.info("chosen : $daemon (port = ${port(daemon)})")
         val info = getInfo(daemon)
         log.info("info : $info")
-        assert(info.isGood)
+        assertTrue("bad info", info.isGood)
         registerClient(daemon)
         extraAction(daemon)
     }
@@ -212,13 +220,13 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
     }
 
     private fun expectNewDaemon(serverType: ServerType, extraAction: (CompileServiceClientSide) -> Unit = {}) = expectDaemon(
-        ::getNewDaemonsOrAsyncWrappers,
-        { daemons -> daemons.maxWith(comparator)!!.daemon },
-        { d -> runBlocking { d.getDaemonInfo() } },
-        { d -> runBlocking { d.registerClient(generateClient()) } },
-        { d -> d.serverPort },
-        serverType.instancesNumber,
-        extraAction
+        getDaemons = ::getNewDaemonsOrAsyncWrappers,
+        chooseDaemon = { daemons -> daemons.maxWith(comparator)!!.daemon },
+        getInfo = { d -> runBlocking { d.getDaemonInfo() } },
+        registerClient = { d -> runBlocking { d.registerClient(generateClient()) } },
+        port = { d -> d.serverPort },
+        expectedDaemonCount = serverType.instancesNumber,
+        extraAction = extraAction
     )
 
     private fun expectOldDaemon(shouldCheckNumber: Boolean = true, extraAction: (CompileService) -> Unit = {}) = expectDaemon(
@@ -328,55 +336,53 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
 
     fun testCompile() {
         runNewServer()
-        expectNewDaemon(ServerType.ANY) { daemon ->
-            assertTrue(daemon !is CompileServiceAsyncWrapper)
-            val outStream = ByteArrayOutputStream()
-            val msgCollector = PrintingMessageCollector(PrintStream(outStream), MessageRenderer.WITHOUT_PATHS, true)
-            val codes = (0 until 10).toMutableList()
-            val services = BasicCompilerServicesWithResultsFacadeServerServerSide(
-                msgCollector,
-                { _, _ -> },
-                findCallbackServerSocket()
-            )
-            val serverRun = services.runServer()
-            val servicesClient = services.clientSide
-            val compResultsClient = KotlinCompilerClient.createCompResults().clientSide
-            fun runThread(i: Int) {
-                thread {
-                    val jar = tmpdir.absolutePath + File.separator + "hello.$i.jar"
-                    val code = runBlocking {
-                        daemon.compile(
-                            CompileService.NO_SESSION,
-                            arrayOf(
-                                "-include-runtime",
-                                File(KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/helloApp", "hello.kt").absolutePath,
-                                "-d",
-                                jar
-                            ),
-                            CompilationOptions(
-                                CompilerMode.NON_INCREMENTAL_COMPILER,
-                                CompileService.TargetPlatform.JVM,
-                                arrayOf(
-                                    ReportCategory.COMPILER_MESSAGE.code,
-                                    ReportCategory.DAEMON_MESSAGE.code,
-                                    ReportCategory.EXCEPTION.code,
-                                    ReportCategory.OUTPUT_MESSAGE.code
-                                ),
-                                ReportSeverity.INFO.code,
-                                emptyArray()
-                            ),
-                            servicesClient,
-                            compResultsClient
-                        ).get().also { println("CODE = $it") }
-                    }
-                    codes[i] = code
-                }
-            }
-            (0 until 10).forEach(::runThread)
+        expectNewDaemon(ServerType.NEW) { daemon ->
             runBlocking {
-                delay(20000L)
+                assertTrue("daemon is wrapper", daemon !is CompileServiceAsyncWrapper)
+                val outStream = ByteArrayOutputStream()
+                val msgCollector = PrintingMessageCollector(PrintStream(outStream), MessageRenderer.WITHOUT_PATHS, true)
+                val codes = (0 until 10).toMutableList()
+                val services = BasicCompilerServicesWithResultsFacadeServerServerSide(
+                    msgCollector,
+                    { _, _ -> },
+                    findCallbackServerSocket()
+                )
+                services.runServer()
+                val servicesClient = services.clientSide
+                val compResultsClient = KotlinCompilerClient.createCompResults().clientSide
+                val threadCount = 10
+                fun runThread(i: Int) =
+                    async(newSingleThreadContext("thread_$i")) {
+                        val jar = tmpdir.absolutePath + File.separator + "hello.$i.jar"
+                        val code =
+                            daemon.compile(
+                                CompileService.NO_SESSION,
+                                arrayOf(
+                                    "-include-runtime",
+                                    File(KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/helloApp", "hello.kt").absolutePath,
+                                    "-d",
+                                    jar
+                                ),
+                                CompilationOptions(
+                                    CompilerMode.NON_INCREMENTAL_COMPILER,
+                                    CompileService.TargetPlatform.JVM,
+                                    arrayOf(
+                                        ReportCategory.COMPILER_MESSAGE.code,
+                                        ReportCategory.DAEMON_MESSAGE.code,
+                                        ReportCategory.EXCEPTION.code,
+                                        ReportCategory.OUTPUT_MESSAGE.code
+                                    ),
+                                    ReportSeverity.INFO.code,
+                                    emptyArray()
+                                ),
+                                servicesClient,
+                                compResultsClient
+                            ).get().also { println("CODE = $it") }
+                        codes[i] = code
+                    }
+                (0 until threadCount).map(::runThread).map { it.await() }
                 codes.forEach { println(it) }
-                assertTrue(codes.all { it == 0 })
+                assertTrue("not-null code", codes.all { it == 0 })
             }
         }
     }
