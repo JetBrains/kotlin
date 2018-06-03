@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.daemon.client.experimental
+package org.jetbrains.kotlin.daemon.client.experimental.new
 
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -53,5 +53,6 @@ class RemoteReplCompilerStateAsync(
 
     override val currentGeneration: Int get() = (history as RemoteReplCompilerStateHistory).currentGeneration.get()
 
-    override val history: IReplStageHistory<Unit> = RemoteReplCompilerStateHistoryAsync(this)
+    override val history: IReplStageHistory<Unit> =
+        RemoteReplCompilerStateHistoryAsync(this)
 }

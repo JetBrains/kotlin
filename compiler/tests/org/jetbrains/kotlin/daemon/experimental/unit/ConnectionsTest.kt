@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.daemon.CompileServiceImpl
 import org.jetbrains.kotlin.daemon.CompilerSelector
-import org.jetbrains.kotlin.daemon.client.experimental.BasicCompilerServicesWithResultsFacadeServerServerSide
-import org.jetbrains.kotlin.daemon.client.experimental.KotlinCompilerClient
+import org.jetbrains.kotlin.daemon.client.experimental.new.BasicCompilerServicesWithResultsFacadeServerServerSide
+import org.jetbrains.kotlin.daemon.client.experimental.new.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.experimental.CompileServiceServerSideImpl
@@ -27,11 +27,9 @@ import java.io.File
 import java.io.IOException
 import java.io.PrintStream
 import java.util.*
-import java.util.concurrent.CountDownLatch
 import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.schedule
-import kotlin.concurrent.thread
 
 
 class ConnectionsTest : KotlinIntegrationTestBase() {

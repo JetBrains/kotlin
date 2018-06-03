@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.daemon.client.experimental
+package org.jetbrains.kotlin.daemon.client.experimental.new
 
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -26,7 +26,11 @@ open class KotlinRemoteReplCompilerClientAsync(
     templateClasspath: List<File>,
     templateClassName: String
 ) : ReplCompiler {
-    val services = BasicCompilerServicesWithResultsFacadeServerServerSide(messageCollector, null, findCallbackServerSocket())
+    val services = BasicCompilerServicesWithResultsFacadeServerServerSide(
+        messageCollector,
+        null,
+        findCallbackServerSocket()
+    )
 
     val sessionId = runBlocking {
         compileService.leaseReplSession(
