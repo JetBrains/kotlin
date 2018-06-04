@@ -41,5 +41,5 @@ public final class User : AbstractUser {
 
     public final boolean isProUser()
 
-    public final void writeToParcel(android.os.Parcel p0, int p1)
+    public void writeToParcel(android.os.Parcel p0, int p1)
 }

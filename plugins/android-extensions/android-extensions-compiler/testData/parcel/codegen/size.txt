@@ -47,7 +47,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 
     public static Test copy$default(Test p0, android.util.Size p1, android.util.Size p2, int p3, java.lang.Object p4)
 
-    public final int describeContents()
+    public int describeContents()
 
     public boolean equals(java.lang.Object p0)
 
@@ -59,7 +59,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 
     public java.lang.String toString()
 
-    public final void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel p0, int p1) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)
@@ -137,7 +137,7 @@ public final class TestF : java/lang/Object, android/os/Parcelable {
 
     public static TestF copy$default(TestF p0, android.util.SizeF p1, android.util.SizeF p2, int p3, java.lang.Object p4)
 
-    public final int describeContents()
+    public int describeContents()
 
     public boolean equals(java.lang.Object p0)
 
@@ -149,7 +149,7 @@ public final class TestF : java/lang/Object, android/os/Parcelable {
 
     public java.lang.String toString()
 
-    public final void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel p0, int p1) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)
