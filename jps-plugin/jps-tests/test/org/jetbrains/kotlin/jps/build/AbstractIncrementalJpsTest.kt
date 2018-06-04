@@ -300,9 +300,12 @@ abstract class AbstractIncrementalJpsTest(
     ): String {
         return buildString {
             for (target in project.allModuleTargets.sortedBy { it.presentableName }) {
-                append("<target $target>\n")
-                append(project.dataManager.getKotlinCache(dummyCompileContext.kotlinBuildTargets[target]!!).dump())
-                append("</target $target>\n\n\n")
+                val kotlinCache = project.dataManager.getKotlinCache(dummyCompileContext.kotlinBuildTargets[target])
+                if (kotlinCache != null) {
+                    append("<target $target>\n")
+                    append(kotlinCache.dump())
+                    append("</target $target>\n\n\n")
+                }
             }
         }
     }

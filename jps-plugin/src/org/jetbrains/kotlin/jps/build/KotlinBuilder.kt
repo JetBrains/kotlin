@@ -47,10 +47,7 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.incremental.*
-import org.jetbrains.kotlin.jps.platforms.KotlinCommonModuleBuildTarget
-import org.jetbrains.kotlin.jps.platforms.KotlinJsModuleBuildTarget
-import org.jetbrains.kotlin.jps.platforms.KotlinModuleBuildTarget
-import org.jetbrains.kotlin.jps.platforms.kotlinBuildTargets
+import org.jetbrains.kotlin.jps.platforms.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -427,7 +424,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
                     val kotlinBuildTargets = context.kotlinBuildTargets
                     for (target in targets) {
-                        dataManager.getKotlinCache(kotlinBuildTargets[target]!!).clean()
+                        dataManager.getKotlinCache(kotlinBuildTargets[target])?.clean()
                         hasKotlin.clean(target)
                         rebuildAfterCacheVersionChanged[target] = true
                     }
@@ -441,7 +438,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
                     val kotlinBuildTargets = context.kotlinBuildTargets
                     for (target in context.allTargets()) {
-                        dataManager.getKotlinCache(kotlinBuildTargets[target]!!).clean()
+                        dataManager.getKotlinCache(kotlinBuildTargets[target])?.clean()
                     }
                 }
                 CacheVersion.Action.CLEAN_DATA_CONTAINER -> {
@@ -473,7 +470,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val kotlinBuildTargets = context.kotlinBuildTargets
         for (target in context.allTargets()) {
-            dataManager.getKotlinCache(kotlinBuildTargets[target]!!).clean()
+            dataManager.getKotlinCache(kotlinBuildTargets[target])?.clean()
             rebuildAfterCacheVersionChanged[target] = true
         }
 
@@ -703,23 +700,17 @@ private fun getIncrementalCaches(
     chunk: ModuleChunk,
     context: CompileContext
 ): Map<ModuleBuildTarget, JpsIncrementalCache> {
-    val dependentTargets = getDependentTargets(chunk, context)
-
     val dataManager = context.projectDescriptor.dataManager
     val kotlinBuildTargets = context.kotlinBuildTargets
 
     val chunkCaches = chunk.targets.keysToMapExceptNulls {
-        val kotlinModuleBuilderTarget = kotlinBuildTargets[it]
-        if (kotlinModuleBuilderTarget !is KotlinCommonModuleBuildTarget) {
-            dataManager.getKotlinCache(kotlinBuildTargets[it]!!)
-        } else null
+        dataManager.getKotlinCache(kotlinBuildTargets[it])
     }
 
+    val dependentTargets = getDependentTargets(chunkCaches.keys, context)
+
     val dependentCaches = dependentTargets.mapNotNull {
-        val kotlinModuleBuilderTarget = kotlinBuildTargets[it]
-        if (kotlinModuleBuilderTarget !is KotlinCommonModuleBuildTarget) {
-            dataManager.getKotlinCache(kotlinModuleBuilderTarget!!)
-        } else null
+        dataManager.getKotlinCache(kotlinBuildTargets[it])
     }
 
     for (chunkCache in chunkCaches.values) {
@@ -732,17 +723,20 @@ private fun getIncrementalCaches(
 }
 
 fun getDependentTargets(
-    compilingChunk: ModuleChunk,
+    compilingChunkTargets: Set<ModuleBuildTarget>,
     context: CompileContext
 ): Set<ModuleBuildTarget> {
-    val compilingChunkIsTests = compilingChunk.targets.any { it.isTests }
+    if (compilingChunkTargets.isEmpty()) return setOf()
+
+    val compilingChunkModules: Set<JpsModule> = compilingChunkTargets.mapTo(mutableSetOf()) { it.module }
+    val compilingChunkIsTests = compilingChunkTargets.any { it.isTests }
     val classpathKind = JpsJavaClasspathKind.compile(compilingChunkIsTests)
 
     fun dependsOnCompilingChunk(target: BuildTarget<*>): Boolean {
         if (target !is ModuleBuildTarget || compilingChunkIsTests && !target.isTests) return false
 
         val dependencies = getDependenciesRecursively(target.module, classpathKind)
-        return ContainerUtil.intersects(dependencies, compilingChunk.modules)
+        return ContainerUtil.intersects(dependencies, compilingChunkModules)
     }
 
     val dependentTargets = HashSet<ModuleBuildTarget>()
@@ -750,7 +744,7 @@ fun getDependentTargets(
 
     // skip chunks that are compiled before compilingChunk
     while (sortedChunks.hasNext()) {
-        if (sortedChunks.next().targets == compilingChunk.targets) break
+        if (sortedChunks.next().targets == compilingChunkTargets) break
     }
 
     // process chunks that compiled after compilingChunk
