@@ -442,12 +442,13 @@ inline void traverseContainerObjectFields(ContainerHeader* container, func proce
   ObjHeader* obj = reinterpret_cast<ObjHeader*>(container + 1);
   for (int object = 0; object < container->objectCount(); object++) {
     const TypeInfo* typeInfo = obj->type_info();
-    for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
-      ObjHeader** location = reinterpret_cast<ObjHeader**>(
-          reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
-      process(location);
-    }
-    if (typeInfo == theArrayTypeInfo) {
+    if (typeInfo != theArrayTypeInfo) {
+      for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
+        ObjHeader** location = reinterpret_cast<ObjHeader**>(
+            reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
+        process(location);
+      }
+    } else {
       ArrayHeader* array = obj->array();
       for (int index = 0; index < array->count_; index++) {
         process(ArrayAddressOfElementAt(array, index));

@@ -81,8 +81,10 @@ struct TypeInfo {
     int32_t instanceSize_;
     // Must be pointer to Any for array classes, and null for Any.
     const TypeInfo* superType_;
-    // All object references inside this object.
+    // All object reference fields inside this object.
     const int32_t* objOffsets_;
+    // Count of object reference fields inside this object.
+    // 1 for kotlin.Array to mark it as non-leaf.
     int32_t objOffsetsCount_;
     const TypeInfo* const* implementedInterfaces_;
     int32_t implementedInterfacesCount_;

@@ -2117,6 +2117,10 @@ task memory_cycles0(type: RunKonanTest) {
     source = "runtime/memory/cycles0.kt"
 }
 
+task memory_cycles1(type: RunKonanTest) {
+    source = "runtime/memory/cycles1.kt"
+}
+
 task memory_basic0(type: RunKonanTest) {
     source = "runtime/memory/basic0.kt"
 }

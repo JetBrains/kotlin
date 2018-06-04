@@ -165,6 +165,12 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val objOffsetsPtr = staticData.placeGlobalConstArray("krefs:$className", int32Type,
                 objOffsets.map { Int32(it.toInt()) })
 
+        val objOffsetsCount = if (classDesc.descriptor == context.builtIns.array) {
+            1 // To mark it as non-leaf.
+        } else {
+            objOffsets.size
+        }
+
         val fields = llvmDeclarations.fields.mapIndexed { index, field ->
             // Note: using FQ name because a class may have multiple fields with the same name due to property overriding
             val nameSignature = field.fqNameSafe.localHash // FIXME: add signature
@@ -191,7 +197,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 name,
                 size,
                 superType,
-                objOffsetsPtr, objOffsets.size,
+                objOffsetsPtr, objOffsetsCount,
                 interfacesPtr, interfaces.size,
                 methodsPtr, methods.size,
                 fieldsPtr, if (classDesc.isInterface) -1 else fields.size,
