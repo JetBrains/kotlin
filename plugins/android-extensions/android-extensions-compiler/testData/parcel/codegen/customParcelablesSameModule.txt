@@ -139,11 +139,11 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
 
     public void <init>(k.KotlinParcelable p0)
 
-    public final int describeContents()
+    public int describeContents()
 
     public final k.KotlinParcelable getKp()
 
-    public final void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel p0, int p1) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)

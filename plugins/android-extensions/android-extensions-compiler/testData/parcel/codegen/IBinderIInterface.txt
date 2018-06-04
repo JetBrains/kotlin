@@ -66,7 +66,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public void <init>(android.os.IBinder p0, android.os.IBinder[] p1, java.util.List p2, java.util.ArrayList p3, android.os.IInterface p4)
 
-    public final int describeContents()
+    public int describeContents()
 
     public final android.os.IBinder getBinder()
 
@@ -78,7 +78,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public final android.os.IInterface getIntf()
 
-    public final void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel p0, int p1) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)

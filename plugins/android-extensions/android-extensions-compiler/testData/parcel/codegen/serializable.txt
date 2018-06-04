@@ -51,13 +51,13 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public void <init>(SerializableSimple p0, SerializableSimple p1)
 
-    public final int describeContents()
+    public int describeContents()
 
     public final SerializableSimple getNotNull()
 
     public final SerializableSimple getNullable()
 
-    public final void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel p0, int p1) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)
