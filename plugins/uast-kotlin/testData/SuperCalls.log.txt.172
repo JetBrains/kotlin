@@ -17,7 +17,7 @@ UFile (package = )
                     UAnnotationMethod (name = SuperCallsKt$anon$1)
                     UClass (name = innerObject)
                         UField (name = INSTANCE)
-                            UAnnotation (fqName = null)
+                            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
                         UAnnotationMethod (name = innerObject)
                             UBlockExpression
                                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
