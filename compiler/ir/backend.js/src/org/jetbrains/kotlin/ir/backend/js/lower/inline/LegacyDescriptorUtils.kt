@@ -53,6 +53,7 @@ internal val FunctionDescriptor.target: FunctionDescriptor
 // but it doesn't have much sense for native,
 // since externals don't have IR bodies.
 // Enforce inlining of constructors annotated with @InlineConstructor.
+// TODO: should we keep this?
 private val inlineConstructor = FqName("konan.internal.InlineConstructor")
 
 internal val FunctionDescriptor.needsInlining: Boolean
