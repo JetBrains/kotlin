@@ -69,6 +69,11 @@ public class ParcelBytecodeListingTestGenerated extends AbstractParcelBytecodeLi
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/IBinderIInterface.kt");
     }
 
+    @TestMetadata("kt25839.kt")
+    public void testKt25839() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/kt25839.kt");
+    }
+
     @TestMetadata("listInsideList.kt")
     public void testListInsideList() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/listInsideList.kt");

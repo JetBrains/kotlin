@@ -168,7 +168,12 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
                 if (properties.isEmpty()) {
                     val entityType = this@writeWriteToParcel.defaultType
                     val asmType = codegen.state.typeMapper.mapType(entityType)
-                    val serializer = ParcelSerializer.get(entityType, asmType, globalContext, strict = true)
+                    val serializer = if (this@writeWriteToParcel.kind == ClassKind.CLASS) {
+                        NullAwareParcelSerializerWrapper(ZeroParameterClassSerializer(asmType, entityType))
+                    } else {
+                        ParcelSerializer.get(entityType, asmType, globalContext, strict = true)
+                    }
+
                     v.load(1, parcelAsmType)
                     v.load(0, containerAsmType)
                     serializer.writeValue(v)
@@ -220,6 +225,10 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
             codegen: ImplementationBodyCodegen,
             parcelableClass: ClassDescriptor
     ): List<PropertyToSerialize> {
+        if (parcelableClass.kind != ClassKind.CLASS) {
+            return emptyList()
+        }
+
         val constructor = parcelableClass.constructors.firstOrNull { it.isPrimary } ?: return emptyList()
 
         val propertiesToSerialize = constructor.valueParameters.mapNotNull { param ->
@@ -271,7 +280,11 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
                 if (properties.isEmpty()) {
                     val entityType = parcelableClass.defaultType
                     val asmType = codegen.state.typeMapper.mapType(entityType)
-                    val serializer = ParcelSerializer.get(entityType, asmType, globalContext, strict = true)
+                    val serializer = if (parcelableClass.kind == ClassKind.CLASS) {
+                        NullAwareParcelSerializerWrapper(ZeroParameterClassSerializer(asmType, entityType))
+                    } else {
+                        ParcelSerializer.get(entityType, asmType, globalContext, strict = true)
+                    }
                     v.load(1, parcelAsmType)
                     serializer.readValue(v)
                 } else {
