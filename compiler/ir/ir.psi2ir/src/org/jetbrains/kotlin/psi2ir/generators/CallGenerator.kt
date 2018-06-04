@@ -153,7 +153,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                     superQualifierSymbol
                 )
             } else {
-                val fieldSymbol = context.symbolTable.referenceField(descriptor)
+                val fieldSymbol = context.symbolTable.referenceField(descriptor.original)
                 IrGetFieldImpl(
                     startOffset, endOffset,
                     fieldSymbol,
