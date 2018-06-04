@@ -101,9 +101,9 @@ IntelliJ를 통해 테스트를 쉽게 실행하기 위해서, Gradle runner 설
 * 프로젝트의 "IDEA" 실행 설정(run configuration)을 실행합니다.
 * 또 다른 IntelliJ IDEA가 Kotlin 플러그인과 함께 시작됩니다.
 
-### Including into composite build
+### 복합(Composite) 빌드에 포함하기
 
-To include kotlin compiler into [composite build](https://docs.gradle.org/current/userguide/composite_builds.html) you need to define `dependencySubstitution` for `kotlin-compiler` module in `settings.gradle`
+Kotlin 컴파일러를 [composite build](https://docs.gradle.org/current/userguide/composite_builds.html)에 포함하기 위해서, `settings.gradle`에서 `kotlin-compiler` 모듈을 위해 `dependencySubstitution`을 정의해야 합니다.
 
 ```
 includeBuild('/path/to/kotlin') {
@@ -113,12 +113,12 @@ includeBuild('/path/to/kotlin') {
 }
 ```
 
-# Contributing
+# 참여하기
 
-We love contributions! There's [lots to do on Kotlin](https://youtrack.jetbrains.com/issues/KT) and on the
-[standard library](https://youtrack.jetbrains.com/issues/KT?q=%23Kotlin%20%23Unresolved%20and%20(links:%20KT-2554,%20KT-4089%20or%20%23Libraries)) so why not chat with us
-about what you're interested in doing? Please join the #kontributors channel in [our Slack chat](http://slack.kotlinlang.org/)
-and let us know about your plans.
+우리는 참여를 적극 환영합니다! [Kotlin에 해야 할 많은 일들](https://youtrack.jetbrains.com/issues/KT)이 있고,
+[표준 라이브러리](https://youtrack.jetbrains.com/issues/KT?q=%23Kotlin%20%23Unresolved%20and%20(links:%20KT-2554,%20KT-4089%20or%20%23Libraries))에도 할 일이 많습니다.
+그러니 혹시 하고 싶은 일이 있다면 우리와 채팅하시는 게 어떻습니까? 
+[Slack 채팅](http://slack.kotlinlang.org/)의 #kontributors 채널에 들어와서 당신의 계획에 대해 알려주세요.
 
 If you want to find some issues to start off with, try [this query](https://youtrack.jetbrains.com/issues/KT?q=tag:%20%7BUp%20For%20Grabs%7D%20%23Unresolved) which should find all Kotlin issues that marked as "up-for-grabs".
 
