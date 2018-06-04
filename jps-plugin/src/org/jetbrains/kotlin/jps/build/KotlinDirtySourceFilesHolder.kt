@@ -32,7 +32,7 @@ import java.io.File
  *
  * Probably should be merged with [FSOperationsHelper]
  */
-class KotlinRoundDirtySourceFilesHolder(
+class KotlinDirtySourceFilesHolder(
     val chunk: ModuleChunk,
     val context: CompileContext,
     val fsOperations: FSOperationsHelper,
@@ -51,8 +51,8 @@ class KotlinRoundDirtySourceFilesHolder(
                 return result
             }
 
-        fun addComplementaryFiles(files: Collection<File>) {
-            fsOperations.markComplementaryFiles(files)
+        fun markDirtyForCurrentRound(files: Collection<File>) {
+            fsOperations.markFilesBeforeInitialRound(files)
             files.forEach {
                 dirty.add(DirtyFile(it, null))
             }

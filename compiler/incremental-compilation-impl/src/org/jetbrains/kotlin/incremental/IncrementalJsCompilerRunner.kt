@@ -117,17 +117,20 @@ class IncrementalJsCompilerRunner(
     }
 
     override fun makeServices(
-            args: K2JSCompilerArguments,
-            lookupTracker: LookupTracker,
-            expectActualTracker: ExpectActualTracker,
-            caches: IncrementalJsCachesManager,
-            compilationMode: CompilationMode
+        args: K2JSCompilerArguments,
+        lookupTracker: LookupTracker,
+        expectActualTracker: ExpectActualTracker,
+        caches: IncrementalJsCachesManager,
+        compilationMode: CompilationMode
     ): Services.Builder =
         super.makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).apply {
             register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
 
             if (compilationMode is CompilationMode.Incremental) {
-                register(IncrementalDataProvider::class.java, IncrementalDataProviderFromCache(caches.platformCache))
+                register(
+                    IncrementalDataProvider::class.java,
+                    IncrementalDataProviderFromCache(caches.platformCache)
+                )
             }
         }
 

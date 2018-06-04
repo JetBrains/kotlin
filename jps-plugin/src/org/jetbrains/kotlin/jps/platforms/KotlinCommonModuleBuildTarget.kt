@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.jps.platforms
 
-import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.CompileContext
@@ -15,10 +14,9 @@ import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.mergeBeans
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.jps.build.KotlinRoundDirtySourceFilesHolder
+import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalJvmCache
 import org.jetbrains.kotlin.jps.model.k2MetadataCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
@@ -29,7 +27,7 @@ class KotlinCommonModuleBuildTarget(context: CompileContext, jpsModuleBuildTarge
     override fun compileModuleChunk(
         chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
-        dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder,
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         environment: JpsCompilerEnvironment
     ): Boolean {
         reportAndSkipCircular(chunk, environment)
@@ -81,7 +79,7 @@ class KotlinCommonModuleBuildTarget(context: CompileContext, jpsModuleBuildTarge
 
         if (dependencyBuildTarget != this@KotlinCommonModuleBuildTarget &&
             dependencyBuildTarget is KotlinCommonModuleBuildTarget &&
-            dependencyBuildTarget.sourceFiles.isNotEmpty()
+            dependencyBuildTarget.sources.isNotEmpty()
         ) {
             result.add(dependencyBuildTarget.destination)
         }
