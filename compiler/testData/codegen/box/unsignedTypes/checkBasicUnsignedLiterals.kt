@@ -1,6 +1,7 @@
 // !LANGUAGE: +InlineClasses
 // !SKIP_METADATA_VERSION_CHECK
 // WITH_UNSIGNED
+// TARGET_BACKEND: JVM
 
 fun box(): String {
     val u1 = 1u

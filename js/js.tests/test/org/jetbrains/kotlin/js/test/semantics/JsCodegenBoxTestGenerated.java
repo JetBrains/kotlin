@@ -19134,21 +19134,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public void testAllFilesPresentInUnsignedTypes() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
-
-        @TestMetadata("checkBasicUnsignedLiterals.kt")
-        public void testCheckBasicUnsignedLiterals() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/checkBasicUnsignedLiterals.kt");
-        }
-
-        @TestMetadata("evaluateConstructorOfUnsignedType.kt")
-        public void testEvaluateConstructorOfUnsignedType() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/evaluateConstructorOfUnsignedType.kt");
-        }
-
-        @TestMetadata("unsignedLiteralsWithSignedOverflow.kt")
-        public void testUnsignedLiteralsWithSignedOverflow() throws Exception {
-            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsWithSignedOverflow.kt");
-        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/vararg")
