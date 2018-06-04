@@ -39,6 +39,7 @@ interface DokkaConfiguration {
     val languageVersion: String?
     val apiVersion: String?
     val noStdlibLink: Boolean
+    val noJdkLink: Boolean
     val cacheRoot: String?
     val suppressedFiles: List<String>
     val collectInheritedExtensionsFromLibraries: Boolean
@@ -102,6 +103,7 @@ data class SerializeOnlyDokkaConfiguration(
     override val perPackageOptions: List<DokkaConfiguration.PackageOptions>,
     override val externalDocumentationLinks: List<DokkaConfiguration.ExternalDocumentationLink>,
     override val noStdlibLink: Boolean,
+    override val noJdkLink: Boolean,
     override val cacheRoot: String?,
     override val suppressedFiles: List<String>,
     override val languageVersion: String?,
