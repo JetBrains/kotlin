@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.incremental.ChangesCollector
 import org.jetbrains.kotlin.incremental.IncrementalJsCache
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.js.*
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderFromCache
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalJsCache
@@ -39,11 +42,11 @@ import java.net.URI
 class KotlinJsModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
     KotlinModuleBuildTarget(compileContext, jpsModuleBuildTarget) {
 
-    val sourceToOutputMap
-        get() = context.projectDescriptor.dataManager.getSourceToOutputMap(jpsModuleBuildTarget)
-
-    val isFirstBuild
-        get() = sourceToOutputMap.sources.isEmpty()
+    val isFirstBuild: Boolean
+        get() {
+            val targetDataRoot = context.projectDescriptor.dataManager.dataPaths.getTargetDataRoot(jpsModuleBuildTarget)
+            return !IncrementalJsCache.hasHeaderFile(targetDataRoot)
+        }
 
     override fun makeServices(
         builder: Services.Builder,

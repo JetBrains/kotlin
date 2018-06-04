@@ -41,6 +41,8 @@ open class IncrementalJsCache(cachesDir: File) : AbstractIncrementalCache<FqName
         private val TRANSLATION_RESULT_MAP = "translation-result"
         private val INLINE_FUNCTIONS = "inline-functions"
         private val HEADER_FILE_NAME = "header.meta"
+
+        fun hasHeaderFile(cachesDir: File) = File(cachesDir, HEADER_FILE_NAME).exists()
     }
 
     override val sourceToClassesMap = registerMap(SourceToFqNameMap(SOURCE_TO_CLASSES.storageFile))

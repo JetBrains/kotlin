@@ -52,7 +52,9 @@ class JpsIncrementalJsCache(
     paths: BuildDataPaths
 ) : IncrementalJsCache(paths.getTargetDataRoot(target)), JpsIncrementalCache {
     override fun addJpsDependentCache(cache: JpsIncrementalCache) {
-        addDependentCache(cache as JpsIncrementalJsCache)
+        if (cache is JpsIncrementalJsCache) {
+            addDependentCache(cache)
+        }
     }
 }
 
