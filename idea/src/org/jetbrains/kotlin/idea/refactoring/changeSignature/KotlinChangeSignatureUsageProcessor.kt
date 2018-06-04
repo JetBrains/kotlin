@@ -442,12 +442,15 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
     private fun findKotlinOverrides(changeInfo: ChangeInfo, result: MutableSet<UsageInfo>) {
         val method = changeInfo.method as? PsiMethod ?: return
+        val methodDescriptor = method.getJavaMethodDescriptor() ?: return
+
+        val baseFunctionInfo = KotlinCallableDefinitionUsage<PsiElement>(method, methodDescriptor, null, null)
 
         for (overridingMethod in OverridingMethodsSearch.search(method)) {
             val unwrappedElement = overridingMethod.namedUnwrappedElement as? KtNamedFunction ?: continue
             val functionDescriptor = unwrappedElement.resolveToDescriptorIfAny() ?: continue
             result.add(DeferredJavaMethodOverrideOrSAMUsage(unwrappedElement, functionDescriptor, null))
-            findDeferredUsagesOfParameters(changeInfo, result, unwrappedElement, functionDescriptor)
+            findDeferredUsagesOfParameters(changeInfo, result, unwrappedElement, functionDescriptor, baseFunctionInfo)
         }
     }
 
@@ -474,8 +477,9 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             changeInfo: ChangeInfo,
             result: MutableSet<UsageInfo>,
             function: KtNamedFunction,
-            functionDescriptor: FunctionDescriptor) {
-        val functionInfoForParameters = KotlinCallableDefinitionUsage<PsiElement>(function, functionDescriptor, null, null)
+            functionDescriptor: FunctionDescriptor,
+            baseFunctionInfo: KotlinCallableDefinitionUsage<PsiElement>) {
+        val functionInfoForParameters = KotlinCallableDefinitionUsage<PsiElement>(function, functionDescriptor, baseFunctionInfo, null)
         val oldParameters = function.valueParameters
         val parameters = changeInfo.newParameters
         for ((paramIndex, parameterInfo) in parameters.withIndex()) {
