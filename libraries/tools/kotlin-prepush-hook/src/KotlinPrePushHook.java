@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -36,6 +37,10 @@ public class KotlinPrePushHook {
 
     private static void check(List<String> remoteRefs) throws Exception {
         Map<String, String> branchProperties = getProperties(new URL(BRANCH_DATA_URL));
+
+        if (branchProperties.isEmpty()) {
+            return;
+        }
 
         Map<String, String> messages = new HashMap<>();
         Map<String, String> branches = new HashMap<>();
@@ -106,6 +111,10 @@ public class KotlinPrePushHook {
             }
 
             return propertyMap;
+        } catch (IOException e) {
+            System.err.println("Can't fetch " + BRANCH_DATA_URL + " (" + e.getMessage() + ").");
+            System.err.println("Pre-push hook won't work.");
+            return Collections.emptyMap();
         }
     }
 }
