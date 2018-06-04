@@ -174,6 +174,8 @@ abstract class KotlinModuleBuildTarget(val context: CompileContext, val jpsModul
     open fun doAfterBuild() {
     }
 
+    open val hasCaches: Boolean = true
+
     abstract fun createCacheStorage(paths: BuildDataPaths): JpsIncrementalCache
 
     /**

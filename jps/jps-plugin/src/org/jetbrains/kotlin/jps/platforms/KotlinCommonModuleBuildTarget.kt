@@ -85,5 +85,9 @@ class KotlinCommonModuleBuildTarget(context: CompileContext, jpsModuleBuildTarge
         }
     }
 
-    override fun createCacheStorage(paths: BuildDataPaths) = JpsIncrementalJvmCache(jpsModuleBuildTarget, paths) // todo: delete
+    override val hasCaches: Boolean
+        get() = false
+
+    override fun createCacheStorage(paths: BuildDataPaths) =
+        error("incremental K2MetadataCompiler not supported yet, createCacheStorage() should not be called")
 }
