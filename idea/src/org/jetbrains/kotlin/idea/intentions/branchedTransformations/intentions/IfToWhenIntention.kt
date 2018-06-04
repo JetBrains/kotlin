@@ -89,11 +89,14 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
             }
         }
 
+        var labelRequired = false
+
         fun KtExpressionWithLabel.addLabelIfNecessary(): KtExpressionWithLabel {
             if (this.getLabelName() != null) return this
             if (this.getStrictParentOfType<KtLoopExpression>() != nearestLoopIfAny) return this
             if (labelName != null) {
                 val jumpWithLabel = KtPsiFactory(project).createExpression("$text@$labelName") as KtExpressionWithLabel
+                labelRequired = true
                 return replaced(jumpWithLabel)
             }
             return this
@@ -187,7 +190,7 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
 
         result.accept(loopJumpVisitor)
         val labelName = loopJumpVisitor.labelName
-        if (loop != null && labelName != null && loop.parent !is KtLabeledExpression) {
+        if (loop != null && loopJumpVisitor.labelRequired && labelName != null && loop.parent !is KtLabeledExpression) {
             val labeledLoopExpression = KtPsiFactory(result).createLabeledExpression(labelName)
             labeledLoopExpression.baseExpression!!.replace(loop)
             val replacedLabeledLoopExpression = loop.replace(labeledLoopExpression)

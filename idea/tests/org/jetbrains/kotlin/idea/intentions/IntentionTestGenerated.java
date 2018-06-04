@@ -2619,6 +2619,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/withLoopExistingLabel.kt");
                 }
 
+                @TestMetadata("withLoopNoJumps.kt")
+                public void testWithLoopNoJumps() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/withLoopNoJumps.kt");
+                }
+
                 @TestMetadata("withLoopOriginal.kt")
                 public void testWithLoopOriginal() throws Exception {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/withLoopOriginal.kt");
