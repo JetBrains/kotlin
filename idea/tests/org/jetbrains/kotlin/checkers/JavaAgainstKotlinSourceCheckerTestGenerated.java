@@ -46,6 +46,11 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
             runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ClassObjects.kt");
         }
 
+        @TestMetadata("ConstantCompileTimeInitializer.kt")
+        public void testConstantCompileTimeInitializer() throws Exception {
+            runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ConstantCompileTimeInitializer.kt");
+        }
+
         @TestMetadata("DeferredFunReturnType.kt")
         public void testDeferredFunReturnType() throws Exception {
             runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/DeferredFunReturnType.kt");

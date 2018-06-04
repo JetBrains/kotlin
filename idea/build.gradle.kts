@@ -84,6 +84,7 @@ dependencies {
     testCompile(intellijPluginDep("copyright"))
     testCompile(intellijPluginDep("properties"))
     testCompile(intellijPluginDep("java-i18n"))
+    testCompile(commonDep("org.mockito:mockito-core:2.8.9"))
     testCompileOnly(intellijDep())
     testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     testCompileOnly(intellijPluginDep("gradle"))

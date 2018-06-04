@@ -23,27 +23,31 @@ public class ClassBuilderMode {
     public final boolean generateMetadata;
     public final boolean generateSourceRetentionAnnotations;
     public final boolean generateMultiFileFacadePartClasses;
+    public final boolean forceComputingPropertyInitializer;
 
     private ClassBuilderMode(
             boolean generateBodies,
             boolean generateMetadata,
             boolean generateSourceRetentionAnnotations,
-            boolean generateMultiFileFacadePartClasses
+            boolean generateMultiFileFacadePartClasses,
+            boolean forceComputingLazySignatureParts
     ) {
         this.generateBodies = generateBodies;
         this.generateMetadata = generateMetadata;
         this.generateSourceRetentionAnnotations = generateSourceRetentionAnnotations;
         this.generateMultiFileFacadePartClasses = generateMultiFileFacadePartClasses;
+        this.forceComputingPropertyInitializer = forceComputingLazySignatureParts;
     }
 
     /**
      * Full function bodies
      */
     public final static ClassBuilderMode FULL = new ClassBuilderMode(
-            /* bodies = */ true, 
+            /* bodies = */ true,
             /* metadata = */ true,
             /* sourceRetention = */ false,
-            /* generateMultiFileFacadePartClasses = */ true);
+            /* generateMultiFileFacadePartClasses = */ true,
+            /* forceComputingPropertyInitializer */ true);
 
     /**
      * Generating light classes: Only function signatures
@@ -52,7 +56,8 @@ public class ClassBuilderMode {
             /* bodies = */ false,
             /* metadata = */ false,
             /* sourceRetention = */ true,
-            /* generateMultiFileFacadePartClasses = */ false);
+            /* generateMultiFileFacadePartClasses = */ true,
+            /* forceComputingPropertyInitializer */ false);
 
     /**
      * Function signatures + metadata (to support incremental compilation with kapt)
@@ -61,12 +66,14 @@ public class ClassBuilderMode {
             /* bodies = */ false,
             /* metadata = */ true,
             /* sourceRetention = */ true,
-            /* generateMultiFileFacadePartClasses = */ true);
+            /* generateMultiFileFacadePartClasses = */ true,
+            /* forceComputingPropertyInitializer */ true);
 
     @TestOnly
     public final static ClassBuilderMode LIGHT_ANALYSIS_FOR_TESTS = new ClassBuilderMode(
             /* bodies = */ false,
             /* metadata = */ true,
             /* sourceRetention = */ false,
-            /* generateMultiFileFacadePartClasses = */ true);
+            /* generateMultiFileFacadePartClasses = */ true,
+            /* forceComputingPropertyInitializer */ true);
 }

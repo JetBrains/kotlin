@@ -16,16 +16,16 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.WrappedTypeFactory
 import org.jetbrains.kotlin.utils.sure
+import org.mockito.Mockito
 
 class LightClassesPartsLazinessTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun doTestForDeferredTypes(fileName: String, block: (WrappedTypeFactoryWithCounter, PsiClass) -> Unit) {
-        val testDataPath = "compiler/testData/asJava/lightClassesPartsLaziness/$fileName"
-        myFixture.configureByFiles(testDataPath)
-        val ktFile = myFixture.file as KtFile
+        val ktFile = prepareKtFile(fileName)
 
         val wrappedTypeFactoryWithCounter = WrappedTypeFactoryWithCounter()
 
@@ -34,6 +34,36 @@ class LightClassesPartsLazinessTest : KotlinLightCodeInsightFixtureTestCase() {
             wrappedTypeFactoryWithCounter.assertZero()
 
             block(wrappedTypeFactoryWithCounter, psiClass)
+        }
+    }
+
+    private fun prepareKtFile(fileName: String): KtFile {
+        val testDataPath = "compiler/testData/asJava/lightClassesPartsLaziness/$fileName"
+        myFixture.configureByFiles(testDataPath)
+        return myFixture.file as KtFile
+    }
+
+    private fun doTestForDeferredCompileTimeInitializer(
+        fileName: String,
+        block: (Function0<Boolean>, PsiClass) -> Unit
+    ) {
+        val ktFile = prepareKtFile(fileName)
+        val mockForEvaluator = Mockito.mock(ConstantExpressionEvaluator::class.java)
+
+        var wasCalled = false
+
+        Mockito.`when`(
+            mockForEvaluator.evaluateExpression(
+                anyMockitoInstance(), anyMockitoInstance(), anyMockitoInstance()
+            )
+        ).thenAnswer {
+            wasCalled = true
+            null
+        }
+
+        project.withServiceRegistered<ConstantExpressionEvaluator, Unit>(mockForEvaluator) {
+            val psiClass = findClass("A", ktFile, project).sure { "Class was not found" }
+            block({ wasCalled }, psiClass)
         }
     }
 
@@ -99,6 +129,22 @@ class LightClassesPartsLazinessTest : KotlinLightCodeInsightFixtureTestCase() {
             assertEquals("java.lang.String", psiField.type.canonicalText)
 
             wrappedTypeFactoryWithCounter.assertSingle()
+        }
+    }
+
+    fun testCompileTimeInitializer() {
+        doTestForDeferredCompileTimeInitializer("compileTimeInitializer.kt") { wasComputed, psiClass ->
+            assertFalse(wasComputed())
+
+            val psiField = psiClass.findSingleField("x")
+            assertTrue(psiField.hasModifier(JvmModifier.STATIC))
+            assertTrue(psiField.hasModifier(JvmModifier.PUBLIC))
+            assertFalse(wasComputed())
+
+            // Actually, it should be not null, but we have only mock ConstantExpressionEvaluator
+            assertNull(psiField.initializer)
+
+            assertTrue(wasComputed())
         }
     }
 

@@ -32,9 +32,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.elements.DeferredPartsUtilsKt;
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder;
 import org.jetbrains.kotlin.codegen.state.DeferredTypesTracker;
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
@@ -221,7 +223,30 @@ public class StubClassBuilder extends AbstractClassBuilder {
         }
         else if (last instanceof PsiFieldStub) {
             recordDeferredTypeInfoByTypeText(last, ((PsiFieldStub) last).getType(false));
-
+            if (origin.getDescriptor() instanceof PropertyDescriptorImpl) {
+                PropertyDescriptorImpl descriptor = (PropertyDescriptorImpl) origin.getDescriptor();
+                if (descriptor.hasInitializer()) {
+                    if (descriptor.hasComputedInitializer()) {
+                        ConstantValue<?> alreadyComputedValue = descriptor.getCompileTimeInitializer();
+                        Object value = alreadyComputedValue != null ? alreadyComputedValue.getValue() : null;
+                        if (value != null) {
+                            last.putUserData(
+                                    DeferredPartsUtilsKt.DEFERRED_CONSTANT_INITIALIZER,
+                                    () -> value
+                            );
+                        }
+                    }
+                    else {
+                        last.putUserData(
+                                DeferredPartsUtilsKt.DEFERRED_CONSTANT_INITIALIZER,
+                                () -> {
+                                    ConstantValue<?> initializer = descriptor.getCompileTimeInitializer();
+                                    return initializer != null ? initializer.getValue() : null;
+                                }
+                        );
+                    }
+                }
+            }
         }
 
         last.putUserData(ClsWrapperStubPsiFactory.ORIGIN, LightElementOriginKt.toLightMemberOrigin(origin));

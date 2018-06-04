@@ -20,6 +20,9 @@ import java.text.StringCharacterIterator
 @JvmField
 val DEFERRED_TYPE_INFO = Key.create<Function0<DeferredTypesTracker.TypeInfo>>("DEFERRED_TYPE_INFO")
 
+@JvmField
+val DEFERRED_CONSTANT_INITIALIZER = Key.create<Function0<Any?>>("DEFERRED_CONSTANT_INITIALIZER")
+
 
 internal fun KtLightElement<*, *>.computeChildTypeElement(
     clsDelegateTypeElement: PsiTypeElement?
