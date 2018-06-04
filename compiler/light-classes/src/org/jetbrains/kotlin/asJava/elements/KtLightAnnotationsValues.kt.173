@@ -9,14 +9,16 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.impl.LanguageConstantExpressionEvaluator
 import com.intellij.psi.impl.light.LightIdentifier
+import com.intellij.psi.impl.light.LightTypeElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KtLightPsiArrayInitializerMemberValue(
     override val kotlinOrigin: KtElement,
@@ -30,7 +32,7 @@ class KtLightPsiArrayInitializerMemberValue(
     override fun isPhysical(): Boolean = true
 }
 
-class KtLightPsiLiteral(
+open class KtLightPsiLiteral(
     override val kotlinOrigin: KtExpression,
     val lightParent: PsiElement
 ) : KtLightElementBase(lightParent), PsiLiteralExpression {
@@ -41,19 +43,7 @@ class KtLightPsiLiteral(
     override fun getType(): PsiType? {
         val bindingContext = LightClassGenerationSupport.getInstance(this.project).analyze(kotlinOrigin)
         val kotlinType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, kotlinOrigin] ?: return null
-        val typeFqName = kotlinType.constructor.declarationDescriptor?.fqNameSafe?.asString() ?: return null
-        return when (typeFqName) {
-            "kotlin.Int" -> PsiType.INT
-            "kotlin.Long" -> PsiType.LONG
-            "kotlin.Short" -> PsiType.SHORT
-            "kotlin.Boolean" -> PsiType.BOOLEAN
-            "kotlin.Byte" -> PsiType.BYTE
-            "kotlin.Char" -> PsiType.CHAR
-            "kotlin.Double" -> PsiType.DOUBLE
-            "kotlin.Float" -> PsiType.FLOAT
-            "kotlin.String" -> PsiType.getJavaLangString(kotlinOrigin.manager, GlobalSearchScope.projectScope(kotlinOrigin.project))
-            else -> null
-        }
+        return psiType(kotlinType, kotlinOrigin)
     }
 
     override fun getParent(): PsiElement = lightParent
@@ -68,6 +58,34 @@ class KtLightPsiLiteral(
 
     override fun getReference(): PsiReference? = references.singleOrNull()
     override fun getReferences(): Array<out PsiReference> = kotlinOrigin.references
+}
+
+class KtLightPsiClassObjectAccessExpression(override val kotlinOrigin: KtClassLiteralExpression, lightParent: PsiElement) :
+    KtLightPsiLiteral(kotlinOrigin, lightParent), PsiClassObjectAccessExpression {
+    override fun getType(): PsiType {
+        val bindingContext = LightClassGenerationSupport.getInstance(this.project).analyze(kotlinOrigin)
+        val kotlinType = bindingContext[BindingContext.COMPILE_TIME_VALUE, kotlinOrigin]
+            ?.getValue(TypeUtils.NO_EXPECTED_TYPE).safeAs<SimpleType>() ?: return PsiType.VOID
+        return psiType(kotlinType, kotlinOrigin) ?: return PsiType.VOID
+    }
+
+    override fun getOperand(): PsiTypeElement = LightTypeElement(kotlinOrigin.manager, type)
+}
+
+private fun psiType(kotlinType: KotlinType, context: PsiElement): PsiType? {
+        val typeFqName = kotlinType.constructor.declarationDescriptor?.fqNameSafe?.asString() ?: return null
+        return when (typeFqName) {
+            "kotlin.Int" -> PsiType.INT
+            "kotlin.Long" -> PsiType.LONG
+            "kotlin.Short" -> PsiType.SHORT
+            "kotlin.Boolean" -> PsiType.BOOLEAN
+            "kotlin.Byte" -> PsiType.BYTE
+            "kotlin.Char" -> PsiType.CHAR
+            "kotlin.Double" -> PsiType.DOUBLE
+            "kotlin.Float" -> PsiType.FLOAT
+        "kotlin.String" -> PsiType.getJavaLangString(context.manager, GlobalSearchScope.projectScope(context.project))
+        else -> PsiType.getTypeByName(typeFqName, context.project, context.resolveScope)
+    }
 }
 
 class KtLightPsiNameValuePair private constructor(

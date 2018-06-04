@@ -330,6 +330,9 @@ private fun KtElement.getResolvedCall(): ResolvedCall<out CallableDescriptor>? {
 fun convertToLightAnnotationMemberValue(lightParent: PsiElement, argument: KtExpression): PsiAnnotationMemberValue {
     val argument = unwrapCall(argument)
     when (argument) {
+        is KtClassLiteralExpression -> {
+            return KtLightPsiClassObjectAccessExpression(argument, lightParent)
+        }
         is KtStringTemplateExpression, is KtConstantExpression -> {
             return KtLightPsiLiteral(argument, lightParent)
         }

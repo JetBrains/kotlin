@@ -22,6 +22,7 @@ import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -331,6 +332,9 @@ private fun KtElement.getResolvedCall(): ResolvedCall<out CallableDescriptor>? {
 fun convertToLightAnnotationMemberValue(lightParent: PsiElement, argument: KtExpression): PsiAnnotationMemberValue {
     val argument = unwrapCall(argument)
     when (argument) {
+        is KtClassLiteralExpression -> {
+            return KtLightPsiClassObjectAccessExpression(argument, lightParent)
+        }
         is KtStringTemplateExpression, is KtConstantExpression -> {
             return KtLightPsiLiteral(argument, lightParent)
         }
@@ -393,8 +397,10 @@ private fun getAnnotationName(callee: KtExpression): String? {
     return null
 }
 
+@TestOnly
 var accessAnnotationsClsDelegateIsAllowed = false
 
+@TestOnly
 fun <T> withAllowedAnnotationsClsDelegate(body: () -> T): T {
     val prev = accessAnnotationsClsDelegateIsAllowed
     try {
