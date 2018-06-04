@@ -266,8 +266,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         fsOperations: FSOperationsHelper
     ): ModuleLevelBuilder.ExitCode {
         // Workaround for Android Studio
-        val isJsModule = representativeTarget is KotlinJsModuleBuildTarget
-        if (!JavaBuilder.IS_ENABLED[context, true] && !isJsModule) {
+        if (representativeTarget is KotlinJvmModuleBuildTarget && !JavaBuilder.IS_ENABLED[context, true]) {
             messageCollector.report(INFO, "Kotlin JPS plugin is disabled")
             return NOTHING_DONE
         }
