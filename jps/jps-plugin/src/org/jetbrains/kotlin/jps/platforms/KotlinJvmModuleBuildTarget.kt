@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
-import org.jetbrains.kotlin.jps.build.KotlinRoundDirtySourceFilesHolder
+import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.build.jvmBuildMetaInfoFile
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalJvmCache
@@ -121,7 +121,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
     override fun compileModuleChunk(
         chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
-        dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder,
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         environment: JpsCompilerEnvironment
     ): Boolean {
         if (chunk.modules.size > 1) {
@@ -174,7 +174,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
         return true
     }
 
-    fun generateModuleDescription(chunk: ModuleChunk, dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder): File? {
+    fun generateModuleDescription(chunk: ModuleChunk, dirtyFilesHolder: KotlinDirtySourceFilesHolder): File? {
         val builder = KotlinModuleXmlBuilder()
 
         var hasDirtySources = false
@@ -294,7 +294,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
 
     override fun updateChunkMappings(
         chunk: ModuleChunk,
-        dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder,
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         outputItems: Map<ModuleBuildTarget, Iterable<GeneratedFile>>,
         incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCache>
     ) {

@@ -11,7 +11,6 @@ import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.ProjectBuildException
 import org.jetbrains.jps.incremental.storage.BuildDataManager
-import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaClasspathKind
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
@@ -79,7 +78,7 @@ abstract class KotlinModuleBuildTarget(val context: CompileContext, val jpsModul
                 result.addIfNotNull(context.kotlinBuildTargets[relatedProductionModule?.productionBuildTarget])
             }
 
-            return result.filter { it.sourceFiles.isNotEmpty() }
+            return result.filter { it.sources.isNotEmpty() }
         }
 
     val friendOutputDirs: List<File>
@@ -95,13 +94,13 @@ abstract class KotlinModuleBuildTarget(val context: CompileContext, val jpsModul
             .includedIn(JpsJavaClasspathKind.compile(isTests))
     }
 
-    val sources by lazy {
-        mutableMapOf<String, Source>().also { result ->
+    val sources: Map<File, Source> by lazy {
+        mutableMapOf<File, Source>().also { result ->
             collectSources(result)
         }
     }
 
-    private fun collectSources(receiver: MutableMap<String, Source>) {
+    private fun collectSources(receiver: MutableMap<File, Source>) {
         val moduleExcludes = module.excludeRootsList.urls.mapTo(java.util.HashSet(), JpsPathUtil::urlToFile)
 
         val compilerExcludes = JpsJavaExtensionService.getInstance()
@@ -117,7 +116,7 @@ abstract class KotlinModuleBuildTarget(val context: CompileContext, val jpsModul
                 .onEnter { file -> file !in moduleExcludes }
                 .forEach { file ->
                     if (!compilerExcludes.isExcluded(file) && file.isFile && file.isKotlinSourceFile) {
-                        receiver[file.path] = Source(file, isCommonRoot)
+                        receiver[file] = Source(file, isCommonRoot)
                     }
                 }
 
@@ -132,11 +131,10 @@ abstract class KotlinModuleBuildTarget(val context: CompileContext, val jpsModul
         val isCommonModule: Boolean
     )
 
-    fun isCommonModuleFile(path: String): Boolean = sources[path]?.isCommonModule == true
+    fun isCommonModuleFile(file: File): Boolean = sources[file]?.isCommonModule == true
 
-    val sourceFiles by lazy {
-        sources.values.map { it.file }
-    }
+    val sourceFiles: Collection<File>
+        get() = sources.values.map { it.file }
 
     override fun toString() = jpsModuleBuildTarget.toString()
 
@@ -146,7 +144,7 @@ abstract class KotlinModuleBuildTarget(val context: CompileContext, val jpsModul
     abstract fun compileModuleChunk(
         chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
-        dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder,
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         environment: JpsCompilerEnvironment
     ): Boolean
 
@@ -183,7 +181,7 @@ abstract class KotlinModuleBuildTarget(val context: CompileContext, val jpsModul
      */
     open fun updateChunkMappings(
         chunk: ModuleChunk,
-        dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder,
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         outputItems: Map<ModuleBuildTarget, Iterable<GeneratedFile>>,
         incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCache>
     ) {
@@ -217,7 +215,7 @@ abstract class KotlinModuleBuildTarget(val context: CompileContext, val jpsModul
         }
     }
 
-    protected fun collectSourcesToCompile(dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder) =
+    protected fun collectSourcesToCompile(dirtyFilesHolder: KotlinDirtySourceFilesHolder) =
         collectSourcesToCompile(this, dirtyFilesHolder)
 
     /**
@@ -225,7 +223,7 @@ abstract class KotlinModuleBuildTarget(val context: CompileContext, val jpsModul
      */
     protected fun collectSourcesToCompile(
         target: KotlinModuleBuildTarget,
-        dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder
     ): Collection<File> {
         // Should not be cached since may be vary in different rounds
 
@@ -234,7 +232,7 @@ abstract class KotlinModuleBuildTarget(val context: CompileContext, val jpsModul
         else target.sourceFiles
     }
 
-    protected fun checkShouldCompileAndLog(dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder, moduleSources: Collection<File>) =
+    protected fun checkShouldCompileAndLog(dirtyFilesHolder: KotlinDirtySourceFilesHolder, moduleSources: Collection<File>) =
         checkShouldCompileAndLog(this, dirtyFilesHolder, moduleSources)
 
     /**
@@ -242,7 +240,7 @@ abstract class KotlinModuleBuildTarget(val context: CompileContext, val jpsModul
      */
     protected fun checkShouldCompileAndLog(
         target: KotlinModuleBuildTarget,
-        dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder,
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         moduleSources: Collection<File>
     ): Boolean {
         val hasRemovedSources = dirtyFilesHolder.getRemovedFiles(target.jpsModuleBuildTarget).isNotEmpty()

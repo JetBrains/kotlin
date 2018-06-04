@@ -60,10 +60,6 @@ class FSOperationsHelper(
         markFilesImpl(files, beforeRound = true) { it.exists() && moduleBasedFilter.accept(it) }
     }
 
-    fun markComplementaryFiles(files: Iterable<File>) {
-        markFilesImpl(files, beforeRound = true) { it.exists() }
-    }
-
     fun markFiles(files: Iterable<File>) {
         markFilesImpl(files, beforeRound = false) { it.exists() }
     }

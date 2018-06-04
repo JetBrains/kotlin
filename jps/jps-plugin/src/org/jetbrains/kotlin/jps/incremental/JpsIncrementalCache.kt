@@ -37,7 +37,9 @@ class JpsIncrementalJvmCache(
     paths: BuildDataPaths
 ) : IncrementalJvmCache(paths.getTargetDataRoot(target), target.outputDir), JpsIncrementalCache {
     override fun addJpsDependentCache(cache: JpsIncrementalCache) {
-        addDependentCache(cache as JpsIncrementalJvmCache)
+        if (cache is JpsIncrementalJvmCache) {
+            addDependentCache(cache)
+        }
     }
 
     override fun debugLog(message: String) {

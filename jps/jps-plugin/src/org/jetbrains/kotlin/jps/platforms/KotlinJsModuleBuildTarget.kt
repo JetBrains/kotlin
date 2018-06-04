@@ -22,11 +22,8 @@ import org.jetbrains.kotlin.incremental.ChangesCollector
 import org.jetbrains.kotlin.incremental.IncrementalJsCache
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
-import org.jetbrains.kotlin.incremental.js.TranslationResultValue
-import org.jetbrains.kotlin.jps.build.KotlinRoundDirtySourceFilesHolder
+import org.jetbrains.kotlin.incremental.js.*
+import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalJsCache
 import org.jetbrains.kotlin.jps.model.k2JsCompilerArguments
@@ -38,14 +35,6 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils.JS_EXT
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils.META_JS_SUFFIX
 import java.io.File
 import java.net.URI
-
-internal class IncrementalDataProviderFromCache(private val cache: IncrementalJsCache) : IncrementalDataProvider {
-    override val headerMetadata: ByteArray
-        get() = cache.header
-
-    override val compiledPackageParts: Map<File, TranslationResultValue>
-        get() = cache.nonDirtyPackageParts()
-}
 
 class KotlinJsModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
     KotlinModuleBuildTarget(compileContext, jpsModuleBuildTarget) {
@@ -81,7 +70,7 @@ class KotlinJsModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTa
     override fun compileModuleChunk(
         chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
-        dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder,
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         environment: JpsCompilerEnvironment
     ): Boolean {
         require(chunk.representativeTarget() == jpsModuleBuildTarget)
@@ -188,7 +177,7 @@ class KotlinJsModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTa
 
         if (dependencyBuildTarget != this@KotlinJsModuleBuildTarget &&
             dependencyBuildTarget is KotlinJsModuleBuildTarget &&
-            dependencyBuildTarget.sourceFiles.isNotEmpty()
+            dependencyBuildTarget.sources.isNotEmpty()
         ) {
             val metaFile = dependencyBuildTarget.outputMetaFile
             if (metaFile.exists()) {
