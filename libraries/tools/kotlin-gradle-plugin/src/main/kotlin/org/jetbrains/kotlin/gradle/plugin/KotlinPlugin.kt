@@ -23,12 +23,14 @@ import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
+import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
@@ -333,7 +335,8 @@ internal class KotlinCommonSourceSetProcessor(
 internal abstract class AbstractKotlinPlugin(
         val tasksProvider: KotlinTasksProvider,
         val kotlinSourceSetProvider: KotlinSourceSetProvider,
-        protected val kotlinPluginVersion: String
+        protected val kotlinPluginVersion: String,
+        val registry: ToolingModelBuilderRegistry
 ) : Plugin<Project> {
     internal abstract fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String): KotlinSourceSetProcessor<*>
 
@@ -346,6 +349,7 @@ internal abstract class AbstractKotlinPlugin(
         configureSourceSetDefaults(project, javaBasePlugin, javaPluginConvention)
         configureDefaultVersionsResolutionStrategy(project)
         configureClassInspectionForIC(project)
+        registry.register(KotlinModelBuilder(kotlinPluginVersion))
     }
 
     open protected fun configureSourceSetDefaults(
@@ -402,8 +406,9 @@ internal abstract class AbstractKotlinPlugin(
 internal open class KotlinPlugin(
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider,
-        kotlinPluginVersion: String
-) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion) {
+        kotlinPluginVersion: String,
+        registry: ToolingModelBuilderRegistry
+) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion, registry) {
     override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String) =
             Kotlin2JvmSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion)
 
@@ -416,8 +421,9 @@ internal open class KotlinPlugin(
 internal open class KotlinCommonPlugin(
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider,
-        kotlinPluginVersion: String
-) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion) {
+        kotlinPluginVersion: String,
+        registry: ToolingModelBuilderRegistry
+) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion, registry) {
     override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String) =
             KotlinCommonSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion)
 }
@@ -425,8 +431,9 @@ internal open class KotlinCommonPlugin(
 internal open class Kotlin2JsPlugin(
         tasksProvider: KotlinTasksProvider,
         kotlinSourceSetProvider: KotlinSourceSetProvider,
-        kotlinPluginVersion: String
-) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion) {
+        kotlinPluginVersion: String,
+        registry: ToolingModelBuilderRegistry
+) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion, registry) {
     override fun buildSourceSetProcessor(project: Project, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet, kotlinPluginVersion: String) =
             Kotlin2JsSourceSetProcessor(project, javaBasePlugin, sourceSet, tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion)
 }
