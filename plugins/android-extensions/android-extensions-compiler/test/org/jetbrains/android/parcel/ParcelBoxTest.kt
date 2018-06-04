@@ -60,6 +60,7 @@ class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testEnumObject() = doTest("enumObject")
     fun testIntArray() = doTest("intArray")
     fun testOpenParcelize() = doTest("openParcelize")
+    fun testKt25839() = doTest("kt25839")
 }
 
 class ParcelBoxTestWithSerializableLikeExtension : AbstractParcelBoxTest() {
