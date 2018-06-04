@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.Stack;
 import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
@@ -44,6 +45,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl;
+import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
@@ -694,18 +697,54 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         CallableDescriptor descriptor = call.getResultingDescriptor();
         if (!(descriptor instanceof FunctionDescriptor)) return;
 
+        recordSamValueForNewInference(call);
         recordSamConstructorIfNeeded(expression, call);
 
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) descriptor);
         if (original == null) return;
 
-        List<ResolvedValueArgument> valueArguments = call.getValueArgumentsByIndex();
-        if (valueArguments == null) return;
-
+        List<ValueParameterDescriptor> valueParametersWithSAMConversion = new SmartList<>();
         for (ValueParameterDescriptor valueParameter : original.getValueParameters()) {
             ValueParameterDescriptor adaptedParameter = descriptor.getValueParameters().get(valueParameter.getIndex());
             if (KotlinTypeChecker.DEFAULT.equalTypes(adaptedParameter.getType(), valueParameter.getType())) continue;
+            valueParametersWithSAMConversion.add(valueParameter);
+        }
+        writeSamValueForValueParameters(valueParametersWithSAMConversion, call.getValueArgumentsByIndex());
+    }
 
+    private void recordSamValueForNewInference(@NotNull ResolvedCall<?> call) {
+        NewResolvedCallImpl<?> newResolvedCall = null;
+        if (call instanceof NewVariableAsFunctionResolvedCallImpl) {
+            newResolvedCall = ((NewVariableAsFunctionResolvedCallImpl) call).getFunctionCall();
+        }
+        else if(call instanceof NewResolvedCallImpl) {
+            newResolvedCall = (NewResolvedCallImpl<?>) call;
+        }
+        if (newResolvedCall == null) return;
+
+        List<ValueParameterDescriptor> valueParametersWithSAMConversion = new SmartList<>();
+        Map<ValueParameterDescriptor, ResolvedValueArgument> arguments = newResolvedCall.getValueArguments();
+        for (ValueParameterDescriptor valueParameter : arguments.keySet()) {
+            ResolvedValueArgument argument = arguments.get(valueParameter);
+
+            if (!(argument instanceof ExpressionValueArgument)) continue;
+            ValueArgument valueArgument = ((ExpressionValueArgument) argument).getValueArgument();
+
+            if (valueArgument == null || newResolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument) == null) continue;
+
+            valueParametersWithSAMConversion.add(valueParameter.getOriginal());
+        }
+        writeSamValueForValueParameters(valueParametersWithSAMConversion, newResolvedCall.getValueArgumentsByIndex());
+
+    }
+
+    private void writeSamValueForValueParameters(
+            @NotNull Collection<ValueParameterDescriptor> valueParametersWithSAMConversion,
+            @Nullable List<ResolvedValueArgument> valueArguments
+    ) {
+        if (valueArguments == null) return;
+
+        for (ValueParameterDescriptor valueParameter : valueParametersWithSAMConversion) {
             SamType samType = SamType.createByValueParameter(valueParameter);
             if (samType == null) continue;
 

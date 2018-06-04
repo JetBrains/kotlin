@@ -19254,6 +19254,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/sam/kt22906_2.kt");
         }
 
+        @TestMetadata("partialSam.kt")
+        public void testPartialSam() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/partialSam.kt");
+        }
+
+        @TestMetadata("partialSamKT.kt")
+        public void testPartialSamKT() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/partialSamKT.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/sam/constructors")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
