@@ -18,6 +18,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -436,7 +437,7 @@ class KotlinUEnumConstant(
     }
 
     override val returnType: PsiType?
-        get() = psi.type
+        get() = uastParent?.getAsJavaPsiElement(PsiClass::class.java)?.let { PsiTypesUtil.getClassType(it) }
 
     override fun resolve() = psi.resolveMethod()
 
