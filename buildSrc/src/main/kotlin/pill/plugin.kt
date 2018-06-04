@@ -248,6 +248,10 @@ class JpsCompatiblePlugin : Plugin<Project> {
                     .configurations.getByName("robolectricClasspath")
                     .files.joinToString(File.pathSeparator)
 
+                if (options.none { it == "-ea" }) {
+                    options += "-ea"
+                }
+
                 addOrReplaceOptionValue("idea.home.path", platformDirProjectRelative)
                 addOrReplaceOptionValue("ideaSdk.androidPlugin.path", platformDirProjectRelative + "/plugins/android/lib")
                 addOrReplaceOptionValue("robolectric.classpath", robolectricClasspath)
