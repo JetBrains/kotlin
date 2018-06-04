@@ -55,7 +55,7 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
 
         configuration.settings.externalProjectPath = projectPath
         configuration.settings.taskNames = tasksToRun
-        configuration.settings.scriptParameters = String.format("--tests %s", testClass.qualifiedName)
+        configuration.settings.scriptParameters = String.format("--tests \"%s\"", testClass.qualifiedName)
         configuration.name = testClass.name
 
         JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, contextLocation)
@@ -88,7 +88,7 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
         if (i == -1) return false
 
         val str = scriptParameters.substringAfter("--tests ").trim() + ' '
-        return str.startsWith(testClass.qualifiedName + ' ') && !str.contains("--tests")
+        return str.startsWith("\"" + testClass.qualifiedName + "\"" + ' ') && !str.contains("--tests")
     }
 }
 
