@@ -100,39 +100,12 @@ package kotlin {
     }
 
     package kotlin.internal {
-
-        package kotlin.internal.contracts {
-        }
     }
 
     package kotlin.ranges {
     }
 
     package kotlin.reflect {
-    }
-
-    package kotlin.script {
-
-        package kotlin.script.dependencies {
-        }
-
-        package kotlin.script.experimental {
-
-            package kotlin.script.experimental.dependencies {
-            }
-
-            package kotlin.script.experimental.location {
-            }
-        }
-
-        package kotlin.script.extensions {
-        }
-
-        package kotlin.script.templates {
-
-            package kotlin.script.templates.standard {
-            }
-        }
     }
 
     package kotlin.text {
