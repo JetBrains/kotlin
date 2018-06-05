@@ -2383,6 +2383,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/mainFunctionReturnUnit"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("junit4Test.kt")
+        public void testJunit4Test() throws Exception {
+            runTest("idea/testData/inspectionsLocal/mainFunctionReturnUnit/junit4Test.kt");
+        }
+
+        @TestMetadata("junit5Test.kt")
+        public void testJunit5Test() throws Exception {
+            runTest("idea/testData/inspectionsLocal/mainFunctionReturnUnit/junit5Test.kt");
+        }
+
         @TestMetadata("notMain.kt")
         public void testNotMain() throws Exception {
             runTest("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notMain.kt");
