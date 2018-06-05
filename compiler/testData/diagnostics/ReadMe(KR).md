@@ -1,4 +1,5 @@
-# Diagnostics 테스트 형식 specification
+# Diagnostics 테스트 형식 명세서(specification)
+
 
 각각의 diagnostics 테스트는 하나 또는 여러 개의 Kotlin 혹은 Java 소스 파일들의 코드를 포함하는 하나의 .kt 파일로 이루어집니다.
 각각의 diagnostic 에 대한 경고나 에러는 다음과 같은 방식으로 표기됩니다:
@@ -13,29 +14,29 @@ Diagnostic 존재 여부 뿐만 아니라 어떤 arguments가 유저에게 rende
 
 참고: 인자로 어떤 텍스트를 넣어야 할 지 모르겠다면, 단순히 괄호를 비웁니다. 그렇게 하면 실패한 테스트가 assertion 메시지를 통해 실제 값을 보여줄 것입니다.
 
-## Directives
+## Directives(지시문)
 
-Several directives can be added to the beginning of a test file with the following syntax:
+몇몇 directive들은 테스트 파일의 앞 부분에 다음 구문을 통해 추가될 수 있습니다:
 
     // !DIRECTIVE
 
 ### 1. DIAGNOSTICS
 
-This directive allows to exclude some irrelevant diagnostics (e.g. unused parameter) from a certain test, or to test only a specific set of diagnostics.
+이 directive는 특정 테스트에게 불필요한 몇몇의 diagnostics (예: 사용되지 않은 인자들)를 제외하는 것이나, 특정 diagnostic들만 테스트 하는 것을 가능하게 해줍니다.
 
-The syntax is
+구문:
 
     '([ + - ! ] DIAGNOSTIC_FACTORY_NAME | ERROR | WARNING | INFO ) +'
 
-  where
+  여기서
 
-* `+` means 'include';
-* `-` means 'exclude';
-* `!` means 'exclude everything but this'.
+* `+` 는 '포함하기'를,
+* `-` 는 '제외하기'를,
+* `!` 는 '이것을 제외한 나머지 모두를 제외하기'를 의미합니다.
 
-  Directives are applied in the order of appearance, i.e. `!FOO +BAR` means include only `FOO` and `BAR`.
+  Directives는 나타난 순서대로 적용됩니다, 예를 들어, `!FOO +BAR`은 `FOO`와 `BAR`만을 포함한다는 의미입니다.
 
-#### Usage:
+#### 사용 예제:
 
     // !DIAGNOSTICS: -WARNING +CAST_NEVER_SUCCEEDS
 
