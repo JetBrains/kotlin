@@ -3202,6 +3202,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/when/whenWithLongRangeClause.kt");
             }
 
+            @TestMetadata("whenWithMapRangeClause.kt")
+            public void testWhenWithMapRangeClause() throws Exception {
+                runTest("js/js.translator/testData/box/expression/when/whenWithMapRangeClause.kt");
+            }
+
             @TestMetadata("whenWithOneStmWhen.kt")
             public void testWhenWithOneStmWhen() throws Exception {
                 runTest("js/js.translator/testData/box/expression/when/whenWithOneStmWhen.kt");
