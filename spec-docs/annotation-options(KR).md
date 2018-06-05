@@ -39,23 +39,23 @@ class example
 
 어노테이션을 매개변수로 갖는 것은 더 발견하기 쉽지만 몇가지 단점을 갖고 있습니다: varargs를 사용할 수 없습니다.
 
-Option 2: 조합
+Option 2: 결합
 
 ``` kotlin
 @Target(CLASS, FIELD) @annotation(retention = SOURCE, repeatable = false, documented = false) class example
 ```
 
-It makes sense because target can have vararg as its argument, and everything else (retention, repeatable, and may be documented / inherited in future) is combined into one annotation.
+타겟이 vararg를 인자로 가질수 있다는 의의가 있고, 그 외의 것들(보존, 반복, 문서화, 상속)은 하나의 주석으로 결합됩니다.
 
-There is an important question here: what is an annotation if annotation is an annotation itself? The following answers are possible:
-* Everything annotated with annotation, regardless of its resolving
-* kotlin.annotation.annotation itself AND everything annotated with (correctly resolved) kotlin.annotation.annotation
+중요한 질문이 하나 있습니다: 어노테이션이 어노테이션일 경우 어노테이션은 무엇입니까? 다음과 같은 답이 가능합니다:
+* 해석에 관계없이 어노테이션된 모든것
+* kotlin.annotation.annotation 과 (정확히 해석된) kotlin.annotation.annotation로 어노테이션 된 모든것
 
-Looks like the second answer makes more sense.
+두번째 답이 더 정확해 보입니다.
 
 ## Targeting
 
-To check applicability, we can use the following constants:
+적용 가능성을 확인하기 위해 다음 상수들을 사용할 수 있습니다:
 
 | Kotlin constant | Java constant |
 |-----------------|---------------|
@@ -74,8 +74,7 @@ To check applicability, we can use the following constants:
 | EXPRESSION | \<no analog> |
 | FILE | \<no analog> |
 
-Putting an annotation on an element that is not allowed by the specified target is a compile-time error.
-No targets specified means that all targets which exist in Java6 are accepted (everything except TYPE_PARAMETER, TYPE, EXPRESSION, and FILE).
+지정된 대상에서 허용되지 않는 요소에 어노테이션을 넣는 것은 컴파일 타임 에러입니다. 지정된 대상이 없으면 Java6에 있는 모든 대상이 허용됩니다.(TYPE_PARAMETER, TYPE, EXPRESSION, FILE을 제외한).
 
 > NOTE: Java has the following [targets](https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html)
 By default, Java has everything but Java8-specific targets (`TYPE_USE`, `TYPE_PARAMETER`), which makes it unclear as of which target should we take by default.
