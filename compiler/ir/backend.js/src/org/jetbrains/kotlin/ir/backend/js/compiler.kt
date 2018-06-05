@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.FunctionInlining
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.ReturnableBlockLowering
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -81,6 +82,8 @@ fun JsIrBackendContext.lower(file: IrFile) {
     LateinitLowering(this, true).lower(file)
     DefaultArgumentStubGenerator(this).runOnFilePostfix(file)
     SharedVariablesLowering(this).runOnFilePostfix(file)
+    // TODO: fails on SharedVariable lowering. Why?
+    ReturnableBlockLowering(this).runOnFilePostfix(file)
     LocalDeclarationsLowering(this).runOnFilePostfix(file)
     InnerClassesLowering(this).runOnFilePostfix(file)
     InnerClassConstructorCallsLowering(this).runOnFilePostfix(file)
