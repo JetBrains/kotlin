@@ -2,7 +2,14 @@
   <id>org.jetbrains.kotlin</id>
 
   <name>Kotlin</name>
-  <description>Kotlin language support</description>
+  <description><![CDATA[
+The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
+<br>
+<a href="http://kotlinlang.org/docs/tutorials/getting-started.html">Getting Started in IntelliJ IDEA</a><br>
+<a href="http://kotlinlang.org/docs/tutorials/kotlin-android.html">Getting Started in Android Studio</a><br>
+<a href="http://slack.kotlinlang.org/">Public Slack</a><br>
+<a href="https://youtrack.jetbrains.com/issues/KT">Issue tracker</a><br>
+]]></description>
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
