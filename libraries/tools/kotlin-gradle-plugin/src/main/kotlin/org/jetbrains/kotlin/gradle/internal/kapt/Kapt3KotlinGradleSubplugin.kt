@@ -18,10 +18,12 @@ import org.gradle.api.tasks.TaskDependency
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.process.CommandLineArgumentProvider
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.tasks.isWorkerAPISupported
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
@@ -31,9 +33,10 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
 import java.util.*
+import javax.inject.Inject
 
 // apply plugin: 'kotlin-kapt'
-class Kapt3GradleSubplugin : Plugin<Project> {
+class Kapt3GradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : Plugin<Project> {
     companion object {
         fun isEnabled(project: Project) = project.plugins.findPlugin(Kapt3GradleSubplugin::class.java) != null
 
@@ -61,6 +64,7 @@ class Kapt3GradleSubplugin : Plugin<Project> {
                 } ?: project.logger.error("Kotlin plugin should be enabled before 'kotlin-kapt'")
             }
         }
+        registry.register(KaptModelBuilder())
     }
 }
 
