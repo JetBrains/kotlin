@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert
 import org.junit.Assume
