@@ -14,11 +14,11 @@ class GradleDaemonMemoryIT : BaseGradleIT() {
     // In order to stop daemon process, special exit task is used ( System.exit(0) ).
     @Test
     fun testGradleDaemonMemory() {
-        val project = Project("kotlinProject")
+        val project = Project("gradleDaemonMemory")
         val VARIANT_CONSTANT = "ForTest"
         val userVariantArg = "-Duser.variant=$VARIANT_CONSTANT"
-        val MEMORY_MAX_GROWTH_LIMIT_KB = 500
-        val BUILD_COUNT = 15
+        val MEMORY_MAX_GROWTH_LIMIT_KB = 5000
+        val BUILD_COUNT = 10
         val reportMemoryUsage = "-Dkotlin.gradle.test.report.memory.usage=true"
         val options = BaseGradleIT.BuildOptions(withDaemon = true)
 
@@ -32,10 +32,11 @@ class GradleDaemonMemoryIT : BaseGradleIT() {
         fun buildAndGetMemoryAfterBuild(): Int {
             var reportedMemory: Int? = null
 
-            project.build(userVariantArg, reportMemoryUsage, "clean", "build", options = options) {
+            project.build(userVariantArg, reportMemoryUsage, "clean", "assemble", options = options) {
                 assertSuccessful()
                 val matches = "\\[KOTLIN\\]\\[PERF\\] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)"
                     .toRegex().find(output)
+                assertTasksExecuted(":compileKotlin")
                 assert(matches != null && matches.groups.size == 3) { "Used memory after build is not reported by plugin" }
                 reportedMemory = matches!!.groupValues[1].toInt()
             }
