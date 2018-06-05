@@ -374,6 +374,7 @@ static ALWAYS_INLINE OBJ_GETTER(convertUnmappedObjCObject, id obj) {
 }
 
 static OBJ_GETTER(blockToKotlinImp, id self, SEL cmd);
+static OBJ_GETTER(boxedBooleanToKotlinImp, NSNumber* self, SEL cmd);
 
 @interface NSObject (NSObjectToKotlin) <ConvertibleToKotlin>
 @end;
@@ -399,6 +400,13 @@ static OBJ_GETTER(blockToKotlinImp, id self, SEL cmd);
   // Note: can't add it with category, because it would be considered as private API usage.
   BOOL added = class_addMethod(nsBlockClass, toKotlinSelector, (IMP)blockToKotlinImp, toKotlinTypeEncoding);
   RuntimeAssert(added, "Unable to add 'toKotlin:' method to NSBlock class");
+
+  // Note: __NSCFBoolean is not visible to linker, so this case can't be handled with a category too.
+  Class booleanClass = objc_getClass("__NSCFBoolean");
+  RuntimeAssert(booleanClass != nullptr, "__NSCFBoolean class not found");
+
+  added = class_addMethod(booleanClass, toKotlinSelector, (IMP)boxedBooleanToKotlinImp, toKotlinTypeEncoding);
+  RuntimeAssert(added, "Unable to add 'toKotlin:' method to __NSCFBoolean class");
 }
 @end;
 
@@ -424,10 +432,12 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 
 }
 
+static OBJ_GETTER(boxedBooleanToKotlinImp, NSNumber* self, SEL cmd) {
+  RETURN_RESULT_OF(Kotlin_boxBoolean, self.boolValue);
+}
+
 @interface NSNumber (NSNumberToKotlin) <ConvertibleToKotlin>
 @end;
-
-static Class __NSCFBooleanClass = nullptr;
 
 @implementation NSNumber (NSNumberToKotlin)
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
@@ -437,22 +447,7 @@ static Class __NSCFBooleanClass = nullptr;
 
   switch (type[0]) {
     case 'S': RETURN_RESULT_OF(Kotlin_boxChar, self.unsignedShortValue);
-    case 'c': {
-      Class booleanClass = __NSCFBooleanClass;
-      if (booleanClass == nullptr) {
-        // Note: __NSCFBoolean is not visible to linker, so this case can't be handled with a category.
-        booleanClass = __NSCFBooleanClass = objc_getClass("__NSCFBoolean");
-        if (booleanClass == nullptr) {
-          [NSException raise:NSGenericException format:@"__NSCFBoolean class not found"];
-        }
-      }
-
-      if (object_getClass(self) == booleanClass) {
-        RETURN_RESULT_OF(Kotlin_boxBoolean, self.boolValue);
-      } else {
-        RETURN_RESULT_OF(Kotlin_boxByte, self.charValue);
-      }
-    }
+    case 'c': RETURN_RESULT_OF(Kotlin_boxByte, self.charValue);
     case 's': RETURN_RESULT_OF(Kotlin_boxShort, self.shortValue);
     case 'i': RETURN_RESULT_OF(Kotlin_boxInt, self.intValue);
     case 'q': RETURN_RESULT_OF(Kotlin_boxLong, self.longLongValue);
