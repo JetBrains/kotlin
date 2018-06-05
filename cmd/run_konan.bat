@@ -94,7 +94,7 @@ goto :eof
 :set_path
   rem libclang.dll is dynamically linked and thus requires correct PATH to be loaded.
   rem TODO: remove this hack.
-  if ("%KONAN_DATA_DIR%"=="") (set KONAN_DATA_DIR=%USERPROFILE%\.konan)
+  if "%KONAN_DATA_DIR%"=="" (set KONAN_DATA_DIR=%USERPROFILE%\.konan)
   set "PATH=%KONAN_DATA_DIR%\dependencies\msys2-mingw-w64-x86_64-gcc-7.2.0-clang-llvm-5.0.0-windows-x86-64\bin;%PATH%"
 goto :eof
 
