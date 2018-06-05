@@ -80,7 +80,7 @@ open class ModulesApiHistoryJvm(protected val modulesInfo: IncrementalModuleInfo
                     }
                 }
                 else ->
-                    setOf()
+                    return Either.Error("Unable to get build history for $file")
             }
         }
         return Either.Success(history)
