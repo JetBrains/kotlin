@@ -7,6 +7,6 @@ package org.jetbrains.kotlin.idea.highlighter;
 
 public class ErrorIconUtil {
     public static String getErrorIconUrl() {
-        return "/ide/error.png";
+        return "/general/error.svg";
     }
 }
