@@ -50,7 +50,6 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: Context) {
     this.transformChildrenVoid(IrUnboundSymbolReplacer(symbolTable, collector.descriptorToSymbol))
 
     // Generate missing external stubs:
-    // TODO: ModuleGenerator::generateUnboundSymbolsAsDependencies(IRModuleFragment) is private function :/
     @Suppress("DEPRECATION")
     ExternalDependenciesGenerator(symbolTable = context.psi2IrGeneratorContext.symbolTable, irBuiltIns = context.irBuiltIns).generateUnboundSymbolsAsDependencies(this)
 
