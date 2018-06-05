@@ -39,7 +39,8 @@ public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
      *
      * @throws IllegalArgumentException if the initial capacity or load factor are negative
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) {
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    actual constructor(initialCapacity: Int, loadFactor: Float = 0.0f) {
         map = HashMap<E, Any>(initialCapacity, loadFactor)
     }
 
