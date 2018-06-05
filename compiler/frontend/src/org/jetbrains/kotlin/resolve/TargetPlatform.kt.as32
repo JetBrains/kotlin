@@ -146,6 +146,3 @@ abstract class PlatformConfigurator(
 
 fun createContainer(id: String, platform: TargetPlatform, init: StorageComponentContainer.() -> Unit) =
     composeContainer(id, platform.platformConfigurator.platformSpecificContainer, init)
-
-
-var KtFile.targetPlatform: TargetPlatform? by UserDataProperty(Key.create("TARGET_PLATFORM"))
