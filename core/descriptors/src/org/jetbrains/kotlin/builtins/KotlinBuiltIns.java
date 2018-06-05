@@ -332,6 +332,15 @@ public abstract class KotlinBuiltIns {
         public final FqNameUnsafe kMutableProperty2 = reflect("KMutableProperty2");
         public final ClassId kProperty = ClassId.topLevel(reflect("KProperty").toSafe());
 
+        public final FqName uByteFqName = fqName("UByte");
+        public final FqName uShortFqName = fqName("UShort");
+        public final FqName uIntFqName = fqName("UInt");
+        public final FqName uLongFqName = fqName("ULong");
+        public final ClassId uByte = ClassId.topLevel(uByteFqName);
+        public final ClassId uShort = ClassId.topLevel(uShortFqName);
+        public final ClassId uInt = ClassId.topLevel(uIntFqName);
+        public final ClassId uLong = ClassId.topLevel(uLongFqName);
+
         public final Set<Name> primitiveTypeShortNames = newHashSetWithExpectedSize(PrimitiveType.values().length);
         public final Set<Name> primitiveArrayTypeShortNames = newHashSetWithExpectedSize(PrimitiveType.values().length);
         public final Map<FqNameUnsafe, PrimitiveType> fqNameToPrimitiveType = newHashMapWithExpectedSize(PrimitiveType.values().length);
@@ -973,6 +982,22 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isDouble(@NotNull KotlinType type) {
         return isDoubleOrNullableDouble(type) && !type.isMarkedNullable();
+    }
+
+    public static boolean isUByte(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.uByteFqName.toUnsafe());
+    }
+
+    public static boolean isUShort(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.uShortFqName.toUnsafe());
+    }
+
+    public static boolean isUInt(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.uIntFqName.toUnsafe());
+    }
+
+    public static boolean isULong(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.uLongFqName.toUnsafe());
     }
 
     public static boolean isDoubleOrNullableDouble(@NotNull KotlinType type) {

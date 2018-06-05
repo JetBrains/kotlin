@@ -29,7 +29,7 @@ class JavaPropertyInitializerEvaluatorImpl : JavaPropertyInitializerEvaluator {
         //Note: evaluated expression may be of class that does not match field type in some cases
         // tested for Int, left other checks just in case
             is Byte, is Short, is Int, is Long -> {
-                ConstantValueFactory.createIntegerConstantValue((evaluated as Number).toLong(), descriptor.type)
+                ConstantValueFactory.createIntegerConstantValue((evaluated as Number).toLong(), descriptor.type, false)
             }
             else -> {
                 ConstantValueFactory.createConstantValue(evaluated)

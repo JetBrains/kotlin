@@ -58,17 +58,7 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
 
             val initializer = (element as? KtDeclarationWithInitializer)?.initializer
 
-            if (initializer is KtLambdaExpression || initializer is KtNamedFunction) {
-                val functionType = element.typeReference?.typeElement as? KtFunctionType
-                if (functionType?.parameters?.isNotEmpty() == true) {
-                    val valueParameters = when (initializer) {
-                        is KtLambdaExpression -> initializer.valueParameters
-                        is KtNamedFunction -> initializer.valueParameters
-                        else -> emptyList()
-                    }
-                    if (valueParameters.isEmpty() || valueParameters.any { it.typeReference == null }) return null
-                }
-            }
+            if (!redundantTypeSpecification(element, initializer)) return null
 
             return when {
                 initializer != null -> TextRange(element.startOffset, initializer.startOffset - 1)
@@ -76,6 +66,19 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
                 element is KtNamedFunction -> TextRange(element.startOffset, typeReference.endOffset)
                 else -> null
             }
+        }
+
+        fun redundantTypeSpecification(element: KtCallableDeclaration, initializer: KtExpression?): Boolean {
+            if (initializer == null) return true
+            if (initializer !is KtLambdaExpression && initializer !is KtNamedFunction) return true
+            val functionType = element.typeReference?.typeElement as? KtFunctionType ?: return true
+            if (functionType.parameters.isEmpty()) return true
+            val valueParameters = when (initializer) {
+                is KtLambdaExpression -> initializer.valueParameters
+                is KtNamedFunction -> initializer.valueParameters
+                else -> emptyList()
+            }
+            return valueParameters.isNotEmpty() && valueParameters.none { it.typeReference == null }
         }
     }
 }

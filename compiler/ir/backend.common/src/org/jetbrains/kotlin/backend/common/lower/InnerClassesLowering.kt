@@ -183,7 +183,7 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
             if (descriptor1 is ReceiverParameterDescriptor) {
                 val receiverValue = descriptor1.value
                 if (receiverValue is ImplicitClassReceiver) {
-                    return class2Symbol[receiverValue.classDescriptor]!!
+                    return class2Symbol[receiverValue.classDescriptor]
                 }
             }
             return null

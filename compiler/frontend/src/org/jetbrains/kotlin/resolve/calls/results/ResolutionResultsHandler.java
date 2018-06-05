@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
@@ -40,9 +41,12 @@ public class ResolutionResultsHandler {
 
     public ResolutionResultsHandler(
             @NotNull KotlinBuiltIns builtIns,
+            @NotNull ModuleDescriptor module,
             @NotNull TypeSpecificityComparator specificityComparator
     ) {
-        overloadingConflictResolver = FlatSignatureForResolvedCallKt.createOverloadingConflictResolver(builtIns, specificityComparator);
+        overloadingConflictResolver = FlatSignatureForResolvedCallKt.createOverloadingConflictResolver(
+                builtIns, module, specificityComparator
+        );
     }
 
     @NotNull

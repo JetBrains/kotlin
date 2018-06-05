@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.lower.BlockDecomposerLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.FunctionReferenceLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.IntrinsicifyCallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.SecondaryCtorLowering
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -67,6 +67,6 @@ fun JsIrBackendContext.lower(file: IrFile) {
     InitializersLowering(this, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).runOnFilePostfix(file)
     BlockDecomposerLowering(this).runOnFilePostfix(file)
     SecondaryCtorLowering(this).runOnFilePostfix(file)
+    CallableReferenceLowering(this).lower(file)
     IntrinsicifyCallsLowering(this).lower(file)
-    FunctionReferenceLowering(this).lower(file)
 }

@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.descriptors.JsSymbolBuilder
-import org.jetbrains.kotlin.ir.backend.js.descriptors.initialize
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.symbols.JsSymbolBuilder
+import org.jetbrains.kotlin.ir.backend.js.symbols.initialize
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -393,16 +393,16 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
                 collectingList += tempResult.runIfChangedOrDefault(listOf(statement)) { statements }
             }
 
-            if (lastStatement != null) {
+            return if (lastStatement != null) {
                 val result = lastStatement.accept(expressionVisitor, data).runIfChangedOrDefault(lastStatement as IrExpression) {
                     collectingList += statements
                     resultValue
                 }
                 collectingList += JsIrBuilder.buildSetVariable(variable, result)
-                return DecomposedResult(mutableListOf(varDeclaration, body), JsIrBuilder.buildGetValue(variable))
+                DecomposedResult(mutableListOf(varDeclaration, body), JsIrBuilder.buildGetValue(variable))
             } else {
                 // do not allow variable to be uninitialized
-                return DecomposedResult(mutableListOf(), unitValue)
+                DecomposedResult(mutableListOf(), unitValue)
             }
         }
 
@@ -562,7 +562,8 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
                 expression.endOffset,
                 expression.type,
                 expression.varargElementType,
-                newArguments)
+                newArguments
+            )
 
             return DecomposedResult(newStatements, newExpression)
         }

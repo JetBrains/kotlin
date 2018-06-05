@@ -206,7 +206,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 expression, context.trace, context.expectedType
         );
 
-        if (!(compileTimeConstant instanceof IntegerValueTypeConstant)) {
+        if (compileTimeConstant instanceof UnsignedErrorValueTypeConstant) {
+            ErrorValue.ErrorValueWithMessage value = ((UnsignedErrorValueTypeConstant) compileTimeConstant).getErrorValue();
+            context.trace.report(Errors.UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH.on(expression));
+
+            return TypeInfoFactoryKt.createTypeInfo(value.getType(components.moduleDescriptor), context);
+        }
+        else if (!(compileTimeConstant instanceof IntegerValueTypeConstant)) {
             CompileTimeConstantChecker constantChecker = new CompileTimeConstantChecker(context, components.moduleDescriptor, false);
             ConstantValue constantValue =
                     compileTimeConstant != null ? ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue() : null;

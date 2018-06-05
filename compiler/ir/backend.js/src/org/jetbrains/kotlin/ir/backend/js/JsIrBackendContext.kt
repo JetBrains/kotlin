@@ -40,7 +40,7 @@ class JsIrBackendContext(
     override val builtIns = module.builtIns
     override val sharedVariablesManager =
         JsSharedVariablesManager(builtIns, KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal")))
-    override val descriptorsFactory = JsDescriptorsFactory(builtIns)
+    override val descriptorsFactory = JsDescriptorsFactory()
 
     override val reflectionTypes: ReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
         // TODO

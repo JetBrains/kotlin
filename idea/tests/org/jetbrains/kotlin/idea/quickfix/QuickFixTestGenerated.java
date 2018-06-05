@@ -8380,6 +8380,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/override/nothingToOverride/overrideJavaMethod.kt");
             }
 
+            @TestMetadata("removeFunctionReciever.kt")
+            public void testRemoveFunctionReciever() throws Exception {
+                runTest("idea/testData/quickfix/override/nothingToOverride/removeFunctionReciever.kt");
+            }
+
             @TestMetadata("removeOverride.kt")
             public void testRemoveOverride() throws Exception {
                 runTest("idea/testData/quickfix/override/nothingToOverride/removeOverride.kt");
@@ -9075,6 +9080,29 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/quickfix/removeToStringInStringTemplate/simple.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/removeTypeVariance")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveTypeVariance extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRemoveTypeVariance() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeTypeVariance"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("in.kt")
+        public void testIn() throws Exception {
+            runTest("idea/testData/quickfix/removeTypeVariance/in.kt");
+        }
+
+        @TestMetadata("out.kt")
+        public void testOut() throws Exception {
+            runTest("idea/testData/quickfix/removeTypeVariance/out.kt");
         }
     }
 
@@ -11928,6 +11956,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("unusedVariableWithAnonymousFunctionInitialize1.kt")
+        public void testUnusedVariableWithAnonymousFunctionInitialize1() throws Exception {
+            runTest("idea/testData/quickfix/variables/unusedVariableWithAnonymousFunctionInitialize1.kt");
+        }
+
+        @TestMetadata("unusedVariableWithAnonymousFunctionInitialize2.kt")
+        public void testUnusedVariableWithAnonymousFunctionInitialize2() throws Exception {
+            runTest("idea/testData/quickfix/variables/unusedVariableWithAnonymousFunctionInitialize2.kt");
+        }
+
         @TestMetadata("unusedVariableWithConstantInitializer.kt")
         public void testUnusedVariableWithConstantInitializer() throws Exception {
             runTest("idea/testData/quickfix/variables/unusedVariableWithConstantInitializer.kt");
@@ -11941,6 +11979,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("unusedVariableWithInitializerAndComment.kt")
         public void testUnusedVariableWithInitializerAndComment() throws Exception {
             runTest("idea/testData/quickfix/variables/unusedVariableWithInitializerAndComment.kt");
+        }
+
+        @TestMetadata("unusedVariableWithLambdaInitializer1.kt")
+        public void testUnusedVariableWithLambdaInitializer1() throws Exception {
+            runTest("idea/testData/quickfix/variables/unusedVariableWithLambdaInitializer1.kt");
+        }
+
+        @TestMetadata("unusedVariableWithLambdaInitializer2.kt")
+        public void testUnusedVariableWithLambdaInitializer2() throws Exception {
+            runTest("idea/testData/quickfix/variables/unusedVariableWithLambdaInitializer2.kt");
         }
 
         @TestMetadata("unusedVariableWithNullInitializer.kt")

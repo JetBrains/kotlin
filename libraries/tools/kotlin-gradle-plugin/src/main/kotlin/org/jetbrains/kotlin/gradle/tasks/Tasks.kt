@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
@@ -27,10 +26,15 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
+import org.jetbrains.kotlin.gradle.incremental.GradleICReporter
+import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAwareWithInput
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
+import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
@@ -177,13 +181,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
                 ?: Coroutines.DEFAULT
 
     @get:Internal
-    internal var compilerCalled: Boolean = false
-
-    // TODO: consider more reliable approach (see usage)
-    @get:Internal
-    internal var anyClassesCompiled: Boolean = false
-
-    @get:Internal
     internal var friendTaskName: String? = null
 
     @get:Internal
@@ -252,8 +249,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
         sourceRoots.log(this.name, logger)
         val args = prepareCompilerArguments()
-
-        compilerCalled = true
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
     }
 
@@ -402,7 +397,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             cleanupOnError()
             throw e
         }
-        anyClassesCompiled = true
     }
 
     private fun disableMultiModuleICIfNeeded() {
@@ -412,7 +406,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             it is AbstractCompile &&
                     it !is JavaCompile &&
                     it !is AbstractKotlinCompile<*> &&
-                    FileUtil.isAncestor(javaOutputDir!!, it.destinationDir, /* strict = */ false)
+                    javaOutputDir!!.isParentOf(it.destinationDir)
         } as? AbstractCompile
 
         if (illegalTask != null) {

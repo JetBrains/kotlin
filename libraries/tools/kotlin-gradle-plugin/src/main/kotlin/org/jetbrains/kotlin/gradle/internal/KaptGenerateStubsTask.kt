@@ -16,22 +16,20 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.kotlinWarn
-import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.SourceRoots
-import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
-import org.jetbrains.kotlin.incremental.pathsAsStringRelativeTo
+import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import java.io.File
 
 @CacheableTask
@@ -64,13 +62,10 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         super.setSource(sourceRootsContainer.set(sources))
     }
 
-    private fun isSourceRootAllowed(source: File): Boolean {
-        fun File.isInside(parent: File) = FileUtil.isAncestor(parent, this, /* strict = */ false)
-
-        return !source.isInside(destinationDir) &&
-               !source.isInside(stubsDir) &&
-               !source.isInside(generatedSourcesDir)
-    }
+    private fun isSourceRootAllowed(source: File): Boolean =
+        !destinationDir.isParentOf(source) &&
+           !stubsDir.isParentOf(source) &&
+           !generatedSourcesDir.isParentOf(source)
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
         kotlinCompileTask.setupCompilerArgs(args)
@@ -101,7 +96,6 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         sourceRoots.log(this.name, logger)
         val args = prepareCompilerArguments()
 
-        compilerCalled = true
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
     }
 }

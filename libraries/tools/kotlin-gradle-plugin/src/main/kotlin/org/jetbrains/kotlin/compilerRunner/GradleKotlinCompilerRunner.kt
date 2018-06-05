@@ -27,16 +27,19 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.IncrementalModuleEntry
 import org.jetbrains.kotlin.daemon.common.IncrementalModuleInfo
+import org.jetbrains.kotlin.gradle.incremental.GRADLE_CACHE_VERSION
+import org.jetbrains.kotlin.gradle.incremental.GRADLE_CACHE_VERSION_FILE_NAME
+import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.newTmpFile
 import org.jetbrains.kotlin.incremental.*
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -262,21 +265,21 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
         val verbose = environment.compilerArgs.verbose
         val compilationOptions = IncrementalCompilationOptions(
-                areFileChangesKnown = knownChangedFiles != null,
-                modifiedFiles = knownChangedFiles?.modified,
-                deletedFiles = knownChangedFiles?.removed,
-                workingDir = environment.workingDir,
-                customCacheVersion = GRADLE_CACHE_VERSION,
-                customCacheVersionFileName = GRADLE_CACHE_VERSION_FILE_NAME,
-                reportCategories = reportCategories(verbose),
-                reportSeverity = reportSeverity(verbose),
-                requestedCompilationResults = arrayOf(CompilationResultCategory.IC_COMPILE_ITERATION.code),
-                compilerMode = CompilerMode.INCREMENTAL_COMPILER,
-                targetPlatform = targetPlatform,
-                usePreciseJavaTracking = environment.usePreciseJavaTracking,
-                localStateDirs = environment.localStateDirs,
-                multiModuleICSettings = environment.multiModuleICSettings,
-                modulesInfo = buildModulesInfo(project.gradle)
+            areFileChangesKnown = knownChangedFiles != null,
+            modifiedFiles = knownChangedFiles?.modified,
+            deletedFiles = knownChangedFiles?.removed,
+            workingDir = environment.workingDir,
+            customCacheVersion = GRADLE_CACHE_VERSION,
+            customCacheVersionFileName = GRADLE_CACHE_VERSION_FILE_NAME,
+            reportCategories = reportCategories(verbose),
+            reportSeverity = reportSeverity(verbose),
+            requestedCompilationResults = arrayOf(CompilationResultCategory.IC_COMPILE_ITERATION.code),
+            compilerMode = CompilerMode.INCREMENTAL_COMPILER,
+            targetPlatform = targetPlatform,
+            usePreciseJavaTracking = environment.usePreciseJavaTracking,
+            localStateDirs = environment.localStateDirs,
+            multiModuleICSettings = environment.multiModuleICSettings,
+            modulesInfo = buildModulesInfo(project.gradle)
         )
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")
@@ -401,7 +404,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             val log = project.logger
             if (clientIsAliveFlagFile == null || !clientIsAliveFlagFile!!.exists()) {
                 val projectName = project.rootProject.name.normalizeForFlagFile()
-                clientIsAliveFlagFile =  FileUtil.createTempFile("kotlin-compiler-in-$projectName-", ".alive", /*deleteOnExit =*/ true)
+                clientIsAliveFlagFile =  newTmpFile(prefix = "kotlin-compiler-in-$projectName-", suffix = ".alive")
                 log.kotlinDebug { CREATED_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.canonicalPath }
             }
             else {
@@ -426,7 +429,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             val log = project.logger
             if (sessionFlagFile == null || !sessionFlagFile!!.exists()) {
                 val sessionFilesDir = sessionsDir(project).apply { mkdirs() }
-                sessionFlagFile = FileUtil.createTempFile(sessionFilesDir, "kotlin-compiler-", ".salive", /*deleteOnExit =*/ true)
+                sessionFlagFile = newTmpFile(prefix = "kotlin-compiler-", suffix = ".salive", directory = sessionFilesDir)
                 log.kotlinDebug { CREATED_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeToRoot(project) }
             }
             else {

@@ -957,6 +957,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/constants/byte.kt");
         }
 
+        @TestMetadata("inlineUnsignedIntConstant.kt")
+        public void testInlineUnsignedIntConstant() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/constants/inlineUnsignedIntConstant.kt");
+        }
+
         @TestMetadata("kt9532.kt")
         public void testKt9532() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/constants/kt9532.kt");

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.backend.js.utils.createValueParameter
 import org.jetbrains.kotlin.ir.backend.js.utils.getFunctions
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -74,11 +75,19 @@ class JsIntrinsics(private val module: ModuleDescriptor, private val irBuiltIns:
     val jsBitShiftL = binOpInt("jsBitShiftL")
 
 
+    // KFunction operations:
+
+    val jsName = unOp("kCallableName", irBuiltIns.string)
+    val jsPropertyGet = binOp("kPropertyGet")
+    val jsPropertySet = tripleOp("kPropertySet", irBuiltIns.unit)
+
     // Other:
 
     val jsInstanceOf = binOpBool("jsInstanceOf")
 
-    val jsObjectCreate: IrSimpleFunction = defineObjectCreateIntrinsic()
+    val jsObjectCreate = defineObjectCreateIntrinsic()
+
+    val jsSetJSField = defineSetJSPropertyIntrinsic()
 
     val jsCode = module.getFunctions(FqName("kotlin.js.js")).singleOrNull()?.let { symbolTable.referenceFunction(it) }
 
@@ -112,6 +121,26 @@ class JsIntrinsics(private val module: ModuleDescriptor, private val irBuiltIns:
         return stubBuilder.generateFunctionStub(desc)
     }
 
+
+    private fun defineSetJSPropertyIntrinsic(): IrSimpleFunction {
+        val returnType = irBuiltIns.unit
+
+        val desc = SimpleFunctionDescriptorImpl.create(
+            module,
+            Annotations.EMPTY,
+            Name.identifier("\$setJSProperty\$"),
+            CallableMemberDescriptor.Kind.SYNTHESIZED,
+            SourceElement.NO_SOURCE
+        ).apply {
+
+            val parameterDescriptors = listOf("receiver", "fieldName", "fieldValue")
+                .mapIndexed { i, name -> createValueParameter(this, i, name, irBuiltIns.any) }
+            initialize(null, null, emptyList(), parameterDescriptors, returnType, Modality.FINAL, Visibilities.PUBLIC)
+        }
+
+        return stubBuilder.generateFunctionStub(desc)
+    }
+
     private fun unOp(name: String, returnType: KotlinType = irBuiltIns.anyN) =
         irBuiltIns.run { defineOperator(name, returnType, listOf(anyN)) }
 
@@ -120,6 +149,9 @@ class JsIntrinsics(private val module: ModuleDescriptor, private val irBuiltIns:
 
     private fun binOp(name: String, returnType: KotlinType = irBuiltIns.anyN) =
         irBuiltIns.run { defineOperator(name, returnType, listOf(anyN, anyN)) }
+
+    private fun tripleOp(name: String, returnType: KotlinType = irBuiltIns.anyN) =
+        irBuiltIns.run { defineOperator(name, returnType, listOf(anyN, anyN, anyN)) }
 
     private fun binOpBool(name: String) = binOp(name, irBuiltIns.bool)
     private fun binOpInt(name: String) = binOp(name, irBuiltIns.int)

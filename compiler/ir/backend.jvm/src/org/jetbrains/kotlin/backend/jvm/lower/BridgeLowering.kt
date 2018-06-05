@@ -195,25 +195,25 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
             ACC_PUBLIC or ACC_BRIDGE or (if (!isSpecialOrDelegationToSuper) ACC_SYNTHETIC else 0) or if (isSpecialBridge) ACC_FINAL else 0 // TODO.
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
         //here some 'isSpecialBridge' magic
-        val bridgeDescriptor = JvmFunctionDescriptorImpl(
+        val bridgeDescriptorForIrFunction = JvmFunctionDescriptorImpl(
             containingClass, null, Annotations.EMPTY, Name.identifier(bridge.method.name),
             CallableMemberDescriptor.Kind.SYNTHESIZED, descriptor.source, flags
         )
 
-        bridgeDescriptor.initialize(
-            null, containingClass.thisAsReceiverParameter, emptyList(),
-            bridge.descriptor.valueParameters.map { it.copy(bridgeDescriptor, it.name, it.index) },
+        bridgeDescriptorForIrFunction.initialize(
+            bridge.descriptor.extensionReceiverParameter?.returnType, containingClass.thisAsReceiverParameter, emptyList(),
+            bridge.descriptor.valueParameters.map { it.copy(bridgeDescriptorForIrFunction, it.name, it.index) },
             bridge.descriptor.returnType, Modality.OPEN, descriptor.visibility
         )
 
-        val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, bridgeDescriptor)
+        val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, bridgeDescriptorForIrFunction)
         irFunction.createParameterDeclarations()
 
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
             //TODO
             //MemberCodegen.markLineNumberForDescriptor(owner.getThisDescriptor(), iv)
             if (delegateTo.method.argumentTypes.isNotEmpty() && isSpecialBridge) {
-                generateTypeCheckBarrierIfNeeded(descriptor, bridgeDescriptor, irFunction, delegateTo.method.argumentTypes)
+                generateTypeCheckBarrierIfNeeded(descriptor, bridgeDescriptorForIrFunction, irFunction, delegateTo.method.argumentTypes)
             }
 
             val implementation = if (isSpecialBridge) delegateTo.descriptor.copyAsDeclaration() else delegateTo.descriptor
@@ -228,6 +228,14 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 irFunction.dispatchReceiverParameter!!.symbol,
                 JvmLoweredStatementOrigin.BRIDGE_DELEGATION
             )
+            irFunction.extensionReceiverParameter?.let {
+                call.extensionReceiver = IrGetValueImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    it.symbol,
+                    JvmLoweredStatementOrigin.BRIDGE_DELEGATION
+                )
+            }
             irFunction.valueParameters.mapIndexed { i, valueParameter ->
                 call.putValueArgument(
                     i,

@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.resolve.constants
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.types.*
 
 interface CompileTimeConstant<out T> {
     val isError: Boolean
@@ -42,11 +40,15 @@ interface CompileTimeConstant<out T> {
 
     val isPure: Boolean get() = parameters.isPure
 
+    val isUnsignedNumberLiteral: Boolean get() = parameters.isUnsignedNumberLiteral
+
     class Parameters(
-            val canBeUsedInAnnotation: Boolean,
-            val isPure: Boolean,
-            val usesVariableAsConstant: Boolean,
-            val usesNonConstValAsConstant: Boolean
+        val canBeUsedInAnnotation: Boolean,
+        val isPure: Boolean,
+        // `isUnsignedNumberLiteral` means that this constant represents simple number literal with `u` suffix (123u, 0xFEu)
+        val isUnsignedNumberLiteral: Boolean,
+        val usesVariableAsConstant: Boolean,
+        val usesNonConstValAsConstant: Boolean
     )
 
     override fun equals(other: Any?): Boolean
@@ -82,12 +84,45 @@ class TypedCompileTimeConstant<out T>(
     }
 }
 
+fun createIntegerValueTypeConstant(
+    value: Number,
+    module: ModuleDescriptor,
+    parameters: CompileTimeConstant.Parameters
+): CompileTimeConstant<*> {
+    return if (parameters.isUnsignedNumberLiteral && !hasUnsignedTypesInModuleDependencies(module)) {
+        UnsignedErrorValueTypeConstant(value, parameters)
+    } else {
+        IntegerValueTypeConstant(value, module, parameters)
+    }
+}
+
+fun hasUnsignedTypesInModuleDependencies(module: ModuleDescriptor): Boolean {
+    return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt) != null
+}
+
+class UnsignedErrorValueTypeConstant(
+    private val value: Number,
+    override val parameters: CompileTimeConstant.Parameters
+) : CompileTimeConstant<Unit> {
+    val errorValue = ErrorValue.ErrorValueWithMessage(
+        "Type cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath"
+    )
+
+    override fun toConstantValue(expectedType: KotlinType): ConstantValue<Unit> {
+        return errorValue
+    }
+
+    override fun equals(other: Any?) = other is UnsignedErrorValueTypeConstant && value == other.value
+
+    override fun hashCode() = value.hashCode()
+}
+
 class IntegerValueTypeConstant(
         private val value: Number,
-        builtIns: KotlinBuiltIns,
+        module: ModuleDescriptor,
         override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<Number> {
-    private val typeConstructor = IntegerValueTypeConstructor(value.toLong(), builtIns)
+    private val typeConstructor = IntegerValueTypeConstructor(value.toLong(), module, parameters)
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<Number> {
         val type = getType(expectedType)
@@ -95,6 +130,13 @@ class IntegerValueTypeConstant(
             KotlinBuiltIns.isInt(type) -> IntValue(value.toInt())
             KotlinBuiltIns.isByte(type) -> ByteValue(value.toByte())
             KotlinBuiltIns.isShort(type) -> ShortValue(value.toShort())
+            KotlinBuiltIns.isLong(type) -> LongValue(value.toLong())
+
+            KotlinBuiltIns.isUInt(type) -> UIntValue(value.toInt())
+            KotlinBuiltIns.isUByte(type) -> UByteValue(value.toByte())
+            KotlinBuiltIns.isUShort(type) -> UShortValue(value.toShort())
+            KotlinBuiltIns.isULong(type) -> ULongValue(value.toLong())
+
             else -> LongValue(value.toLong())
         }
     }

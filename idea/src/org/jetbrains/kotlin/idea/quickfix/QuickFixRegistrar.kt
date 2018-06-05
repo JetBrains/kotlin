@@ -554,6 +554,8 @@ class QuickFixRegistrar : QuickFixContributor {
         EXPERIMENTAL_OVERRIDE_ERROR.registerFactory(ExperimentalFixesFactory)
         EXPERIMENTAL_IS_NOT_ENABLED.registerFactory(MakeModuleExperimentalFix)
 
+        TYPE_VARIANCE_CONFLICT.registerFactory(RemoveTypeVarianceFix)
+
         CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT.registerFactory(MoveConstValToCompanionObjectFix)
     }
 }
