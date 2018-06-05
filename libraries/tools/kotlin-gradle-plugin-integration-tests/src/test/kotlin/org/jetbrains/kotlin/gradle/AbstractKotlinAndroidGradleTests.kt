@@ -173,7 +173,7 @@ abstract class AbstractKotlinAndroidGradleTests(
         // Execute 'assembleAndroidTest' first, without 'build' side effects
         project.build("assembleAndroidTest") {
             assertSuccessful()
-            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+            if (project.testGradleVersionBelow("4.0")) {
                 val tasks = ArrayList<String>().apply {
                     for (subProject in listOf("Android", "Lib")) {
                         for (flavor in listOf("Flavor1", "Flavor2")) {
