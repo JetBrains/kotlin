@@ -35,6 +35,13 @@ annotation class Experimental(val level: Level = Level.ERROR) {
         /** Specifies that an error should be reported on incorrect usages of this experimental API. */
         ERROR,
     }
+
+    @Deprecated("This enum is going to be removed and should no longer be used.")
+    public enum class Impact {
+        COMPILATION,
+        LINKAGE,
+        RUNTIME,
+    }
 }
 
 /**

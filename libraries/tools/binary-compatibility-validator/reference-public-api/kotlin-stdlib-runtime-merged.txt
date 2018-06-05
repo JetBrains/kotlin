@@ -24,6 +24,14 @@ public abstract interface annotation class kotlin/Experimental : java/lang/annot
 	public abstract fun level ()Lkotlin/Experimental$Level;
 }
 
+public final class kotlin/Experimental$Impact : java/lang/Enum {
+	public static final field COMPILATION Lkotlin/Experimental$Impact;
+	public static final field LINKAGE Lkotlin/Experimental$Impact;
+	public static final field RUNTIME Lkotlin/Experimental$Impact;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/Experimental$Impact;
+	public static fun values ()[Lkotlin/Experimental$Impact;
+}
+
 public final class kotlin/Experimental$Level : java/lang/Enum {
 	public static final field ERROR Lkotlin/Experimental$Level;
 	public static final field WARNING Lkotlin/Experimental$Level;
