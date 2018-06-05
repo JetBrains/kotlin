@@ -212,11 +212,7 @@ function invokeModule(inst, args) {
     var exit_status = 0;
 
     try {
-        if (isBrowser()) {
-            instance.exports.Kotlin_initRuntimeIfNeeded();
-        }
         exit_status = instance.exports.Konan_js_main(args.length, isBrowser() ? 0 : 1);
-        // TODO: so when should we deinit runtime?
     } catch (e) {
         runtime.print("Exception executing entry point: " + e);
         runtime.print(e.stack);
