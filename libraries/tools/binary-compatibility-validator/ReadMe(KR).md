@@ -1,15 +1,15 @@
-# Kotlin Public API binary compatibility validation tool
+# Kotlin 공용 API 바이너리 호환성 확인 도구
 
-This tool allows to dump binary API of a Kotlin library that is public in sense of Kotlin visibilities
-and ensure that the public binary API wasn't changed in a way that make this change binary incompatible.
+이 도구는 Kotlin 라이브러리의 바이너리 API를 dump 할 수 있게 해줍니다.
+그리고 공용 바이너리 API가 호환되지 않는 방식으로 변경되었는지는 아닌지 확인합니다.
 
-## How to run
+## 실행 방법
 
-Compile and run tests. `CasesPublicAPITest` verifies the tool itself, 
-and `RuntimePublicAPITest` dumps the public API of `kotlin-stdlib`, 
-`kotlin-stdlib-jdk7/8`, `kotlin-stdlib-jre7/8` and `kotlin-reflect` jars,
-which must be built beforehand with gradle. Use `clean assemble` tasks,
-since the incremental compilation currently doesn't produce all the required output.
+컴파일 후 테스트들을 실행합니다. `CasesPublicAPITest` 는 도구 자체를 확인합니다, 
+그리고 `RuntimePublicAPITest`가 `kotlin-stdlib`의 공용 API를 dump합니다, 
+incremental 컴파일은 현재 모든 요구되는 출력을 만들어 내지 않기 때문에,
+`kotlin-stdlib-jdk7/8`, `kotlin-stdlib-jre7/8` 그리고 `kotlin-reflect` jar,
+는 사전에 반드시 gradle로 작성되어야 합니다. `clean assemble` task들을 사용하십시요.
 
 When substantial changes are made to the public API, it may be convenient to overwrite 
 the entire dump and compare changes later before committing: pass `-Doverwrite.output=true` 
