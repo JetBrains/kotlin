@@ -42,14 +42,14 @@ class UpToDateIT : BaseGradleIT() {
     }
 
     private fun testMutations(vararg mutations: ProjectMutation) {
-        val project = Project("simpleProject")
+        val project = Project("kotlinProject")
         project.setupWorkingDir()
         mutations.forEach {
             it.initProject(project)
-            project.build("build") { assertSuccessful() }
+            project.build("classes") { assertSuccessful() }
 
             it.mutateProject(project)
-            project.build("build") {
+            project.build("classes") {
                 try {
                     assertSuccessful()
                     it.checkAfterRebuild(this)
