@@ -22462,62 +22462,57 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class WithSubjectVariable extends AbstractDiagnosticsUsingJavacTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInWithSubjectVariable() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/when/withSubjectVariable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("invisibleOutsideOfWhen.kt")
                 public void testInvisibleOutsideOfWhen() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/invisibleOutsideOfWhen.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/invisibleOutsideOfWhen.kt");
                 }
 
                 @TestMetadata("reassignmentToWhenSubjectVariable.kt")
                 public void testReassignmentToWhenSubjectVariable() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/reassignmentToWhenSubjectVariable.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/reassignmentToWhenSubjectVariable.kt");
                 }
 
                 @TestMetadata("shadowingOtherVariable.kt")
                 public void testShadowingOtherVariable() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/shadowingOtherVariable.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/shadowingOtherVariable.kt");
                 }
 
                 @TestMetadata("smartCastOnValueBoundToSubjectVariable.kt")
                 public void testSmartCastOnValueBoundToSubjectVariable() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/smartCastOnValueBoundToSubjectVariable.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/smartCastOnValueBoundToSubjectVariable.kt");
                 }
 
                 @TestMetadata("smartCastsOnSubjectVariable.kt")
                 public void testSmartCastsOnSubjectVariable() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/smartCastsOnSubjectVariable.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/smartCastsOnSubjectVariable.kt");
                 }
 
                 @TestMetadata("subjectVariableInIsPattern.kt")
                 public void testSubjectVariableInIsPattern() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/subjectVariableInIsPattern.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/subjectVariableInIsPattern.kt");
                 }
 
                 @TestMetadata("unsupportedFeature.kt")
                 public void testUnsupportedFeature() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/unsupportedFeature.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/unsupportedFeature.kt");
                 }
 
                 @TestMetadata("unsupportedVariableDeclarationsInWhenSubject.kt")
                 public void testUnsupportedVariableDeclarationsInWhenSubject() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/unsupportedVariableDeclarationsInWhenSubject.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/unsupportedVariableDeclarationsInWhenSubject.kt");
                 }
 
                 @TestMetadata("unusedWhenSubjectVariable.kt")
                 public void testUnusedWhenSubjectVariable() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/withSubjectVariable/unusedWhenSubjectVariable.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/unusedWhenSubjectVariable.kt");
                 }
             }
         }
