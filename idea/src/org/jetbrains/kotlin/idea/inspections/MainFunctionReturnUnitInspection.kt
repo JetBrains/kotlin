@@ -44,7 +44,7 @@ class MainFunctionReturnUnitInspection : AbstractKotlinInspection() {
 
             holder.registerProblem(
                 function.nameIdentifier ?: function,
-                "${if (isMain) "main" else "test"} should return Unit",
+                "${if (isMain) "main" else "JUnit test"} should return Unit",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 ChangeMainFunctionReturnTypeToUnitFix(function.typeReference != null)
             )
