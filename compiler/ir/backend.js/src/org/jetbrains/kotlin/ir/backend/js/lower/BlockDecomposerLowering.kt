@@ -620,6 +620,12 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
             return DecomposedResult(jump, JsIrBuilder.buildCall(unreachableFunction))
         }
 
+        override fun visitLoop(loop: IrLoop, data: VisitData): VisitResult {
+            val result = loop.accept(statementVisitor, null)
+            return if (result.status == VisitStatus.KEPT) {
+                DecomposedResult(loop, unitValue)
+            } else result
+        }
     }
 
     fun makeTempVar(type: KotlinType) =
