@@ -1,16 +1,14 @@
-## Samples for the Standard Library
+## 표준 라이브러리 예시
 
-This project contains samples for the standard library functions. 
-They are located in the [test](test) source root and each sample is written like a small unit test.
-Then these samples are referenced in the documentation of the standard library functions 
-with the [`@sample`](http://kotlinlang.org/docs/reference/kotlin-doc.html#block-tags) tag and are embedded in the generated documentation as runnable samples. 
+이 프로젝트는 표준 라이브러리 함수들의 예시를 포함합니다. 
+이들은 [테스트](test) 소스 최상위(root)에 위치하며, 각 예제는 소규모 단위 테스트와 비슷하게 짜여있습니다.
+그리고 이 예제들은 [`@sample`](http://kotlinlang.org/docs/reference/kotlin-doc.html#block-tags) 태그로 표준 라이브러리 함수 문서에서 참조되며, 생성된 문서에 실행가능한 예제로써 내장됩니다. 
 
 
-### Guides for sample authoring
+### 예제 제작 가이드
 
-Note that samples, even though they are written as unit tests, are not conceptually the same as unit tests. 
-Unlike a unit test, which usually explores corner cases of a function being tested, 
-the goal of a sample is to show a common use case of a function.
+단위 테스트로 작성되었더라도, 샘플은 단위 테스트와 개념적으로 같지 않다는 것을 참고하시기 바랍니다. 
+주로 (테스트되는 함수의) 취약 상황을 확인하는 단위 테스트와 다르게, 예제의 목적은 함수의 일반적인 목적에 맞는 상황을 확인하는 것입니다.
 
 Please see the existing samples for an inspiration on authoring new ones.
 
