@@ -373,6 +373,8 @@ static ALWAYS_INLINE OBJ_GETTER(convertUnmappedObjCObject, id obj) {
   RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, objc_retain(obj));
 }
 
+static OBJ_GETTER(blockToKotlinImp, id self, SEL cmd);
+
 @interface NSObject (NSObjectToKotlin) <ConvertibleToKotlin>
 @end;
 
@@ -383,6 +385,20 @@ static ALWAYS_INLINE OBJ_GETTER(convertUnmappedObjCObject, id obj) {
 
 -(void)releaseAsAssociatedObject {
   objc_release(self);
+}
+
++(void)load {
+  SEL toKotlinSelector = @selector(toKotlin:);
+  Method toKotlinMethod = class_getClassMethod([NSObject class], toKotlinSelector);
+  RuntimeAssert(toKotlinMethod != nullptr, "");
+  const char* toKotlinTypeEncoding = method_getTypeEncoding(toKotlinMethod);
+
+  Class nsBlockClass = objc_getClass("NSBlock");
+  RuntimeAssert(nsBlockClass != nullptr, "NSBlock class not found");
+
+  // Note: can't add it with category, because it would be considered as private API usage.
+  BOOL added = class_addMethod(nsBlockClass, toKotlinSelector, (IMP)blockToKotlinImp, toKotlinTypeEncoding);
+  RuntimeAssert(added, "Unable to add 'toKotlin:' method to NSBlock class");
 }
 @end;
 
@@ -456,12 +472,6 @@ static Class __NSCFBooleanClass = nullptr;
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
   RETURN_RESULT_OF(convertUnmappedObjCObject, self);
 }
-@end;
-
-@interface NSBlock <NSObject>
-@end;
-
-@interface NSBlock (NSBlockToKotlin) <ConvertibleToKotlin>
 @end;
 
 struct Block_descriptor_1;
@@ -545,19 +555,11 @@ static const TypeInfo* getFunctionTypeInfoForBlock(id block) {
   return Kotlin_ObjCExport_functionAdaptersToBlock[parameterCount];
 }
 
-@implementation NSBlock (NSBlockToKotlin)
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
-
+static OBJ_GETTER(blockToKotlinImp, id self, SEL cmd) {
   const TypeInfo* typeInfo = getFunctionTypeInfoForBlock(self);
   RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, objc_retainBlock(self));
   // TODO: call (Any) constructor?
 }
-
--(void)releaseAsAssociatedObject {
-  objc_release(self);
-}
-
-@end;
 
 static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj);
 
