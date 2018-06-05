@@ -16,9 +16,9 @@ org.jetbrains.kotlin.preloading.Preloader \
              <compiler's command-line args>
 ```
 
-This example uses an artifact already configured in our project.
-In this artifact, what to instrument is configured in the ```org.jetbrains.kotlin.preloading.ProfilingInstrumenterExample``` class.
-This is determined by the ```src/META-INF/services/org.jetbrains.kotlin.preloading.instrumentation.Instrumenter``` file (see JavaDoc for ```java.util.ServiceLoader```).
+이 예제는 우리 프로젝트의 이미 설정된 artifact를 사용한 것입니다.
+이 artifact에서, 무엇을 instrument하는지는 ```org.jetbrains.kotlin.preloading.ProfilingInstrumenterExample``` 클래스 설정에서 구성됩니다.
+이것은  ```src/META-INF/services/org.jetbrains.kotlin.preloading.instrumentation.Instrumenter``` 파일에 의해 결정됩니다. (```java.util.ServiceLoader```에 대한 JavaDoc을 참조하세요).
 
 ## More structured description
 
