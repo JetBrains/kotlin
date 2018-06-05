@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import kotlin.math.exp
 
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
 
@@ -64,6 +65,17 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             }
             return JsInvocation(it, concatArguments)
         } ?: JsArrayLiteral(arrayLiteralElements)
+    }
+
+    override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsExpression {
+
+        val block = IrElementToJsStatementTransformer().visitBlock(expression, context)
+        block.statements.lastOrNull()?.let {
+            if (it is JsExpressionStatement) {
+                block.statements[block.statements.size - 1] = JsReturn(it.expression)
+            }
+        }
+        return JsInvocation(JsFunction(context.currentScope, block, ""))
     }
 
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =

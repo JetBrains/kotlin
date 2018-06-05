@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -23,19 +24,30 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transform { memberDeclaration ->
-            if (memberDeclaration is IrFunction) {
-                memberDeclaration.lower()
-            } else memberDeclaration
+            when (memberDeclaration) {
+                is IrFunction -> memberDeclaration.lower()
+                is IrProperty -> memberDeclaration.lower()
+                else -> memberDeclaration
+            }
         }
     }
 
     fun IrFunction.lower(): IrFunction {
-        function = this
+        containingDeclaration = this
         body?.accept(visitor, null)
         return this
     }
 
-    private var function: IrFunction? = null
+    fun IrProperty.lower(): IrProperty {
+        backingField?.let {
+            containingDeclaration = it
+            it.initializer?.accept(visitor, null)
+        }
+        return this
+    }
+
+
+    private var containingDeclaration: IrSymbolOwner? = null
 
     private var labelCnt = 0
     private val constFalse = JsIrBuilder.buildBoolean(context.builtIns.booleanType, false)
@@ -82,7 +94,7 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
                     expression.origin
                 )
 
-                val variable = JsSymbolBuilder.buildTempVar(function!!.symbol, expression.type, "tmp\$slfk\$${tmpVarCounter++}", true)
+                val variable = JsSymbolBuilder.buildTempVar(containingDeclaration!!.symbol, expression.type, "tmp\$slfk\$${tmpVarCounter++}", true)
                 val varDeclaration = JsIrBuilder.buildVar(variable)
                 replacementBlock.statements += varDeclaration
 
