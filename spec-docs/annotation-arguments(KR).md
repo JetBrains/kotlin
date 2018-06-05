@@ -51,8 +51,8 @@ class Baz
 ## 자바 주석 로드
 
 자바 주석을 위한 가상의 생성자는 다음과 같이 빌드될 수 있습니다:
-* if there is an element named `value`, it is put first on the parameter list
-* if all other elements have default values, and `value` has an array type, it is marked `vararg` and has the type of the elements of the array
+* 만약 `value`라는 이름의 요소가 있다면, 인자의 파라미터 리스트의 첫번째에 놓입니다.
+* 만약 다른 모든 요소가 초기값을 가지고 있고 `value`가 배열이라면 가지고 있다면, `vararg`로 마크되고 배열요소의 타입을 가집니다.
 * parameters corresponding to all elements but `value` can not be used positionally, only named arguments are allowed for them (this requires adding a platform-specific check to `frontend.java`)
 * note that elements with default values should be transformed to parameters with default values
 
