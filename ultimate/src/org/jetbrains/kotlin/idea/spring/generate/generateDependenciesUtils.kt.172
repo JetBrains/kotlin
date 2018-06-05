@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.moduleInfo
+import org.jetbrains.kotlin.idea.caches.project.forcedModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaOrKotlinMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getParameterDescriptor
@@ -398,7 +398,7 @@ private fun createConstructorWithTemplate(
         ShortenReferences.DEFAULT.process(factoryFunction)
 
         val dummyMethod = JavaPsiFacade.getElementFactory(beanClass.project).createMethod("foo", PsiType.VOID)
-        dummyMethod.containingFile.moduleInfo = ktBeanClass.getModuleInfo()
+        dummyMethod.containingFile.forcedModuleInfo = ktBeanClass.getModuleInfo()
         SpringConstructorArgResolveUtil.suggestParamsForConstructorArgs(currentBean).forEach { dummyMethod.parameterList.add(it) }
 
         val parameterList = factoryFunction.valueParameterList!!

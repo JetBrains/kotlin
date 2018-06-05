@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.moduleInfo
+import org.jetbrains.kotlin.idea.caches.project.forcedModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaOrKotlinMemberDescriptor
@@ -950,7 +950,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
                 val dummyClass = JavaPsiFacade.getElementFactory(method.project).createClass("Dummy")
                 val dummyMethod = createJavaMethod(method, dummyClass)
-                dummyMethod.containingFile.moduleInfo = baseFunction.getModuleInfo()
+                dummyMethod.containingFile.forcedModuleInfo = baseFunction.getModuleInfo()
                 try {
                     changeInfo.updateMethod(dummyMethod)
                     JavaChangeSignatureUsageProcessor().processPrimaryMethod(changeInfo)

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import kotlin.coroutines.experimental.buildSequence
 
-var PsiFile.moduleInfo: ModuleInfo? by UserDataProperty(Key.create("MODULE_INFO"))
+var PsiFile.forcedModuleInfo: ModuleInfo? by UserDataProperty(Key.create("FORCED_MODULE_INFO"))
 
 fun PsiElement.getModuleInfo(): IdeaModuleInfo = this.collectInfos(ModuleInfoCollector.NotNullTakeFirst)
 
@@ -136,7 +136,7 @@ private sealed class ModuleInfoCollector<out T>(
 }
 
 private fun <T> PsiElement.collectInfos(c: ModuleInfoCollector<T>): T {
-    (containingFile?.moduleInfo as? IdeaModuleInfo)?.let {
+    (containingFile?.forcedModuleInfo as? IdeaModuleInfo)?.let {
         return c.onResult(it)
     }
 
@@ -156,7 +156,7 @@ private fun <T> PsiElement.collectInfos(c: ModuleInfoCollector<T>): T {
         return c.onFailure("Should not analyze element: $text in file ${containingKtFile.name}\n$it")
     }
 
-    val explicitModuleInfo = containingKtFile?.moduleInfo ?: (containingKtFile?.originalFile as? KtFile)?.moduleInfo
+    val explicitModuleInfo = containingKtFile?.forcedModuleInfo ?: (containingKtFile?.originalFile as? KtFile)?.forcedModuleInfo
     if (explicitModuleInfo is IdeaModuleInfo) {
         return c.onResult(explicitModuleInfo)
     }
