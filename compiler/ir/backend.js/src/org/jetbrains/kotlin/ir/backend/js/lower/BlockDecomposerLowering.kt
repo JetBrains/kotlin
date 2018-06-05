@@ -159,6 +159,8 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
                 val (st, result) = expressionResult.runIfChangedOrDefault(mutableListOf<IrStatement>() to expression.value) { statements to resultValue }
                 if (variable != null) {
                     st += JsIrBuilder.buildSetVariable(variable, result)
+                } else {
+                    st += result
                 }
                 st += JsIrBuilder.buildBreak(context.builtIns.unitType, loop)
                 DecomposedResult(st, unitValue)
