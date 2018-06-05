@@ -66,6 +66,11 @@ private val progressiveModeArg: String by lazy {
     CommonCompilerArguments::progressiveMode.annotations.filterIsInstance<Argument>().single().value
 }
 
+// XXX: this is a dirty hack only for 1.2.50 release.
+// In 1.2.60+ this syntax should be supported properly via internal arguments (see KT-24593)
+const val internalNewInferenceArg: String = "-XXLanguage:+NewInference"
+const val internalSamConversionForKotlinFunctionsArg: String = "-XXLanguage:+SamConversionForKotlinFunctions"
+
 fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
     val languageLevel = getLibraryLanguageLevel(this, null, facetSettings.targetPlatformKind)
@@ -199,7 +204,9 @@ private fun getExtraLanguageFeatures(
             put(LanguageFeature.ReadDeserializedContracts, LanguageFeature.State.ENABLED)
         }
 
-        if (compilerSettings?.additionalArguments?.contains(newInferenceArg) == true) {
+        if (compilerSettings?.additionalArguments?.contains(newInferenceArg) == true ||
+            compilerSettings?.additionalArguments?.contains(internalNewInferenceArg) == true
+        ) {
             put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
         }
 
@@ -207,6 +214,10 @@ private fun getExtraLanguageFeatures(
             LanguageFeature.values().filter { it.kind.enabledInProgressiveMode }.forEach {
                 if (!contains(it)) put(it, LanguageFeature.State.ENABLED)
             }
+        }
+
+        if (compilerSettings?.additionalArguments?.contains(internalSamConversionForKotlinFunctionsArg) == true) {
+            put(LanguageFeature.SamConversionForKotlinFunctions, LanguageFeature.State.ENABLED)
         }
     }
 }

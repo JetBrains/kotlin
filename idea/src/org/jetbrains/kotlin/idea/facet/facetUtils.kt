@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgume
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import org.jetbrains.kotlin.idea.project.internalNewInferenceArg
+import org.jetbrains.kotlin.idea.project.internalSamConversionForKotlinFunctionsArg
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.*
 import kotlin.reflect.KProperty1
@@ -255,7 +257,7 @@ fun parseCompilerArgumentsToFacet(
         fun exposeAsAdditionalArgument(property: KProperty1<CommonCompilerArguments, Any?>) =
                 property.name !in primaryFields && property.get(compilerArguments) != property.get(defaultCompilerArguments)
 
-        val additionalArgumentsString = with(compilerArguments::class.java.newInstance()) {
+        var additionalArgumentsString = with(compilerArguments::class.java.newInstance()) {
             copyFieldsSatisfying(compilerArguments, this) { exposeAsAdditionalArgument(it) && it.name !in ignoredFields }
             ArgumentUtils.convertArgumentsToStringList(this).joinToString(separator = " ") {
                 if (StringUtil.containsWhitespaces(it) || it.startsWith('"')) {
@@ -263,6 +265,11 @@ fun parseCompilerArgumentsToFacet(
                 } else it
             }
         }
+
+        // XXX: this is temporary hack specifically for 1.2.50
+        if (arguments.contains(internalNewInferenceArg)) additionalArgumentsString += " $internalNewInferenceArg"
+        if (arguments.contains(internalSamConversionForKotlinFunctionsArg)) additionalArgumentsString += " $internalSamConversionForKotlinFunctionsArg"
+
         compilerSettings?.additionalArguments =
                 if (additionalArgumentsString.isNotEmpty()) additionalArgumentsString else CompilerSettings.DEFAULT_ADDITIONAL_ARGUMENTS
 
