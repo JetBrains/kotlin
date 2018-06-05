@@ -9396,6 +9396,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedTypeSubstitutedIntoOppositeProjection.kt");
                 }
 
+                @TestMetadata("capturedTypeWithInnerTypealias.kt")
+                public void testCapturedTypeWithInnerTypealias() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedTypeWithInnerTypealias.kt");
+                }
+
                 @TestMetadata("capturedTypeWithTypeVariableSubtyping.kt")
                 public void testCapturedTypeWithTypeVariableSubtyping() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedTypeWithTypeVariableSubtyping.kt");
