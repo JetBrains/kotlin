@@ -75,7 +75,11 @@ fun create(project: Project): ExecutorService {
                     val absoluteQemu = "$absoluteTargetToolchain/bin/$qemu"
                     val exe = executable
                     executable = absoluteQemu
-                    args = listOf("-L", absoluteTargetSysRoot, exe) + args
+                    args = listOf("-L", absoluteTargetSysRoot,
+                        // This is to workaround an endianess issue.
+                        // See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=731082 for details.
+                        "$absoluteTargetSysRoot/lib/ld.so.1", "--inhibit-cache",
+                        exe) + args
                 }
             }
         }
