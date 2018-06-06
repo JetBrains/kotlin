@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 data class A(val v: Any?)
 
 data class B<T>(val v: T)

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class MyClass
 
 operator fun MyClass?.inc(): MyClass? = null

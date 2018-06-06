@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // LANGUAGE_VERSION: 1.0
 fun box(): String {
     val nullValue: Any? = null

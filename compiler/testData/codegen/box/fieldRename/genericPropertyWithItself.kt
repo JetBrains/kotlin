@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 public class MPair<out A> (
         public val first: A
 ) {

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun String?.foo() = this ?: "OK"
 
 fun foo(i: Int?): String {

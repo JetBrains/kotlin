@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun t1 () {
     val a1 = arrayOfNulls<String>(1)
     a1[0] = "0" //ok

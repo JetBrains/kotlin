@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // See KT-6206 Always generate hashCode() and equals() for data classes even if base classes have non-trivial analogs
 
 abstract class Base {

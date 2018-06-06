@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 sealed class Season {
     object Warm: Season()
     object Cold: Season()

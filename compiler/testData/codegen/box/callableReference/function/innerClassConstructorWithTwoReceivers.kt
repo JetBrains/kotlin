@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 abstract class A {
     inner class InnerInA {
         fun returnOk() = "OK"

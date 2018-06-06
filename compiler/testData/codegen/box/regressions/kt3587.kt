@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 open class Variable {
     val lightVar: LightVariable = if (this is LightVariable) this else LightVariable()
 }

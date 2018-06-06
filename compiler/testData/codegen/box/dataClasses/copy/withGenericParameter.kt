@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 data class A(val a: Foo<String>) {}
 
 class Foo<T>(val a: T) { }

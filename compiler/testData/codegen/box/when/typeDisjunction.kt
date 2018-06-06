@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun foo(s: Any): String {
     val x = when (s) {
         is String -> s

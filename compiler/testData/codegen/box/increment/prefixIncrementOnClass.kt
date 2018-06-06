@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 interface Base
 class Derived: Base
 class Another: Base

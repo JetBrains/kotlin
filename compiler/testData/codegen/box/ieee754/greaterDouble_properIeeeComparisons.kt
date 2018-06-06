@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperIeee754Comparisons
-// IGNORE_BACKEND: JS_IR
 
 fun greater1(a: Double, b: Double) = a > b
 

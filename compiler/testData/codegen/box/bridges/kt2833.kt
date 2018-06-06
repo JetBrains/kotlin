@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 package test
 
 public interface FunDependencyEdge {

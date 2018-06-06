@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box() : String {
   return if(true.and(true)) "OK" else "fail"
 }

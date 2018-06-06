@@ -3017,6 +3017,39 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             }
         }
 
+        @TestMetadata("js/js.translator/testData/box/expression/typeCheck")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeCheck extends AbstractIrBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTypeCheck() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/expression/typeCheck"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+            }
+
+            @TestMetadata("simpleAsClass.kt")
+            public void testSimpleAsClass() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/simpleAsClass.kt");
+            }
+
+            @TestMetadata("simpleAsInterface.kt")
+            public void testSimpleAsInterface() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/simpleAsInterface.kt");
+            }
+
+            @TestMetadata("simpleIsClass.kt")
+            public void testSimpleIsClass() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsClass.kt");
+            }
+
+            @TestMetadata("simpleIsInterface.kt")
+            public void testSimpleIsInterface() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsInterface.kt");
+            }
+        }
+
         @TestMetadata("js/js.translator/testData/box/expression/when")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -6983,6 +7016,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("isComparable.kt")
         public void testIsComparable() throws Exception {
             runTest("js/js.translator/testData/box/rtti/isComparable.kt");
+        }
+
+        @TestMetadata("isJsPrimitiveNullableType.kt")
+        public void testIsJsPrimitiveNullableType() throws Exception {
+            runTest("js/js.translator/testData/box/rtti/isJsPrimitiveNullableType.kt");
         }
 
         @TestMetadata("isJsPrimitiveType.kt")

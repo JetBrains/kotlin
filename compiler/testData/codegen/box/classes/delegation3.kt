@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 interface One {
   public open fun foo() : Int
   public open fun faz() : Int = 10

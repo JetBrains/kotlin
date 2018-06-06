@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 open class A<T> {
     open var x: T = "Fail" as T
     get
