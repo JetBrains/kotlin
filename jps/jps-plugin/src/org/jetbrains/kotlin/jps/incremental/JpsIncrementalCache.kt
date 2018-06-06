@@ -59,7 +59,7 @@ class JpsIncrementalJsCache(
 }
 
 private class KotlinIncrementalStorageProvider(
-    private val target: KotlinModuleBuildTarget,
+    private val target: KotlinModuleBuildTarget<*>,
     private val paths: BuildDataPaths
 ) : StorageProvider<JpsIncrementalCache>() {
     init {
@@ -73,7 +73,7 @@ private class KotlinIncrementalStorageProvider(
     override fun createStorage(targetDataDir: File): JpsIncrementalCache = target.createCacheStorage(paths)
 }
 
-fun BuildDataManager.getKotlinCache(target: KotlinModuleBuildTarget?): JpsIncrementalCache? =
+fun BuildDataManager.getKotlinCache(target: KotlinModuleBuildTarget<*>?): JpsIncrementalCache? =
     if (target == null || !target.hasCaches) null
     else getStorage(target.jpsModuleBuildTarget, KotlinIncrementalStorageProvider(target, dataPaths))
 
