@@ -177,3 +177,15 @@ class JKJavaInstanceOfExpressionImpl(expression: JKExpression, type: JKTypeEleme
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaInstanceOfExpression(this, data)
 }
+
+class JKJavaPolyadicExpressionImpl(operands: List<JKExpression>, override var tokens: List<JKOperator>) : JKJavaPolyadicExpression,
+    JKBranchElementBase() {
+    override var operands by children(operands)
+
+    override fun getTokenBeforeOperand(operand: JKExpression): JKOperator? {
+        val index = operands.indexOf(operand)
+        return if (index < 1 || index > tokens.size) null else tokens[index - 1]
+    }
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaPolyadicExpression(this, data)
+}

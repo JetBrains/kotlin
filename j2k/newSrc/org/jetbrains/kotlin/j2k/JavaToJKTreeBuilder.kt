@@ -58,6 +58,10 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiConditionalExpression -> JKIfElseExpressionImpl(
                     condition.toJK(), thenExpression.toJK(), elseExpression.toJK()
                 )
+                is PsiPolyadicExpression -> JKJavaPolyadicExpressionImpl(
+                    operands.map { it.toJK() },
+                    Array(operands.lastIndex) { getTokenBeforeOperand(operands[it + 1]) }.map { it?.toJK() ?: TODO() }
+                )
                 else -> {
                     throw RuntimeException("Not supported: ${this::class}")
                 }
