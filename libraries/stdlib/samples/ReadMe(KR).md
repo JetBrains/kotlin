@@ -1,6 +1,7 @@
 ## 표준 라이브러리 예시
 
 이 프로젝트는 표준 라이브러리 함수들의 예시를 포함합니다. 
+
 이들은 [테스트](test) 소스 최상위(root)에 위치하며, 각 예제는 소규모 단위 테스트와 비슷하게 짜여있습니다.
 그리고 이 예제들은 [`@sample`](http://kotlinlang.org/docs/reference/kotlin-doc.html#block-tags) 태그로 표준 라이브러리 함수 문서에서 참조되며, 생성된 문서에 실행가능한 예제로써 내장됩니다. 
 
@@ -10,29 +11,24 @@
 단위 테스트로 작성되었더라도, 샘플은 단위 테스트와 개념적으로 같지 않다는 것을 참고하시기 바랍니다. 
 주로 (테스트되는 함수의) 취약 상황을 확인하는 단위 테스트와 다르게, 예제의 목적은 함수의 일반적인 목적에 맞는 상황을 확인하는 것입니다.
 
-Please see the existing samples for an inspiration on authoring new ones.
+새로운 것을 만들때, 이미 있는 예제들을 보고 영감을 얻는 것도 좋습니다.
 
-- Do not add `Test` postfix or prefix to the name of a sample container class or sample method.
+- 예제를 포함하는 클래스나 예제 메서드의 이름에 `Test`를 postfix 혹은 prefix로 붙이지 않습니다.
 
-- There's no hard restriction that each function should get its own sample. Several closely related functions can be illustrated with one sample, 
-for example one sample can show the usage of `nullsFirst` and `nullsLast` comparators.
+- 각 함수가 무조건 한 개의 예제를 가져야만 하는 것은 아닙니다. 몇몇 밀접한 함수들은 한 가지 예제로 설명될 수 있습니다. 예를 들자면, 한 예제가 `nullsFirst` 와 `nullsLast` comparator들의 사용법을 보여주는 경우가 있을 수 있습니다.
   
-- For the functions that are generated from a template (usually they are placed in the `generated` directory) the sample reference should be placed
-in the template, and then all specializations should be regenerated. See [the standard library generator](https://github.com/JetBrains/kotlin/tree/master/libraries/tools/kotlin-stdlib-gen) for details.
+- (주로 `generated` 디렉토리에 위치한) 템플릿으로 생성된 함수들에 대해서는 예제 참조(Reference)가 템플릿 안에 있어야 하고, 그 다음 템플릿과 다른 부분들(개별화)에 대해서는 다시 생성해야합니다. [표준 라이브러리 생성기](https://github.com/JetBrains/kotlin/tree/master/libraries/tools/kotlin-stdlib-gen)에서 더 자세한 내용을 확인할 수 있습니다.
  
-- It's possible to provide a single sample for all primitive specializations of a function in case if its usage doesn't change significantly
-depending on the specialization. 
+- 개별화에 관계없이 사용법이 크게 변하지 않는 원시(primitive) 함수들에 대해서는 한 예제를 사용해도 됩니다. 
 
-- Each sample should be self contained, but you can introduce local classes and functions in it.
-Do not use external references, other than the Standard Library itself and JDK.
+- 각 예제는 (의존성 등을) 스스로 포함하고 있어야 합니다, 하지만 로컬 클래스나 함수를 가질 수는 있습니다.
+표준 라이브러리 스스로나 JDK를 제외한 외부 참조는 사용하지 않습니다.
 
-- Use only the following subset of assertions:
+- 다음의 일부 assertion들만 사용합니다:
 
-    - `assertPrints` to show any printable value,
-    - `assertTrue`/`assertFalse` to show a boolean value,
-    - `assertFails` / `assertFailsWith` to show that some invocation will fail.
+    - `assertPrints`를 통해 출력가능한 값을 보여주고,
+    - `assertTrue`/`assertFalse`를 통해 boolean 값을 보여주고,
+    - `assertFails` / `assertFailsWith`를 통해 몇몇 호출이 실패할 것임을 보여줍니다.
   
-  When a sample is compiled and run during the build these assertions work as usual test assertions.
-  When the sample is transformed to be embedded in docs, these assertions are either replaced with `println` with the comment showing its 
-  expected output, or commented out with `//` — this is used for `assertFails` / `assertFailsWith` to prevent execution of its failing block 
-  of code. 
+  빌드 중간에 예제가 컴파일 및 실행되는 경우에는 이 assertion들은 일반적인 예제 assertion들과 비슷하게 행동합니다.
+  예제가 문서(docs)에 내장되도록 바뀌는 경우에는, 이 assertion들은 예상 결과를 나타내는 주석과 함께 `println`으로 대체되거나, `//`와 함께 주석처리됩니다 — 이는 `assertFails` / `assertFailsWith` 에 사용되는데, 이는 코드의 결함 블럭을 실행하는 것을 막기 위함입니다.
