@@ -133,7 +133,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
             )
         }
 
-        val filesSet = dirtyFilesHolder.dirtyFiles
+        val filesSet = dirtyFilesHolder.allDirtyFiles
 
         val moduleFile = generateModuleDescription(chunk, dirtyFilesHolder)
         if (moduleFile == null) {
@@ -150,7 +150,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
         val module = chunk.representativeTarget().module
 
         if (KotlinBuilder.LOG.isDebugEnabled) {
-            val totalRemovedFiles = dirtyFilesHolder.removedFilesCount
+            val totalRemovedFiles = dirtyFilesHolder.allRemovedFilesFiles.size
             KotlinBuilder.LOG.debug("Compiling to JVM ${filesSet.size} files"
                                             + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
                                             + " in " + chunk.targets.joinToString { it.presentableName })
@@ -303,7 +303,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
 
         val targetDirtyFiles: Map<ModuleBuildTarget, Set<File>> = chunk.targets.keysToMap {
             val files = HashSet<File>()
-            dirtyFilesHolder.getRemovedFiles(it).mapTo(files, ::File)
+            files.addAll(dirtyFilesHolder.getRemovedFiles(it))
             files.addAll(dirtyFilesHolder.getDirtyFiles(it))
             files
         }
@@ -336,7 +336,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
             }
         }
 
-        val allCompiled = dirtyFilesHolder.dirtyFiles
+        val allCompiled = dirtyFilesHolder.allDirtyFiles
         JavaBuilderUtil.registerFilesToCompile(context, allCompiled)
         JavaBuilderUtil.registerSuccessfullyCompiled(context, allCompiled)
     }
