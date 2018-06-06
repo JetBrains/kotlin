@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 data class A(val a: Any?, var x: Int)
 data class B(val a: Any?)
 data class C(val a: Int, var x: Int?)

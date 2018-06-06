@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 enum class ClassTemplate(
         // var bug: Int = 1,
         var code: Int,

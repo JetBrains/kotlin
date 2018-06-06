@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 inline fun inlineCall(action: () -> Unit) {
     action()
 }

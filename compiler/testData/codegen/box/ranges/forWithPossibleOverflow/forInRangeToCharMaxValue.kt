@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 const val M = 0xFFFF.toChar()
 
 fun box(): String {

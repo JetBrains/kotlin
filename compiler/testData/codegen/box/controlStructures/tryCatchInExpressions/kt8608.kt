@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface Callable {
     fun call(b: Boolean)
 }

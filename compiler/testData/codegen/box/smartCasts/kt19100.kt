@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 open class KFoo {
     fun foo(): String {
         if (this is KFooQux) return qux

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class MyException(message: String): Exception(message)
 
 fun box(): String =

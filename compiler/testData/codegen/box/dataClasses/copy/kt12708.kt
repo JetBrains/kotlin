@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // LANGUAGE_VERSION: 1.1
 
 fun box(): String {

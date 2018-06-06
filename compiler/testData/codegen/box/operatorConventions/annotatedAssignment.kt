@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 @Target(AnnotationTarget.EXPRESSION)
 annotation class Annotation
 

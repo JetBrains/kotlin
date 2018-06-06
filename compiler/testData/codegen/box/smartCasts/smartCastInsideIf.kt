@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class A(val s: String = "FAIL")
 
 private fun foo(a: A?, aOther: A?): A {

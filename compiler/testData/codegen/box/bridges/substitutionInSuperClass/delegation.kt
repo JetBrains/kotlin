@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface A<T> {
     fun id(t: T): T
 }

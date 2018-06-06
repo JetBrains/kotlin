@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // !LANGUAGE: +ProperIeee754Comparisons
 
 fun ne(x: Any, y: Any) = x is Double && y is Float && x != y

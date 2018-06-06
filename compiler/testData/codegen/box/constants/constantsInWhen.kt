@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun test(
         b: Boolean,
         i: Int

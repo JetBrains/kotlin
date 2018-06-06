@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // !LANGUAGE: +InlineClasses
 
 inline class ULong(val l: Long)

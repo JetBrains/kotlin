@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 open class A<T> {
     var size: T = 56 as T
 }

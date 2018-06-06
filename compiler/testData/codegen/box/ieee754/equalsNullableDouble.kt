@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // !LANGUAGE: -ProperIeee754Comparisons
 
 fun equals1(a: Double, b: Double?) = a == b

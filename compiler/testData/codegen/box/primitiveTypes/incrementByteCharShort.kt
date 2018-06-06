@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun byteArg(b: Byte) {}
 fun charArg(c: Char) {}
 fun shortArg(s: Short) {}

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class Box<T>(t: T) {
     var value = t
 }

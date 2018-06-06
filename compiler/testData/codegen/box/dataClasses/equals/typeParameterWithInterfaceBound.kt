@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface A
 
 data class B<out T : A>(val a: T)

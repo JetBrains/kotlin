@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class Book(val name: String) : Comparable<Book> {
   override fun compareTo(other: Book) = name.compareTo(other.name)
 }

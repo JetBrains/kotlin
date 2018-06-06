@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class GameError(msg: String): Exception(msg) {
 }
 

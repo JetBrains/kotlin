@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 open class SuperFoo {
     public fun bar(): String {
         if (this is Foo) {

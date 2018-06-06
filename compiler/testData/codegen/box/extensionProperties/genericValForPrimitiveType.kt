@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 val <T> T.valProp: T
     get() = this
 

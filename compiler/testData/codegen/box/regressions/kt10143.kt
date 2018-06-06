@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // FILE: Outer.kt
 
 package another

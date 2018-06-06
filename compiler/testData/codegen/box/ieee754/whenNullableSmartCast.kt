@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val nullValue: Any? = null
     val nullDouble: Double? = null

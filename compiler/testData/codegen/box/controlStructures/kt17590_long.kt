@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun foo(x: Any?, y: Any?) = 0L
 
 inline fun test(value: Any?): Long {
