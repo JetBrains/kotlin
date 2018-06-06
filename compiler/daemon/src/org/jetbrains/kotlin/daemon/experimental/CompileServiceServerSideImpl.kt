@@ -481,7 +481,7 @@ class CompileServiceServerSideImpl(
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBaseClientSide,
-        compilationResults: CompilationResultsClientSide
+        compilationResults: CompilationResultsClientSide?
     ): CompileService.CallResult<Int> = ifAlive(info = "compile") {
         log.info("servicesFacade : $servicesFacade")
         servicesFacade.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.INFO, "abacaba")
@@ -566,7 +566,7 @@ class CompileServiceServerSideImpl(
         args: K2JSCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         servicesFacade: IncrementalCompilerServicesFacadeAsync,
-        compilationResults: CompilationResultsClientSide,
+        compilationResults: CompilationResultsClientSide?,
         compilerMessageCollector: MessageCollector
     ): ExitCode {
         val allKotlinFiles = arrayListOf<File>()
@@ -605,7 +605,7 @@ class CompileServiceServerSideImpl(
         k2jvmArgs: K2JVMCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         servicesFacade: IncrementalCompilerServicesFacadeAsync,
-        compilationResults: CompilationResultsClientSide,
+        compilationResults: CompilationResultsClientSide?,
         compilerMessageCollector: MessageCollector,
         daemonMessageReporterAsync: DaemonMessageReporterAsync
     ): ExitCode {

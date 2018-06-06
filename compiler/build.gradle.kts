@@ -66,6 +66,7 @@ dependencies {
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     testCompileOnly(project(":kotlin-daemon-client"))
+    testCompileOnly(project(":kotlin-daemon-client-new"))
     testCompile(project(":compiler:daemon")) // +
     testCompile(project(":compiler:daemon-common")) // +
     testCompileOnly(project(":kotlin-reflect-api"))
@@ -84,6 +85,7 @@ dependencies {
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-daemon-client"))
+    testRuntime(projectDist(":kotlin-daemon-client-new"))
     testRuntime(project(":compiler:daemon")) // +
     testRuntime(project(":compiler:daemon-common")) // +
     testRuntime(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }

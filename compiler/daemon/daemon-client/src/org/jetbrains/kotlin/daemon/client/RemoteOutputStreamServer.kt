@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.daemon.client
 
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
-import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.daemon.common.RemoteOutputStream
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import java.io.OutputStream

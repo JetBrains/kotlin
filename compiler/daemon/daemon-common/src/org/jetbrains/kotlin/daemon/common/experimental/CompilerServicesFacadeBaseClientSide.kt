@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.daemon.common.experimental
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import java.io.Serializable
 
 interface CompilerServicesFacadeBaseClientSide : CompilerServicesFacadeBaseAsync, Client<CompilerServicesFacadeBaseServerSide>

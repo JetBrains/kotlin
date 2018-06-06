@@ -200,7 +200,9 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
             val messageCollector = TestMessageCollector()
 
             val daemonWithSession = KotlinCompilerClient.connectAndLease(compilerId, aliveFile, daemonJVMOptions, daemonOptions,
-                                                                         DaemonReportingTargets(messageCollector = messageCollector), autostart = true, leaseSession = true)
+                                                                         DaemonReportingTargets(
+                                                                             messageCollector = messageCollector
+                                                                         ), autostart = true, leaseSession = true)
             assertNotNull("failed to connect daemon:\ncompiler id: $compilerId\ndaemon opts: $daemonOptions\njvm opts: $daemonJVMOptions\nalive file: $aliveFile\n", daemonWithSession)
 
             try {

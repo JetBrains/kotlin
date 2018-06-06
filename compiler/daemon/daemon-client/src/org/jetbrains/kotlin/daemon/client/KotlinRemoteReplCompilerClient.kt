@@ -1,71 +1,88 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.daemon.client
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.cli.common.repl.IReplStageState
+import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
+import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
+import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
+import org.jetbrains.kotlin.cli.common.repl.experimental.ReplCompiler
+import org.jetbrains.kotlin.daemon.client.impls.KotlinRemoteReplCompilerClientImpl
+import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.CompileServiceClientSide
+import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
+import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceClientSideImpl
+import org.jetbrains.kotlin.daemon.common.experimental.toRMI
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
-// TODO: reduce number of ports used then SOCKET_ANY_FREE_PORT is passed (same problem with other calls)
+interface KotlinRemoteReplCompilerClient : ReplCompiler {
 
-open class KotlinRemoteReplCompilerClient(
-        protected val compileService: CompileService,
-        clientAliveFlagFile: File?,
-        targetPlatform: CompileService.TargetPlatform,
-        args: Array<out String>,
-        messageCollector: MessageCollector,
-        templateClasspath: List<File>,
-        templateClassName: String,
-        port: Int = SOCKET_ANY_FREE_PORT
-) : ReplCompiler {
-    val services = BasicCompilerServicesWithResultsFacadeServer(messageCollector, null, port)
-
-    val sessionId = compileService.leaseReplSession(
-            clientAliveFlagFile?.absolutePath,
-            args,
-            CompilationOptions(
-                    CompilerMode.NON_INCREMENTAL_COMPILER,
-                    targetPlatform,
-                    arrayOf(ReportCategory.COMPILER_MESSAGE.code, ReportCategory.DAEMON_MESSAGE.code, ReportCategory.EXCEPTION.code, ReportCategory.OUTPUT_MESSAGE.code),
-                    ReportSeverity.INFO.code,
-                    emptyArray()),
-            services,
-            templateClasspath,
-            templateClassName
-    ).get()
+    val sessionId: Int
 
     // dispose should be called at the end of the repl lifetime to free daemon repl session and appropriate resources
-    open fun dispose() {
-        try {
-            compileService.releaseReplSession(sessionId)
-        }
-        catch (ex: java.rmi.RemoteException) {
-            // assuming that communication failed and daemon most likely is already down
-        }
+    suspend fun dispose()
+
+    override suspend fun createState(lock: ReentrantReadWriteLock): IReplStageState<*>
+
+    override suspend fun check(
+        state: IReplStageState<*>,
+        codeLine: ReplCodeLine
+    ): ReplCheckResult
+
+    override suspend fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult
+
+    companion object {
+        fun instantiate(
+            compileService: CompileServiceClientSide,
+            clientAliveFlagFile: File?,
+            targetPlatform: CompileService.TargetPlatform,
+            args: Array<out String>,
+            messageCollector: MessageCollector,
+            templateClasspath: List<File>,
+            templateClassName: String,
+            port: Int = SOCKET_ANY_FREE_PORT
+        ): KotlinRemoteReplCompilerClient =
+            when (compileService) {
+                is CompileServiceClientSideImpl ->
+                    ClassLoader
+                        .getSystemClassLoader()
+                        .loadClass("org.jetbrains.kotlin.daemon.client.experimental.KotlinRemoteReplCompilerClientAsync")
+                        .getDeclaredConstructor(
+                            CompileServiceClientSide::class.java,
+                            File::class.java,
+                            CompileService.TargetPlatform::class.java,
+                            Array<out String>::class.java,
+                            MessageCollector::class.java,
+                            List::class.java,
+                            String::class.java,
+                            Int::class.java
+                        )
+                        .newInstance(
+                            compileService,
+                            clientAliveFlagFile,
+                            targetPlatform,
+                            args,
+                            messageCollector,
+                            templateClasspath,
+                            templateClassName,
+                            port
+                        ) as KotlinRemoteReplCompilerClient
+                else -> KotlinRemoteReplCompilerWrapper(
+                    KotlinRemoteReplCompilerClientImpl(
+                        compileService.toRMI(),
+                        clientAliveFlagFile,
+                        targetPlatform,
+                        args,
+                        messageCollector,
+                        templateClasspath,
+                        templateClassName
+                    )
+                )
+            }
     }
-
-    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> =
-            RemoteReplCompilerState(compileService.replCreateState(sessionId).get(), lock)
-
-    override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult =
-            compileService.replCheck(sessionId, state.asState(RemoteReplCompilerState::class.java).replStateFacade.getId(), codeLine).get()
-
-    override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult =
-            compileService.replCompile(sessionId, state.asState(RemoteReplCompilerState::class.java).replStateFacade.getId(), codeLine).get()
 }

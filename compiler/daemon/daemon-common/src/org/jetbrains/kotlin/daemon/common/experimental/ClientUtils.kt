@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 
-import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.*

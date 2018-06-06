@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.daemon.TestMessageCollector
-import org.jetbrains.kotlin.daemon.assertHasMessage
+import org.jetbrains.kotlin.daemon.experimental.integration.TestMessageCollector
+import org.jetbrains.kotlin.daemon.experimental.integration.assertHasMessage
 import org.jetbrains.kotlin.daemon.toFile
 import org.jetbrains.kotlin.script.InvalidScriptResolverAnnotation
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
