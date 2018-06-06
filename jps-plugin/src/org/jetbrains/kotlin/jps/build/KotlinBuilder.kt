@@ -63,7 +63,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         const val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
 
         val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
-        const val JVM_BUILD_META_INFO_FILE_NAME = "jvm-build-meta-info.txt"
         const val SKIP_CACHE_VERSION_CHECK_PROPERTY = "kotlin.jps.skip.cache.version.check"
         const val JPS_KOTLIN_HOME_PROPERTY = "jps.kotlin.home"
 
@@ -259,7 +258,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     private fun doBuild(
         chunk: ModuleChunk,
-        representativeTarget: KotlinModuleBuildTarget,
+        representativeTarget: KotlinModuleBuildTarget<*>,
         context: CompileContext,
         kotlinDirtyFilesHolder: KotlinDirtySourceFilesHolder,
         messageCollector: MessageCollectorAdapter,
@@ -345,7 +344,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val generatedFiles = getGeneratedFiles(context, chunk, environment.outputItemsCollector)
 
         registerOutputItems(outputConsumer, generatedFiles)
-        saveVersions(context, chunk, commonArguments)
+        representativeTarget.saveVersions(context, chunk, commonArguments)
 
         if (targets.any { hasKotlin[it] == null }) {
             fsOperations.markChunk(recursively = false, kotlinOnly = true, excludeFiles = kotlinDirtyFilesHolder.allDirtyFiles)
@@ -476,26 +475,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         dataManager.cleanLookupStorage(LOG)
     }
 
-    private fun saveVersions(context: CompileContext, chunk: ModuleChunk, commonArguments: CommonCompilerArguments) {
-        val dataManager = context.projectDescriptor.dataManager
-        val targets = chunk.targets
-        val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
-        cacheVersionsProvider.allVersions(targets).forEach { it.saveIfNeeded() }
-
-        val isJsModule = context.kotlinBuildTargets[chunk.representativeTarget()] is KotlinJsModuleBuildTarget
-        if (!isJsModule) {
-            val jvmBuildMetaInfo = JvmBuildMetaInfo(commonArguments)
-            val serializedMetaInfo = JvmBuildMetaInfo.serializeToString(jvmBuildMetaInfo)
-
-            for (target in chunk.targets) {
-                jvmBuildMetaInfoFile(target, dataManager).writeText(serializedMetaInfo)
-            }
-        }
-    }
-
     private fun doCompileModuleChunk(
         chunk: ModuleChunk,
-        kotlinTarget: KotlinModuleBuildTarget,
+        kotlinTarget: KotlinModuleBuildTarget<*>,
         commonArguments: CommonCompilerArguments,
         context: CompileContext,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
@@ -537,15 +519,13 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             }
         }
 
-        val isDoneSomething = kotlinTarget.compileModuleChunk(
-            chunk, commonArguments, dirtyFilesHolder, environment
-        )
+        val isDoneSomething = kotlinTarget.compileModuleChunk(chunk, commonArguments, dirtyFilesHolder, environment)
 
         return if (isDoneSomething) environment.outputItemsCollector else null
     }
 
     private fun createCompileEnvironment(
-        kotlinModuleBuilderTarget: KotlinModuleBuildTarget,
+        kotlinModuleBuilderTarget: KotlinModuleBuildTarget<*>,
         incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCache>,
         lookupTracker: LookupTracker,
         exceptActualTracer: ExpectActualTracker,
@@ -754,6 +734,3 @@ fun getDependentTargets(
 
 private fun getDependenciesRecursively(module: JpsModule, kind: JpsJavaClasspathKind): Set<JpsModule> =
     JpsJavaExtensionService.dependencies(module).includedIn(kind).recursivelyExportedOnly().modules
-
-fun jvmBuildMetaInfoFile(target: ModuleBuildTarget, dataManager: BuildDataManager): File =
-    File(dataManager.dataPaths.getTargetDataRoot(target), KotlinBuilder.JVM_BUILD_META_INFO_FILE_NAME)

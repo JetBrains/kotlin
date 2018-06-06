@@ -34,7 +34,7 @@ data class DependenciesTxt(
         var index: Int = -1
 
         val indexedName
-            get() = "${index / 10}${index % 10}_$name"
+            get() = "${index.toString().padStart(2, '0')}_$name"
 
         /**
          * Facet should not be created for old tests

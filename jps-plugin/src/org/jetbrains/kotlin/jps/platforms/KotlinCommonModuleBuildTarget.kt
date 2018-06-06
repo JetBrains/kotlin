@@ -12,17 +12,25 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.build.CommonBuildMetaInfo
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
-import org.jetbrains.kotlin.jps.incremental.JpsIncrementalJvmCache
 import org.jetbrains.kotlin.jps.model.k2MetadataCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 
+private const val COMMON_BUILD_META_INFO_FILE_NAME = "common-build-meta-info.txt"
+
 class KotlinCommonModuleBuildTarget(context: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
-    KotlinModuleBuildTarget(context, jpsModuleBuildTarget) {
+    KotlinModuleBuildTarget<CommonBuildMetaInfo>(context, jpsModuleBuildTarget) {
+
+    override val buildMetaInfoFactory
+        get() = CommonBuildMetaInfo
+
+    override val buildMetaInfoFileName
+        get() = COMMON_BUILD_META_INFO_FILE_NAME
 
     override fun compileModuleChunk(
         chunk: ModuleChunk,

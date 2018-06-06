@@ -17,7 +17,7 @@ import java.io.File
 
 class MessageCollectorAdapter(
     private val context: CompileContext,
-    private val kotlinTarget: KotlinModuleBuildTarget?
+    private val kotlinTarget: KotlinModuleBuildTarget<*>?
 ) : MessageCollector {
     private var hasErrors = false
 

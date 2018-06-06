@@ -13,6 +13,7 @@ import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.build.GeneratedFile
+import org.jetbrains.kotlin.build.JsBuildMetaInfo
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
@@ -39,8 +40,16 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils.META_JS_SUFFIX
 import java.io.File
 import java.net.URI
 
+private const val JS_BUILD_META_INFO_FILE_NAME = "js-build-meta-info.txt"
+
 class KotlinJsModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
-    KotlinModuleBuildTarget(compileContext, jpsModuleBuildTarget) {
+    KotlinModuleBuildTarget<JsBuildMetaInfo>(compileContext, jpsModuleBuildTarget) {
+
+    override val buildMetaInfoFactory
+        get() = JsBuildMetaInfo
+
+    override val buildMetaInfoFileName: String
+        get() = JS_BUILD_META_INFO_FILE_NAME
 
     val isFirstBuild: Boolean
         get() {
