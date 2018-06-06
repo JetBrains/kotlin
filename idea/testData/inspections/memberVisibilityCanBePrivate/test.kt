@@ -209,3 +209,13 @@ fun withLocal(): Int {
 class Math {
     @test.anno.EntryPoint fun fact(n: Int) = if (n < 2) 1 else n * fact(n - 1)
 }
+
+expect class Expect {
+    fun foo()
+    val bar: Int
+}
+
+actual class Actual {
+    actual fun foo() {}
+    actual val bar = 42
+}
