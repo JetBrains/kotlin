@@ -1,4 +1,5 @@
 // !API_VERSION: 1.2
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 import helpers.*
