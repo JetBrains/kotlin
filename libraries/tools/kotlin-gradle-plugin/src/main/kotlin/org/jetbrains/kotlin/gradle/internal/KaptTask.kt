@@ -119,6 +119,9 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
         }
 
         val compilerRunner = GradleCompilerRunner(project)
+
+        sourceRoots.log(this.name, logger)
+
         val exitCode = compilerRunner.runJvmCompiler(
             sourcesToCompile = emptyList(),
             javaSourceRoots = javaSourceRoots,
