@@ -2940,31 +2940,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/directCompanion.kt");
         }
 
-        @TestMetadata("function1.kt")
-        public void testFunction1() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/function1.kt");
-        }
-
-        @TestMetadata("function2.kt")
-        public void testFunction2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/function2.kt");
-        }
-
-        @TestMetadata("function3.kt")
-        public void testFunction3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/function3.kt");
-        }
-
-        @TestMetadata("function4.kt")
-        public void testFunction4() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/function4.kt");
-        }
-
-        @TestMetadata("function5.kt")
-        public void testFunction5() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/function5.kt");
-        }
-
         @TestMetadata("functionReference.kt")
         public void testFunctionReference() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/functionReference.kt");
@@ -2995,24 +2970,54 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/onlyCompanion.kt");
         }
 
-        @TestMetadata("property1.kt")
-        public void testProperty1() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/property1.kt");
+        @TestMetadata("sameNameDifferentArgsFunction.kt")
+        public void testSameNameDifferentArgsFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameDifferentArgsFunction.kt");
         }
 
-        @TestMetadata("property2.kt")
-        public void testProperty2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/property2.kt");
+        @TestMetadata("sameNameExtensionFunction.kt")
+        public void testSameNameExtensionFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameExtensionFunction.kt");
         }
 
-        @TestMetadata("property3.kt")
-        public void testProperty3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/property3.kt");
+        @TestMetadata("sameNameExtensionVariable.kt")
+        public void testSameNameExtensionVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameExtensionVariable.kt");
         }
 
-        @TestMetadata("property4.kt")
-        public void testProperty4() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/property4.kt");
+        @TestMetadata("sameNameGlobalFunction.kt")
+        public void testSameNameGlobalFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameGlobalFunction.kt");
+        }
+
+        @TestMetadata("sameNameGlobalVariable.kt")
+        public void testSameNameGlobalVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameGlobalVariable.kt");
+        }
+
+        @TestMetadata("sameNameLocalFunction.kt")
+        public void testSameNameLocalFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameLocalFunction.kt");
+        }
+
+        @TestMetadata("sameNameLocalVariable.kt")
+        public void testSameNameLocalVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameLocalVariable.kt");
+        }
+
+        @TestMetadata("sameNameLocalVariable2.kt")
+        public void testSameNameLocalVariable2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameLocalVariable2.kt");
+        }
+
+        @TestMetadata("sameNameMemberFunction.kt")
+        public void testSameNameMemberFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameMemberFunction.kt");
+        }
+
+        @TestMetadata("sameNameMemberVariable.kt")
+        public void testSameNameMemberVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameMemberVariable.kt");
         }
     }
 

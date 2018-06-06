@@ -11,39 +11,56 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.findPropertyByName
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 
 class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return referenceExpressionVisitor(fun(expression) {
             val parent = expression.parent as? KtDotQualifiedExpression ?: return
-            if (expression == parent.selectorExpression && parent.parent !is KtDotQualifiedExpression) return
+            val selectorExpression = parent.selectorExpression
+            if (expression == selectorExpression && parent.parent !is KtDotQualifiedExpression) return
             if (parent.getStrictParentOfType<KtImportDirective>() != null) return
 
             val objectDeclaration = expression.mainReference.resolve() as? KtObjectDeclaration ?: return
             if (!objectDeclaration.isCompanion()) return
             if (expression.text != objectDeclaration.name) return
 
-            val property = parent.getStrictParentOfType<KtProperty>()
-            if (property != null && property.name == parent.selectorExpression?.text) return
-
-            val function = parent.getStrictParentOfType<KtNamedFunction>()
-            if (function != null) {
-                val callee = (parent.selectorExpression as? KtCallExpression)?.calleeExpression
-                if (function.name == callee?.text) {
-                    val functionParams = (function.descriptor as? FunctionDescriptor)?.valueParameters ?: emptyList()
-                    val calleeParams = callee?.getCallableDescriptor()?.valueParameters ?: emptyList()
-                    if (functionParams.size == calleeParams.size &&
-                        functionParams.zip(calleeParams).all { it.first.type == it.second.type }
-                    ) return
+            val containingClass = objectDeclaration.containingClass() ?: return
+            val selectorDescriptor = selectorExpression?.getCallableDescriptor()
+            when (selectorDescriptor) {
+                is PropertyDescriptor -> {
+                    val name = selectorDescriptor.name
+                    if (containingClass.findPropertyByName(name.asString()) != null) return
+                    val variable = expression.getResolutionScope().findVariable(name, NoLookupLocation.FROM_IDE)
+                    if (variable.isLocalOrExtension(containingClass)) return
+                }
+                is FunctionDescriptor -> {
+                    val name = selectorDescriptor.name
+                    val function = containingClass.findFunctionByName(name.asString())?.descriptor
+                            ?: expression.getResolutionScope().findFunction(name, NoLookupLocation.FROM_IDE)?.takeIf {
+                                it.isLocalOrExtension(containingClass)
+                            }
+                    if (function is FunctionDescriptor) {
+                        val functionParams = function.valueParameters
+                        val calleeParams =
+                            (selectorExpression as? KtCallExpression)?.calleeExpression?.getCallableDescriptor()?.valueParameters.orEmpty()
+                        if (functionParams.size == calleeParams.size &&
+                            functionParams.zip(calleeParams).all { it.first.type == it.second.type }
+                        ) return
+                    }
                 }
             }
 
@@ -61,6 +78,15 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             )
         })
     }
+}
+
+private fun KtClass.findFunctionByName(name: String): KtDeclaration? {
+    return declarations.firstOrNull { it is KtNamedFunction && it.name == name }
+}
+
+private fun CallableDescriptor?.isLocalOrExtension(extensionClass: KtClass): Boolean {
+    return this?.visibility == Visibilities.LOCAL
+            || this?.extensionReceiverParameter?.type?.constructor?.declarationDescriptor == extensionClass.descriptor
 }
 
 private class RemoveRedundantCompanionReferenceFix : LocalQuickFix {

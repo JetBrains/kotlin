@@ -1,6 +1,0 @@
-class TEST {
-    companion object {
-        val foo = ""
-    }
-    val bar = foo
-}
