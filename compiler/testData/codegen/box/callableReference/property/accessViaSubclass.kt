@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 abstract class Base {
     val result = "OK"
 }

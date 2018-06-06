@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 inline fun foo(x: () -> String) = x()
 
 fun String.id() = this

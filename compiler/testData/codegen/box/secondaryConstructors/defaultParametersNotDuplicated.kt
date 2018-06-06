@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 var global = 0
 
 fun sideEffect() = global++

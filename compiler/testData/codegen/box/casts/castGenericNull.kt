@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun <T> castToString(t: T) {
     t as String
 }

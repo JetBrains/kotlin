@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class A<T>(t: Array<Array<T>>) {
     val a:Array<Array<T>> = t
 }

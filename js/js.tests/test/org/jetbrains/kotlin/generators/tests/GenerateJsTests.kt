@@ -72,6 +72,10 @@ fun main(args: Array<String>) {
             model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractJsIrCodegenBoxTest> {
+            model("codegen/box", targetBackend = TargetBackend.JS_IR)
+        }
+
         testClass<AbstractIrNonLocalReturnsTest> {
             model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS_IR)
         }

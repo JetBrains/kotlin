@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // FILE: Foo.kt
 
 package foo

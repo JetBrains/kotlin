@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val list = ArrayList<IntRange>()
     list.add(1..3)

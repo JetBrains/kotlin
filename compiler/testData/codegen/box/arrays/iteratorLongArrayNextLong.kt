@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val a = LongArray(5)
     val x = a.iterator()

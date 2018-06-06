@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun foo(): String {
     val s = try {
         "OK"

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 package test
 
 import test.C.E1

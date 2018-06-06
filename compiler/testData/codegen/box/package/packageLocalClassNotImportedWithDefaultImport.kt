@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // FILE: box.kt
 
 package a

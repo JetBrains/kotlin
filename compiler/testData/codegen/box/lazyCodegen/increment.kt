@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 var holder = ""
 var globalA: A = A(-1)
     get(): A {

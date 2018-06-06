@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun test1(): Long {
     var s = 0L
     for (i in 1L..4) {

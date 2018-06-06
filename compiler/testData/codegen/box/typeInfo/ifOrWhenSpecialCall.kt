@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface Option<out T> {
     val s: String
 }

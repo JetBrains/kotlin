@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 public abstract class VirtualFile() {
     public abstract val size : Long
 }

@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS_IR
 // !LANGUAGE: +InlineClasses
 
 inline class UInt(private val value: Int) {

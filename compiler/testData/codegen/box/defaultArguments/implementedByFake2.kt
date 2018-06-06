@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JVM, JS
 
 interface I<T> {

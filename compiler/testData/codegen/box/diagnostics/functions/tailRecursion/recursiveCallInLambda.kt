@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 // TODO: muted automatically, investigate should it be ran for JS or not

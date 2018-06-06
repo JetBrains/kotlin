@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 enum class A {
     ONE,
     TWO

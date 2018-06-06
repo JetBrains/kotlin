@@ -56,6 +56,10 @@ abstract class AbstractSourceMapGenerationSmokeTest : BasicBoxTest(
 
 abstract class AbstractIrBoxJsTest : BasicIrBoxTest(BasicBoxTest.TEST_DATA_DIR_PATH + "box/", "irBox/")
 
+abstract class AbstractJsIrCodegenBoxTest : BasicIrBoxTest(
+    "compiler/testData/codegen/box/",
+    "codegen/irBox/"
+)
 
 abstract class BorrowedIrInlineTest(relativePath: String) : BasicIrBoxTest(
     "compiler/testData/codegen/boxInline/$relativePath",

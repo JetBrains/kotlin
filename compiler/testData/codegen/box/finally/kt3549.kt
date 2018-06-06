@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun test1() : String {
     var s = "";
     try {

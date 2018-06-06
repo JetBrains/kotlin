@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class Thing(delegate: CharSequence) : CharSequence by delegate
   
 fun box(): String {

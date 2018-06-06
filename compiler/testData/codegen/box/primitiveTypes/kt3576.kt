@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 object TestObject {
     val testFloat: Float = 0.9999.toFloat()
     val otherFloat: Float = 1.01.toFloat()

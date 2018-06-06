@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 val String.id: String
     get() = this
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 import kotlin.reflect.KProperty1
 
 class A {

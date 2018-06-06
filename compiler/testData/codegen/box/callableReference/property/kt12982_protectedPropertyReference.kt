@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class Foo {
     protected var x = 0
 

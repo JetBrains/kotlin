@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface A<T> {
     fun foo(t: T) = "A"
 }

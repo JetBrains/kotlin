@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class X {
     val result: String
         inline get() = "OK"

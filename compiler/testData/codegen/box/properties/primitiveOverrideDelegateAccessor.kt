@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 import kotlin.reflect.KProperty
 
 class Holder(var value: Int) {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class Bob {
     fun Bob.bar() = "OK"
 }

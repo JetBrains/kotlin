@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 enum class A(val a: Int = 1) {
   FIRST(),
   SECOND(2)

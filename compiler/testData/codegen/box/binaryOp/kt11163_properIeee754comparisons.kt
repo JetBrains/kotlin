@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // !LANGUAGE: +ProperIeee754Comparisons
 operator fun Int.compareTo(c: Char) = 0
 

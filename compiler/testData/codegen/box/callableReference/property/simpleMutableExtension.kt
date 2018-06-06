@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 var storage = 0
 
 var Int.foo: Int

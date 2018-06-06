@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JVM, JS, NATIVE
 
 // Here we check that there is compilation error, so ignore_backend directive is actual

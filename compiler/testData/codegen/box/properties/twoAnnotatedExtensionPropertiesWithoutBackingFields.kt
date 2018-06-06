@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 annotation class Anno
 
 @Anno val Int.foo: Int

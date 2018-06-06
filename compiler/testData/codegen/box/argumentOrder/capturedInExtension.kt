@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun box(): String {
     var invokeOrder = "";
     val expectedResult = "1_0_1_9"

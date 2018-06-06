@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun typeName(a: Any?) : String {
     return when(a) {
         is ArrayList<*> -> "array list"

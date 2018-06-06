@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // !LANGUAGE: +MultiPlatformProjects
 // WITH_RUNTIME
 // FILE: common.kt

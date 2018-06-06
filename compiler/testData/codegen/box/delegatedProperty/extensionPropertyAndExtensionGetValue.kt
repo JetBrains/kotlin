@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class A(val o: String)
 
 interface I {

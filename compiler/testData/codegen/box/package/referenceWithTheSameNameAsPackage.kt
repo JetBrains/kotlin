@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // !LANGUAGE: +NewInference
 // WITH_RUNTIME
 
