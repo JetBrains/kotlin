@@ -32,13 +32,12 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.effectiveVisibility
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
@@ -47,7 +46,6 @@ import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
 
@@ -126,10 +124,9 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
             }
             val classOrObjectDescriptor = classOrObject.descriptor as? ClassDescriptor
             if (classOrObjectDescriptor != null) {
-                val receiver = usage.getStrictParentOfType<KtQualifiedExpression>()?.receiverExpression
-                val receiverDescriptor = (receiver?.getCallableDescriptor()?.returnType?.constructor?.declarationDescriptor
-                        ?: (receiver?.mainReference?.resolve() as? KtClassOrObject)?.descriptor) as? ClassDescriptor
-                if (receiverDescriptor != null && DescriptorUtils.isSubclass(receiverDescriptor, classOrObjectDescriptor)) {
+                val receiverType = (usage as? KtElement)?.resolveToCall()?.dispatchReceiver?.type
+                val receiverDescriptor = receiverType?.constructor?.declarationDescriptor
+                if (receiverDescriptor != null && receiverDescriptor != classOrObjectDescriptor) {
                     otherUsageFound = true
                     return@Processor false
                 }
