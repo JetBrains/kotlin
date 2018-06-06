@@ -48,28 +48,56 @@ fun main(args: Array<String>) {
             model("codegen/box", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractIrJsCodegenBoxTest> {
+            model("codegen/box", targetBackend = TargetBackend.JS_IR)
+        }
+
         testClass<AbstractNonLocalReturnsTest> {
             model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractIrNonLocalReturnsTest> {
+            model("codegen/boxInline/nonLocalReturns/", targetBackend = TargetBackend.JS_IR)
         }
 
         testClass<AbstractPropertyAccessorsInlineTests> {
             model("codegen/boxInline/property/", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractIrPropertyAccessorsInlineTests> {
+            model("codegen/boxInline/property/", targetBackend = TargetBackend.JS_IR)
+        }
+
         testClass<AbstractNoInlineTests> {
             model("codegen/boxInline/noInline/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractIrNoInlineTests> {
+            model("codegen/boxInline/noInline/", targetBackend = TargetBackend.JS_IR)
         }
 
         testClass<AbstractCallableReferenceInlineTests> {
             model("codegen/boxInline/callableReference/", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractIrCallableReferenceInlineTests> {
+            model("codegen/boxInline/callableReference/", targetBackend = TargetBackend.JS_IR)
+        }
+
         testClass<AbstractEnumValuesInlineTests> {
             model("codegen/boxInline/enum/", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractIrEnumValuesInlineTests> {
+            model("codegen/boxInline/enum/", targetBackend = TargetBackend.JS_IR)
+        }
+
         testClass<AbstractInlineDefaultValuesTests> {
             model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractIrInlineDefaultValuesTests> {
+            model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS_IR)
         }
 
         testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
