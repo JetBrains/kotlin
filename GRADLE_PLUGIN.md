@@ -57,13 +57,13 @@ v0.3.4. Use the `interop` method of the `konanArtifact` block instead:
 	}
 
 All artifacts except interop libraries are built by the Kotlin/Native compiler. Such an artifact may be configured using its script block.
-Here one can specify source files, used libraries and compilation flags (see [**Plugin DSL**](#plugin-dsl) section for details). The plugin
+Here one can specify source directories, used libraries and compilation flags (see [**Plugin DSL**](#plugin-dsl) section for details). The plugin
 uses `src/main/kotlin/` as a default source directory for all compiler artifacts:
 
     konanArtifacts {
         // Build foo.klib
         library('foo') {
-            srcFiles fileTree('src/foo/kotlin') // Use custom source path
+            srcDir 'src/foo/kotlin' // Use custom source path
         }
 
         // Build executable 'bar'
