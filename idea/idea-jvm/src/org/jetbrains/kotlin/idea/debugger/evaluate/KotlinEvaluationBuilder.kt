@@ -558,7 +558,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 }
 
 private val template = """
-@file:JvmName("$GENERATED_CLASS_NAME")
+@file:kotlin.jvm.JvmName("$GENERATED_CLASS_NAME")
 !PACKAGE!
 
 !IMPORT_LIST!
