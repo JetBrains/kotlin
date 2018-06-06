@@ -52,12 +52,10 @@ import java.io.File
 
 class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
     override fun execute() {
-        handlers.forEach { it.onStart(file) }
-
         val module = file.getModule() ?: return error("Module should be selected")
-        val psiFile = file.getPsiFile() ?: return error("Couldn't find psiFile for current editor")
+        val psiFile = file.getPsiFile() as? KtFile ?: return error("Couldn't find KtFile for current editor")
 
-        if (!checkForErrors(psiFile as KtFile)) {
+        if (!checkForErrors(psiFile)) {
             return error("Compilation Error")
         }
 
@@ -112,7 +110,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
 
         val state = GenerationState.Builder(
             file.project,
-            ClassBuilderFactories.binaries(false),
+            ClassBuilderFactories.BINARIES,
             resolutionFacade.moduleDescriptor,
             bindingContext,
             files,

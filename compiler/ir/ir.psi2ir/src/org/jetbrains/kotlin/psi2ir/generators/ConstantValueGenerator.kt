@@ -7,27 +7,32 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi2ir.transformations.AnnotationGenerator
+import org.jetbrains.kotlin.psi2ir.transformations.ScopedTypeParametersResolver
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ConstantValueGenerator(
     private val moduleDescriptor: ModuleDescriptor,
     private val symbolTable: SymbolTable,
-    private val annotationGenerator: AnnotationGenerator?
+    private val annotationGenerator: AnnotationGenerator?,
+    private val scopedTypeParameterResolver: ScopedTypeParametersResolver?
 ) {
 
     constructor(
         context: GeneratorContext,
         annotationGenerator: AnnotationGenerator? = null
-    ) : this(context.moduleDescriptor, context.symbolTable, annotationGenerator)
+    ) : this(context.moduleDescriptor, context.symbolTable, annotationGenerator, null)
 
     fun generateConstantValueAsExpression(
         startOffset: Int,
@@ -80,7 +85,24 @@ class ConstantValueGenerator(
                 annotationGenerator.generateAnnotationConstructorCall(constantValue.value)
             }
 
-            else -> TODO("handle other literal values: ${constantValue::class.simpleName}")
+            is KClassValue -> {
+                val classifierType = constantValue.value
+                val classifierDescriptor = classifierType.constructor.declarationDescriptor
+                        ?: throw AssertionError("Unexpected KClassValue: $classifierType")
+
+                val typeParameterSymbol = classifierDescriptor.safeAs<TypeParameterDescriptor>()?.let {
+                    scopedTypeParameterResolver?.resolveScopedTypeParameter(it)
+                }
+
+                IrClassReferenceImpl(
+                    startOffset, endOffset,
+                    constantValue.getType(moduleDescriptor),
+                    typeParameterSymbol ?: symbolTable.referenceClassifier(classifierDescriptor),
+                    classifierType
+                )
+            }
+
+            else -> TODO("Unexpected constant value: ${constantValue.javaClass.simpleName} $constantValue")
         }
     }
 

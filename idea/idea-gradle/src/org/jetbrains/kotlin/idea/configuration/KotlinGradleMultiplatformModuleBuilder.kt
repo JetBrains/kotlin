@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.externalSystem.service.project.wizard.ExternalModuleSettingsStep
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableRootModel
@@ -27,11 +26,11 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
 import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
+import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import javax.swing.Icon
 
 class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
@@ -65,28 +64,31 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
             val module = modifiableRootModel.module
             val buildScriptData = getBuildScriptData(module) ?: return
             val sdk = modifiableRootModel.sdk
-            GradleKotlinMPPCommonFrameworkSupportProvider().addSupport(buildScriptData, sdk)
+            GradleKotlinMPPCommonFrameworkSupportProvider().addSupport(buildScriptData, module, sdk, true)
         }
     }
 
     override fun setupModule(module: Module) {
-        super.setupModule(module)
+        try {
+            module.gradleModuleBuilder = this
 
-        val contentRoot = module.rootManager.contentRoots.firstOrNull() ?: return
-        setupCommonModule(module, contentRoot)
-        setupPlatformModule(module, contentRoot, jvmModuleName, GradleKotlinMPPJavaFrameworkSupportProvider(), jdk)
-        setupPlatformModule(module, contentRoot, jsModuleName, GradleKotlinMPPJSFrameworkSupportProvider())
+            super.setupModule(module)
 
-        val settingsGradle = contentRoot.findChild("settings.gradle")
-        settingsGradle?.let {
-            module.project.executeCommand("Update settings.gradle") {
-                val doc = FileDocumentManager.getInstance().getDocument(it) ?: return@executeCommand
+            val contentRoot = module.rootManager.contentRoots.firstOrNull() ?: return
+            setupCommonModule(module, contentRoot)
+            setupPlatformModule(module, contentRoot, jvmModuleName, GradleKotlinMPPJavaFrameworkSupportProvider(), jdk)
+            setupPlatformModule(module, contentRoot, jsModuleName, GradleKotlinMPPJSFrameworkSupportProvider())
+
+            updateSettingsScript(module) {
                 val includedModules = listOfNotNull(commonModuleName, jvmModuleName, jsModuleName).filter { it.isNotEmpty() }
                 if (includedModules.isNotEmpty()) {
-                    doc.insertString(doc.textLength, includedModules.joinToString(prefix = "include ") { "'$it'" })
+                    val includeCall = GroovyPsiElementFactory.getInstance(module.project)
+                        .createExpressionFromText(includedModules.joinToString(prefix = "include ") { "'$it'" })
+                    it.add(includeCall)
                 }
-                FileDocumentManager.getInstance().saveDocument(doc)
             }
+        } finally {
+            flushSettingsGradleCopy(module)
         }
     }
 
@@ -110,7 +112,7 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         rootModule: Module,
         contentRoot: VirtualFile
     ) = setupChildModule(rootModule, contentRoot, commonModuleName) { builder, sdk ->
-        GradleKotlinMPPCommonFrameworkSupportProvider().addSupport(builder, sdk)
+        GradleKotlinMPPCommonFrameworkSupportProvider().addSupport(builder, rootModule, sdk, true)
     }
 
     private fun setupPlatformModule(
@@ -120,7 +122,7 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         supportProvider: GradleKotlinFrameworkSupportProvider,
         sdk: Sdk? = null
     ) = setupChildModule(rootModule, contentRoot, platformModuleName, sdk) { builder, finalSdk ->
-        supportProvider.addSupport(builder, finalSdk)
+        supportProvider.addSupport(builder, rootModule, finalSdk, !commonModuleName.isNullOrEmpty())
         val dependency = commonModuleName ?: ""
         builder.addDependencyNotation("expectedBy project(\":$dependency\")")
     }

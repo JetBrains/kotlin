@@ -43,7 +43,7 @@ class ScriptDependenciesCache(private val project: Project) {
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = SLRUMap<VirtualFile, ScriptDependencies>(MAX_SCRIPTS_CACHED, MAX_SCRIPTS_CACHED)
 
-    operator fun get(virtualFile: VirtualFile): ScriptDependencies? = cacheLock.read { cache[virtualFile] }
+    operator fun get(virtualFile: VirtualFile): ScriptDependencies? = cacheLock.write { cache[virtualFile] }
 
     val allScriptsClasspath by ClearableLazyValue(cacheLock) {
         val files = cache.entrySet().flatMap { it.value.classpath }.distinct()

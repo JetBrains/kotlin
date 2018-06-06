@@ -12,6 +12,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test1>(): Int'
@@ -19,6 +20,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
               receiver: GET_VAR 'this@C: C' type=C origin=null
     PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:val
       FUN name:<get-test2> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test2>(): Int'
@@ -28,12 +30,14 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test3>(): Int'
             GET_FIELD 'test3: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
@@ -45,12 +49,14 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=1
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test4>(): Int'
             GET_FIELD 'test4: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
       FUN name:<set-test4> visibility:public modality:FINAL <> ($this:C, value:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
         BLOCK_BODY
@@ -62,12 +68,14 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=1
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test5 type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test5>(): Int'
             GET_FIELD 'test5: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
       FUN name:<set-test5> visibility:private modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:test5 type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
@@ -79,6 +87,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=1
       FUN name:<get-test6> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test6 type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test6>(): Int'
@@ -96,6 +105,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
                     CONST Int type=kotlin.Int value=42
               FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test7 type:kotlin.Int visibility:public modality:FINAL flags:delegated,val
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test7>(): Int'
@@ -112,6 +122,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
             <K>: String
             <V>: Int
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test8 type:kotlin.Int visibility:public modality:FINAL flags:delegated,var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test8>(): Int'
@@ -123,6 +134,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
               thisRef: GET_VAR 'this@C: C' type=C origin=null
               property: PROPERTY_REFERENCE 'test8: Int' field=null getter='<get-test8>(): Int' setter='<set-test8>(Int): Unit' type=kotlin.reflect.KMutableProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:test8 type:kotlin.Int visibility:public modality:FINAL flags:delegated,var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY

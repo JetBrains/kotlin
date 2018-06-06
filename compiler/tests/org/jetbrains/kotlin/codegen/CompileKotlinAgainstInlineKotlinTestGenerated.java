@@ -603,6 +603,39 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/assert")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Assert extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAssert() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/assert"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("jvmAssertInlineFunctionAssertionsDisabled.kt")
+        public void testJvmAssertInlineFunctionAssertionsDisabled() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/assert/jvmAssertInlineFunctionAssertionsDisabled.kt");
+        }
+
+        @TestMetadata("jvmAssertInlineFunctionAssertionsEnabled.kt")
+        public void testJvmAssertInlineFunctionAssertionsEnabled() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/assert/jvmAssertInlineFunctionAssertionsEnabled.kt");
+        }
+
+        @TestMetadata("jvmAssertInlineLambda.kt")
+        public void testJvmAssertInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/assert/jvmAssertInlineLambda.kt");
+        }
+
+        @TestMetadata("jvmCrossinlineLambda.kt")
+        public void testJvmCrossinlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/assert/jvmCrossinlineLambda.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/builders")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -48,11 +48,11 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.io.StringWriter
 import java.io.PrintWriter
+import java.io.StringWriter
 import java.util.*
 
 fun generateIsCheck(
@@ -271,6 +271,7 @@ fun Collection<Type>.withVariableIndices(): List<Pair<Int, Type>> = mutableListO
 }
 
 fun FunctionDescriptor.isGenericToArray(): Boolean {
+    if (name.asString() != "toArray") return false
     if (valueParameters.size != 1 || typeParameters.size != 1) return false
 
     val returnType = returnType ?: throw AssertionError(toString())
@@ -284,6 +285,7 @@ fun FunctionDescriptor.isGenericToArray(): Boolean {
 }
 
 fun FunctionDescriptor.isNonGenericToArray(): Boolean {
+    if (name.asString() != "toArray") return false
     if (!valueParameters.isEmpty() || !typeParameters.isEmpty()) return false
 
     val returnType = returnType

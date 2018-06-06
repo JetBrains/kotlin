@@ -22,7 +22,9 @@ import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.internal.AbstractTask
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.plugin.JetBrainsSubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
+import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 class AllOpenGradleSubplugin : Plugin<Project> {
@@ -34,39 +36,14 @@ class AllOpenGradleSubplugin : Plugin<Project> {
         }
     }
 
-    fun Project.getBuildscriptArtifacts(): Set<ResolvedArtifact> =
-            buildscript.configurations.findByName("classpath")?.resolvedConfiguration?.resolvedArtifacts ?: emptySet()
-
     override fun apply(project: Project) {
-        val allOpenExtension = project.extensions.create("allOpen", AllOpenExtension::class.java)
-
-        project.afterEvaluate {
-            val fqNamesAsString = allOpenExtension.myAnnotations.joinToString(",")
-            val presetsAsString = allOpenExtension.myPresets.joinToString(",")
-            project.extensions.extraProperties.set("kotlinAllOpenAnnotations", fqNamesAsString)
-
-            val allBuildscriptArtifacts = project.getBuildscriptArtifacts() + project.rootProject.getBuildscriptArtifacts()
-            val allOpenCompilerPluginFile = allBuildscriptArtifacts.filter {
-                val id = it.moduleVersion.id
-                id.group == AllOpenKotlinGradleSubplugin.ALLOPEN_GROUP_NAME
-                        && id.name == AllOpenKotlinGradleSubplugin.ALLOPEN_ARTIFACT_NAME
-            }.firstOrNull()?.file?.absolutePath ?: ""
-
-            open class TaskForAllOpen : AbstractTask()
-            project.tasks.add(project.tasks.create("allOpenDataStorageTask", TaskForAllOpen::class.java).apply {
-                isEnabled = false
-                description = "Supported annotations: $fqNamesAsString" +
-                        "; Presets: $presetsAsString" +
-                        "; Compiler plugin classpath: $allOpenCompilerPluginFile"
-            })
-        }
+        project.extensions.create("allOpen", AllOpenExtension::class.java)
     }
 }
 
 class AllOpenKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     companion object {
-        val ALLOPEN_GROUP_NAME = "org.jetbrains.kotlin"
-        val ALLOPEN_ARTIFACT_NAME = "kotlin-allopen"
+        const val ALLOPEN_ARTIFACT_NAME = "kotlin-allopen"
 
         private val ANNOTATION_ARG_NAME = "annotation"
         private val PRESET_ARG_NAME = "preset"
@@ -99,7 +76,7 @@ class AllOpenKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         return options
     }
 
-    override fun getGroupName() = ALLOPEN_GROUP_NAME
-    override fun getArtifactName() = ALLOPEN_ARTIFACT_NAME
     override fun getCompilerPluginId() = "org.jetbrains.kotlin.allopen"
+    override fun getPluginArtifact(): SubpluginArtifact =
+        JetBrainsSubpluginArtifact(artifactId = ALLOPEN_ARTIFACT_NAME)
 }

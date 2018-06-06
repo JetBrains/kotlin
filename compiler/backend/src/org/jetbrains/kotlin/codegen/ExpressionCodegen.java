@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenProvider;
 import org.jetbrains.kotlin.config.ApiVersion;
+import org.jetbrains.kotlin.config.JVMAssertionsMode;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
@@ -1942,7 +1942,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private CodegenContext getBackingFieldContext(
-            @NotNull FieldAccessorKind accessorKind,
+            @NotNull AccessorKind accessorKind,
             @NotNull DeclarationDescriptor containingDeclaration
     ) {
         switch (accessorKind) {
@@ -1992,22 +1992,22 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
 
         boolean isBackingFieldInClassCompanion = JvmAbi.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
-        FieldAccessorKind fieldAccessorKind;
+        AccessorKind fieldAccessorKind;
         if (skipLateinitAssertion) {
-            fieldAccessorKind = FieldAccessorKind.LATEINIT_INTRINSIC;
+            fieldAccessorKind = AccessorKind.LATEINIT_INTRINSIC;
         }
         else if (isBackingFieldInClassCompanion &&
                  (forceField ||
                   (Visibilities.isPrivate(propertyDescriptor.getVisibility()) &&
                    isDefaultAccessor(propertyDescriptor.getGetter()) && isDefaultAccessor(propertyDescriptor.getSetter())))) {
-            fieldAccessorKind = FieldAccessorKind.IN_CLASS_COMPANION;
+            fieldAccessorKind = AccessorKind.IN_CLASS_COMPANION;
         }
         else if ((syntheticBackingField &&
                   context.getFirstCrossInlineOrNonInlineContext().getParentContext().getContextDescriptor() != containingDeclaration)) {
-            fieldAccessorKind = FieldAccessorKind.FIELD_FROM_LOCAL;
+            fieldAccessorKind = AccessorKind.FIELD_FROM_LOCAL;
         }
         else {
-            fieldAccessorKind = FieldAccessorKind.NORMAL;
+            fieldAccessorKind = AccessorKind.NORMAL;
         }
         boolean isStaticBackingField = DescriptorUtils.isStaticDeclaration(propertyDescriptor) ||
                                        AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor);
@@ -2022,7 +2022,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         CodegenContext backingFieldContext = getBackingFieldContext(fieldAccessorKind, containingDeclaration);
         boolean isPrivateProperty =
-                fieldAccessorKind != FieldAccessorKind.NORMAL &&
+                fieldAccessorKind != AccessorKind.NORMAL &&
                 (AsmUtil.getVisibilityForBackingField(propertyDescriptor, isDelegatedProperty) & ACC_PRIVATE) != 0;
         DeclarationDescriptor ownerDescriptor;
         boolean skipPropertyAccessors;
@@ -2033,7 +2033,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         boolean directAccessToSetter = couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context,
                                                                               state.getShouldInlineConstVals());
 
-        if (fieldAccessorKind == FieldAccessorKind.LATEINIT_INTRINSIC) {
+        if (fieldAccessorKind == AccessorKind.LATEINIT_INTRINSIC) {
             skipPropertyAccessors = !isPrivateProperty || context.getClassOrPackageParentContext() == backingFieldContext;
 
             if (!skipPropertyAccessors) {
@@ -2042,7 +2042,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
             ownerDescriptor = propertyDescriptor;
         }
-        else if (fieldAccessorKind == FieldAccessorKind.IN_CLASS_COMPANION || fieldAccessorKind == FieldAccessorKind.FIELD_FROM_LOCAL) {
+        else if (fieldAccessorKind == AccessorKind.IN_CLASS_COMPANION || fieldAccessorKind == AccessorKind.FIELD_FROM_LOCAL) {
             // Do not use accessor 'access<property name>$cp' when the property can be accessed directly by its backing field.
             skipPropertyAccessors = skipAccessorsForPrivateFieldInOuterClass ||
                                     (directAccessToGetter && (!propertyDescriptor.isVar() || directAccessToSetter));
@@ -2358,6 +2358,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull CallGenerator callGenerator,
             @NotNull ArgumentGenerator argumentGenerator
     ) {
+        if (AssertCodegenUtilKt.isAssertCall(resolvedCall) && !state.getAssertionsMode().equals(JVMAssertionsMode.LEGACY)) {
+            AssertCodegenUtilKt.generateAssert(state.getAssertionsMode(), resolvedCall, this, parentCodegen);
+            return;
+        }
+
         boolean isSuspendNoInlineCall =
                 CoroutineCodegenUtilKt.isSuspendNoInlineCall(resolvedCall, this, state.getLanguageVersionSettings());
         boolean isConstructor = resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;

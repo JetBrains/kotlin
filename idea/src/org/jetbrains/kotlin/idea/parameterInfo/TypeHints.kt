@@ -11,6 +11,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -25,7 +26,10 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
+import org.jetbrains.kotlin.renderer.renderFqName
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.KotlinType
@@ -48,7 +52,19 @@ class ImportAwareClassifierNamePolicy(
             }
         }
 
-        return ClassifierNamePolicy.SHORT.renderClassifier(classifier, renderer)
+        return shortNameWithCompanionNameSkip(classifier, renderer)
+    }
+
+    private fun shortNameWithCompanionNameSkip(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
+        if (classifier is TypeParameterDescriptor) return renderer.renderName(classifier.name)
+
+        val qualifiedNameParts = classifier.parentsWithSelf
+            .takeWhile { it is ClassifierDescriptor }
+            .filter { !(it.isCompanionObject() && it.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) }
+            .mapTo(ArrayList()) { it.name }
+            .reversed()
+
+        return renderFqName(qualifiedNameParts)
     }
 }
 

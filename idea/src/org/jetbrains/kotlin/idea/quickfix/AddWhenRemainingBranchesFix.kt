@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class AddWhenRemainingBranchesFix(
-        expression: KtWhenExpression,
-        val withImport: Boolean = false
+    expression: KtWhenExpression,
+    val withImport: Boolean = false
 ) : KotlinQuickFixAction<KtWhenExpression>(expression) {
 
     override fun getFamilyName() = text
@@ -40,48 +40,11 @@ class AddWhenRemainingBranchesFix(
     override fun getText() = "Add remaining branches" + if (withImport) " with import" else ""
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
-        val element = element ?: return false
-        return element.closeBrace != null &&
-               with(WhenChecker.getMissingCases(element, element.analyze())) { isNotEmpty() && !hasUnknown }
+        return isAvailable(element)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val element = element ?: return
-        val missingCases = WhenChecker.getMissingCases(element, element.analyze())
-
-        val whenCloseBrace = element.closeBrace ?: throw AssertionError("isAvailable should check if close brace exist")
-        val psiFactory = KtPsiFactory(file)
-
-        for (case in missingCases) {
-            val branchConditionText = when (case) {
-                UnknownMissingCase, NullMissingCase, is BooleanMissingCase ->
-                    case.branchConditionText
-                is ClassMissingCase ->
-                    if (case.classIsSingleton) {
-                        case.classFqName.quoteIfNeeded().asString()
-                    }
-                    else {
-                        "is " + case.classFqName.quoteIfNeeded().asString()
-                    }
-            }
-            val entry = psiFactory.createWhenEntry("$branchConditionText -> TODO()")
-            element.addBefore(entry, whenCloseBrace)
-        }
-
-        if (withImport) {
-            importAllEntries(element)
-        }
-    }
-
-    private fun importAllEntries(element: KtWhenExpression) {
-        with (ImportAllMembersIntention) {
-            element.entries
-                    .map { it.conditions.toList() }
-                    .flatten()
-                    .firstNotNullResult {
-                        (it as? KtWhenConditionWithExpression)?.expression as? KtDotQualifiedExpression
-                    }?.importReceiverMembers()
-        }
+        addRemainingBranches(element, withImport)
     }
 
     companion object : KotlinIntentionActionsFactory() {
@@ -98,6 +61,55 @@ class AddWhenRemainingBranchesFix(
                 actions += AddWhenRemainingBranchesFix(whenExpression, withImport = true)
             }
             return actions
+        }
+
+        fun isAvailable(element: KtWhenExpression?): Boolean {
+            if (element == null) return false
+            return element.closeBrace != null &&
+                    with(WhenChecker.getMissingCases(element, element.analyze())) { isNotEmpty() && !hasUnknown }
+        }
+
+        fun addRemainingBranches(element: KtWhenExpression?, withImport: Boolean = false) {
+            if (element == null) return
+            val missingCases = WhenChecker.getMissingCases(element, element.analyze())
+
+            val whenCloseBrace = element.closeBrace ?: throw AssertionError("isAvailable should check if close brace exist")
+            val elseBranch = element.entries.find { it.isElse }
+            val psiFactory = KtPsiFactory(element)
+
+            for (case in missingCases) {
+                val branchConditionText = when (case) {
+                    UnknownMissingCase, NullMissingCase, is BooleanMissingCase ->
+                        case.branchConditionText
+                    is ClassMissingCase ->
+                        if (case.classIsSingleton) {
+                            case.classFqName.quoteIfNeeded().asString()
+                        } else {
+                            "is " + case.classFqName.quoteIfNeeded().asString()
+                        }
+                }
+                val entry = psiFactory.createWhenEntry("$branchConditionText -> TODO()")
+                if (elseBranch != null) {
+                    element.addBefore(entry, elseBranch)
+                } else {
+                    element.addBefore(entry, whenCloseBrace)
+                }
+            }
+
+            if (withImport) {
+                importAllEntries(element)
+            }
+        }
+
+        private fun importAllEntries(element: KtWhenExpression) {
+            with(ImportAllMembersIntention) {
+                element.entries
+                    .map { it.conditions.toList() }
+                    .flatten()
+                    .firstNotNullResult {
+                        (it as? KtWhenConditionWithExpression)?.expression as? KtDotQualifiedExpression
+                    }?.importReceiverMembers()
+            }
         }
     }
 }

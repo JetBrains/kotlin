@@ -20,8 +20,5 @@ import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 
 interface IrTypeAlias : IrDeclaration {
     override val descriptor: TypeAliasDescriptor
-
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.TYPEALIAS
 }
 

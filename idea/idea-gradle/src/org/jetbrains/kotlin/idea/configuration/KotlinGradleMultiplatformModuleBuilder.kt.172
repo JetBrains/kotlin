@@ -65,7 +65,7 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
             val module = modifiableRootModel.module
             val buildScriptData = getBuildScriptData(module) ?: return
             val sdk = modifiableRootModel.sdk
-            GradleKotlinMPPCommonFrameworkSupportProvider().addSupport(buildScriptData, sdk)
+            GradleKotlinMPPCommonFrameworkSupportProvider().addSupport(buildScriptData, module, sdk, true)
         }
     }
 
@@ -110,7 +110,7 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         rootModule: Module,
         contentRoot: VirtualFile
     ) = setupChildModule(rootModule, contentRoot, commonModuleName) { builder, sdk ->
-        GradleKotlinMPPCommonFrameworkSupportProvider().addSupport(builder, sdk)
+        GradleKotlinMPPCommonFrameworkSupportProvider().addSupport(builder, rootModule, sdk, true)
     }
 
     private fun setupPlatformModule(
@@ -120,7 +120,7 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         supportProvider: GradleKotlinFrameworkSupportProvider,
         sdk: Sdk? = null
     ) = setupChildModule(rootModule, contentRoot, platformModuleName, sdk) { builder, finalSdk ->
-        supportProvider.addSupport(builder, finalSdk)
+        supportProvider.addSupport(builder, rootModule, finalSdk, true)
         val dependency = commonModuleName ?: ""
         builder.addDependencyNotation("expectedBy project(\":$dependency\")")
     }

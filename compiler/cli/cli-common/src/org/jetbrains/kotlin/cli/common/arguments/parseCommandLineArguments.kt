@@ -19,24 +19,23 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.utils.SmartList
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class Argument(
-        val value: String,
-        val shortName: String = "",
-        val deprecatedName: String = "",
-        val delimiter: String = ",",
-        val valueDescription: String = "",
-        val description: String
+    val value: String,
+    val shortName: String = "",
+    val deprecatedName: String = "",
+    val delimiter: String = ",",
+    val valueDescription: String = "",
+    val description: String
 )
 
 val Argument.isAdvanced: Boolean
     get() = value.startsWith(ADVANCED_ARGUMENT_PREFIX) && value.length > ADVANCED_ARGUMENT_PREFIX.length
 
-private val ADVANCED_ARGUMENT_PREFIX = "-X"
-private val FREE_ARGS_DELIMITER = "--"
+private const val ADVANCED_ARGUMENT_PREFIX = "-X"
+private const val FREE_ARGS_DELIMITER = "--"
 
 data class ArgumentParseErrors(
     val unknownArgs: MutableList<String> = SmartList<String>(),
@@ -53,11 +52,18 @@ data class ArgumentParseErrors(
     // Arguments where [Argument.deprecatedName] was used; the key is the deprecated name, the value is the new name ([Argument.value])
     val deprecatedArguments: MutableMap<String, String> = mutableMapOf(),
 
-    var argumentWithoutValue: String? = null
+    var argumentWithoutValue: String? = null,
+
+    val argfileErrors: MutableList<String> = SmartList()
 )
 
 // Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
 fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A) {
+    val preprocessed = preprocessCommandLineArguments(args, result.errors)
+    parsePreprocessedCommandLineArguments(preprocessed, result)
+}
+
+private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args: List<String>, result: A) {
     data class ArgumentField(val property: KMutableProperty1<A, Any?>, val argument: Argument)
 
     @Suppress("UNCHECKED_CAST")
@@ -90,7 +96,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
                 return true
             }
 
-            if (deprecatedName != null && arg.startsWith(deprecatedName + "=")) {
+            if (deprecatedName != null && arg.startsWith("$deprecatedName=")) {
                 errors.deprecatedArguments[deprecatedName] = argument.value
                 return true
             }
@@ -102,6 +108,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
     }
 
     val freeArgs = ArrayList<String>()
+    val internalArguments = ArrayList<String>()
 
     var i = 0
     loop@ while (i < args.size) {
@@ -113,6 +120,21 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
         }
         if (arg == FREE_ARGS_DELIMITER) {
             freeArgsStarted = true
+            continue
+        }
+
+        if (arg.startsWith(InternalArgumentParser.INTERNAL_ARGUMENT_PREFIX)) {
+            val matchingParsers = InternalArgumentParser.PARSERS.filter { it.canParse(arg) }
+            assert(matchingParsers.size <= 1) { "Internal error: internal argument $arg can be ambiguously parsed by parsers ${matchingParsers.joinToString()}" }
+
+            val parser = matchingParsers.firstOrNull()
+
+            if (parser == null) {
+                errors.unknownExtraFlags += arg
+            } else {
+                internalArguments.add(arg)
+            }
+
             continue
         }
 
@@ -145,14 +167,16 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
         }
 
         if ((argumentField.property.returnType.classifier as? KClass<*>)?.java?.isArray == false
-            && !visitedArgs.add(argument.value) && value is String && property.get(result) != value) {
-            errors.duplicateArguments.put(argument.value, value)
+            && !visitedArgs.add(argument.value) && value is String && property.get(result) != value
+        ) {
+            errors.duplicateArguments[argument.value] = value
         }
 
         updateField(property, result, value, argument.delimiter)
     }
 
     result.freeArgs += freeArgs
+    result.internalArguments += internalArguments
 }
 
 private fun <A : CommonToolArguments> updateField(property: KMutableProperty1<A, Any?>, result: A, value: Any, delimiter: String) {

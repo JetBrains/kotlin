@@ -10,6 +10,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnn) returnType:String flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:TestAnn flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): String'
@@ -36,6 +37,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
       EXPRESSION_BODY
         CONST String type=kotlin.String value=a val
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVal> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:testVal type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testVal>(): String'
           GET_FIELD 'testVal: String' type=kotlin.String origin=null
@@ -47,11 +49,14 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
       EXPRESSION_BODY
         CONST String type=kotlin.String value=a var
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVar> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:testVar type:kotlin.String visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testVar>(): String'
           GET_FIELD 'testVar: String' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testVar> visibility:public modality:FINAL <> (<set-?>:kotlin.String) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:testVar type:kotlin.String visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String flags:
       BLOCK_BODY
         SET_FIELD 'testVar: String' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: String' type=kotlin.String origin=null
+

@@ -40,11 +40,11 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitBreak(jump: IrBreak, context: JsGenerationContext): JsStatement {
-        return JsBreak(jump.label?.let(::JsNameRef))
+        return JsBreak(context.getNameForLoop(jump.loop)?.makeRef())
     }
 
     override fun visitContinue(jump: IrContinue, context: JsGenerationContext): JsStatement {
-        return JsContinue(jump.label?.let(::JsNameRef))
+        return JsContinue(context.getNameForLoop(jump.loop)?.makeRef())
     }
 
     override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
@@ -79,11 +79,15 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
     override fun visitWhileLoop(loop: IrWhileLoop, context: JsGenerationContext): JsStatement {
         //TODO what if body null?
-        return JsWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context))
+        val label = context.getNameForLoop(loop)
+        val loopStatement = JsWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context))
+        return label?.let { JsLabel(it, loopStatement) } ?: loopStatement
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, context: JsGenerationContext): JsStatement {
         //TODO what if body null?
-        return JsDoWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context))
+        val label = context.getNameForLoop(loop)
+        val loopStatement = JsDoWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context))
+        return label?.let { JsLabel(it, loopStatement) } ?: loopStatement
     }
 }

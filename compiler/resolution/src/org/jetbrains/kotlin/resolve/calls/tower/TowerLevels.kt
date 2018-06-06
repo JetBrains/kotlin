@@ -239,7 +239,7 @@ internal open class ScopeBasedTowerLevel protected constructor(
             createCandidateDescriptor(
                 classifier,
                 dispatchReceiver = null,
-                specialError = if (isDeprecated) ResolvedUsingDeprecatedVisbility(resolutionScope, location) else null
+                specialError = if (isDeprecated) ResolvedUsingDeprecatedVisibility(resolutionScope, location) else null
             )
         }
 
@@ -259,7 +259,7 @@ internal open class ScopeBasedTowerLevel protected constructor(
                 createCandidateDescriptor(
                     it,
                     dispatchReceiver = null,
-                    specialError = ResolvedUsingDeprecatedVisbility(resolutionScope, location)
+                    specialError = ResolvedUsingDeprecatedVisibility(resolutionScope, location)
                 )
             }
         }

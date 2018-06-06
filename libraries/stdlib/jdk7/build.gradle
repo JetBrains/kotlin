@@ -60,7 +60,6 @@ compileKotlin {
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
             "-Xnormalize-constructor-calls=enable",
-            "-Xdump-declarations-to=${buildDir}/stdlib-jdk7-declarations.json",
             "-module-name", project.name
     ]
 }

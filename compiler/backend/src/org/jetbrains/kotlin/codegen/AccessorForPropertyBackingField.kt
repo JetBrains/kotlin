@@ -22,19 +22,20 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
 class AccessorForPropertyBackingField(
-        property: PropertyDescriptor,
-        containingDeclaration: DeclarationDescriptor,
-        delegateType: KotlinType?,
-        extensionReceiverParameter: ReceiverParameterDescriptor?,
-        dispatchReceiverParameter: ReceiverParameterDescriptor?,
-        nameSuffix: String,
-        val fieldAccessorKind: FieldAccessorKind
+    property: PropertyDescriptor,
+    containingDeclaration: DeclarationDescriptor,
+    delegateType: KotlinType?,
+    extensionReceiverParameter: ReceiverParameterDescriptor?,
+    dispatchReceiverParameter: ReceiverParameterDescriptor?,
+    nameSuffix: String,
+    fieldAccessorKind: AccessorKind
 ) : AccessorForPropertyDescriptor(
-        property,
-        delegateType ?: property.type,
-        extensionReceiverParameter?.type,
-        dispatchReceiverParameter,
-        containingDeclaration,
-        null,
-        nameSuffix
+    property,
+    delegateType ?: property.type,
+    extensionReceiverParameter?.type,
+    dispatchReceiverParameter,
+    containingDeclaration,
+    null,
+    nameSuffix,
+    fieldAccessorKind
 )

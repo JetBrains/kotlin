@@ -31,6 +31,7 @@ FILE fqName:<root> fileName:/delegateFieldWithAnnotations.kt
                   CONST Int type=kotlin.Int value=42
             FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:delegated,val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): Int'
           CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null

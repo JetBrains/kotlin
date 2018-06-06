@@ -493,6 +493,11 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                         ),
                         SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
                     )
+                functionDescriptor.isBuiltinAlwaysEnabledAssert() ->
+                    return SMAPAndMethodNode(
+                        createMethodNodeForAlwaysEnabledAssert(functionDescriptor, state.typeMapper),
+                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                    )
             }
 
             val asmMethod = if (callDefault)

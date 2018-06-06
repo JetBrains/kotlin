@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 class JsIrBackendContext(
     val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
-    irModuleFragment: IrModuleFragment,
-    symbolTable: SymbolTable
+    val symbolTable: SymbolTable,
+    irModuleFragment: IrModuleFragment
 ) : CommonBackendContext {
 
     val intrinsics = JsIntrinsics(module, irBuiltIns, symbolTable)
@@ -40,7 +40,7 @@ class JsIrBackendContext(
     override val builtIns = module.builtIns
     override val sharedVariablesManager =
         JsSharedVariablesManager(builtIns, KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal")))
-    override val descriptorsFactory = JsDescriptorsFactory(builtIns)
+    override val descriptorsFactory = JsDescriptorsFactory()
 
     override val reflectionTypes: ReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
         // TODO

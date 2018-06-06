@@ -83,7 +83,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         val commonLibs = Files.newDirectoryStream(Paths.get(stdlibCommonLibsDir)).use(Iterable<Path>::toList)
         return commonLibs.sorted().findLast {
             val name = it.toFile().name
-            !name.endsWith("-javadoc.jar") && !name.endsWith("-sources.jar")
+            !name.endsWith("-javadoc.jar") && !name.endsWith("-sources.jar") && !name.contains("coroutines")
         }?.toFile() ?: error("kotlin-stdlib-common is not found in $stdlibCommonLibsDir")
     }
 

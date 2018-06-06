@@ -185,7 +185,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME);
 
             ScriptingCompilerConfigurationExtensionKt.configureScriptDefinitions(
-                    scriptTemplates, configuration, messageCollector, new HashMap<>()
+                    scriptTemplates, configuration, this.getClass().getClassLoader(), messageCollector, new HashMap<>()
             );
 
             KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);

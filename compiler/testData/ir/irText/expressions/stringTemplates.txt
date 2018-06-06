@@ -8,6 +8,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-x>(): Int'
           GET_FIELD 'x: Int' type=kotlin.Int origin=null
@@ -16,6 +17,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
       EXPRESSION_BODY
         CONST String type=kotlin.String value=
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:test1 type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): String'
           GET_FIELD 'test1: String' type=kotlin.String origin=null
@@ -24,6 +26,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
       EXPRESSION_BODY
         CONST String type=kotlin.String value=abc
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:test2 type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): String'
           GET_FIELD 'test2: String' type=kotlin.String origin=null
@@ -32,6 +35,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
       EXPRESSION_BODY
         CONST String type=kotlin.String value=
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:test3 type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test3>(): String'
           GET_FIELD 'test3: String' type=kotlin.String origin=null
@@ -40,6 +44,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
       EXPRESSION_BODY
         CONST String type=kotlin.String value=abc
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:test4 type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test4>(): String'
           GET_FIELD 'test4: String' type=kotlin.String origin=null
@@ -53,6 +58,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
           CONST String type=kotlin.String value=
 
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:test5 type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test5>(): String'
           GET_FIELD 'test5: String' type=kotlin.String origin=null
@@ -64,6 +70,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
           CONST String type=kotlin.String value= 
           CALL 'foo(): String' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:test6 type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test6>(): String'
           GET_FIELD 'test6: String' type=kotlin.String origin=null
@@ -73,6 +80,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
         STRING_CONCATENATION type=kotlin.String
           CALL '<get-test1>(): String' type=kotlin.String origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:test7 type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test7>(): String'
           GET_FIELD 'test7: String' type=kotlin.String origin=null
@@ -82,6 +90,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
         STRING_CONCATENATION type=kotlin.String
           CALL 'foo(): String' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:test8 type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test8>(): String'
           GET_FIELD 'test8: String' type=kotlin.String origin=null
@@ -91,6 +100,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
         STRING_CONCATENATION type=kotlin.String
           CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test9> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:test9 type:kotlin.String visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test9>(): String'
           GET_FIELD 'test9: String' type=kotlin.String origin=null

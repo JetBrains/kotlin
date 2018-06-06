@@ -25,8 +25,10 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -64,8 +66,13 @@ class ConstraintSystemTestData(
         val matcher = INTEGER_VALUE_TYPE_PATTERN.matcher(name)
         if (matcher.find()) {
             val number = matcher.group(1)!!
-            return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), functionFoo.builtIns),
-                                                                         listOf(), false, MemberScope.Empty
+            val parameters = CompileTimeConstant.Parameters(false, false, false, false, false)
+            return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+                Annotations.EMPTY,
+                IntegerValueTypeConstructor(number.toLong(), functionFoo.module, parameters),
+                listOf(),
+                false,
+                MemberScope.Empty
             )
         }
         return typeResolver.resolveType(

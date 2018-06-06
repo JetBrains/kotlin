@@ -213,6 +213,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         inputParametersPanel.setText("&Parameters");
         inputParametersPanel.setLabelFor(parameterTablePanel.getTable());
         inputParametersPanel.add(parameterTablePanel);
+
+        functionNameField.requestFocus();
     }
 
     @SuppressWarnings("SuspiciousMethodCalls")

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.cli.common
 
 import org.fusesource.jansi.AnsiConsole
-import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
-import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
@@ -38,10 +35,10 @@ abstract class CLITool<A : CommonToolArguments> {
     }
 
     protected fun exec(
-            errStream: PrintStream,
-            services: Services,
-            messageRenderer: MessageRenderer,
-            args: Array<out String>
+        errStream: PrintStream,
+        services: Services,
+        messageRenderer: MessageRenderer,
+        args: Array<out String>
     ): ExitCode {
         val arguments = createArguments()
         parseCommandLineArguments(args.asList(), arguments)
@@ -67,8 +64,7 @@ abstract class CLITool<A : CommonToolArguments> {
             }
 
             return exec(collector, services, arguments)
-        }
-        finally {
+        } finally {
             errStream.print(messageRenderer.renderConclusion())
 
             if (PlainTextMessageRenderer.COLOR_ENABLED) {
@@ -84,12 +80,11 @@ abstract class CLITool<A : CommonToolArguments> {
 
         val fixedMessageCollector = if (arguments.suppressWarnings && !arguments.allWarningsAsErrors) {
             FilteringMessageCollector(messageCollector, Predicate.isEqual(CompilerMessageSeverity.WARNING))
-        }
-        else {
+        } else {
             messageCollector
         }
 
-        reportArgumentParseProblems(fixedMessageCollector, arguments.errors)
+        reportArgumentParseProblems(fixedMessageCollector, arguments)
         return execImpl(fixedMessageCollector, services, arguments)
     }
 
@@ -117,19 +112,36 @@ abstract class CLITool<A : CommonToolArguments> {
         }
     }
 
-    private fun reportArgumentParseProblems(collector: MessageCollector, errors: ArgumentParseErrors) {
+    private fun reportArgumentParseProblems(collector: MessageCollector, arguments: A) {
+        val errors = arguments.errors
         for (flag in errors.unknownExtraFlags) {
             collector.report(STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
         }
         for (argument in errors.extraArgumentsPassedInObsoleteForm) {
-            collector.report(STRONG_WARNING, "Advanced option value is passed in an obsolete form. Please use the '=' character " +
-                                             "to specify the value: $argument=...")
+            collector.report(
+                STRONG_WARNING, "Advanced option value is passed in an obsolete form. Please use the '=' character " +
+                        "to specify the value: $argument=..."
+            )
         }
         for ((key, value) in errors.duplicateArguments) {
             collector.report(STRONG_WARNING, "Argument $key is passed multiple times. Only the last value will be used: $value")
         }
         for ((deprecatedName, newName) in errors.deprecatedArguments) {
             collector.report(STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
+        }
+        if (arguments.internalArguments.isNotEmpty()) {
+            collector.report(
+                STRONG_WARNING,
+                "ATTENTION!\n" +
+                        "This build uses internal compiler arguments:\n" +
+                        arguments.internalArguments.joinToString(prefix = "\n", postfix = "\n\n", separator = "\n") +
+                        "This mode is strictly prohibited for production use,\n" +
+                        "as no stability/compatibility guarantees are given on\n" +
+                        "compiler or generated code. Use it at your own risk!\n"
+            )
+        }
+        for (argfileError in errors.argfileErrors) {
+            collector.report(STRONG_WARNING, argfileError)
         }
     }
 
@@ -166,8 +178,7 @@ abstract class CLITool<A : CommonToolArguments> {
         fun doMainNoExit(compiler: CLITool<*>, args: Array<String>): ExitCode {
             try {
                 return compiler.exec(System.err, *args)
-            }
-            catch (e: CompileEnvironmentException) {
+            } catch (e: CompileEnvironmentException) {
                 System.err.println(e.message)
                 return ExitCode.INTERNAL_ERROR
             }

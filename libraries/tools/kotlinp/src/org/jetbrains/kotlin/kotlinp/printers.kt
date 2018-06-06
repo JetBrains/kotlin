@@ -19,7 +19,7 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
         var receiverParameterType: String? = null
         var returnType: String? = null
         var versionRequirement: String? = null
-        var jvmDesc: String? = null
+        var jvmDesc: JvmMemberSignature? = null
         var lambdaClassOriginName: String? = null
 
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
@@ -42,7 +42,7 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
         override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? {
             if (type != JvmFunctionExtensionVisitor.TYPE) return null
             return object : JvmFunctionExtensionVisitor() {
-                override fun visit(desc: String?) {
+                override fun visit(desc: JvmMethodSignature?) {
                     jvmDesc = desc
                 }
 
@@ -91,11 +91,10 @@ private fun visitProperty(
         var returnType: String? = null
         var setterParameter: String? = null
         var versionRequirement: String? = null
-        var jvmFieldName: String? = null
-        var jvmFieldTypeDesc: String? = null
-        var jvmGetterDesc: String? = null
-        var jvmSetterDesc: String? = null
-        var jvmSyntheticMethodForAnnotationsDesc: String? = null
+        var jvmFieldDesc: JvmMemberSignature? = null
+        var jvmGetterDesc: JvmMemberSignature? = null
+        var jvmSetterDesc: JvmMemberSignature? = null
+        var jvmSyntheticMethodForAnnotationsDesc: JvmMemberSignature? = null
 
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             printType(flags) { receiverParameterType = it }
@@ -115,14 +114,13 @@ private fun visitProperty(
         override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? {
             if (type != JvmPropertyExtensionVisitor.TYPE) return null
             return object : JvmPropertyExtensionVisitor() {
-                override fun visit(fieldName: String?, fieldTypeDesc: String?, getterDesc: String?, setterDesc: String?) {
-                    jvmFieldName = fieldName
-                    jvmFieldTypeDesc = fieldTypeDesc
+                override fun visit(fieldDesc: JvmFieldSignature?, getterDesc: JvmMethodSignature?, setterDesc: JvmMethodSignature?) {
+                    jvmFieldDesc = fieldDesc
                     jvmGetterDesc = getterDesc
                     jvmSetterDesc = setterDesc
                 }
 
-                override fun visitSyntheticMethodForAnnotations(desc: String?) {
+                override fun visitSyntheticMethodForAnnotations(desc: JvmMethodSignature?) {
                     jvmSyntheticMethodForAnnotationsDesc = desc
                 }
             }
@@ -133,12 +131,8 @@ private fun visitProperty(
             if (versionRequirement != null) {
                 sb.appendln("  // $versionRequirement")
             }
-            if (jvmFieldName != null || jvmFieldTypeDesc != null) {
-                sb.append("  // field: ${jvmFieldName ?: "<null>"}")
-                if (jvmFieldTypeDesc != null) {
-                    sb.append(":$jvmFieldTypeDesc")
-                }
-                sb.appendln()
+            if (jvmFieldDesc != null) {
+                sb.appendln("  // field: $jvmFieldDesc")
             }
             if (jvmGetterDesc != null) {
                 sb.appendln("  // getter: $jvmGetterDesc")
@@ -188,7 +182,7 @@ private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisi
     object : KmConstructorVisitor() {
         val params = mutableListOf<String>()
         var versionRequirement: String? = null
-        var jvmDesc: String? = null
+        var jvmDesc: JvmMemberSignature? = null
 
         override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor? =
             printValueParameter(flags, name) { params.add(it) }
@@ -199,7 +193,7 @@ private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisi
         override fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? {
             if (type != JvmConstructorExtensionVisitor.TYPE) return null
             return object : JvmConstructorExtensionVisitor() {
-                override fun visit(desc: String?) {
+                override fun visit(desc: JvmMethodSignature?) {
                     jvmDesc = desc
                 }
             }

@@ -21,7 +21,7 @@ import java.io.File
 
 abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
     private companion object {
-        var TEST_LIGHT_ANALYSIS: ClassBuilderFactory = object : ClassBuilderFactories.TestClassBuilderFactory(false) {
+        var TEST_LIGHT_ANALYSIS: ClassBuilderFactory = object : ClassBuilderFactories.TestClassBuilderFactory() {
             override fun getClassBuilderMode() = ClassBuilderMode.LIGHT_ANALYSIS_FOR_TESTS
         }
     }
@@ -113,6 +113,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         }
 
         override fun shouldWriteField(access: Int, name: String, desc: String) = when {
+            name == "\$assertionsDisabled" -> false
             name == "\$VALUES" && (access and ACC_PRIVATE != 0) && (access and ACC_FINAL != 0) && (access and ACC_SYNTHETIC != 0) -> false
             name == JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME && (access and ACC_SYNTHETIC != 0) -> false
             else -> true

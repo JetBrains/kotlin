@@ -51,6 +51,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
   TYPEALIAS typealias CInt32Var = CInt32VarX<Int> type=CInt32VarX<kotlin.Int>
   PROPERTY name:value type:T_INT visibility:public modality:FINAL flags:var
     FUN name:<get-value> visibility:public modality:FINAL <T_INT> ($receiver:CInt32VarX<T_INT>) returnType:T_INT flags:
+      correspondingProperty: PROPERTY name:value type:T_INT visibility:public modality:FINAL flags:var
       TYPE_PARAMETER name:T_INT index:0 variance: upperBounds:[kotlin.Int]
         superClassifiers:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
@@ -59,6 +60,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
         RETURN type=kotlin.Nothing from='<get-value>() on CInt32VarX<T_INT>: T_INT'
           CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
     FUN name:<set-value> visibility:public modality:FINAL <T_INT> ($receiver:CInt32VarX<T_INT>, value:T_INT) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:value type:T_INT visibility:public modality:FINAL flags:var
       TYPE_PARAMETER name:T_INT index:0 variance: upperBounds:[kotlin.Int]
         superClassifiers:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
@@ -79,6 +81,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:IdType) returnType:Int flags:
+        correspondingProperty: PROPERTY name:value type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:IdType flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): Int'

@@ -56,17 +56,12 @@ dependencies {
             extension = 'jar'
         }
     }
-    compileOnly project(':kotlin-scripting-gradle')
 
     runtime project(path: ':kotlin-compiler-embeddable', configuration: "runtimeJar")
     runtime project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
     runtime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
     runtime project(path: ':kotlin-compiler-runner', configuration: 'runtimeJar')
     runtime project(':kotlin-reflect')
-    runtime project(':kotlin-scripting-common')
-    runtime project(':kotlin-scripting-compiler')
-    runtime project(':kotlin-scripting-jvm')
-    runtime project(path: ':kotlin-scripting-gradle', configuration: 'runtimeJar')
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
     agp25CompileOnly('com.android.tools.build:gradle:3.0.0-alpha1') { transitive = false }
@@ -155,6 +150,10 @@ pluginBundle {
         kotlinKaptPlugin {
             id = 'org.jetbrains.kotlin.kapt'
             description = displayName = 'Kotlin Kapt plugin'
+        }
+        kotlinScriptingPlugin {
+            id = 'org.jetbrains.kotlin.plugin.scripting'
+            description = displayName = 'Gradle plugin for kotlin scripting'
         }
     }
 }

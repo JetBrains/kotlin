@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.builtins;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.BuiltInsLoaderImpl;
@@ -35,10 +34,6 @@ import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclara
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
-import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -62,20 +57,6 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     }
 
     public void testBuiltIns() throws Exception {
-        RecursiveDescriptorComparator.Configuration configuration =
-                RecursiveDescriptorComparator.RECURSIVE_ALL.includeMethodsOfKotlinAny(false).withRenderer(
-                        DescriptorRenderer.Companion.withOptions(
-                                options -> {
-                                    options.setWithDefinedIn(false);
-                                    options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
-                                    options.setVerbose(true);
-                                    options.setAnnotationArgumentsRenderingPolicy(AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY);
-                                    options.setModifiers(DescriptorRendererModifier.ALL);
-                                    return Unit.INSTANCE;
-                                }
-                        )
-                );
-
         PackageFragmentProvider packageFragmentProvider = createBuiltInsPackageFragmentProvider();
 
         List<KtFile> files = KotlinTestUtils.loadToJetFiles(getEnvironment(), ContainerUtil.concat(
@@ -93,7 +74,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                 PackageFragmentDescriptor deserialized =
                         CollectionsKt.single(packageFragmentProvider.getPackageFragments(packageFqName));
                 RecursiveDescriptorComparator.validateAndCompareDescriptors(
-                        fromLazyResolve, deserialized, configuration,
+                        fromLazyResolve, deserialized, AbstractBuiltInsWithJDKMembersTest.createComparatorConfiguration(),
                         new File("compiler/testData/builtin-classes/default/" + packageFqName.asString().replace('.', '-') + ".txt")
                 );
             }

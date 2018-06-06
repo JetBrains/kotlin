@@ -70,6 +70,17 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototype)
             }
 
+            add(intrinsics.jsSetJSField) { call, context ->
+                val args = translateCallArguments(call, context)
+                val receiver = args[0]
+                val fieldName = args[1] as JsStringLiteral
+                val fieldValue = args[2]
+
+                val fieldNameLiteral = fieldName.value!!
+
+                jsAssignment(JsNameRef(fieldNameLiteral, receiver), fieldValue)
+            }
+
             add(backendContext.sharedVariablesManager.closureBoxConstructorTypeSymbol) { call, context ->
                 val args = translateCallArguments(call, context)
                 val initializer = args[0]
@@ -85,6 +96,27 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 // TODO don't generate function for this case
                     else -> JsInvocation(JsFunction(context.currentScope, jsCode as? JsBlock ?: JsBlock(jsCode as JsStatement), ""))
                 }
+            }
+
+            add(intrinsics.jsName) { call: IrCall, context ->
+                val args = translateCallArguments(call, context)
+                val receiver = args[0]
+                JsNameRef(Namer.KCALLABLE_NAME, receiver)
+            }
+
+            add(intrinsics.jsPropertyGet) { call: IrCall, context ->
+                val args = translateCallArguments(call, context)
+                val reference = args[0]
+                val receiver = args[1]
+                JsInvocation(JsNameRef(Namer.KPROPERTY_GET, reference), listOf(receiver))
+            }
+
+            add(intrinsics.jsPropertySet) { call: IrCall, context ->
+                val args = translateCallArguments(call, context)
+                val reference = args[0]
+                val receiver = args[1]
+                val value = args[2]
+                JsInvocation(JsNameRef(Namer.KPROPERTY_SET, reference), listOf(receiver, value))
             }
         }
     }

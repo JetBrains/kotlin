@@ -20,6 +20,7 @@ FILE fqName:<root> fileName:/constructor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: T1' type=T1 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test1<T1, T2>) returnType:T1 flags:
+        correspondingProperty: PROPERTY name:x type:T1 visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test1<T1, T2> flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): T1'
@@ -30,6 +31,7 @@ FILE fqName:<root> fileName:/constructor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: T2' type=T2 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Test1<T1, T2>) returnType:T2 flags:
+        correspondingProperty: PROPERTY name:y type:T2 visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test1<T1, T2> flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): T2'
@@ -63,6 +65,7 @@ FILE fqName:<root> fileName:/constructor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Test2) returnType:String flags:
+        correspondingProperty: PROPERTY name:y type:kotlin.String visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test2 flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): String'
@@ -86,6 +89,7 @@ FILE fqName:<root> fileName:/constructor.kt
           EXPRESSION_BODY
             GET_VAR 'value-parameter z: Z' type=Z origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:Test2.TestInner<Z>) returnType:Z flags:
+          correspondingProperty: PROPERTY name:z type:Z visibility:public modality:FINAL flags:val
           $this: VALUE_PARAMETER name:<this> type:Test2.TestInner<Z> flags:
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-z>(): Z'
@@ -143,6 +147,7 @@ FILE fqName:<root> fileName:/constructor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test3) returnType:Int flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test3 flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
@@ -153,6 +158,7 @@ FILE fqName:<root> fileName:/constructor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: String = ...' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Test3) returnType:String flags:
+        correspondingProperty: PROPERTY name:y type:kotlin.String visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test3 flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): String'
@@ -188,6 +194,7 @@ FILE fqName:<root> fileName:/constructor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test4<T>) returnType:Int flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test4<T> flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'

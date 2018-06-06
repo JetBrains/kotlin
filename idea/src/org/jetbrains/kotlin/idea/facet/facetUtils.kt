@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgu
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.versions.*
 import kotlin.reflect.KProperty1
 
@@ -221,7 +222,14 @@ private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArgum
         val jdkHome = compilerArguments.jdkHome ?: return
         allSdks.firstOrNull { it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0 } ?: return
     } else {
-        allSdks.firstOrNull { it.sdkType is KotlinSdkType } ?: KotlinSdkType.INSTANCE.createSdkWithUniqueName(allSdks.toList())
+        allSdks.firstOrNull { it.sdkType is KotlinSdkType }
+                ?: modelsProvider
+                    .modifiableModuleModel
+                    .modules
+                    .asSequence()
+                    .mapNotNull { modelsProvider.getModifiableRootModel(it).sdk }
+                    .firstOrNull { it.sdkType is KotlinSdkType }
+                ?: KotlinSdkType.INSTANCE.createSdkWithUniqueName(allSdks.toList())
     }
 
     modelsProvider.getModifiableRootModel(this).sdk = sdk

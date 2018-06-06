@@ -26,6 +26,11 @@ public class ReleaseCoroutinesDisabledLanguageVersionSettings implements Languag
     }
 
     @Override
+    public boolean isPreRelease() {
+        return delegate.isPreRelease();
+    }
+
+    @Override
     public <T> T getFlag(@NotNull AnalysisFlag<? extends T> flag) {
         return delegate.getFlag(flag);
     }

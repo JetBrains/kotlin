@@ -43,6 +43,14 @@ object DocExtensions {
             else -> "list"
         }
 
+    val PrimitiveType?.zero: String
+        get() = when (this) {
+            null -> "`null`"
+            PrimitiveType.Boolean -> "`false`"
+            PrimitiveType.Char -> "null char (`\\u0000`)"
+            else -> "zero"
+        }
+
     fun textWhen(condition: Boolean, text: () -> String): String = if (condition) text() else ""
 
     private fun String.singularize() = removeSuffix("s")

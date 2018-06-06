@@ -20,22 +20,22 @@ class IrModuleToJsTransformer(val backendContext: JsIrBackendContext) : BaseIrEl
         }
 
         // sort member forwarding code
-        addPostDeclarations(rootContext)
+        program.globalBlock.statements += addPostDeclarations(rootContext.staticContext.classModels)
 
         return program
     }
 
 
-    private fun addPostDeclarations(context: JsGenerationContext) {
-        val staticContext = context.staticContext
-        val program = context.currentScope.program
-        val block = program.globalBlock
+    private fun addPostDeclarations(classModels: Map<JsName, JsClassModel>): List<JsStatement> {
 
+        val statements = mutableListOf<JsStatement>()
         val visited = mutableSetOf<JsName>()
 
-        for (name in staticContext.classModels.keys) {
-            addPostDeclaration(name, visited, block.statements, staticContext.classModels)
+        for (name in classModels.keys) {
+            addPostDeclaration(name, visited, statements, classModels)
         }
+
+        return statements
     }
 
     private fun addPostDeclaration(name: JsName, visited: MutableSet<JsName>, statements: MutableList<JsStatement>, classModels: Map<JsName, JsClassModel>) {

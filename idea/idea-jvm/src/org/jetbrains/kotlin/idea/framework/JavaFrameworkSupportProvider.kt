@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import javax.swing.JComponent
 
-internal class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
+class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
     override fun getFrameworkType(): FrameworkTypeEx = JavaFrameworkType.instance
 
     override fun createConfigurable(model: FrameworkSupportModel): FrameworkSupportInModuleConfigurable {
@@ -43,14 +43,14 @@ internal class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider()
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                         rootModel,
                         JSLibraryStdDescription.SUITABLE_LIBRARY_KINDS,
-                        JSFrameworkType.instance)
+                        "Kotlin/\u200BJS")
 
                 description!!.finishLibConfiguration(module, rootModel)
             }
 
             override fun onFrameworkSelectionChanged(selected: Boolean) {
                 if (selected) {
-                    val providerId = JSFrameworkType.instance.id
+                    val providerId = "kotlin-js-framework-id"
                     if (model.isFrameworkSelected(providerId)) {
                         model.setFrameworkComponentEnabled(providerId, false)
                     }

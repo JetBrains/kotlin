@@ -579,3 +579,12 @@ fun KtNamedDeclaration.safeFqNameForLazyResolve(): FqName? {
     val parentFqName = KtNamedDeclarationUtil.getParentFqName(this)
     return parentFqName?.child(safeNameForLazyResolve())
 }
+
+fun isTopLevelInFileOrScript(element: PsiElement): Boolean {
+    val parent = element.parent
+    return when (parent) {
+        is KtFile -> true
+        is KtBlockExpression -> parent.parent is KtScript
+        else -> false
+    }
+}

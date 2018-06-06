@@ -12,7 +12,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.PlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("MethodMayBeStatic")
+/**
+ * Wrapper for CompletionTestCase that deals with compatibility issues.
+ * Should be dropped after abandoning 173.
+ * BUNCH: 181
+ */
+@SuppressWarnings({"MethodMayBeStatic", "IncompatibleAPI"})
 abstract public class CompletionTestCaseWrapper extends CompletionTestCase {
     protected Module createModuleAtWrapper(String moduleName, Project project, ModuleType moduleType, String path) {
         return createModuleAt(moduleName, project, moduleType, path);

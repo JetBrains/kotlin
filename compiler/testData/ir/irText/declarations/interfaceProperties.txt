@@ -5,26 +5,32 @@ FILE fqName:<root> fileName:/interfaceProperties.kt
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     PROPERTY name:test1 type:kotlin.Int visibility:public modality:ABSTRACT flags:val
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:ABSTRACT <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test1 type:kotlin.Int visibility:public modality:ABSTRACT flags:val
         $this: VALUE_PARAMETER name:<this> type:C flags:
     PROPERTY name:test2 type:kotlin.Int visibility:public modality:OPEN flags:val
       FUN name:<get-test2> visibility:public modality:OPEN <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test2 type:kotlin.Int visibility:public modality:OPEN flags:val
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test2>(): Int'
             CONST Int type=kotlin.Int value=0
     PROPERTY name:test3 type:kotlin.Int visibility:public modality:ABSTRACT flags:var
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:ABSTRACT <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test3 type:kotlin.Int visibility:public modality:ABSTRACT flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:ABSTRACT <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:test3 type:kotlin.Int visibility:public modality:ABSTRACT flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
     PROPERTY name:test4 type:kotlin.Int visibility:public modality:OPEN flags:var
       FUN name:<get-test4> visibility:public modality:OPEN <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test4 type:kotlin.Int visibility:public modality:OPEN flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test4>(): Int'
             CONST Int type=kotlin.Int value=0
       FUN name:<set-test4> visibility:public modality:OPEN <> ($this:C, value:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:test4 type:kotlin.Int visibility:public modality:OPEN flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
         BLOCK_BODY

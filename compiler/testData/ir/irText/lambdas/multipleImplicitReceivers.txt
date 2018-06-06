@@ -47,6 +47,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     PROPERTY name:foo type:B visibility:public modality:OPEN flags:val
       FUN name:<get-foo> visibility:public modality:OPEN <> ($this:IFoo, $receiver:A) returnType:B flags:
+        correspondingProperty: PROPERTY name:foo type:B visibility:public modality:OPEN flags:val
         $this: VALUE_PARAMETER name:<this> type:IFoo flags:
         $receiver: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY

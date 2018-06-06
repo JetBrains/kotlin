@@ -209,8 +209,8 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
     }
 
     fun getKotlinLibrary(project: Project): Library? {
-        return LibraryTablesRegistrar.getInstance().getLibraryTable(project).libraries.firstOrNull(this::isKotlinLibrary) ?:
-               LibraryTablesRegistrar.getInstance().libraryTable.libraries.firstOrNull(this::isKotlinLibrary)
+        return LibraryTablesRegistrar.getInstance().getLibraryTable(project).libraries.firstOrNull { isKotlinLibrary(it, project) } ?:
+               LibraryTablesRegistrar.getInstance().libraryTable.libraries.firstOrNull { isKotlinLibrary(it, project) }
     }
 
     @Contract("!null, _, _ -> !null")
@@ -272,13 +272,13 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
         return library != null && library.getUrls(OrderRootType.CLASSES).size > 0
     }
 
-    protected abstract val libraryMatcher: (Library) -> Boolean
+    protected abstract val libraryMatcher: (Library, Project) -> Boolean
 
     fun getKotlinLibrary(module: Module): Library? {
         return findKotlinRuntimeLibrary(module, this::isKotlinLibrary)
     }
 
-    private fun isKotlinLibrary(library: Library) = library.name == libraryName || libraryMatcher(library)
+    private fun isKotlinLibrary(library: Library, project: Project) = library.name == libraryName || libraryMatcher(library, project)
 
     protected fun needToChooseJarPath(project: Project): Boolean {
         val defaultPath = getDefaultPathToJarFile(project)

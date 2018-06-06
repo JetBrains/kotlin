@@ -16,6 +16,7 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Cell<T>) returnType:T flags:
+        correspondingProperty: PROPERTY name:value type:T visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Cell<T> flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): T'

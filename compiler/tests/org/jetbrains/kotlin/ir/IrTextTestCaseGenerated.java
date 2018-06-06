@@ -326,6 +326,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/declarations/annotations/arrayInAnnotationArguments.kt");
             }
 
+            @TestMetadata("classLiteralInAnnotation.kt")
+            public void testClassLiteralInAnnotation() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/classLiteralInAnnotation.kt");
+            }
+
             @TestMetadata("classesWithAnnotations.kt")
             public void testClassesWithAnnotations() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/classesWithAnnotations.kt");
@@ -374,6 +379,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             @TestMetadata("functionsWithAnnotations.kt")
             public void testFunctionsWithAnnotations() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/functionsWithAnnotations.kt");
+            }
+
+            @TestMetadata("javaAnnotation.kt")
+            public void testJavaAnnotation() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/javaAnnotation.kt");
             }
 
             @TestMetadata("localDelegatedPropertiesWithAnnotations.kt")
@@ -860,6 +870,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("implicitCastOnPlatformType.kt")
         public void testImplicitCastOnPlatformType() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/implicitCastOnPlatformType.kt");
+        }
+
+        @TestMetadata("implicitCastToNonNull.kt")
+        public void testImplicitCastToNonNull() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/implicitCastToNonNull.kt");
         }
 
         @TestMetadata("implicitCastToTypeParameter.kt")

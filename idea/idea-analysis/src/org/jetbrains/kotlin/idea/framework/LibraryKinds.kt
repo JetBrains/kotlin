@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.framework
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.DummyLibraryProperties
@@ -31,23 +32,28 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.util.jar.Attributes
 import java.util.regex.Pattern
 
-object JSLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.js") {
+interface KotlinLibraryKind
+
+object JSLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.js"), KotlinLibraryKind {
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
 
-object CommonLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.common") {
+object CommonLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.common"), KotlinLibraryKind {
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
 
-fun getLibraryPlatform(library: Library): TargetPlatform {
-    library as? LibraryEx ?: return JvmPlatform
-    if (library.isDisposed) return JvmPlatform
-
-    return when (library.kind) {
+val PersistentLibraryKind<*>?.platform: TargetPlatform
+    get() = when (this) {
         JSLibraryKind -> JsPlatform
         CommonLibraryKind -> TargetPlatform.Common
         else -> JvmPlatform
     }
+
+fun getLibraryPlatform(project: Project, library: Library): TargetPlatform {
+    library as? LibraryEx ?: return JvmPlatform
+    if (library.isDisposed) return JvmPlatform
+
+    return library.effectiveKind(project).platform
 }
 
 fun detectLibraryKind(roots: Array<VirtualFile>): PersistentLibraryKind<*>? {
@@ -86,14 +92,13 @@ private fun detectLibraryKindFromJarContents(jarRoot: VirtualFile): PersistentLi
     return result
 }
 
-fun getLibraryJarVersion(library: Library, jarPattern: Pattern): String? {
-    for (file in library.getFiles(OrderRootType.CLASSES)) {
-        if (jarPattern.matcher(file.name).matches()) {
-            return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(file), Attributes.Name.IMPLEMENTATION_VERSION)
-        }
-    }
-    return null
+fun getLibraryJar(roots: Array<VirtualFile>, jarPattern: Pattern): VirtualFile? {
+    return roots.firstOrNull { jarPattern.matcher(it.name).matches() }
 }
 
-fun getCommonRuntimeLibraryVersion(library: Library) =
-        getLibraryJarVersion(library, PathUtil.KOTLIN_STDLIB_COMMON_JAR_PATTERN)
+fun getLibraryJarVersion(library: Library, jarPattern: Pattern): String? {
+    val libraryJar = getLibraryJar(library.getFiles(OrderRootType.CLASSES), jarPattern) ?: return null
+    return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(libraryJar), Attributes.Name.IMPLEMENTATION_VERSION)
+}
+
+fun getCommonRuntimeLibraryVersion(library: Library) = getLibraryJarVersion(library, PathUtil.KOTLIN_STDLIB_COMMON_JAR_PATTERN)

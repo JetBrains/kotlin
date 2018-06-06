@@ -8,6 +8,7 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
       BLOCK_BODY
     PROPERTY name:bar type:kotlin.Int visibility:public modality:OPEN flags:val
       FUN name:<get-bar> visibility:public modality:OPEN <> ($this:ILeft) returnType:Int flags:
+        correspondingProperty: PROPERTY name:bar type:kotlin.Int visibility:public modality:OPEN flags:val
         $this: VALUE_PARAMETER name:<this> type:ILeft flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
@@ -34,6 +35,7 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
       BLOCK_BODY
     PROPERTY name:bar type:kotlin.Int visibility:public modality:OPEN flags:val
       FUN name:<get-bar> visibility:public modality:OPEN <> ($this:IRight) returnType:Int flags:
+        correspondingProperty: PROPERTY name:bar type:kotlin.Int visibility:public modality:OPEN flags:val
         $this: VALUE_PARAMETER name:<this> type:IRight flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
@@ -72,6 +74,7 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
           $this: GET_VAR 'this@CBoth: CBoth' type=CBoth origin=null
     PROPERTY name:bar type:kotlin.Int visibility:public modality:OPEN flags:val
       FUN name:<get-bar> visibility:public modality:OPEN <> ($this:CBoth) returnType:Int flags:
+        correspondingProperty: PROPERTY name:bar type:kotlin.Int visibility:public modality:OPEN flags:val
         overridden:
           FUN name:<get-bar> visibility:public modality:OPEN <> ($this:ILeft) returnType:Int flags:
           FUN name:<get-bar> visibility:public modality:OPEN <> ($this:IRight) returnType:Int flags:

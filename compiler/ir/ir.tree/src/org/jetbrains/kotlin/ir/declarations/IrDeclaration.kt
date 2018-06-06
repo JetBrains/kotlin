@@ -28,7 +28,6 @@ interface IrSymbolOwner : IrElement {
 
 interface IrDeclaration : IrStatement, IrAnnotationContainer {
     val descriptor: DeclarationDescriptor
-    val declarationKind: IrDeclarationKind
     val origin: IrDeclarationOrigin
 
     var parent: IrDeclarationParent
@@ -40,24 +39,3 @@ interface IrDeclaration : IrStatement, IrAnnotationContainer {
 interface IrSymbolDeclaration<out S : IrSymbol> : IrDeclaration, IrSymbolOwner {
     override val symbol: S
 }
-
-enum class IrDeclarationKind {
-    MODULE,
-    FILE,
-    CLASS,
-    ENUM_ENTRY,
-    FUNCTION,
-    CONSTRUCTOR,
-    PROPERTY,
-    FIELD,
-    PROPERTY_ACCESSOR,
-    VARIABLE,
-    LOCAL_PROPERTY,
-    LOCAL_PROPERTY_ACCESSOR,
-    TYPEALIAS,
-    ANONYMOUS_INITIALIZER,
-    TYPE_PARAMETER,
-    VALUE_PARAMETER,
-    ERROR;
-}
-

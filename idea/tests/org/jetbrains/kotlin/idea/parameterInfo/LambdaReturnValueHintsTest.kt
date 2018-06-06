@@ -109,4 +109,23 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """.trimIndent()
         )
     }
+
+    fun testPostfixPrefixExpressions() {
+        check(
+            """
+                fun bar() {
+                    var test = 0
+                    run {
+                        test
+                        <hint text="^run"/>test++
+                    }
+
+                    run {
+                        test
+                        <hint text="^run"/>++test
+                    }
+                }
+            """.trimIndent()
+        )
+    }
 }

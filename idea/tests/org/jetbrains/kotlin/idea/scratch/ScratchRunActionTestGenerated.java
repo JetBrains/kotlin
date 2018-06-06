@@ -56,6 +56,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
             runTest("idea/testData/scratch/simpleFun.kts");
         }
 
+        @TestMetadata("spacesAtLineStart.kts")
+        public void testSpacesAtLineStart() throws Exception {
+            runTest("idea/testData/scratch/spacesAtLineStart.kts");
+        }
+
         @TestMetadata("stdlibFun.kts")
         public void testStdlibFun() throws Exception {
             runTest("idea/testData/scratch/stdlibFun.kts");
@@ -127,6 +132,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         @TestMetadata("simpleFun.kts")
         public void testSimpleFun() throws Exception {
             runTest("idea/testData/scratch/simpleFun.kts");
+        }
+
+        @TestMetadata("spacesAtLineStart.kts")
+        public void testSpacesAtLineStart() throws Exception {
+            runTest("idea/testData/scratch/spacesAtLineStart.kts");
         }
 
         @TestMetadata("stdlibFun.kts")

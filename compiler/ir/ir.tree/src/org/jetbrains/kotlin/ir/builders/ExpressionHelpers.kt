@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.builders
 
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -153,6 +154,13 @@ fun IrBuilderWithScope.irCall(
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrCall =
     irCall(callee, callee.descriptor.returnType!!)
+
+fun IrBuilderWithScope.irCall(
+    calleeSymbol: IrFunctionSymbol,
+    calleeDescriptor: FunctionDescriptor,
+    typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null
+): IrCall =
+    IrCallImpl(startOffset, endOffset, calleeDescriptor.returnType!!, calleeSymbol, calleeDescriptor, typeArguments)
 
 fun IrBuilderWithScope.irCallOp(callee: IrFunctionSymbol, dispatchReceiver: IrExpression, argument: IrExpression): IrCall =
     irCall(callee, callee.descriptor.returnType!!).apply {

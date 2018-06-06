@@ -10,6 +10,7 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: IntArray' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnnWithIntArray) returnType:IntArray flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.IntArray visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:TestAnnWithIntArray flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): IntArray'
@@ -39,6 +40,7 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Array<String>' type=kotlin.Array<kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnnWithStringArray) returnType:Array<String> flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.Array<kotlin.String> visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:TestAnnWithStringArray flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Array<String>'

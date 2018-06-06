@@ -44,7 +44,8 @@ abstract class BasicIrBoxTest(
         testFunction: String
     ) {
         val runtime = listOf(
-            "libraries/stdlib/js/src/kotlin/core.kt"
+            "libraries/stdlib/js/src/kotlin/core.kt",
+            "libraries/stdlib/js/irRuntime/dummy.kt"
         ).map { createPsiFile(it) }
 
         val filesToIgnore = listOf(

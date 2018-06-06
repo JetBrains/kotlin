@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.utils.createValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -136,19 +135,7 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
                 listOf(), true
             )
 
-            val paramDesc = ValueParameterDescriptorImpl(
-                this,
-                null,
-                0,
-                Annotations.EMPTY,
-                Name.identifier("v"),
-                parameterType,
-                false,
-                false,
-                false,
-                null,
-                SourceElement.NO_SOURCE
-            )
+            val paramDesc = createValueParameter(this, 0, "v", parameterType)
 
             initialize(listOf(paramDesc), Visibilities.PUBLIC)
             returnType = KotlinTypeFactory.simpleNotNullType(

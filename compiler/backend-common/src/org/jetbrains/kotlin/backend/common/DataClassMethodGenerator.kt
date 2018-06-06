@@ -78,20 +78,26 @@ abstract class DataClassMethodGenerator(protected val declaration: KtClassOrObje
     }
 
     private fun generateDataClassToStringIfNeeded(properties: List<PropertyDescriptor>) {
-        val function = getMemberToGenerate(classDescriptor, "toString",
-                                           KotlinBuiltIns::isString, List<ValueParameterDescriptor>::isEmpty) ?: return
+        val function = getMemberToGenerate(
+            classDescriptor, "toString",
+            KotlinBuiltIns::isString, List<ValueParameterDescriptor>::isEmpty
+        ) ?: return
         generateToStringMethod(function, properties)
     }
 
     private fun generateDataClassHashCodeIfNeeded(properties: List<PropertyDescriptor>) {
-        val function = getMemberToGenerate(classDescriptor, "hashCode",
-                                           KotlinBuiltIns::isInt, List<ValueParameterDescriptor>::isEmpty) ?: return
+        val function = getMemberToGenerate(
+            classDescriptor, "hashCode",
+            KotlinBuiltIns::isInt, List<ValueParameterDescriptor>::isEmpty
+        ) ?: return
         generateHashCodeMethod(function, properties)
     }
 
     private fun generateDataClassEqualsIfNeeded(properties: List<PropertyDescriptor>) {
-        val function = getMemberToGenerate(classDescriptor, "equals",
-                                           KotlinBuiltIns::isBoolean) { parameters ->
+        val function = getMemberToGenerate(
+            classDescriptor, "equals",
+            KotlinBuiltIns::isBoolean
+        ) { parameters ->
             parameters.size == 1 && KotlinBuiltIns.isNullableAny(parameters.first().type)
         } ?: return
         generateEqualsMethod(function, properties)
@@ -99,8 +105,8 @@ abstract class DataClassMethodGenerator(protected val declaration: KtClassOrObje
 
     private val dataProperties: List<PropertyDescriptor>
         get() = primaryConstructorParameters
-                .filter { it.hasValOrVar() }
-                .map { bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it)!! }
+            .filter { it.hasValOrVar() }
+            .map { bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it)!! }
 
     private val primaryConstructorParameters: List<KtParameter>
         get() = (declaration as? KtClass)?.primaryConstructorParameters.orEmpty()

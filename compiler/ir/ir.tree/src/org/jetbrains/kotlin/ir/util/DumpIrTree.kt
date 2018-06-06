@@ -103,6 +103,7 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
+            declaration.correspondingProperty?.render("correspondingProperty")
             declaration.overriddenSymbols.renderDeclarationElementsOrDescriptors("overridden")
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$this")

@@ -12,12 +12,14 @@ FILE fqName:<root> fileName:/localDelegatedPropertyWithSuspendOperators.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
+        correspondingProperty: PROPERTY name:z type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z>(): Int'
             GET_FIELD 'z: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-z> visibility:public modality:FINAL <> ($this:A, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:z type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:A flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY

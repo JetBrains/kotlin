@@ -48,7 +48,8 @@ class InitializersLowering(
 
         classInitializersBuilder.transformInstanceInitializerCallsInConstructors(irClass)
 
-        if (clinitNeeded) classInitializersBuilder.createStaticInitializationMethod(irClass)
+        if (clinitNeeded && classInitializersBuilder.staticInitializerStatements.isNotEmpty())
+            classInitializersBuilder.createStaticInitializationMethod(irClass)
     }
 
     private inner class ClassInitializersBuilder(val irClass: IrClass) : IrElementVisitorVoid {

@@ -11,6 +11,7 @@ dependencies {
     compile(project(":compiler:cli-common"))
     compile(project(":compiler:frontend.java"))
     compileOnly(intellijDep())
+    compileOnly(intellijDep("jps-standalone")) { includeJars("jps-model") }
 }
 
 sourceSets {

@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class JsGenerationContext {
     fun newDeclaration(scope: JsScope, func: IrFunction? = null): JsGenerationContext {
-        return JsGenerationContext(this, JsBlock(), scope, func)
+        return JsGenerationContext(this, if (func != null) JsBlock() else JsGlobalBlock(), scope, func)
     }
 
     val currentBlock: JsBlock
@@ -42,4 +43,5 @@ class JsGenerationContext {
     }
 
     fun getNameForSymbol(symbol: IrSymbol): JsName = staticContext.getNameForSymbol(symbol, this)
+    fun getNameForLoop(loop: IrLoop): JsName? = staticContext.getNameForLoop(loop, this)
 }

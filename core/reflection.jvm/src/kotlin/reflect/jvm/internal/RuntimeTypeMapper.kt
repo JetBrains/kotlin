@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -52,17 +53,21 @@ import kotlin.reflect.jvm.internal.structure.*
 internal sealed class JvmFunctionSignature {
     abstract fun asString(): String
 
-    class KotlinFunction(val signature: String) : JvmFunctionSignature() {
-        val methodName: String get() = signature.substringBefore('(')
-        val methodDesc: String get() = signature.substring(signature.indexOf('('))
+    class KotlinFunction(val signature: JvmMemberSignature.Method) : JvmFunctionSignature() {
+        private val _signature = signature.asString()
 
-        override fun asString(): String = signature
+        val methodName: String get() = signature.name
+        val methodDesc: String get() = signature.desc
+
+        override fun asString(): String = _signature
     }
 
-    class KotlinConstructor(val signature: String) : JvmFunctionSignature() {
-        val constructorDesc: String get() = signature.substring(signature.indexOf('('))
+    class KotlinConstructor(val signature: JvmMemberSignature.Method) : JvmFunctionSignature() {
+        private val _signature = signature.asString()
 
-        override fun asString(): String = signature
+        val constructorDesc: String get() = signature.desc
+
+        override fun asString(): String = _signature
     }
 
     class JavaMethod(val method: Method) : JvmFunctionSignature() {

@@ -50,7 +50,7 @@ private fun inlineFunctionsJvmNames(functions: List<ProtoBuf.Function>, nameReso
     val typeTable = TypeTable(protoTypeTable)
     val inlineFunctions = functions.filter { Flags.IS_INLINE.get(it.flags) }
     val jvmNames = inlineFunctions.mapNotNull {
-        JvmProtoBufUtil.getJvmMethodSignature(it, nameResolver, typeTable)
+        JvmProtoBufUtil.getJvmMethodSignature(it, nameResolver, typeTable)?.asString()
     }
     return jvmNames.toSet()
 }

@@ -121,7 +121,7 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
     }
 
     protected void assertSources(String moduleName, String... expectedSources) {
-        doAssertContentFolders(moduleName, JavaSourceRootType.SOURCE, expectedSources);
+        assertContentFolders(moduleName, JavaSourceRootType.SOURCE, expectedSources);
     }
 
     protected void assertGeneratedSources(String moduleName, String... expectedSources) {
@@ -138,15 +138,15 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
     }
 
     protected void assertResources(String moduleName, String... expectedSources) {
-        doAssertContentFolders(moduleName, JavaResourceRootType.RESOURCE, expectedSources);
+        assertContentFolders(moduleName, JavaResourceRootType.RESOURCE, expectedSources);
     }
 
     protected void assertTestSources(String moduleName, String... expectedSources) {
-        doAssertContentFolders(moduleName, JavaSourceRootType.TEST_SOURCE, expectedSources);
+        assertContentFolders(moduleName, JavaSourceRootType.TEST_SOURCE, expectedSources);
     }
 
     protected void assertTestResources(String moduleName, String... expectedSources) {
-        doAssertContentFolders(moduleName, JavaResourceRootType.TEST_RESOURCE, expectedSources);
+        assertContentFolders(moduleName, JavaResourceRootType.TEST_RESOURCE, expectedSources);
     }
 
     protected void assertExcludes(String moduleName, String... expectedExcludes) {
@@ -159,7 +159,7 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
         doAssertContentFolders(root, Arrays.asList(root.getExcludeFolders()), expectedExcudes);
     }
 
-    private void doAssertContentFolders(String moduleName, @NotNull JpsModuleSourceRootType<?> rootType, String... expected) {
+    protected void assertContentFolders(String moduleName, @NotNull JpsModuleSourceRootType<?> rootType, String... expected) {
         ContentEntry contentRoot = getContentRoot(moduleName);
         doAssertContentFolders(contentRoot, contentRoot.getSourceFolders(rootType), expected);
     }

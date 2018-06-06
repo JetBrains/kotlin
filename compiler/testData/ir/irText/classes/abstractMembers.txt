@@ -11,11 +11,14 @@ FILE fqName:<root> fileName:/abstractMembers.kt
       $this: VALUE_PARAMETER name:<this> type:AbstractClass flags:
     PROPERTY name:abstractVal type:kotlin.Int visibility:public modality:ABSTRACT flags:val
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-abstractVal> visibility:public modality:ABSTRACT <> ($this:AbstractClass) returnType:Int flags:
+        correspondingProperty: PROPERTY name:abstractVal type:kotlin.Int visibility:public modality:ABSTRACT flags:val
         $this: VALUE_PARAMETER name:<this> type:AbstractClass flags:
     PROPERTY name:abstractVar type:kotlin.Int visibility:public modality:ABSTRACT flags:var
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-abstractVar> visibility:public modality:ABSTRACT <> ($this:AbstractClass) returnType:Int flags:
+        correspondingProperty: PROPERTY name:abstractVar type:kotlin.Int visibility:public modality:ABSTRACT flags:var
         $this: VALUE_PARAMETER name:<this> type:AbstractClass flags:
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-abstractVar> visibility:public modality:ABSTRACT <> ($this:AbstractClass, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:abstractVar type:kotlin.Int visibility:public modality:ABSTRACT flags:var
         $this: VALUE_PARAMETER name:<this> type:AbstractClass flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -39,11 +42,14 @@ FILE fqName:<root> fileName:/abstractMembers.kt
       $this: VALUE_PARAMETER name:<this> type:Interface flags:
     PROPERTY name:abstractVal type:kotlin.Int visibility:public modality:ABSTRACT flags:val
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-abstractVal> visibility:public modality:ABSTRACT <> ($this:Interface) returnType:Int flags:
+        correspondingProperty: PROPERTY name:abstractVal type:kotlin.Int visibility:public modality:ABSTRACT flags:val
         $this: VALUE_PARAMETER name:<this> type:Interface flags:
     PROPERTY name:abstractVar type:kotlin.Int visibility:public modality:ABSTRACT flags:var
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-abstractVar> visibility:public modality:ABSTRACT <> ($this:Interface) returnType:Int flags:
+        correspondingProperty: PROPERTY name:abstractVar type:kotlin.Int visibility:public modality:ABSTRACT flags:var
         $this: VALUE_PARAMETER name:<this> type:Interface flags:
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-abstractVar> visibility:public modality:ABSTRACT <> ($this:Interface, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:abstractVar type:kotlin.Int visibility:public modality:ABSTRACT flags:var
         $this: VALUE_PARAMETER name:<this> type:Interface flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
