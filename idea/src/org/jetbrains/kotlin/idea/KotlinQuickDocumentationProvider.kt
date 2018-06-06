@@ -311,9 +311,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             var renderedHtml: String
 
 
-            //if (!quickNavigation) {
             renderedHtml = "${DocumentationMarkup.DEFINITION_START}$declaration${DocumentationMarkup.DEFINITION_END}"
-            //}
 
             val deprecationProvider = ktElement.getResolutionFacade().frontendService<DeprecationResolver>()
             renderedHtml += renderDeprecationInfo(declarationDescriptor, deprecationProvider)
@@ -322,13 +320,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 val comment = declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }
                 if (comment != null) {
                     val renderedComment = KDocRenderer.renderKDoc(comment)
-                    renderedHtml += "${DocumentationMarkup.CONTENT_START}$renderedComment${DocumentationMarkup.CONTENT_END}"
-//                    if (renderedComment.startsWith("<p>")) {
-//                        renderedHtml += renderedComment
-//                    }
-//                    else {
-//                        renderedHtml = "$renderedHtml<br/>$renderedComment"
-//                    }
+                    renderedHtml += "${DocumentationMarkup.CONTENT_START}$renderedComment"
                 } else {
                     if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
                         val psi = declarationDescriptor.findPsi() as? KtFunction
