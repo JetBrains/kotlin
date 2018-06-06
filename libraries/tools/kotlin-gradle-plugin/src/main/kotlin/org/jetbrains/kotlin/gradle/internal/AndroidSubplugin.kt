@@ -27,15 +27,18 @@ import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.w3c.dom.Document
 import java.io.File
+import javax.inject.Inject
 import javax.xml.parsers.DocumentBuilderFactory
 
 // Use apply plugin: 'kotlin-android-extensions' to enable Android Extensions in an Android project.
-class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
+class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
 
@@ -44,6 +47,8 @@ class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
                 addAndroidExtensionsRuntimeIfNeeded(project)
             }
         }
+
+        registry.register(KotlinAndroidExtensionModelBuilder())
     }
 
     private fun addAndroidExtensionsRuntimeIfNeeded(project: Project) {

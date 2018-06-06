@@ -284,7 +284,9 @@ abstract class BaseGradleIT {
 
         val connection = GradleConnector.newConnector().forProjectDirectory(projectDir).connect()
         val options = defaultBuildOptions()
-        val model = connection.action(ModelFetcherBuildAction(modelType)) .withArguments("-Pkotlin_version=" + options.kotlinVersion).run()
+        val arguments = mutableListOf("-Pkotlin_version=${options.kotlinVersion}")
+        options.androidGradlePluginVersion?.let { arguments.add("-Pandroid_tools_version=$it") }
+        val model = connection.action(ModelFetcherBuildAction(modelType)).withArguments(arguments).run()
         connection.close()
         return model
     }
