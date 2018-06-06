@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.backend.konan.ir.IrSuspendableExpression
 import org.jetbrains.kotlin.backend.konan.ir.IrSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -42,17 +42,15 @@ import org.jetbrains.kotlin.ir.backend.js.utils.constructedClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 private fun getClassWithBoxingIncluded(type: KotlinType, ir: KonanIr): ClassDescriptor? {
     /*
@@ -605,7 +603,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                     DataFlowIR.Node.StaticCall(
                                             symbolTable.mapFunction(callee),
                                             arguments,
-                                            symbolTable.mapClass(context.ir.symbols.unit.owner),
                                             symbolTable.mapClass(callee.constructedClass),
                                             null
                                     )
@@ -629,23 +626,42 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                 value
                                         )
                                     } else {
+                                        callee as IrSimpleFunction
                                         if (callee.isOverridable && value.superQualifier == null) {
                                             val owner = callee.containingDeclaration as ClassDescriptor
-                                            val vTableBuilder = context.getVtableBuilder(owner)
+                                            val actualReceiverType = value.dispatchReceiver!!.type
+                                            val receiverType =
+                                                    if (actualReceiverType.constructor.declarationDescriptor is TypeParameterDescriptor
+                                                            || !callee.isReal /* Could be a bridge. */)
+                                                        symbolTable.mapClass(owner)
+                                                    else {
+                                                        val actualClassAtCallsite = actualReceiverType.constructor.declarationDescriptor as org.jetbrains.kotlin.descriptors.ClassDescriptor
+                                                        assert (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
+                                                            "Expected an inheritor of ${owner.descriptor}, but was $actualClassAtCallsite"
+                                                        }
+                                                        symbolTable.mapType(
+                                                                actualReceiverType.let {
+                                                                    if (it.isValueType())  // A virtual call on a value type - it must be boxed.
+                                                                        context.ir.symbols.getTypeConversion(it, it.makeNullable())!!.descriptor.returnType!!
+                                                                    else it
+                                                                }
+                                                        )
+                                                    }
                                             if (owner.isInterface) {
+                                                val calleeHash = callee.functionName.localHash.value
                                                 DataFlowIR.Node.ItableCall(
                                                         symbolTable.mapFunction(callee.target),
-                                                        symbolTable.mapClass(owner),
-                                                        callee.functionName.localHash.value,
+                                                        receiverType,
+                                                        calleeHash,
                                                         arguments,
                                                         value
                                                 )
                                             } else {
-                                                val vtableIndex = vTableBuilder.vtableIndex(callee as IrSimpleFunction)
-                                                assert(vtableIndex >= 0, { "Unable to find function $callee in vtable of $owner" })
+                                                val vTableBuilder = context.getVtableBuilder(owner)
+                                                val vtableIndex = vTableBuilder.vtableIndex(callee)
                                                 DataFlowIR.Node.VtableCall(
                                                         symbolTable.mapFunction(callee.target),
-                                                        symbolTable.mapClass(owner),
+                                                        receiverType,
                                                         vtableIndex,
                                                         arguments,
                                                         value
