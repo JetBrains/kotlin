@@ -1060,8 +1060,25 @@ public class KotlinTestUtils {
 
             if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
                 String text = doLoadFile(testDataFile);
-                String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name();
-                String newText = directive + "\n" + text;
+                String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name() + "\n";
+
+                String newText;
+                if (text.startsWith("// !")) {
+                    StringBuilder prefixBuilder = new StringBuilder();
+                    int l = 0;
+                    while (text.startsWith("// !", l)) {
+                        int r = text.indexOf("\n", l) + 1;
+                        if (r <= 0) r = text.length();
+                        prefixBuilder.append(text.substring(l, r));
+                        l = r;
+                    }
+                    prefixBuilder.append(directive);
+                    prefixBuilder.append(text.substring(l));
+
+                    newText = prefixBuilder.toString();
+                } else {
+                    newText = directive + text;
+                }
 
                 if (!newText.equals(text)) {
                     System.err.println("\"" + directive + "\" was added to \"" + testDataFile + "\"");
