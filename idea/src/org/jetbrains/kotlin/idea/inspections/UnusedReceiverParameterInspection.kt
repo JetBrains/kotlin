@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -68,7 +69,8 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 if (callableDeclaration.isOverridable() ||
                     callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) ||
                     callableDeclaration.hasModifier(KtTokens.OPERATOR_KEYWORD) ||
-                    callableDeclaration.hasModifier(KtTokens.INFIX_KEYWORD)
+                    callableDeclaration.hasModifier(KtTokens.INFIX_KEYWORD) ||
+                    callableDeclaration.hasActualModifier()
                 ) return
 
                 if (callableDeclaration is KtProperty && callableDeclaration.accessors.isEmpty()) return
