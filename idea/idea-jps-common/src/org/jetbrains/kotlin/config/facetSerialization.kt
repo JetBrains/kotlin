@@ -25,6 +25,7 @@ import org.jdom.Element
 import org.jdom.Text
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.superclasses
@@ -93,11 +94,15 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
     }
 }
 
+fun Element.getFacetPlatformByConfigurationElement(): TargetPlatformKind<*> {
+    val platformName = getAttributeValue("platform")
+    return TargetPlatformKind.ALL_PLATFORMS.firstOrNull { it.description == platformName } ?: TargetPlatformKind.DEFAULT_PLATFORM
+}
+
 private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
     return KotlinFacetSettings().apply {
         element.getAttributeValue("useProjectSettings")?.let { useProjectSettings = it.toBoolean() }
-        val platformName = element.getAttributeValue("platform")
-        val platformKind = TargetPlatformKind.ALL_PLATFORMS.firstOrNull { it.description == platformName } ?: TargetPlatformKind.DEFAULT_PLATFORM
+        val platformKind = element.getFacetPlatformByConfigurationElement()
         element.getChild("implements")?.let {
             val items = it.getChildren("implement")
             implementedModuleNames = if (items.isNotEmpty()) {

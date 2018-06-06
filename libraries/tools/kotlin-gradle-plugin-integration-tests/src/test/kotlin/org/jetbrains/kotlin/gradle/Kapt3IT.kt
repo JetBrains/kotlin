@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import java.io.File
+import java.util.zip.ZipFile
 
 abstract class Kapt3BaseIT : BaseGradleIT() {
     companion object {
@@ -405,6 +406,55 @@ open class Kapt3IT : Kapt3BaseIT() {
         build("tasks") {
             assertSuccessful()
             assertNotContains("Resolved!")
+        }
+    }
+
+    @Test
+    fun testKt19179() {
+        val project = Project("kt19179", directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+            assertFileExists("processor/build/tmp/kapt3/classes/main/META-INF/services/javax.annotation.processing.Processor")
+
+            val processorJar = fileInWorkingDir("processor/build/libs/processor.jar")
+            assert(processorJar.exists())
+
+            val zip = ZipFile(processorJar)
+            @Suppress("ConvertTryFinallyToUseCall")
+            try {
+                assert(zip.getEntry("META-INF/services/javax.annotation.processing.Processor") != null)
+            } finally {
+                zip.close()
+            }
+
+            assertTasksExecuted(
+                ":processor:kaptGenerateStubsKotlin",
+                ":processor:kaptKotlin",
+                ":app:kaptGenerateStubsKotlin",
+                ":app:kaptKotlin"
+            )
+        }
+
+        project.projectDir.getFileByName("Test.kt").modify { text ->
+            assert("SomeClass()" in text)
+            text.replace("SomeClass()", "SomeClass(); val a = 5")
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksUpToDate(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin", ":app:kaptKotlin")
+            assertTasksExecuted(":app:kaptGenerateStubsKotlin")
+        }
+
+        project.projectDir.getFileByName("Test.kt").modify { text ->
+            text + "\n\nfun t() {}"
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksUpToDate(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin")
+            assertTasksExecuted(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin")
         }
     }
 }

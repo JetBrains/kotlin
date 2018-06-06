@@ -35,6 +35,7 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
           CONST String type=kotlin.String value=
     PROPERTY name:p type:kotlin.String visibility:public modality:FINAL flags:val
       FUN name:<get-p> visibility:public modality:FINAL <> ($this:A, $receiver:@receiver:Ann kotlin.String?) returnType:String flags:
+        correspondingProperty: PROPERTY name:p type:kotlin.String visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A flags:
         $receiver: VALUE_PARAMETER name:<this> type:@receiver:Ann kotlin.String? flags:
           annotations:
@@ -64,6 +65,7 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
         CONST String type=kotlin.String value=
   PROPERTY name:topLevelP type:kotlin.String visibility:public modality:FINAL flags:val
     FUN name:<get-topLevelP> visibility:public modality:FINAL <> ($receiver:@receiver:Ann kotlin.String) returnType:String flags:
+      correspondingProperty: PROPERTY name:topLevelP type:kotlin.String visibility:public modality:FINAL flags:val
       $receiver: VALUE_PARAMETER name:<this> type:@receiver:Ann kotlin.String flags:
         annotations:
           CALL 'constructor Ann()' type=Ann origin=null

@@ -177,7 +177,7 @@ class TypeInstantiationItems(
 
             val allTypeArgsKnown = fuzzyType.freeParameters.isEmpty() || typeArgs.none { it.type.areTypeParametersUsedInside(fuzzyType.freeParameters) }
             itemText += if (allTypeArgsKnown) {
-                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgsToUse)
+                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderTypeArguments(typeArgsToUse)
             }
             else {
                 "<...>"

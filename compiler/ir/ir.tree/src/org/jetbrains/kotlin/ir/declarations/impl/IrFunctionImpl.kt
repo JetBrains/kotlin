@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -34,38 +35,23 @@ class IrFunctionImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
-    name: Name,
-    visibility: Visibility,
-    override val modality: Modality,
-    returnType: KotlinType,
-    isInline: Boolean,
-    isExternal: Boolean,
-    override val isTailrec: Boolean,
-    override val isSuspend: Boolean
+    name: Name = symbol.descriptor.name,
+    visibility: Visibility = symbol.descriptor.visibility,
+    override val modality: Modality = symbol.descriptor.modality,
+    returnType: KotlinType = symbol.descriptor.returnType!!,
+    isInline: Boolean = symbol.descriptor.isInline,
+    isExternal: Boolean = symbol.descriptor.isExternal,
+    override val isTailrec: Boolean = symbol.descriptor.isTailrec,
+    override val isSuspend: Boolean = symbol.descriptor.isSuspend
 ) :
     IrFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, returnType),
     IrSimpleFunction {
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrSimpleFunctionSymbol
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name,
-        symbol.descriptor.visibility,
-        symbol.descriptor.modality,
-        symbol.descriptor.returnType!!,
-        symbol.descriptor.isInline,
-        symbol.descriptor.isExternal,
-        symbol.descriptor.isTailrec,
-        symbol.descriptor.isSuspend
-    )
-
     override val descriptor: FunctionDescriptor = symbol.descriptor
 
     override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
+
+    override var correspondingProperty: IrProperty? = null
 
     constructor(
         startOffset: Int,

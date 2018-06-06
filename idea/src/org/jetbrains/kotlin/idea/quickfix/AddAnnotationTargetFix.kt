@@ -122,7 +122,7 @@ private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {
             ?: getStrictParentOfType<KtFile>()
             ?: return emptyList()
 
-    val targetList = AnnotationChecker.getActualTargetList(annotatedElement, null, BindingTraceContext())
+    val targetList = AnnotationChecker.getActualTargetList(annotatedElement, null, BindingTraceContext().bindingContext)
 
     val useSiteTarget = this.useSiteTarget ?: return targetList.defaultTargets
     val annotationUseSiteTarget = useSiteTarget.getAnnotationUseSiteTarget()

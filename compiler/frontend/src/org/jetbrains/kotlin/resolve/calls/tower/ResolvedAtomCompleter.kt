@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -44,6 +46,7 @@ class ResolvedAtomCompleter(
     private val expressionTypingServices: ExpressionTypingServices,
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
+    private val builtIns: KotlinBuiltIns,
     deprecationResolver: DeprecationResolver,
     moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory
@@ -124,7 +127,17 @@ class ResolvedAtomCompleter(
         functionDescriptor.setReturnType(returnType)
 
         val existingLambdaType = trace.getType(ktArgumentExpression) ?: throw AssertionError("No type for resolved lambda argument")
-        trace.recordType(ktArgumentExpression, resultSubstitutor.substituteKeepAnnotations(existingLambdaType.unwrap()))
+        val substitutedFunctionalType = createFunctionType(
+            builtIns,
+            existingLambdaType.annotations,
+            lambda.receiver?.let { resultSubstitutor.substituteKeepAnnotations(it) },
+            lambda.parameters.map { resultSubstitutor.substituteKeepAnnotations(it) },
+            null, // parameter names transforms to special annotations, so they are already taken from parameter types
+            returnType,
+            lambda.isSuspend
+        )
+
+        trace.recordType(ktArgumentExpression, substitutedFunctionalType)
 
         // Mainly this is needed for builder-like inference, when we have type `SomeType<K, V>.() -> Unit` and now we want to update those K, V
         val extensionReceiverParameter = functionDescriptor.extensionReceiverParameter

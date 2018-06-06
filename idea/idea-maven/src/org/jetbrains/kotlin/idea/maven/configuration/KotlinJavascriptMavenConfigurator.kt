@@ -49,6 +49,6 @@ class KotlinJavascriptMavenConfigurator :
 
     companion object {
         private const val NAME = "js maven"
-        private const val PRESENTABLE_TEXT = "Maven (JavaScript)"
+        private const val PRESENTABLE_TEXT = "JavaScript with Maven"
     }
 }

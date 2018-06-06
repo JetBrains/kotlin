@@ -701,6 +701,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/TypealiasIsKeyword.kt");
         }
 
+        @TestMetadata("UnsignedLiteral.kt")
+        public void testUnsignedLiteral() throws Exception {
+            runTest("compiler/testData/psi/UnsignedLiteral.kt");
+        }
+
         @TestMetadata("When.kt")
         public void testWhen() throws Exception {
             runTest("compiler/testData/psi/When.kt");

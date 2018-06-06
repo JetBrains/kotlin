@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -35,6 +36,7 @@ class JvmLower(val context: JvmBackendContext) {
 
         ConstAndJvmFieldPropertiesLowering().lower(irFile)
         PropertiesLowering().lower(irFile)
+        AnnotationLowering().runOnFilePostfix(irFile) //should be run before defaults lowering
 
         //Should be before interface lowering
         DefaultArgumentStubGenerator(context, false).runOnFilePostfix(irFile)
@@ -45,11 +47,16 @@ class JvmLower(val context: JvmBackendContext) {
         SharedVariablesLowering(context).runOnFilePostfix(irFile)
         InnerClassesLowering(context).runOnFilePostfix(irFile)
         InnerClassConstructorCallsLowering(context).runOnFilePostfix(irFile)
-        LocalDeclarationsLowering(context,
-                                  object : LocalNameProvider {
-                                      override fun localName(descriptor: DeclarationDescriptor): String =
-                                              NameUtils.sanitizeAsJavaIdentifier(super.localName(descriptor))
-                                  }).runOnFilePostfix(irFile)
+
+        irFile.acceptVoid(PatchDeclarationParentsVisitor())
+        LocalDeclarationsLowering(
+            context,
+            object : LocalNameProvider {
+                override fun localName(descriptor: DeclarationDescriptor): String =
+                    NameUtils.sanitizeAsJavaIdentifier(super.localName(descriptor))
+            }
+        ).runOnFilePostfix(irFile)
+
         EnumClassLowering(context).runOnFilePostfix(irFile)
         //Should be before SyntheticAccessorLowering cause of synthetic accessor for companion constructor
         ObjectClassLowering(context).lower(irFile)

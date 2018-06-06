@@ -171,8 +171,8 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
             nameSuggestions = getNameSuggestionsForOuterInstance(element)
 
             val newParam = parameterList.addParameterBefore(
-                    ktPsiFactory.createParameter("${nameSuggestions.first()}: ${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(newParamType)}"),
-                    parameters.firstOrNull()
+                ktPsiFactory.createParameter("${nameSuggestions.first()}: ${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(newParamType)}"),
+                parameters.firstOrNull()
             )
 
             val newOuterInstanceRef = ktPsiFactory.createExpression(newParam.name!!)

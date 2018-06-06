@@ -89,7 +89,7 @@ open class GenericReplCompiler(disposable: Disposable,
 
             val generationState = GenerationState.Builder(
                     psiFile.project,
-                    ClassBuilderFactories.binaries(false),
+                    ClassBuilderFactories.BINARIES,
                     compilerState.analyzerEngine.module,
                     compilerState.analyzerEngine.trace.bindingContext,
                     listOf(psiFile),

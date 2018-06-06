@@ -139,6 +139,11 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("idea/testData/inspections/copyWithoutNamedArguments/inspectionData/inspections.test");
         }
 
+        @TestMetadata("coroutines/asyncResultUnused/inspectionData/inspections.test")
+        public void testCoroutines_asyncResultUnused_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/coroutines/asyncResultUnused/inspectionData/inspections.test");
+        }
+
         @TestMetadata("dataClassPrivateConstructor/inspectionData/inspections.test")
         public void testDataClassPrivateConstructor_inspectionData_Inspections_test() throws Exception {
             runTest("idea/testData/inspections/dataClassPrivateConstructor/inspectionData/inspections.test");
@@ -172,6 +177,11 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("hasPlatformType/inspectionData/inspections.test")
         public void testHasPlatformType_inspectionData_Inspections_test() throws Exception {
             runTest("idea/testData/inspections/hasPlatformType/inspectionData/inspections.test");
+        }
+
+        @TestMetadata("incompatibleAPI/inspectionData/inspections.test")
+        public void testIncompatibleAPI_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/incompatibleAPI/inspectionData/inspections.test");
         }
 
         @TestMetadata("javaCollectionsStaticMethodOnImmutableList/inspectionData/inspections.test")

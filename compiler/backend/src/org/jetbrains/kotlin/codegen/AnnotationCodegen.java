@@ -228,6 +228,8 @@ public abstract class AnnotationCodegen {
         annotationTargetMap.put(KotlinTarget.PROPERTY_SETTER, ElementType.METHOD);
         annotationTargetMap.put(KotlinTarget.FIELD, ElementType.FIELD);
         annotationTargetMap.put(KotlinTarget.VALUE_PARAMETER, ElementType.PARAMETER);
+        annotationTargetMap.put(KotlinTarget.TYPE_PARAMETER, ElementType.TYPE_PARAMETER);
+        annotationTargetMap.put(KotlinTarget.TYPE, ElementType.TYPE_USE);
     }
 
     private void generateTargetAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
@@ -297,6 +299,10 @@ public abstract class AnnotationCodegen {
         assert classDescriptor != null : "Annotation descriptor has no class: " + annotationDescriptor;
         RetentionPolicy rp = getRetentionPolicy(classDescriptor);
         if (rp == RetentionPolicy.SOURCE && !typeMapper.getClassBuilderMode().generateSourceRetentionAnnotations) {
+            return null;
+        }
+
+        if (classDescriptor.isExpect()) {
             return null;
         }
 
@@ -399,6 +405,26 @@ public abstract class AnnotationCodegen {
             public Void visitKClassValue(KClassValue value, Void data) {
                 annotationVisitor.visit(name, typeMapper.mapType(value.getValue()));
                 return null;
+            }
+
+            @Override
+            public Void visitUByteValue(UByteValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitUShortValue(UShortValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitUIntValue(UIntValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitULongValue(ULongValue value, Void data) {
+                return visitSimpleValue(value);
             }
 
             private Void visitSimpleValue(ConstantValue<?> value) {

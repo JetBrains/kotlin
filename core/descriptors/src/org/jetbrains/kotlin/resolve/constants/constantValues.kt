@@ -40,6 +40,7 @@ abstract class ConstantValue<out T>(open val value: T) {
 }
 
 abstract class IntegerValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
+abstract class UnsignedValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
 
 class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<AnnotationDescriptor>(value) {
     override fun getType(module: ModuleDescriptor): KotlinType = value.type
@@ -188,4 +189,48 @@ class StringValue(value: String) : ConstantValue<String>(value) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitStringValue(this, data)
 
     override fun toString() = "\"$value\""
+}
+
+class UByteValue(byteValue: Byte) : UnsignedValueConstant<Byte>(byteValue) {
+    override fun getType(module: ModuleDescriptor): KotlinType {
+        return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uByte)?.defaultType
+                ?: ErrorUtils.createErrorType("Unsigned type UByte not found")
+    }
+
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitUByteValue(this, data)
+
+    override fun toString() = "$value.toUByte()"
+}
+
+class UShortValue(shortValue: Short) : UnsignedValueConstant<Short>(shortValue) {
+    override fun getType(module: ModuleDescriptor): KotlinType {
+        return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uShort)?.defaultType
+                ?: ErrorUtils.createErrorType("Unsigned type UByte not found")
+    }
+
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitUShortValue(this, data)
+
+    override fun toString() = "$value.toUShort()"
+}
+
+class UIntValue(intValue: Int) : UnsignedValueConstant<Int>(intValue) {
+    override fun getType(module: ModuleDescriptor): KotlinType {
+        return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt)?.defaultType
+                ?: ErrorUtils.createErrorType("Unsigned type UByte not found")
+    }
+
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitUIntValue(this, data)
+
+    override fun toString() = "$value.toUInt()"
+}
+
+class ULongValue(longValue: Long) : UnsignedValueConstant<Long>(longValue) {
+    override fun getType(module: ModuleDescriptor): KotlinType {
+        return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uLong)?.defaultType
+                ?: ErrorUtils.createErrorType("Unsigned type UByte not found")
+    }
+
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitULongValue(this, data)
+
+    override fun toString() = "$value.toULong()"
 }

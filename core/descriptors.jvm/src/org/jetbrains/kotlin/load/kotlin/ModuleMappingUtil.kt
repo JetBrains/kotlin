@@ -16,7 +16,6 @@ fun ModuleMapping.Companion.loadModuleMapping(
     loadModuleMapping(
         bytes,
         debugName,
-        { version -> JvmMetadataVersion(*version).isCompatible() },
         configuration.skipMetadataVersionCheck,
         configuration.isJvmPackageNameSupported
     )

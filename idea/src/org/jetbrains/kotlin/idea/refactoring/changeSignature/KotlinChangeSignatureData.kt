@@ -60,7 +60,7 @@ class KotlinChangeSignatureData(
                     val jetParameter = valueParameters?.get(parameterDescriptor.index)
                     val parameterType = parameterDescriptor.type
                     val parameterTypeText = jetParameter?.typeReference?.text
-                                            ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(parameterType)
+                                            ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(parameterType)
                     KotlinParameterInfo(
                             callableDescriptor = baseDescriptor,
                             originalIndex = parameterDescriptor.index,
@@ -76,7 +76,7 @@ class KotlinChangeSignatureData(
         val receiverType = baseDescriptor.extensionReceiverParameter?.type ?: return null
         val receiverName = suggestReceiverNames(baseDeclaration.project, baseDescriptor).first()
         val receiverTypeText = (baseDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.text
-                               ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)
+                               ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(receiverType)
         return KotlinParameterInfo(callableDescriptor = baseDescriptor,
                                    name = receiverName,
                                    originalTypeInfo = KotlinTypeInfo(false, receiverType, receiverTypeText))

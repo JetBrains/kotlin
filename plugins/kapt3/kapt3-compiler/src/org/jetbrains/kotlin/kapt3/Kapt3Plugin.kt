@@ -226,10 +226,13 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
                                ?: PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
         val logger = KaptLogger(isVerbose, messageCollector)
 
+        fun abortAnalysis() = AnalysisHandlerExtension.registerExtension(project, AbortAnalysisHandlerExtension())
+
         try {
             Class.forName(JAVAC_CONTEXT_CLASS)
         } catch (e: ClassNotFoundException) {
             logger.error("'$JAVAC_CONTEXT_CLASS' class can't be found ('tools.jar' is absent in the plugin classpath). Kapt won't work.")
+            abortAnalysis()
             return
         }
 
@@ -244,6 +247,9 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         if (apClasspath.isEmpty()) {
             // Skip annotation processing if no annotation processors were provided
+            if (aptMode != AptMode.WITH_COMPILATION) {
+                abortAnalysis()
+            }
             return
         }
 
@@ -258,7 +264,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
                 val moduleName = configuration.get(CommonConfigurationKeys.MODULE_NAME)
                                  ?: configuration.get(JVMConfigurationKeys.MODULES).orEmpty().joinToString()
                 logger.warn("$nonExistentOptionName is not specified for $moduleName, skipping annotation processing")
-                AnalysisHandlerExtension.registerExtension(project, AbortAnalysisHandlerExtension())
+                abortAnalysis()
             }
             return
         }

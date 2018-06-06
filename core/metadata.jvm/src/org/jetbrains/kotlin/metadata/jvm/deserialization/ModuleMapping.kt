@@ -33,7 +33,6 @@ class ModuleMapping private constructor(
         fun loadModuleMapping(
             bytes: ByteArray?,
             debugName: String,
-            isVersionCompatible: (IntArray) -> Boolean,
             skipMetadataVersionCheck: Boolean,
             isJvmPackageNameSupported: Boolean
         ): ModuleMapping {
@@ -50,7 +49,7 @@ class ModuleMapping private constructor(
                 return CORRUPTED
             }
 
-            if (skipMetadataVersionCheck || isVersionCompatible(versionNumber)) {
+            if (skipMetadataVersionCheck || JvmMetadataVersion(*versionNumber).isCompatible()) {
                 val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream) ?: return EMPTY
                 val result = linkedMapOf<String, PackageParts>()
 

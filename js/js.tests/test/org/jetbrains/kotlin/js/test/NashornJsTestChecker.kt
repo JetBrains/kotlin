@@ -30,7 +30,7 @@ fun ScriptEngine.runTestFunction(
             when {
                 withModuleSystem ->
                     eval(BasicBoxTest.Companion.KOTLIN_TEST_INTERNAL + ".require('" + testModuleName!! + "')")
-                testModuleName == null ->
+                testModuleName === null ->
                     eval("this")
                 else ->
                     get(testModuleName)

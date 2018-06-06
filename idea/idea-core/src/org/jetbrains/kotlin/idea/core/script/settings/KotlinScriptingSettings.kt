@@ -19,7 +19,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
 class KotlinScriptingSettings : PersistentStateComponent<KotlinScriptingSettings> {
     var isAutoReloadEnabled = false
 
-    override fun loadState(element: KotlinScriptingSettings) {
+    override fun loadState(state: KotlinScriptingSettings) {
         XmlSerializerUtil.copyBean(state, this)
     }
 

@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
-import org.jetbrains.kotlin.idea.caches.resolve.LightClassLazinessChecker.Tracker.Level.*
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext
+import org.jetbrains.kotlin.idea.caches.resolve.LightClassLazinessChecker.Tracker.Level.*
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -251,21 +251,35 @@ object LightClassLazinessChecker {
         }.map {
             (fqName, clsAnnotations) ->
 
-            val lightAnnotations = (modifierListOwner as? PsiModifierListOwner)?.modifierList?.annotations?.filter { it.qualifiedName == fqName }.orEmpty()
+            val annotations = (modifierListOwner as? PsiModifierListOwner)?.modifierList?.annotations
+            val lightAnnotations = annotations?.filter { it.qualifiedName == fqName }.orEmpty()
             if (fqName != Nullable::class.java.name && fqName != NotNull::class.java.name) {
                 assertEquals(clsAnnotations.size, lightAnnotations.size, "Missing $fqName annotation")
             }
             else {
                 // having duplicating nullability annotations is fine
                 // see KtLightNullabilityAnnotation
-                assertTrue(lightAnnotations.isNotEmpty(), "Missing $fqName annotation")
+                assertTrue(
+                    lightAnnotations.isNotEmpty(),
+                    "Missing $fqName annotation in '${modifierListOwner}' have only ${annotations?.joinToString(
+                        ", ",
+                        "[",
+                        "]"
+                    ) { it.toString() }}"
+                )
             }
             clsAnnotations.zip(lightAnnotations).forEach {
                 (clsAnnotation, lightAnnotation) ->
-                assertNotNull(lightAnnotation!!.nameReferenceElement)
+                if (lightAnnotation !is KtLightNullabilityAnnotation)
+                    assertNotNull(
+                        lightAnnotation!!.nameReferenceElement,
+                        "nameReferenceElement should be not null for $lightAnnotation of ${lightAnnotation.javaClass}"
+                    )
                 if (lightAnnotation is KtLightAbstractAnnotation) {
                     assertEquals(clsAnnotation.values(), lightAnnotation.values())
-                    assertEquals(clsAnnotation, lightAnnotation.clsDelegate)
+                    withAllowedAnnotationsClsDelegate {
+                        assertEquals(clsAnnotation, lightAnnotation.clsDelegate)
+                    }
                 }
             }
         }

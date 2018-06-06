@@ -3,50 +3,52 @@ MODULE_FRAGMENT name:<test-module>
     CLASS IR_EXTERNAL_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL visibility:public flags:
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:JEnum flags:
       superClasses:
-        UNBOUND: class Enum<E : kotlin.Enum<E>> : kotlin.Comparable<E>, java.io.Serializable
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:JEnum flags:primary
       ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:ONE
       ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:THREE
       ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:TWO
       FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<JEnum!>) returnType:Any flags:
         overridden:
-          UNBOUND: fun clone(): kotlin.Any
+          FUN IR_EXTERNAL_DECLARATION_STUB name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E>) returnType:Any flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Enum<JEnum!> flags:
       FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<JEnum!>) returnType:Unit flags:
         overridden:
-          UNBOUND: fun finalize(): kotlin.Unit
+          FUN IR_EXTERNAL_DECLARATION_STUB name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<E>) returnType:Unit flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Enum<JEnum!> flags:
       FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<JEnum!>) returnType:(java.lang.Class<(JEnum..JEnum?)>..java.lang.Class<(JEnum..JEnum?)>?) flags:
         overridden:
-          UNBOUND: fun getDeclaringClass(): java.lang.Class<E!>!
+          FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:(java.lang.Class<(E..E?)>..java.lang.Class<(E..E?)>?) flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Enum<JEnum!> flags:
       FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<JEnum!>, other:JEnum!) returnType:Int flags:
         overridden:
-          UNBOUND: fun compareTo(other: E): kotlin.Int
+          FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<E>, other:E) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Enum<JEnum!> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:JEnum! flags:
       FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<JEnum!>, other:kotlin.Any?) returnType:Boolean flags:
         overridden:
-          UNBOUND: fun equals(other: kotlin.Any?): kotlin.Boolean
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<E>, other:kotlin.Any?) returnType:Boolean flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Enum<JEnum!> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<JEnum!>) returnType:Int flags:
         overridden:
-          UNBOUND: fun hashCode(): kotlin.Int
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Enum<JEnum!> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:name type:kotlin.String visibility:public modality:FINAL flags:val
         FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<JEnum!>) returnType:String flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:name type:kotlin.String visibility:public modality:FINAL flags:val
           overridden:
-            UNBOUND: fun <get-name>(): kotlin.String
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:String flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Enum<JEnum!> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ordinal type:kotlin.Int visibility:public modality:FINAL flags:val
         FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<JEnum!>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ordinal type:kotlin.Int visibility:public modality:FINAL flags:val
           overridden:
-            UNBOUND: fun <get-ordinal>(): kotlin.Int
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:Int flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Enum<JEnum!> flags:
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<JEnum!>) returnType:String flags:
         overridden:
-          UNBOUND: fun toString(): kotlin.String
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<E>) returnType:String flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Enum<JEnum!> flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:JEnum flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:kotlin.String flags:

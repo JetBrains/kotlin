@@ -4,10 +4,12 @@ FILE fqName:<root> fileName:/field.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testSimple> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:testSimple type:kotlin.Int visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testSimple>(): Int'
           GET_FIELD 'testSimple: Int' type=kotlin.Int origin=null
     FUN name:<set-testSimple> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:testSimple type:kotlin.Int visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'testSimple: Int' type=kotlin.Unit origin=EQ
@@ -17,10 +19,12 @@ FILE fqName:<root> fileName:/field.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testAugmented> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:testAugmented type:kotlin.Int visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testAugmented>(): Int'
           GET_FIELD 'testAugmented: Int' type=kotlin.Int origin=null
     FUN name:<set-testAugmented> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:testAugmented type:kotlin.Int visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'testAugmented: Int' type=kotlin.Unit origin=PLUSEQ

@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.UnwrappedType
 
 
 abstract class ResolutionPart {
@@ -176,6 +176,17 @@ class MutableResolvedCallAtom(
     override lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     override lateinit var substitutor: FreshVariableNewTypeSubstitutor
     lateinit var argumentToCandidateParameter: Map<KotlinCallArgument, ValueParameterDescriptor>
+    private var samAdapterMap: HashMap<KotlinCallArgument, SamConversionDescription>? = null
+
+    override val argumentsWithConversion: Map<KotlinCallArgument, SamConversionDescription>
+        get() = samAdapterMap ?: emptyMap()
+
+    fun registerArgumentWithSamConversion(argument: KotlinCallArgument, samConversionDescription: SamConversionDescription) {
+        if (samAdapterMap == null)
+            samAdapterMap = hashMapOf()
+
+        samAdapterMap!![argument] = samConversionDescription
+    }
 
     override public fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>) {
         super.setAnalyzedResults(subResolvedAtoms)

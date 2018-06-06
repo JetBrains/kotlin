@@ -13,11 +13,14 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
           $this: VALUE_PARAMETER name:<this> type:outer.ALocal flags:
         PROPERTY name:aval type:kotlin.Int visibility:public modality:ABSTRACT flags:val
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aval> visibility:public modality:ABSTRACT <> ($this:outer.ALocal) returnType:Int flags:
+            correspondingProperty: PROPERTY name:aval type:kotlin.Int visibility:public modality:ABSTRACT flags:val
             $this: VALUE_PARAMETER name:<this> type:outer.ALocal flags:
         PROPERTY name:avar type:kotlin.Int visibility:public modality:ABSTRACT flags:var
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-avar> visibility:public modality:ABSTRACT <> ($this:outer.ALocal) returnType:Int flags:
+            correspondingProperty: PROPERTY name:avar type:kotlin.Int visibility:public modality:ABSTRACT flags:var
             $this: VALUE_PARAMETER name:<this> type:outer.ALocal flags:
           FUN DEFAULT_PROPERTY_ACCESSOR name:<set-avar> visibility:public modality:ABSTRACT <> ($this:outer.ALocal, <set-?>:kotlin.Int) returnType:Unit flags:
+            correspondingProperty: PROPERTY name:avar type:kotlin.Int visibility:public modality:ABSTRACT flags:var
             $this: VALUE_PARAMETER name:<this> type:outer.ALocal flags:
             VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -51,6 +54,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=1
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aval> visibility:public modality:OPEN <> ($this:outer.Local) returnType:Int flags:
+            correspondingProperty: PROPERTY name:aval type:kotlin.Int visibility:public modality:OPEN flags:val
             overridden:
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aval> visibility:public modality:ABSTRACT <> ($this:outer.ALocal) returnType:Int flags:
             $this: VALUE_PARAMETER name:<this> type:outer.Local flags:
@@ -63,6 +67,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=2
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-avar> visibility:public modality:OPEN <> ($this:outer.Local) returnType:Int flags:
+            correspondingProperty: PROPERTY name:avar type:kotlin.Int visibility:public modality:OPEN flags:var
             overridden:
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-avar> visibility:public modality:ABSTRACT <> ($this:outer.ALocal) returnType:Int flags:
             $this: VALUE_PARAMETER name:<this> type:outer.Local flags:
@@ -71,6 +76,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
                 GET_FIELD 'avar: Int' type=kotlin.Int origin=null
                   receiver: GET_VAR 'this@Local: Local' type=outer.Local origin=null
           FUN DEFAULT_PROPERTY_ACCESSOR name:<set-avar> visibility:public modality:OPEN <> ($this:outer.Local, <set-?>:kotlin.Int) returnType:Unit flags:
+            correspondingProperty: PROPERTY name:avar type:kotlin.Int visibility:public modality:OPEN flags:var
             overridden:
               FUN DEFAULT_PROPERTY_ACCESSOR name:<set-avar> visibility:public modality:ABSTRACT <> ($this:outer.ALocal, <set-?>:kotlin.Int) returnType:Unit flags:
             $this: VALUE_PARAMETER name:<this> type:outer.Local flags:

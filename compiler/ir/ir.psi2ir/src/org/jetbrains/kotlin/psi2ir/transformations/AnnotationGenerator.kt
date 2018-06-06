@@ -39,15 +39,22 @@ class AnnotationGenerator(
 
     constructor(context: GeneratorContext) : this(context.moduleDescriptor, context.symbolTable)
 
-    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, this)
+    private val scopedTypeParameterResolver = ScopedTypeParametersResolver()
+    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, this, scopedTypeParameterResolver)
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
 
     override fun visitDeclaration(declaration: IrDeclaration) {
-        visitElement(declaration)
+        if (declaration is IrTypeParametersContainer) {
+            scopedTypeParameterResolver.enterTypeParameterScope(declaration)
+        }
         generateAnnotationsForDeclaration(declaration)
+        visitElement(declaration)
+        if (declaration is IrTypeParametersContainer) {
+            scopedTypeParameterResolver.leaveTypeParameterScope()
+        }
     }
 
     override fun visitValueParameter(declaration: IrValueParameter) {
@@ -81,15 +88,17 @@ class AnnotationGenerator(
 
     fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor): IrCall {
         val annotationType = annotationDescriptor.type
-        val annotationClassDescriptor = annotationType.constructor.declarationDescriptor
+        val annotationClassDescriptor = annotationType.constructor.declarationDescriptor as? ClassDescriptor
                 ?: throw AssertionError("No declaration descriptor for annotation $annotationDescriptor")
         assert(DescriptorUtils.isAnnotationClass(annotationClassDescriptor)) {
             "Annotation class expected: $annotationClassDescriptor"
         }
 
         val primaryConstructorDescriptor =
-            annotationClassDescriptor.safeAs<ClassDescriptor>()?.unsubstitutedPrimaryConstructor
-                    ?: throw AssertionError("No primary constructor for annotation class $annotationClassDescriptor")
+            annotationClassDescriptor.unsubstitutedPrimaryConstructor
+                    ?: annotationClassDescriptor.constructors.singleOrNull()
+                    ?: throw AssertionError("No constructor for annotation class $annotationClassDescriptor")
+
         val primaryConstructorSymbol = symbolTable.referenceConstructor(primaryConstructorDescriptor)
 
         val psi = annotationDescriptor.source.safeAs<PsiSourceElement>()?.psi

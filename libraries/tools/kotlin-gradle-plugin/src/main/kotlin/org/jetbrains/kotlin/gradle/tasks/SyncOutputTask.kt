@@ -20,8 +20,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.api.tasks.incremental.InputFileDetails
-import com.intellij.openapi.util.io.FileUtil.isAncestor
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -175,7 +175,7 @@ internal open class SyncOutputTask : DefaultTask() {
     }
 
     private fun File.siblingInJavaDir(baseDir: File? = null): File {
-        val base = baseDir ?: classesDirs.find { isAncestor(it, this, true) }!!
+        val base = baseDir ?: classesDirs.find { it.isParentOf(this, strict = true) }!!
         return File(javaOutputDir, this.relativeTo(base).path)
     }
 }

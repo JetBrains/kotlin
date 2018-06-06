@@ -31,6 +31,9 @@ public final class kotlin/Experimental$Level : java/lang/Enum {
 	public static fun values ()[Lkotlin/Experimental$Level;
 }
 
+public abstract interface annotation class kotlin/ExperimentalMultiplatform : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ExtensionFunctionType : java/lang/annotation/Annotation {
 }
 
@@ -94,6 +97,9 @@ public final class kotlin/NotImplementedError : java/lang/Error {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract interface annotation class kotlin/OptionalExpectation : java/lang/annotation/Annotation {
 }
 
 public final class kotlin/Pair : java/io/Serializable {

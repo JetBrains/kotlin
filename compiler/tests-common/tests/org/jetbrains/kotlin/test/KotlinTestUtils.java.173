@@ -406,10 +406,15 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static File tmpDirForTest(TestCase test) throws IOException {
-        File answer = normalizeFile(FileUtil.createTempDirectory(test.getClass().getSimpleName(), test.getName()));
+    public static File tmpDirForTest(@NotNull String testClassName, @NotNull String testName) throws IOException {
+        File answer = normalizeFile(FileUtil.createTempDirectory(testClassName, testName));
         deleteOnShutdown(answer);
         return answer;
+    }
+
+    @NotNull
+    public static File tmpDirForTest(TestCase test) throws IOException {
+        return tmpDirForTest(test.getClass().getSimpleName(), test.getName());
     }
 
     @NotNull
@@ -570,6 +575,9 @@ public class KotlinTestUtils {
 
         if (configurationKind.getWithCoroutines()) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.coroutinesJarForTests());
+        }
+        if (configurationKind.getWithUnsignedTypes()) {
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.unsignedTypesJarForTests());
         }
         if (configurationKind.getWithRuntime()) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.runtimeJarForTests());

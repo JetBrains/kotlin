@@ -170,7 +170,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             propertyDescriptor.setter?.let { generateFakeOverrideFunction(it, ktElement) }
         )
 
-    private fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement): IrFunction =
+    private fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement): IrSimpleFunction =
         FunctionGenerator(this).generateFakeOverrideFunction(functionDescriptor, ktElement)
 }
 

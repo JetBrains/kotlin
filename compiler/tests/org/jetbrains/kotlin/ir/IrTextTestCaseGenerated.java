@@ -326,6 +326,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/declarations/annotations/arrayInAnnotationArguments.kt");
             }
 
+            @TestMetadata("classLiteralInAnnotation.kt")
+            public void testClassLiteralInAnnotation() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/classLiteralInAnnotation.kt");
+            }
+
             @TestMetadata("classesWithAnnotations.kt")
             public void testClassesWithAnnotations() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/classesWithAnnotations.kt");
@@ -374,6 +379,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             @TestMetadata("functionsWithAnnotations.kt")
             public void testFunctionsWithAnnotations() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/functionsWithAnnotations.kt");
+            }
+
+            @TestMetadata("javaAnnotation.kt")
+            public void testJavaAnnotation() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/javaAnnotation.kt");
             }
 
             @TestMetadata("localDelegatedPropertiesWithAnnotations.kt")
@@ -862,6 +872,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/implicitCastOnPlatformType.kt");
         }
 
+        @TestMetadata("implicitCastToNonNull.kt")
+        public void testImplicitCastToNonNull() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/implicitCastToNonNull.kt");
+        }
+
         @TestMetadata("implicitCastToTypeParameter.kt")
         public void testImplicitCastToTypeParameter() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/implicitCastToTypeParameter.kt");
@@ -1254,6 +1269,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("integerCoercionToT.kt")
         public void testIntegerCoercionToT() throws Exception {
             runTest("compiler/testData/ir/irText/regressions/integerCoercionToT.kt");
+        }
+
+        @TestMetadata("kt24114.kt")
+        public void testKt24114() throws Exception {
+            runTest("compiler/testData/ir/irText/regressions/kt24114.kt");
         }
 
         @TestMetadata("typeAliasCtorForGenericClass.kt")

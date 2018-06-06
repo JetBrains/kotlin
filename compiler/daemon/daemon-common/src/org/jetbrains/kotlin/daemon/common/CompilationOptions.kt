@@ -60,13 +60,13 @@ class IncrementalCompilationOptions(
         reportSeverity: Int,
         /** @See [CompilationResultCategory]] */
         requestedCompilationResults: Array<Int>,
-        val resultDifferenceFile: File? = null,
-        val friendDifferenceFile: File? = null,
         val usePreciseJavaTracking: Boolean,
         /**
          * Directories that should be cleared when IC decides to rebuild
          */
-        val localStateDirs: List<File>
+        val localStateDirs: List<File>,
+        val multiModuleICSettings: MultiModuleICSettings,
+        val modulesInfo: IncrementalModuleInfo
 ) : CompilationOptions(compilerMode, targetPlatform, reportCategories, reportSeverity, requestedCompilationResults) {
     companion object {
         const val serialVersionUID: Long = 0
@@ -81,11 +81,19 @@ class IncrementalCompilationOptions(
                "workingDir=$workingDir, " +
                "customCacheVersionFileName='$customCacheVersionFileName', " +
                "customCacheVersion=$customCacheVersion, " +
-               "resultDifferenceFile=$resultDifferenceFile, " +
-               "friendDifferenceFile=$friendDifferenceFile, " +
+               "multiModuleICSettings=$multiModuleICSettings, " +
                "usePreciseJavaTracking=$usePreciseJavaTracking" +
                "localStateDirs=$localStateDirs" +
                ")"
+    }
+}
+
+data class MultiModuleICSettings(
+    val buildHistoryFile: File,
+    val useModuleDetection: Boolean
+) : Serializable {
+    companion object {
+        const val serialVersionUID: Long = 0
     }
 }
 

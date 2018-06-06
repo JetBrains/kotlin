@@ -449,6 +449,8 @@ public class KtPsiUtil {
             return false;
         }
 
+        if (parentElement instanceof KtCollectionLiteralExpression) return false;
+
         if (innerExpression instanceof KtIfExpression) {
             if (parentElement instanceof KtQualifiedExpression) return true;
 

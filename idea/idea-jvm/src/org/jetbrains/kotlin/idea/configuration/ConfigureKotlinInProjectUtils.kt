@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.quickfix.KotlinAddRequiredModuleFix
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.findFirstPsiJavaModule
@@ -59,6 +60,14 @@ val EAP_REPOSITORY = RepositoryDescription(
         "https://bintray.com/kotlin/kotlin-eap/kotlin/",
         isSnapshot = false)
 
+fun devRepository(version: String) = RepositoryDescription(
+        "teamcity.kotlin.dev",
+        "Teamcity Repository of Kotlin Development Builds",
+        "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:$version,branch:default:any/artifacts/content/maven/",
+        null,
+        isSnapshot = false
+)
+
 val MAVEN_CENTRAL = "mavenCentral()"
 
 val JCENTER = "jcenter()"
@@ -84,6 +93,7 @@ fun RepositoryDescription.toKotlinRepositorySnippet() = "maven {\n    setUrl(\"$
 fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
     isSnapshot(version) -> SNAPSHOT_REPOSITORY
     isEap(version) -> EAP_REPOSITORY
+    isDev(version) -> devRepository(version)
     else -> null
 }
 
@@ -270,6 +280,10 @@ fun isEap(version: String): Boolean {
     return version.contains("rc") || version.contains("eap") || version.contains("-M")
 }
 
+fun isDev(version: String): Boolean {
+    return version.contains("dev")
+}
+
 private class LibraryKindSearchScope(val module: Module,
                                      val baseScope: GlobalSearchScope,
                                      val libraryKind: PersistentLibraryKind<*>
@@ -278,7 +292,7 @@ private class LibraryKindSearchScope(val module: Module,
         if (!super.contains(file)) return false
         val orderEntry = ModuleRootManager.getInstance(module).fileIndex.getOrderEntryForFile(file)
         if (orderEntry is LibraryOrderEntry) {
-            return (orderEntry.library as LibraryEx).kind == libraryKind
+            return (orderEntry.library as LibraryEx).effectiveKind(module.project) == libraryKind
         }
         return true
     }

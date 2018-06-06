@@ -34,21 +34,20 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid(), ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
-        if (!DescriptorUtils.isInterface(irClass.descriptor)) {
-            return
-        }
+        if (!irClass.isInterface) return
 
         val interfaceDescriptor = irClass.descriptor
         val defaultImplsDescriptor = createDefaultImplsClassDescriptor(interfaceDescriptor)
@@ -60,11 +59,14 @@ class InterfaceLowering(val state: GenerationState) : IrElementTransformerVoid()
 
         irClass.declarations.filterIsInstance<IrFunction>().forEach {
             val descriptor = it.descriptor
-            if (descriptor.modality != Modality.ABSTRACT) {
+            if (it.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER) {
+                members.add(it) //just copy $default to DefaultImpls
+            } else if (descriptor.modality != Modality.ABSTRACT) {
                 val functionDescriptorImpl =
                     createDefaultImplFunDescriptor(defaultImplsDescriptor, descriptor, interfaceDescriptor, state.typeMapper)
-                members.add(functionDescriptorImpl.createFunctionAndMapVariables(it))
+                members.add(functionDescriptorImpl.createFunctionAndMapVariables(it, it.visibility))
                 it.body = null
+                //TODO reset modality to abstract
             }
         }
 
@@ -142,8 +144,15 @@ internal fun createStaticFunctionWithReceivers(
     return newFunction
 }
 
-internal fun FunctionDescriptor.createFunctionAndMapVariables(oldFunction: IrFunction) =
-    IrFunctionImpl(oldFunction.startOffset, oldFunction.endOffset, oldFunction.origin, this, oldFunction.body).apply {
+internal fun FunctionDescriptor.createFunctionAndMapVariables(
+    oldFunction: IrFunction,
+    visibility: Visibility
+) =
+    IrFunctionImpl(
+        oldFunction.startOffset, oldFunction.endOffset, oldFunction.origin, IrSimpleFunctionSymbolImpl(this),
+        visibility = visibility
+    ).apply {
+        body = oldFunction.body
         createParameterDeclarations()
         val mapping: Map<ValueDescriptor, IrValueParameter> =
             (

@@ -6,8 +6,10 @@ configurations {
 
 dependencies {
     compile project(':kotlin-stdlib')
-    compile 'org.ow2.asm:asm-debug-all:6.0_BETA'
-    compile 'com.google.code.gson:gson:2.6.2'
+    compile project(':kotlinx-metadata')
+    compile project(':kotlinx-metadata-jvm')
+    compile 'org.ow2.asm:asm:6.0'
+    compile 'org.ow2.asm:asm-tree:6.0'
     testCompile project(':kotlin-test:kotlin-test-junit')
 
     testArtifacts project(':kotlin-stdlib')
@@ -28,23 +30,17 @@ sourceSets {
     }
 }
 
-def testCasesDeclarationsDump = "${buildDir}/cases-declarations.json".toString()
-
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ["-Xdump-declarations-to=$testCasesDeclarationsDump", "-Xnormalize-constructor-calls=enable"]
+        freeCompilerArgs = ["-Xnormalize-constructor-calls=enable"]
     }
 }
 
 test {
-    dependsOn cleanCompileTestKotlin
     dependsOn configurations.testArtifacts
 
     systemProperty 'overwrite.output', System.getProperty("overwrite.output", "false")
     systemProperty 'kotlinVersion', project.version
     systemProperty 'testCasesClassesDirs', sourceSets.test.output.classesDirs.asPath
-    systemProperty 'testCasesDeclarations', testCasesDeclarationsDump
     jvmArgs '-ea'
-
-    ignoreFailures = System.getenv("kotlin_build_ignore_test_failures") == 'yes'
 }

@@ -1,1 +1,1 @@
-<not generated>
+// NOT_GENERATED

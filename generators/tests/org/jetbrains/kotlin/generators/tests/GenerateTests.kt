@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.android.quickfix.AbstractAndroidQuickFixMultiFileTes
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
-import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.checkers.AbstractJavaAgainstKotlinBinariesCheckerTest
 import org.jetbrains.kotlin.checkers.AbstractJavaAgainstKotlinSourceCheckerTest
 import org.jetbrains.kotlin.checkers.AbstractJsCheckerTest
@@ -52,8 +51,8 @@ import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeCompiledLightClassTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeLightClassTest
-import org.jetbrains.kotlin.idea.caches.resolve.AbstractMultiModuleHighlightingTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractMultiModuleLineMarkerTest
+import org.jetbrains.kotlin.idea.caches.resolve.AbstractMultiPlatformHighlightingTest
 import org.jetbrains.kotlin.idea.codeInsight.*
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractCodeInsightActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateHashCodeAndEqualsActionTest
@@ -644,7 +643,7 @@ fun main(args: Array<String>) {
             model("multiFileHighlighting", recursive = false)
         }
 
-        testClass<AbstractMultiModuleHighlightingTest> {
+        testClass<AbstractMultiPlatformHighlightingTest> {
             model("multiModuleHighlighting/multiplatform/", recursive = false, extension = null)
         }
 
@@ -740,6 +739,7 @@ fun main(args: Array<String>) {
 
         testClass<AbstractScriptConfigurationHighlightingTest> {
             model("script/definition/highlighting", extension = null, recursive = false)
+            model("script/definition/complex", extension = null, recursive = false, testMethod = "doComplexTest")
         }
 
         testClass<AbstractScriptConfigurationNavigationTest> {
@@ -1013,12 +1013,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractParcelBytecodeListingTest> {
             model("parcel/codegen")
-        }
-    }
-
-    testGroup("plugins/annotation-collector/test", "plugins/annotation-collector/testData") {
-        testClass<AbstractAnnotationProcessorBoxTest> {
-            model("collectToFile", recursive = false, extension = null)
         }
     }
 

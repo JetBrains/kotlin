@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
+import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.descriptors.DefaultImplsClassDescriptor
 import org.jetbrains.kotlin.backend.jvm.descriptors.DefaultImplsClassDescriptorImpl
 import org.jetbrains.kotlin.codegen.isDefinitelyNotDefaultImplsMethod
@@ -36,19 +37,15 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 
 class InterfaceDelegationLowering(val state: GenerationState) : IrElementTransformerVoid(), ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
-        val descriptor = irClass.descriptor
-        if (DescriptorUtils.isInterface(descriptor)) {
-            return
-        }
+        if (irClass.isJvmInterface) return
 
         irClass.transformChildrenVoid(this)
-        generateInterfaceMethods(irClass, descriptor)
+        generateInterfaceMethods(irClass, irClass.descriptor)
     }
 
 

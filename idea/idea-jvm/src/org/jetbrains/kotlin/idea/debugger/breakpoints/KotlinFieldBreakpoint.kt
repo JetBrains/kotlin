@@ -96,25 +96,24 @@ class KotlinFieldBreakpoint(
         return null
     }
 
-    override fun reload(psiFile: PsiFile?) {
-        val property = getProperty(sourcePosition)
-        if (property != null) {
-            setFieldName(property.name!!)
+    override fun reload() {
+        super.reload()
 
-            if (property is KtProperty && property.isTopLevel) {
-                properties.myClassName = JvmFileClassUtil.getFileClassInfoNoResolve(property.getContainingKtFile()).fileClassFqName.asString()
-            }
-            else {
-                val ktClass: KtClassOrObject? = PsiTreeUtil.getParentOfType(property, KtClassOrObject::class.java)
-                if (ktClass is KtClassOrObject) {
-                    val fqName = ktClass.fqName
-                    if (fqName != null) {
-                        properties.myClassName = fqName.asString()
-                    }
+        val property = getProperty(sourcePosition) ?: return
+        setFieldName(property.name!!)
+
+        if (property is KtProperty && property.isTopLevel) {
+            properties.myClassName = JvmFileClassUtil.getFileClassInfoNoResolve(property.getContainingKtFile()).fileClassFqName.asString()
+        } else {
+            val ktClass: KtClassOrObject? = PsiTreeUtil.getParentOfType(property, KtClassOrObject::class.java)
+            if (ktClass is KtClassOrObject) {
+                val fqName = ktClass.fqName
+                if (fqName != null) {
+                    properties.myClassName = fqName.asString()
                 }
             }
-            isInstanceFiltersEnabled = false
         }
+        isInstanceFiltersEnabled = false
     }
 
     override fun createRequestForPreparedClass(debugProcess: DebugProcessImpl?, refType: ReferenceType?) {

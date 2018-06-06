@@ -61,7 +61,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
 
     companion object {
         val EXPERIMENTAL_FQ_NAME = FqName("kotlin.Experimental")
-        internal val USE_EXPERIMENTAL_FQ_NAME = FqName("kotlin.UseExperimental")
+        val USE_EXPERIMENTAL_FQ_NAME = FqName("kotlin.UseExperimental")
         internal val WAS_EXPERIMENTAL_FQ_NAME = FqName("kotlin.WasExperimental")
         internal val USE_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
         internal val WAS_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
@@ -263,18 +263,6 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             if (!element.isUsageAsAnnotationOrImport() && !element.isUsageAsQualifier()) {
                 context.trace.report(Errors.EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION.on(element))
             }
-        }
-
-        private fun PsiElement.isUsageAsAnnotationOrImport(): Boolean {
-            val parent = parent
-
-            if (parent is KtUserType) {
-                return parent.parent is KtTypeReference &&
-                        parent.parent.parent is KtConstructorCalleeExpression &&
-                        parent.parent.parent.parent is KtAnnotationEntry
-            }
-
-            return parent is KtDotQualifiedExpression && parent.parent is KtImportDirective
         }
 
         private fun PsiElement.isUsageAsQualifier(): Boolean {

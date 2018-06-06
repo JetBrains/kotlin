@@ -30,7 +30,4 @@ interface IrLocalDelegatedProperty : IrDeclaration {
     var delegate: IrVariable
     var getter: IrFunction
     var setter: IrFunction?
-
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.LOCAL_PROPERTY
 }

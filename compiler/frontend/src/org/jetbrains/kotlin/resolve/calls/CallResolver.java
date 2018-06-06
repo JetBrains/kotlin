@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.AnalysisFlag;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
@@ -655,6 +656,7 @@ public class CallResolver {
             @NotNull ResolutionTask<D> resolutionTask,
             @NotNull TracingStrategy tracing
     ) {
+        DataFlowInfo initialInfo = context.dataFlowInfoForArguments.getResultInfo();
         if (context.checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) {
             argumentTypeResolver.analyzeArgumentsAndRecordTypes(context, ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS);
         }
@@ -673,14 +675,32 @@ public class CallResolver {
             }
         }
 
+        OverloadResolutionResultsImpl<D> result;
         if (!(resolutionTask.resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates)) {
             assert resolutionTask.name != null;
-            return newResolutionOldInference.runResolution(context, resolutionTask.name, resolutionTask.resolutionKind, tracing);
+            result = newResolutionOldInference.runResolution(context, resolutionTask.name, resolutionTask.resolutionKind, tracing);
         }
         else {
             assert resolutionTask.givenCandidates != null;
-            return newResolutionOldInference.runResolutionForGivenCandidates(context, tracing, resolutionTask.givenCandidates);
+            result = newResolutionOldInference.runResolutionForGivenCandidates(context, tracing, resolutionTask.givenCandidates);
         }
+
+        // in code like
+        //   assert(a!!.isEmpty())
+        //   a.length
+        // we should ignore data flow info from assert argument, since assertions can be disabled and
+        // thus it will lead to NPE in runtime otherwise
+        if (languageVersionSettings.getFlag(AnalysisFlag.getIgnoreDataFlowInAssert()) && result.isSingleResult()) {
+            D descriptor = result.getResultingDescriptor();
+            if (descriptor.getName().equals(Name.identifier("assert"))) {
+                DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
+                if (declaration instanceof PackageFragmentDescriptor &&
+                    ((PackageFragmentDescriptor) declaration).getFqName().asString().equals("kotlin")) {
+                    context.dataFlowInfoForArguments.updateInfo(context.call.getValueArguments().get(0), initialInfo);
+                }
+            }
+        }
+        return result;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

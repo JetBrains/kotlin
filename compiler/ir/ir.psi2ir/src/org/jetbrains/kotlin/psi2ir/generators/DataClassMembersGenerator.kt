@@ -164,20 +164,18 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                 .let { context.symbolTable.referenceFunction(it) }
 
 
-        private fun getHashCodeFunction(type: KotlinType): IrFunctionSymbol {
+        private fun getHashCodeFunction(type: KotlinType): FunctionDescriptor {
             val typeConstructorDescriptor = type.constructor.declarationDescriptor
             return when (typeConstructorDescriptor) {
-                is ClassDescriptor -> {
-                    if (KotlinBuiltIns.isArrayOrPrimitiveArray(typeConstructorDescriptor)) {
-                        context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
-                    } else {
-                        val hashCodeDescriptor: CallableDescriptor =
-                            typeConstructorDescriptor.findFirstFunction("hashCode") { it.valueParameters.isEmpty() }
-                        context.symbolTable.referenceFunction(hashCodeDescriptor)
-                    }
-                }
+                is ClassDescriptor ->
+                    if (KotlinBuiltIns.isArrayOrPrimitiveArray(typeConstructorDescriptor))
+                        context.irBuiltIns.dataClassArrayMemberHashCodeSymbol.descriptor
+                    else
+                        type.memberScope.findFirstFunction("hashCode") { it.valueParameters.isEmpty() }
+
                 is TypeParameterDescriptor ->
                     getHashCodeFunction(context.builtIns.anyType) // TODO
+
                 else ->
                     throw AssertionError("Unexpected type: $type")
             }
@@ -212,14 +210,17 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
             }
         }
 
-        private fun MemberFunctionBuilder.getHashCodeOf(irValue: IrExpression): IrExpression =
-            irCall(getHashCodeFunction(irValue.type)).apply {
+        private fun MemberFunctionBuilder.getHashCodeOf(irValue: IrExpression): IrExpression {
+            val hashCodeFunctionDescriptor = getHashCodeFunction(irValue.type)
+            val hashCodeFunctionSymbol = declarationGenerator.context.symbolTable.referenceFunction(hashCodeFunctionDescriptor.original)
+            return irCall(hashCodeFunctionSymbol, hashCodeFunctionDescriptor).apply {
                 if (descriptor.dispatchReceiverParameter != null) {
                     dispatchReceiver = irValue
                 } else {
                     putValueArgument(0, irValue)
                 }
             }
+        }
 
         override fun generateToStringMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
             buildMember(function, declaration) {

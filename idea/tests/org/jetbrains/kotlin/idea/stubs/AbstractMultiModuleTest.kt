@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
@@ -101,6 +102,13 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         facetSettings.compilerSettings = CompilerSettings().apply {
             additionalArguments += " -Xmulti-platform"
         }
+    }
+
+    fun Module.enableCoroutines() {
+        createFacet()
+        val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
+        facetSettings.useProjectSettings = false
+        facetSettings.coroutineSupport = LanguageFeature.State.ENABLED
     }
 
     protected fun checkFiles(shouldCheckFile: () -> Boolean = { true }, check: () -> Unit) {

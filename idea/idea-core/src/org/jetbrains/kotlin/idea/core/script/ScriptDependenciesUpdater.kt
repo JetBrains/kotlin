@@ -30,6 +30,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.Alarm
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.script.dependencies.FromFileAttributeScriptDependenciesLoader
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesLoader
 import org.jetbrains.kotlin.psi.KtFile
@@ -64,6 +65,7 @@ class ScriptDependenciesUpdater(
     private fun listenForChangesInScripts() {
         project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
             override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
+                if (file.fileType != KotlinFileType.INSTANCE) return
                 val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
                 val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
 

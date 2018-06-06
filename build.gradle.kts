@@ -12,7 +12,7 @@ import proguard.gradle.ProGuardTask
 buildscript {
     extra["defaultSnapshotVersion"] = "1.2-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.50-dev-880", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.60-dev-170", onlySuccessBootstrap = false))
 
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
@@ -22,7 +22,7 @@ buildscript {
             "https://jcenter.bintray.com/",
             "https://plugins.gradle.org/m2",
             "http://dl.bintray.com/kotlin/kotlinx",
-            "https://repo.gradle.org/gradle/libs-releases-local", // for native-platform
+            "https://repo.gradle.org/gradle/ext-releases-local", // for native-platform
             "https://jetbrains.bintray.com/intellij-third-party-dependencies", // for jflex
             "https://dl.bintray.com/jetbrains/markdown" // for org.jetbrains:markdown
     )
@@ -46,6 +46,15 @@ plugins {
     `build-scan`
     idea
     id("jps-compatible")
+}
+
+pill {
+    excludedDirs(
+        "out",
+        "buildSrc/build",
+        "buildSrc/prepare-deps/android-dx/build",
+        "buildSrc/prepare-deps/intellij-sdk/build"
+    )
 }
 
 buildScan {
@@ -223,6 +232,7 @@ val coreLibProjects = listOf(
         ":kotlin-test:kotlin-test-common",
         ":kotlin-test:kotlin-test-jvm",
         ":kotlin-test:kotlin-test-junit",
+        ":kotlin-test:kotlin-test-junit5",
         ":kotlin-test:kotlin-test-testng",
         ":kotlin-test:kotlin-test-js",
         ":kotlin-reflect"
@@ -387,6 +397,7 @@ tasks {
         (coreLibProjects + listOf(
                 ":kotlin-stdlib:samples",
                 ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
+                ":kotlinx-metadata-jvm",
                 ":tools:binary-compatibility-validator"
         )).forEach {
             dependsOn(it + ":check")
@@ -429,6 +440,10 @@ tasks {
         dependsOn(":compiler:incremental-compilation-impl:test")
     }
 
+    "toolsTest" {
+        dependsOn(":tools:kotlinp:test")
+    }
+
     "examplesTest" {
         dependsOn("dist")
         (project(":examples").subprojects + project(":kotlin-gradle-subplugin-example")).forEach { p ->
@@ -438,6 +453,7 @@ tasks {
 
     "distTest" {
         dependsOn("compilerTest")
+        dependsOn("toolsTest")
         dependsOn("gradlePluginTest")
         dependsOn("examplesTest")
     }
@@ -575,7 +591,6 @@ val cidrPlugin by task<Copy> {
         exclude("lib/android-extensions-ide.jar")
         exclude("lib/android-extensions-compiler.jar")
         exclude("lib/kapt3-idea.jar")
-        exclude("lib/j2k.jar")
         exclude("lib/jps-ide.jar")
         exclude("lib/jps/**")
         exclude("kotlinc/**")

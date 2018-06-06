@@ -218,7 +218,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun getPerformanceManager(): CommonCompilerPerformanceManager = performanceManager
 
     private fun loadPlugins(paths: KotlinPaths?, arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration): ExitCode {
-        val pluginClasspaths = arguments.pluginClasspaths?.toMutableList() ?: ArrayList()
+        var pluginClasspaths: Iterable<String> = arguments.pluginClasspaths?.asIterable() ?: emptyList()
         val pluginOptions = arguments.pluginOptions?.toMutableList() ?: ArrayList()
 
         if (!arguments.disableDefaultScriptingPlugin) {
@@ -235,10 +235,12 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             if (!explicitOrLoadedScriptingPlugin) {
                 val libPath = paths?.libPath?.takeIf { it.exists() } ?: File(".")
                 with(PathUtil) {
-                    val jars = arrayOf(KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR)
-                        .mapNotNull { File(libPath, it).takeIf { it.exists() }?.canonicalPath }
-                    if (jars.size == 3) {
-                        pluginClasspaths.addAll(jars)
+                    val jars = arrayOf(
+                        KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR,
+                        KOTLIN_SCRIPTING_JVM_JAR, KOTLIN_SCRIPTING_MISC_JAR
+                    ).mapNotNull { File(libPath, it).takeIf { it.exists() }?.canonicalPath }
+                    if (jars.size == 4) {
+                        pluginClasspaths = jars + pluginClasspaths
                     }
                 }
             }
@@ -361,6 +363,20 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(
                 JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
                 constructorCallNormalizationMode ?: JVMConstructorCallNormalizationMode.DEFAULT
+            )
+
+            val assertionsMode =
+                JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)
+            if (assertionsMode == null) {
+                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                    ERROR,
+                    "Unknown assertions mode: ${arguments.assertionsMode}, " +
+                            "supported modes: ${JVMAssertionsMode.values().map { it.description }}"
+                )
+            }
+            configuration.put(
+                JVMConfigurationKeys.ASSERTIONS_MODE,
+                assertionsMode ?: JVMAssertionsMode.DEFAULT
             )
 
             configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, arguments.inheritMultifileParts)

@@ -258,11 +258,16 @@ public class AsmUtil {
             return specialCase;
         }
         Visibility visibility = descriptor.getVisibility();
-        Integer defaultMapping = visibilityToAccessFlag.get(visibility);
+        Integer defaultMapping = getVisibilityAccessFlag(visibility);
         if (defaultMapping == null) {
             throw new IllegalStateException(visibility + " is not a valid visibility in backend for " + DescriptorRenderer.DEBUG_TEXT.render(descriptor));
         }
         return defaultMapping;
+    }
+
+    @Nullable
+    public static Integer getVisibilityAccessFlag(Visibility visibility) {
+        return visibilityToAccessFlag.get(visibility);
     }
 
     /*

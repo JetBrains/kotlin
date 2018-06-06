@@ -30,7 +30,7 @@ abstract class AbstractMultiModuleLineMarkerTest : AbstractMultiModuleHighlighti
 
     override fun doTestLineMarkers() = true
 
-    override fun doTest(path: String) {
+    protected fun doTest(path: String) {
         setupMppProjectFromDirStructure(File(path))
         checkHighlightingInAllFiles()
     }

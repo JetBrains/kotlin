@@ -22,42 +22,51 @@ import org.jetbrains.kotlin.gradle.plugin.TaskToFriendTaskMapper
 import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
 
 internal open class KotlinTasksProvider {
-    fun createKotlinJVMTask(project: Project, name: String, sourceSetName: String): KotlinCompile =
-            project.tasks.create(name, KotlinCompile::class.java).apply {
-                configure(project, sourceSetName)
-            }
+    open fun createKotlinJVMTask(project: Project, name: String, sourceSetName: String): KotlinCompile =
+        project.tasks.create(name, KotlinCompile::class.java).apply {
+            configure(this, project, sourceSetName)
+        }
 
     fun createKotlinJSTask(project: Project, name: String, sourceSetName: String): Kotlin2JsCompile =
-            project.tasks.create(name, Kotlin2JsCompile::class.java).apply {
-                configure(project, sourceSetName)
-            }
+        project.tasks.create(name, Kotlin2JsCompile::class.java).apply {
+            configure(this, project, sourceSetName)
+        }
 
     fun createKotlinCommonTask(project: Project, name: String, sourceSetName: String): KotlinCompileCommon =
-            project.tasks.create(name, KotlinCompileCommon::class.java).apply {
-                configure(project, sourceSetName)
-            }
+        project.tasks.create(name, KotlinCompileCommon::class.java).apply {
+            configure(this, project, sourceSetName)
+        }
 
-    private fun AbstractKotlinCompile<*>.configure(project: Project, sourceSetName: String) {
-        this.sourceSetName = sourceSetName
-        this.friendTaskName = taskToFriendTaskMapper[this]
-        mapKotlinTaskProperties(project, this)
+    open fun configure(
+        kotlinTask: AbstractKotlinCompile<*>,
+        project: Project,
+        sourceSetName: String
+    ) {
+        kotlinTask.sourceSetName = sourceSetName
+        kotlinTask.friendTaskName = taskToFriendTaskMapper[kotlinTask]
+        mapKotlinTaskProperties(project, kotlinTask)
     }
 
     protected open val taskToFriendTaskMapper: TaskToFriendTaskMapper =
-            RegexTaskToFriendTaskMapper.Default()
+        RegexTaskToFriendTaskMapper.Default()
 }
 
 internal class KotlinCommonTasksProvider : KotlinTasksProvider() {
     override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
-            RegexTaskToFriendTaskMapper.Common()
+        RegexTaskToFriendTaskMapper.Common()
 }
 
 internal class Kotlin2JsTasksProvider : KotlinTasksProvider() {
     override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
-            RegexTaskToFriendTaskMapper.JavaScript()
+        RegexTaskToFriendTaskMapper.JavaScript()
 }
 
 internal class AndroidTasksProvider : KotlinTasksProvider() {
     override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
-            RegexTaskToFriendTaskMapper.Android()
+        RegexTaskToFriendTaskMapper.Android()
+
+    override fun configure(kotlinTask: AbstractKotlinCompile<*>, project: Project, sourceSetName: String) {
+        super.configure(kotlinTask, project, sourceSetName)
+        kotlinTask.useModuleDetection = true
+    }
 }

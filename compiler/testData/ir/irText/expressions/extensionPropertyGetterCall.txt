@@ -1,6 +1,7 @@
 FILE fqName:<root> fileName:/extensionPropertyGetterCall.kt
   PROPERTY name:okext type:kotlin.String visibility:public modality:FINAL flags:val
     FUN name:<get-okext> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:String flags:
+      correspondingProperty: PROPERTY name:okext type:kotlin.String visibility:public modality:FINAL flags:val
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-okext>() on String: String'

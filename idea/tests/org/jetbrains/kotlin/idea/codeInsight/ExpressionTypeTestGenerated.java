@@ -109,6 +109,11 @@ public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
         runTest("idea/testData/codeInsight/expressionType/ThisInLambda.kt");
     }
 
+    @TestMetadata("typeOfLambda.kt")
+    public void testTypeOfLambda() throws Exception {
+        runTest("idea/testData/codeInsight/expressionType/typeOfLambda.kt");
+    }
+
     @TestMetadata("VariableDeclaration.kt")
     public void testVariableDeclaration() throws Exception {
         runTest("idea/testData/codeInsight/expressionType/VariableDeclaration.kt");

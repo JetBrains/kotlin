@@ -1,17 +1,20 @@
 FILE fqName:<root> fileName:/extensionProperties.kt
   PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
     FUN name:<get-test1> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:Int flags:
+      correspondingProperty: PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>() on String: Int'
           CONST Int type=kotlin.Int value=42
   PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
     FUN name:<get-test2> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:Int flags:
+      correspondingProperty: PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>() on String: Int'
           CONST Int type=kotlin.Int value=42
     FUN name:<set-test2> visibility:public modality:FINAL <> ($receiver:kotlin.String, value:kotlin.Int) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
@@ -25,6 +28,7 @@ FILE fqName:<root> fileName:/extensionProperties.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
     PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:val
       FUN name:<get-test3> visibility:public modality:FINAL <> ($this:Host, $receiver:kotlin.String) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Host flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         BLOCK_BODY
@@ -32,12 +36,14 @@ FILE fqName:<root> fileName:/extensionProperties.kt
             CONST Int type=kotlin.Int value=42
     PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:var
       FUN name:<get-test4> visibility:public modality:FINAL <> ($this:Host, $receiver:kotlin.String) returnType:Int flags:
+        correspondingProperty: PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:Host flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test4>() on String: Int'
             CONST Int type=kotlin.Int value=42
       FUN name:<set-test4> visibility:public modality:FINAL <> ($this:Host, $receiver:kotlin.String, value:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:Host flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:

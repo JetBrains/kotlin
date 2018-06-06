@@ -47,7 +47,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             ktFunction.bodyExpression?.let { generateFunctionBody(it) }
         }
 
-    fun generateLambdaFunctionDeclaration(ktFunction: KtFunctionLiteral): IrFunction =
+    fun generateLambdaFunctionDeclaration(ktFunction: KtFunctionLiteral): IrSimpleFunction =
         declareSimpleFunction(
             ktFunction,
             null,
@@ -57,7 +57,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             generateLambdaBody(ktFunction)
         }
 
-    fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement): IrFunction =
+    fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement): IrSimpleFunction =
         context.symbolTable.declareSimpleFunctionWithOverrides(
             ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
             IrDeclarationOrigin.FAKE_OVERRIDE,
@@ -113,7 +113,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     fun generateDefaultAccessorForPrimaryConstructorParameter(
         descriptor: PropertyAccessorDescriptor,
         ktParameter: KtParameter
-    ): IrFunction =
+    ): IrSimpleFunction =
         context.symbolTable.declareSimpleFunctionWithOverrides(
             ktParameter.startOffsetOrUndefined,
             ktParameter.endOffsetOrUndefined,

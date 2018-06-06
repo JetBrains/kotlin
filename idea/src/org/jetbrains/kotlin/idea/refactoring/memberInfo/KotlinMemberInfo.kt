@@ -42,7 +42,7 @@ class KotlinMemberInfo @JvmOverloads constructor(
         val isCompanionMember: Boolean = false
 ) : MemberInfoBase<KtNamedDeclaration>(member) {
     companion object {
-        private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+        private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
             modifiers = setOf(DescriptorRendererModifier.INNER)
         }
     }

@@ -213,7 +213,7 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
                                     public void run() {
                                         if (exprTypeCheckbox.isSelected()) {
                                             String renderedType =
-                                                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(myExprType);
+                                                    IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(myExprType);
                                             myDeclaration.setTypeReference(new KtPsiFactory(myProject).createType(renderedType));
                                         }
                                         else {

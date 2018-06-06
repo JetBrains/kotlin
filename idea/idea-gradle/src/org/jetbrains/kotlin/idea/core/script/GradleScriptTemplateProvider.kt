@@ -226,6 +226,10 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
     }
 
     private class ErrorGradleScriptDefinition(message: String? = null) : KotlinScriptDefinition(ScriptTemplateWithArgs::class) {
+        companion object {
+            private const val KOTLIN_DSL_SCRIPT_EXTENSION = ".gradle.kts"
+        }
+
         override val name: String = "Default Kotlin Gradle Script"
         override val fileType: LanguageFileType = KotlinFileType.INSTANCE
         override val annotationsForSamWithReceivers: List<String> = emptyList()
@@ -234,10 +238,10 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         override val dependencyResolver: DependenciesResolver = ErrorScriptDependenciesResolver(message)
 
         override fun getScriptName(script: KtScript) =
-            Name.identifier(script.containingKtFile.name.removeSuffix(GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION))
+            Name.identifier(script.containingKtFile.name.removeSuffix(KOTLIN_DSL_SCRIPT_EXTENSION))
 
         override fun isScript(fileName: String): Boolean =
-            fileName.endsWith(GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION)
+            fileName.endsWith(KOTLIN_DSL_SCRIPT_EXTENSION)
 
         override fun toString(): String = "ErrorGradleScriptDefinition"
     }

@@ -25,13 +25,14 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSymbolDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.type
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -54,7 +55,7 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
     private val builtIns = context.builtIns
 
     private val typesWithSpecialAppendFunction =
-            PrimitiveType.values().map { builtIns.getPrimitiveKotlinType(it) } + builtIns.stringType
+        PrimitiveType.values().map { builtIns.getPrimitiveKotlinType(it) } + builtIns.stringType
 
     private val nameToString = Name.identifier("toString")
     private val nameAppend = Name.identifier("append")
@@ -77,16 +78,16 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
 
 
     private val appendFunctions: Map<KotlinType, IrFunctionSymbol?> =
-            typesWithSpecialAppendFunction.map { type ->
-                type to stringBuilder.functions.toList().atMostOne {
-                    it.descriptor.name == nameAppend &&
-                            it.owner.valueParameters.size == 1 &&
-                            it.owner.valueParameters.single().type == type
-                }
-            }.toMap()
+        typesWithSpecialAppendFunction.map { type ->
+            type to stringBuilder.functions.toList().atMostOne {
+                it.descriptor.name == nameAppend &&
+                        it.owner.valueParameters.size == 1 &&
+                        it.owner.valueParameters.single().type == type
+            }
+        }.toMap()
 
-    private fun typeToAppendFunction(type : KotlinType) : IrFunctionSymbol {
-        return appendFunctions[type]?:defaultAppendFunction
+    private fun typeToAppendFunction(type: KotlinType): IrFunctionSymbol {
+        return appendFunctions[type] ?: defaultAppendFunction
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
@@ -116,7 +117,7 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
 
         with(declaration) {
             buildersStack.add(
-                    context.createIrBuilder(declaration.symbol, startOffset, endOffset)
+                context.createIrBuilder(declaration.symbol, startOffset, endOffset)
             )
             transformChildrenVoid(this@StringConcatenationTransformer)
             buildersStack.removeAt(buildersStack.lastIndex)

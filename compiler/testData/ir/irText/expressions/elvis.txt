@@ -4,6 +4,7 @@ FILE fqName:<root> fileName:/elvis.kt
       EXPRESSION_BODY
         CONST Null type=kotlin.Nothing? value=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Any? flags:
+      correspondingProperty: PROPERTY name:p type:kotlin.Any? visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>(): Any?'
           GET_FIELD 'p: Any?' type=kotlin.Any? origin=null

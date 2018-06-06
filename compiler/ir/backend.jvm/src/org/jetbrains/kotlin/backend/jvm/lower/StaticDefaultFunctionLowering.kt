@@ -20,20 +20,15 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class StaticDefaultFunctionLowering(val state: GenerationState) : IrElementTransformerVoid(), ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
-        val kind = irClass.kind
-        if (kind == ClassKind.INTERFACE || kind == ClassKind.ANNOTATION_CLASS) {
-            return
-        }
         irClass.accept(this, null)
     }
 
@@ -45,7 +40,7 @@ class StaticDefaultFunctionLowering(val state: GenerationState) : IrElementTrans
                 declaration.descriptor,
                 declaration.descriptor.dispatchReceiverParameter!!.type
             )
-            newFunction.createFunctionAndMapVariables(declaration)
+            newFunction.createFunctionAndMapVariables(declaration, Visibilities.PUBLIC)
         } else {
             super.visitFunction(declaration)
         }

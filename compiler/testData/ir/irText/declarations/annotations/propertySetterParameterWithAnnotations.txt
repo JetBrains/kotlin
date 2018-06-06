@@ -22,10 +22,12 @@ FILE fqName:<root> fileName:/propertySetterParameterWithAnnotations.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>(): Int'
           GET_FIELD 'p: Int' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-p> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         annotations:
           CALL 'constructor AnnParam()' type=AnnParam origin=null
@@ -46,12 +48,14 @@ FILE fqName:<root> fileName:/propertySetterParameterWithAnnotations.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter p: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-p>(): Int'
             GET_FIELD 'p: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-p> visibility:public modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
           annotations:
@@ -73,3 +77,4 @@ FILE fqName:<root> fileName:/propertySetterParameterWithAnnotations.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+

@@ -36,16 +36,18 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
         val connection = project.messageBus.connect()
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
             override fun rootsChanged(event: ModuleRootEvent?) {
-                var templatesChanged = false
-                lock.read {
-                    val newTemplates = getScriptTemplates()
-                    if (newTemplates != templates) lock.write {
-                        templates = newTemplates
-                        templatesChanged = true
+                if (project.isInitialized) {
+                    var templatesChanged = false
+                    lock.read {
+                        val newTemplates = getScriptTemplates()
+                        if (newTemplates != templates) lock.write {
+                            templates = newTemplates
+                            templatesChanged = true
+                        }
                     }
-                }
-                if (templatesChanged) {
-                    ScriptDefinitionsManager.getInstance(project).reloadDefinitionsBy(this@ScriptTemplatesFromDependenciesProvider)
+                    if (templatesChanged) {
+                        ScriptDefinitionsManager.getInstance(project).reloadDefinitionsBy(this@ScriptTemplatesFromDependenciesProvider)
+                    }
                 }
             }
         })

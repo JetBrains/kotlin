@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.util.StableDescriptorsComparator
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
+import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -72,11 +73,11 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
 
             generateFakeOverrideMemberDeclarations(irClass, ktClassOrObject)
 
-            if (descriptor.isData) {
+            if (irClass.isData) {
                 generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
             }
 
-            if (descriptor.kind == ClassKind.ENUM_CLASS) {
+            if (irClass.isEnumClass) {
                 generateAdditionalMembersForEnumClass(irClass)
             }
         }
@@ -190,7 +191,11 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         irClass.addMember(generateDelegatedFunction(irDelegate, delegated, overridden))
     }
 
-    private fun generateDelegatedFunction(irDelegate: IrField, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrFunction =
+    private fun generateDelegatedFunction(
+        irDelegate: IrField,
+        delegated: FunctionDescriptor,
+        overridden: FunctionDescriptor
+    ): IrSimpleFunction =
         context.symbolTable.declareSimpleFunctionWithOverrides(
             irDelegate.startOffset, irDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_MEMBER,

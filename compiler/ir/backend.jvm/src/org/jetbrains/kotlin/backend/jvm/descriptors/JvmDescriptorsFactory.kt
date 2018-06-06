@@ -26,12 +26,16 @@ import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.ir.SourceManager
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
@@ -40,13 +44,13 @@ class JvmDescriptorsFactory(
     private val psiSourceManager: PsiSourceManager,
     private val builtIns: KotlinBuiltIns
 ) : DescriptorsFactory {
-    private val singletonFieldDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
-    private val outerThisDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
-    private val innerClassConstructors = HashMap<ClassConstructorDescriptor, IrConstructorSymbol>()
+    private val singletonFieldDescriptors = HashMap<IrBindableSymbol<*, *>, IrFieldSymbol>()
+    private val outerThisDescriptors = HashMap<IrClass, IrFieldSymbol>()
+    private val innerClassConstructors = HashMap<IrConstructorSymbol, IrConstructorSymbol>()
 
-    override fun getFieldDescriptorForEnumEntry(enumEntryDescriptor: ClassDescriptor): PropertyDescriptor =
-        singletonFieldDescriptors.getOrPut(enumEntryDescriptor) {
-            createEnumEntryFieldDescriptor(enumEntryDescriptor)
+    override fun getSymbolForEnumEntry(enumEntry: IrEnumEntrySymbol): IrFieldSymbol =
+        singletonFieldDescriptors.getOrPut(enumEntry) {
+            IrFieldSymbolImpl(createEnumEntryFieldDescriptor(enumEntry.descriptor))
         }
 
     fun createFileClassDescriptor(fileEntry: SourceManager.FileEntry, packageFragment: PackageFragmentDescriptor): FileClassDescriptor {
@@ -62,28 +66,30 @@ class JvmDescriptorsFactory(
         )
     }
 
-    override fun getOuterThisFieldDescriptor(innerClassDescriptor: ClassDescriptor): PropertyDescriptor =
-        if (!innerClassDescriptor.isInner) throw AssertionError("Class is not inner: $innerClassDescriptor")
-        else outerThisDescriptors.getOrPut(innerClassDescriptor) {
-            val outerClassDescriptor = DescriptorUtils.getContainingClass(innerClassDescriptor)
-                    ?: throw AssertionError("No containing class for inner class $innerClassDescriptor")
+    override fun getOuterThisFieldSymbol(innerClass: IrClass): IrFieldSymbol =
+        if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")
+        else outerThisDescriptors.getOrPut(innerClass) {
+            val outerClass = innerClass.parent as? IrClass
+                    ?: throw AssertionError("No containing class for inner class ${innerClass.dump()}")
 
-            JvmPropertyDescriptorImpl.createFinalField(
-                Name.identifier("this$0"), outerClassDescriptor.defaultType, innerClassDescriptor,
-                Annotations.EMPTY, JavaVisibilities.PACKAGE_VISIBILITY, Opcodes.ACC_SYNTHETIC, SourceElement.NO_SOURCE
+            IrFieldSymbolImpl(
+                JvmPropertyDescriptorImpl.createFinalField(
+                    Name.identifier("this$0"), outerClass.defaultType, innerClass.descriptor,
+                    Annotations.EMPTY, JavaVisibilities.PACKAGE_VISIBILITY, Opcodes.ACC_SYNTHETIC, SourceElement.NO_SOURCE
+                )
             )
         }
 
-    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: ClassConstructorDescriptor): IrConstructorSymbol {
-        val innerClass = innerClassConstructor.containingDeclaration
-        assert(innerClass.isInner) { "Class is not inner: $innerClass" }
+    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructorSymbol {
+        assert((innerClassConstructor.parent as IrClass).isInner) { "Class is not inner: ${(innerClassConstructor.parent as IrClass).dump()}" }
 
-        return innerClassConstructors.getOrPut(innerClassConstructor) {
+        return innerClassConstructors.getOrPut(innerClassConstructor.symbol) {
             createInnerClassConstructorWithOuterThisParameter(innerClassConstructor)
         }
     }
 
-    private fun createInnerClassConstructorWithOuterThisParameter(oldDescriptor: ClassConstructorDescriptor): IrConstructorSymbol {
+    private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructorSymbol {
+        val oldDescriptor = oldConstructor.descriptor
         val classDescriptor = oldDescriptor.containingDeclaration
         val outerThisType = (classDescriptor.containingDeclaration as ClassDescriptor).defaultType
 
@@ -120,9 +126,9 @@ class JvmDescriptorsFactory(
         )
     }
 
-    override fun getFieldDescriptorForObjectInstance(objectDescriptor: ClassDescriptor): PropertyDescriptor =
-        singletonFieldDescriptors.getOrPut(objectDescriptor) {
-            createObjectInstanceFieldDescriptor(objectDescriptor)
+    override fun getSymbolForObjectInstance(singleton: IrClassSymbol): IrFieldSymbol =
+        singletonFieldDescriptors.getOrPut(singleton) {
+            IrFieldSymbolImpl(createObjectInstanceFieldDescriptor(singleton.descriptor))
         }
 
     private fun createObjectInstanceFieldDescriptor(objectDescriptor: ClassDescriptor): PropertyDescriptor {

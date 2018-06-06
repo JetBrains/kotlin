@@ -73,6 +73,13 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
     }
 
     fun finishLibConfiguration(module: Module, rootModel: ModifiableRootModel) {
+        configureKotlinSettings(module.project, rootModel.sdk)
+
+        KotlinCommonCompilerArgumentsHolder.getInstance(module.project).update {
+            languageVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
+            apiVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
+        }
+
         val library = rootModel.orderEntries().findLibrary { library ->
             val libraryPresentationManager = LibraryPresentationManager.getInstance()
             val classFiles = library.getFiles(OrderRootType.CLASSES).toList()
@@ -97,13 +104,6 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
 
                     configurator.configureLibraryJar(model, jarState, copyToPath, jarDescriptor, collector)
                 }
-            }
-
-            configureKotlinSettings(module.project, rootModel.sdk)
-
-            KotlinCommonCompilerArgumentsHolder.getInstance(module.project).update {
-                languageVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
-                apiVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
             }
 
             collector.showNotification()

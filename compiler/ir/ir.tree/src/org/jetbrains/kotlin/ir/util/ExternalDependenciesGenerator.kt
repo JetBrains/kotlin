@@ -25,33 +25,59 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 
 class ExternalDependenciesGenerator(val symbolTable: SymbolTable, val irBuiltIns: IrBuiltIns) {
+
     private val stubGenerator = DeclarationStubGenerator(symbolTable, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
 
     fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment) {
-        val collector = DependenciesCollector()
-        collector.collectTopLevelDescriptorsForUnboundSymbols(symbolTable)
-
-        collector.dependencyModules.mapTo(irModule.dependencyModules) { moduleDescriptor ->
-            generateModuleStub(collector, moduleDescriptor)
-        }
+        DependencyGenerationTask(irModule).run()
     }
 
-    private fun generateModuleStub(collector: DependenciesCollector, moduleDescriptor: ModuleDescriptor): IrModuleFragment =
-        stubGenerator.generateEmptyModuleFragmentStub(moduleDescriptor, irBuiltIns).also { irDependencyModule ->
-            collector.getPackageFragments(moduleDescriptor)
-                .mapTo(irDependencyModule.externalPackageFragments) { packageFragmentDescriptor ->
-                    generatePackageStub(packageFragmentDescriptor, collector.getTopLevelDescriptors(packageFragmentDescriptor))
+    private inner class DependencyGenerationTask(val irModule: IrModuleFragment) {
+
+        private val moduleFragments = HashMap<ModuleDescriptor, IrModuleFragment>()
+        private val packageFragments = HashMap<PackageFragmentDescriptor, IrExternalPackageFragment>()
+
+        fun run() {
+            while (true) {
+                val collector = DependenciesCollector()
+                collector.collectTopLevelDescriptorsForUnboundSymbols(symbolTable)
+                if (collector.isEmpty) break
+
+                collector.dependencyModules.mapTo(irModule.dependencyModules) { moduleDescriptor ->
+                    generateModuleStub(collector, moduleDescriptor)
                 }
+            }
         }
 
-    private fun generatePackageStub(
-        packageFragmentDescriptor: PackageFragmentDescriptor,
-        topLevelDescriptors: Collection<DeclarationDescriptor>
-    ): IrExternalPackageFragment =
-        stubGenerator.generateEmptyExternalPackageFragmentStub(packageFragmentDescriptor).also { irExternalPackageFragment ->
-            topLevelDescriptors.mapTo(irExternalPackageFragment.declarations) {
-                stubGenerator.generateMemberStub(it)
+        private fun generateModuleStub(collector: DependenciesCollector, moduleDescriptor: ModuleDescriptor): IrModuleFragment =
+            getOrCreateModuleFragment(moduleDescriptor).also { irDependencyModule ->
+                collector.getPackageFragments(moduleDescriptor)
+                    .mapTo(irDependencyModule.externalPackageFragments) { packageFragmentDescriptor ->
+                        generatePackageStub(packageFragmentDescriptor, collector.getTopLevelDescriptors(packageFragmentDescriptor))
+                    }
             }
-        }.patchDeclarationParents()
+
+        private fun generatePackageStub(
+            packageFragmentDescriptor: PackageFragmentDescriptor,
+            topLevelDescriptors: Collection<DeclarationDescriptor>
+        ): IrExternalPackageFragment =
+            getOrCreatePackageFragment(packageFragmentDescriptor).also { irExternalPackageFragment ->
+                topLevelDescriptors.mapTo(irExternalPackageFragment.declarations) {
+                    stubGenerator.generateMemberStub(it)
+                }
+                irExternalPackageFragment.patchDeclarationParents()
+            }
+
+        private fun getOrCreateModuleFragment(moduleDescriptor: ModuleDescriptor) =
+            moduleFragments.getOrPut(moduleDescriptor) {
+                stubGenerator.generateEmptyModuleFragmentStub(moduleDescriptor, irBuiltIns)
+            }
+
+        private fun getOrCreatePackageFragment(packageFragmentDescriptor: PackageFragmentDescriptor) =
+            packageFragments.getOrPut(packageFragmentDescriptor) {
+                stubGenerator.generateEmptyExternalPackageFragmentStub(packageFragmentDescriptor)
+            }
+
+    }
 
 }

@@ -36,6 +36,7 @@ FILE fqName:<root> fileName:/typeParameterBeforeBound.kt
     BLOCK_BODY
   PROPERTY name:test3 type:kotlin.Unit visibility:public modality:FINAL flags:var
     FUN name:<get-test3> visibility:public modality:FINAL <T, U> ($receiver:Test1<T, U>) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:test3 type:kotlin.Unit visibility:public modality:FINAL flags:var
       TYPE_PARAMETER name:T index:0 variance: upperBounds:[U]
         superClassifiers:
           TYPE_PARAMETER name:U index:1 variance: upperBounds:[kotlin.Any?]
@@ -45,6 +46,7 @@ FILE fqName:<root> fileName:/typeParameterBeforeBound.kt
       $receiver: VALUE_PARAMETER name:<this> type:Test1<T, U> flags:
       BLOCK_BODY
     FUN name:<set-test3> visibility:public modality:FINAL <T, U> ($receiver:Test1<T, U>, value:kotlin.Unit) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:test3 type:kotlin.Unit visibility:public modality:FINAL flags:var
       TYPE_PARAMETER name:T index:0 variance: upperBounds:[U]
         superClassifiers:
           TYPE_PARAMETER name:U index:1 variance: upperBounds:[kotlin.Any?]

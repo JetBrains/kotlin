@@ -513,6 +513,7 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
             localFunctionContext.transformedDeclaration = with(localFunctionContext.declaration) {
                 IrFunctionImpl(startOffset, endOffset, origin, newDescriptor)
             }.apply {
+                parent = localFunctionContext.declaration.parent
                 createParameterDeclarations()
                 recordTransformedValueParameters(localFunctionContext)
                 transformedDeclarations[oldDescriptor] = this.symbol
@@ -600,6 +601,7 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
             constructorContext.transformedDeclaration = with(constructorContext.declaration) {
                 IrConstructorImpl(startOffset, endOffset, origin, newDescriptor)
             }.apply {
+                parent = constructorContext.declaration.parent
                 createParameterDeclarations()
                 recordTransformedValueParameters(constructorContext)
                 transformedDeclarations[oldDescriptor] = this.symbol
@@ -642,7 +644,9 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
                     localClassContext.declaration.startOffset, localClassContext.declaration.endOffset,
                     DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE,
                     fieldDescriptor
-                )
+                ).apply {
+                    parent = localClassContext.declaration
+                }
             }
         }
 
@@ -728,9 +732,9 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
                     declaration.acceptChildrenVoid(this)
 
                     val descriptor = declaration.descriptor
-                    assert(descriptor.visibility != Visibilities.LOCAL)
+                    assert(declaration.visibility != Visibilities.LOCAL)
 
-                    if (descriptor.constructedClass.isInner) return
+                    if ((declaration.parent as IrClass).isInner) return
 
                     localClassConstructors[descriptor] = LocalClassConstructorContext(declaration)
                 }
@@ -740,7 +744,7 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
 
                     val descriptor = declaration.descriptor
 
-                    if (descriptor.isInner) return
+                    if (declaration.isInner) return
 
                     // Local nested classes can only be inner.
                     assert(descriptor.declaredInFunction())

@@ -174,7 +174,16 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             requestedCompilationResults = emptyArray()
         )
         return doWithDaemon(environment) { sessionId, daemon ->
-            daemon.compile(sessionId, withAdditionalCompilerArgs(compilerArgs), options, JpsCompilerServicesFacadeImpl(environment), null)
+            environment.withProgressReporter { progress ->
+                progress.compilationStarted()
+                daemon.compile(
+                    sessionId,
+                    withAdditionalCompilerArgs(compilerArgs),
+                    options,
+                    JpsCompilerServicesFacadeImpl(environment),
+                    null
+                )
+            }
         }?.let { exitCodeFromProcessExitCode(it) }
     }
 
@@ -248,7 +257,10 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         if (System.getProperty(GlobalOptions.COMPILE_PARALLEL_OPTION, "false").toBoolean())
             System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
-        val rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, withAdditionalCompilerArgs(compilerArgs), environment, out)
+        val rc = environment.withProgressReporter { progress ->
+            progress.compilationStarted()
+            CompilerRunnerUtil.invokeExecMethod(compilerClassName, withAdditionalCompilerArgs(compilerArgs), environment, out)
+        }
 
         // exec() returns an ExitCode object, class of which is loaded with a different class loader,
         // so we take it's contents through reflection
@@ -292,6 +304,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
 
     override fun getDaemonConnection(environment: JpsCompilerEnvironment): CompileServiceSession? =
         getOrCreateDaemonConnection {
+            environment.progressReporter.progress("connecting to daemon")
             val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, environment.messageCollector)
             val compilerPath = File(libPath, "kotlin-compiler.jar")
             val toolsJarPath = CompilerRunnerUtil.jdkToolsJar
@@ -300,6 +313,10 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
 
             val clientFlagFile = KotlinCompilerClient.getOrCreateClientFlagFile(daemonOptions)
             val sessionFlagFile = makeAutodeletingFlagFile("compiler-jps-session-", File(daemonOptions.runFilesPathOrDefault))
-            newDaemonConnection(compilerId, clientFlagFile, sessionFlagFile, environment, daemonOptions)
+
+            environment.withProgressReporter { progress ->
+                progress.progress("connecting to daemon")
+                newDaemonConnection(compilerId, clientFlagFile, sessionFlagFile, environment, daemonOptions)
+            }
         }
 }

@@ -1,26 +1,13 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.*
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -125,6 +112,17 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var constructorCallNormalizationMode: String? by FreezableVar(JVMConstructorCallNormalizationMode.DEFAULT.description)
 
     @Argument(
+        value = "-Xassertions", valueDescription = "{always-enable|always-disable|jvm|legacy}",
+        description = "Assert calls behaviour\n" +
+                "-Xassertions=always-enable:  enable, ignore jvm assertion settings;\n" +
+                "-Xassertions=always-disable: disable, ignore jvm assertion settings;\n" +
+                "-Xassertions=jvm:            enable, depend on jvm assertion settings;\n" +
+                "-Xassertions=legacy:         calculate condition on each call, check depends on jvm assertion settings in the kotlin package;\n" +
+                "default: legacy"
+    )
+    var assertionsMode: String? by FreezableVar(JVMAssertionsMode.DEFAULT.description)
+
+    @Argument(
         value = "-Xbuild-file",
         deprecatedName = "-module",
         valueDescription = "<path>",
@@ -225,8 +223,17 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
 
-    @Argument(value = "-Xenable-jvm-default", description = "Allow to use '@JvmDefault' for JVM default method support")
-    var enableJvmDefault: Boolean by FreezableVar(false)
+    @Argument(
+        value = "-Xjvm-default",
+        valueDescription = "{disable|enable|compatibility}",
+        description = "Allow to use '@JvmDefault' annotation for JVM default method support.\n" +
+                "-Xjvm-default=disable         Prohibit usages of @JvmDefault\n" +
+                "-Xjvm-default=enable          Allow usages of @JvmDefault; only generate the default method\n" +
+                "                              in the interface (annotating an existing method can break binary compatibility)\n" +
+                "-Xjvm-default=compatibility   Allow usages of @JvmDefault; generate a compatibility accessor\n" +
+                "                              in the 'DefaultImpls' class in addition to the interface method\n"
+    )
+    var jvmDefault: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
 
     @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
     var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
@@ -243,7 +250,13 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             jsr305,
             supportCompatqualCheckerFrameworkAnnotations
         )
-        result[AnalysisFlag.enableJvmDefault] = enableJvmDefault
+        result[AnalysisFlag.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
+        JvmDefaultMode.fromStringOrNull(jvmDefault)?.let { result[AnalysisFlag.jvmDefaultMode] = it }
+                ?: collector.report(
+                    CompilerMessageSeverity.ERROR,
+                    "Unknown @JvmDefault mode: $jvmDefault, " +
+                            "supported modes: ${JvmDefaultMode.values().map { it.description }}"
+                )
         return result
     }
 

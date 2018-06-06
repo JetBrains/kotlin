@@ -30,21 +30,6 @@ abstract class BaseGradleIT {
         workingDir.deleteRecursively()
     }
 
-    fun Project.allowOriginalKapt() {
-        if (!projectDir.exists()) {
-            setupWorkingDir()
-        }
-
-        val allowOriginalKaptOption = "allow.original.kapt = true"
-
-        val gradleProperties = File(projectDir, "gradle.properties")
-        if (gradleProperties.exists()) {
-            gradleProperties.appendText("\n$allowOriginalKaptOption")
-        } else {
-            gradleProperties.writeText(allowOriginalKaptOption)
-        }
-    }
-
     // https://developer.android.com/studio/intro/update.html#download-with-gradle
     fun acceptAndroidSdkLicenses() = defaultBuildOptions().androidHome?.let {
         val sdkLicenses = File(it, "licenses")
@@ -63,8 +48,30 @@ abstract class BaseGradleIT {
     }
 
     companion object {
-        // wrapper version to the number of daemon runs performed
-        private val daemonRunCount = hashMapOf<String, Int>()
+
+        private object DaemonRegistry {
+            // wrapper version to the number of daemon runs performed
+            private val daemonRunCount = hashMapOf<String, Int>()
+            private val runnerGradleVersion = System.getProperty("runnerGradleVersion")
+
+            val activeDaemons: List<String>
+                get() = daemonRunCount.keys.toList()
+
+            fun register(version: String) {
+                if (version == runnerGradleVersion) return
+
+                daemonRunCount[version] = (daemonRunCount[version] ?: 0) + 1
+            }
+
+            fun unregister(version: String) {
+                daemonRunCount.remove(version)
+            }
+
+            fun runCountForDaemon(version: String): Int =
+                daemonRunCount[version] ?: 0
+        }
+
+
         // gradle wrapper version to wrapper directory
         private val gradleWrappers = hashMapOf<String, File>()
         private const val MAX_DAEMON_RUNS = 30
@@ -96,27 +103,27 @@ abstract class BaseGradleIT {
             environmentVariables: Map<String, String> = mapOf(),
             withDaemon: Boolean = true
         ): File {
-            val wrapperDir = gradleWrappers.getOrPut(version) { createNewWrapperDir(version) }
-
-            // Even if gradle is run with --no-daemon, we should check,
-            // that common active process count does not exceed the threshold,
-            // to avoid retaining too much memory (which is critical for CI)
-            val activeDaemonsCount = daemonRunCount.keys.size
-            val nonDaemonCount = if (!withDaemon) 1 else 0
-            if (activeDaemonsCount + nonDaemonCount > MAX_ACTIVE_GRADLE_PROCESSES) {
-                println("Too many Gradle active processes (max is $MAX_ACTIVE_GRADLE_PROCESSES). Stopping all daemons")
-                stopAllDaemons(environmentVariables)
-            }
+            val wrapper = gradleWrappers.getOrPut(version) { createNewWrapperDir(version) }
 
             if (withDaemon) {
-                val timesDaemonUsed = daemonRunCount[version] ?: 0
-                if (timesDaemonUsed >= MAX_DAEMON_RUNS) {
+                DaemonRegistry.register(version)
+
+                if (DaemonRegistry.activeDaemons.size > MAX_ACTIVE_GRADLE_PROCESSES) {
+                    println("Too many Gradle active processes (max is $MAX_ACTIVE_GRADLE_PROCESSES). Stopping all daemons")
+                    stopAllDaemons(environmentVariables)
+                }
+
+                if (DaemonRegistry.runCountForDaemon(version) >= MAX_DAEMON_RUNS) {
                     stopDaemon(version, environmentVariables)
                 }
-                daemonRunCount[version] = timesDaemonUsed + 1
+
+                // we could've stopped daemon
+                if (DaemonRegistry.runCountForDaemon(version) <= 0) {
+                    DaemonRegistry.register(version)
+                }
             }
 
-            return wrapperDir
+            return wrapper
         }
 
         private fun createNewWrapperDir(version: String): File =
@@ -130,30 +137,22 @@ abstract class BaseGradleIT {
         private val runnerGradleVersion = System.getProperty("runnerGradleVersion")
 
         private fun stopDaemon(version: String, environmentVariables: Map<String, String>) {
-            if (version == runnerGradleVersion) {
-                println("Not stopping Gradle daemon v$version as it matches the runner version")
-                return
-            }
-
+            assert(version != runnerGradleVersion) { "Not stopping Gradle daemon v$version as it matches the runner version" }
             println("Stopping gradle daemon v$version")
 
             val wrapperDir = gradleWrappers[version] ?: error("Was asked to stop unknown daemon $version")
-            if (version in daemonRunCount) {
-                val cmd = createGradleCommand(wrapperDir, arrayListOf("-stop"))
-                val result = runProcess(cmd, wrapperDir, environmentVariables)
-                assert(result.isSuccessful) { "Could not stop daemon: $result" }
-                daemonRunCount.remove(version)
-            }
+            val cmd = createGradleCommand(wrapperDir, arrayListOf("-stop"))
+            val result = runProcess(cmd, wrapperDir, environmentVariables)
+            assert(result.isSuccessful) { "Could not stop daemon: $result" }
+            DaemonRegistry.unregister(version)
         }
 
         private fun stopAllDaemons(environmentVariables: Map<String, String>) {
-            // copy wrapper versions, because stopDaemon modifies daemonRunCount
-            val wrapperVersions = daemonRunCount.keys.toList()
-            for (version in wrapperVersions) {
+            for (version in DaemonRegistry.activeDaemons) {
                 stopDaemon(version, environmentVariables)
             }
-            assert(daemonRunCount.keys.none { it != runnerGradleVersion }) {
-                "Could not stop some daemons ${(daemonRunCount.keys - runnerGradleVersion).joinToString()}"
+            assert(DaemonRegistry.activeDaemons.isEmpty()) {
+                "Could not stop some daemons ${(DaemonRegistry.activeDaemons).joinToString()}"
             }
         }
     }

@@ -18,35 +18,37 @@ package org.jetbrains.kotlin.backend.js
 
 import org.jetbrains.kotlin.backend.common.descriptors.DescriptorsFactory
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.createValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 
-class JsDescriptorsFactory(
-    private val builtIns: KotlinBuiltIns
-) : DescriptorsFactory {
-    private val singletonFieldDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
-    private val outerThisDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
-    private val innerClassConstructors = HashMap<ClassConstructorDescriptor, IrConstructorSymbol>()
+class JsDescriptorsFactory : DescriptorsFactory {
+    private val singletonFieldDescriptors = HashMap<IrBindableSymbol<*, *>, IrFieldSymbol>()
+    private val outerThisFieldSymbols = HashMap<IrClass, IrFieldSymbol>()
+    private val innerClassConstructors = HashMap<IrConstructorSymbol, IrConstructorSymbol>()
 
-    override fun getFieldDescriptorForEnumEntry(enumEntryDescriptor: ClassDescriptor): PropertyDescriptor = TODO()
+    override fun getSymbolForEnumEntry(enumEntry: IrEnumEntrySymbol): IrFieldSymbol = TODO()
 
-    override fun getOuterThisFieldDescriptor(innerClassDescriptor: ClassDescriptor): PropertyDescriptor =
-        if (!innerClassDescriptor.isInner) throw AssertionError("Class is not inner: $innerClassDescriptor")
-        else outerThisDescriptors.getOrPut(innerClassDescriptor) {
-            val outerClassDescriptor = DescriptorUtils.getContainingClass(innerClassDescriptor)
-                    ?: throw AssertionError("No containing class for inner class $innerClassDescriptor")
+    override fun getOuterThisFieldSymbol(innerClass: IrClass): IrFieldSymbol =
+        if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")
+        else outerThisFieldSymbols.getOrPut(innerClass) {
+            val outerClass = innerClass.parent as? IrClass
+                    ?: throw AssertionError("No containing class for inner class ${innerClass.dump()}")
 
-            PropertyDescriptorImpl.create(
-                innerClassDescriptor,
+            IrFieldSymbolImpl(PropertyDescriptorImpl.create(
+                innerClass.descriptor,
                 Annotations.EMPTY,
                 Modality.FINAL,
                 Visibilities.PROTECTED,
@@ -62,21 +64,22 @@ class JsDescriptorsFactory(
                 false
             ).apply {
                 setType(
-                    outerClassDescriptor.defaultType,
+                    outerClass.defaultType,
                     emptyList(),
-                    innerClassDescriptor.thisAsReceiverParameter,
+                    innerClass.descriptor.thisAsReceiverParameter,
                     null as? ReceiverParameterDescriptor
                 )
                 initialize(null, null)
-            }
+            })
         }
 
-    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: ClassConstructorDescriptor): IrConstructorSymbol {
-        val innerClass = innerClassConstructor.containingDeclaration
+
+    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructorSymbol {
+        val innerClass = innerClassConstructor.parent as IrClass
         assert(innerClass.isInner) { "Class is not inner: $innerClass" }
 
-        return innerClassConstructors.getOrPut(innerClassConstructor) {
-            createInnerClassConstructorWithOuterThisParameter(innerClassConstructor)
+        return innerClassConstructors.getOrPut(innerClassConstructor.symbol) {
+            createInnerClassConstructorWithOuterThisParameter(innerClassConstructor.descriptor)
         }
     }
 
@@ -88,19 +91,7 @@ class JsDescriptorsFactory(
             classDescriptor, oldDescriptor.annotations, oldDescriptor.isPrimary, oldDescriptor.source
         )
 
-        val outerThisValueParameter = ValueParameterDescriptorImpl(
-            newDescriptor,
-            null,
-            0,
-            Annotations.EMPTY,
-            Name.identifier("\$outer"),
-            outerThisType,
-            false,
-            false,
-            false,
-            null,
-            SourceElement.NO_SOURCE
-        )
+        val outerThisValueParameter = createValueParameter(newDescriptor, 0, Namer.OUTER_NAME, outerThisType)
 
         val newValueParameters =
             listOf(outerThisValueParameter) +
@@ -110,9 +101,9 @@ class JsDescriptorsFactory(
         return IrConstructorSymbolImpl(newDescriptor)
     }
 
-    override fun getFieldDescriptorForObjectInstance(objectDescriptor: ClassDescriptor): PropertyDescriptor =
-        singletonFieldDescriptors.getOrPut(objectDescriptor) {
-            createObjectInstanceFieldDescriptor(objectDescriptor)
+    override fun getSymbolForObjectInstance(singleton: IrClassSymbol): IrFieldSymbol =
+        singletonFieldDescriptors.getOrPut(singleton) {
+            IrFieldSymbolImpl(createObjectInstanceFieldDescriptor(singleton.descriptor))
         }
 
     private fun createObjectInstanceFieldDescriptor(objectDescriptor: ClassDescriptor): PropertyDescriptor {
