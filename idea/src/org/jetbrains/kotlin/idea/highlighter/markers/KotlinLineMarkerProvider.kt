@@ -349,6 +349,7 @@ private fun collectActualMarkers(
     declaration: KtNamedDeclaration,
     result: MutableCollection<LineMarkerInfo<*>>
 ) {
+    if (declaration is KtPrimaryConstructor) return
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
@@ -378,6 +379,7 @@ private fun collectExpectedMarkers(
     declaration: KtNamedDeclaration,
     result: MutableCollection<LineMarkerInfo<*>>
 ) {
+    if (declaration is KtPrimaryConstructor) return
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
