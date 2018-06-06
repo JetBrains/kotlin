@@ -328,8 +328,13 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                             val lightElement = LightClassUtil.getLightClassMethod(psi) // Light method for super's scan in javadoc info gen
                             val javaDocInfoGenerator = JavaDocInfoGeneratorFactory.create(psi.project, lightElement)
                             val builder = StringBuilder()
-                            if (javaDocInfoGenerator.generateDocInfoCore(builder, false))
-                                renderedHtml += builder.toString().substringAfter("</PRE>") // Cut off light method signature
+                            if (javaDocInfoGenerator.generateDocInfoCore(builder, false)) {
+                                val renderedJava = builder.toString()
+                                renderedHtml += renderedJava.removeRange(
+                                    renderedJava.indexOf(DocumentationMarkup.DEFINITION_START),
+                                    renderedJava.indexOf(DocumentationMarkup.DEFINITION_END)
+                                ) // Cut off light method signature
+                            }
                         }
                     }
                 }
