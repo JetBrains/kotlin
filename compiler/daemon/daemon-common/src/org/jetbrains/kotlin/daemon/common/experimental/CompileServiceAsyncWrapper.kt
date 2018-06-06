@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
@@ -26,13 +25,13 @@ class CompileServiceAsyncWrapper(
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBaseClientSide,
-        compilationResults: CompilationResultsClientSide
+        compilationResults: CompilationResultsClientSide?
     ) = rmiCompileService.compile(
         sessionId,
         compilerArguments,
         compilationOptions,
         servicesFacade.toRMI(),
-        compilationResults.toRMI()
+        compilationResults?.toRMI()
     )
 
     override suspend fun leaseReplSession(
@@ -192,7 +191,7 @@ class CompileServiceClientRMIWrapper(
             compilerArguments,
             compilationOptions,
             servicesFacade.toClient(),
-            compilationResults!!.toClient() // TODO
+            compilationResults?.toClient() // TODO
         )
     }
 

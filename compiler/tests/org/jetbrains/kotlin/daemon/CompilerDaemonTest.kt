@@ -17,12 +17,17 @@
 package org.jetbrains.kotlin.daemon
 
 import junit.framework.TestCase
+import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.daemon.client.*
+import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.CompileServiceClientSide
+import org.jetbrains.kotlin.daemon.experimental.integration.TestMessageCollector
+import org.jetbrains.kotlin.daemon.experimental.integration.assertHasMessage
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -48,32 +53,56 @@ val TIMEOUT_DAEMON_RUNNER_EXIT_MS = 10000L
 
 class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
+    val kotlinCompilerClient = KotlinCompilerDaemonClient
+        .instantiate(KotlinCompilerDaemonClient.Version.RMI)
+
     data class CompilerResults(val resultCode: Int, val out: String)
 
     val compilerClassPath = listOf(
-            File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"))
-    val daemonClientClassPath = listOf( File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-daemon-client.jar"),
-                                        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"))
+        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar")
+    )
+    val daemonClientClassPath = listOf(
+        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-daemon-client.jar"),
+        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar")
+    )
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
-    private fun compileOnDaemon(clientAliveFile: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, vararg args: String): CompilerResults {
-        val daemon = KotlinCompilerClient.connectToCompileService(compilerId, clientAliveFile, daemonJVMOptions, daemonOptions,
-                                                                  DaemonReportingTargets(out = System.err), autostart = true)
-        assertNotNull("failed to connect daemon", daemon)
-        daemon?.registerClient(clientAliveFile.absolutePath)
-        val strm = ByteArrayOutputStream()
-        val code = KotlinCompilerClient.compile(daemon!!, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM,
-                                                args, PrintingMessageCollector(PrintStream(strm), MessageRenderer.WITHOUT_PATHS, true),
-                                                reportSeverity = ReportSeverity.DEBUG)
-        return CompilerResults(code, strm.toString())
+    private fun compileOnDaemon(
+        clientAliveFile: File,
+        compilerId: CompilerId,
+        daemonJVMOptions: DaemonJVMOptions,
+        daemonOptions: DaemonOptions,
+        vararg args: String
+    ): CompilerResults {
+        return runBlocking {
+            val daemon = kotlinCompilerClient.connectToCompileService(
+                compilerId, clientAliveFile, daemonJVMOptions, daemonOptions,
+                DaemonReportingTargets(out = System.err), autostart = true
+            )
+            assertNotNull("failed to connect daemon", daemon)
+            daemon?.registerClient(clientAliveFile.absolutePath)
+            val strm = ByteArrayOutputStream()
+            val code = kotlinCompilerClient.compile(
+                daemon!!, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM,
+                args, PrintingMessageCollector(PrintStream(strm), MessageRenderer.WITHOUT_PATHS, true),
+                reportSeverity = ReportSeverity.DEBUG
+            )
+            CompilerResults(code, strm.toString())
+        }
     }
 
-    private fun runDaemonCompilerTwice(clientAliveFile: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, vararg args: String): Unit {
-            val res1 = compileOnDaemon(clientAliveFile, compilerId, daemonJVMOptions, daemonOptions, *args)
-            assertEquals("first compilation failed:\n${res1.out}", 0, res1.resultCode)
-            val res2 = compileOnDaemon(clientAliveFile, compilerId, daemonJVMOptions, daemonOptions, *args)
-            assertEquals("second compilation failed:\n${res2.out}", 0, res2.resultCode)
-            assertEquals("build results differ", AbstractCliTest.removePerfOutput(res1.out), AbstractCliTest.removePerfOutput(res2.out))
+    private fun runDaemonCompilerTwice(
+        clientAliveFile: File,
+        compilerId: CompilerId,
+        daemonJVMOptions: DaemonJVMOptions,
+        daemonOptions: DaemonOptions,
+        vararg args: String
+    ): Unit {
+        val res1 = compileOnDaemon(clientAliveFile, compilerId, daemonJVMOptions, daemonOptions, *args)
+        assertEquals("first compilation failed:\n${res1.out}", 0, res1.resultCode)
+        val res2 = compileOnDaemon(clientAliveFile, compilerId, daemonJVMOptions, daemonOptions, *args)
+        assertEquals("second compilation failed:\n${res2.out}", 0, res2.resultCode)
+        assertEquals("build results differ", AbstractCliTest.removePerfOutput(res1.out), AbstractCliTest.removePerfOutput(res2.out))
     }
 
     private fun getTestBaseDir(): String = KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/" + getTestName(true)
@@ -82,10 +111,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     private fun run(logName: String, vararg args: String): Int = runJava(getTestBaseDir(), logName, *args)
 
     fun makeTestDaemonOptions(testName: String, shutdownDelay: Int = 5) =
-            DaemonOptions(runFilesPath = File(tmpdir, testName).absolutePath,
-                                      shutdownDelayMilliseconds = shutdownDelay.toLong(),
-                                      verbose = true,
-                                      reportPerf = true)
+        DaemonOptions(
+            runFilesPath = File(tmpdir, testName).absolutePath,
+            shutdownDelayMilliseconds = shutdownDelay.toLong(),
+            verbose = true,
+            reportPerf = true
+        )
 
     fun makeTestDaemonJvmOptions(logFile: File? = null, xmx: Int = 384, args: Iterable<String> = listOf()): DaemonJVMOptions {
         val additionalArgs = arrayListOf<String>()
@@ -95,11 +126,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         args.forEach { additionalArgs.add(it) }
         val baseOpts = if (xmx > 0) DaemonJVMOptions(maxMemory = "${xmx}m") else DaemonJVMOptions()
         return configureDaemonJVMOptions(
-                baseOpts,
-                *additionalArgs.toTypedArray(),
-                inheritMemoryLimits = xmx <= 0,
-                inheritAdditionalProperties = false,
-                inheritOtherJvmOptions = false)
+            baseOpts,
+            *additionalArgs.toTypedArray(),
+            inheritMemoryLimits = xmx <= 0,
+            inheritAdditionalProperties = false,
+            inheritOtherJvmOptions = false
+        )
     }
 
     fun testHelloApp() {
@@ -112,29 +144,32 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
                 try {
                     val jar = tmpdir.absolutePath + File.separator + "hello.jar"
-                    runDaemonCompilerTwice(flagFile, compilerId, daemonJVMOptions, daemonOptions,
-                                           "-include-runtime", File(getTestBaseDir(), "hello.kt").absolutePath, "-d", jar)
-
-                    KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+                    runDaemonCompilerTwice(
+                        flagFile, compilerId, daemonJVMOptions, daemonOptions,
+                        "-include-runtime", File(getTestBaseDir(), "hello.kt").absolutePath, "-d", jar
+                    )
+                    kotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
                     Thread.sleep(100)
                     daemonShotDown = true
                     var compileTime1 = 0L
                     var compileTime2 = 0L
                     logFile.assertLogContainsSequence(
-                            LinePattern("Kotlin compiler daemon version"),
-                            LinePattern("Starting compilation with args: "),
-                            LinePattern("Compile on daemon: (\\d+) ms", { it.groups[1]?.value?.toLong()?.let { compileTime1 = it }; true }),
-                            LinePattern("Starting compilation with args: "),
-                            LinePattern("Compile on daemon: (\\d+) ms", { it.groups[1]?.value?.toLong()?.let { compileTime2 = it }; true }),
-                            LinePattern("Shutdown started"))
-                    assertTrue("Expecting that compilation 1 ($compileTime1 ms) is at least two times longer than compilation 2 ($compileTime2 ms)",
-                               compileTime1 > compileTime2 * 2)
+                        LinePattern("Kotlin compiler daemon version"),
+                        LinePattern("Starting compilation with args: "),
+                        LinePattern("Compile on daemon: (\\d+) ms", { it.groups[1]?.value?.toLong()?.let { compileTime1 = it }; true }),
+                        LinePattern("Starting compilation with args: "),
+                        LinePattern("Compile on daemon: (\\d+) ms", { it.groups[1]?.value?.toLong()?.let { compileTime2 = it }; true }),
+                        LinePattern("Shutdown started")
+                    )
+                    assertTrue(
+                        "Expecting that compilation 1 ($compileTime1 ms) is at least two times longer than compilation 2 ($compileTime2 ms)",
+                        compileTime1 > compileTime2 * 2
+                    )
                     logFile.delete()
                     run("hello.run", "-cp", jar, "Hello.HelloKt")
-                }
-                finally {
+                } finally {
                     if (!daemonShotDown)
-                        KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+                        kotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
                 }
             }
         }
@@ -143,29 +178,35 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     fun testDaemonJvmOptionsParsing() {
         val backupJvmOptions = System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)
         try {
-            System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-aaa,-bbb\\,ccc,-ddd,-Xmx200m,-XX:MaxPermSize=10k,-XX:ReservedCodeCacheSize=100,-xxx\\,yyy")
-            val opts = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
+            System.setProperty(
+                COMPILE_DAEMON_JVM_OPTIONS_PROPERTY,
+                "-aaa,-bbb\\,ccc,-ddd,-Xmx200m,-XX:MaxPermSize=10k,-XX:ReservedCodeCacheSize=100,-xxx\\,yyy"
+            )
+            val opts =
+                configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
             assertEquals("200m", opts.maxMemory)
             assertEquals("10k", opts.maxPermSize)
             assertEquals("100", opts.reservedCodeCacheSize)
             assertEquals(arrayListOf("aaa", "bbb,ccc", "ddd", "xxx,yyy"), opts.jvmParams)
 
             System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-Xmx300m,-XX:MaxPermSize=10k,-XX:ReservedCodeCacheSize=100")
-            val opts2 = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
+            val opts2 =
+                configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
             assertEquals("300m", opts2.maxMemory)
-            assertEquals( -1, DaemonJVMOptionsMemoryComparator().compare(opts, opts2))
+            assertEquals(-1, DaemonJVMOptionsMemoryComparator().compare(opts, opts2))
             assertEquals("300m", listOf(opts, opts2).maxWith(DaemonJVMOptionsMemoryComparator())?.maxMemory)
 
             val myXmxParam = ManagementFactory.getRuntimeMXBean().inputArguments.first { it.startsWith("-Xmx") }
             TestCase.assertNotNull(myXmxParam)
             val myXmxVal = myXmxParam.substring(4)
             System.clearProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)
-            val opts3 = configureDaemonJVMOptions(inheritMemoryLimits = true,
-                                                  inheritOtherJvmOptions = true,
-                                                  inheritAdditionalProperties = false)
+            val opts3 = configureDaemonJVMOptions(
+                inheritMemoryLimits = true,
+                inheritOtherJvmOptions = true,
+                inheritAdditionalProperties = false
+            )
             assertEquals(myXmxVal, opts3.maxMemory)
-        }
-        finally {
+        } finally {
             restoreSystemProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, backupJvmOptions)
         }
     }
@@ -177,8 +218,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             val opts = configureDaemonOptions(DaemonOptions(shutdownDelayMilliseconds = 1))
             assertEquals("abcd", opts.runFilesPath)
             assertEquals(1111, opts.autoshutdownIdleSeconds)
-        }
-        finally {
+        } finally {
             restoreSystemProperty(COMPILE_DAEMON_OPTIONS_PROPERTY, backupOptions)
         }
     }
@@ -186,8 +226,10 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     fun testDaemonInstancesSimple() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = makeTestDaemonOptions(getTestName(true))
-            val compilerId2 = CompilerId.makeCompilerId(compilerClassPath +
-                                                        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler-sources.jar"))
+            val compilerId2 = CompilerId.makeCompilerId(
+                compilerClassPath +
+                        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler-sources.jar")
+            )
 
             withLogFile("kotlin-daemon1-test") { logFile1 ->
                 withLogFile("kotlin-daemon2-test") { logFile2 ->
@@ -197,20 +239,38 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     assertTrue(logFile1.length() == 0L && logFile2.length() == 0L)
 
                     val jar1 = tmpdir.absolutePath + File.separator + "hello1.jar"
-                    val res1 = compileOnDaemon(flagFile, compilerId, daemonJVMOptions1, daemonOptions, "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar1)
+                    val res1 = compileOnDaemon(
+                        flagFile,
+                        compilerId,
+                        daemonJVMOptions1,
+                        daemonOptions,
+                        "-include-runtime",
+                        File(getHelloAppBaseDir(), "hello.kt").absolutePath,
+                        "-d",
+                        jar1
+                    )
                     assertEquals("first compilation failed:\n${res1.out}", 0, res1.resultCode)
 
                     logFile1.assertLogContainsSequence("Starting compilation with args: ")
                     assertEquals("expecting '${logFile2.absolutePath}' to be empty", 0L, logFile2.length())
 
                     val jar2 = tmpdir.absolutePath + File.separator + "hello2.jar"
-                    val res2 = compileOnDaemon(flagFile, compilerId2, daemonJVMOptions2, daemonOptions, "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar2)
+                    val res2 = compileOnDaemon(
+                        flagFile,
+                        compilerId2,
+                        daemonJVMOptions2,
+                        daemonOptions,
+                        "-include-runtime",
+                        File(getHelloAppBaseDir(), "hello.kt").absolutePath,
+                        "-d",
+                        jar2
+                    )
                     assertEquals("second compilation failed:\n${res2.out}", 0, res1.resultCode)
 
                     logFile2.assertLogContainsSequence("Starting compilation with args: ")
 
-                    KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
-                    KotlinCompilerClient.shutdownCompileService(compilerId2, daemonOptions)
+                    kotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+                    kotlinCompilerClient.shutdownCompileService(compilerId2, daemonOptions)
 
                     Thread.sleep(100)
 
@@ -223,16 +283,26 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testDaemonRunError() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
-            val daemonOptions = DaemonOptions(shutdownDelayMilliseconds = 1, verbose = true, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+            val daemonOptions =
+                DaemonOptions(shutdownDelayMilliseconds = 1, verbose = true, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
 
-            val daemonJVMOptions = configureDaemonJVMOptions("-abracadabra", inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
+            val daemonJVMOptions = configureDaemonJVMOptions(
+                "-abracadabra",
+                inheritMemoryLimits = false,
+                inheritOtherJvmOptions = false,
+                inheritAdditionalProperties = false
+            )
 
             val messageCollector = TestMessageCollector()
 
-            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
-                                                                      DaemonReportingTargets(
-                                                                          messageCollector = messageCollector
-                                                                      ), autostart = true)
+            val daemon = runBlocking {
+                kotlinCompilerClient.connectToCompileService(
+                    compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        messageCollector = messageCollector
+                    ), autostart = true
+                )
+            }
 
             assertNull(daemon)
 
@@ -243,16 +313,22 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     // TODO: find out how to reliably cause the retry
     fun ignore_testDaemonStartRetry() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
-            val daemonOptions = DaemonOptions(shutdownDelayMilliseconds = 1, verbose = true, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+            val daemonOptions =
+                DaemonOptions(shutdownDelayMilliseconds = 1, verbose = true, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
 
-            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
+            val daemonJVMOptions =
+                configureDaemonJVMOptions(inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
 
             val messageCollector = TestMessageCollector()
 
-            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
-                                                                      DaemonReportingTargets(
-                                                                          messageCollector = messageCollector
-                                                                      ), autostart = true)
+            val daemon = runBlocking {
+                kotlinCompilerClient.connectToCompileService(
+                    compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        messageCollector = messageCollector
+                    ), autostart = true
+                )
+            }
 
             assertNull(daemon)
 
@@ -265,15 +341,21 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testDaemonAutoshutdownOnUnused() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
-            val daemonOptions = DaemonOptions(autoshutdownUnusedSeconds = 1, shutdownDelayMilliseconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+            val daemonOptions = DaemonOptions(
+                autoshutdownUnusedSeconds = 1,
+                shutdownDelayMilliseconds = 1,
+                runFilesPath = File(tmpdir, getTestName(true)).absolutePath
+            )
 
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
 
-                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
-                                                                          DaemonReportingTargets(
-                                                                              out = System.err
-                                                                          ), autostart = true)
+                val daemon = kotlinCompilerClient.connectToCompileService(
+                    compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        out = System.err
+                    ), autostart = true
+                )
                 assertNotNull("failed to connect daemon", daemon)
                 daemon?.registerClient(flagFile.absolutePath)
 
@@ -284,31 +366,41 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 }
                 Thread.sleep(200)
 
-                logFile.assertLogContainsSequence("Unused timeout exceeded 1s",
-                                                  "Shutdown started")
+                logFile.assertLogContainsSequence(
+                    "Unused timeout exceeded 1s",
+                    "Shutdown started"
+                )
             }
         }
     }
 
     fun testDaemonAutoshutdownOnIdle() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
-            val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1, shutdownDelayMilliseconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+            val daemonOptions = DaemonOptions(
+                autoshutdownIdleSeconds = 1,
+                shutdownDelayMilliseconds = 1,
+                runFilesPath = File(tmpdir, getTestName(true)).absolutePath
+            )
 
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
 
-                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
-                                                                          DaemonReportingTargets(
-                                                                              out = System.err
-                                                                          ), autostart = true)
+                val daemon = kotlinCompilerClient.connectToCompileService(
+                    compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        out = System.err
+                    ), autostart = true
+                )
                 assertNotNull("failed to connect daemon", daemon)
                 daemon?.registerClient(flagFile.absolutePath)
                 val jar = tmpdir.absolutePath + File.separator + "hello1.jar"
                 val strm = ByteArrayOutputStream()
-                val code = KotlinCompilerClient.compile(daemon!!, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM,
-                                                        arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
-                                                        PrintingMessageCollector(PrintStream(strm), MessageRenderer.WITHOUT_PATHS, true),
-                                                        reportSeverity = ReportSeverity.DEBUG)
+                val code = kotlinCompilerClient.compile(
+                    daemon!!, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM,
+                    arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                    PrintingMessageCollector(PrintStream(strm), MessageRenderer.WITHOUT_PATHS, true),
+                    reportSeverity = ReportSeverity.DEBUG
+                )
                 assertEquals("compilation failed:\n$strm", 0, code)
 
                 logFile.assertLogContainsSequence("Starting compilation with args: ")
@@ -319,30 +411,41 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     Thread.sleep(200)
                 }
                 Thread.sleep(200)
-                logFile.assertLogContainsSequence("Idle timeout exceeded 1s",
-                                                  "Shutdown started")
+                logFile.assertLogContainsSequence(
+                    "Idle timeout exceeded 1s",
+                    "Shutdown started"
+                )
             }
         }
     }
 
     fun testDaemonGracefulShutdown() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
-            val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1, shutdownDelayMilliseconds = 1, forceShutdownTimeoutMilliseconds = 60000, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+            val daemonOptions = DaemonOptions(
+                autoshutdownIdleSeconds = 1,
+                shutdownDelayMilliseconds = 1,
+                forceShutdownTimeoutMilliseconds = 60000,
+                runFilesPath = File(tmpdir, getTestName(true)).absolutePath
+            )
 
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
 
-                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
-                                                                          DaemonReportingTargets(
-                                                                              out = System.err
-                                                                          ), autostart = true)
+                val daemon = kotlinCompilerClient.connectToCompileService(
+                    compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        out = System.err
+                    ), autostart = true
+                )
                 assertNotNull("failed to connect daemon", daemon)
                 daemon?.registerClient(flagFile.absolutePath)
                 val sessionId = daemon?.leaseCompileSession(null)
 
                 val scheduleShutdownRes = daemon?.scheduleShutdown(true)
 
-                assertTrue("failed to schedule shutdown ($scheduleShutdownRes)", scheduleShutdownRes?.let { it.isGood && it.get() } ?: false)
+                assertTrue(
+                    "failed to schedule shutdown ($scheduleShutdownRes)",
+                    scheduleShutdownRes?.let { it.isGood && it.get() } ?: false)
 
                 Thread.sleep(100) // to allow timer task to run in the daemon
 
@@ -356,23 +459,31 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
                 Thread.sleep(100) // allow after session timed action to run
 
-                logFile.assertLogContainsSequence("All sessions finished",
-                                                  "Shutdown started")
+                logFile.assertLogContainsSequence(
+                    "All sessions finished",
+                    "Shutdown started"
+                )
             }
         }
     }
 
     fun testDaemonExitsOnClientFlagDeletedWithActiveSessions() {
-        val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1000, shutdownDelayMilliseconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+        val daemonOptions = DaemonOptions(
+            autoshutdownIdleSeconds = 1000,
+            shutdownDelayMilliseconds = 1,
+            runFilesPath = File(tmpdir, getTestName(true)).absolutePath
+        )
         val clientFlag = createTempFile(getTestName(true), "-client.alive")
         val sessionFlag = createTempFile(getTestName(true), "-session.alive")
         try {
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
-                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, clientFlag, daemonJVMOptions, daemonOptions,
-                                                                          DaemonReportingTargets(
-                                                                              out = System.err
-                                                                          ), autostart = true)
+                val daemon = kotlinCompilerClient.connectToCompileService(
+                    compilerId, clientFlag, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        out = System.err
+                    ), autostart = true
+                )
                 assertNotNull("failed to connect daemon", daemon)
                 daemon?.leaseCompileSession(sessionFlag.canonicalPath)
 
@@ -381,27 +492,34 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 Thread.sleep(2100) // allow deleted file detection, should be 2 * DAEMON_PERIODIC_CHECK_INTERVAL_MS + o
                 // TODO: consider possibility to set DAEMON_PERIODIC_CHECK_INTERVAL_MS from tests, to allow shorter sleeps
 
-                logFile.assertLogContainsSequence("No more clients left",
-                                                  "Shutdown started")
+                logFile.assertLogContainsSequence(
+                    "No more clients left",
+                    "Shutdown started"
+                )
             }
-        }
-        finally {
+        } finally {
             sessionFlag.delete()
             clientFlag.delete()
         }
     }
 
     fun testDaemonExitsOnClientFlagDeletedWithAllSessionsReleased() {
-        val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1000, shutdownDelayMilliseconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+        val daemonOptions = DaemonOptions(
+            autoshutdownIdleSeconds = 1000,
+            shutdownDelayMilliseconds = 1,
+            runFilesPath = File(tmpdir, getTestName(true)).absolutePath
+        )
         val clientFlag = createTempFile(getTestName(true), "-client.alive")
         val sessionFlag = createTempFile(getTestName(true), "-session.alive")
         try {
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
-                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, clientFlag, daemonJVMOptions, daemonOptions,
-                                                                          DaemonReportingTargets(
-                                                                              out = System.err
-                                                                          ), autostart = true)
+                val daemon = kotlinCompilerClient.connectToCompileService(
+                    compilerId, clientFlag, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        out = System.err
+                    ), autostart = true
+                )
                 assertNotNull("failed to connect daemon", daemon)
                 daemon?.leaseCompileSession(sessionFlag.canonicalPath)
 
@@ -413,27 +531,34 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
                 Thread.sleep(2100) // allow deleted file detection, should be 2 * DAEMON_PERIODIC_CHECK_INTERVAL_MS + o
 
-                logFile.assertLogContainsSequence("No more clients left",
-                                                  "Shutdown started")
+                logFile.assertLogContainsSequence(
+                    "No more clients left",
+                    "Shutdown started"
+                )
             }
-        }
-        finally {
+        } finally {
             sessionFlag.delete()
             clientFlag.delete()
         }
     }
 
     fun testDaemonCancelShutdownOnANewClient() {
-        val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1000, shutdownDelayMilliseconds = 3000, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+        val daemonOptions = DaemonOptions(
+            autoshutdownIdleSeconds = 1000,
+            shutdownDelayMilliseconds = 3000,
+            runFilesPath = File(tmpdir, getTestName(true)).absolutePath
+        )
         val clientFlag = createTempFile(getTestName(true), "-client.alive")
         val clientFlag2 = createTempFile(getTestName(true), "-client.alive")
         try {
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
-                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, clientFlag, daemonJVMOptions, daemonOptions,
-                                                                          DaemonReportingTargets(
-                                                                              out = System.err
-                                                                          ), autostart = true)
+                val daemon = kotlinCompilerClient.connectToCompileService(
+                    compilerId, clientFlag, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        out = System.err
+                    ), autostart = true
+                )
                 assertNotNull("failed to connect daemon", daemon)
                 daemon?.leaseCompileSession(null)
 
@@ -442,21 +567,24 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 Thread.sleep(2100) // allow deleted file detection, should be 2 * DAEMON_PERIODIC_CHECK_INTERVAL_MS + o
                 // TODO: consider possibility to set DAEMON_PERIODIC_CHECK_INTERVAL_MS from tests, to allow shorter sleeps
 
-                val daemon2 = KotlinCompilerClient.connectToCompileService(compilerId, clientFlag2, daemonJVMOptions, daemonOptions,
-                                                                           DaemonReportingTargets(
-                                                                               out = System.err
-                                                                           ), autostart = true)
+                val daemon2 = kotlinCompilerClient.connectToCompileService(
+                    compilerId, clientFlag2, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        out = System.err
+                    ), autostart = true
+                )
                 assertNotNull("failed to connect daemon", daemon2)
                 daemon2?.leaseCompileSession(null)
 
                 Thread.sleep(3000) // allow to trigger delayed shutdown timer
 
-                logFile.assertLogContainsSequence("No more clients left",
-                                                  "Delayed shutdown in 3000ms",
-                                                  "Cancel delayed shutdown due to a new activity")
+                logFile.assertLogContainsSequence(
+                    "No more clients left",
+                    "Delayed shutdown in 3000ms",
+                    "Cancel delayed shutdown due to a new activity"
+                )
             }
-        }
-        finally {
+        } finally {
             clientFlag.delete()
             clientFlag2.delete()
         }
@@ -477,16 +605,18 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val daemonOptions = makeTestDaemonOptions(getTestName(true))
         val jar = tmpdir.absolutePath + File.separator + "hello.jar"
         val args = listOf(
-                File(File(System.getProperty("java.home"), "bin"), "java").absolutePath,
-                "-Xmx256m",
-                "-D$COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY",
-                "-cp",
-                daemonClientClassPath.joinToString(File.pathSeparator) { it.absolutePath },
-                KotlinCompilerClient::class.qualifiedName!!) +
-                   daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
-                   compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
-                   File(getHelloAppBaseDir(), "hello.kt").absolutePath +
-                   "-d" + jar
+            File(File(System.getProperty("java.home"), "bin"), "java").absolutePath,
+            "-Xmx256m",
+            "-D$COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY",
+            "-cp",
+            daemonClientClassPath.joinToString(File.pathSeparator) { it.absolutePath },
+            KotlinCompilerClientInstance::class.qualifiedName!!
+        ) +
+                daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
+                compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
+                File(getHelloAppBaseDir(), "hello.kt").absolutePath +
+                "-d" + jar +
+                KotlinCompilerClientInstance.RMI_FLAG
         try {
             var resOutput: String? = null
             var resCode: Int? = null
@@ -502,8 +632,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             assertFalse("process.waitFor() hangs:\n$resOutput", waitThread.isAlive)
             assertEquals("Compilation failed:\n$resOutput", 0, resCode)
-        }
-        finally {
+        } finally {
             if (clientAliveFile.exists())
                 clientAliveFile.delete()
         }
@@ -522,10 +651,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile, xmx = -1)
 
-                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
-                                                                          DaemonReportingTargets(
-                                                                              out = System.err
-                                                                          ), autostart = true)
+                val daemon = kotlinCompilerClient.connectToCompileService(
+                    compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        out = System.err
+                    ), autostart = true
+                )
                 assertNotNull("failed to connect daemon", daemon)
 
                 val (_, port) = findPortAndCreateRegistry(10, 16384, 65535)
@@ -534,25 +665,30 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 val outStreams = Array(PARALLEL_THREADS_TO_COMPILE, { ByteArrayOutputStream() })
 
                 fun runCompile(threadNo: Int) =
-                        thread {
-                            val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
-                            val res = KotlinCompilerClient.compile(
-                                    daemon!!,
-                                    CompileService.NO_SESSION,
-                                    CompileService.TargetPlatform.JVM,
-                                    arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
-                                    PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true),
-                                    port = port)
-                            synchronized(resultCodes) {
-                                resultCodes[threadNo] = res
-                            }
-                            localEndSignal.countDown()
+                    thread {
+                        val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
+                        val res = runBlocking {
+                            kotlinCompilerClient.compile(
+                                daemon!!,
+                                CompileService.NO_SESSION,
+                                CompileService.TargetPlatform.JVM,
+                                arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                                PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true)
+                            )
                         }
+                        synchronized(resultCodes) {
+                            resultCodes[threadNo] = res
+                        }
+                        localEndSignal.countDown()
+                    }
 
                 (1..PARALLEL_THREADS_TO_COMPILE).forEach { runCompile(it - 1) }
 
                 val succeeded = localEndSignal.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
-                assertTrue("parallel compilation failed to complete in $PARALLEL_WAIT_TIMEOUT_S s, ${localEndSignal.count} unfinished threads", succeeded)
+                assertTrue(
+                    "parallel compilation failed to complete in $PARALLEL_WAIT_TIMEOUT_S s, ${localEndSignal.count} unfinished threads",
+                    succeeded
+                )
 
                 (1..PARALLEL_THREADS_TO_COMPILE).forEach {
                     assertEquals("Compilation on thread $it failed:\n${outStreams[it - 1]}", 0, resultCodes[it - 1])
@@ -585,11 +721,13 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                         logFiles[threadNo] = logFile
                         val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
                         val compileServiceSession =
-                                KotlinCompilerClient.connectAndLease(compilerId, flagFile, daemonJVMOptions, daemonOptions,
-                                                                     DaemonReportingTargets(
-                                                                         out = PrintStream(outStreams[threadNo])
-                                                                     ), autostart = true,
-                                                                     leaseSession = true)
+                            kotlinCompilerClient.connectAndLease(
+                                compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                                DaemonReportingTargets(
+                                    out = PrintStream(outStreams[threadNo])
+                                ), autostart = true,
+                                leaseSession = true
+                            )
                         daemonInfos[threadNo] = compileServiceSession?.compileService?.getDaemonInfo() to compileServiceSession?.sessionId
 
                         resultCodes[threadNo] = when {
@@ -598,19 +736,19 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                             }
                             ParallelStartParams.performCompilation -> {
                                 val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
-                                KotlinCompilerClient.compile(
-                                        compileServiceSession!!.compileService,
-                                        compileServiceSession.sessionId,
-                                        CompileService.TargetPlatform.JVM,
-                                        arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
-                                        PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true))
+                                kotlinCompilerClient.compile(
+                                    compileServiceSession!!.compileService,
+                                    compileServiceSession.sessionId,
+                                    CompileService.TargetPlatform.JVM,
+                                    arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                                    PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true)
+                                )
                             }
                             else -> 0 // compilation skipped, assuming - successful
                         }
                     }
                 }
-            }
-            finally {
+            } finally {
                 doneLatch.countDown()
             }
         }
@@ -621,8 +759,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val succeeded = try {
             (1..ParallelStartParams.threads).forEach { connectThread(it - 1) }
             doneLatch.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
-        }
-        finally {
+        } finally {
             System.clearProperty(COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY)
             System.clearProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)
         }
@@ -634,7 +771,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
         for (i in 0..(ParallelStartParams.threads - 1)) {
             val logContents = logFiles[i]?.readLines()
-            port2logs[i] = logContents?.find { it.contains("daemon is listening on port") }?.split(" ")?.last()?.toIntOrNull() to logFiles[i]
+            port2logs[i] = logContents?.find { it.contains("daemon is listening on port") }?.split(" ")?.last()?.toIntOrNull() to
+                    logFiles[i]
             electionLogs[i] = logContents?.find { it.contains(LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE) }
         }
 
@@ -658,11 +796,14 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                         compiledPort?.let { port -> port2logs.find { it?.first == port } }?.second?.let { logFile ->
                             appendln("--- log file ${logFile.name}:\n${logFile.readText()}\n---")
                         }
-                        ?: appendln("--- log not found (port: $compiledPort)")
+                                ?: appendln("--- log not found (port: $compiledPort)")
                     }
                 }
             }
-            assertTrue("parallel daemons start failed to complete in $PARALLEL_WAIT_TIMEOUT_S s, ${doneLatch.count} unfinished threads:\n\n$msg", succeeded)
+            assertTrue(
+                "parallel daemons start failed to complete in $PARALLEL_WAIT_TIMEOUT_S s, ${doneLatch.count} unfinished threads:\n\n$msg",
+                succeeded
+            )
             assertTrue("No daemon elected:\n\n$msg\n--- elections:\n${electionLogs.joinToString("\n")}\n---", electionsSuccess)
             assertTrue("Compilations failed: $resultsFailures of ${ParallelStartParams.threads}:\n\n$msg", resultsFailures > 0)
         }
@@ -672,30 +813,31 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = makeTestDaemonOptions(getTestName(true))
             val daemonJVMOptions = makeTestDaemonJvmOptions()
-            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
-                                                                      DaemonReportingTargets(
-                                                                          out = System.err
-                                                                      ), autostart = true)
+            val daemon = runBlocking {
+                kotlinCompilerClient.connectToCompileService(
+                    compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        out = System.err
+                    ), autostart = true
+                )
+            }
             assertNotNull("failed to connect daemon", daemon)
-            daemon?.registerClient(flagFile.absolutePath)
+            runBlocking { daemon?.registerClient(flagFile.absolutePath) }
 
-            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+            runBlocking { kotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions) }
             Thread.sleep(200)
 
             val exception: Exception? =
-                    try {
-                        daemon!!.getUsedMemory()
-                        null
-                    }
-                    catch (e: java.rmi.ConnectException) {
-                        e
-                    }
-                    catch (e: java.rmi.UnmarshalException) {
-                        e
-                    }
-                    catch (e: java.rmi.ConnectIOException) {
-                        e
-                    }
+                try {
+                    runBlocking { daemon!!.getUsedMemory() }
+                    null
+                } catch (e: java.rmi.ConnectException) {
+                    e
+                } catch (e: java.rmi.UnmarshalException) {
+                    e
+                } catch (e: java.rmi.ConnectIOException) {
+                    e
+                }
             assertNotNull(exception)
         }
     }
@@ -707,10 +849,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
 
-                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
-                                                                          DaemonReportingTargets(
-                                                                              out = System.err
-                                                                          ), autostart = true)
+                val daemon = kotlinCompilerClient.connectToCompileService(
+                    compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        out = System.err
+                    ), autostart = true
+                )
                 assertNotNull("failed to connect daemon", daemon)
                 daemon?.registerClient(flagFile.absolutePath)
 
@@ -728,14 +872,19 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     }
                 }, port = SOCKET_ANY_FREE_PORT)
                 val strm = ByteArrayOutputStream()
-                val code = daemon!!.remoteCompile(CompileService.NO_SESSION,
-                                                  CompileService.TargetPlatform.JVM,
-                                                  arrayOf("-include-runtime", file.absolutePath, "-d", jar),
-                                                  callbackServices,
-                                                  RemoteOutputStreamServer(strm, SOCKET_ANY_FREE_PORT),
-                                                  CompileService.OutputFormat.XML,
-                                                  RemoteOutputStreamServer(strm, SOCKET_ANY_FREE_PORT),
-                                                  null).get()
+                val code = runBlocking {
+                    TODO("remoteCompile - UNIMPL")
+//                    daemon!!.remoteCompile(
+//                        CompileService.NO_SESSION,
+//                        CompileService.TargetPlatform.JVM,
+//                        arrayOf("-include-runtime", file.absolutePath, "-d", jar),
+//                        callbackServices,
+//                        RemoteOutputStreamServer(strm, SOCKET_ANY_FREE_PORT),
+//                        CompileService.OutputFormat.XML,
+//                        RemoteOutputStreamServer(strm, SOCKET_ANY_FREE_PORT),
+//                        null
+//                    ).get()
+                }
 
                 TestCase.assertEquals(0, code)
 
@@ -749,80 +898,99 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testDaemonReplLocalEvalNoParams() {
         withDaemon { daemon ->
-            val repl = KotlinRemoteReplCompilerClient(daemon, null, CompileService.TargetPlatform.JVM,
-                                                      emptyArray(),
-                                                      TestMessageCollector(),
-                                                      classpathFromClassloader(),
-                                                      ScriptWithNoParam::class.qualifiedName!!)
+            val repl = KotlinRemoteReplCompilerClient.instantiate(
+                daemon, null, CompileService.TargetPlatform.JVM,
+                emptyArray(),
+                TestMessageCollector(),
+                classpathFromClassloader(),
+                ScriptWithNoParam::class.qualifiedName!!
+            )
 
             val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader)
 
             doReplTestWithLocalEval(repl, localEvaluator)
-            repl.dispose()
+            runBlocking { repl.dispose() }
         }
     }
 
     fun testDaemonReplLocalEvalStandardTemplate() {
         withDaemon { daemon ->
-            val repl = KotlinRemoteReplCompilerClient(daemon, null, CompileService.TargetPlatform.JVM, emptyArray(),
-                                                      TestMessageCollector(),
-                                                      classpathFromClassloader(),
-                                                      "kotlin.script.templates.standard.ScriptTemplateWithArgs")
+            val repl = KotlinRemoteReplCompilerClient.instantiate(
+                daemon, null, CompileService.TargetPlatform.JVM, emptyArray(),
+                TestMessageCollector(),
+                classpathFromClassloader(),
+                "kotlin.script.templates.standard.ScriptTemplateWithArgs"
+            )
 
-            val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader,
-                                                      ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class)))
+            val localEvaluator = GenericReplEvaluator(
+                emptyList(), Thread.currentThread().contextClassLoader,
+                ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class))
+            )
 
             doReplTestWithLocalEval(repl, localEvaluator)
-            repl.dispose()
+            runBlocking { repl.dispose() }
         }
     }
 
-    private fun doReplTestWithLocalEval(replCompiler: KotlinRemoteReplCompilerClient, localEvaluator: ReplEvaluator) {
+    private fun doReplTestWithLocalEval(
+        replCompiler: org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient,
+        localEvaluator: ReplEvaluator
+    ) {
+        runBlocking {
+            val compilerState = replCompiler.createState()
+            val evaluatorState = localEvaluator.createState()
 
-        val compilerState = replCompiler.createState()
-        val evaluatorState = localEvaluator.createState()
+            val res0 = replCompiler.check(compilerState, ReplCodeLine(0, 0, "val x ="))
+            TestCase.assertTrue("Unexpected check results: $res0", res0 is ReplCheckResult.Incomplete)
 
-        val res0 = replCompiler.check(compilerState, ReplCodeLine(0, 0, "val x ="))
-        TestCase.assertTrue("Unexpected check results: $res0", res0 is ReplCheckResult.Incomplete)
+            val codeLine1 = ReplCodeLine(1, 0, "val lst = listOf(1)\nval x = 5")
+            val res1 = replCompiler.compile(compilerState, codeLine1)
+            val res1c = res1 as? ReplCompileResult.CompiledClasses
+            TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
 
-        val codeLine1 = ReplCodeLine(1, 0, "val lst = listOf(1)\nval x = 5")
-        val res1 = replCompiler.compile(compilerState, codeLine1)
-        val res1c = res1 as? ReplCompileResult.CompiledClasses
-        TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
+            val res11 = localEvaluator.eval(evaluatorState, res1c!!)
+            val res11e = res11 as? ReplEvalResult.UnitResult
+            TestCase.assertNotNull("Unexpected eval result: $res11", res11e)
 
-        val res11 = localEvaluator.eval(evaluatorState, res1c!!)
-        val res11e = res11 as? ReplEvalResult.UnitResult
-        TestCase.assertNotNull("Unexpected eval result: $res11", res11e)
+            val codeLine2 = ReplCodeLine(2, 0, "x + 2")
+            val res2 = replCompiler.compile(compilerState, codeLine2)
+            val res2c = res2 as? ReplCompileResult.CompiledClasses
+            TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
 
-        val codeLine2 = ReplCodeLine(2, 0, "x + 2")
-        val res2 = replCompiler.compile(compilerState, codeLine2)
-        val res2c = res2 as? ReplCompileResult.CompiledClasses
-        TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
-
-        val res21 = localEvaluator.eval(evaluatorState, res2c!!)
-        val res21e = res21 as? ReplEvalResult.ValueResult
-        TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
-        TestCase.assertEquals(7, res21e!!.value)
+            val res21 = localEvaluator.eval(evaluatorState, res2c!!)
+            val res21e = res21 as? ReplEvalResult.ValueResult
+            TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
+            TestCase.assertEquals(7, res21e!!.value)
+        }
     }
 
     fun testDaemonReplAutoshutdownOnIdle() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
-            val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1, autoshutdownUnusedSeconds = 1, shutdownDelayMilliseconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+            val daemonOptions = DaemonOptions(
+                autoshutdownIdleSeconds = 1,
+                autoshutdownUnusedSeconds = 1,
+                shutdownDelayMilliseconds = 1,
+                runFilesPath = File(tmpdir, getTestName(true)).absolutePath
+            )
 
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
 
-                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
-                                                                          DaemonReportingTargets(
-                                                                              out = System.err
-                                                                          ), autostart = true)
+                val daemon = kotlinCompilerClient.connectToCompileService(
+                    compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        out = System.err
+                    ), autostart = true
+                )
                 assertNotNull("failed to connect daemon", daemon)
 
-                val replCompiler = KotlinRemoteReplCompilerClient(daemon!!, null, CompileService.TargetPlatform.JVM,
-                                                                  emptyArray(),
-                                                                  TestMessageCollector(),
-                                                                  classpathFromClassloader(),
-                                                                  ScriptWithNoParam::class.qualifiedName!!)
+                val replCompiler = KotlinRemoteReplCompilerClient.instantiate(
+                    daemon!!, null, CompileService.TargetPlatform.JVM,
+                    emptyArray(),
+                    TestMessageCollector(),
+                    classpathFromClassloader(),
+                    ScriptWithNoParam::class.qualifiedName!!
+                )
 
                 val compilerState = replCompiler.createState()
 
@@ -843,21 +1011,25 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 replCompiler.dispose()
 
                 Thread.sleep(200)
-                logFile.assertLogContainsSequence("Idle timeout exceeded 1s",
-                                                  "Shutdown started")
+                logFile.assertLogContainsSequence(
+                    "Idle timeout exceeded 1s",
+                    "Shutdown started"
+                )
             }
         }
     }
 
-    internal fun withDaemon(body: (CompileService) -> Unit) {
+    internal fun withDaemon(body: (CompileServiceClientSide) -> Unit) {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = makeTestDaemonOptions(getTestName(true))
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
-                val daemon: CompileService? = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions,
-                                                                                           DaemonReportingTargets(
-                                                                                               out = System.err
-                                                                                           ), autostart = true)
+                val daemon: CompileServiceClientSide? = kotlinCompilerClient.connectToCompileService(
+                    compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                    DaemonReportingTargets(
+                        out = System.err
+                    ), autostart = true
+                )
                 assertNotNull("failed to connect daemon", daemon)
 
                 body(daemon!!)
@@ -905,7 +1077,11 @@ internal fun File.assertLogContainsSequence(patterns: Iterable<LinePattern>) {
     val lines = reader().readLines()
     lines.asSequence().ifNotContainsSequence(patterns.iterator())
     { unmatchedPattern, lineNo ->
-        fail("pattern not found in the input: ${unmatchedPattern.regex}\nunmatched part of the log file ($absolutePath) from line $lineNo:\n\n${lines.asSequence().drop(lineNo).joinToString("\n")}\n-------")
+        fail(
+            "pattern not found in the input: ${unmatchedPattern.regex}\nunmatched part of the log file ($absolutePath) from line $lineNo:\n\n${lines.asSequence().drop(
+                lineNo
+            ).joinToString("\n")}\n-------"
+        )
     }
 }
 
@@ -918,8 +1094,7 @@ internal fun File.isLogContainsSequence(vararg patterns: String): Boolean {
 fun restoreSystemProperty(propertyName: String, backupValue: String?) {
     if (backupValue == null) {
         System.clearProperty(propertyName)
-    }
-    else {
+    } else {
         System.setProperty(propertyName, backupValue)
     }
 }
@@ -928,18 +1103,23 @@ internal inline fun withFlagFile(prefix: String, suffix: String? = null, body: (
     val file = createTempFile(prefix, suffix)
     try {
         body(file)
-    }
-    finally {
+    } finally {
         file.delete()
     }
 }
 
-internal inline fun withLogFile(prefix: String, suffix: String = ".log", printLogOnException: Boolean = true, body: (File) -> Unit) {
+internal fun withLogFile(
+    prefix: String,
+    suffix: String = ".log",
+    printLogOnException: Boolean = true,
+    body: suspend (File) -> Unit
+) {
     val logFile = createTempFile(prefix, suffix)
     try {
-        body(logFile)
-    }
-    catch (e: Exception) {
+        runBlocking {
+            body(logFile)
+        }
+    } catch (e: Exception) {
         if (printLogOnException) {
             Thread.sleep(100) // trying to wait log flushing
             System.err.println("--- log file ${logFile.name}:\n${logFile.readText()}\n---")
@@ -971,20 +1151,19 @@ abstract class ScriptWithNoParam
 
 internal fun classpathFromClassloader(): List<File> {
     val additionalClasspath = System.getProperty("kotlin.test.script.classpath")?.split(File.pathSeparator)
-            ?.map{ File(it) }.orEmpty()
+        ?.map { File(it) }.orEmpty()
     return ((TestKotlinScriptDummyDependenciesResolver::class.java.classLoader as? URLClassLoader)?.urLs
-                   ?.mapNotNull(URL::toFile)
-                   ?.filter { it.path.contains("out") && it.path.contains("test") }
-           ?: emptyList()
-           ) + additionalClasspath
+        ?.mapNotNull(URL::toFile)
+        ?.filter { it.path.contains("out") && it.path.contains("test") }
+            ?: emptyList()
+            ) + additionalClasspath
 }
 
 internal fun URL.toFile() =
-        try {
-            File(toURI().schemeSpecificPart)
-        }
-        catch (e: java.net.URISyntaxException) {
-            if (protocol != "file") null
-            else File(file)
-        }
+    try {
+        File(toURI().schemeSpecificPart)
+    } catch (e: java.net.URISyntaxException) {
+        if (protocol != "file") null
+        else File(file)
+    }
 

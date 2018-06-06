@@ -3,13 +3,14 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.daemon.common.experimental
+package org.jetbrains.kotlin.daemon.common
 
-import kotlinx.coroutines.experimental.Deferred
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
-import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.experimental.CompilationResultsClientSide
+import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSide
+import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacadeClientSide
 import java.io.File
 
 interface CompileServiceAsync {
@@ -43,7 +44,7 @@ interface CompileServiceAsync {
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBaseClientSide,
-        compilationResults: CompilationResultsClientSide
+        compilationResults: CompilationResultsClientSide?
     ): CompileService.CallResult<Int>
 
     suspend fun clearJarCache()

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
-import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.script.StandardScriptDefinition
@@ -200,7 +200,9 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
             val messageCollector = TestMessageCollector()
 
             val daemonWithSession = KotlinCompilerClient.connectAndLease(compilerId, aliveFile, daemonJVMOptions, daemonOptions,
-                                                                         DaemonReportingTargets(messageCollector = messageCollector), autostart = true, leaseSession = true)
+                                                                         DaemonReportingTargets(
+                                                                             messageCollector = messageCollector
+                                                                         ), autostart = true, leaseSession = true)
             assertNotNull("failed to connect daemon:\ncompiler id: $compilerId\ndaemon opts: $daemonOptions\njvm opts: $daemonJVMOptions\nalive file: $aliveFile\n", daemonWithSession)
 
             try {

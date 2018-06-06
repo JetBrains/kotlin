@@ -3,14 +3,15 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.daemon.client.experimental.new
+package org.jetbrains.kotlin.daemon.client.experimental
 
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.common.repl.experimental.ReplCompiler
+import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceClientSide
+import org.jetbrains.kotlin.daemon.common.CompileServiceClientSide
 import org.jetbrains.kotlin.daemon.common.experimental.findCallbackServerSocket
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -25,14 +26,14 @@ open class KotlinRemoteReplCompilerClientAsync(
     messageCollector: MessageCollector,
     templateClasspath: List<File>,
     templateClassName: String
-) : ReplCompiler {
+) : KotlinRemoteReplCompilerClient {
     val services = BasicCompilerServicesWithResultsFacadeServerServerSide(
         messageCollector,
         null,
         findCallbackServerSocket()
     )
 
-    val sessionId = runBlocking {
+    override val sessionId = runBlocking {
         compileService.leaseReplSession(
             clientAliveFlagFile?.absolutePath,
             args,
@@ -55,7 +56,7 @@ open class KotlinRemoteReplCompilerClientAsync(
     }
 
     // dispose should be called at the end of the repl lifetime to free daemon repl session and appropriate resources
-    open suspend fun dispose() {
+    override suspend fun dispose() {
         compileService.releaseReplSession(sessionId)
     }
 

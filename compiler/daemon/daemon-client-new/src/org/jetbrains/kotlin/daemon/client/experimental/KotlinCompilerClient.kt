@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.daemon.client.experimental.new
+package org.jetbrains.kotlin.daemon.client.experimental
 
 import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.Deferred
@@ -12,9 +12,10 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
-import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
-import org.jetbrains.kotlin.daemon.client.experimental.common.KotlinCompilerDaemonClient
+import org.jetbrains.kotlin.daemon.client.CompileServiceSession
+import org.jetbrains.kotlin.daemon.client.impls.DaemonReportMessage
+import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.Profiler
@@ -31,10 +32,12 @@ import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 import kotlin.concurrent.thread
 
-data class CompileServiceSession(val compileService: CompileServiceClientSide, val sessionId: Int)
 
+class KotlinCompilerClient : KotlinCompilerDaemonClient {
 
-object KotlinCompilerClient : KotlinCompilerDaemonClient {
+    init {
+        println("experimental KotlinCompilerClient is being instantiated")
+    }
 
     val DAEMON_DEFAULT_STARTUP_TIMEOUT_MS = 10000L
     val DAEMON_CONNECT_CYCLE_ATTEMPTS = 3
@@ -124,7 +127,7 @@ object KotlinCompilerClient : KotlinCompilerDaemonClient {
                     }
                     reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
                     if (!leaseSession)
-                        CompileServiceSession(this@leaseImpl, CompileService.NO_SESSION)
+                        org.jetbrains.kotlin.daemon.client.CompileServiceSession(this@leaseImpl, CompileService.NO_SESSION)
                     else
                         try {
                             leaseCompileSession(sessionAliveFlagFile?.absolutePath)
@@ -133,7 +136,7 @@ object KotlinCompilerClient : KotlinCompilerDaemonClient {
                         }
                             .takeUnless { it is CompileService.CallResult.Dying }
                             ?.let {
-                                CompileServiceSession(this@leaseImpl, it.get())
+                                org.jetbrains.kotlin.daemon.client.CompileServiceSession(this@leaseImpl, it.get())
                             }
                 }
 
@@ -247,9 +250,7 @@ object KotlinCompilerClient : KotlinCompilerDaemonClient {
     private fun configureClientOptions(): ClientOptions =
         configureClientOptions(ClientOptions())
 
-
-    @JvmStatic
-    fun main(vararg args: String) {
+    override fun main(vararg args: String) {
         runBlocking(Unconfined) {
             val compilerId = CompilerId()
             val daemonOptions = configureDaemonOptions()
@@ -551,7 +552,7 @@ object KotlinCompilerClient : KotlinCompilerDaemonClient {
                 } catch (e: Exception) {
                     reportingTargets.report(
                         DaemonReportCategory.INFO,
-                        "unable to interpret $COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY property ('$it'); using default timeout ${DAEMON_DEFAULT_STARTUP_TIMEOUT_MS} ms"
+                        "unable to interpret $COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY property ('$it'); using default timeout $DAEMON_DEFAULT_STARTUP_TIMEOUT_MS ms"
                     )
                     null
                 }

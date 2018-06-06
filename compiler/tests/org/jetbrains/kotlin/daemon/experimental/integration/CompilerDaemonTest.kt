@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.daemon.*
-import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
-import org.jetbrains.kotlin.daemon.client.experimental.new.CompilerCallbackServicesFacadeServerServerSide
-import org.jetbrains.kotlin.daemon.client.experimental.common.KotlinCompilerDaemonClient
-import org.jetbrains.kotlin.daemon.client.experimental.new.KotlinRemoteReplCompilerClientAsync
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerClientInstance
+import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.experimental.CompilerCallbackServicesFacadeServerServerSide
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
+import org.jetbrains.kotlin.daemon.client.experimental.KotlinRemoteReplCompilerClientAsync
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceAsyncWrapper
-import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceClientSide
+import org.jetbrains.kotlin.daemon.common.CompileServiceClientSide
 import org.jetbrains.kotlin.daemon.common.experimental.findCallbackServerSocket
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.progress.experimental.CompilationCanceledStatus
@@ -88,7 +89,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar")
     )
     val daemonClientClassPath = listOf(
-        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-daemon-client.jar"),
+        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-daemon-client-new.jar"),
         File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar")
     )
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
@@ -684,12 +685,13 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             "-D$COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY",
             "-cp",
             daemonClientClassPath.joinToString(File.pathSeparator) { it.absolutePath },
-            kotlinCompilerClientInstance::class.qualifiedName!!
+            KotlinCompilerClientInstance::class.qualifiedName!!
         ) +
                 daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                 compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                 File(getHelloAppBaseDir(), "hello.kt").absolutePath +
-                "-d" + jar
+                "-d" + jar +
+                KotlinCompilerClientInstance.SOCKETS_FLAG
         try {
             var resOutput: String? = null
             var resCode: Int? = null
@@ -1205,7 +1207,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     )
                     println("daemon : $daemon")
                     assertNotNull("failed to connect daemon", daemon)
-                    assertTrue("daemon is New", daemon !is CompileServiceAsyncWrapper)
+                    assertTrue("daemon is not New", daemon !is CompileServiceAsyncWrapper)
 
                     body(daemon!!)
                 }

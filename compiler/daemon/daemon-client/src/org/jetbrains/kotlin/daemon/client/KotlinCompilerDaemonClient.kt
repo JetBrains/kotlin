@@ -3,14 +3,13 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.daemon.client.experimental.common
+package org.jetbrains.kotlin.daemon.client
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
-import org.jetbrains.kotlin.daemon.client.experimental.new.CompileServiceSession
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient.Companion.instantiate
+import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompilationResultsServerSide
-import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceClientSide
 import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.experimental.Profiler
 import java.io.File
@@ -67,16 +66,41 @@ interface KotlinCompilerDaemonClient {
         RMI, SOCKETS
     }
 
+    fun main(vararg args: String)
+
     companion object {
         fun instantiate(version: Version): KotlinCompilerDaemonClient =
             when (version) {
-                Version.RMI -> {
-                    org.jetbrains.kotlin.daemon.client.experimental.new.KotlinCompilerClient
-                }
-                Version.SOCKETS -> {
-                    org.jetbrains.kotlin.daemon.client.experimental.old.KotlinCompilerClient
-                }
+                Version.RMI ->
+                    ClassLoader
+                        .getSystemClassLoader()
+                        .loadClass("org.jetbrains.kotlin.daemon.client.KotlinCompilerClient")
+                        .newInstance() as KotlinCompilerDaemonClient
+
+                Version.SOCKETS ->
+                    ClassLoader
+                        .getSystemClassLoader()
+                        .loadClass("org.jetbrains.kotlin.daemon.client.experimental.KotlinCompilerClient")
+                        .newInstance() as KotlinCompilerDaemonClient
             }
+    }
+
+}
+
+object KotlinCompilerClientInstance {
+
+    const val RMI_FLAG = "-old"
+    const val SOCKETS_FLAG = "-new"
+
+    @JvmStatic
+    fun main(vararg args: String) {
+        val clientInstance: KotlinCompilerDaemonClient? = when (args.last()) {
+            SOCKETS_FLAG ->
+                instantiate(KotlinCompilerDaemonClient.Version.SOCKETS)
+            else ->
+                instantiate(KotlinCompilerDaemonClient.Version.RMI)
+        }
+        clientInstance?.main(*args.sliceArray(0..args.lastIndex))
     }
 
 }

@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
-import org.jetbrains.kotlin.daemon.client.experimental.new.KotlinCompilerClient
+import org.jetbrains.kotlin.daemon.KotlinCompileDaemon
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
+import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.experimental.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
@@ -31,6 +33,9 @@ import java.util.logging.Logger
 private val logFiles = arrayListOf<String>()
 
 class CompilerApiTest : KotlinIntegrationTestBase() {
+
+    val kotlinCompilerClient = KotlinCompilerDaemonClient
+        .instantiate(KotlinCompilerDaemonClient.Version.SOCKETS)
 
     private val compilerLibDir = getCompilerLib()
 
@@ -103,8 +108,8 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         vararg args: String
     ): Pair<Int, Collection<OutputMessageUtil.Output>> = runBlocking {
 
-        log.info("KotlinCompilerClient.connectToCompileService() call")
-        val daemon = KotlinCompilerClient.connectToCompileService(
+        log.info("kotlinCompilerClient.connectToCompileService() call")
+        val daemon = kotlinCompilerClient.connectToCompileService(
             compilerId,
             clientAliveFile,
             daemonJVMOptions,
@@ -112,7 +117,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             DaemonReportingTargets(messageCollector = messageCollector),
             autostart = true
         )
-        log.info("KotlinCompilerClient.connectToCompileService() called! (daemon = $daemon)")
+        log.info("kotlinCompilerClient.connectToCompileService() called! (daemon = $daemon)")
 
         assertNotNull("failed to connect daemon", daemon)
 
@@ -125,7 +130,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
         val outputs = arrayListOf<OutputMessageUtil.Output>()
 
-        val code = KotlinCompilerClient.compile(
+        val code = kotlinCompilerClient.compile(
             daemon!!,
             CompileService.NO_SESSION,
             CompileService.TargetPlatform.JVM,
@@ -199,7 +204,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 //        runBlocking {
 //            log.info("in runBlocking")
 //            delay(1000L)
-//            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+//            kotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
 //        }
 //        currentLogFile.delete()
 //        externalLogFile.delete()
@@ -289,7 +294,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                     compilerId,
                     daemonJVMOptions,
                     daemonOptions,
-                    org.jetbrains.kotlin.daemon.TestMessageCollector(),
+                    TestMessageCollector(),
                     File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
                     "-Xreport-output-files",
                     "-d",

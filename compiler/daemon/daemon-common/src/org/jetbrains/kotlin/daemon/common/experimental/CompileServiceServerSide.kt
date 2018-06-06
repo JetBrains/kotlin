@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import org.jetbrains.kotlin.daemon.common.CompileServiceAsync
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 
 interface CompileServiceServerSide : CompileServiceAsync, Server<CompileServiceServerSide>
