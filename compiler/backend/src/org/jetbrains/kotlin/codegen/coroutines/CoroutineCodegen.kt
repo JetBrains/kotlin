@@ -338,11 +338,7 @@ class CoroutineCodegenForLambda private constructor(
                     expressionCodegen,
                     declaration,
                     expressionCodegen.context.intoCoroutineClosure(
-                        getOrCreateJvmSuspendFunctionView(
-                            originalSuspendLambdaDescriptor,
-                            expressionCodegen.state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
-                            expressionCodegen.state.bindingContext
-                        ),
+                        getOrCreateJvmSuspendFunctionView(originalSuspendLambdaDescriptor, expressionCodegen.state),
                         originalSuspendLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
                     ),
                     classBuilder,

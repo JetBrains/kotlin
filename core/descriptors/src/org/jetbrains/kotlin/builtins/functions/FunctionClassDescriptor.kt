@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -118,7 +118,6 @@ class FunctionClassDescriptor(
                 result.add(KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, descriptor, arguments))
             }
 
-
             when (functionKind) {
                 Kind.SuspendFunction -> // SuspendFunction$N<...> <: Function
                     add(containingDeclaration, Name.identifier("Function"))
@@ -128,17 +127,19 @@ class FunctionClassDescriptor(
                     add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
             }
 
-            // For KFunction{n}, add corresponding numbered Function{n} class, e.g. Function2 for KFunction2
-            if (functionKind == Kind.KFunction) {
+            val numberedSupertypeKind = when (functionKind) {
+                Kind.KFunction -> Kind.Function
+                Kind.KSuspendFunction -> Kind.SuspendFunction
+                else -> null
+            }
+
+
+            // For K{Suspend}Function{n}, add corresponding numbered {Suspend}Function{n} class, e.g. {Suspend}Function2 for {Suspend}KFunction2
+            if (numberedSupertypeKind != null) {
                 val packageView = containingDeclaration.containingDeclaration.getPackage(BUILT_INS_PACKAGE_FQ_NAME)
                 val kotlinPackageFragment = packageView.fragments.filterIsInstance<BuiltInsPackageFragment>().first()
 
-                add(kotlinPackageFragment, Kind.Function.numberedClassName(arity))
-            } else if (functionKind == Kind.KSuspendFunction) {
-                val packageView = containingDeclaration.containingDeclaration.getPackage(BUILT_INS_PACKAGE_FQ_NAME)
-                val kotlinPackageFragment = packageView.fragments.filterIsInstance<BuiltInsPackageFragment>().first()
-
-                add(kotlinPackageFragment, Kind.SuspendFunction.numberedClassName(arity))
+                add(kotlinPackageFragment, numberedSupertypeKind.numberedClassName(arity))
             }
 
             return result.toList()

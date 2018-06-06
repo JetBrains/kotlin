@@ -982,11 +982,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         ClosureCodegen coroutineCodegen = CoroutineCodegenForLambda.create(this, descriptor, declaration, cv);
         ClosureContext closureContext = descriptor.isSuspend() ? this.context.intoCoroutineClosure(
-                CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
-                        descriptor,
-                        state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines),
-                        state.getBindingContext()
-                ),
+                CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(descriptor, state),
                 descriptor, this, state.getTypeMapper()
         ) : this.context.intoClosure(descriptor, this, typeMapper);
         ClosureCodegen closureCodegen = coroutineCodegen != null ? coroutineCodegen : new ClosureCodegen(

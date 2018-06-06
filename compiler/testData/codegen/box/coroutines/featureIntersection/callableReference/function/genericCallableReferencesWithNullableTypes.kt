@@ -28,8 +28,8 @@ fun box(): String {
     builder {
         bar(1, "", ::foo, "Int", "String")
 
-        val s1: Pair<Int, String?> = bar(1, "", ::foo, "Int", "String")
-        val (a: Int, b: String?) = bar(1, "", ::foo, "Int", "String")
+        val s1: Pair<Long, String?> = bar(1L, "", ::foo, "Long", "String")
+        val (a: Long, b: String?) = bar(1L, "", ::foo, "Long", "String")
 
         val ns: String? = null
         bar(ns, ns, ::foo, "String", "String")

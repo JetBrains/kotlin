@@ -3359,6 +3359,41 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/tryCatchStackTransform.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/suspend/callableReference")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CallableReference extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCallableReference() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("ordinaryParameter.kt")
+            public void testOrdinaryParameter() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/callableReference/ordinaryParameter.kt");
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple_1_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple_1_3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+            }
+
+            @TestMetadata("suspendOfOrdinary.kt")
+            public void testSuspendOfOrdinary() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/callableReference/suspendOfOrdinary.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/suspend/defaultParameter")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

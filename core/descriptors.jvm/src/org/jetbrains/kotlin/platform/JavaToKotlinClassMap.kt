@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.platform
@@ -89,18 +78,15 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         }
 
         // TODO: support also functions with >= 23 parameters
+        val kFunction = FunctionClassDescriptor.Kind.KFunction
+        val kFun = kFunction.packageFqName.toString() + "." + kFunction.classNamePrefix
         for (i in 0..22) {
             add(ClassId.topLevel(FqName("kotlin.jvm.functions.Function" + i)), KotlinBuiltIns.getFunctionClassId(i))
-
-            val kFunction = FunctionClassDescriptor.Kind.KFunction
-            val kFun = kFunction.packageFqName.toString() + "." + kFunction.classNamePrefix
             addKotlinToJava(FqName(kFun + i), ClassId.topLevel(FqName(kFun)))
         }
         for (i in 0 until 22) {
             val kSuspendFunction = FunctionClassDescriptor.Kind.KSuspendFunction
-            val kFunction = FunctionClassDescriptor.Kind.KFunction
             val kSuspendFun = kSuspendFunction.packageFqName.toString() + "." + kSuspendFunction.classNamePrefix
-            val kFun = kFunction.packageFqName.toString() + "." + kFunction.classNamePrefix
             addKotlinToJava(FqName(kSuspendFun + i), ClassId.topLevel(FqName(kFun)))
         }
 

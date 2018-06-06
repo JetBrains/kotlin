@@ -201,6 +201,12 @@ fun CallableDescriptor.isSuspendFunctionNotSuspensionView(): Boolean {
     return this.isSuspend && this.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) == null
 }
 
+fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(function: D, state: GenerationState): D = getOrCreateJvmSuspendFunctionView(
+    function,
+    state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+    state.bindingContext
+)
+
 // Suspend functions have irregular signatures on JVM, containing an additional last parameter with type `Continuation<return-type>`,
 // and return type Any?
 // This function returns a function descriptor reflecting how the suspend function looks from point of view of JVM

@@ -4166,6 +4166,42 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/coroutines")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Coroutines extends AbstractDiagnosticsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCoroutines() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/coroutines/callableReference")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CallableReference extends AbstractDiagnosticsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInCallableReference() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("invokeOutideSuspend.kt")
+                public void testInvokeOutideSuspend() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/coroutines/callableReference/invokeOutideSuspend.kt");
+                }
+
+                @TestMetadata("outsideSuspend.kt")
+                public void testOutsideSuspend() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/coroutines/callableReference/outsideSuspend.kt");
+                }
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

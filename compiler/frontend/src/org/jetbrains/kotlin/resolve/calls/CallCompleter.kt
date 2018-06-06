@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -161,7 +158,7 @@ class CallCompleter(
         val expectedReturnType =
             if (call.isCallableReference()) {
                 // TODO: compute generic type argument for R in the kotlin.Function<R> supertype (KT-12963)
-                if (!TypeUtils.noExpectedType(expectedType) && (expectedType.isFunctionType || expectedType.isSuspendFunctionType))
+                if (!TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionOrSuspendFunctionType)
                     expectedType.getReturnTypeFromFunctionType()
                 else TypeUtils.NO_EXPECTED_TYPE
             } else expectedType
@@ -213,7 +210,7 @@ class CallCompleter(
             }
         }
 
-        if (call.isCallableReference() && !TypeUtils.noExpectedType(expectedType) && (expectedType.isFunctionType || expectedType.isSuspendFunctionType)) {
+        if (call.isCallableReference() && !TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionOrSuspendFunctionType) {
             updateSystemIfNeeded { builder ->
                 candidateDescriptor.valueParameters.zip(expectedType.getValueParameterTypesFromFunctionType())
                     .forEach { (parameter, argument) ->

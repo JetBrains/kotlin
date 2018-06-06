@@ -178,8 +178,7 @@ public class FunctionCodegen {
             @NotNull FunctionGenerationStrategy strategy
     ) {
         if (CoroutineCodegenUtilKt.isSuspendFunctionNotSuspensionView(descriptor)) {
-            generateMethod(origin, CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(descriptor, state.getLanguageVersionSettings()
-                    .supportsFeature(LanguageFeature.ReleaseCoroutines), bindingContext), strategy);
+            generateMethod(origin, CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(descriptor, state), strategy);
             return;
         }
 
@@ -675,8 +674,7 @@ public class FunctionCodegen {
         if (functionDescriptor instanceof AnonymousFunctionDescriptor && functionDescriptor.isSuspend()) {
             functionDescriptor = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
                     functionDescriptor,
-                    parentCodegen.state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines),
-                    typeMapper.getBindingContext()
+                    parentCodegen.state
             );
         }
 

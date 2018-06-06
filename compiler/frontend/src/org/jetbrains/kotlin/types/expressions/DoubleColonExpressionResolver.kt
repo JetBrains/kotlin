@@ -1,24 +1,12 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -37,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
@@ -46,7 +35,6 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.createValueParametersForInvokeInFunctionType
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
@@ -544,7 +532,7 @@ class DoubleColonExpressionResolver(
         val type = createKCallableTypeForReference(descriptor, lhs, reflectionTypes, context.scope.ownerDescriptor) ?: return null
 
         when (descriptor) {
-            is FunctionDescriptor -> bindFunctionReference(expression, type, context)
+            is FunctionDescriptor -> bindFunctionReference(expression, type, context, descriptor)
             is PropertyDescriptor -> bindPropertyReference(expression, type, context)
         }
 
@@ -581,13 +569,18 @@ class DoubleColonExpressionResolver(
         return original.extensionReceiverParameter != null && original.dispatchReceiverParameter != null
     }
 
-    internal fun bindFunctionReference(expression: KtCallableReferenceExpression, type: KotlinType, context: ResolutionContext<*>) {
+    internal fun bindFunctionReference(
+        expression: KtCallableReferenceExpression,
+        type: KotlinType,
+        context: ResolutionContext<*>,
+        referencedFunction: FunctionDescriptor
+    ) {
         val functionDescriptor = AnonymousFunctionDescriptor(
             context.scope.ownerDescriptor,
             Annotations.EMPTY,
             CallableMemberDescriptor.Kind.DECLARATION,
             expression.toSourceElement(),
-            /* isCoroutine = */ ReflectionTypes.isKSuspendFunction(type)
+            /* isCoroutine = */ ReflectionTypes.isNumberedKSuspendFunction(type) || referencedFunction.isSuspend
         )
 
         functionDescriptor.initialize(
@@ -637,8 +630,8 @@ class DoubleColonExpressionResolver(
         resolutionResults: OverloadResolutionResults<CallableDescriptor>?
     ) {
         val descriptor =
-            if (resolutionResults?.isSingleResult == true) resolutionResults.resultingDescriptor as? FunctionDescriptor else null
-        if (descriptor?.isSuspend == true && descriptor is PropertyDescriptor) {
+            if (resolutionResults?.isSingleResult == true) resolutionResults.resultingDescriptor else null
+        if (descriptor is PropertyDescriptor && descriptor.isBuiltInCoroutineContext(languageVersionSettings)) {
             context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable references to suspend property"))
         }
 
@@ -785,13 +778,9 @@ class DoubleColonExpressionResolver(
                     val returnType = descriptor.returnType ?: return null
                     val parametersTypes = descriptor.valueParameters.map { it.type }
                     val parametersNames = descriptor.valueParameters.map { it.name }
-                    return if (descriptor.isSuspend) reflectionTypes.getKSuspendFunctionType(
+                    return reflectionTypes.getKFunctionType(
                         Annotations.EMPTY, receiverType,
-                        parametersTypes, parametersNames, returnType, descriptor.builtIns
-                    )
-                    else reflectionTypes.getKFunctionType(
-                        Annotations.EMPTY, receiverType,
-                        parametersTypes, parametersNames, returnType, descriptor.builtIns
+                        parametersTypes, parametersNames, returnType, descriptor.builtIns, descriptor.isSuspend
                     )
                 }
                 is PropertyDescriptor -> {

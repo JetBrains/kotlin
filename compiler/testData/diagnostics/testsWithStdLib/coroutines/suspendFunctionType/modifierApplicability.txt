@@ -50,5 +50,5 @@ public typealias Test4 = Action
 public typealias Test5 = kotlin.collections.List<suspend () -> kotlin.Unit>
 public typealias Test6 = kotlin.collections.List<() -> kotlin.Unit>
 public typealias Test7 = SAM
-public typealias Test8 = [ERROR : SuspendFunction0<Unit>]<kotlin.Unit>
+public typealias Test8 = suspend () -> kotlin.Unit
 public typealias Test9 = suspend (() -> kotlin.Unit) -> kotlin.Unit

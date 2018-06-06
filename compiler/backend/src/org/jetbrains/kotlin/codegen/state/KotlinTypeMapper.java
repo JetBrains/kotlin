@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
@@ -1024,8 +1025,8 @@ public class KotlinTypeMapper {
     }
 
     private static boolean isSuspendFunctionReference(FunctionDescriptor descriptor) {
-        return descriptor.getSource() instanceof KotlinSourceElement &&
-               ((KotlinSourceElement) descriptor.getSource()).getPsi() instanceof KtCallableReferenceExpression &&
+        return descriptor instanceof SimpleFunctionDescriptor &&
+               descriptor.getName().isSpecial() &&
                CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(descriptor) != null &&
                CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(descriptor).isSuspend();
     }

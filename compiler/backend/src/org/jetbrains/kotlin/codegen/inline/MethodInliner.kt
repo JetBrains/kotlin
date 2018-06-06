@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
+import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -214,12 +216,34 @@ class MethodInliner(
                         return
                     }
 
+                    // in case of inlining suspend lambda reference as ordinary parameter of inline function:
+                    //   suspend fun foo (...) ...
+                    //   inline fun inlineMe(c: (...) -> ...) ...
+                    //   builder {
+                    //     inlineMe(::foo)
+                    //   }
+                    // we should create additional parameter for continuation.
+                    var coroutineDesc = desc
+                    if (info.invokeMethodDescriptor.isSuspend) {
+                        val coroutineInvokeMethodDescriptor = getOrCreateJvmSuspendFunctionView(
+                            info.invokeMethodDescriptor,
+                            inliningContext.state
+                        )
+                        val coroutineInvokeDesc = typeMapper.mapAsmMethod(coroutineInvokeMethodDescriptor).descriptor
+                        // And here we expect invoke(...Ljava/lang/Object;) be replaced with invoke(...Lkotlin/coroutines/Continuation;)
+                        // if this does not happen, insert fake continuation, since we could not have one yet.
+                        val argumentTypes = Type.getArgumentTypes(desc)
+                        if (Type.getArgumentTypes(coroutineInvokeDesc).size != argumentTypes.size) {
+                            addFakeContinuationMarker(this)
+                            coroutineDesc = Type.getMethodDescriptor(Type.getReturnType(desc), *argumentTypes, AsmTypes.OBJECT_TYPE)
+                        }
+                    }
                     val valueParameters =
                         listOfNotNull(info.invokeMethodDescriptor.extensionReceiverParameter) + info.invokeMethodDescriptor.valueParameters
 
                     val valueParamShift = Math.max(nextLocalIndex, markerShift)//NB: don't inline cause it changes
                     putStackValuesIntoLocalsForLambdaOnInvoke(
-                        listOf(*info.invokeMethod.argumentTypes), valueParameters, valueParamShift, this, desc
+                        listOf(*info.invokeMethod.argumentTypes), valueParameters, valueParamShift, this, coroutineDesc
                     )
 
                     if (invokeCall.lambdaInfo.invokeMethodDescriptor.valueParameters.isEmpty()) {
