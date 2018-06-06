@@ -84,7 +84,7 @@ abstract class BasicBoxTest(
     protected open fun getOutputPostfixFile(testFilePath: String): File? = null
 
     protected open val runMinifierByDefault: Boolean = false
-    protected open val skipMinification = System.getProperty("kotlin.js.skipMinificationTest", "false")!!.toBoolean()
+    protected open val skipMinification = System.getProperty("kotlin.js.skipMinificationTest", "true")!!.toBoolean()
 
     fun doTest(filePath: String) {
         doTest(filePath, "OK", MainCallParameters.noCall())
