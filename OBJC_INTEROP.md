@@ -32,7 +32,7 @@ The table below shows how Kotlin concepts are mapped to Swift/Objective-C and vi
 | Extension | Extension | Category member | [note](#category-members) |
 | `companion` member <- | Class method or property | Class method or property |  |
 | `null` | `nil` | `nil` | |
-| `Singleton` | `Singleton()`  | `[Singleton singleton]` | |
+| `Singleton` | `Singleton()`  | `[Singleton singleton]` | [note](#kotlin-singletons) |
 | Primitive type | Primitive type / `NSNumber` | | [note](#nsnumber) |
 | `Unit` return type | `Void` | `void` | |
 | `String` | `String` | `NSString` | |
@@ -115,6 +115,13 @@ exception-throwing.
 Members of Objective-C categories and Swift extensions are imported to Kotlin
 as extensions. That's why these declarations can't be overridden in Kotlin.
 And extension initializers aren't available as Kotlin constructors.
+
+### Kotlin singletons
+
+Kotlin singleton (made with `object` declaration, including `companion object`)
+is imported to Swift/Objective-C as class with a single instance.
+The instance is available through the factory method, i.e. as
+`[MySingleton mySingleton]` in Objective-C and `MySingleton()` in Swift.
 
 ### NSNumber
 
