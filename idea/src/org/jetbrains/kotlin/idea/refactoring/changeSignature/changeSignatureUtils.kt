@@ -101,7 +101,7 @@ private object ForceTypeCopySubstitution : TypeSubstitution() {
     override fun get(key: KotlinType) =
             with(key) {
                 if (isError) return@with asTypeProjection()
-                KotlinTypeFactory.simpleType(annotations, constructor, arguments, isMarkedNullable, memberScope).asTypeProjection()
+                KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(annotations, constructor, arguments, isMarkedNullable, memberScope).asTypeProjection()
             }
 
     override fun isEmpty() = false

@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasOwnParametersWithDefaultValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
 
 class DeclarationBodyVisitor(
         private val containingClass: ClassDescriptor,
@@ -52,6 +50,16 @@ class DeclarationBodyVisitor(
                 addInitializerStatement(JsInvocation(context.getNameForObjectInstance(descriptor).makeRef())
                                                 .source(classOrObject).makeStmt())
             }
+        }
+    }
+
+    fun generateClassOrObject(classOrObject: KtPureClassOrObject, context: TranslationContext, needCompanionInitializer: Boolean = false) {
+        ClassTranslator.translate(classOrObject, context)
+        val descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), classOrObject)
+        context.export(descriptor)
+        if (needCompanionInitializer) {
+            addInitializerStatement(JsInvocation(context.getNameForObjectInstance(descriptor).makeRef())
+                                            .source(classOrObject).makeStmt())
         }
     }
 
@@ -95,11 +103,12 @@ class DeclarationBodyVisitor(
 
     override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: TranslationContext) { }
 
-    private fun addInitializerStatement(statement: JsStatement) {
+    // used from kotlinx.serialization
+    fun addInitializerStatement(statement: JsStatement) {
         initializerStatements.add(statement)
     }
 
-    override fun addFunction(descriptor: FunctionDescriptor, expression: JsExpression?, psi: KtElement) {
+    override fun addFunction(descriptor: FunctionDescriptor, expression: JsExpression?, psi: KtElement?) {
         if (!descriptor.hasOrInheritsParametersWithDefaultValue() || !descriptor.isOverridableOrOverrides) {
             if (expression != null) {
                 context.addDeclarationStatement(context.addFunctionToPrototype(containingClass, descriptor, expression))
@@ -116,7 +125,7 @@ class DeclarationBodyVisitor(
 
             if (descriptor.hasOwnParametersWithDefaultValue()) {
                 val caller = JsFunction(context.getScopeForDescriptor(containingClass), JsBlock(), "")
-                caller.source = psi.finalElement
+                caller.source = psi?.finalElement
                 val callerContext = context
                         .newDeclaration(descriptor)
                         .translateAndAliasParameters(descriptor, caller.parameters)
@@ -159,7 +168,6 @@ class DeclarationBodyVisitor(
         }
     }
 
-    override fun getBackingFieldReference(descriptor: PropertyDescriptor): JsExpression {
-        return Namer.getDelegateNameRef(descriptor.name.asString())
-    }
+    override fun getBackingFieldReference(descriptor: PropertyDescriptor): JsExpression =
+            JsNameRef(context.getNameForBackingField(descriptor), JsThisRef())
 }

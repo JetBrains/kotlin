@@ -21,10 +21,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementFactory
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.changeSignature.*
 import com.intellij.refactoring.util.CanonicalTypes
@@ -118,11 +115,28 @@ class KotlinChangeSignature(
                 }
 
                 val (preview, javaChangeInfo) = getPreviewInfoForJavaMethod(descriptor)
-                object: JavaChangeSignatureDialog(project, JavaMethodDescriptor(preview), false, null) {
+                val javaDescriptor = object : JavaMethodDescriptor(preview) {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun getParameters() = javaChangeInfo.newParameters.toMutableList() as MutableList<ParameterInfoImpl>
+                }
+                object: JavaChangeSignatureDialog(project, javaDescriptor, false, null) {
                     override fun createRefactoringProcessor(): BaseRefactoringProcessor? {
-                        val processor = super.createRefactoringProcessor()
-                        (processor as? ChangeSignatureProcessor)?.changeInfo?.updateMethod(javaChangeInfo.method)
-                        return processor
+                        val parameters = parameters
+                        LOG.assertTrue(myMethod.method.isValid)
+                        val newJavaChangeInfo = JavaChangeInfoImpl(
+                                visibility ?: VisibilityUtil.getVisibilityModifier(myMethod.method.modifierList),
+                                javaChangeInfo.method,
+                                methodName,
+                                returnType ?: CanonicalTypes.createTypeWrapper(PsiType.VOID),
+                                parameters.toTypedArray(),
+                                exceptions,
+                                isGenerateDelegate,
+                                myMethodsToPropagateParameters ?: HashSet(),
+                                myMethodsToPropagateExceptions ?: HashSet()
+                        ).also {
+                            it.setCheckUnusedParameter()
+                        }
+                        return ChangeSignatureProcessor(myProject, newJavaChangeInfo)
                     }
                 }
             }
@@ -139,16 +153,17 @@ class KotlinChangeSignature(
         // Generate new Java method signature from the Kotlin point of view
         val ktChangeInfo = KotlinChangeInfo(methodDescriptor = descriptor, context = defaultValueContext)
         val ktSignature = ktChangeInfo.getNewSignature(descriptor.originalPrimaryCallable)
+        val previewClassName = if (originalMethod.isConstructor) originalMethod.name else "Dummy"
         val dummyFileText = with(StringBuilder()) {
             contextFile.packageDirective?.let { append(it.text).append("\n") }
-            append("class Dummy {\n").append(ktSignature).append("{}\n}")
+            append("class $previewClassName {\n").append(ktSignature).append("{}\n}")
             toString()
         }
         val dummyFile = KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", dummyFileText, originalMethod)
         val dummyDeclaration = (dummyFile.declarations.first() as KtClass).getBody()!!.declarations.first()
 
         // Convert to PsiMethod which can be used in Change Signature dialog
-        val containingClass = PsiElementFactory.SERVICE.getInstance(project).createClass("Dummy")
+        val containingClass = PsiElementFactory.SERVICE.getInstance(project).createClass(previewClassName)
         val preview = createJavaMethod(dummyDeclaration.getRepresentativeLightMethod()!!, containingClass)
 
         // Create JavaChangeInfo based on new signature

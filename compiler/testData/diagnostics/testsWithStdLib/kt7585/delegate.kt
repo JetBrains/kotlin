@@ -1,3 +1,4 @@
+// JAVAC_EXPECTED_FILE
 // FILE: Base.java
 
 public interface Base {}

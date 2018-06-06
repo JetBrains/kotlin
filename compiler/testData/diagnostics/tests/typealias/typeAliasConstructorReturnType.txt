@@ -25,8 +25,8 @@ public final class Pair</*0*/ T1, /*1*/ T2> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias CA</*0*/ TA>  = Cell<TA>
+public typealias CA</*0*/ TA> = Cell<TA>
 public typealias CIntA = Cell<kotlin.Int>
-public typealias P2A</*0*/ TA>  = Pair<TA, TA>
-public typealias PA</*0*/ T1A, /*1*/ T2A>  = Pair<T1A, T2A>
+public typealias P2A</*0*/ TA> = Pair<TA, TA>
+public typealias PA</*0*/ T1A, /*1*/ T2A> = Pair<T1A, T2A>
 public typealias PIntIntA = Pair<kotlin.Int, kotlin.Int>

@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrVarargImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val varargElementType: KotlinType
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    override val varargElementType: KotlinType
 ) : IrVararg, IrExpressionBase(startOffset, endOffset, type) {
     constructor(
-            startOffset: Int, endOffset: Int, type: KotlinType, varargElementType: KotlinType,
-            elements: List<IrVarargElement>
+        startOffset: Int, endOffset: Int, type: KotlinType, varargElementType: KotlinType,
+        elements: List<IrVarargElement>
     ) : this(startOffset, endOffset, type, varargElementType) {
         this.elements.addAll(elements)
     }

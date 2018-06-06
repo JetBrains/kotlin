@@ -20,8 +20,9 @@ import com.intellij.util.indexing.*
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import org.jetbrains.kotlin.load.kotlin.PackageParts
+import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import java.io.DataInput
 import java.io.DataOutput
@@ -30,7 +31,7 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
 
     val KEY: ID<String, PackageParts> = ID.create(KotlinModuleMappingIndex::class.java.canonicalName)
 
-    private val KEY_DESCRIPTOR = object : KeyDescriptor<String> {
+    internal val STRING_KEY_DESCRIPTOR = object : KeyDescriptor<String> {
         override fun save(output: DataOutput, value: String) = IOUtil.writeUTF(output, value)
 
         override fun read(input: DataInput) = IOUtil.readUTF(input)
@@ -43,9 +44,9 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
     private val VALUE_EXTERNALIZER = object : DataExternalizer<PackageParts> {
         override fun read(input: DataInput): PackageParts? =
                 PackageParts(IOUtil.readUTF(input)).apply {
-                    val shortPartNames = IOUtil.readStringList(input)
-                    val shortFacadeNames = IOUtil.readStringList(input)
-                    for ((partName, facadeName) in shortPartNames zip shortFacadeNames) {
+                    val partInternalNames = IOUtil.readStringList(input)
+                    val facadeInternalNames = IOUtil.readStringList(input)
+                    for ((partName, facadeName) in partInternalNames zip facadeInternalNames) {
                         addPart(partName, if (facadeName.isNotEmpty()) facadeName else null)
                     }
                     IOUtil.readStringList(input).forEach(this::addMetadataPart)
@@ -63,22 +64,21 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
 
     override fun dependsOnFileContent() = true
 
-    override fun getKeyDescriptor() = KEY_DESCRIPTOR
+    override fun getKeyDescriptor() = STRING_KEY_DESCRIPTOR
 
     override fun getValueExternalizer() = VALUE_EXTERNALIZER
 
-    override fun getInputFilter(): FileBasedIndex.InputFilter {
-        return FileBasedIndex.InputFilter { file -> file.extension == ModuleMapping.MAPPING_FILE_EXT }
-    }
+    override fun getInputFilter(): FileBasedIndex.InputFilter =
+            FileBasedIndex.InputFilter { file -> file.extension == ModuleMapping.MAPPING_FILE_EXT }
 
-    override fun getVersion(): Int = 4
+    override fun getVersion(): Int = 5
 
     override fun getIndexer(): DataIndexer<String, PackageParts, FileContent> {
         return DataIndexer<String, PackageParts, FileContent> { inputData ->
             val content = inputData.content
             val file = inputData.file
             try {
-                val moduleMapping = ModuleMapping.create(content, file.toString(), DeserializationConfiguration.Default)
+                val moduleMapping = ModuleMapping.loadModuleMapping(content, file.toString(), DeserializationConfiguration.Default)
                 if (moduleMapping === ModuleMapping.CORRUPTED) {
                     file.refresh(true, false)
                 }

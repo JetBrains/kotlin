@@ -29,7 +29,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.explicateReceiverOf
@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleReference
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.usagesSearch.searchReferencesOrMethodReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -97,7 +98,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                     "$receiver.${expression.text}(${arguments.joinToString()})"
             )
             expression.replaced(adapterLambda).let {
-                MoveLambdaOutsideParenthesesIntention.moveFunctionLiteralOutsideParenthesesIfPossible(it)
+                it.moveFunctionLiteralOutsideParenthesesIfPossible()
             }
         }
     }
@@ -159,7 +160,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             } as KtLambdaExpression
 
             expression.replaced(replacingLambda).let {
-                MoveLambdaOutsideParenthesesIntention.moveFunctionLiteralOutsideParenthesesIfPossible(it)
+                it.moveFunctionLiteralOutsideParenthesesIfPossible()
             }
         }
 
@@ -186,7 +187,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                 runReadAction {
                     val progressStep = 1.0/callables.size
                     for ((i, callable) in callables.withIndex()) {
-                        ProgressManager.getInstance().progressIndicator.fraction = (i + 1) * progressStep
+                        ProgressManager.getInstance().progressIndicatorNullable!!.fraction = (i + 1) * progressStep
 
                         if (callable !is PsiNamedElement) continue
 
@@ -320,7 +321,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             val function: KtFunction
     ) {
         val isFirstParameter: Boolean get() = typeParameterIndex == 0
-        val functionDescriptor by lazy { function.resolveToDescriptor() as FunctionDescriptor }
+        val functionDescriptor by lazy { function.unsafeResolveToDescriptor() as FunctionDescriptor }
     }
 
     private fun KtTypeReference.getConversionData(): ConversionData? {

@@ -9,7 +9,7 @@ import java.io.File
 class TestRootAffectedIT : BaseGradleIT() {
     @Test
     fun testSourceRootClassIsModifiedIC() {
-        val project = Project("kotlinProject", "2.10")
+        val project = Project("kotlinProject", GradleVersionRequired.AtLeast("4.1"))
         val buildOptions = defaultBuildOptions().copy(incremental = true)
 
         project.build("build", options = buildOptions) {
@@ -18,7 +18,7 @@ class TestRootAffectedIT : BaseGradleIT() {
 
         val kotlinGreetingJoinerFile = project.projectDir.getFileByName("KotlinGreetingJoiner.kt")
         kotlinGreetingJoinerFile.modify {
-            val replacing   = "fun addName(name: String?): Unit"
+            val replacing = "fun addName(name: String?): Unit"
             val replacement = "fun addName(name: String): Unit"
             assert(it.contains(replacing)) { "API has changed!" }
             it.replace(replacing, replacement)
@@ -26,8 +26,8 @@ class TestRootAffectedIT : BaseGradleIT() {
 
         project.build("build", options = buildOptions) {
             assertSuccessful()
-            val expectedToCompile = project.relativize(listOf(kotlinGreetingJoinerFile) + project.allTestKotlinFiles())
-            assertCompiledKotlinSources(expectedToCompile)
+            val testKotlinGreetingJoinerFile = project.projectDir.getFileByName("TestKotlinGreetingJoiner.kt")
+            assertCompiledKotlinSources(project.relativize(kotlinGreetingJoinerFile, testKotlinGreetingJoinerFile))
         }
 
         project.build("build", options = buildOptions) {
@@ -38,7 +38,7 @@ class TestRootAffectedIT : BaseGradleIT() {
 
     @Test
     fun testSourceRootClassIsRemovedIC() {
-        val project = Project("kotlinProject", "2.10")
+        val project = Project("kotlinProject")
         val buildOptions = defaultBuildOptions().copy(incremental = true)
 
         project.build("build", options = buildOptions) {
@@ -50,19 +50,15 @@ class TestRootAffectedIT : BaseGradleIT() {
 
         project.build("build", options = buildOptions) {
             assertSuccessful()
-            val expectedToCompile = project.relativize(project.allTestKotlinFiles())
-            assertCompiledKotlinSources(expectedToCompile)
-        }
-
-        project.build("build", options = buildOptions) {
-            assertSuccessful()
-            assertCompiledKotlinSources(emptyList())
+            // see KT-20541
+            val kotlinTestFiles = File(project.projectDir, "src/test").allKotlinFiles()
+            assertCompiledKotlinSources(project.relativize(kotlinTestFiles))
         }
     }
 
     @Test
     fun testTestRootClassIsRemovedIC() {
-        val project = Project("kotlinProject", "2.10")
+        val project = Project("kotlinProject", GradleVersionRequired.AtLeast("4.1"))
         val buildOptions = defaultBuildOptions().copy(incremental = true)
 
         project.build("build", options = buildOptions) {
@@ -76,13 +72,5 @@ class TestRootAffectedIT : BaseGradleIT() {
             assertSuccessful()
             assertCompiledKotlinSources(emptyList())
         }
-
-        project.build("build", options = buildOptions) {
-            assertSuccessful()
-            assertCompiledKotlinSources(emptyList())
-        }
     }
-
-    private fun Project.allTestKotlinFiles(): Iterable<File> =
-            File(projectDir, "src/test").allKotlinFiles()
 }

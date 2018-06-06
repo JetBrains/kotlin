@@ -14,7 +14,7 @@ class A {
                     return JetBundle.message(
                             "x.in.y",
                             DescriptorRenderer.COMPACT.render(declarationDescriptor),
-                            IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(containingDescriptor)
+                            IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(containingDescriptor)
                     )
                 }
             }
@@ -30,7 +30,7 @@ class A {
 
     fun getSelected(): ArrayList<UsageInfo> {
         val result = ArrayList<UsageInfo>()
-        for (i in 0..myChecked.length - 1) {
+        for (i in 0 until myChecked.length) {
             if (myChecked[i]) {
                 result.add(myOverridingMethods.get(i))
             }

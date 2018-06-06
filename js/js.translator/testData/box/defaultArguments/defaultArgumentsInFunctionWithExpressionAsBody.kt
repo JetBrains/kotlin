@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 999
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1117
 // KT-6037: KT-6037 Javascript default function arguments fill code generated in wrong order on method without "return keyword"
 package foo
 

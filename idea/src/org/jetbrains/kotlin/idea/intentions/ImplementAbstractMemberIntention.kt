@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
@@ -85,7 +85,7 @@ abstract class ImplementAbstractMemberIntentionBase :
                 is KtEnumEntry -> subClass.resolveToDescriptorIfAny()
                 is PsiClass -> subClass.getJavaClassDescriptor()
                 else -> null
-            } as? ClassDescriptor ?: return false
+            } ?: return false
             return acceptSubClass(classDescriptor, memberDescriptor)
         }
 
@@ -117,7 +117,7 @@ abstract class ImplementAbstractMemberIntentionBase :
     protected abstract val preferConstructorParameters: Boolean
 
     private fun implementInKotlinClass(editor: Editor?, member: KtNamedDeclaration, targetClass: KtClassOrObject) {
-        val subClassDescriptor = targetClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
+        val subClassDescriptor = targetClass.resolveToDescriptorIfAny() ?: return
         val superMemberDescriptor = member.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return
         val superClassDescriptor = superMemberDescriptor.containingDeclaration as? ClassDescriptor ?: return
         val substitutor = getTypeSubstitutor(superClassDescriptor.defaultType, subClassDescriptor.defaultType)

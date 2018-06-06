@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.core.toKeywordToken
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
+import org.jetbrains.kotlin.idea.refactoring.dropOperatorKeywordIfNecessary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -61,8 +62,8 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
     val currentCallableDescriptor: CallableDescriptor? by lazy {
         val element = declaration
         when (element) {
-            is KtFunction, is KtProperty, is KtParameter -> (element as KtDeclaration).resolveToDescriptor() as CallableDescriptor
-            is KtClass -> (element.resolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor
+            is KtFunction, is KtProperty, is KtParameter -> (element as KtDeclaration).unsafeResolveToDescriptor() as CallableDescriptor
+            is KtClass -> (element.unsafeResolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor
             is PsiMethod -> element.getJavaMethodDescriptor()
             else -> null
         }
@@ -140,6 +141,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         if (canDropOverride) {
             dropOverrideKeywordIfNecessary(element)
         }
+        dropOperatorKeywordIfNecessary(element)
 
         return true
     }

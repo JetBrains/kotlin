@@ -1,6 +1,6 @@
 package test
 
-impl fun foo(s: String) {
+actual fun foo(s: String) {
     n.size
 }
 

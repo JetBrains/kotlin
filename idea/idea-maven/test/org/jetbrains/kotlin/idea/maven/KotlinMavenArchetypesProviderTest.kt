@@ -24,7 +24,9 @@ import org.junit.Test
 import java.io.File
 
 class KotlinMavenArchetypesProviderTest {
-    private val BASE_PATH = "idea/testData/configuration/"
+    companion object {
+        private const val BASE_PATH = "idea/testData/configuration/"
+    }
 
     @Test
     fun extractVersions() {
@@ -38,11 +40,11 @@ class KotlinMavenArchetypesProviderTest {
         val versions = KotlinMavenArchetypesProvider("1.0.0-Release-Something-1886", false).extractVersions(json)
 
         assertEquals(
-                listOf(
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.0.1-2", null, null),
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-js", "1.0.0", null, null)
-                ).sortedBy { it.artifactId + "." + it.version },
-                versions.sortedBy { it.artifactId + "." + it.version }
+            listOf(
+                MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.0.1-2", null, null),
+                MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-js", "1.0.0", null, null)
+            ).sortedBy { it.artifactId + "." + it.version },
+            versions.sortedBy { it.artifactId + "." + it.version }
         )
     }
 
@@ -58,10 +60,10 @@ class KotlinMavenArchetypesProviderTest {
         val versions = KotlinMavenArchetypesProvider("1.1.0-Next-Release-Something-9999", false).extractVersions(json)
 
         assertEquals(
-                listOf(
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.1.2", null, null)
-                ).sortedBy { it.artifactId + "." + it.version },
-                versions.sortedBy { it.artifactId + "." + it.version }
+            listOf(
+                MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.1.2", null, null)
+            ).sortedBy { it.artifactId + "." + it.version },
+            versions.sortedBy { it.artifactId + "." + it.version }
         )
     }
 
@@ -77,12 +79,12 @@ class KotlinMavenArchetypesProviderTest {
         val versions = KotlinMavenArchetypesProvider("1.0.0-Release-Something-1886", true).extractVersions(json)
 
         assertEquals(
-                listOf(
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.0.1-2", null, null),
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.1.2", null, null),
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-js", "1.0.0", null, null)
-                ).sortedBy { it.artifactId + "." + it.version },
-                versions.sortedBy { it.artifactId + "." + it.version }
+            listOf(
+                MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.0.1-2", null, null),
+                MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.1.2", null, null),
+                MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-js", "1.0.0", null, null)
+            ).sortedBy { it.artifactId + "." + it.version },
+            versions.sortedBy { it.artifactId + "." + it.version }
         )
     }
 
@@ -98,12 +100,12 @@ class KotlinMavenArchetypesProviderTest {
         val versions = KotlinMavenArchetypesProvider("1.9.0-Missing-Release-Something-1886", false).extractVersions(json)
 
         assertEquals(
-                listOf(
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.0.1-2", null, null),
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.1.2", null, null),
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-js", "1.0.0", null, null)
-                ).sortedBy { it.artifactId + "." + it.version },
-                versions.sortedBy { it.artifactId + "." + it.version }
+            listOf(
+                MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.0.1-2", null, null),
+                MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.1.2", null, null),
+                MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-js", "1.0.0", null, null)
+            ).sortedBy { it.artifactId + "." + it.version },
+            versions.sortedBy { it.artifactId + "." + it.version }
         )
     }
 
@@ -119,12 +121,12 @@ class KotlinMavenArchetypesProviderTest {
         val versions = KotlinMavenArchetypesProvider("@snapshot@", false).extractVersions(json)
 
         assertEquals(
-                listOf(
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.0.1-2", null, null),
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.1.2", null, null),
-                        MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-js", "1.0.0", null, null)
-                ).sortedBy { it.artifactId + "." + it.version },
-                versions.sortedBy { it.artifactId + "." + it.version }
+            listOf(
+                MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.0.1-2", null, null),
+                MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-jvm", "1.1.2", null, null),
+                MavenArchetype("org.jetbrains.kotlin", "kotlin-archetype-js", "1.0.0", null, null)
+            ).sortedBy { it.artifactId + "." + it.version },
+            versions.sortedBy { it.artifactId + "." + it.version }
         )
     }
 }

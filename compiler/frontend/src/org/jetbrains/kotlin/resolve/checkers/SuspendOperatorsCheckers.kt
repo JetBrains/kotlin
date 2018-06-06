@@ -18,29 +18,22 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object SuspendOperatorsCheckers : SimpleDeclarationChecker {
+object SuspendOperatorsCheckers : DeclarationChecker {
     private val UNSUPPORTED_OPERATOR_NAMES = setOf(
-            OperatorNameConventions.CONTAINS,
-            OperatorNameConventions.GET, OperatorNameConventions.SET
+        OperatorNameConventions.CONTAINS,
+        OperatorNameConventions.GET, OperatorNameConventions.SET
     )
 
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor is FunctionDescriptor && descriptor.isSuspend && descriptor.isOperator &&
             descriptor.name in UNSUPPORTED_OPERATOR_NAMES) {
             declaration.modifierList?.getModifier(KtTokens.OPERATOR_KEYWORD)?.let {
-                diagnosticHolder.report(Errors.UNSUPPORTED.on(it, "suspend operator \"${descriptor.name}\""))
+                context.trace.report(Errors.UNSUPPORTED.on(it, "suspend operator \"${descriptor.name}\""))
             }
         }
     }

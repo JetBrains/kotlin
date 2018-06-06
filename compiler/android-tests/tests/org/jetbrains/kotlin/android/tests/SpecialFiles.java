@@ -48,6 +48,11 @@ public class SpecialFiles {
         excludedFiles.add("enumKClassAnnotation.kt");
         excludedFiles.add("primitivesAndArrays.kt");
         excludedFiles.add("getDelegateWithoutReflection.kt");
+        excludedFiles.add("parameterAnnotationInDefaultImpls.kt");
+        excludedFiles.add("kt17091.kt");
+        excludedFiles.add("kt17091_2.kt");
+        excludedFiles.add("kt17091_3.kt");
+        excludedFiles.add("kt22906.kt");
 
         // Reflection is used to check full class name
         excludedFiles.add("native");
@@ -122,6 +127,13 @@ public class SpecialFiles {
         // KT-8120
         excludedFiles.add("closureOfInnerLocalClass.kt");
         excludedFiles.add("closureWithSelfInstantiation.kt");
+        excludedFiles.add("quotedClassName.kt");
+
+        //wrong function resolution after package renaming
+        excludedFiles.add("apiVersionAtLeast1.kt");
+
+        //special symbols in names
+        excludedFiles.add("nameWithWhitespace.kt");
     }
 
     private SpecialFiles() {

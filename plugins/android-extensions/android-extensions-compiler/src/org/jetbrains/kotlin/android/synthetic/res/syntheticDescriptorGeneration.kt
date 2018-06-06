@@ -104,8 +104,8 @@ private fun genProperty(
             sourceElement,
             /* lateInit = */ false,
             /* isConst = */ false,
-            /* isHeader = */ false,
-            /* isImpl = */ false,
+            /* isExpect = */ false,
+            /* isActual = */ false,
             /* isExternal = */ false,
             /* isDelegated = */ false
     ) {

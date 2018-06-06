@@ -25,7 +25,6 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.PackageEntryTable
 import com.intellij.ui.OptionGroup
 import com.intellij.ui.components.JBScrollPane
-import org.jdom.Element
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
@@ -66,12 +65,14 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     private val starImportPackageEntryTable = PackageEntryTable()
     private val dummyImportLayoutPanel = object : ImportLayoutPanel() {
         override fun areStaticImportsEnabled() = false
-        override fun refresh() { }
+        override fun refresh() {}
     }
     private val starImportPackageTable = ImportLayoutPanel.createTableForPackageEntries(starImportPackageEntryTable, dummyImportLayoutPanel)
 
-    private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector("Top-level Symbols")
-    private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector("Java Statics and Enum Members")
+    private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector(
+        "Top-level Symbols", KotlinCodeStyleSettings.DEFAULT.NAME_COUNT_TO_USE_STAR_IMPORT)
+    private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector(
+        "Java Statics and Enum Members", KotlinCodeStyleSettings.DEFAULT.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS)
 
     init {
         layout = BorderLayout()
@@ -110,30 +111,62 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
         }
     }
 
-    fun apply(settings: KotlinCodeStyleSettings, dropEmptyPackages: Boolean = true) {
+    fun apply(settings: KotlinCodeStyleSettings) {
         settings.NAME_COUNT_TO_USE_STAR_IMPORT = nameCountToUseStarImportSelector.value
         settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = nameCountToUseStarImportForMembersSelector.value
         settings.IMPORT_NESTED_CLASSES = cbImportNestedClasses.isSelected
-
-        if (dropEmptyPackages) {
-            starImportPackageEntryTable.removeEmptyPackages()
-        }
-        settings.PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(starImportPackageEntryTable)
+        settings.PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(getCopyWithoutEmptyPackages(starImportPackageEntryTable))
     }
 
     fun isModified(settings: KotlinCodeStyleSettings): Boolean {
-        val tempSettings = KotlinCodeStyleSettings(commonSettings)
-        apply(tempSettings, dropEmptyPackages = false)
-        val root = Element("fake")
-        tempSettings.writeExternal(root, settings)
-        return root.children.isNotEmpty()
+        return with(settings) {
+            var isModified: Boolean = false
+            isModified = isModified || nameCountToUseStarImportSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT
+            isModified = isModified || nameCountToUseStarImportForMembersSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
+            isModified = isModified || isModified(cbImportNestedClasses, IMPORT_NESTED_CLASSES)
+            isModified = isModified || isModified(getCopyWithoutEmptyPackages(starImportPackageEntryTable), PACKAGES_TO_USE_STAR_IMPORTS)
+
+            isModified
+        }
     }
 
-    private class NameCountToUseStarImportSelector(title: String) : OptionGroup(title) {
+    companion object {
+        private fun isModified(checkBox: JCheckBox, value: Boolean): Boolean {
+            return checkBox.isSelected != value
+        }
+
+        private fun isModified(list: PackageEntryTable, table: PackageEntryTable): Boolean {
+            if (list.entryCount != table.entryCount) {
+                return true
+            }
+
+            for (i in 0 until list.entryCount) {
+                val entry1 = list.getEntryAt(i)
+                val entry2 = table.getEntryAt(i)
+                if (entry1 != entry2) {
+                    return true
+                }
+            }
+
+            return false
+        }
+
+        private fun getCopyWithoutEmptyPackages(table: PackageEntryTable): PackageEntryTable {
+            try {
+                val copy = table.clone() as PackageEntryTable
+                copy.removeEmptyPackages()
+                return copy
+            } catch (ignored: CloneNotSupportedException) {
+                throw IllegalStateException("Clone should be supported")
+            }
+        }
+    }
+
+    private class NameCountToUseStarImportSelector(title: String, default: Int) : OptionGroup(title) {
         private val rbUseSingleImports = JRadioButton("Use single name import")
         private val rbUseStarImports = JRadioButton("Use import with '*'")
         private val rbUseStarImportsIfAtLeast = JRadioButton("Use import with '*' when at least ")
-        private val starImportLimitModel = SpinnerNumberModel(2, 2, 100, 1)
+        private val starImportLimitModel = SpinnerNumberModel(default, 2, 100, 1)
         private val starImportLimitField = JSpinner(starImportLimitModel)
 
         init {
@@ -168,17 +201,17 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
                     else -> starImportLimitModel.number as Int
                 }
             }
-           set(value) {
-               when (value) {
-                   Int.MAX_VALUE -> rbUseSingleImports.isSelected = true
+            set(value) {
+                when (value) {
+                    Int.MAX_VALUE -> rbUseSingleImports.isSelected = true
 
-                   1 -> rbUseStarImports.isSelected = true
+                    1 -> rbUseStarImports.isSelected = true
 
-                   else -> {
-                       rbUseStarImportsIfAtLeast.isSelected = true
-                       starImportLimitField.value = value
-                   }
-               }
-           }
+                    else -> {
+                        rbUseStarImportsIfAtLeast.isSelected = true
+                        starImportLimitField.value = value
+                    }
+                }
+            }
     }
 }

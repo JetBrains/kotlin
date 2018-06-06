@@ -31,6 +31,9 @@ interface LegacyResolverWrapper
 internal class LegacyPackageDependencyResolverWrapper(
         val legacyResolver: ScriptDependenciesResolver
 ) : kotlin.script.experimental.dependencies.DependenciesResolver, LegacyResolverWrapper {
+
+    private var previousDependencies: org.jetbrains.kotlin.script.KotlinScriptExternalDependencies? = null
+
     override fun resolve(
             scriptContents: kotlin.script.dependencies.ScriptContents,
             environment: Environment
@@ -45,7 +48,8 @@ internal class LegacyPackageDependencyResolverWrapper(
                 environment,
                 { sev, msg, pos ->
                     reports.add(ScriptReport(msg, sev.convertSeverity(), pos?.convertPosition()))
-                }, null
+                },
+                previousDependencies
         ).get() ?: return DependenciesResolver.ResolveResult.Failure(reports)
 
         val dependencies = ScriptDependencies(
@@ -55,10 +59,12 @@ internal class LegacyPackageDependencyResolverWrapper(
                 sources = legacyDeps.sources.toList(),
                 scripts = legacyDeps.scripts.toList()
         )
+        previousDependencies = legacyDeps
         return DependenciesResolver.ResolveResult.Success(dependencies, reports)
     }
 
     private fun ScriptDependenciesResolver.ReportSeverity.convertSeverity(): ScriptReport.Severity  = when(this) {
+        ScriptDependenciesResolver.ReportSeverity.FATAL -> ScriptReport.Severity.FATAL
         ScriptDependenciesResolver.ReportSeverity.ERROR -> ScriptReport.Severity.ERROR
         ScriptDependenciesResolver.ReportSeverity.WARNING -> ScriptReport.Severity.WARNING
         ScriptDependenciesResolver.ReportSeverity.INFO -> ScriptReport.Severity.INFO
@@ -73,6 +79,9 @@ internal class ApiChangeDependencyResolverWrapper(
 ) : kotlin.script.experimental.dependencies.DependenciesResolver,
         DependencyResolverWrapper<kotlin.script.dependencies.ScriptDependenciesResolver>,
         LegacyResolverWrapper {
+
+    private var previousDependencies: kotlin.script.dependencies.KotlinScriptExternalDependencies? = null
+
     override fun resolve(
             scriptContents: kotlin.script.dependencies.ScriptContents,
             environment: Environment
@@ -83,7 +92,8 @@ internal class ApiChangeDependencyResolverWrapper(
                 environment,
                 { sev, msg, pos ->
                     reports.add(ScriptReport(msg, sev.convertSeverity(), pos?.convertPosition()))
-                }, null
+                },
+                previousDependencies
         ).get() ?: return DependenciesResolver.ResolveResult.Failure(reports)
 
         val dependencies = ScriptDependencies(
@@ -93,10 +103,12 @@ internal class ApiChangeDependencyResolverWrapper(
                 sources = legacyDeps.sources.toList(),
                 scripts = legacyDeps.scripts.toList()
         )
+        previousDependencies = legacyDeps
         return DependenciesResolver.ResolveResult.Success(dependencies, reports)
     }
 
     private fun kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.convertSeverity(): ScriptReport.Severity = when (this) {
+        kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.FATAL -> ScriptReport.Severity.FATAL
         kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.ERROR -> ScriptReport.Severity.ERROR
         kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.WARNING -> ScriptReport.Severity.WARNING
         kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity.INFO -> ScriptReport.Severity.INFO

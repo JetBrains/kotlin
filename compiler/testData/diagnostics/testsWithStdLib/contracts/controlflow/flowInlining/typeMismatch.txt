@@ -1,0 +1,7 @@
+package
+
+public fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+public fun </*0*/ T> myRun(/*0*/ block: () -> T): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun typeMismatchInLambda(/*0*/ y: kotlin.String): kotlin.Int

@@ -17,18 +17,16 @@
 package org.jetbrains.kotlin.cli.common
 
 import org.fusesource.jansi.AnsiConsole
-import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
-import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
 import java.io.PrintStream
+import java.net.URL
+import java.net.URLConnection
 import java.util.function.Predicate
 
 abstract class CLITool<A : CommonToolArguments> {
@@ -37,13 +35,11 @@ abstract class CLITool<A : CommonToolArguments> {
     }
 
     protected fun exec(
-            errStream: PrintStream,
-            services: Services,
-            messageRenderer: MessageRenderer,
-            args: Array<out String>
+        errStream: PrintStream,
+        services: Services,
+        messageRenderer: MessageRenderer,
+        args: Array<out String>
     ): ExitCode {
-        K2JVMCompiler.resetInitStartTime()
-
         val arguments = createArguments()
         parseCommandLineArguments(args.asList(), arguments)
         val collector = PrintingMessageCollector(errStream, messageRenderer, arguments.verbose)
@@ -68,8 +64,7 @@ abstract class CLITool<A : CommonToolArguments> {
             }
 
             return exec(collector, services, arguments)
-        }
-        finally {
+        } finally {
             errStream.print(messageRenderer.renderConclusion())
 
             if (PlainTextMessageRenderer.COLOR_ENABLED) {
@@ -79,17 +74,28 @@ abstract class CLITool<A : CommonToolArguments> {
     }
 
     fun exec(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
+        disableURLConnectionCaches()
+
         printVersionIfNeeded(messageCollector, arguments)
 
-        val fixedMessageCollector = if (arguments.suppressWarnings) {
+        val fixedMessageCollector = if (arguments.suppressWarnings && !arguments.allWarningsAsErrors) {
             FilteringMessageCollector(messageCollector, Predicate.isEqual(CompilerMessageSeverity.WARNING))
-        }
-        else {
+        } else {
             messageCollector
         }
 
-        reportArgumentParseProblems(fixedMessageCollector, arguments.errors)
+        reportArgumentParseProblems(fixedMessageCollector, arguments)
         return execImpl(fixedMessageCollector, services, arguments)
+    }
+
+    private fun disableURLConnectionCaches() {
+        // We disable caches to avoid problems with compiler under daemon, see https://youtrack.jetbrains.com/issue/KT-22513
+        // For some inexplicable reason, URLConnection.setDefaultUseCaches is an instance method modifying a static field,
+        // so we have to create a dummy instance to call that method
+
+        object : URLConnection(URL("file:.")) {
+            override fun connect() = throw UnsupportedOperationException()
+        }.defaultUseCaches = false
     }
 
     // Used in kotlin-maven-plugin (KotlinCompileMojoBase)
@@ -106,19 +112,36 @@ abstract class CLITool<A : CommonToolArguments> {
         }
     }
 
-    private fun reportArgumentParseProblems(collector: MessageCollector, errors: ArgumentParseErrors) {
+    private fun reportArgumentParseProblems(collector: MessageCollector, arguments: A) {
+        val errors = arguments.errors
         for (flag in errors.unknownExtraFlags) {
             collector.report(STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
         }
         for (argument in errors.extraArgumentsPassedInObsoleteForm) {
-            collector.report(STRONG_WARNING, "Advanced option value is passed in an obsolete form. Please use the '=' character " +
-                                             "to specify the value: $argument=...")
+            collector.report(
+                STRONG_WARNING, "Advanced option value is passed in an obsolete form. Please use the '=' character " +
+                        "to specify the value: $argument=..."
+            )
         }
         for ((key, value) in errors.duplicateArguments) {
             collector.report(STRONG_WARNING, "Argument $key is passed multiple times. Only the last value will be used: $value")
         }
         for ((deprecatedName, newName) in errors.deprecatedArguments) {
             collector.report(STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
+        }
+        if (arguments.internalArguments.isNotEmpty()) {
+            collector.report(
+                STRONG_WARNING,
+                "ATTENTION!\n" +
+                        "This build uses internal compiler arguments:\n" +
+                        arguments.internalArguments.joinToString(prefix = "\n", postfix = "\n\n", separator = "\n") +
+                        "This mode is strictly prohibited for production use,\n" +
+                        "as no stability/compatibility guarantees are given on\n" +
+                        "compiler or generated code. Use it at your own risk!\n"
+            )
+        }
+        for (argfileError in errors.argfileErrors) {
+            collector.report(STRONG_WARNING, argfileError)
         }
     }
 
@@ -155,8 +178,7 @@ abstract class CLITool<A : CommonToolArguments> {
         fun doMainNoExit(compiler: CLITool<*>, args: Array<String>): ExitCode {
             try {
                 return compiler.exec(System.err, *args)
-            }
-            catch (e: CompileEnvironmentException) {
+            } catch (e: CompileEnvironmentException) {
                 System.err.println(e.message)
                 return ExitCode.INTERNAL_ERROR
             }

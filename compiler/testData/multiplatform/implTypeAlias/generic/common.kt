@@ -1,3 +1,3 @@
-header class C1<A> {
+expect class C1<A> {
     fun foo(a: A): List<A>?
 }

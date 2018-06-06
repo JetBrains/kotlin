@@ -40,16 +40,16 @@ import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.Exception
 
 fun KotlinType.containsNull() =
-        TypeUtils.isNullableType(this)
+    TypeUtils.isNullableType(this)
 
 fun KtElement.deparenthesize(): KtElement =
-        if (this is KtExpression) KtPsiUtil.safeDeparenthesize(this) else this
+    if (this is KtExpression) KtPsiUtil.safeDeparenthesize(this) else this
 
 fun ResolvedCall<*>.isValueArgumentReorderingRequired(): Boolean {
     var lastValueParameterIndex = -1
     for (valueArgument in call.valueArguments) {
-        val argumentMapping = getArgumentMapping(valueArgument) as? ArgumentMatch ?:
-                              throw Exception("Value argument in function call is mapped with error")
+        val argumentMapping =
+            getArgumentMapping(valueArgument) as? ArgumentMatch ?: throw Exception("Value argument in function call is mapped with error")
         val argumentIndex = argumentMapping.valueParameter.index
         if (argumentIndex < lastValueParameterIndex) {
             return true
@@ -68,16 +68,16 @@ fun KtSecondaryConstructor.isConstructorDelegatingToSuper(bindingContext: Bindin
 }
 
 inline fun ClassDescriptor.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
-        unsubstitutedMemberScope.findFirstFunction(name, predicate)
+    unsubstitutedMemberScope.findFirstFunction(name, predicate)
 
 inline fun MemberScope.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
-        getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first(predicate)
+    getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first(predicate)
 
 fun MemberScope.findSingleFunction(name: Name): FunctionDescriptor =
-        getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).single()
+    getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).single()
 
 fun KotlinBuiltIns.findSingleFunction(name: Name): FunctionDescriptor =
-        builtInsPackageScope.findSingleFunction(name)
+    builtInsPackageScope.findSingleFunction(name)
 
 val PsiElement?.startOffsetOrUndefined get() = this?.startOffset ?: UNDEFINED_OFFSET
 val PsiElement?.endOffsetOrUndefined get() = this?.endOffset ?: UNDEFINED_OFFSET

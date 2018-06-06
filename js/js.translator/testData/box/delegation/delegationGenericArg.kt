@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1000
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1118
 // This test was adapted from compiler/testData/codegen/box/classes
 package foo
 

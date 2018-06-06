@@ -1,0 +1,44 @@
+FILE fqName:<root> fileName:/propertiesWithAnnotations.kt
+  CLASS ANNOTATION_CLASS name:TestAnn modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnn flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:primary
+      VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
+    PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnn) returnType:String flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:TestAnn flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): String'
+            GET_FIELD 'x: String' type=kotlin.String origin=null
+              receiver: GET_VAR 'this@TestAnn: TestAnn' type=TestAnn origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  PROPERTY name:testVal type:kotlin.String visibility:public modality:FINAL flags:val
+    annotations:
+      CALL 'constructor TestAnn(String)' type=TestAnn origin=null
+        x: CONST String type=kotlin.String value=testVal.property
+    FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:public flags:final
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value=
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVal> visibility:public modality:FINAL <> () returnType:String flags:
+      correspondingProperty: PROPERTY name:testVal type:kotlin.String visibility:public modality:FINAL flags:val
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-testVal>(): String'
+          GET_FIELD 'testVal: String' type=kotlin.String origin=null
+

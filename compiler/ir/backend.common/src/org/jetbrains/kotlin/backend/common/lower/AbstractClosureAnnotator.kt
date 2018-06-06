@@ -119,9 +119,13 @@ class ClosureAnnotator   {
             closureBuilders[declaration.descriptor] = closureBuilder
 
             closureBuilder.declareVariable(classDescriptor.thisAsReceiverParameter)
-            if (classDescriptor.isInner) {
+            if (declaration.isInner) {
                 closureBuilder.declareVariable((classDescriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter)
                 includeInParent(closureBuilder)
+            }
+
+            classDescriptor.unsubstitutedPrimaryConstructor?.valueParameters?.forEach {
+                closureBuilder.declareVariable(it)
             }
 
             closuresStack.push(closureBuilder)

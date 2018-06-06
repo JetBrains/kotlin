@@ -2,14 +2,14 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-header class Foo(x: Int, y: String) {
+expect class Foo(x: Int, y: String) {
     val x: Int
     val y: String
 }
 
-header class Bar(z: Double)
+expect class Bar(z: Double)
 
-header class Baz(w: List<String>) {
+expect class Baz(w: List<String>) {
     val w: List<String>
 
     operator fun component1(): List<String>
@@ -25,8 +25,8 @@ header class Baz(w: List<String>) {
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
-impl data class Foo(impl val x: Int, impl val y: String)
+actual data class Foo actual constructor(actual val x: Int, actual val y: String)
 
-impl data class Bar(val z: Double)
+actual data class Bar actual constructor(val z: Double)
 
-impl data class Baz(impl val w: List<String>)
+actual data class Baz actual constructor(actual val w: List<String>)

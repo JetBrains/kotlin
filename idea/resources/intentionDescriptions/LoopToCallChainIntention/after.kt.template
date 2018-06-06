@@ -1,3 +1,0 @@
-fun foo(list: List<String>): String? {
-    <spot>return list.firstOrNull { it.length > 0 }</spot>
-}

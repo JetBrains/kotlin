@@ -2,8 +2,8 @@
 // WITH_RUNTIME
 package test
 
-inline fun <reified T : Enum<T>> myValueOf(): String {
-    return myValueOf2<T>()
+inline fun <reified Z : Enum<Z>> myValueOf(): String {
+    return myValueOf2<Z>()
 }
 
 inline fun <reified Y : Enum<Y>> myValueOf2(): String {

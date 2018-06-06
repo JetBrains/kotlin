@@ -26,12 +26,16 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSubstitutorImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.source.PsiImmediateClassType
+import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.NonNls
@@ -50,7 +54,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightPsiReferenceList
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
@@ -59,6 +62,8 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
@@ -91,7 +96,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     private fun getJavaFileStub(): PsiJavaFileStub = getLightClassDataHolder().javaFileStub
 
-    protected fun getDescriptor(): ClassDescriptor? {
+    fun getDescriptor(): ClassDescriptor? {
         return LightClassGenerationSupport.getInstance(project).resolveToDescriptor(classOrObject) as? ClassDescriptor
     }
 
@@ -104,8 +109,6 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     }
 
     private val _containingFile: PsiFile by lazyPub {
-        classOrObject.containingFile.virtualFile ?: error("No virtual file for " + classOrObject.text)
-
         object : FakeFileForLightClass(
                 classOrObject.containingKtFile,
                 { if (classOrObject.isTopLevel()) this else create(getOutermostClassOrObject(classOrObject))!! },
@@ -333,43 +336,39 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
                 FINAL_KEYWORD to PsiModifier.FINAL)
 
 
-        fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
-            if (classOrObject.containingKtFile.isScript || classOrObject.hasModifier(KtTokens.HEADER_KEYWORD)) {
+        fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? =
+                CachedValuesManager.getCachedValue(classOrObject) {
+                    CachedValueProvider.Result
+                            .create(createNoCache(classOrObject), OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                }
+
+        fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
+            if (classOrObject.shouldNotBeVisibleAsLightClass()) {
                 return null
             }
 
-            if (classOrObject is KtObjectDeclaration && classOrObject.isObjectLiteral()) {
-                if (classOrObject.containingFile.virtualFile == null) return null
+            return when {
+                classOrObject is KtObjectDeclaration && classOrObject.isObjectLiteral() ->
+                    KtLightClassForAnonymousDeclaration(classOrObject)
 
-                return KtLightClassForAnonymousDeclaration(classOrObject)
+                classOrObject.isLocal ->
+                    KtLightClassForLocalDeclaration(classOrObject)
+
+                else ->
+                    KtLightClassImpl(classOrObject)
             }
-
-            if (isEnumEntryWithoutBody(classOrObject)) {
-                return null
-            }
-
-            if (classOrObject.isLocal) {
-                if (classOrObject.containingFile.virtualFile == null) return null
-
-                return KtLightClassForLocalDeclaration(classOrObject)
-            }
-
-
-            return KtLightClassImpl(classOrObject)
-        }
-
-        private fun isEnumEntryWithoutBody(classOrObject: KtClassOrObject): Boolean {
-            if (classOrObject !is KtEnumEntry) {
-                return false
-            }
-            return classOrObject.getBody()?.declarations?.isEmpty() ?: true
         }
 
         fun getLightClassDataHolder(classOrObject: KtClassOrObject): LightClassDataHolder.ForClass {
-            return getLightClassCachedValue(classOrObject).value
+            if (classOrObject.shouldNotBeVisibleAsLightClass()) {
+                return InvalidLightClassDataHolder
+            }
+
+            return classOrObject.containingKtFile.script?.let { KtLightClassForScript.getLightClassCachedValue(it).value } ?:
+                   getLightClassCachedValue(classOrObject).value
         }
 
-        fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<LightClassDataHolder.ForClass> {
+        private fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<LightClassDataHolder.ForClass> {
             var value =
                     getOutermostClassOrObject(classOrObject).getUserData(JAVA_API_STUB) // stub computed for outer class can be used for inner/nested
                     ?: classOrObject.getUserData(JAVA_API_STUB)
@@ -482,13 +481,13 @@ fun getOutermostClassOrObject(classOrObject: KtClassOrObject): KtClassOrObject {
 
 interface LightClassInheritanceHelper {
     fun isInheritor(
-            lightClass: KtLightClassForSourceDeclaration,
+            lightClass: KtLightClass,
             baseClass: PsiClass,
             checkDeep: Boolean
     ): ImpreciseResolveResult
 
     object NoHelp : LightClassInheritanceHelper {
-        override fun isInheritor(lightClass: KtLightClassForSourceDeclaration, baseClass: PsiClass, checkDeep: Boolean) = UNSURE
+        override fun isInheritor(lightClass: KtLightClass, baseClass: PsiClass, checkDeep: Boolean) = UNSURE
     }
 
     companion object {
@@ -506,4 +505,46 @@ fun KtClassOrObject.defaultJavaAncestorQualifiedName(): String? {
         isInterface() -> CommonClassNames.JAVA_LANG_OBJECT // see com.intellij.psi.impl.PsiClassImplUtil.getSuperClass
         else -> CommonClassNames.JAVA_LANG_OBJECT
     }
+}
+
+fun KtClassOrObject.shouldNotBeVisibleAsLightClass(): Boolean {
+    if (parentsWithSelf.filterIsInstance<KtClassOrObject>().any { it.hasExpectModifier() }) {
+        return true
+    }
+
+    if (isLocal) {
+        if (containingFile.virtualFile == null) return true
+        if (hasParseErrorsAround(this) || PsiUtilCore.hasErrorElementChild(this)) return true
+    }
+
+    if (isEnumEntryWithoutBody(this)) {
+        return true
+    }
+
+    return false
+}
+
+private fun isEnumEntryWithoutBody(classOrObject: KtClassOrObject): Boolean {
+    if (classOrObject !is KtEnumEntry) {
+        return false
+    }
+    return classOrObject.getBody()?.declarations?.isEmpty() ?: true
+}
+
+private fun hasParseErrorsAround(psi: PsiElement): Boolean {
+    val node = psi.node ?: return false
+
+    TreeUtil.nextLeaf(node)?.let { nextLeaf ->
+        if (nextLeaf.elementType == TokenType.ERROR_ELEMENT || nextLeaf.treePrev?.elementType == TokenType.ERROR_ELEMENT) {
+            return true
+        }
+    }
+
+    TreeUtil.prevLeaf(node)?.let { prevLeaf ->
+        if (prevLeaf.elementType == TokenType.ERROR_ELEMENT || prevLeaf.treeNext?.elementType == TokenType.ERROR_ELEMENT) {
+            return true
+        }
+    }
+
+    return false
 }

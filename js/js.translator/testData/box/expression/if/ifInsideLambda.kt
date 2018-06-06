@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 990
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1108
 // http://youtrack.jetbrains.com/issue/KT-5594
 // JS: compiler crashes
 

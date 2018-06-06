@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.extensions
 
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -28,6 +29,7 @@ interface ExpressionCodegenExtension {
             "org.jetbrains.kotlin.expressionCodegenExtension", ExpressionCodegenExtension::class.java)
 
     class Context(
+            val codegen: ExpressionCodegen,
             val typeMapper: KotlinTypeMapper,
             val v: InstructionAdapter
     )
@@ -45,4 +47,7 @@ interface ExpressionCodegenExtension {
     fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): StackValue? = null
 
     fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {}
+
+    val shouldGenerateClassSyntheticPartsInLightClassesMode: Boolean
+        get() = false
 }

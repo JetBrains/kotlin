@@ -1,0 +1,26 @@
+package test
+
+@test.A public val property: kotlin.Unit
+@test.A public fun </*0*/ @test.A T> function(/*0*/ @test.A param: kotlin.Unit): @test.A kotlin.Unit
+
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER}) public final annotation class A : kotlin.Annotation {
+    public constructor A()
+}
+
+public final enum class Enum : kotlin.Enum<test.Enum> {
+    @test.A enum entry ENTRY
+
+    private constructor Enum()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Enum
+    public final /*synthesized*/ fun values(): kotlin.Array<test.Enum>
+}
+
+@test.A public final class Klass {
+    @test.A public constructor Klass()
+}

@@ -1,4 +1,5 @@
-@<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>myAnnotation<!> <!WRONG_MODIFIER_TARGET!>public<!> package illegal_modifiers
+@<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>myAnnotation<!> <!WRONG_MODIFIER_TARGET!>public<!>
+package illegal_modifiers
 
 abstract class A() {
     <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>final<!> fun f()
@@ -17,7 +18,7 @@ class FinalClass() {
     val i: Int = 1
         <!WRONG_MODIFIER_TARGET!>open<!> get(): Int = field
     var j: Int = 1
-        <!WRONG_MODIFIER_TARGET!>open<!> set(v: Int) {}
+        <!WRONG_MODIFIER_TARGET!>open<!> set(<!UNUSED_PARAMETER!>v<!>: Int) {}
 }
 
 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> class C

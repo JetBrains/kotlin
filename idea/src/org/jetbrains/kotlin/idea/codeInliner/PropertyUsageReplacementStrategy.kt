@@ -22,8 +22,12 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 class PropertyUsageReplacementStrategy(readReplacement: CodeToInline?, writeReplacement: CodeToInline?) : UsageReplacementStrategy {
-    private val readReplacementStrategy = readReplacement?.let { CallableUsageReplacementStrategy(it) }
-    private val writeReplacementStrategy = writeReplacement?.let { CallableUsageReplacementStrategy(it) }
+    private val readReplacementStrategy = readReplacement?.let {
+        CallableUsageReplacementStrategy(it, inlineSetter = false)
+    }
+    private val writeReplacementStrategy = writeReplacement?.let {
+        CallableUsageReplacementStrategy(it, inlineSetter = true)
+    }
 
     override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement?)? {
         val access = usage.readWriteAccess(useResolveForReadWrite = true)

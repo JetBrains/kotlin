@@ -113,38 +113,38 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
                 val restoredOwner = restoredTypeParameter.getStrictParentOfType<KtTypeParameterListOwner>() ?: return@postRename
                 val restoredOriginalTypeElement = typeElementToExtractPointer.element ?: return@postRename
 
+                val parameterRefElement = KtPsiFactory(project).createType(restoredTypeParameter.name ?: "_").typeElement!!
+
+                val duplicateRanges = restoredOriginalTypeElement
+                        .toRange()
+                        .match(restoredOwner, KotlinPsiUnifier.DEFAULT)
+                        .filterNot {
+                            val textRange = it.range.getTextRange()
+                            restoredOriginalTypeElement.textRange.intersects(textRange)
+                            || restoredOwner.typeParameterList?.textRange?.intersects(textRange) ?: false
+                        }
+                        .map { it.range.elements.toRange() }
+
                 runWriteAction {
-                    val parameterRefElement = KtPsiFactory(project).createType(restoredTypeParameter.name ?: "_").typeElement!!
-
-                    val duplicateRanges = restoredOriginalTypeElement
-                            .toRange()
-                            .match(restoredOwner, KotlinPsiUnifier.DEFAULT)
-                            .filterNot {
-                                val textRange = it.range.getTextRange()
-                                restoredOriginalTypeElement.textRange.intersects(textRange)
-                                || restoredOwner.typeParameterList?.textRange?.intersects(textRange) ?: false
-                            }
-                            .map { it.range.elements.toRange() }
-
                     restoredOriginalTypeElement.replace(parameterRefElement)
+                }
 
-                    processDuplicates(
-                            duplicateRanges.keysToMap {
-                                {
-                                    it.elements.singleOrNull()?.replace(parameterRefElement)
-                                    Unit
-                                }
-                            },
-                            project,
-                            editor,
-                            ElementDescriptionUtil.getElementDescription(restoredOwner, UsageViewTypeLocation.INSTANCE) + " '${restoredOwner.name}'",
-                            "a reference to extracted type parameter"
-                    )
+                processDuplicates(
+                        duplicateRanges.keysToMap {
+                            {
+                                it.elements.singleOrNull()?.replace(parameterRefElement)
+                                Unit
+                            }
+                        },
+                        project,
+                        editor,
+                        ElementDescriptionUtil.getElementDescription(restoredOwner, UsageViewTypeLocation.INSTANCE) + " '${restoredOwner.name}'",
+                        "a reference to extracted type parameter"
+                )
 
-                    restoredTypeParameter.extendsBound?.let {
-                        editor.selectionModel.setSelection(it.startOffset, it.endOffset)
-                        editor.caretModel.moveToOffset(it.startOffset)
-                    }
+                restoredTypeParameter.extendsBound?.let {
+                    editor.selectionModel.setSelection(it.startOffset, it.endOffset)
+                    editor.caretModel.moveToOffset(it.startOffset)
                 }
             }
 

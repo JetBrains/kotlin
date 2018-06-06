@@ -1,3 +1,0 @@
-ext.kotlin_version = findProperty("deployVersion") ?: "1.1-SNAPSHOT"
-ext.kotlin_language_version = "1.1"
-ext.kotlin_gradle_plugin_version = "1.1.3"

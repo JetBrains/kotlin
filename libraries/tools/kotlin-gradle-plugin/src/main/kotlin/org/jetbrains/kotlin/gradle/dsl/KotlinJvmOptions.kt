@@ -36,13 +36,13 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var noJdk: kotlin.Boolean
 
     /**
-     * Don't include Kotlin reflection implementation into classpath
+     * Don't include kotlin-reflect.jar into classpath
      * Default value: true
      */
      var noReflect: kotlin.Boolean
 
     /**
-     * Don't include Kotlin runtime into classpath
+     * Don't include kotlin-stdlib.jar or kotlin-reflect.jar into classpath
      * Default value: true
      */
      var noStdlib: kotlin.Boolean

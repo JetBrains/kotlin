@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.resolve
@@ -32,9 +21,10 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
+import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext
 import org.jetbrains.kotlin.idea.caches.resolve.LightClassLazinessChecker.Tracker.Level.*
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IDELightClassConstructionContext
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -53,9 +43,13 @@ import kotlin.test.assertTrue
 
 abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(testDataPath: String) {
-        val extraFilePath = testDataPath.replace(".kt", ".extra.kt")
-        val testFiles = if (File(extraFilePath).isFile) listOf(testDataPath, extraFilePath) else listOf(testDataPath)
+        val extraFilePath = when {
+            testDataPath.endsWith(".kt") -> testDataPath.replace(".kt", ".extra.kt")
+            testDataPath.endsWith(".kts") -> testDataPath.replace(".kts", ".extra.kts")
+            else -> error("Invalid test data extension")
+        }
 
+        val testFiles = if (File(extraFilePath).isFile) listOf(testDataPath, extraFilePath) else listOf(testDataPath)
 
         val lazinessMode = lazinessModeByFileText(testDataPath)
         myFixture.configureByFiles(*testFiles.toTypedArray())
@@ -91,11 +85,13 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
         val testName = getTestName(false)
         if (KotlinTestUtils.isAllFilesPresentTest(testName)) return
 
-        val filePath = "${KotlinTestUtils.getTestsRoot(this::class.java)}/${getTestName(false)}.kt"
+        val filePathWithoutExtension = "${KotlinTestUtils.getTestsRoot(this::class.java)}/${getTestName(false)}"
+        val testFile = File("$filePathWithoutExtension.kt").takeIf { it.exists() } ?:
+                       File("$filePathWithoutExtension.kts").takeIf { it.exists() }
 
-        Assert.assertTrue("File doesn't exist $filePath", File(filePath).exists())
+        Assert.assertNotNull("Test file not found!", testFile)
 
-        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(filePath, libName())
+        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(testFile!!.canonicalPath, libName())
         val jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/"
         ModuleRootModificationUtil.addModuleLibrary(module, jarUrl)
     }
@@ -117,10 +113,10 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
 
 private fun testLightClass(expected: File, testData: File, normalize: (String) -> String, findLightClass: (String) -> PsiClass?) {
     LightClassTestCommon.testLightClass(
-            expected,
-            testData,
-            findLightClass,
-            normalizeText = { text ->
+        expected,
+        testData,
+        findLightClass = findLightClass,
+        normalizeText = { text ->
                 //NOTE: ide and compiler differ in names generated for parameters with unspecified names
                 text
                         .replace("java.lang.String s,", "java.lang.String p,")
@@ -128,6 +124,7 @@ private fun testLightClass(expected: File, testData: File, normalize: (String) -
                         .replace("java.lang.String s1", "java.lang.String p1")
                         .replace("java.lang.String s2", "java.lang.String p2")
                         .replace("java.lang.Object o)", "java.lang.Object p)")
+                        .replace("java.lang.String[] strings", "java.lang.String[] p")
                         .removeLinesStartingWith("@" + JvmAnnotationNames.METADATA_FQ_NAME.asString())
                         .run(normalize)
             }
@@ -135,6 +132,10 @@ private fun testLightClass(expected: File, testData: File, normalize: (String) -
 }
 
 private fun findClass(fqName: String, ktFile: KtFile?, project: Project): PsiClass? {
+    ktFile?.script?.let {
+        return it.toLightClass()
+    }
+
     return JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project)) ?:
            PsiTreeUtil.findChildrenOfType(ktFile, KtClassOrObject::class.java)
                    .find { fqName.endsWith(it.nameAsName!!.asString()) }
@@ -250,21 +251,35 @@ object LightClassLazinessChecker {
         }.map {
             (fqName, clsAnnotations) ->
 
-            val lightAnnotations = (modifierListOwner as? PsiModifierListOwner)?.modifierList?.annotations?.filter { it.qualifiedName == fqName }.orEmpty()
+            val annotations = (modifierListOwner as? PsiModifierListOwner)?.modifierList?.annotations
+            val lightAnnotations = annotations?.filter { it.qualifiedName == fqName }.orEmpty()
             if (fqName != Nullable::class.java.name && fqName != NotNull::class.java.name) {
                 assertEquals(clsAnnotations.size, lightAnnotations.size, "Missing $fqName annotation")
             }
             else {
                 // having duplicating nullability annotations is fine
                 // see KtLightNullabilityAnnotation
-                assertTrue(lightAnnotations.isNotEmpty(), "Missing $fqName annotation")
+                assertTrue(
+                    lightAnnotations.isNotEmpty(),
+                    "Missing $fqName annotation in '${modifierListOwner}' have only ${annotations?.joinToString(
+                        ", ",
+                        "[",
+                        "]"
+                    ) { it.toString() }}"
+                )
             }
             clsAnnotations.zip(lightAnnotations).forEach {
                 (clsAnnotation, lightAnnotation) ->
-                assertNotNull(lightAnnotation!!.nameReferenceElement)
+                if (lightAnnotation !is KtLightNullabilityAnnotation)
+                    assertNotNull(
+                        lightAnnotation!!.nameReferenceElement,
+                        "nameReferenceElement should be not null for $lightAnnotation of ${lightAnnotation.javaClass}"
+                    )
                 if (lightAnnotation is KtLightAbstractAnnotation) {
                     assertEquals(clsAnnotation.values(), lightAnnotation.values())
-                    assertEquals(clsAnnotation, lightAnnotation.clsDelegate)
+                    withAllowedAnnotationsClsDelegate {
+                        assertEquals(clsAnnotation, lightAnnotation.clsDelegate)
+                    }
                 }
             }
         }

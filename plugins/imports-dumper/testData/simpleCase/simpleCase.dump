@@ -1,0 +1,1 @@
+{"$TESTDATA_DIR$\/a\/A1.kt":["import c.JavaC"],"$TESTDATA_DIR$\/a\/A2.kt":[],"$TESTDATA_DIR$\/b\/B1.kt":["import a.*"],"$TESTDATA_DIR$\/b\/nestedB\/B2.kt":["import a.A1 as AliasedA1","import a.A1"],"$TESTDATA_DIR$\/c\/C1.kt":["import a.A1","import a.A2","import b.B1.Companion.a2","import b.nestedB.bar","import b.nestedB.foo"]}

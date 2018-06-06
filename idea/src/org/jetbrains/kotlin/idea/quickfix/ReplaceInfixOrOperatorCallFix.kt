@@ -22,13 +22,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class ReplaceInfixOrOperatorCallFix(
@@ -111,7 +111,7 @@ class ReplaceInfixOrOperatorCallFix(
                     when {
                         parent.calleeExpression == null -> null
                         parent.parent is KtQualifiedExpression -> null
-                        parent.getResolvedCall(parent.analyze())?.getImplicitReceiverValue() != null -> null
+                        parent.resolveToCall(BodyResolveMode.FULL)?.getImplicitReceiverValue() != null -> null
                         else -> ReplaceInfixOrOperatorCallFix(parent, parent.shouldHaveNotNullType())
                     }
                 }

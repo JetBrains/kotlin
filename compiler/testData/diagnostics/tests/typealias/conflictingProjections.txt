@@ -14,9 +14,9 @@ public interface Out</*0*/ out T> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias InAlias</*0*/ T>  = In<T>
-public typealias OutAlias</*0*/ T>  = Out<T>
-public typealias TestInForOut</*0*/ T>  = Out<in T>
-public typealias TestInForOutWithinAlias</*0*/ T>  = OutAlias<in T>
-public typealias TestOutForIn</*0*/ T>  = In<out T>
-public typealias TestOutForInWithinAlias</*0*/ T>  = InAlias<out T>
+public typealias InAlias</*0*/ T> = In<T>
+public typealias OutAlias</*0*/ T> = Out<T>
+public typealias TestInForOut</*0*/ T> = Out<in T>
+public typealias TestInForOutWithinAlias</*0*/ T> = OutAlias<in T>
+public typealias TestOutForIn</*0*/ T> = In<out T>
+public typealias TestOutForInWithinAlias</*0*/ T> = InAlias<out T>

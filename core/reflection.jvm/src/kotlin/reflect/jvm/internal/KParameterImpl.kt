@@ -18,7 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 
@@ -43,7 +43,7 @@ internal class KParameterImpl(
         get() = KTypeImpl(descriptor.type) { callable.caller.parameterTypes[index] }
 
     override val isOptional: Boolean
-        get() = (descriptor as? ValueParameterDescriptor)?.hasDefaultValue() ?: false
+        get() = (descriptor as? ValueParameterDescriptor)?.declaresOrInheritsDefaultValue() ?: false
 
     override val isVararg: Boolean
         get() = descriptor.let { it is ValueParameterDescriptor && it.varargElementType != null }

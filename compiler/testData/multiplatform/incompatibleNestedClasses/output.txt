@@ -5,76 +5,51 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:2:18: error: header declaration 'N1' has no implementation in module
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:2:12: error: actual interface 'N1' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public impl interface N1
+    public final expect class N1
 
-    header class N1
-                 ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:3:22: error: header declaration 'N2' has no implementation in module
-The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public impl object N2
-
-    header interface N2
-                     ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:4:12: error: header declaration 'N3' has no implementation in module
-The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
-    public final impl class N3
-
-    header object N3
+    actual interface N1
            ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:8:18: error: header declaration 'N2' has no implementation in module
-The following declaration is incompatible because modifiers are different (companion, inner):
-    public final impl inner class N2
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:3:12: error: actual object 'N2' has no corresponding expected declaration
+The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
+    public expect interface N2
 
-    header class N2
-                 ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:9:24: error: header declaration 'I2' has no implementation in module
-The following declaration is incompatible because modifiers are different (companion, inner):
-    public final impl class I2
-
-    header inner class I2
-                       ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:13:12: error: header declaration 'Companion' has no implementation in module
-The following declaration is incompatible because modifiers are different (companion, inner):
-    public impl companion object
-
-    header object Companion
+    actual object N2
            ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:14:22: error: header declaration 'Factory' has no implementation in module
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:4:12: error: actual class 'N3' has no corresponding expected declaration
+The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
+    public expect object N3
+
+    actual class N3
+           ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:8:5: error: actual class 'N2' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner):
-    public impl object Factory
+    public final expect class N2
 
-    header companion object Factory
-                     ^
-compiler/testData/multiplatform/incompatibleNestedClasses/common.kt:18:22: error: header declaration 'Companion' has no implementation in module
+    actual inner class N2
+    ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:9:5: error: actual class 'I2' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner):
-    public impl object Companion
+    public final expect inner class I2
 
-    header companion object
-                     ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:2:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-    impl interface N1
+    actual class I2
     ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:3:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-    impl object N2
-    ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:4:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-    impl class N3
-    ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:8:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-    impl inner class N2
-    ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:9:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-    impl class I2
-    ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:13:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-    impl companion object {}
-    ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:14:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-    impl object Factory
-    ^
-compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:18:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
-    impl object Companion
-    ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:13:5: error: actual companion object 'Companion' has no corresponding expected declaration
+The following declaration is incompatible because modifiers are different (companion, inner):
+    public expect object Companion
 
+    actual companion object {}
+    ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:14:5: error: actual object 'Factory' has no corresponding expected declaration
+The following declaration is incompatible because modifiers are different (companion, inner):
+    public expect companion object Factory
+
+    actual object Factory
+    ^
+compiler/testData/multiplatform/incompatibleNestedClasses/jvm.kt:18:5: error: actual object 'Companion' has no corresponding expected declaration
+The following declaration is incompatible because modifiers are different (companion, inner):
+    public expect companion object
+
+    actual object Companion
+    ^

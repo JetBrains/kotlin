@@ -27,6 +27,7 @@ annotation class Test {
 // EXIST:  const
 // EXIST:  suspend
 // EXIST:  typealias
-// EXIST:  header
-// EXIST:  impl
+// EXIST:  expect
+// EXIST:  actual
+// EXIST:  companion object
 // NOTHING_ELSE

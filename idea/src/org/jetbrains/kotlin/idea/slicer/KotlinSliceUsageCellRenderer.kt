@@ -21,7 +21,7 @@ import com.intellij.slicer.SliceUsageCellRendererBase
 import com.intellij.ui.JBColor
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.FontUtil
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 
 // Based on com.intellij.slicer.SliceUsageCellRenderer
 object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
-    private val descriptorRenderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+    private val descriptorRenderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
         withDefinedIn = true
         withoutTypeParameters = true
         parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
@@ -61,7 +61,7 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
             it is KtDeclarationWithBody ||
             it is KtProperty && it.isLocal
         } as? KtDeclaration ?: return
-        val descriptor = declaration.resolveToDescriptor()
+        val descriptor = declaration.unsafeResolveToDescriptor()
         append(" in ${descriptorRenderer.render(descriptor)}", SimpleTextAttributes.GRAY_ATTRIBUTES)
     }
 }

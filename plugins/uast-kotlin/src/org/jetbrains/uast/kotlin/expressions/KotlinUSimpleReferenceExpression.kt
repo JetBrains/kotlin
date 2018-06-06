@@ -31,12 +31,13 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.visitor.UastVisitor
 
 open class KotlinUSimpleReferenceExpression(
         override val psi: KtSimpleNameExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), USimpleNameReferenceExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     private val resolvedDeclaration by lz { psi.resolveCallToDeclaration(this) }
 
     override val identifier get() = psi.getReferencedName()
@@ -49,6 +50,14 @@ open class KotlinUSimpleReferenceExpression(
     override fun accept(visitor: UastVisitor) {
         visitor.visitSimpleNameReferenceExpression(this)
 
+        if (psi.parent.destructuringDeclarationInitializer != true) {
+            visitAccessorCalls(visitor)
+        }
+
+        visitor.afterVisitSimpleNameReferenceExpression(this)
+    }
+
+    private fun visitAccessorCalls(visitor: UastVisitor) {
         // Visit Kotlin get-set synthetic Java property calls as function calls
         val bindingContext = psi.analyze()
         val access = psi.readWriteAccess()
@@ -78,8 +87,6 @@ open class KotlinUSimpleReferenceExpression(
                 }
             }
         }
-
-        visitor.afterVisitSimpleNameReferenceExpression(this)
     }
 
     private tailrec fun findAssignment(prev: PsiElement?, element: PsiElement?): KtBinaryExpression? = when (element) {
@@ -90,12 +97,12 @@ open class KotlinUSimpleReferenceExpression(
     }
 
     class KotlinAccessorCallExpression(
-            override val psi: KtElement,
-            override val uastParent: KotlinUSimpleReferenceExpression,
-            private val resolvedCall: ResolvedCall<*>,
-            private val accessorDescriptor: DeclarationDescriptor,
-            val setterValue: KtExpression?
-    ) : UCallExpression {
+        override val psi: KtSimpleNameExpression,
+        override val uastParent: KotlinUSimpleReferenceExpression,
+        private val resolvedCall: ResolvedCall<*>,
+        private val accessorDescriptor: DeclarationDescriptor,
+        val setterValue: KtExpression?
+    ) : UCallExpressionEx, JvmDeclarationUElementPlaceholder {
         override val methodName: String?
             get() = accessorDescriptor.name.asString()
 
@@ -108,6 +115,9 @@ open class KotlinUSimpleReferenceExpression(
                     null
             }
 
+        override val javaPsi: PsiElement? = null
+        override val sourcePsi: PsiElement? = psi
+
         override val annotations: List<UAnnotation>
             get() = emptyList()
 
@@ -116,8 +126,7 @@ open class KotlinUSimpleReferenceExpression(
             type.toPsiType(this, psi, boxed = true)
         }
 
-        override val methodIdentifier: UIdentifier?
-            get() = UIdentifier(uastParent.psi, this)
+        override val methodIdentifier: UIdentifier? by lazy { KotlinUIdentifier(psi.getReferencedNameElement(), this) }
 
         override val classReference: UReferenceExpression?
             get() = null
@@ -131,6 +140,8 @@ open class KotlinUSimpleReferenceExpression(
             else
                 emptyList()
         }
+
+        override fun getArgumentForParameter(i: Int): UExpression? = valueArguments.getOrNull(i)
 
         override val typeArgumentCount: Int
             get() = resolvedCall.typeArguments.size
@@ -183,10 +194,10 @@ open class KotlinUSimpleReferenceExpression(
 }
 
 class KotlinClassViaConstructorUSimpleReferenceExpression(
-        override val psi: KtCallExpression,
+        override val psi: KtCallElement,
         override val identifier: String,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), USimpleNameReferenceExpression, KotlinUElementWithType {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression, KotlinUElementWithType {
     override val resolvedName: String?
         get() = (psi.getResolvedCall(psi.analyze())?.resultingDescriptor as? ConstructorDescriptor)
                 ?.containingDeclaration?.name?.asString()
@@ -201,8 +212,8 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
 
 class KotlinStringUSimpleReferenceExpression(
         override val identifier: String,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), USimpleNameReferenceExpression {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), USimpleNameReferenceExpression {
     override val psi: PsiElement?
         get() = null
     override fun resolve() = null

@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.javac.wrappers.trees
 
-import com.sun.source.util.TreePath
+import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 
 abstract class TreeBasedElement<out T : JCTree>(
         val tree: T,
-        val treePath: TreePath,
+        val compilationUnit: CompilationUnitTree,
         val javac: JavacWrapper
 ) : JavaElement {
 

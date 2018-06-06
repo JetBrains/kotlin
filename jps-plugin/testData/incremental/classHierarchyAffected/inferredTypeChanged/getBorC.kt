@@ -1,1 +1,3 @@
-fun getBorC() = if (Math.random() > 0.5) getB() else getC()
+private var bOrCCounter = 0
+
+fun getBorC() = if (bOrCCounter++ % 2 == 0) getB() else getC()

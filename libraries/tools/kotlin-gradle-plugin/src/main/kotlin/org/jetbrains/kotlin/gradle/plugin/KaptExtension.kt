@@ -30,31 +30,64 @@ open class KaptExtension {
 
     open var correctErrorTypes: Boolean = false
 
+    open var mapDiagnosticLocations: Boolean = false
+
+    @Deprecated("Use `annotationProcessor()` and `annotationProcessors()` instead")
     open var processors: String = ""
+
+    /** Explicit opt-in switch for Kapt caching. Should be used when annotation processors used by this project are
+     * certain NOT to use anything aside from the task inputs in their logic and are guaranteed to produce the same
+     * output on subsequent runs without input changes. */
+    var useBuildCache: Boolean = false
+
+    private val apOptionsActions =
+            mutableListOf<(KaptAnnotationProcessorOptions) -> Unit>()
+
+    private val javacOptionsActions =
+            mutableListOf<(KaptJavacOptionsDelegate) -> Unit>()
 
     private var apOptionsClosure: Closure<*>? = null
     private var javacOptionsClosure: Closure<*>? = null
 
+    open fun annotationProcessor(fqName: String) {
+        val oldProcessors = this.processors
+        this.processors = if (oldProcessors.isEmpty()) fqName else "$oldProcessors,$fqName"
+    }
+
+    open fun annotationProcessors(vararg fqName: String) {
+        fqName.forEach(this::annotationProcessor)
+    }
+
     open fun arguments(closure: Closure<*>) {
-        this.apOptionsClosure = closure
+        apOptionsActions += { apOptions ->
+            apOptions.execute(closure)
+        }
+    }
+
+    open fun arguments(action: KaptAnnotationProcessorOptions.() -> Unit) {
+        apOptionsActions += action
     }
 
     open fun javacOptions(closure: Closure<*>) {
-        this.javacOptionsClosure = closure
+        this.javacOptionsActions += { javacOptions ->
+            javacOptions.execute(closure)
+        }
+    }
+
+    open fun javacOptions(action: KaptJavacOptionsDelegate.() -> Unit) {
+        javacOptionsActions += action
     }
 
     fun getJavacOptions(): Map<String, String> {
-        val closureToExecute = javacOptionsClosure ?: return emptyMap()
-        val executor = KaptJavacOptionsDelegate().apply { execute(closureToExecute) }
-        return executor.options
+        val result = KaptJavacOptionsDelegate()
+        javacOptionsActions.forEach { it(result) }
+        return result.options
     }
 
     fun getAdditionalArguments(project: Project, variantData: Any?, androidExtension: Any?): Map<String, String> {
-        val closureToExecute = apOptionsClosure ?: return emptyMap()
-
-        val executor = KaptAnnotationProcessorOptions(project, variantData, androidExtension)
-        executor.execute(closureToExecute)
-        return executor.options
+        val result = KaptAnnotationProcessorOptions(project, variantData, androidExtension)
+        apOptionsActions.forEach { it(result) }
+        return result.options
     }
 
     fun getAdditionalArgumentsForJavac(project: Project, variantData: Any?, androidExtension: Any?): List<String> {
@@ -81,12 +114,7 @@ open class KaptAnnotationProcessorOptions(
         options.put(name.toString(), values.joinToString(" "))
     }
 
-    fun execute(closure: Closure<*>) {
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure.delegate = this
-        closure.call()
-    }
-
+    fun execute(closure: Closure<*>) = executeClosure(closure)
 }
 
 open class KaptJavacOptionsDelegate {
@@ -100,9 +128,11 @@ open class KaptJavacOptionsDelegate {
         options.put(name.toString(), "")
     }
 
-    fun execute(closure: Closure<*>) {
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure.delegate = this
-        closure.call()
-    }
+    fun execute(closure: Closure<*>) = executeClosure(closure)
+}
+
+private fun Any?.executeClosure(closure: Closure<*>) {
+    closure.resolveStrategy = Closure.DELEGATE_FIRST
+    closure.delegate = this
+    closure.call()
 }

@@ -22,7 +22,7 @@ fun <T> nullable(): T? = null
 fun <T> dependOn(x: T) = x
 
 fun test() {
-    takeNotNull(notNull() <!USELESS_ELVIS!>?: ""<!>)
+    takeNotNull(notNull() ?: "")
     takeNotNull(nullable() ?: "")
 
     val x: String? = null

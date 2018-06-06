@@ -1,6 +1,6 @@
 package
 
-@X public external final class A {
+@X public final external class A {
     public constructor A()
     @X public final val p: kotlin.Int
     public final val r: kotlin.Int
@@ -10,7 +10,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@Y public external final class B {
+@Y public final external class B {
     public constructor B()
     @Y public final val p: kotlin.Int
     public final val r: kotlin.Int

@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ S> bar(/*0*/ a: S): kotlin.Unit
+public fun test(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Boolean): kotlin.Unit
+public fun </*0*/ T, /*1*/ R> T.foo(/*0*/ l: (T) -> R): R

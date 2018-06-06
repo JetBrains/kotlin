@@ -22,8 +22,10 @@ import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.DataConversionException
 import org.jdom.Element
+import org.jdom.Text
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.superclasses
@@ -57,7 +59,7 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
         val jvmArgumentsElement = compilerInfoElement?.getOptionBody("k2jvmCompilerArguments")
         val jsArgumentsElement = compilerInfoElement?.getOptionBody("k2jsCompilerArguments")
 
-        val compilerArguments = targetPlatform.createCompilerArguments()
+        val compilerArguments = targetPlatform.createCompilerArguments { freeArgs = ArrayList() }
 
         commonArgumentsElement?.let { XmlSerializer.deserializeInto(compilerArguments, it) }
         when (compilerArguments) {
@@ -72,6 +74,8 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
         if (apiLevel != null) {
             compilerArguments.apiVersion = apiLevel
         }
+
+        compilerArguments.detectVersionAutoAdvance()
 
         if (useProjectSettings != null) {
             this.useProjectSettings = useProjectSettings
@@ -90,19 +94,38 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
     }
 }
 
+fun Element.getFacetPlatformByConfigurationElement(): TargetPlatformKind<*> {
+    val platformName = getAttributeValue("platform")
+    return TargetPlatformKind.ALL_PLATFORMS.firstOrNull { it.description == platformName } ?: TargetPlatformKind.DEFAULT_PLATFORM
+}
+
 private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
     return KotlinFacetSettings().apply {
         element.getAttributeValue("useProjectSettings")?.let { useProjectSettings = it.toBoolean() }
-        val platformName = element.getAttributeValue("platform")
-        val platformKind = TargetPlatformKind.ALL_PLATFORMS.firstOrNull { it.description == platformName } ?: TargetPlatformKind.DEFAULT_PLATFORM
+        val platformKind = element.getFacetPlatformByConfigurationElement()
+        element.getChild("implements")?.let {
+            val items = it.getChildren("implement")
+            implementedModuleNames = if (items.isNotEmpty()) {
+                items.mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
+            } else {
+                listOfNotNull((it.content.firstOrNull() as? Text)?.textTrim)
+            }
+        }
         element.getChild("compilerSettings")?.let {
             compilerSettings = CompilerSettings()
             XmlSerializer.deserializeInto(compilerSettings!!, it)
         }
         element.getChild("compilerArguments")?.let {
-            compilerArguments = platformKind.createCompilerArguments()
+            compilerArguments = platformKind.createCompilerArguments { freeArgs = ArrayList() }
             XmlSerializer.deserializeInto(compilerArguments!!, it)
+            compilerArguments!!.detectVersionAutoAdvance()
         }
+        productionOutputPath = element.getChild("productionOutputPath")?.let {
+            PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
+        } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
+        testOutputPath = element.getChild("testOutputPath")?.let {
+            PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
+        } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
     }
 }
 
@@ -207,8 +230,8 @@ private fun Element.restoreNormalOrdering(bean: Any) {
             .forEachIndexed { index, element -> elementsToReorder[index] = element.clone() }
 }
 
-private fun buildChildElement(element: Element, tag: String, bean: Any, filter: SerializationFilter) {
-    Element(tag).apply {
+private fun buildChildElement(element: Element, tag: String, bean: Any, filter: SerializationFilter): Element {
+    return Element(tag).apply {
         XmlSerializer.serializeInto(bean, this, filter)
         restoreNormalOrdering(bean)
         element.addContent(this)
@@ -224,13 +247,52 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     if (!useProjectSettings) {
         element.setAttribute("useProjectSettings", useProjectSettings.toString())
     }
+    if (implementedModuleNames.isNotEmpty()) {
+        element.addContent(
+                Element("implements").apply {
+                    val singleModule = implementedModuleNames.singleOrNull()
+                    if (singleModule != null) {
+                        addContent(singleModule)
+                    } else {
+                        implementedModuleNames.map { addContent(Element("implement").apply { addContent(it) }) }
+                    }
+                }
+        )
+    }
+    productionOutputPath?.let {
+        if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {
+            element.addContent(Element("productionOutputPath").apply { addContent(PathUtil.toSystemIndependentName(it)) })
+        }
+    }
+    testOutputPath?.let {
+        if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {
+            element.addContent(Element("testOutputPath").apply { addContent(PathUtil.toSystemIndependentName(it)) })
+        }
+    }
     compilerSettings?.let { copyBean(it) }?.let {
         it.convertPathsToSystemIndependent()
         buildChildElement(element, "compilerSettings", it, filter)
     }
     compilerArguments?.let { copyBean(it) }?.let {
         it.convertPathsToSystemIndependent()
-        buildChildElement(element, "compilerArguments", it, filter)
+        val compilerArgumentsXml = buildChildElement(element, "compilerArguments", it, filter)
+        compilerArgumentsXml.dropVersionsIfNecessary(it)
+    }
+}
+
+fun CommonCompilerArguments.detectVersionAutoAdvance() {
+    autoAdvanceLanguageVersion = languageVersion == null
+    autoAdvanceApiVersion = apiVersion == null
+}
+
+fun Element.dropVersionsIfNecessary(settings: CommonCompilerArguments) {
+    // Do not serialize language/api version if they correspond to the default language version
+    if (settings.autoAdvanceLanguageVersion) {
+        getOption("languageVersion")?.detach()
+    }
+
+    if (settings.autoAdvanceApiVersion) {
+        getOption("apiVersion")?.detach()
     }
 }
 

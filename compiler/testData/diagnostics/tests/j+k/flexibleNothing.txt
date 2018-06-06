@@ -1,0 +1,11 @@
+package
+
+public fun run(): kotlin.Unit
+
+public open class TestClass {
+    public constructor TestClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open operator fun </*0*/ T : kotlin.Any!> set(/*0*/ @org.jetbrains.annotations.Nullable key: kotlin.String?, /*1*/ @org.jetbrains.annotations.Nullable t: T?): T!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,0 +1,25 @@
+package
+
+package a {
+
+    public open class x</*0*/ T : kotlin.Any!> {
+        public constructor x</*0*/ T : kotlin.Any!>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun getT(): T!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public open inner class y</*0*/ T : kotlin.Any!> /*captured type parameters: /*1*/ T : kotlin.Any!*/ {
+            public constructor y</*0*/ T : kotlin.Any!>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open fun getT(): T!
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+package test {
+    public fun test(): kotlin.String!
+    public fun test2(): kotlin.String!
+}

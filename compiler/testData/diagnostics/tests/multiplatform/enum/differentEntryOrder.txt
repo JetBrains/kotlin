@@ -1,12 +1,12 @@
 // -- Module: <m1-common> --
 package
 
-public final header enum class Bar : kotlin.Enum<Bar> {
-    enum entry X
+public final expect enum class Bar : kotlin.Enum<Bar> {
+    expect enum entry X
 
-    enum entry Y
+    expect enum entry Y
 
-    enum entry Z
+    expect enum entry Z
 
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
@@ -21,10 +21,10 @@ public final header enum class Bar : kotlin.Enum<Bar> {
     public final /*synthesized*/ fun values(): kotlin.Array<Bar>
 }
 
-public final header enum class Foo : kotlin.Enum<Foo> {
-    enum entry A
+public final expect enum class Foo : kotlin.Enum<Foo> {
+    expect enum entry A
 
-    enum entry B
+    expect enum entry B
 
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
@@ -43,7 +43,7 @@ public final header enum class Foo : kotlin.Enum<Foo> {
 // -- Module: <m2-jvm> --
 package
 
-public final impl enum class Bar : kotlin.Enum<Bar> {
+public final actual enum class Bar : kotlin.Enum<Bar> {
     enum entry X
 
     enum entry Z
@@ -66,7 +66,7 @@ public final impl enum class Bar : kotlin.Enum<Bar> {
     public final /*synthesized*/ fun values(): kotlin.Array<Bar>
 }
 
-public final impl enum class Foo : kotlin.Enum<Foo> {
+public final actual enum class Foo : kotlin.Enum<Foo> {
     enum entry B
 
     enum entry A

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.diagnostics
 
 import com.google.common.collect.ImmutableSet
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.ContainerUtil
@@ -34,37 +33,25 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.util.ExtensionProvider
 
-interface SuppressStringProvider {
-    operator fun get(annotationDescriptor: AnnotationDescriptor): List<String>
-
-    companion object {
-        val EP_NAME: ExtensionPointName<SuppressStringProvider> =
-                ExtensionPointName.create<SuppressStringProvider>("org.jetbrains.kotlin.suppressStringProvider")
-    }
-}
-
 interface DiagnosticSuppressor {
     fun isSuppressed(diagnostic: Diagnostic): Boolean
 
     companion object {
         val EP_NAME: ExtensionPointName<DiagnosticSuppressor> =
-                ExtensionPointName.create<DiagnosticSuppressor>("org.jetbrains.kotlin.diagnosticSuppressor")
+            ExtensionPointName.create<DiagnosticSuppressor>("org.jetbrains.kotlin.diagnosticSuppressor")
     }
 }
 
 abstract class KotlinSuppressCache {
-    private val LOG = Logger.getInstance(DiagnosticsWithSuppression::class.java)
-
-    private val ADDITIONAL_SUPPRESS_STRING_PROVIDERS = ExtensionProvider.create(SuppressStringProvider.EP_NAME)
-    private val DIAGNOSTIC_SUPPRESSORS = ExtensionProvider.create(DiagnosticSuppressor.EP_NAME)
+    private val diagnosticSuppressors = ExtensionProvider.create(DiagnosticSuppressor.EP_NAME)
 
     // The cache is weak: we're OK with losing it
-    private val suppressors =  ContainerUtil.createConcurrentWeakValueMap<KtAnnotated, Suppressor>()
+    private val suppressors = ContainerUtil.createConcurrentWeakValueMap<KtAnnotated, Suppressor>()
 
     val filter: (Diagnostic) -> Boolean = { diagnostic: Diagnostic -> !isSuppressed(diagnostic) }
 
     fun isSuppressed(psiElement: PsiElement, suppressionKey: String, severity: Severity) =
-            isSuppressed(StringSuppressRequest(psiElement, severity, suppressionKey.toLowerCase()))
+        isSuppressed(StringSuppressRequest(psiElement, severity, suppressionKey.toLowerCase()))
 
     fun isSuppressed(diagnostic: Diagnostic): Boolean = isSuppressed(DiagnosticSuppressRequest(diagnostic))
 
@@ -80,7 +67,7 @@ abstract class KotlinSuppressCache {
         }
 
         if (request is DiagnosticSuppressRequest) {
-            for (suppressor in DIAGNOSTIC_SUPPRESSORS.get()) {
+            for (suppressor in diagnosticSuppressors.get()) {
                 if (suppressor.isSuppressed(request.diagnostic)) return true
             }
         }
@@ -121,12 +108,6 @@ abstract class KotlinSuppressCache {
        This way we need no more lookups than the number of suppress() annotations from here to the root.
      */
     protected fun isSuppressedByAnnotated(suppressionKey: String, severity: Severity, annotated: KtAnnotated, debugDepth: Int): Boolean {
-        if (LOG.isDebugEnabled) {
-            LOG.debug("Annotated: ", annotated.name)
-            LOG.debug("Depth: ", debugDepth)
-            LOG.debug("Cache size: ", suppressors.size, "\n")
-        }
-
         val suppressor = getOrCreateSuppressor(annotated)
         if (suppressor.isSuppressed(suppressionKey, severity)) return true
 
@@ -167,10 +148,6 @@ abstract class KotlinSuppressCache {
     }
 
     private fun processAnnotation(builder: ImmutableSet.Builder<String>, annotationDescriptor: AnnotationDescriptor) {
-        for (suppressStringProvider in ADDITIONAL_SUPPRESS_STRING_PROVIDERS.get()) {
-            builder.addAll(suppressStringProvider[annotationDescriptor])
-        }
-
         if (annotationDescriptor.fqName != KotlinBuiltIns.FQ_NAMES.suppress) return
 
         // We only add strings and skip other values to facilitate recovery in presence of erroneous code
@@ -247,12 +224,13 @@ abstract class KotlinSuppressCache {
     }
 
     private class StringSuppressRequest(
-            override val element: PsiElement,
-            override val severity: Severity,
-            override val suppressKey: String) : SuppressRequest
+        override val element: PsiElement,
+        override val severity: Severity,
+        override val suppressKey: String
+    ) : SuppressRequest
 
     private class DiagnosticSuppressRequest(val diagnostic: Diagnostic) : SuppressRequest {
-        override val element: PsiElement get() =  diagnostic.psiElement
+        override val element: PsiElement get() = diagnostic.psiElement
         override val severity: Severity get() = diagnostic.severity
         override val suppressKey: String get() = getDiagnosticSuppressKey(diagnostic)
     }
@@ -264,8 +242,7 @@ class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressC
 
         return if (descriptor != null) {
             descriptor.annotations.toList()
-        }
-        else {
+        } else {
             annotated.annotationEntries.mapNotNull { context.get(BindingContext.ANNOTATION, it) }
         }
     }

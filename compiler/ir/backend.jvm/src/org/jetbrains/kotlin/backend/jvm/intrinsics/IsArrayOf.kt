@@ -32,7 +32,7 @@ class IsArrayOf : IntrinsicMethod() {
             "Expected only one type parameter for Any?.isArrayOf(), got: ${descriptor.typeParameters}"
         }
         /*TODO original?*/
-        val elementType = expression.getTypeArgument(descriptor.original.typeParameters.first())!!
+        val elementType = expression.getTypeArgument(descriptor.original.typeParameters.first().index)!!
         val arrayKtType = builtIns.getArrayType(Variance.INVARIANT, elementType)
         val arrayType = typeMapper.mapType(arrayKtType)
 

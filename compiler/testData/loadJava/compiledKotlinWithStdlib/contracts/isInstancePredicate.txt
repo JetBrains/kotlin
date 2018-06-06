@@ -1,0 +1,11 @@
+package test
+
+public fun simpleIsInstace(/*0*/ x: kotlin.Any?): kotlin.Unit
+    Returns(TRUE) -> x is A
+
+public fun kotlin.Any?.receiverIsInstance(): kotlin.Unit
+    Returns(TRUE) -> <this> is A
+
+public final class A {
+    /*primary*/ public constructor A()
+}

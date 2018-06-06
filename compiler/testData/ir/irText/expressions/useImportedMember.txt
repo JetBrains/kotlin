@@ -1,0 +1,298 @@
+FILE fqName:<root> fileName:/useImportedMember.kt
+  CLASS INTERFACE name:I modality:ABSTRACT visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:I<G> flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+    TYPE_PARAMETER name:G index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+    FUN name:fromInterface visibility:public modality:OPEN <T> ($this:I<G>, $receiver:T) returnType:T flags:
+      TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+        superClassifiers:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      $this: VALUE_PARAMETER name:<this> type:I<G> flags:
+      $receiver: VALUE_PARAMETER name:<this> type:T flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='fromInterface() on T: T'
+          GET_VAR 'this@fromInterface: T' type=T origin=null
+    FUN name:genericFromSuper visibility:public modality:OPEN <> ($this:I<G>, g:G) returnType:G flags:
+      $this: VALUE_PARAMETER name:<this> type:I<G> flags:
+      VALUE_PARAMETER name:g index:0 type:G flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='genericFromSuper(G): G'
+          GET_VAR 'value-parameter g: G' type=G origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS CLASS name:BaseClass modality:OPEN visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:BaseClass flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+    CONSTRUCTOR visibility:public <> () returnType:BaseClass flags:primary
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='BaseClass'
+    PROPERTY name:fromClass type:T visibility:public modality:FINAL flags:val
+      FUN name:<get-fromClass> visibility:public modality:FINAL <T> ($this:BaseClass, $receiver:T) returnType:T flags:
+        correspondingProperty: PROPERTY name:fromClass type:T visibility:public modality:FINAL flags:val
+        TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+          superClassifiers:
+            CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+        $this: VALUE_PARAMETER name:<this> type:BaseClass flags:
+        $receiver: VALUE_PARAMETER name:<this> type:T flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-fromClass>() on T: T'
+            GET_VAR 'this@fromClass: T' type=T origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS OBJECT name:C modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
+    superClasses:
+      CLASS CLASS name:BaseClass modality:OPEN visibility:public flags:
+      CLASS INTERFACE name:I modality:ABSTRACT visibility:public flags:
+    CONSTRUCTOR visibility:private <> () returnType:C flags:primary
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor BaseClass()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='C'
+    FUN name:f visibility:public modality:FINAL <> ($this:C, s:kotlin.Int) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:C flags:
+      VALUE_PARAMETER name:s index:0 type:kotlin.Int flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='f(Int): Int'
+          CONST Int type=kotlin.Int value=1
+    FUN name:f visibility:public modality:FINAL <> ($this:C, s:kotlin.String) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:C flags:
+      VALUE_PARAMETER name:s index:0 type:kotlin.String flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='f(String): Int'
+          CONST Int type=kotlin.Int value=2
+    FUN name:f visibility:public modality:FINAL <> ($this:C, $receiver:kotlin.Boolean) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:C flags:
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Boolean flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='f() on Boolean: Int'
+          CONST Int type=kotlin.Int value=3
+    PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=4
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
+        $this: VALUE_PARAMETER name:<this> type:C flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-p>(): Int'
+            GET_FIELD 'p: Int' type=kotlin.Int origin=null
+              receiver: GET_VAR 'this@C: C' type=C origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-p> visibility:public modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
+        $this: VALUE_PARAMETER name:<this> type:C flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
+        BLOCK_BODY
+          SET_FIELD 'p: Int' type=kotlin.Unit origin=null
+            receiver: GET_VAR 'this@C: C' type=C origin=null
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    PROPERTY name:ext type:kotlin.Int visibility:public modality:FINAL flags:val
+      FUN name:<get-ext> visibility:public modality:FINAL <> ($this:C, $receiver:kotlin.Int) returnType:Int flags:
+        correspondingProperty: PROPERTY name:ext type:kotlin.Int visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:C flags:
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-ext>() on Int: Int'
+            CONST Int type=kotlin.Int value=6
+    FUN name:g1 visibility:public modality:FINAL <T> ($this:C, t:T) returnType:T flags:
+      TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+        superClassifiers:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      $this: VALUE_PARAMETER name:<this> type:C flags:
+      VALUE_PARAMETER name:t index:0 type:T flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='g1(T): T'
+          GET_VAR 'value-parameter t: T' type=T origin=null
+    PROPERTY name:g2 type:T visibility:public modality:FINAL flags:val
+      FUN name:<get-g2> visibility:public modality:FINAL <T> ($this:C, $receiver:T) returnType:T flags:
+        correspondingProperty: PROPERTY name:g2 type:T visibility:public modality:FINAL flags:val
+        TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+          superClassifiers:
+            CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+        $this: VALUE_PARAMETER name:<this> type:C flags:
+        $receiver: VALUE_PARAMETER name:<this> type:T flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-g2>() on T: T'
+            GET_VAR 'this@g2: T' type=T origin=null
+    PROPERTY FAKE_OVERRIDE name:fromClass type:T visibility:public modality:FINAL flags:val
+      FUN FAKE_OVERRIDE name:<get-fromClass> visibility:public modality:FINAL <> ($this:BaseClass, $receiver:T) returnType:T flags:
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:fromClass type:T visibility:public modality:FINAL flags:val
+        overridden:
+          FUN name:<get-fromClass> visibility:public modality:FINAL <T> ($this:BaseClass, $receiver:T) returnType:T flags:
+        $this: VALUE_PARAMETER name:<this> type:BaseClass flags:
+        $receiver: VALUE_PARAMETER name:<this> type:T flags:
+    FUN FAKE_OVERRIDE name:fromInterface visibility:public modality:OPEN <T> ($this:I<kotlin.String>, $receiver:T) returnType:T flags:
+      overridden:
+        FUN name:fromInterface visibility:public modality:OPEN <T> ($this:I<G>, $receiver:T) returnType:T flags:
+      TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+        superClassifiers:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      $this: VALUE_PARAMETER name:<this> type:I<kotlin.String> flags:
+      $receiver: VALUE_PARAMETER name:<this> type:T flags:
+    FUN FAKE_OVERRIDE name:genericFromSuper visibility:public modality:OPEN <> ($this:I<kotlin.String>, g:kotlin.String) returnType:String flags:
+      overridden:
+        FUN name:genericFromSuper visibility:public modality:OPEN <> ($this:I<G>, g:G) returnType:G flags:
+      $this: VALUE_PARAMETER name:<this> type:I<kotlin.String> flags:
+      VALUE_PARAMETER name:g index:0 type:kotlin.String flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:box visibility:public modality:FINAL <> () returnType:String flags:
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'f(Int): Int' type=kotlin.Int origin=null
+                $this: GET_OBJECT 'C' type=C
+                s: CONST Int type=kotlin.Int value=1
+              arg1: CONST Int type=kotlin.Int value=1
+          then: RETURN type=kotlin.Nothing from='box(): String'
+            CONST String type=kotlin.String value=1
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'f(String): Int' type=kotlin.Int origin=null
+                $this: GET_OBJECT 'C' type=C
+                s: CONST String type=kotlin.String value=s
+              arg1: CONST Int type=kotlin.Int value=2
+          then: RETURN type=kotlin.Nothing from='box(): String'
+            CONST String type=kotlin.String value=2
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'f() on Boolean: Int' type=kotlin.Int origin=null
+                $this: GET_OBJECT 'C' type=C
+                $receiver: CONST Boolean type=kotlin.Boolean value=true
+              arg1: CONST Int type=kotlin.Int value=3
+          then: RETURN type=kotlin.Nothing from='box(): String'
+            CONST String type=kotlin.String value=3
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL '<get-p>(): Int' type=kotlin.Int origin=GET_PROPERTY
+                $this: GET_OBJECT 'C' type=C
+              arg1: CONST Int type=kotlin.Int value=4
+          then: RETURN type=kotlin.Nothing from='box(): String'
+            CONST String type=kotlin.String value=4
+      CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=EQ
+        $this: GET_OBJECT 'C' type=C
+        <set-?>: CONST Int type=kotlin.Int value=5
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL '<get-p>(): Int' type=kotlin.Int origin=GET_PROPERTY
+                $this: GET_OBJECT 'C' type=C
+              arg1: CONST Int type=kotlin.Int value=5
+          then: RETURN type=kotlin.Nothing from='box(): String'
+            CONST String type=kotlin.String value=5
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL '<get-ext>() on Int: Int' type=kotlin.Int origin=GET_PROPERTY
+                $this: GET_OBJECT 'C' type=C
+                $receiver: CONST Int type=kotlin.Int value=5
+              arg1: CONST Int type=kotlin.Int value=6
+          then: RETURN type=kotlin.Nothing from='box(): String'
+            CONST String type=kotlin.String value=6
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'g1(String): String' type=kotlin.String origin=null
+                <T>: String
+                $this: GET_OBJECT 'C' type=C
+                t: CONST String type=kotlin.String value=7
+              arg1: CONST String type=kotlin.String value=7
+          then: RETURN type=kotlin.Nothing from='box(): String'
+            CONST String type=kotlin.String value=7
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL '<get-g2>() on String: String' type=kotlin.String origin=GET_PROPERTY
+                <`0>: String
+                $this: GET_OBJECT 'C' type=C
+                $receiver: CONST String type=kotlin.String value=8
+              arg1: CONST String type=kotlin.String value=8
+          then: RETURN type=kotlin.Nothing from='box(): String'
+            CONST String type=kotlin.String value=8
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'fromInterface() on Int: Int' type=kotlin.Int origin=null
+                <T>: Int
+                $this: GET_OBJECT 'C' type=C
+                $receiver: CONST Int type=kotlin.Int value=9
+              arg1: CONST Int type=kotlin.Int value=9
+          then: RETURN type=kotlin.Nothing from='box(): String'
+            CONST String type=kotlin.String value=9
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL '<get-fromClass>() on String: String' type=kotlin.String origin=GET_PROPERTY
+                <`0>: String
+                $this: GET_OBJECT 'C' type=C
+                $receiver: CONST String type=kotlin.String value=10
+              arg1: CONST String type=kotlin.String value=10
+          then: RETURN type=kotlin.Nothing from='box(): String'
+            CONST String type=kotlin.String value=10
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'genericFromSuper(String): String' type=kotlin.String origin=null
+                $this: GET_OBJECT 'C' type=C
+                g: CONST String type=kotlin.String value=11
+              arg1: CONST String type=kotlin.String value=11
+          then: RETURN type=kotlin.Nothing from='box(): String'
+            CONST String type=kotlin.String value=11
+      RETURN type=kotlin.Nothing from='box(): String'
+        CONST String type=kotlin.String value=OK
+

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInsight;
@@ -32,91 +21,81 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class BreadcrumbsTestGenerated extends AbstractBreadcrumbsTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInBreadcrumbs() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/breadcrumbs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("AnonymousObjects.kt")
     public void testAnonymousObjects() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/AnonymousObjects.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/AnonymousObjects.kt");
     }
 
     @TestMetadata("Declarations.kt")
     public void testDeclarations() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/Declarations.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/Declarations.kt");
     }
 
     @TestMetadata("For.kt")
     public void testFor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/For.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/For.kt");
     }
 
     @TestMetadata("FunctionalType.kt")
     public void testFunctionalType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/FunctionalType.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/FunctionalType.kt");
     }
 
     @TestMetadata("If.kt")
     public void testIf() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/If.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/If.kt");
     }
 
     @TestMetadata("LabeledStatements.kt")
     public void testLabeledStatements() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/LabeledStatements.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/LabeledStatements.kt");
     }
 
     @TestMetadata("Lambdas.kt")
     public void testLambdas() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/Lambdas.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/Lambdas.kt");
     }
 
     @TestMetadata("OnIfCondition.kt")
     public void testOnIfCondition() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/OnIfCondition.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/OnIfCondition.kt");
     }
 
     @TestMetadata("OnWhenEntryCondition.kt")
     public void testOnWhenEntryCondition() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/OnWhenEntryCondition.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/OnWhenEntryCondition.kt");
     }
 
     @TestMetadata("PropertyAccessor.kt")
     public void testPropertyAccessor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/PropertyAccessor.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/PropertyAccessor.kt");
     }
 
     @TestMetadata("StarProjection.kt")
     public void testStarProjection() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/StarProjection.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/StarProjection.kt");
     }
 
     @TestMetadata("Try.kt")
     public void testTry() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/Try.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/Try.kt");
     }
 
     @TestMetadata("When.kt")
     public void testWhen() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/When.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/When.kt");
     }
 
     @TestMetadata("While.kt")
     public void testWhile() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/breadcrumbs/While.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/breadcrumbs/While.kt");
     }
 }

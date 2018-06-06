@@ -29,16 +29,11 @@ sealed class RenderingContext {
     class Impl(private val objectsToRender: Collection<Any?>) : RenderingContext() {
         private val data = linkedMapOf<Key<*>, Any?>()
 
+        @Suppress("UNCHECKED_CAST")
         override fun <T> get(key: Key<T>): T {
-            if (!data.containsKey(key)) {
-                val result = key.compute(objectsToRender)
-                data[key] = result
-                return result
-            }
-            return data[key] as T
+            return data[key] as? T ?: key.compute(objectsToRender).also { data[key] = it }
         }
     }
-
 
     object Empty : RenderingContext() {
         override fun <T> get(key: Key<T>): T {

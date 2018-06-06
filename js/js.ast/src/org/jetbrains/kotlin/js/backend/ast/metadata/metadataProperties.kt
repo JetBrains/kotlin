@@ -24,15 +24,24 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
+import org.jetbrains.kotlin.types.KotlinType
 
 var JsName.staticRef: JsNode? by MetadataProperty(default = null)
 
 var JsName.descriptor: DeclarationDescriptor? by MetadataProperty(default = null)
 
+var JsName.localAlias: JsName? by MetadataProperty(default = null)
+
+var JsName.specialFunction: SpecialFunction? by MetadataProperty(default = null)
+
+var JsExpression.localAlias: JsName? by MetadataProperty(default = null)
+
 // TODO: move this to module 'js.inliner' and change dependency on 'frontend' to dependency on 'descriptors'
 var JsInvocation.inlineStrategy: InlineStrategy? by MetadataProperty(default = null)
 
 var JsInvocation.isCallableReference by MetadataProperty(default = false)
+
+var JsInvocation.callableReferenceReceiver: JsExpression? by MetadataProperty(default = null)
 
 var JsInvocation.descriptor: CallableDescriptor? by MetadataProperty(default = null)
 
@@ -46,15 +55,21 @@ var JsNameRef.psiElement: PsiElement? by MetadataProperty(default = null)
 
 var JsFunction.isLocal: Boolean by MetadataProperty(default = false)
 
+var JsFunction.forcedReturnVariable: JsName? by MetadataProperty(default = null)
+
 var JsParameter.hasDefaultValue: Boolean by MetadataProperty(default = false)
 
 var JsInvocation.typeCheck: TypeCheck? by MetadataProperty(default = null)
 
-var JsInvocation.boxing: Boolean by MetadataProperty(default = false)
+var JsInvocation.boxing: BoxingKind by MetadataProperty(default = BoxingKind.NONE)
 
 var JsVars.exportedPackage: String? by MetadataProperty(default = null)
 
 var JsExpressionStatement.exportedTag: String? by MetadataProperty(default = null)
+
+var JsExpression.type: KotlinType? by MetadataProperty(default = null)
+
+var JsExpression.isUnit: Boolean by MetadataProperty(default = false)
 
 /**
  * For function and lambda bodies indicates what declaration corresponds to.
@@ -81,8 +96,6 @@ var HasMetadata.sideEffects: SideEffectKind by MetadataProperty(default = SideEf
  */
 var JsExpression.isSuspend: Boolean by MetadataProperty(default = false)
 
-var JsExpression.isTailCallSuspend: Boolean by MetadataProperty(default = false)
-
 /**
  * Denotes a reference to coroutine's `result` field that contains result of
  * last suspended invocation.
@@ -100,9 +113,15 @@ var JsNameRef.coroutineController by MetadataProperty(default = false)
  */
 var JsNameRef.coroutineReceiver by MetadataProperty(default = false)
 
+var JsFunction.forceStateMachine by MetadataProperty(default = false)
+
+var JsFunction.isInlineableCoroutineBody by MetadataProperty(default = false)
+
 var JsName.imported by MetadataProperty(default = false)
 
 var JsFunction.coroutineMetadata: CoroutineMetadata? by MetadataProperty(default = null)
+
+var JsExpression.range: Pair<RangeType, RangeKind>? by MetadataProperty(default = null)
 
 data class CoroutineMetadata(
         val doResumeName: JsName,
@@ -129,4 +148,32 @@ enum class SideEffectKind {
     AFFECTS_STATE,
     DEPENDS_ON_STATE,
     PURE
+}
+
+enum class SpecialFunction(val suggestedName: String) {
+    DEFINE_INLINE_FUNCTION("defineInlineFunction"),
+    WRAP_FUNCTION("wrapFunction"),
+    TO_BOXED_CHAR("toBoxedChar"),
+    UNBOX_CHAR("unboxChar"),
+    SUSPEND_CALL("suspendCall"),
+    COROUTINE_RESULT("coroutineResult"),
+    COROUTINE_CONTROLLER("coroutineController"),
+    COROUTINE_RECEIVER("coroutineReceiver"),
+    SET_COROUTINE_RESULT("setCoroutineResult")
+}
+
+enum class BoxingKind {
+    NONE,
+    BOXING,
+    UNBOXING
+}
+
+enum class RangeType {
+    INT,
+    LONG
+}
+
+enum class RangeKind {
+    RANGE_TO,
+    UNTIL
 }

@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 
 class SubpackagesImportingScope(
-        override val parent: ImportingScope?,
-        moduleDescriptor: ModuleDescriptor,
-        fqName: FqName
+    override val parent: ImportingScope?,
+    moduleDescriptor: ModuleDescriptor,
+    fqName: FqName
 ) : SubpackagesScope(moduleDescriptor, fqName), ImportingScope by ImportingScope.Empty {
 
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = getPackage(name)
@@ -42,10 +42,18 @@ class SubpackagesImportingScope(
     //TODO: kept old behavior, but it seems very strange (super call seems more applicable)
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> =
-            emptyList()
+    override fun getContributedDescriptors(
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> =
+        emptyList()
 
     //TODO: kept old behavior, but it seems very strange (super call seems more applicable)
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean, changeNamesForAliased: Boolean): Collection<DeclarationDescriptor>
-            = emptyList()
+    override fun getContributedDescriptors(
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean,
+        changeNamesForAliased: Boolean
+    ): Collection<DeclarationDescriptor> = emptyList()
+
+    override fun computeImportedNames() = emptySet<Name>()
 }

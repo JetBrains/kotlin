@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package a
 
 fun <V: U, U> foo(<!UNUSED_PARAMETER!>v<!>: V, u: U) = u
@@ -15,7 +16,7 @@ fun <T> checkItIsExactlyAny(<!UNUSED_PARAMETER!>t<!>: T, <!UNUSED_PARAMETER!>l<!
 fun <V : U, U> baz(<!UNUSED_PARAMETER!>v<!>: V, u: MutableSet<U>) = u
 
 fun test(a: Any, s: MutableSet<String>) {
-    <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>baz<!>(a, s)
+    <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>baz<!>(a, <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>s<!>)
 }
 
 //from standard library

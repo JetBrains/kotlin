@@ -89,6 +89,18 @@ class JDIEval(
         }
     }
 
+    fun loadClassByName(name: String, classLoader: ClassLoaderReference): jdi_Type {
+        val dimensions = name.count { it == '[' }
+        val baseTypeName = if (dimensions > 0) name.substring(0, name.indexOf('[')) else name
+
+        val baseType = primitiveTypes[baseTypeName] ?: Type.getType("L$baseTypeName;").asReferenceType(classLoader)
+
+        return if (dimensions == 0)
+            baseType
+        else
+            Type.getType("[".repeat(dimensions) + baseType.asType().descriptor).asReferenceType(classLoader)
+    }
+
     override fun loadString(str: String): Value = vm.mirrorOf(str).asValue()
 
     override fun newInstance(classType: Type): Value {
@@ -167,13 +179,12 @@ class JDIEval(
         }
     }
 
-    private fun findField(fieldDesc: FieldDescription): Field {
-        val _class = fieldDesc.ownerType.asReferenceType()
-        val field = _class.fieldByName(fieldDesc.name)
-        if (field == null) {
-            throwBrokenCodeException(NoSuchFieldError("Field not found: $fieldDesc"))
+    private fun findField(fieldDesc: FieldDescription, receiver: ReferenceType? = null): Field {
+        for (owner in listOfNotNull(receiver, fieldDesc.ownerType.asReferenceType())) {
+            owner.fieldByName(fieldDesc.name)?.let { return it }
         }
-        return field
+
+        throwBrokenCodeException(NoSuchFieldError("Field not found: $fieldDesc"))
     }
 
     private fun findStaticField(fieldDesc: FieldDescription): Field {
@@ -256,18 +267,26 @@ class JDIEval(
     }
 
     override fun getField(instance: Value, fieldDesc: FieldDescription): Value {
-        val field = findField(fieldDesc)
-        val obj = instance.jdiObj.checkNull()
+        val receiver = instance.jdiObj.checkNull()
+        val field = findField(fieldDesc, receiver.referenceType())
 
-        return mayThrow { obj.getValue(field) }.ifFail(field, obj).asValue()
+        return mayThrow {
+            try {
+                receiver.getValue(field)
+            } catch (e: IllegalArgumentException) {
+                throw IllegalArgumentException("Possibly incompatible types: " +
+                                               "field declaring type = ${field.declaringType()}, " +
+                                               "instance type = ${receiver.referenceType()}")
+            }
+        }.ifFail(field, receiver).asValue()
     }
 
     override fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value) {
-        val field = findField(fieldDesc)
-        val obj = instance.jdiObj.checkNull()
+        val receiver = instance.jdiObj.checkNull()
+        val field = findField(fieldDesc, receiver.referenceType())
 
         val jdiValue = newValue.asJdiValue(vm, field.type().asType())
-        mayThrow { obj.setValue(field, jdiValue) }
+        mayThrow { receiver.setValue(field, jdiValue) }
     }
 
     fun unboxType(boxedValue: Value, type: Type): Value {
@@ -406,18 +425,7 @@ class JDIEval(
             return argumentTypes()
         }
         catch (e: ClassNotLoadedException) {
-            return argumentTypeNames()!!.map {
-                name ->
-                val dimensions = name.count { it == '[' }
-                val baseTypeName = if (dimensions > 0) name.substring(0, name.indexOf('[')) else name
-
-                val baseType = primitiveTypes[baseTypeName] ?: Type.getType("L$baseTypeName;").asReferenceType(declaringType().classLoader())
-
-                if (dimensions == 0)
-                    baseType
-                else
-                    Type.getType("[".repeat(dimensions) + baseType.asType().descriptor).asReferenceType(declaringType().classLoader())
-            }
+            return argumentTypeNames()!!.map { name -> loadClassByName(name, declaringType().classLoader()) }
         }
     }
 }

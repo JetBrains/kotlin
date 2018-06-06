@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.coroutines.experimental.intrinsics
@@ -26,8 +15,8 @@ import kotlin.coroutines.experimental.Continuation
  * coroutine using a reference to the suspending function.
  */
 @SinceKotlin("1.1")
-public header inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
-        completion: Continuation<T>
+public expect inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
+    completion: Continuation<T>
 ): Any?
 
 /**
@@ -38,18 +27,18 @@ public header inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
  * coroutine using a reference to the suspending function.
  */
 @SinceKotlin("1.1")
-public header inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
-        receiver: R,
-        completion: Continuation<T>
+public expect inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
+    receiver: R,
+    completion: Continuation<T>
 ): Any?
 
 @SinceKotlin("1.1")
-public header fun <T> (suspend () -> T).createCoroutineUnchecked(
-        completion: Continuation<T>
+public expect fun <T> (suspend () -> T).createCoroutineUnchecked(
+    completion: Continuation<T>
 ): Continuation<Unit>
 
 @SinceKotlin("1.1")
-public header fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
-        receiver: R,
-        completion: Continuation<T>
+public expect fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
+    receiver: R,
+    completion: Continuation<T>
 ): Continuation<Unit>

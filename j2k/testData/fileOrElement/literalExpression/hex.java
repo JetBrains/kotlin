@@ -9,5 +9,7 @@ class Test {
     long l1 = 0xffffffff;
     Long l2 = 0xffffffffl;
     long l3 = 0xffffffffffL;
+    long l4 = 0xFFFFFFFFFFFFFFFFL;
+    long l5 = 0xF000000000000000L;
   }
 }

@@ -20,10 +20,7 @@ import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
-import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.TagsTestDataUtil;
 
@@ -31,11 +28,6 @@ import java.io.File;
 import java.util.List;
 
 public abstract class AbstractHighlightingTest extends KotlinLightCodeInsightFixtureTestCase {
-    @NotNull
-    @Override
-    protected LightProjectDescriptor getProjectDescriptor() {
-        return KotlinLightProjectDescriptor.INSTANCE;
-    }
 
     protected void doTest(String filePath) throws Exception {
         String fileText = FileUtil.loadFile(new File(filePath), true);
@@ -56,11 +48,5 @@ public abstract class AbstractHighlightingTest extends KotlinLightCodeInsightFix
             System.out.println(TagsTestDataUtil.insertInfoTags(highlights, text));
             throw e;
         }
-    }
-
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return "";
     }
 }

@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 
@@ -11,17 +12,19 @@ class Kapt3Android30IT : Kapt3AndroidIT() {
 
 open class Kapt3AndroidIT : Kapt3BaseIT() {
     companion object {
-        private const val GRADLE_VERSION = "4.1-rc-1"
+        private val GRADLE_VERSION = GradleVersionRequired.AtLeast("4.1")
     }
 
     protected open val androidGradlePluginVersion: String
         get() = "2.3.0"
 
     private fun androidBuildOptions() =
-            BuildOptions(withDaemon = true,
-                    androidHome = File(ANDROID_HOME_PATH),
-                    androidGradlePluginVersion = androidGradlePluginVersion,
-                    freeCommandLineArgs = listOf("-Pkapt.verbose=true"))
+        BuildOptions(
+            withDaemon = true,
+            androidHome = KotlinTestUtils.findAndroidSdk(),
+            androidGradlePluginVersion = androidGradlePluginVersion,
+            freeCommandLineArgs = listOf("-Pkapt.verbose=true")
+        )
 
     override fun defaultBuildOptions() = androidBuildOptions()
 
@@ -44,8 +47,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
         project.build("build", options = options) {
             assertSuccessful()
-            assertContains(":compileReleaseKotlin UP-TO-DATE")
-            assertContains(":compileReleaseJavaWithJavac UP-TO-DATE")
+            assertTasksUpToDate(":compileReleaseKotlin", ":compileReleaseJavaWithJavac")
         }
     }
 

@@ -1,18 +1,28 @@
 description 'Kotlin Script Runtime'
 
 apply plugin: 'kotlin'
+apply plugin: 'pill-configurable'
 
-configureJvmProject(project)
+configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
 
+pill {
+    importAsLibrary = true
+}
+
 dependencies {
-    compileOnly project(':kotlin-stdlib')
+    compileOnly project(path: ':kotlin-stdlib', configuration: 'distJar')
+}
+
+configurations {
+    mainJar
 }
 
 sourceSets {
     main {
         kotlin {
-            srcDir "${rootDir}/../core/script.runtime/src"
+            srcDir "${rootDir}/core/script.runtime/src"
         }
     }
 }
@@ -24,8 +34,8 @@ jar {
 artifacts {
     archives sourcesJar
     archives javadocJar
+    mainJar jar
 }
-
 
 dist {
     from (jar, sourcesJar)
@@ -34,6 +44,10 @@ dist {
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
+            "-Xnormalize-constructor-calls=enable",
             "-module-name", project.name
     ]
 }
+
+kotlin.experimental.coroutines 'enable'
+

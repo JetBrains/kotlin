@@ -1,16 +1,36 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.collections
 
-import org.junit.Test
 import kotlin.test.*
 import kotlin.comparisons.*
 
 fun fibonacci(): Sequence<Int> {
     // fibonacci terms
     // 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, ...
-    return generateSequence(Pair(0, 1), { Pair(it.second, it.first + it.second) }).map { it.first }
+    return generateSequence(Pair(0, 1), { Pair(it.second, it.first + it.second) }).map { it.first * 1 }
 }
 
 public class SequenceTest {
+
+    private class TriggerSequence<out T>(val source: Sequence<T>) : Sequence<T> {
+        var iterated: Boolean = false
+            private set
+
+        override fun iterator(): Iterator<T> = source.iterator().also { iterated = true }
+    }
+
+    fun <T> ensureIsIntermediate(source: Sequence<T>, operation: (Sequence<T>) -> Sequence<*>) {
+        TriggerSequence(source).let { s ->
+            val result = operation(s)
+            assertFalse(s.iterated, "Source should not be iterated before the result is")
+            result.iterator().hasNext()
+            assertTrue(s.iterated, "Source should be iterated after the result is iterated")
+        }
+    }
 
     @Test fun filterEmptySequence() {
         for (sequence in listOf(emptySequence<String>(), sequenceOf<String>())) {
@@ -70,10 +90,12 @@ public class SequenceTest {
 
     @Test fun mapIndexedNotNull() {
         // find which terms are divisible by their index
-        assertEquals(listOf("1/1", "5/5", "144/12", "46368/24", "75025/25"),
-                fibonacci().mapIndexedNotNull { index, value ->
-                    if (index > 0 && (value % index) == 0) "$value/$index" else null
-                }.take(5).toList())
+        assertEquals(
+            listOf("1/1", "5/5", "144/12", "46368/24", "75025/25"),
+            fibonacci().mapIndexedNotNull { index, value ->
+                if (index > 0 && (value % index) == 0) "$value/$index" else null
+            }.take(5).toList()
+        )
     }
 
 
@@ -165,16 +187,121 @@ public class SequenceTest {
         assertEquals("", sequenceOf(1).dropWhile { it < 200 }.joinToString(limit = 10))
     }
 
+    @Test fun zipWithNext() {
+        val deltas = fibonacci().zipWithNext { a: Int, b: Int -> b - a }
+        // deltas of 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, ...
+        // is the same sequence prepended by 1
+        assertEquals(listOf(1) + fibonacci().take(9), deltas.take(10).toList())
+
+        ensureIsIntermediate(source = sequenceOf(1, 2)) { it.zipWithNext { a: Int, b: Int -> b - a } }
+    }
+
+    @Test fun zipWithNextPairs() {
+        val pairs: Sequence<Pair<String, String>> = sequenceOf("a", "b", "c", "d").zipWithNext()
+        assertEquals(listOf("a" to "b", "b" to "c", "c" to "d"), pairs.toList())
+
+        assertTrue(emptySequence<String>().zipWithNext().toList().isEmpty())
+        assertTrue(sequenceOf(1).zipWithNext().toList().isEmpty())
+
+        ensureIsIntermediate(source = sequenceOf(1, 2)) { it.zipWithNext() }
+    }
+
+    @Test
+    fun chunked() {
+        val infiniteSeq = generateSequence(0) { it + 1 }
+        val result = infiniteSeq.chunked(4)
+        assertEquals(listOf(
+                listOf(0, 1, 2, 3),
+                listOf(4, 5, 6, 7)
+        ), result.take(2).toList())
+
+        val size = 7
+        val seq = infiniteSeq.take(7)
+
+        val result2 = seq.chunked(3) { it.joinToString("") }
+        assertEquals(listOf("012", "345", "6"), result2.toList())
+
+        seq.toList().let { expectedSingleChunk ->
+            assertEquals(expectedSingleChunk, seq.chunked(size).single())
+            assertEquals(expectedSingleChunk, seq.chunked(size + 3).single())
+        }
+
+        assertTrue(emptySequence<String>().chunked(3).none())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { infiniteSeq.chunked(illegalValue) }
+        }
+
+        ensureIsIntermediate(source = sequenceOf(1, 2, 3)) { it.chunked(2) }
+    }
+
+
+    @Test
+    fun windowed() {
+        val infiniteSeq = generateSequence(0) { it + 1 }
+        val result = infiniteSeq.windowed(5, 3)
+        result.take(10).forEachIndexed { windowIndex, window ->
+            val startElement = windowIndex * 3
+            assertEquals((startElement until startElement + 5).toList(), window)
+        }
+
+        val size = 7
+        val seq = infiniteSeq.take(7)
+
+        val result1 = seq.windowed(4, 2)
+        assertEquals(listOf(
+                listOf(0, 1, 2, 3),
+                listOf(2, 3, 4, 5)
+        ), result1.toList())
+
+        val result1partial = seq.windowed(4, 2, partialWindows = true)
+        assertEquals(listOf(
+                listOf(0, 1, 2, 3),
+                listOf(2, 3, 4, 5),
+                listOf(4, 5, 6),
+                listOf(6)
+        ), result1partial.toList())
+
+        val result2 = seq.windowed(2, 3) { it.joinToString("") }
+        assertEquals(listOf("01", "34"), result2.toList())
+
+        val result2partial = seq.windowed(2, 3, partialWindows = true) { it.joinToString("") }
+        assertEquals(listOf("01", "34", "6"), result2partial.toList())
+
+        assertEquals(seq.chunked(2).toList(), seq.windowed(2, 2, partialWindows = true).toList())
+
+        assertEquals(seq.take(2).toList(), seq.windowed(2, size).single())
+        assertEquals(seq.take(3).toList(), seq.windowed(3, size + 3).single())
+
+
+        assertEquals(seq.toList(), seq.windowed(size, 1).single())
+        assertTrue(seq.windowed(size + 1, 1).none())
+
+        val result3partial = seq.windowed(size, 1, partialWindows = true)
+        result3partial.forEachIndexed { index, window ->
+            assertEquals(size - index, window.size, "size of window#$index")
+        }
+
+        assertTrue(emptySequence<String>().windowed(3, 2).none())
+
+        for (illegalValue in listOf(Int.MIN_VALUE, -1, 0)) {
+            assertFailsWith<IllegalArgumentException>("size $illegalValue") { seq.windowed(illegalValue, 1) }
+            assertFailsWith<IllegalArgumentException>("step $illegalValue") { seq.windowed(1, illegalValue) }
+        }
+
+        ensureIsIntermediate(source = sequenceOf(1, 2, 3)) { it.windowed(2, 1) }
+    }
+
     @Test fun zip() {
         expect(listOf("ab", "bc", "cd")) {
             sequenceOf("a", "b", "c").zip(sequenceOf("b", "c", "d")) { a, b -> a + b }.toList()
         }
     }
 
-    @Test fun zipPairs() {
-        val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).joinToString(limit = 10)
-        assertEquals("(0, 0), (1, 2), (1, 2), (2, 4), (3, 6), (5, 10), (8, 16), (13, 26), (21, 42), (34, 68), ...", pairStr)
-    }
+//    @Test fun zipPairs() {
+//        val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).joinToString(limit = 10)
+//        assertEquals("(0, 0), (1, 2), (1, 2), (2, 4), (3, 6), (5, 10), (8, 16), (13, 26), (21, 42), (34, 68), ...", pairStr)
+//    }
 
     @Test fun toStringJoinsNoMoreThanTheFirstTenElements() {
         assertEquals("0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...", fibonacci().joinToString(limit = 10))
@@ -332,14 +459,14 @@ public class SequenceTest {
 
     @Test fun flatMapAndTakeExtractTheTransformedElements() {
         val expected = listOf(
-                '3', // fibonacci(4) = 3
-                '5', // fibonacci(5) = 5
-                '8', // fibonacci(6) = 8
-                '1', '3', // fibonacci(7) = 13
-                '2', '1', // fibonacci(8) = 21
-                '3', '4', // fibonacci(9) = 34
-                '5' // fibonacci(10) = 55
-                             )
+            '3', // fibonacci(4) = 3
+            '5', // fibonacci(5) = 5
+            '8', // fibonacci(6) = 8
+            '1', '3', // fibonacci(7) = 13
+            '2', '1', // fibonacci(8) = 21
+            '3', '4', // fibonacci(9) = 34
+            '5' // fibonacci(10) = 55
+        )
 
         assertEquals(expected, fibonacci().drop(4).flatMap { it.toString().asSequence() }.take(10).toList())
     }

@@ -18,15 +18,24 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
+import kotlin.reflect.KClass
 
-internal fun Project.createKotlinExtension() {
-    val kotlinExt = extensions.create("kotlin", KotlinProjectExtension::class.java)
+internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProjectExtension>) {
+    val kotlinExt = extensions.create("kotlin", extensionClass.java)
     DslObject(kotlinExt).extensions.create("experimental", ExperimentalExtension::class.java)
 }
 
 open class KotlinProjectExtension {
     val experimental: ExperimentalExtension
             get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)!!
+}
+
+open class KotlinJvmProjectExtension : KotlinProjectExtension() {
+    /**
+     * With Gradle 4.0+, disables the separate output directory for Kotlin, falling back to sharing the deprecated
+     * single classes directory per source set. With Gradle < 4.0, has no effect.
+     * */
+    var copyClassesToJavaOutput = false
 }
 
 open class ExperimentalExtension {

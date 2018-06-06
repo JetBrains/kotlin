@@ -14,20 +14,20 @@ class A {
 
     fun test() {
         val s = object {
-            <!JVM_STATIC_NOT_IN_OBJECT!>@JvmStatic fun a3()<!> {
+            <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic fun a3()<!> {
 
             }
         }
     }
 
-    <!JVM_STATIC_NOT_IN_OBJECT!>@JvmStatic fun a4()<!> {
+    <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic fun a4()<!> {
 
     }
 }
 
 interface B {
     companion object {
-        <!JVM_STATIC_NOT_IN_OBJECT!>@JvmStatic fun a1()<!> {
+        <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic fun a1()<!> {
 
         }
     }
@@ -40,13 +40,13 @@ interface B {
 
     fun test() {
         val s = object {
-            <!JVM_STATIC_NOT_IN_OBJECT!>@JvmStatic fun a3()<!> {
+            <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic fun a3()<!> {
 
             }
         }
     }
 
-    <!JVM_STATIC_NOT_IN_OBJECT!>@JvmStatic fun a4()<!> {
+    <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic fun a4()<!> {
 
     }
 }

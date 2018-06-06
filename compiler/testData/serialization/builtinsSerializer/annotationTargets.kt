@@ -13,7 +13,7 @@ val p1 = null
 fun Long.f2(@anno("extension function parameter") p: Int) {}
 
 @anno("extension property")
-val Double.p2: Double get() = null
+val Double.p2: Double get() = 0.0
 
 @anno("top level class")
 class C1 @anno("constructor") constructor() {

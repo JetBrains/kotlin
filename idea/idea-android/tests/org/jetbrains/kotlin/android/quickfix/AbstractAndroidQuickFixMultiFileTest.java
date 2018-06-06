@@ -23,6 +23,7 @@ import com.intellij.facet.impl.FacetUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.Extensions;
 import org.jetbrains.android.facet.AndroidFacet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest;
 import org.jetbrains.kotlin.idea.test.KotlinTestImportFilter;
 
@@ -37,14 +38,17 @@ public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuick
 
     @Override
     protected void tearDown() {
-        Extensions.getRootArea().getExtensionPoint(ImportFilter.EP_NAME).unregisterExtension(KotlinTestImportFilter.INSTANCE);
-        AndroidFacet facet = FacetManager.getInstance(myModule).getFacetByType(AndroidFacet.getFacetType().getId());
-        FacetUtil.deleteFacet(facet);
-        super.tearDown();
+        try {
+            Extensions.getRootArea().getExtensionPoint(ImportFilter.EP_NAME).unregisterExtension(KotlinTestImportFilter.INSTANCE);
+            AndroidFacet facet = FacetManager.getInstance(myModule).getFacetByType(AndroidFacet.getFacetType().getId());
+            FacetUtil.deleteFacet(facet);
+        } finally {
+            super.tearDown();
+        }
     }
 
     @Override
-    protected void doTestWithExtraFile(String beforeFileName) throws Exception {
+    protected void doTestWithExtraFile(@NotNull String beforeFileName) {
         addManifest();
         super.doTestWithExtraFile(beforeFileName);
     }
@@ -53,17 +57,12 @@ public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuick
         FacetManager facetManager = FacetManager.getInstance(myModule);
         AndroidFacet facet = facetManager.createFacet(AndroidFacet.getFacetType(), "Android", null);
 
-        final ModifiableFacetModel facetModel = facetManager.createModifiableModel();
+        ModifiableFacetModel facetModel = facetManager.createModifiableModel();
         facetModel.addFacet(facet);
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                facetModel.commit();
-            }
-        });
+        ApplicationManager.getApplication().runWriteAction(facetModel::commit);
     }
 
-    private void addManifest() throws Exception {
+    private void addManifest() {
         myFixture.configureByFile("idea/testData/android/AndroidManifest.xml");
     }
 }

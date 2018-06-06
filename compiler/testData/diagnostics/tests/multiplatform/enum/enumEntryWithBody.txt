@@ -1,11 +1,11 @@
 package
 
-public final header enum class En : kotlin.Enum<En> {
-    enum entry E1
+public final expect enum class En : kotlin.Enum<En> {
+    expect enum entry E1
 
-    enum entry E2
+    expect enum entry E2
 
-    enum entry E3
+    expect enum entry E3
 
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int

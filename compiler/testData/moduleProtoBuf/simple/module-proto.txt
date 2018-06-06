@@ -1,0 +1,10 @@
+bar
+  bar/MultiBar__BarMultiFilePart1Kt (bar/MultiBar)
+  bar/MultiBar__BarMultiFilePart2Kt (bar/MultiBar)
+  bar/BarFileFacade1Kt
+foo
+  foo/AnotherMultiFoo__AnotherFooMultiFilePart1Kt (foo/AnotherMultiFoo)
+  foo/MultiFoo__FooMultiFilePart1Kt (foo/MultiFoo)
+  foo/MultiFoo__FooMultiFilePart2Kt (foo/MultiFoo)
+  foo/FooFileFacade1Kt
+  foo/FooFileFacade2Kt

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring
@@ -71,20 +60,22 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.showYesNoCancelDialog
-import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
-import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
@@ -95,11 +86,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.AnalyzingUtils
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCallWithAssert
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -148,7 +136,8 @@ fun PsiElement.getUsageContext(): PsiElement {
                 this,
                 KtPropertyAccessor::class.java,
                 KtProperty::class.java,
-                KtFunction::class.java,
+                KtNamedFunction::class.java,
+                KtConstructor::class.java,
                 KtClassOrObject::class.java
         ) ?: containingFile
         else -> ConflictsUtil.getContainer(this)
@@ -330,7 +319,10 @@ fun PsiFile.getLineStartOffset(line: Int): Int? {
         val startOffset = doc.getLineStartOffset(line)
         val element = findElementAt(startOffset) ?: return startOffset
 
-        return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java, PsiComment::class.java)?.startOffset ?: startOffset
+        if (element is PsiWhiteSpace || element is PsiComment) {
+            return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java, PsiComment::class.java)?.startOffset ?: startOffset
+        }
+        return startOffset
     }
 
     return null
@@ -464,7 +456,7 @@ fun PsiElement.canRefactor(): Boolean {
         this is KtElement ||
         this is PsiMember && language == JavaLanguage.INSTANCE ||
         this is PsiDirectory ->
-            ProjectRootsUtil.isInProjectSource(this)
+            ProjectRootsUtil.isInProjectSource(this) || ((containingFile as? KtFile)?.isScript() ?: false)
         else ->
             false
     }
@@ -578,7 +570,7 @@ fun createJavaField(property: KtNamedDeclaration, targetClass: PsiClass): PsiFie
 }
 
 fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boolean = false): PsiClass {
-    val kind = if (forcePlainClass) ClassKind.CLASS else (klass.resolveToDescriptor() as ClassDescriptor).kind
+    val kind = if (forcePlainClass) ClassKind.CLASS else (klass.unsafeResolveToDescriptor() as ClassDescriptor).kind
 
     val factory = PsiElementFactory.SERVICE.getInstance(klass.project)
     val className = klass.name!!
@@ -716,9 +708,9 @@ fun invokeOnceOnCommandFinish(action: () -> Unit) {
     commandProcessor.addCommandListener(listener)
 }
 
-fun FqNameUnsafe.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString().quoteIfNeeded()) }
+fun FqNameUnsafe.hasIdentifiersOnly(): Boolean = pathSegments().all { it.asString().quoteIfNeeded().isIdentifier() }
 
-fun FqName.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString().quoteIfNeeded()) }
+fun FqName.hasIdentifiersOnly(): Boolean = pathSegments().all { it.asString().quoteIfNeeded().isIdentifier() }
 
 fun PsiNamedElement.isInterfaceClass(): Boolean = when (this) {
     is KtClass -> isInterface()
@@ -759,11 +751,25 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
 
     if (commonCount == 0) return originalList.listReplacer(newList)
 
+    val lastOriginalParameter = oldParameters.last()
+
     if (oldCount > commonCount) {
-        originalList.deleteChildRange(oldParameters[commonCount - 1].nextSibling, oldParameters.last())
+        originalList.deleteChildRange(oldParameters[commonCount - 1].nextSibling, lastOriginalParameter)
     }
     else if (newCount > commonCount) {
-        originalList.addRangeAfter(newParameters[commonCount - 1].nextSibling, newParameters.last(), oldParameters.last())
+        val psiBeforeLastParameter = lastOriginalParameter.prevSibling
+        val withMultiline = (psiBeforeLastParameter is PsiWhiteSpace || psiBeforeLastParameter is PsiComment) && psiBeforeLastParameter.textContains('\n')
+        val extraSpace = if (withMultiline) KtPsiFactory(originalList).createNewLine() else null
+        originalList.addRangeAfter(newParameters[commonCount - 1].nextSibling, newParameters.last(), lastOriginalParameter)
+        if (extraSpace != null) {
+            val addedItems = originalList.itemsFun().subList(commonCount, newCount)
+            for (addedItem in addedItems) {
+                val elementBefore = addedItem.prevSibling
+                if ((elementBefore !is PsiWhiteSpace && elementBefore !is PsiComment) || !elementBefore.textContains('\n')) {
+                    addedItem.parent.addBefore(extraSpace, addedItem)
+                }
+            }
+        }
     }
 
     return originalList
@@ -774,26 +780,29 @@ fun <T> Pass(body: (T) -> Unit) = object : Pass<T>() {
 }
 
 fun KtExpression.removeTemplateEntryBracesIfPossible(): KtExpression {
-    val parent = parent
-    if (parent !is KtBlockStringTemplateEntry) return this
-
-    val intention = RemoveCurlyBracesFromTemplateIntention()
-    val newEntry = if (intention.isApplicableTo(parent)) intention.applyTo(parent) else parent
+    val parent = parent as? KtBlockStringTemplateEntry ?: return this
+    val newEntry = if (parent.canDropBraces()) parent.dropBraces() else parent
     return newEntry.expression!!
 }
 
 fun dropOverrideKeywordIfNecessary(element: KtNamedDeclaration) {
-    val callableDescriptor = element.resolveToDescriptor(BodyResolveMode.PARTIAL) as? CallableDescriptor ?: return
+    val callableDescriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return
     if (callableDescriptor.overriddenDescriptors.isEmpty()) {
         element.removeModifier(KtTokens.OVERRIDE_KEYWORD)
     }
 }
 
-fun getQualifiedTypeArgumentList(
-        initializer: KtExpression,
-        context: BindingContext = initializer.analyze(BodyResolveMode.PARTIAL)
-): KtTypeArgumentList? {
-    val call = initializer.getResolvedCall(context) ?: return null
+fun dropOperatorKeywordIfNecessary(element: KtNamedDeclaration) {
+    val callableDescriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return
+    val diagnosticHolder = BindingTraceContext()
+    OperatorModifierChecker.check(element, callableDescriptor, diagnosticHolder, element.languageVersionSettings)
+    if (diagnosticHolder.bindingContext.diagnostics.any { it.factory == Errors.INAPPLICABLE_OPERATOR_MODIFIER }) {
+        element.removeModifier(KtTokens.OPERATOR_KEYWORD)
+    }
+}
+
+fun getQualifiedTypeArgumentList(initializer: KtExpression): KtTypeArgumentList? {
+    val call = initializer.resolveToCall() ?: return null
     val typeArgumentMap = call.typeArguments
     val typeArguments = call.candidateDescriptor.typeParameters.mapNotNull { typeArgumentMap[it] }
     val renderedList = typeArguments.joinToString(prefix = "<", postfix = ">") {
@@ -819,6 +828,7 @@ internal fun DeclarationDescriptor.getThisLabelName(): String {
     if (this is AnonymousFunctionDescriptor) {
         val function = source.getPsi() as? KtFunction
         val argument = function?.parent as? KtValueArgument
+                ?: (function?.parent as? KtLambdaExpression)?.parent as? KtValueArgument
         val callElement = argument?.getStrictParentOfType<KtCallElement>()
         val callee = callElement?.calleeExpression as? KtSimpleNameExpression
         if (callee != null) return callee.text
@@ -885,7 +895,7 @@ fun checkSuperMethods(
     }
 
 
-    val declarationDescriptor = declaration.resolveToDescriptor() as CallableDescriptor
+    val declarationDescriptor = declaration.unsafeResolveToDescriptor() as CallableDescriptor
 
     if (declarationDescriptor is LocalVariableDescriptor) return listOf(declaration)
 
@@ -908,7 +918,7 @@ fun checkSuperMethods(
 
 fun checkSuperMethodsWithPopup(
         declaration: KtNamedDeclaration,
-        deepestSuperMethods: List<PsiMethod>,
+        deepestSuperMethods: List<PsiElement>,
         actionString: String,
         editor: Editor,
         action: (List<PsiElement>) -> Unit
@@ -917,7 +927,12 @@ fun checkSuperMethodsWithPopup(
 
     val superMethod = deepestSuperMethods.first()
 
-    val superClass = superMethod.containingClass ?: return action(listOf(declaration))
+    val (superClass, isAbstract) = when (superMethod) {
+        is PsiMember -> superMethod.containingClass to superMethod.hasModifierProperty(PsiModifier.ABSTRACT)
+        is KtNamedDeclaration -> superMethod.containingClassOrObject to superMethod.isAbstract()
+        else -> null
+    } ?: return action(listOf(declaration))
+    if (superClass == null) return action(listOf(declaration))
 
     if (ApplicationManager.getApplication().isUnitTestMode) return action(deepestSuperMethods)
 
@@ -940,7 +955,7 @@ fun checkSuperMethodsWithPopup(
     val renameCurrent = actionString + " only current $kind"
     val title = buildString {
         append(declaration.name)
-        append(if (superMethod.hasModifierProperty(PsiModifier.ABSTRACT)) " implements " else " overrides ")
+        append(if (isAbstract) " implements " else " overrides ")
         append(ElementDescriptionUtil.getElementDescription(superMethod, UsageViewTypeLocation.INSTANCE))
         append(" of ")
         append(SymbolPresentationUtil.getSymbolPresentableText(superClass))
@@ -953,7 +968,7 @@ fun checkSuperMethodsWithPopup(
             .setResizable(false)
             .setRequestFocus(true)
             .setItemChoosenCallback {
-                val value = list.selectedValue as? String ?: return@setItemChoosenCallback
+                val value = list.selectedValue ?: return@setItemChoosenCallback
                 val chosenElements = if (value == renameBase) deepestSuperMethods + declaration else listOf(declaration)
                 action(chosenElements)
             }
@@ -966,13 +981,13 @@ fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
     return containingObject.isCompanion() && containingObject.containingClassOrObject == klass
 }
 
-internal fun KtDeclaration.withHeaderImplementations(): List<KtDeclaration> {
-    val header = liftToHeader() ?: return listOf(this)
-    val implementations = header.headerImplementations() ?: emptySet()
-    return listOf(header) + implementations
+internal fun KtDeclaration.withExpectedActuals(): List<KtDeclaration> {
+    val expect = liftToExpected() ?: return listOf(this)
+    val actuals = expect.actualsForExpected()
+    return listOf(expect) + actuals
 }
 
-internal fun KtDeclaration.resolveToHeaderDescriptorIfPossible(): DeclarationDescriptor {
-    val descriptor = resolveToDescriptor()
-    return descriptor.liftToHeader() ?: descriptor
+internal fun KtDeclaration.resolveToExpectedDescriptorIfPossible(): DeclarationDescriptor {
+    val descriptor = unsafeResolveToDescriptor()
+    return descriptor.liftToExpected() ?: descriptor
 }

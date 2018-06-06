@@ -18,19 +18,19 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfoTable
 
 class ClassDeserializer(private val components: DeserializationComponents) {
     private val classes: (ClassKey) -> ClassDescriptor? =
             components.storageManager.createMemoizedFunctionWithNullableValues { key -> createClass(key) }
 
-    // Additional ClassDataWithSource parameter is needed to avoid calling ClassDataFinder#findClassData()
+    // Additional ClassData parameter is needed to avoid calling ClassDataFinder#findClassData()
     // if it is already computed at the call site
-    fun deserializeClass(classId: ClassId, classDataWithSource: ClassDataWithSource? = null): ClassDescriptor? =
-            classes(ClassKey(classId, classDataWithSource))
+    fun deserializeClass(classId: ClassId, classData: ClassData? = null): ClassDescriptor? =
+        classes(ClassKey(classId, classData))
 
     private fun createClass(key: ClassKey): ClassDescriptor? {
         val classId = key.classId
@@ -39,10 +39,9 @@ class ClassDeserializer(private val components: DeserializationComponents) {
         }
         if (classId in BLACK_LIST) return null
 
-        val (classData, sourceElement) = key.classDataWithSource
-                                         ?: components.classDataFinder.findClassData(classId)
-                                         ?: return null
-        val (nameResolver, classProto) = classData
+        val (nameResolver, classProto, sourceElement) = key.classData
+                ?: components.classDataFinder.findClassData(classId)
+                ?: return null
 
         val outerClassId = classId.outerClassId
         val outerContext = if (outerClassId != null) {
@@ -55,18 +54,13 @@ class ClassDeserializer(private val components: DeserializationComponents) {
         }
         else {
             val fragments = components.packageFragmentProvider.getPackageFragments(classId.packageFqName)
-            assert(fragments.size == 1) { "There should be exactly one package: $fragments, class id is $classId" }
-
-            val fragment = fragments.single()
-            if (fragment is DeserializedPackageFragment) {
-                // Similarly, verify that the containing package has information about this class
-                if (!fragment.hasTopLevelClass(classId.shortClassName)) return null
-            }
+            val fragment = fragments.firstOrNull { it !is DeserializedPackageFragment || it.hasTopLevelClass(classId.shortClassName) }
+                           ?: return null
 
             components.createContext(
                     fragment, nameResolver,
                     TypeTable(classProto.typeTable),
-                    SinceKotlinInfoTable.create(classProto.sinceKotlinInfoTable),
+                    VersionRequirementTable.create(classProto.versionRequirementTable),
                     containerSource = null
             )
         }
@@ -74,8 +68,8 @@ class ClassDeserializer(private val components: DeserializationComponents) {
         return DeserializedClassDescriptor(outerContext, classProto, nameResolver, sourceElement)
     }
 
-    private class ClassKey(val classId: ClassId, val classDataWithSource: ClassDataWithSource?) {
-        // classDataWithSource *intentionally* not used in equals() / hashCode()
+    private class ClassKey(val classId: ClassId, val classData: ClassData?) {
+        // classData *intentionally* not used in equals() / hashCode()
         override fun equals(other: Any?) = other is ClassKey && classId == other.classId
 
         override fun hashCode() = classId.hashCode()

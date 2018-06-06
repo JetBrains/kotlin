@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.idea.refactoring
 
 import com.intellij.lang.refactoring.NamesValidator
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 
 class KotlinNamesValidator : NamesValidator {
     private val KEYWORD_SET = KtTokens.KEYWORDS.types.filterIsInstance<KtKeywordToken>().map { it.value }.toSet()
 
     override fun isKeyword(name: String, project: Project?): Boolean = name in KEYWORD_SET
-    override fun isIdentifier(name: String, project: Project?): Boolean = KotlinNameSuggester.isIdentifier(name)
+    override fun isIdentifier(name: String, project: Project?): Boolean = name.isIdentifier()
 }

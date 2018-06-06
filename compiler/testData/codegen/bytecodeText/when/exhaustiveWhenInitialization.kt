@@ -9,6 +9,6 @@ fun box(): String {
   return if (b) "OK" else "FAIL"
 }
 
-// 0 TABLESWITCH
-// 1 LOOKUPSWITCH
+// 1 TABLESWITCH
+// 0 LOOKUPSWITCH
 // 1 ATHROW

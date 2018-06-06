@@ -21,7 +21,7 @@ import gnu.trove.TObjectIntHashMap;
 import kotlin.io.TextStreamsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor;
+import org.jetbrains.kotlin.js.parser.sourcemaps.*;
 import org.jetbrains.kotlin.js.util.TextOutput;
 
 import java.io.File;
@@ -70,55 +70,31 @@ public class SourceMap3Builder implements SourceMapBuilder {
 
     @Override
     public String build() {
-        StringBuilder sb = new StringBuilder(out.length() + (128 * orderedSources.size()));
-        sb.append("{\"version\":3,\"file\":\"").append(generatedFile.getName()).append('"').append(',');
-
-        appendSources(sb);
-        sb.append(",");
-        appendSourcesContent(sb);
-
-        sb.append(",\"names\":[");
-        sb.append("],\"mappings\":\"");
-        sb.append(out);
-        sb.append("\"}");
-        return sb.toString();
+        JsonObject json = new JsonObject();
+        json.getProperties().put("version", new JsonNumber(3));
+        json.getProperties().put("file", new JsonString(generatedFile.getName()));
+        appendSources(json);
+        appendSourcesContent(json);
+        json.getProperties().put("names", new JsonArray());
+        json.getProperties().put("mappings", new JsonString(out.toString()));
+        return json.toString();
     }
 
-    private void appendSources(StringBuilder sb) {
-        boolean isNotFirst = false;
-        sb.append('"').append("sources").append("\":[");
+    private void appendSources(JsonObject json) {
+        JsonArray array = new JsonArray();
         for (String source : orderedSources) {
-            if (isNotFirst) {
-                sb.append(',');
-            }
-            else {
-                isNotFirst = true;
-            }
-            sb.append(JsToStringGenerationVisitor.javaScriptString(pathPrefix + source, true));
+            array.getElements().add(new JsonString(pathPrefix + source));
         }
-        sb.append(']');
+        json.getProperties().put("sources", array);
     }
 
-    private void appendSourcesContent(StringBuilder sb) {
-        boolean isNotFirst = false;
-        sb.append('"').append("sourcesContent").append("\":[");
+    private void appendSourcesContent(JsonObject json) {
+        JsonArray array = new JsonArray();
         for (Supplier<Reader> contentSupplier : orderedSourceContentSuppliers) {
-            if (isNotFirst) {
-                sb.append(',');
-            }
-            else {
-                isNotFirst = true;
-            }
-
             Reader reader = contentSupplier.get();
-            if (reader != null) {
-                sb.append(JsToStringGenerationVisitor.javaScriptString(TextStreamsKt.readText(reader), true));
-            }
-            else {
-                sb.append("null");
-            }
+            array.getElements().add(reader != null ? new JsonString(TextStreamsKt.readText(reader)) : JsonNull.INSTANCE);
         }
-        sb.append(']');
+        json.getProperties().put("sourcesContent", array);
     }
 
     @Override

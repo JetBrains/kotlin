@@ -2,7 +2,7 @@ var Tester = require('./test-result-checker');
 var expectedOutcomes = require('./expected-outcomes');
 
 module.exports = function (results) {
-    var tester = new Tester(expectedOutcomes);
+    var tester = new Tester(expectedOutcomes, 'jest');
     var testResults = results.testResults[0].testResults;
     for (var i = 0; i < testResults.length; i++) {
         var tr = testResults[i];

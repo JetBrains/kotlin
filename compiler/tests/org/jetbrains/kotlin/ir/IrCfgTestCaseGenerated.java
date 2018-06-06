@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir;
@@ -32,70 +21,69 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IrCfgTestCaseGenerated extends AbstractIrCfgTestCase {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInIrCfg() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("expressionFun.kt")
     public void testExpressionFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/expressionFun.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/irCfg/expressionFun.kt");
     }
 
     @TestMetadata("expressionUnit.kt")
     public void testExpressionUnit() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/expressionUnit.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/irCfg/expressionUnit.kt");
     }
 
     @TestMetadata("returnUnit.kt")
     public void testReturnUnit() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/returnUnit.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/irCfg/returnUnit.kt");
     }
 
     @TestMetadata("sequentialFun.kt")
     public void testSequentialFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/sequentialFun.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/irCfg/sequentialFun.kt");
     }
 
     @TestMetadata("simpleFun.kt")
     public void testSimpleFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/simpleFun.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/irCfg/simpleFun.kt");
     }
 
     @TestMetadata("simpleReturn.kt")
     public void testSimpleReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/simpleReturn.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/irCfg/simpleReturn.kt");
     }
 
     @TestMetadata("compiler/testData/ir/irCfg/loop")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Loop extends AbstractIrCfgTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInLoop() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg/loop"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("digitCount.kt")
         public void testDigitCount() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/loop/digitCount.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/irCfg/loop/digitCount.kt");
         }
 
         @TestMetadata("factorial.kt")
         public void testFactorial() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/loop/factorial.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/irCfg/loop/factorial.kt");
         }
 
         @TestMetadata("isPerfect.kt")
         public void testIsPerfect() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/loop/isPerfect.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/irCfg/loop/isPerfect.kt");
         }
     }
 
@@ -103,38 +91,37 @@ public class IrCfgTestCaseGenerated extends AbstractIrCfgTestCase {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class When extends AbstractIrCfgTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInWhen() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg/when"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("cascadeIf.kt")
         public void testCascadeIf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/when/cascadeIf.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/irCfg/when/cascadeIf.kt");
         }
 
         @TestMetadata("emptyWhen.kt")
         public void testEmptyWhen() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/when/emptyWhen.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/irCfg/when/emptyWhen.kt");
         }
 
         @TestMetadata("expressionIf.kt")
         public void testExpressionIf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/when/expressionIf.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/irCfg/when/expressionIf.kt");
         }
 
         @TestMetadata("ifChain.kt")
         public void testIfChain() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/when/ifChain.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/irCfg/when/ifChain.kt");
         }
 
         @TestMetadata("whenReturn.kt")
         public void testWhenReturn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irCfg/when/whenReturn.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/irCfg/when/whenReturn.kt");
         }
     }
 }

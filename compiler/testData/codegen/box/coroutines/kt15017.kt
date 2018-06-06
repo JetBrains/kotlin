@@ -1,7 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.startCoroutine
+import COROUTINES_PACKAGE.startCoroutine
 
 class Controller {
     suspend inline fun suspendInlineThrow(v: String): String = throw RuntimeException(v)

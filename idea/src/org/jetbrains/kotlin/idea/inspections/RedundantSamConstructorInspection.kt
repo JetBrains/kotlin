@@ -1,21 +1,11 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
@@ -52,70 +42,73 @@ import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
 class RedundantSamConstructorInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            private fun createQuickFix(expression: KtCallExpression): LocalQuickFix {
-                return object : LocalQuickFix {
-                    override fun getName() = "Remove redundant SAM-constructor"
-                    override fun getFamilyName() = name
-                    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-                        replaceSamConstructorCall(expression)
-                    }
-                }
+        return callExpressionVisitor(fun(expression) {
+            if (expression.valueArguments.isEmpty()) return
+
+            val samConstructorCalls = samConstructorCallsToBeConverted(expression)
+            if (samConstructorCalls.isEmpty()) return
+            val single = samConstructorCalls.singleOrNull()
+            if (single != null) {
+                val calleeExpression = single.calleeExpression ?: return
+                val problemDescriptor = holder.manager.createProblemDescriptor(
+                    single.getQualifiedExpressionForSelectorOrThis(),
+                    single.typeArgumentList ?: calleeExpression,
+                    "Redundant SAM-constructor",
+                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                    isOnTheFly,
+                    createQuickFix(single)
+                )
+
+                holder.registerProblem(problemDescriptor)
+            } else {
+                val problemDescriptor = holder.manager.createProblemDescriptor(
+                    expression.valueArgumentList!!,
+                    "Redundant SAM-constructors",
+                    createQuickFix(samConstructorCalls),
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    isOnTheFly
+                )
+
+                holder.registerProblem(problemDescriptor)
             }
+        })
+    }
 
-            private fun createQuickFix(expressions: Collection<KtCallExpression>): LocalQuickFix {
-                return object : LocalQuickFix {
-                    override fun getName() = "Remove redundant SAM-constructors"
-                    override fun getFamilyName() = name
-                    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-                        for (callExpression in expressions) {
-                            replaceSamConstructorCall(callExpression)
-                        }
-                    }
-                }
+    private fun createQuickFix(expression: KtCallExpression): LocalQuickFix {
+        return object : LocalQuickFix {
+            override fun getName() = "Remove redundant SAM-constructor"
+            override fun getFamilyName() = name
+            override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+                if (!FileModificationService.getInstance().preparePsiElementForWrite(expression)) return
+                replaceSamConstructorCall(expression)
             }
+        }
+    }
 
-            override fun visitCallExpression(expression: KtCallExpression) {
-                if (expression.valueArguments.isEmpty()) return
-
-                val samConstructorCalls = samConstructorCallsToBeConverted(expression)
-                if (samConstructorCalls.isEmpty()) return
-                val single = samConstructorCalls.singleOrNull()
-                if (single != null) {
-                    val calleeExpression = single.calleeExpression ?: return
-                    val problemDescriptor = holder.manager.
-                            createProblemDescriptor(calleeExpression,
-                                                    single.typeArgumentList ?: calleeExpression,
-                                                    "Redundant SAM-constructor",
-                                                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                                    isOnTheFly,
-                                                    createQuickFix(single))
-
-                    holder.registerProblem(problemDescriptor)
-                }
-                else {
-                    val problemDescriptor = holder.manager.
-                            createProblemDescriptor(expression.valueArgumentList!!,
-                                                    "Redundant SAM-constructors",
-                                                    createQuickFix(samConstructorCalls),
-                                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                                    isOnTheFly)
-
-                    holder.registerProblem(problemDescriptor)
+    private fun createQuickFix(expressions: Collection<KtCallExpression>): LocalQuickFix {
+        return object : LocalQuickFix {
+            override fun getName() = "Remove redundant SAM-constructors"
+            override fun getFamilyName() = name
+            override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+                for (callExpression in expressions) {
+                    if (!FileModificationService.getInstance().preparePsiElementForWrite(callExpression)) return
+                    replaceSamConstructorCall(callExpression)
                 }
             }
         }
     }
 
-    companion  object {
+    companion object {
         fun replaceSamConstructorCall(callExpression: KtCallExpression): KtLambdaExpression {
             val functionalArgument = callExpression.samConstructorValueArgument()?.getArgumentExpression()
-                                     ?: throw AssertionError("SAM-constructor should have a FunctionLiteralExpression as single argument: ${callExpression.getElementTextWithContext()}")
+                    ?: throw AssertionError("SAM-constructor should have a FunctionLiteralExpression as single argument: ${callExpression.getElementTextWithContext()}")
             return callExpression.getQualifiedExpressionForSelectorOrThis().replace(functionalArgument) as KtLambdaExpression
         }
 
-        private fun canBeReplaced(parentCall: KtCallExpression,
-                                  samConstructorCallArgumentMap: Map<KtValueArgument, KtCallExpression>): Boolean {
+        private fun canBeReplaced(
+            parentCall: KtCallExpression,
+            samConstructorCallArgumentMap: Map<KtValueArgument, KtCallExpression>
+        ): Boolean {
             val context = parentCall.analyze(BodyResolveMode.PARTIAL)
 
             val calleeExpression = parentCall.calleeExpression ?: return false
@@ -139,8 +132,8 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
         }
 
         private class CallWithConvertedArguments(
-                original: Call,
-                val callArgumentMapToConvert: Map<KtValueArgument, KtCallExpression>
+            original: Call,
+            val callArgumentMapToConvert: Map<KtValueArgument, KtCallExpression>
         ) : DelegatingCall(original) {
             private val newArguments: List<ValueArgument>
 
@@ -166,18 +159,18 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             val functionResolvedCall = functionCall.getResolvedCall(bindingContext) ?: return emptyList()
             if (!functionResolvedCall.isReallySuccess()) return emptyList()
 
-            val samConstructorCallArgumentMap = valueArguments.keysToMapExceptNulls { it.toCallExpression() }.filter {
-                (_, call) -> call.getResolvedCall(bindingContext)?.resultingDescriptor?.original is SamConstructorDescriptor
+            val samConstructorCallArgumentMap = valueArguments.keysToMapExceptNulls { it.toCallExpression() }.filter { (_, call) ->
+                call.getResolvedCall(bindingContext)?.resultingDescriptor?.original is SamConstructorDescriptor
             }
 
             if (samConstructorCallArgumentMap.isEmpty()) return emptyList()
 
             if (samConstructorCallArgumentMap.values.any {
-                val samValueArgument = it.samConstructorValueArgument()
-                val samConstructorName = (it.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameAsName()
-                samValueArgument == null || samConstructorName == null ||
-                samValueArgument.hasLabeledReturnPreventingConversion(samConstructorName)
-            }) return emptyList()
+                    val samValueArgument = it.samConstructorValueArgument()
+                    val samConstructorName = (it.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameAsName()
+                    samValueArgument == null || samConstructorName == null ||
+                            samValueArgument.hasLabeledReturnPreventingConversion(samConstructorName)
+                }) return emptyList()
 
             val originalFunctionDescriptor = functionResolvedCall.resultingDescriptor.original as? FunctionDescriptor ?: return emptyList()
             val containingClass = originalFunctionDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
@@ -188,7 +181,12 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             val contributedFunctions = syntheticScopes.collectSyntheticStaticFunctions(containingClass.staticScope)
             for (staticFunWithSameName in contributedFunctions) {
                 if (staticFunWithSameName is SamAdapterDescriptor<*>) {
-                    if (isSamAdapterSuitableForCall(staticFunWithSameName, originalFunctionDescriptor, samConstructorCallArgumentMap.size)) {
+                    if (isSamAdapterSuitableForCall(
+                            staticFunWithSameName,
+                            originalFunctionDescriptor,
+                            samConstructorCallArgumentMap.size
+                        )
+                    ) {
                         return samConstructorCallArgumentMap.takeIf { canBeReplaced(functionCall, it) }?.values ?: emptyList()
                     }
                 }
@@ -196,9 +194,10 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
             // SAM adapters for member functions
             val syntheticExtensions = syntheticScopes.collectSyntheticMemberFunctions(
-                    listOf(containingClass.defaultType),
-                    functionResolvedCall.resultingDescriptor.name,
-                    NoLookupLocation.FROM_IDE)
+                listOf(containingClass.defaultType),
+                functionResolvedCall.resultingDescriptor.name,
+                NoLookupLocation.FROM_IDE
+            )
             for (syntheticExtension in syntheticExtensions) {
                 val samAdapter = syntheticExtension as? SamAdapterExtensionFunctionDescriptor ?: continue
                 if (isSamAdapterSuitableForCall(samAdapter, originalFunctionDescriptor, samConstructorCallArgumentMap.size)) {
@@ -209,8 +208,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             return emptyList()
         }
 
-        private fun canBeSamConstructorCall(argument: KtValueArgument)
-                = argument.toCallExpression()?.samConstructorValueArgument() != null
+        private fun canBeSamConstructorCall(argument: KtValueArgument) = argument.toCallExpression()?.samConstructorValueArgument() != null
 
         private fun KtCallExpression.samConstructorValueArgument(): KtValueArgument? {
             return valueArguments.singleOrNull()?.takeIf { it.getArgumentExpression() is KtLambdaExpression }
@@ -225,21 +223,18 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
         }
 
         private fun isSamAdapterSuitableForCall(
-                samAdapter: FunctionDescriptor,
-                originalFunction: FunctionDescriptor,
-                samConstructorsCount: Int
+            samAdapter: FunctionDescriptor,
+            originalFunction: FunctionDescriptor,
+            samConstructorsCount: Int
         ): Boolean {
             val samAdapterOriginalFunction = SamCodegenUtil.getOriginalIfSamAdapter(samAdapter)?.original
             if (samAdapterOriginalFunction != originalFunction) return false
 
-            val parametersWithSamTypeCount = originalFunction.valueParameters.count {
-                SingleAbstractMethodUtils.getFunctionTypeForSamType(it.type) != null
-            }
-
+            val parametersWithSamTypeCount = originalFunction.valueParameters.count { SingleAbstractMethodUtils.isSamType(it.type) }
             return parametersWithSamTypeCount == samConstructorsCount
         }
 
         private fun KtValueArgument.hasLabeledReturnPreventingConversion(samConstructorName: Name) =
-                anyDescendantOfType<KtReturnExpression> { it.getLabelNameAsName() == samConstructorName }
+            anyDescendantOfType<KtReturnExpression> { it.getLabelNameAsName() == samConstructorName }
     }
 }

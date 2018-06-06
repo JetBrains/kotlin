@@ -37,6 +37,7 @@ class CliScriptReportSink(private val messageCollector: MessageCollector) : Scri
     }
 
     private fun ScriptReport.Severity.convertSeverity(): CompilerMessageSeverity = when(this) {
+        ScriptReport.Severity.FATAL -> CompilerMessageSeverity.ERROR
         ScriptReport.Severity.ERROR -> CompilerMessageSeverity.ERROR
         ScriptReport.Severity.WARNING -> CompilerMessageSeverity.WARNING
         ScriptReport.Severity.INFO -> CompilerMessageSeverity.INFO

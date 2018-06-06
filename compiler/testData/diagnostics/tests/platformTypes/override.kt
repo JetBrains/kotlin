@@ -2,7 +2,7 @@
 
 package p;
 
-import p.J.Param
+import p.J.Param;
 
 public interface I {
     String s();

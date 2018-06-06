@@ -1,4 +1,7 @@
-header class <error>My</error> {
+// !CHECK_HIGHLIGHTING
+package foo
+
+expect class My {
 
     fun foo(): Int
 
@@ -6,7 +9,7 @@ header class <error>My</error> {
 
 }
 
-header class <error>Your</error> {
+expect class Your {
 
     fun foo(): Int
 
@@ -14,10 +17,9 @@ header class <error>Your</error> {
 
 }
 
-header class His {
+expect class His {
 
     fun foo(): Int
 
     fun bar(arg: Int): Boolean
-
 }

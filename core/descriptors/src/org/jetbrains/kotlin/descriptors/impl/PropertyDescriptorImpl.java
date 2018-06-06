@@ -42,8 +42,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     private final Kind kind;
     private final boolean lateInit;
     private final boolean isConst;
-    private final boolean isHeader;
-    private final boolean isImpl;
+    private final boolean isExpect;
+    private final boolean isActual;
     private final boolean isExternal;
     private final boolean isDelegated;
 
@@ -66,8 +66,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @NotNull SourceElement source,
             boolean lateInit,
             boolean isConst,
-            boolean isHeader,
-            boolean isImpl,
+            boolean isExpect,
+            boolean isActual,
             boolean isExternal,
             boolean isDelegated
     ) {
@@ -78,8 +78,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         this.kind = kind;
         this.lateInit = lateInit;
         this.isConst = isConst;
-        this.isHeader = isHeader;
-        this.isImpl = isImpl;
+        this.isExpect = isExpect;
+        this.isActual = isActual;
         this.isExternal = isExternal;
         this.isDelegated = isDelegated;
     }
@@ -96,14 +96,14 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @NotNull SourceElement source,
             boolean lateInit,
             boolean isConst,
-            boolean isHeader,
-            boolean isImpl,
+            boolean isExpect,
+            boolean isActual,
             boolean isExternal,
             boolean isDelegated
     ) {
         return new PropertyDescriptorImpl(containingDeclaration, null, annotations,
                                           modality, visibility, isVar, name, kind, source, lateInit, isConst,
-                                          isHeader, isImpl, isExternal, isDelegated);
+                                          isExpect, isActual, isExternal, isDelegated);
     }
 
     public void setType(
@@ -458,7 +458,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     ) {
         return new PropertyDescriptorImpl(
                 newOwner, original, getAnnotations(), newModality, newVisibility, isVar(), newName, kind, SourceElement.NO_SOURCE,
-                isLateInit(), isConst(), isHeader(), isImpl(), isExternal(), isDelegated()
+                isLateInit(), isConst(), isExpect(), isActual(), isExternal(), isDelegated()
         );
     }
 
@@ -480,13 +480,13 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     }
 
     @Override
-    public boolean isHeader() {
-        return isHeader;
+    public boolean isExpect() {
+        return isExpect;
     }
 
     @Override
-    public boolean isImpl() {
-        return isImpl;
+    public boolean isActual() {
+        return isActual;
     }
 
     @Override

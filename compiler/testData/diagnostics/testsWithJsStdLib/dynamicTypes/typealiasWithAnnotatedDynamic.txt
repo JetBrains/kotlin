@@ -18,7 +18,7 @@ public fun useAnnGen2(/*0*/ x: TestAnnGen2 /* = kotlin.collections.List<dynamic>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias AnnGenList</*0*/ T>  = kotlin.collections.List<@Ann1 T>
+public typealias AnnGenList</*0*/ T> = kotlin.collections.List<@Ann1 T>
 public typealias TestAnnGen1 = AnnGenList<dynamic>
 public typealias TestAnnGen2 = AnnGenList<dynamic>
 public typealias TestAnnGen3 = AnnGenList<dynamic>

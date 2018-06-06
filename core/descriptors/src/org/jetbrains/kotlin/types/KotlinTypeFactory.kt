@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,12 @@ object KotlinTypeFactory {
         val descriptor = constructor.declarationDescriptor
         return when (descriptor) {
             is TypeParameterDescriptor -> descriptor.getDefaultType().memberScope
-            is ClassDescriptor ->  descriptor.getMemberScope(TypeConstructorSubstitution.create(constructor, arguments))
+            is ClassDescriptor -> {
+                if (arguments.isEmpty())
+                    descriptor.defaultType.memberScope
+                else
+                    descriptor.getMemberScope(TypeConstructorSubstitution.create(constructor, arguments))
+            }
             is TypeAliasDescriptor -> ErrorUtils.createErrorScope("Scope for abbreviation: ${descriptor.name}", true)
             else -> throw IllegalStateException("Unsupported classifier: $descriptor for constructor: $constructor")
         }
@@ -45,11 +50,11 @@ object KotlinTypeFactory {
             return constructor.declarationDescriptor!!.defaultType
         }
 
-        return simpleType(annotations, constructor, arguments, nullable, computeMemberScope(constructor, arguments))
+        return simpleTypeWithNonTrivialMemberScope(annotations, constructor, arguments, nullable, computeMemberScope(constructor, arguments))
     }
 
     @JvmStatic
-    fun simpleType(
+    fun simpleTypeWithNonTrivialMemberScope(
             annotations: Annotations,
             constructor: TypeConstructor,
             arguments: List<TypeProjection>,
@@ -69,7 +74,7 @@ object KotlinTypeFactory {
             annotations: Annotations,
             descriptor: ClassDescriptor,
             arguments: List<TypeProjection>
-    ): SimpleType = simpleType(annotations, descriptor.typeConstructor, arguments, false, descriptor.getMemberScope(arguments))
+    ): SimpleType = simpleType(annotations, descriptor.typeConstructor, arguments, nullable = false)
 
     @JvmStatic
     fun simpleType(
@@ -77,9 +82,8 @@ object KotlinTypeFactory {
             annotations: Annotations = baseType.annotations,
             constructor: TypeConstructor = baseType.constructor,
             arguments: List<TypeProjection> = baseType.arguments,
-            nullable: Boolean = baseType.isMarkedNullable,
-            memberScope: MemberScope = baseType.memberScope
-    ): SimpleType = simpleType(annotations, constructor, arguments, nullable, memberScope)
+            nullable: Boolean = baseType.isMarkedNullable
+    ): SimpleType = simpleType(annotations, constructor, arguments, nullable)
 
     @JvmStatic
     fun flexibleType(lowerBound: SimpleType, upperBound: SimpleType): UnwrappedType {

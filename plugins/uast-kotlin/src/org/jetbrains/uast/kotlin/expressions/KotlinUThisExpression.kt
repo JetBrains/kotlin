@@ -21,16 +21,17 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.UThisExpression
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinUThisExpression(
         override val psi: KtThisExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UThisExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UThisExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val label: String?
         get() = psi.getLabelName()
 
     override val labelIdentifier: UIdentifier?
-        get() = psi.getTargetLabel()?.let { UIdentifier(it, this) }
+        get() = psi.getTargetLabel()?.let { KotlinUIdentifier(it, this) }
 
     override fun resolve() = psi.analyze()[BindingContext.LABEL_TARGET, psi.getTargetLabel()]
 }

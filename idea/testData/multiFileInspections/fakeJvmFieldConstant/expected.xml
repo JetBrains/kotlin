@@ -1,0 +1,20 @@
+<problems>
+    <problem>
+        <file>JavaUser.java</file>
+        <line>3</line>
+        <module>First</module>
+        <package>&lt;default&gt;</package>
+        <entry_point TYPE="file" FQNAME="JavaUser.java" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Kotlin non-const property used as annotation argument</problem_class>
+        <description>Use of @JvmField non-const Kotlin property as annotation argument is incorrect. Will be forbidden in 1.3</description>
+    </problem>
+    <problem>
+        <file>JavaUser.java</file>
+        <line>7</line>
+        <module>First</module>
+        <package>&lt;default&gt;</package>
+        <entry_point TYPE="file" FQNAME="JavaUser.java" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Kotlin non-const property used as annotation argument</problem_class>
+        <description>Use of @JvmField non-const Kotlin property as annotation argument is incorrect. Will be forbidden in 1.3</description>
+    </problem>
+</problems>

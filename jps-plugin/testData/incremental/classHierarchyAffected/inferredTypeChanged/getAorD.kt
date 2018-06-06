@@ -1,1 +1,3 @@
-fun getAorD() = if (Math.random() > 0.5) getA() else getD()
+private var aOrDCounter = 0
+
+fun getAorD() = if (aOrDCounter++ % 2 == 0) getA() else getD()

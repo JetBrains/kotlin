@@ -1,0 +1,5 @@
+package
+
+public fun incorrectPartDoesntMatter(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun isString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> x is String

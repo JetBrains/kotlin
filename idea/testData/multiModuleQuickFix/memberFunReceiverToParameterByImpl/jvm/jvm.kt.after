@@ -1,9 +1,9 @@
-impl class Foo {
-    impl fun foo(s: String, n: Int) {
+actual class Foo {
+    actual fun foo(s: String, n: Int) {
 
     }
 }
 
-fun Foo.test() {
+fun Foo.test1() {
     foo("1", 2)
 }

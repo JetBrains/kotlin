@@ -25,4 +25,10 @@ class FooC(
     fun bar()
 }
 
+enum class Foo { Bar, Baz }
+
+class Foo {
+    fun bar() {}
+}
+
 // SET_INT: BLANK_LINES_AFTER_CLASS_HEADER = 1

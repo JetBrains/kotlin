@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.caches
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.openapi.vfs.newvfs.FileAttribute
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.DataInputOutputUtil
@@ -70,6 +71,7 @@ class FileAttributeServiceImpl : FileAttributeService {
 
     override fun <T> read(file: VirtualFile, id: String, readValueFun: (DataInput) -> T): CachedAttributeData<T>? {
         val attribute = attributes[id] ?: throw IllegalArgumentException("Attribute with $id wasn't registered")
+        if (file !is VirtualFileWithId) return null
 
         val stream = attribute.readAttribute(file) ?: return null
         return stream.use {

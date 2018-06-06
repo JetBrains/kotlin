@@ -1,0 +1,30 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+package kotlin.test
+
+/**
+ * Marks a function as a test.
+ */
+@Target(AnnotationTarget.FUNCTION)
+public expect annotation class Test()
+
+/**
+ * Marks a test or a suite as ignored.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+public expect annotation class Ignore()
+
+/**
+ * Marks a function to be invoked before each test.
+ */
+@Target(AnnotationTarget.FUNCTION)
+public expect annotation class BeforeTest()
+
+/**
+ * Marks a function to be invoked after each test.
+ */
+@Target(AnnotationTarget.FUNCTION)
+public expect annotation class AfterTest()

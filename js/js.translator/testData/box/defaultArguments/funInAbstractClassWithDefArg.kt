@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1000
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1118
 package foo
 
 open abstract class B() {

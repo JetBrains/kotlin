@@ -100,20 +100,6 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         }
     }
 
-    fun testScriptResolverEnvironmentArgsParsing() {
-
-        fun args(body: K2JVMCompilerArguments.() -> Unit): K2JVMCompilerArguments =
-                K2JVMCompilerArguments().apply(body)
-
-        val longStr = (1..100).joinToString { """\" $it aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \\""" }
-        val unescapeRe = """\\(["\\])""".toRegex()
-        val messageCollector = TestMessageCollector()
-        Assert.assertEquals(hashMapOf("abc" to "def", "11" to "ab cd \\ \"", "long" to unescapeRe.replace(longStr, "\$1")),
-                            K2JVMCompiler.createScriptResolverEnvironment(
-                                args { scriptResolverEnvironment = arrayOf("abc=def", """11="ab cd \\ \""""", "long=\"$longStr\"") },
-                                messageCollector))
-    }
-
     fun testHelloAppLocal() {
         val messageCollector = TestMessageCollector()
         val jar = tmpdir.absolutePath + File.separator + "hello.jar"
@@ -206,6 +192,10 @@ class TestMessageCollector : MessageCollector {
     }
 
     override fun hasErrors(): Boolean = messages.any { it.severity == CompilerMessageSeverity.EXCEPTION || it.severity == CompilerMessageSeverity.ERROR }
+
+    override fun toString(): String {
+        return messages.joinToString("\n") { "${it.severity}: ${it.message}${it.location?.let{" at $it"} ?: ""}" }
+    }
 }
 
 fun TestMessageCollector.assertHasMessage(msg: String, desiredSeverity: CompilerMessageSeverity? = null) {

@@ -7,7 +7,7 @@ and ensure that the public binary API wasn't changed in a way that make this cha
 
 Compile and run tests. `CasesPublicAPITest` verifies the tool itself, 
 and `RuntimePublicAPITest` dumps the public API of `kotlin-stdlib`, 
-`kotlin-stdlib-jre7/8` and `kotlin-reflect` jars, 
+`kotlin-stdlib-jdk7/8`, `kotlin-stdlib-jre7/8` and `kotlin-reflect` jars,
 which must be built beforehand with gradle. Use `clean assemble` tasks,
 since the incremental compilation currently doesn't produce all the required output.
 

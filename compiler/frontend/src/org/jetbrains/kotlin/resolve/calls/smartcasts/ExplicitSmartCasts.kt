@@ -33,8 +33,8 @@ data class SingleSmartCast(val call: Call?, val type: KotlinType) : ExplicitSmar
     override val defaultType: KotlinType get() = type
 
     override fun plus(smartCast: SingleSmartCast) =
-            if (this == smartCast) this
-            else MultipleSmartCasts(mapOf(call to type, smartCast.call to smartCast.type))
+        if (this == smartCast) this
+        else MultipleSmartCasts(mapOf(call to type, smartCast.call to smartCast.type))
 }
 
 data class MultipleSmartCasts internal constructor(val map: Map<Call?, KotlinType>) : ExplicitSmartCasts {

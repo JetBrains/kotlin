@@ -114,7 +114,7 @@ class KtLightMethodImpl private constructor(
         if (calculatingReturnType.get() == true) {
             return KotlinJavaPsiFacade.getInstance(project).emptyModifierList
         }
-        return super.getModifierList()!!
+        return super.getModifierList()
     }
 
     override fun getParameterList() = paramsList
@@ -235,7 +235,7 @@ fun KtLightMethod.isTraitFakeOverride(): Boolean {
     }
 
     val parentOfMethodOrigin = PsiTreeUtil.getParentOfType(methodOrigin, KtClassOrObject::class.java)
-    val thisClassDeclaration = (this.containingClass as KtLightClass).kotlinOrigin
+    val thisClassDeclaration = this.containingClass.kotlinOrigin
 
     // Method was generated from declaration in some other trait
     return (parentOfMethodOrigin != null && thisClassDeclaration !== parentOfMethodOrigin && KtPsiUtil.isTrait(parentOfMethodOrigin))

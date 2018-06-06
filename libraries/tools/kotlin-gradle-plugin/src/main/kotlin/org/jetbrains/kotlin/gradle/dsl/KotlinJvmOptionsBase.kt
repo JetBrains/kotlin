@@ -4,6 +4,11 @@ package org.jetbrains.kotlin.gradle.dsl
 
 internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions {
 
+    private var allWarningsAsErrorsField: kotlin.Boolean? = null
+    override var allWarningsAsErrors: kotlin.Boolean
+        get() = allWarningsAsErrorsField ?: false
+        set(value) { allWarningsAsErrorsField = value }
+
     private var suppressWarningsField: kotlin.Boolean? = null
     override var suppressWarnings: kotlin.Boolean
         get() = suppressWarningsField ?: false
@@ -60,6 +65,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         set(value) { noStdlibField = value }
 
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments) {
+        allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
         verboseField?.let { args.verbose = it }
         apiVersionField?.let { args.apiVersion = it }
@@ -75,6 +81,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
 }
 
 internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fillDefaultValues() {
+    allWarningsAsErrors = false
     suppressWarnings = false
     verbose = false
     apiVersion = null

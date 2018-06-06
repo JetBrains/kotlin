@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.config;
 
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.load.java.JavaClassesTracker;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
+import org.jetbrains.kotlin.script.ScriptDefinitionsSource;
 
 import java.io.File;
 import java.util.List;
@@ -42,16 +44,33 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<File> JDK_HOME =
             CompilerConfigurationKey.create("jdk home");
 
+    public static final CompilerConfigurationKey<Boolean> NO_JDK =
+            CompilerConfigurationKey.create("no jdk");
+
     public static final CompilerConfigurationKey<List<KotlinScriptDefinition>> SCRIPT_DEFINITIONS =
             CompilerConfigurationKey.create("script definitions");
+
+    public static final CompilerConfigurationKey<List<ScriptDefinitionsSource>> SCRIPT_DEFINITIONS_SOURCES =
+            CompilerConfigurationKey.create("script definitions sources");
+
+    public static final CompilerConfigurationKey<Boolean> DISABLE_STANDARD_SCRIPT_DEFINITION =
+            CompilerConfigurationKey.create("Disable standard kotlin script support");
 
     public static final CompilerConfigurationKey<Boolean> RETAIN_OUTPUT_IN_MEMORY =
             CompilerConfigurationKey.create("retain compiled classes in memory for further use, e.g. when running scripts");
 
     public static final CompilerConfigurationKey<Boolean> DISABLE_CALL_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null call assertions");
+    public static final CompilerConfigurationKey<Boolean> DISABLE_RECEIVER_ASSERTIONS =
+            CompilerConfigurationKey.create("disable not-null call receiver assertions");
     public static final CompilerConfigurationKey<Boolean> DISABLE_PARAM_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null parameter assertions");
+    public static final CompilerConfigurationKey<JVMAssertionsMode> ASSERTIONS_MODE =
+            CompilerConfigurationKey.create("assertions mode");
+    public static final CompilerConfigurationKey<JVMConstructorCallNormalizationMode> CONSTRUCTOR_CALL_NORMALIZATION_MODE =
+            CompilerConfigurationKey.create("constructor call normalization mode");
+    public static final CompilerConfigurationKey<Boolean> NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL =
+            CompilerConfigurationKey.create("do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type");
     public static final CompilerConfigurationKey<Boolean> DISABLE_OPTIMIZATION =
             CompilerConfigurationKey.create("disable optimization");
     public static final CompilerConfigurationKey<Boolean> INHERIT_MULTIFILE_PARTS =
@@ -86,15 +105,12 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> PARAMETERS_METADATA =
             CompilerConfigurationKey.create("Parameters metadata for java 1.8 reflection");
-
-    public static final CompilerConfigurationKey<Boolean> INTERFACE_COMPATIBILITY =
-            CompilerConfigurationKey.create("Generate additional 'DefaultImpls' class files for jvm 8 target for compatibility with 6 target interfaces");
-
-    public static final CompilerConfigurationKey<Boolean> JVM8_TARGET_WITH_DEFAULTS =
-            CompilerConfigurationKey.create("Generate default methods in interfaces");
-
+    
     public static final CompilerConfigurationKey<IncrementalCompilationComponents> INCREMENTAL_COMPILATION_COMPONENTS =
             CompilerConfigurationKey.create("incremental cache provider");
+
+    public static final CompilerConfigurationKey<JavaClassesTracker> JAVA_CLASSES_TRACKER =
+            CompilerConfigurationKey.create("Java classes tracker");
 
     public static final CompilerConfigurationKey<File> MODULE_XML_FILE =
             CompilerConfigurationKey.create("path to module.xml");
@@ -115,8 +131,14 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("use fast class files reading implementation [experimental]");
 
     public static final CompilerConfigurationKey<Boolean> USE_JAVAC =
-            CompilerConfigurationKey.create("use javac");
+            CompilerConfigurationKey.create("use javac [experimental]");
+
+    public static final CompilerConfigurationKey<Boolean> COMPILE_JAVA =
+            CompilerConfigurationKey.create("compile java files [experimental]");
 
     public static final CompilerConfigurationKey<List<String>> ADDITIONAL_JAVA_MODULES =
             CompilerConfigurationKey.create("additional Java modules");
+
+    public static final CompilerConfigurationKey<Boolean> ENABLE_JVM_DEFAULT =
+            CompilerConfigurationKey.create("Allow to use '@JvmDefault'");
 }

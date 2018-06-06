@@ -23,10 +23,13 @@ import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-class ArrayRangeValue : RangeValue {
+class ArrayRangeValue(
+    private val canCacheArrayLength: Boolean,
+    private val shouldAlwaysStoreArrayInNewVar: Boolean
+) : RangeValue {
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            ForInArrayLoopGenerator(codegen, forExpression)
+        ForInArrayLoopGenerator(codegen, forExpression, canCacheArrayLength, shouldAlwaysStoreArrayInNewVar)
 
     override fun createInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator =
-            CallBasedInExpressionGenerator(codegen, operatorReference)
+        CallBasedInExpressionGenerator(codegen, operatorReference)
 }

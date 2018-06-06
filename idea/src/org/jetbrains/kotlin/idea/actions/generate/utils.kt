@@ -18,18 +18,17 @@ package org.jetbrains.kotlin.idea.actions.generate
 
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import java.util.*
@@ -51,7 +50,7 @@ fun getPropertiesToUseInGeneratedMember(classOrObject: KtClassOrObject): List<Kt
     return ArrayList<KtNamedDeclaration>().apply {
         classOrObject.primaryConstructorParameters.filterTo(this) { it.hasValOrVar() }
         classOrObject.declarations.filterIsInstance<KtProperty>().filterTo(this) {
-            val descriptor = it.resolveToDescriptor()
+            val descriptor = it.unsafeResolveToDescriptor()
             when (descriptor) {
                 is ValueParameterDescriptor -> true
                 is PropertyDescriptor -> descriptor.getter?.isDefault ?: true
@@ -59,11 +58,11 @@ fun getPropertiesToUseInGeneratedMember(classOrObject: KtClassOrObject): List<Kt
             }
         }
     }.filter {
-        KotlinNameSuggester.isIdentifier(it.name?.quoteIfNeeded())
+        it.name?.quoteIfNeeded().isIdentifier()
     }
 }
 
-private val MEMBER_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+private val MEMBER_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
     modifiers = emptySet()
     startFromName = true
     parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
@@ -79,8 +78,8 @@ fun confirmMemberRewrite(targetClass: KtClass, vararg descriptors: FunctionDescr
                                     Messages.getQuestionIcon()) == Messages.YES
 }
 
-fun generateFunctionSkeleton(descriptor: FunctionDescriptor, project: Project): KtNamedFunction {
+fun generateFunctionSkeleton(descriptor: FunctionDescriptor, targetClass: KtClassOrObject): KtNamedFunction {
     return OverrideMemberChooserObject
-            .create(project, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY)
-            .generateMember(project, false) as KtNamedFunction
+            .create(targetClass.project, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY)
+            .generateMember(targetClass, false) as KtNamedFunction
 }

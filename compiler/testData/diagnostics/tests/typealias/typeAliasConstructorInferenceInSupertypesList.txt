@@ -22,4 +22,4 @@ public final class Test2 : R<kotlin.Int> /* = Ref<kotlin.Int> */ {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias R</*0*/ T>  = Ref<T>
+public typealias R</*0*/ T> = Ref<T>

@@ -1,0 +1,3 @@
+package
+
+public fun test(/*0*/ m: kotlin.collections.Map<kotlin.String, kotlin.Int>, /*1*/ mm: kotlin.collections.MutableMap<kotlin.Int, kotlin.String>): kotlin.Unit

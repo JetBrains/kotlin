@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 //KT-2216 Nullability of a value determined in function parameter computation doesn't pass to code following
 package kt2216
@@ -14,7 +15,7 @@ fun foo() {
 
     val y: Int? = 0
     val z: Int? = 0
-    bar(if (y != null) y else <!TYPE_MISMATCH!>z<!>, <!TYPE_MISMATCH!>y<!>)
+    bar(<!NI;TYPE_MISMATCH!>if (y != null) y else <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>z<!><!>, <!TYPE_MISMATCH!>y<!>)
     y <!UNSAFE_OPERATOR_CALL!>+<!> 2
     baz(<!TYPE_MISMATCH!>y<!>, <!TYPE_MISMATCH!>y<!>, if (y == null) return else y, y)
     baz(y, z!!, z, y)

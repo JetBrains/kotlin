@@ -1,0 +1,11 @@
+package
+
+public fun nullWhenNotString(/*0*/ x: kotlin.Any?): kotlin.Int?
+    Returns(NULL) -> x !is String
+
+public fun nullWhenString(/*0*/ x: kotlin.Any?): kotlin.Int?
+    Returns(NULL) -> x is String
+
+public fun test1(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun test2(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun test3(/*0*/ x: kotlin.Any?): kotlin.Unit

@@ -1,9 +1,10 @@
+// !WITH_NEW_INFERENCE
 fun import() {
     <!FUNCTION_CALL_EXPECTED!>import<!> <!UNRESOLVED_REFERENCE!>a<!><!SYNTAX!>.<!><!DEBUG_INFO_MISSING_UNRESOLVED!>*<!><!SYNTAX!><!>
 }
 
 fun composite() {
-    val <!UNUSED_VARIABLE!>s<!> = 13+<!SYNTAX!>~<!><!DEBUG_INFO_MISSING_UNRESOLVED!>/<!>12
+    val <!UNUSED_VARIABLE!>s<!> = 13<!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!>~<!><!DEBUG_INFO_MISSING_UNRESOLVED!>/<!>12
 }
 
 fun html() {

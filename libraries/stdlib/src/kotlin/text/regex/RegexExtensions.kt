@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 
@@ -20,12 +25,3 @@ public inline fun String.toRegex(option: RegexOption): Regex = Regex(this, optio
  */
 @kotlin.internal.InlineOnly
 public inline fun String.toRegex(options: Set<RegexOption>): Regex = Regex(this, options)
-
-/**
- * Converts this [Pattern] to an instance of [Regex].
- *
- * Provides the way to use Regex API on the instances of [Pattern].
- */
-@JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun java.util.regex.Pattern.toRegex(): Regex = Regex(this)

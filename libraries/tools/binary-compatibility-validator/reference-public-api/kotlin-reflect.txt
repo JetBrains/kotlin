@@ -1,37 +1,4 @@
-public class kotlin/reflect/IllegalCallableAccessException : java/lang/Exception {
-	public fun <init> (Ljava/lang/IllegalAccessException;)V
-}
-
-public final class kotlin/reflect/KClasses {
-	public static final fun getCompanionObject (Lkotlin/reflect/KClass;)Lkotlin/reflect/KClass;
-	public static final fun getCompanionObjectInstance (Lkotlin/reflect/KClass;)Ljava/lang/Object;
-	public static final fun getDeclaredFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
-	public static final fun getDeclaredMemberExtensionFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
-	public static final fun getDeclaredMemberExtensionProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
-	public static final fun getDeclaredMemberFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
-	public static final fun getDeclaredMemberProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
-	public static final fun getDefaultType (Lkotlin/reflect/KClass;)Lkotlin/reflect/KType;
-	public static final fun getFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
-	public static final fun getMemberExtensionFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
-	public static final fun getMemberExtensionProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
-	public static final fun getMemberFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
-	public static final fun getMemberProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
-	public static final fun getPrimaryConstructor (Lkotlin/reflect/KClass;)Lkotlin/reflect/KFunction;
-	public static final fun getStaticFunctions (Lkotlin/reflect/KClass;)Ljava/util/Collection;
-	public static final fun getStaticProperties (Lkotlin/reflect/KClass;)Ljava/util/Collection;
-}
-
-public class kotlin/reflect/KotlinReflectionInternalError : java/lang/Error {
-	public fun <init> (Ljava/lang/String;)V
-}
-
-public class kotlin/reflect/NoSuchPropertyException : java/lang/Exception {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/Exception;)V
-	public synthetic fun <init> (Ljava/lang/Exception;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-}
-
-public final class kotlin/reflect/full/IllegalCallableAccessException : kotlin/reflect/IllegalCallableAccessException {
+public final class kotlin/reflect/full/IllegalCallableAccessException : java/lang/Exception {
 	public fun <init> (Ljava/lang/IllegalAccessException;)V
 }
 
@@ -91,7 +58,7 @@ public final class kotlin/reflect/full/KTypes {
 	public static final fun withNullability (Lkotlin/reflect/KType;Z)Lkotlin/reflect/KType;
 }
 
-public final class kotlin/reflect/full/NoSuchPropertyException : kotlin/reflect/NoSuchPropertyException {
+public final class kotlin/reflect/full/NoSuchPropertyException : java/lang/Exception {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/Exception;)V
 	public synthetic fun <init> (Ljava/lang/Exception;ILkotlin/jvm/internal/DefaultConstructorMarker;)V

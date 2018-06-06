@@ -35,7 +35,7 @@ public interface Q4</*0*/ out S> : Out<A4<S> /* = Out<Inv<S>> */> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias A1</*0*/ E>  = Out<Out<E>>
-public typealias A2</*0*/ E>  = Out<Out<E>>
-public typealias A3</*0*/ E>  = Inv<Out<E>>
-public typealias A4</*0*/ E>  = Out<Inv<E>>
+public typealias A1</*0*/ E> = Out<Out<E>>
+public typealias A2</*0*/ E> = Out<Out<E>>
+public typealias A3</*0*/ E> = Inv<Out<E>>
+public typealias A4</*0*/ E> = Out<Inv<E>>

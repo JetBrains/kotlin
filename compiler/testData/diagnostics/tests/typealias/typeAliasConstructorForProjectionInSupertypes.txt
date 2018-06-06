@@ -44,4 +44,4 @@ public final class Test5 : CT<*> /* = C<*> */ {
 public typealias CIn = C<in kotlin.Int>
 public typealias COut = C<out kotlin.Int>
 public typealias CStar = C<*>
-public typealias CT</*0*/ T>  = C<T>
+public typealias CT</*0*/ T> = C<T>

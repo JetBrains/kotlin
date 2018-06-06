@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.serialization.js
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -24,7 +26,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.types.FlexibleType
 
@@ -64,11 +65,17 @@ class KotlinJavascriptSerializerExtension(
     private fun getFileId(descriptor: DeclarationDescriptor): Int? {
         if (!DescriptorUtils.isTopLevelDeclaration(descriptor) || descriptor !is DeclarationDescriptorWithSource) return null
 
-        val file = descriptor.source.containingFile
-        if (file !is PsiSourceFile) return null
+        val fileId = descriptor.extractFileId()
+        if (fileId != null) {
+            (descriptor.containingDeclaration as? KotlinJavascriptPackageFragment)?.let { packageFragment ->
+                return fileRegistry.lookup(KotlinDeserializedFileMetadata(packageFragment, fileId))
+            }
+        }
+
+        val file = descriptor.source.containingFile as? PsiSourceFile ?: return null
 
         val psiFile = file.psiFile
-        return (psiFile as? KtFile)?.let { fileRegistry.lookup(it) }
+        return (psiFile as? KtFile)?.let { fileRegistry.lookup(KotlinPsiFileMetadata(it)) }
     }
 }
 

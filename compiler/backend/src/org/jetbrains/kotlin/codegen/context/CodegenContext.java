@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.context;
@@ -38,6 +27,8 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
+import static org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.isCallableMemberWithJvmDefaultAnnotation;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -57,13 +48,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private static class AccessorKey {
         public final DeclarationDescriptor descriptor;
         public final ClassDescriptor superCallLabelTarget;
+        public final AccessorKind accessorKind;
 
         public AccessorKey(
                 @NotNull DeclarationDescriptor descriptor,
-                @Nullable ClassDescriptor superCallLabelTarget
+                @Nullable ClassDescriptor superCallLabelTarget,
+                @NotNull AccessorKind accessorKind
         ) {
             this.descriptor = descriptor;
             this.superCallLabelTarget = superCallLabelTarget;
+            this.accessorKind = accessorKind;
         }
 
         @Override
@@ -71,13 +65,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             if (!(obj instanceof AccessorKey)) return false;
             AccessorKey other = (AccessorKey) obj;
             return descriptor.equals(other.descriptor) &&
+                   accessorKind == other.accessorKind &&
                    (superCallLabelTarget == null ? other.superCallLabelTarget == null
                                                  : superCallLabelTarget.equals(other.superCallLabelTarget));
         }
 
         @Override
         public int hashCode() {
-            return 31 * descriptor.hashCode() + (superCallLabelTarget == null ? 0 : superCallLabelTarget.hashCode());
+            return 31 * descriptor.hashCode() +
+                   accessorKind.hashCode() +
+                   (superCallLabelTarget == null ? 0 : superCallLabelTarget.hashCode());
         }
 
         @Override
@@ -91,6 +88,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         private final @NotNull DeclarationDescriptor containingDeclaration;
         private final @Nullable ClassDescriptor superCallTarget;
         private final @NotNull String nameSuffix;
+        private final @NotNull AccessorKind accessorKind;
 
         private AccessorForPropertyDescriptor withSyntheticGetterAndSetter = null;
         private AccessorForPropertyDescriptor withSyntheticGetter = null;
@@ -100,12 +98,14 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                 @NotNull PropertyDescriptor property,
                 @NotNull DeclarationDescriptor containingDeclaration,
                 @Nullable ClassDescriptor superCallTarget,
-                @NotNull String nameSuffix
+                @NotNull String nameSuffix,
+                @NotNull AccessorKind accessorKind
         ) {
             this.property = property;
             this.containingDeclaration = containingDeclaration;
             this.superCallTarget = superCallTarget;
             this.nameSuffix = nameSuffix;
+            this.accessorKind = accessorKind;
         }
 
         @SuppressWarnings("ConstantConditions")
@@ -117,7 +117,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                 if (withSyntheticGetter == null) {
                     withSyntheticGetter = new AccessorForPropertyDescriptor(
                             property, containingDeclaration, superCallTarget, nameSuffix,
-                            true, false);
+                            true, false, accessorKind);
                 }
                 return withSyntheticGetter;
             }
@@ -125,7 +125,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                 if (withSyntheticSetter == null) {
                     withSyntheticSetter = new AccessorForPropertyDescriptor(
                             property, containingDeclaration, superCallTarget, nameSuffix,
-                            false, true);
+                            false, true, accessorKind);
                 }
                 return withSyntheticSetter;
             }
@@ -139,7 +139,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             if (withSyntheticGetterAndSetter == null) {
                 withSyntheticGetterAndSetter = new AccessorForPropertyDescriptor(
                         property, containingDeclaration, superCallTarget, nameSuffix,
-                        true, true);
+                        true, true, accessorKind);
             }
             return withSyntheticGetterAndSetter;
         }
@@ -215,13 +215,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private StackValue getOuterExpression(@Nullable StackValue prefix, boolean ignoreNoOuter, boolean captureThis) {
         if (outerExpression.invoke() == null) {
             if (!ignoreNoOuter) {
-                throw new UnsupportedOperationException("Don't know how to generate outer expression for " + getContextDescriptor());
+                throw new UnsupportedOperationException("Don't know how to generate outer expression: " + this);
             }
             return null;
         }
         if (captureThis) {
             if (closure == null) {
-                throw new IllegalStateException("Can't capture this for context without closure: " + getContextDescriptor());
+                throw new IllegalStateException("Can't capture this for context without closure: " + this);
             }
             closure.setCaptureThis();
         }
@@ -343,18 +343,49 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return new ClosureContext(typeMapper, jvmViewOfSuspendLambda, this, localLookup, originalSuspendLambdaDescriptor);
     }
 
+    public ClassContext intoWrapperForErasedInlineClass(ClassDescriptor descriptor, GenerationState state) {
+        return new ClassContext(state.getTypeMapper(), descriptor, OwnerKind.ERASED_INLINE_CLASS, this, null);
+    }
+
     @Nullable
     public CodegenContext getParentContext() {
         return parentContext;
     }
 
-    public ClassDescriptor getEnclosingClass() {
-        CodegenContext cur = getParentContext();
-        while (cur != null && !(cur.getContextDescriptor() instanceof ClassDescriptor)) {
+    public boolean isContextWithUninitializedThis() {
+        return false;
+    }
+
+    @Nullable
+    public CodegenContext getEnclosingClassContext() {
+        CodegenContext cur = getEnclosingThisContext();
+        while (cur != null) {
+            DeclarationDescriptor curDescriptor = cur.getContextDescriptor();
+            if (curDescriptor instanceof ClassDescriptor) {
+                return cur;
+            }
             cur = cur.getParentContext();
         }
+        return null;
+    }
 
-        return cur == null ? null : (ClassDescriptor) cur.getContextDescriptor();
+    @Nullable
+    public CodegenContext getEnclosingThisContext() {
+        CodegenContext cur = getParentContext();
+        while (cur != null && cur.isContextWithUninitializedThis()) {
+            CodegenContext parent = cur.getParentContext();
+            assert parent != null : "Context " + cur + " should have a parent";
+            cur = parent.getParentContext();
+        }
+        return cur;
+    }
+
+    @Nullable
+    public ClassDescriptor getEnclosingClass() {
+        // TODO store enclosing context class in the context itself
+        CodegenContext enclosingClassContext = getEnclosingClassContext();
+        if (enclosingClassContext == null) return null;
+        return (ClassDescriptor) enclosingClassContext.getContextDescriptor();
     }
 
     @Nullable
@@ -374,12 +405,24 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             boolean getterAccessorRequired,
             boolean setterAccessorRequired
     ) {
-        return getAccessor(propertyDescriptor, FieldAccessorKind.NORMAL, null, superCallTarget, getterAccessorRequired, setterAccessorRequired);
+        return getAccessor(propertyDescriptor, AccessorKind.NORMAL, null, superCallTarget, getterAccessorRequired, setterAccessorRequired);
+    }
+
+
+    public  <D extends CallableMemberDescriptor> D getAccessorForJvmDefaultCompatibility(@NotNull D descriptor) {
+        if (descriptor instanceof PropertyAccessorDescriptor) {
+            PropertyDescriptor propertyAccessor = getAccessor(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty(),
+                                                              AccessorKind.JVM_DEFAULT_COMPATIBILITY, null, null,
+                                                              descriptor instanceof PropertyGetterDescriptor,
+                                                              descriptor instanceof PropertySetterDescriptor);
+            return descriptor instanceof PropertyGetterDescriptor ? (D) propertyAccessor.getGetter() : (D) propertyAccessor.getSetter();
+        }
+        return getAccessor(descriptor, AccessorKind.JVM_DEFAULT_COMPATIBILITY, null, null);
     }
 
     @NotNull
     private <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor, @Nullable ClassDescriptor superCallTarget) {
-        return getAccessor(descriptor, FieldAccessorKind.NORMAL, null, superCallTarget);
+        return getAccessor(descriptor, AccessorKind.NORMAL, null, superCallTarget);
     }
 
     @SuppressWarnings("unchecked")
@@ -388,7 +431,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @NotNull D descriptor,
             @Nullable ClassDescriptor superCallTarget,
             @NotNull GenerationState state) {
-        if (superCallTarget != null && !isNonDefaultInterfaceMember(descriptor, state)) {
+        if (superCallTarget != null && !isNonDefaultInterfaceMember(descriptor)) {
             CodegenContext afterInline = getFirstCrossInlineOrNonInlineContext();
             CodegenContext c = afterInline.findParentContextWithDescriptor(superCallTarget);
             assert c != null : "Couldn't find a context for a super-call: " + descriptor;
@@ -402,7 +445,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     public <D extends CallableMemberDescriptor> D getAccessor(
             @NotNull D possiblySubstitutedDescriptor,
-            @NotNull FieldAccessorKind accessorKind,
+            @NotNull AccessorKind accessorKind,
             @Nullable KotlinType delegateType,
             @Nullable ClassDescriptor superCallTarget
     ) {
@@ -417,7 +460,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     private <D extends CallableMemberDescriptor> D getAccessor(
             @NotNull D possiblySubstitutedDescriptor,
-            @NotNull FieldAccessorKind accessorKind,
+            @NotNull AccessorKind accessorKind,
             @Nullable KotlinType delegateType,
             @Nullable ClassDescriptor superCallTarget,
             boolean getterAccessorRequired,
@@ -431,55 +474,51 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         D descriptor = (D) possiblySubstitutedDescriptor.getOriginal();
-        AccessorKey key = new AccessorKey(descriptor, superCallTarget);
+        AccessorKey key = new AccessorKey(descriptor, superCallTarget, accessorKind);
 
         // NB should check for property accessor factory first (or change property accessor tracking under propertyAccessorFactory creation)
-        AccessorForPropertyDescriptorFactory propertyAccessorFactory = propertyAccessorFactories.get(key);
-        if (propertyAccessorFactory != null) {
-            return (D) propertyAccessorFactory.getOrCreateAccessorIfNeeded(getterAccessorRequired, setterAccessorRequired);
+        if (propertyAccessorFactories.containsKey(key)) {
+            return (D) propertyAccessorFactories.get(key).getOrCreateAccessorIfNeeded(getterAccessorRequired, setterAccessorRequired);
         }
-        AccessorForCallableDescriptor<?> accessor = accessors.get(key);
-        if (accessor != null) {
-            assert accessorKind == FieldAccessorKind.NORMAL ||
+
+        if (accessors.containsKey(key)) {
+            AccessorForCallableDescriptor<?> accessor = accessors.get(key);
+            assert accessorKind == AccessorKind.NORMAL ||
                    accessor instanceof AccessorForPropertyBackingField : "There is already exists accessor with isForBackingField = false in this context";
             return (D) accessor;
         }
+
         String nameSuffix = SyntheticAccessorUtilKt.getAccessorNameSuffix(descriptor, key.superCallLabelTarget, accessorKind);
+        AccessorForCallableDescriptor<?> accessor;
         if (descriptor instanceof SimpleFunctionDescriptor) {
-            accessor = new AccessorForFunctionDescriptor(
-                    (FunctionDescriptor) descriptor, contextDescriptor, superCallTarget, nameSuffix
-            );
+            accessor = new AccessorForFunctionDescriptor((FunctionDescriptor) descriptor, contextDescriptor, superCallTarget, nameSuffix, accessorKind);
         }
         else if (descriptor instanceof ClassConstructorDescriptor) {
-            accessor = new AccessorForConstructorDescriptor((ClassConstructorDescriptor) descriptor, contextDescriptor, superCallTarget);
+            accessor = new AccessorForConstructorDescriptor((ClassConstructorDescriptor) descriptor, contextDescriptor, superCallTarget, accessorKind);
         }
         else if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-            switch (accessorKind) {
-                case NORMAL:
-                    propertyAccessorFactory = new AccessorForPropertyDescriptorFactory((PropertyDescriptor) descriptor, contextDescriptor,
-                                                                                       superCallTarget, nameSuffix);
-                    propertyAccessorFactories.put(key, propertyAccessorFactory);
+            if (accessorKind == AccessorKind.NORMAL || accessorKind == AccessorKind.JVM_DEFAULT_COMPATIBILITY) {
+                AccessorForPropertyDescriptorFactory factory =
+                        new AccessorForPropertyDescriptorFactory(propertyDescriptor, contextDescriptor, superCallTarget, nameSuffix, accessorKind);
+                propertyAccessorFactories.put(key, factory);
 
-                    // Record worst case accessor for accessor methods generation.
-                    AccessorForPropertyDescriptor accessorWithGetterAndSetter =
-                            propertyAccessorFactory.getOrCreateAccessorWithSyntheticGetterAndSetter();
-                    accessors.put(key, accessorWithGetterAndSetter);
+                // Record worst case accessor for accessor methods generation.
+                accessors.put(key, factory.getOrCreateAccessorWithSyntheticGetterAndSetter());
 
-                    PropertyDescriptor accessorDescriptor =
-                            propertyAccessorFactory.getOrCreateAccessorIfNeeded(getterAccessorRequired, setterAccessorRequired);
-                    return (D) accessorDescriptor;
-                case IN_CLASS_COMPANION:
-                    accessor = new AccessorForPropertyBackingFieldInClassCompanion(propertyDescriptor, contextDescriptor,
-                                                                                   delegateType, nameSuffix);
-                    break;
-                case FIELD_FROM_LOCAL:
-                    accessor = new AccessorForPropertyBackingFieldFromLocal(propertyDescriptor, contextDescriptor, nameSuffix);
-                    break;
+                return (D) factory.getOrCreateAccessorIfNeeded(getterAccessorRequired, setterAccessorRequired);
             }
+
+            accessor = new AccessorForPropertyBackingField(
+                    propertyDescriptor, contextDescriptor, delegateType,
+                    accessorKind == AccessorKind.IN_CLASS_COMPANION ? null : propertyDescriptor.getExtensionReceiverParameter(),
+                    accessorKind == AccessorKind.IN_CLASS_COMPANION ? null : propertyDescriptor.getDispatchReceiverParameter(),
+                    nameSuffix, accessorKind
+            );
         }
         else {
-            throw new UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor);
+            throw new UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor +
+                                                    " in context " + this);
         }
 
         accessors.put(key, accessor);
@@ -495,9 +534,9 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
         StackValue myOuter = null;
         if (closure != null) {
-            EnclosedValueDescriptor answer = closure.getCaptureVariables().get(d);
-            if (answer != null) {
-                return StackValue.changeReceiverForFieldAndSharedVar(answer.getInnerValue(), result);
+            EnclosedValueDescriptor capturedVariable = closure.getCaptureVariables().get(d);
+            if (capturedVariable != null) {
+                return StackValue.changeReceiverForFieldAndSharedVar(capturedVariable.getInnerValue(), result);
             }
 
             for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
@@ -520,8 +559,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         StackValue resultValue;
         if (myOuter != null && getEnclosingClass() == d) {
             resultValue = result;
-        } else {
-            resultValue = parentContext != null ? parentContext.lookupInContext(d, result, state, ignoreNoOuter) : null;
+        }
+        else {
+            CodegenContext enclosingClassContext = getEnclosingThisContext();
+            resultValue = enclosingClassContext != null ? enclosingClassContext.lookupInContext(d, result, state, ignoreNoOuter) : null;
         }
 
         if (myOuter != null && resultValue != null && !isStaticField(resultValue)) {
@@ -545,10 +586,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         CodegenContext properContext = getFirstCrossInlineOrNonInlineContext();
         DeclarationDescriptor enclosing = descriptor.getContainingDeclaration();
         boolean isInliningContext = properContext.isInlineMethodContext();
+        boolean sameJvmDefault = hasJvmDefaultAnnotation(descriptor) ==
+                                 isCallableMemberWithJvmDefaultAnnotation(properContext.contextDescriptor) ||
+                                 properContext.contextDescriptor instanceof AccessorForCallableDescriptor;
         if (!isInliningContext && (
                 !properContext.hasThisDescriptor() ||
-                enclosing == properContext.getThisDescriptor() ||
-                enclosing == properContext.getClassOrPackageParentContext().getContextDescriptor())) {
+                ((enclosing == properContext.getThisDescriptor()) && sameJvmDefault) ||
+                ((enclosing == properContext.getClassOrPackageParentContext().getContextDescriptor()) && sameJvmDefault))) {
             return descriptor;
         }
         return (D) properContext.accessibleDescriptorIfNeeded(descriptor, superCallTarget, isInliningContext);
@@ -599,6 +643,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         if (descriptorContext == null) {
             return descriptor;
         }
+
+        if (hasJvmDefaultAnnotation(descriptor) && descriptorContext instanceof DefaultImplsClassContext) {
+            descriptorContext = ((DefaultImplsClassContext) descriptorContext).getInterfaceContext();
+        }
+
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
             int propertyAccessFlag = getVisibilityAccessFlag(descriptor);
@@ -687,5 +736,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     public CodegenContext getFirstCrossInlineOrNonInlineContext() {
         return this;
+    }
+
+    @Nullable
+    public LocalLookup getEnclosingLocalLookup() {
+        return enclosingLocalLookup;
     }
 }

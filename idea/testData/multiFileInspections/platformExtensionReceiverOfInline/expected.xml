@@ -1,0 +1,9 @@
+<problems>
+    <problem>
+        <file>Test.kt</file>
+        <line>2</line>
+        <entry_point TYPE="file" FQNAME="Test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unsafe call of inline function with nullable extension receiver</problem_class>
+        <description>Call of inline function with nullable extension receiver can provoke NPE in Kotlin 1.2+</description>
+    </problem>
+</problems>

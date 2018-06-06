@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -34,110 +23,97 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LineNumber extends AbstractLineNumberTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInLineNumber() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lineNumber"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("anonymousFunction.kt")
         public void testAnonymousFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/anonymousFunction.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/anonymousFunction.kt");
         }
 
         @TestMetadata("class.kt")
         public void testClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/class.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/class.kt");
         }
 
         @TestMetadata("classObject.kt")
         public void testClassObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/classObject.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/classObject.kt");
         }
 
         @TestMetadata("defaultParameter.kt")
         public void testDefaultParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/defaultParameter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/defaultParameter.kt");
         }
 
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/enum.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/enum.kt");
         }
 
         @TestMetadata("for.kt")
         public void testFor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/for.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/for.kt");
         }
 
         @TestMetadata("if.kt")
         public void testIf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/if.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/if.kt");
         }
 
         @TestMetadata("inlineSimpleCall.kt")
         public void testInlineSimpleCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/inlineSimpleCall.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/inlineSimpleCall.kt");
         }
 
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/localFunction.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/localFunction.kt");
         }
 
         @TestMetadata("object.kt")
         public void testObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/object.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/object.kt");
         }
 
         @TestMetadata("propertyAccessor.kt")
         public void testPropertyAccessor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/propertyAccessor.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/propertyAccessor.kt");
         }
 
         @TestMetadata("psvm.kt")
         public void testPsvm() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/psvm.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/psvm.kt");
         }
 
         @TestMetadata("simpleSmap.kt")
         public void testSimpleSmap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/simpleSmap.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/simpleSmap.kt");
         }
 
         @TestMetadata("topLevel.kt")
         public void testTopLevel() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/topLevel.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/topLevel.kt");
         }
 
         @TestMetadata("trait.kt")
         public void testTrait() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/trait.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/trait.kt");
         }
 
         @TestMetadata("tryCatch.kt")
         public void testTryCatch() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/tryCatch.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/tryCatch.kt");
         }
 
         @TestMetadata("while.kt")
         public void testWhile() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/while.kt");
-            doTest(fileName);
+            runTest("compiler/testData/lineNumber/while.kt");
         }
     }
 
@@ -145,146 +121,127 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Custom extends AbstractLineNumberTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestCustom, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInCustom() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/lineNumber/custom"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("beforeGotoToWhileStart.kt")
         public void testBeforeGotoToWhileStart() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/beforeGotoToWhileStart.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/beforeGotoToWhileStart.kt");
         }
 
         @TestMetadata("callWithCallInArguments.kt")
         public void testCallWithCallInArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/callWithCallInArguments.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/callWithCallInArguments.kt");
         }
 
         @TestMetadata("callWithReceiver.kt")
         public void testCallWithReceiver() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/callWithReceiver.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/callWithReceiver.kt");
         }
 
         @TestMetadata("chainCall.kt")
         public void testChainCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/chainCall.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/chainCall.kt");
         }
 
         @TestMetadata("compileTimeConstant.kt")
         public void testCompileTimeConstant() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/compileTimeConstant.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/compileTimeConstant.kt");
         }
 
         @TestMetadata("functionCallWithDefault.kt")
         public void testFunctionCallWithDefault() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/functionCallWithDefault.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/functionCallWithDefault.kt");
         }
 
         @TestMetadata("functionCallWithInlinedLambdaParam.kt")
         public void testFunctionCallWithInlinedLambdaParam() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/functionCallWithInlinedLambdaParam.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/functionCallWithInlinedLambdaParam.kt");
         }
 
         @TestMetadata("functionCallWithLambdaParam.kt")
         public void testFunctionCallWithLambdaParam() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/functionCallWithLambdaParam.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/functionCallWithLambdaParam.kt");
         }
 
         @TestMetadata("ifThen.kt")
         public void testIfThen() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/ifThen.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/ifThen.kt");
         }
 
         @TestMetadata("ifThenElse.kt")
         public void testIfThenElse() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/ifThenElse.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/ifThenElse.kt");
         }
 
         @TestMetadata("inTheEndOfLambdaArgumentOfInlineCall.kt")
         public void testInTheEndOfLambdaArgumentOfInlineCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/inTheEndOfLambdaArgumentOfInlineCall.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/inTheEndOfLambdaArgumentOfInlineCall.kt");
         }
 
         @TestMetadata("multilineFunctionCall.kt")
         public void testMultilineFunctionCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/multilineFunctionCall.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/multilineFunctionCall.kt");
         }
 
         @TestMetadata("multilineInfixCall.kt")
         public void testMultilineInfixCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/multilineInfixCall.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/multilineInfixCall.kt");
         }
 
         @TestMetadata("noParametersArgumentCallInExpression.kt")
         public void testNoParametersArgumentCallInExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/noParametersArgumentCallInExpression.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/noParametersArgumentCallInExpression.kt");
         }
 
         @TestMetadata("smapInlineAsArgument.kt")
         public void testSmapInlineAsArgument() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/smapInlineAsArgument.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/smapInlineAsArgument.kt");
         }
 
         @TestMetadata("smapInlineAsInfixArgument.kt")
         public void testSmapInlineAsInfixArgument() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/smapInlineAsInfixArgument.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/smapInlineAsInfixArgument.kt");
         }
 
         @TestMetadata("smapInlineAsInlineArgument.kt")
         public void testSmapInlineAsInlineArgument() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/smapInlineAsInlineArgument.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/smapInlineAsInlineArgument.kt");
         }
 
         @TestMetadata("smapInlineInIntrinsicArgument.kt")
         public void testSmapInlineInIntrinsicArgument() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/smapInlineInIntrinsicArgument.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/smapInlineInIntrinsicArgument.kt");
         }
 
         @TestMetadata("tryCatchExpression.kt")
         public void testTryCatchExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/tryCatchExpression.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/tryCatchExpression.kt");
         }
 
         @TestMetadata("tryCatchFinally.kt")
         public void testTryCatchFinally() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/tryCatchFinally.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/tryCatchFinally.kt");
         }
 
         @TestMetadata("tryFinally.kt")
         public void testTryFinally() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/tryFinally.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/tryFinally.kt");
         }
 
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/when.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/when.kt");
         }
 
         @TestMetadata("whenSubject.kt")
         public void testWhenSubject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/lineNumber/custom/whenSubject.kt");
-            doTestCustom(fileName);
+            runTest("compiler/testData/lineNumber/custom/whenSubject.kt");
         }
     }
 }

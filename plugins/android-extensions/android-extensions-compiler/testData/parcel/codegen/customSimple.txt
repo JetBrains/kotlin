@@ -5,35 +5,34 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
 
     public User create(android.os.Parcel p0)
 
-    public android.os.Parcelable create(android.os.Parcel p0)
+    public java.lang.Object create(android.os.Parcel p0)
 
     public User[] newArray(int p0) {
         LABEL (L0)
-        LINENUMBER (9)
+        LINENUMBER (10)
           ALOAD (0)
           ILOAD (1)
-          INVOKESTATIC (kotlinx/android/parcel/Parceler$DefaultImpls, newArray, (Lkotlinx/android/parcel/Parceler;I)[Landroid/os/Parcelable;)
+          INVOKESTATIC (kotlinx/android/parcel/Parceler$DefaultImpls, newArray, (Lkotlinx/android/parcel/Parceler;I)[Ljava/lang/Object;)
           CHECKCAST
           ARETURN
         LABEL (L1)
     }
 
-    public android.os.Parcelable[] newArray(int p0) {
+    public java.lang.Object[] newArray(int p0) {
         LABEL (L0)
-        LINENUMBER (9)
+        LINENUMBER (10)
           ALOAD (0)
           ILOAD (1)
           INVOKEVIRTUAL (User$Companion, newArray, (I)[LUser;)
-          CHECKCAST
           ARETURN
     }
 
     public void write(User p0, android.os.Parcel p1, int p2)
 
-    public void write(android.os.Parcelable p0, android.os.Parcel p1, int p2)
+    public void write(java.lang.Object p0, android.os.Parcel p1, int p2)
 }
 
-public static class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
+public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
     public final java.lang.Object createFromParcel(android.os.Parcel p0) {
@@ -43,12 +42,12 @@ public static class User$Creator : java/lang/Object, android/os/Parcelable$Creat
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
           GETSTATIC (Companion, LUser$Companion;)
           ALOAD (1)
-          INVOKEVIRTUAL (User$Companion, create, (Landroid/os/Parcel;)Landroid/os/Parcelable;)
+          INVOKEVIRTUAL (User$Companion, create, (Landroid/os/Parcel;)Ljava/lang/Object;)
           ARETURN
         LABEL (L1)
     }
 
-    public final User[] newArray(int p0) {
+    public final java.lang.Object[] newArray(int p0) {
         LABEL (L0)
           ILOAD (1)
           ANEWARRAY
@@ -58,7 +57,7 @@ public static class User$Creator : java/lang/Object, android/os/Parcelable$Creat
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
-    public final static User$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     public final static User$Companion Companion
 

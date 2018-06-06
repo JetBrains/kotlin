@@ -1,0 +1,172 @@
+== myRun ==
+inline fun <T> myRun(block: () -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+                                                                                   <v0>: {<: () -> T}                      NEW: magic[FAKE_INITIALIZER](block: () -> T) -> <v0>
+{ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                               <v1>: {<: ContractBuilder.() -> Unit}   NEW: r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                      <v2>: *                                 NEW: call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+block                                                                              <v3>: {<: () -> T}                      NEW: r(block) -> <v3>
+block()                                                                            <v4>: {<: T}                            NEW: call(block(), invoke|<v3>) -> <v4>
+return block()                                                                     !<v5>: *
+{ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() }   !<v5>: *                                COPY
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+                                                   <v0>: {<: ContractBuilder}   NEW: magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+block                                              <v1>: {<: Function<T>}       NEW: r(block) -> <v1>
+EXACTLY_ONCE                                       <v2>: {<: InvocationKind}    NEW: r(EXACTLY_ONCE) -> <v2>
+InvocationKind.EXACTLY_ONCE                        <v2>: {<: InvocationKind}    COPY
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      NEW: call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      COPY
+=====================
+== innerComputation ==
+fun innerComputation(): Int = 42
+---------------------
+42   <v0>: Int   NEW: r(42) -> <v0>
+=====================
+== outerComputation ==
+fun outerComputation(): Int = 52
+---------------------
+52   <v0>: Int   NEW: r(52) -> <v0>
+=====================
+== log ==
+fun log() = Unit
+---------------------
+Unit   <v0>: Unit   NEW: r(Unit) -> <v0>
+=====================
+== outerFinallyInitializes ==
+fun outerFinallyInitializes() {
+    val x: Int
+
+    try {
+        myRun {
+            try {
+                x = innerComputation()
+            } catch (e: java.lang.Exception) {
+                log()
+            }
+            // possible reassignment if innerComputation finished
+            x = 42
+        }
+
+        // Definite reassignment here, cause can get here only if myRun finished
+        x = outerComputation()
+    } catch (e: java.lang.Exception) {
+        // can catch exception thrown by the inner, so x can be not initalized
+        log()
+    } finally {
+        // Possible reassignment (e.g. if everything finished)
+        x = 42
+    }
+
+    // Properly initialized
+    x.inc()
+}
+---------------------
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <v4>: {<: Exception}    NEW: magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v4>
+{ try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42 }                                                                                                                                                                                                                                                                                                                                                          <v0>: {<: () -> Unit}   NEW: r({ try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42 }) -> <v0>
+myRun { try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42 }                                                                                                                                                                                                                                                                                                                                                    <v1>: *                 NEW: call(myRun { try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42 }, myRun|<v0>) -> <v1>
+outerComputation()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <v2>: Int               NEW: call(outerComputation(), outerComputation) -> <v2>
+x = outerComputation()                                                                                                                                                                                                                                                                                                                                                                                                                                                                            !<v3>: *
+{ myRun { try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42 } // Definite reassignment here, cause can get here only if myRun finished x = outerComputation() }                                                                                                                                                                                                                                                !<v3>: *                COPY
+log()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             <v5>: *                 NEW: call(log(), log) -> <v5>
+{ // can catch exception thrown by the inner, so x can be not initalized log() }                                                                                                                                                                                                                                                                                                                                                                                                                  <v5>: *                 COPY
+42                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <v6>: Int               NEW: r(42) -> <v6>
+x = 42                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            !<v7>: *
+{ // Possible reassignment (e.g. if everything finished) x = 42 }                                                                                                                                                                                                                                                                                                                                                                                                                                 !<v7>: *                COPY
+try { myRun { try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42 } // Definite reassignment here, cause can get here only if myRun finished x = outerComputation() } catch (e: java.lang.Exception) { // can catch exception thrown by the inner, so x can be not initalized log() } finally { // Possible reassignment (e.g. if everything finished) x = 42 }                                                  <v8>: *                 NEW: merge(try { myRun { try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42 } // Definite reassignment here, cause can get here only if myRun finished x = outerComputation() } catch (e: java.lang.Exception) { // can catch exception thrown by the inner, so x can be not initalized log() } finally { // Possible reassignment (e.g. if everything finished) x = 42 }|!<v3>, <v5>) -> <v8>
+x                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 <v9>: Int               NEW: r(x) -> <v9>
+inc()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             <v10>: *                NEW: call(inc(), inc|<v9>) -> <v10>
+x.inc()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           <v10>: *                COPY
+{ val x: Int try { myRun { try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42 } // Definite reassignment here, cause can get here only if myRun finished x = outerComputation() } catch (e: java.lang.Exception) { // can catch exception thrown by the inner, so x can be not initalized log() } finally { // Possible reassignment (e.g. if everything finished) x = 42 } // Properly initialized x.inc() }   <v10>: *                COPY
+=====================
+== inlined anonymous_1 ==
+{
+            try {
+                x = innerComputation()
+            } catch (e: java.lang.Exception) {
+                log()
+            }
+            // possible reassignment if innerComputation finished
+            x = 42
+        }
+---------------------
+                                                                                                                                       <v2>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v2>
+innerComputation()                                                                                                                     <v0>: Int              NEW: call(innerComputation(), innerComputation) -> <v0>
+x = innerComputation()                                                                                                                 !<v1>: *
+{ x = innerComputation() }                                                                                                             !<v1>: *               COPY
+log()                                                                                                                                  <v3>: *                NEW: call(log(), log) -> <v3>
+{ log() }                                                                                                                              <v3>: *                COPY
+try { x = innerComputation() } catch (e: java.lang.Exception) { log() }                                                                <v4>: *                NEW: merge(try { x = innerComputation() } catch (e: java.lang.Exception) { log() }|!<v1>, <v3>) -> <v4>
+42                                                                                                                                     <v5>: Int              NEW: r(42) -> <v5>
+x = 42                                                                                                                                 !<v6>: *
+try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42   !<v6>: *               COPY
+=====================
+== innerFinalltInitializes ==
+fun innerFinalltInitializes() {
+    val x: Int
+    try {
+        myRun {
+            try {
+                innerComputation()
+            } catch (e: java.lang.Exception) {
+                log()
+            } finally {
+                x = 42
+            }
+        }
+
+        // Properly initialized
+        x.inc()
+    } catch (e: java.lang.Exception) {
+        log()
+    }
+
+    // Still can be non-initialized (e.g. if x.inc() threw an exception)
+    x.inc()
+}
+---------------------
+                                                                                                                                                                                                                                                                                <v4>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v4>
+{ try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 } }                                                                                                                                                                                      <v0>: {<: () -> Any}   NEW: r({ try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 } }) -> <v0>
+myRun { try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 } }                                                                                                                                                                                <v1>: *                NEW: call(myRun { try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 } }, myRun|<v0>) -> <v1>
+x                                                                                                                                                                                                                                                                               <v2>: Int              NEW: r(x) -> <v2>
+inc()                                                                                                                                                                                                                                                                           <v3>: *                NEW: call(inc(), inc|<v2>) -> <v3>
+x.inc()                                                                                                                                                                                                                                                                         <v3>: *                COPY
+{ myRun { try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 } } // Properly initialized x.inc() }                                                                                                                                            <v3>: *                COPY
+log()                                                                                                                                                                                                                                                                           <v5>: *                NEW: call(log(), log) -> <v5>
+{ log() }                                                                                                                                                                                                                                                                       <v5>: *                COPY
+try { myRun { try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 } } // Properly initialized x.inc() } catch (e: java.lang.Exception) { log() }                                                                                               <v6>: *                NEW: merge(try { myRun { try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 } } // Properly initialized x.inc() } catch (e: java.lang.Exception) { log() }|<v3>, <v5>) -> <v6>
+x                                                                                                                                                                                                                                                                               <v7>: Int              NEW: r(x) -> <v7>
+inc()                                                                                                                                                                                                                                                                           <v8>: *                NEW: call(inc(), inc|<v7>) -> <v8>
+x.inc()                                                                                                                                                                                                                                                                         <v8>: *                COPY
+{ val x: Int try { myRun { try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 } } // Properly initialized x.inc() } catch (e: java.lang.Exception) { log() } // Still can be non-initialized (e.g. if x.inc() threw an exception) x.inc() }   <v8>: *                COPY
+=====================
+== inlined anonymous_2 ==
+{
+            try {
+                innerComputation()
+            } catch (e: java.lang.Exception) {
+                log()
+            } finally {
+                x = 42
+            }
+        }
+---------------------
+                                                                                         <v1>: {<: Exception}   NEW: magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v1>
+innerComputation()                                                                       <v0>: {<: Any}         NEW: call(innerComputation(), innerComputation) -> <v0>
+{ innerComputation() }                                                                   <v0>: {<: Any}         COPY
+log()                                                                                    <v2>: {<: Any}         NEW: call(log(), log) -> <v2>
+{ log() }                                                                                <v2>: {<: Any}         COPY
+42                                                                                       <v3>: Int              NEW: r(42) -> <v3>
+x = 42                                                                                   !<v4>: *
+{ x = 42 }                                                                               !<v4>: *               COPY
+try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 }   <v5>: {<: Any}         NEW: merge(try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 }|<v0>, <v2>) -> <v5>
+try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 }   <v5>: {<: Any}         COPY
+=====================

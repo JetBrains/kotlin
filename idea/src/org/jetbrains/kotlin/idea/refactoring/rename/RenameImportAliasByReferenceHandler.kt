@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-class RenameImportAliasByReferenceHandler : AbstractReferenceSubstitutionRenameHandler(VariableInplaceRenameHandler()) {
+class RenameImportAliasByReferenceHandler : AbstractReferenceSubstitutionRenameHandler(KotlinVariableInplaceRenameHandler()) {
     override fun getElementToRename(dataContext: DataContext): PsiElement? {
-        val refExpr = getReferenceExpression(dataContext) as? KtSimpleNameExpression ?: return null
+        val refExpr = getReferenceExpression(dataContext) ?: return null
         return refExpr.mainReference.getImportAlias()
     }
 }

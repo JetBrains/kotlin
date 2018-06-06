@@ -19,17 +19,17 @@ package org.jetbrains.kotlin.cfg.pseudocode
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.*
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-
 import java.util.*
 
 class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
@@ -48,8 +48,8 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
 
     private val allBlocks = Stack<BlockInfo>()
 
-    private fun pushBuilder(scopingElement: KtElement, subroutine: KtElement) {
-        val worker = ControlFlowInstructionsGeneratorWorker(scopingElement, subroutine)
+    private fun pushBuilder(scopingElement: KtElement, subroutine: KtElement, shouldInline: Boolean) {
+        val worker = ControlFlowInstructionsGeneratorWorker(scopingElement, subroutine, shouldInline)
         builders.push(worker)
         builder = worker
     }
@@ -58,39 +58,46 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         val worker = builders.pop()
         builder = if (!builders.isEmpty()) {
             builders.peek()
-        }
-        else {
+        } else {
             null
         }
         return worker
     }
 
-    override fun enterSubroutine(subroutine: KtElement) {
+    override fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind?) {
         val builder = builder
+        val shouldInlnie = invocationKind != null
         if (builder != null && subroutine is KtFunctionLiteral) {
-            pushBuilder(subroutine, builder.returnSubroutine)
-        }
-        else {
-            pushBuilder(subroutine, subroutine)
+            pushBuilder(subroutine, builder.returnSubroutine, shouldInlnie)
+        } else {
+            pushBuilder(subroutine, subroutine, shouldInlnie)
         }
         delegateBuilder.enterBlockScope(subroutine)
         delegateBuilder.enterSubroutine(subroutine)
     }
 
-    override fun exitSubroutine(subroutine: KtElement): Pseudocode {
-        super.exitSubroutine(subroutine)
+    override fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind?): Pseudocode {
+        super.exitSubroutine(subroutine, invocationKind)
         delegateBuilder.exitBlockScope(subroutine)
         val worker = popBuilder()
         if (!builders.empty()) {
             val builder = builders.peek()
-            builder.declareFunction(subroutine, worker.pseudocode)
+            if (invocationKind == null) {
+                builder.declareFunction(subroutine, worker.pseudocode)
+            } else {
+                builder.declareInlinedFunction(subroutine, worker.pseudocode, invocationKind)
+            }
         }
         return worker.pseudocode
     }
 
-    private inner class ControlFlowInstructionsGeneratorWorker(scopingElement: KtElement, override val returnSubroutine: KtElement) : ControlFlowBuilder {
+    private inner class ControlFlowInstructionsGeneratorWorker(
+        scopingElement: KtElement,
+        override val returnSubroutine: KtElement,
+        shouldInline: Boolean
+    ) : ControlFlowBuilder {
 
-        val pseudocode: PseudocodeImpl = PseudocodeImpl(scopingElement)
+        val pseudocode: PseudocodeImpl = PseudocodeImpl(scopingElement, shouldInline)
         private val error: Label = pseudocode.createLabel("error", null)
         private val sink: Label = pseudocode.createLabel("sink", null)
 
@@ -113,13 +120,18 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override fun createUnboundLabel(name: String): Label = pseudocode.createLabel("L" + labelCount++, name)
 
         override fun enterLoop(expression: KtLoopExpression): LoopInfo {
+            if (expression is KtDoWhileExpression) {
+                (pseudocode.rootPseudocode as PseudocodeImpl).containsDoWhile = true
+            }
+
             val info = LoopInfo(
-                    expression,
-                    createUnboundLabel("loop entry point"),
-                    createUnboundLabel("loop exit point"),
-                    createUnboundLabel("body entry point"),
-                    createUnboundLabel("body exit point"),
-                    createUnboundLabel("condition entry point"))
+                expression,
+                createUnboundLabel("loop entry point"),
+                createUnboundLabel("loop exit point"),
+                createUnboundLabel("body entry point"),
+                createUnboundLabel("body exit point"),
+                createUnboundLabel("condition entry point")
+            )
             bindLabel(info.entryPoint)
             elementToLoopInfo.put(expression, info)
             return info
@@ -142,11 +154,12 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override val currentLoop: KtLoopExpression?
             get() = if (loopInfo.empty()) null else loopInfo.peek().element
 
-        override fun enterSubroutine(subroutine: KtElement) {
+        override fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind?) {
             val blockInfo = SubroutineInfo(
-                    subroutine,
-                    /* entry point */ createUnboundLabel(),
-                    /* exit point  */ createUnboundLabel())
+                subroutine,
+                /* entry point */ createUnboundLabel(),
+                /* exit point  */ createUnboundLabel()
+            )
             elementToSubroutineInfo.put(subroutine, blockInfo)
             allBlocks.push(blockInfo)
             bindLabel(blockInfo.entryPoint)
@@ -159,10 +172,11 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override fun getLoopConditionEntryPoint(loop: KtLoopExpression): Label? = elementToLoopInfo[loop]?.conditionEntryPoint
 
         override fun getLoopExitPoint(loop: KtLoopExpression): Label? =// It's quite possible to have null here, see testBreakInsideLocal
-                elementToLoopInfo[loop]?.exitPoint
+            elementToLoopInfo[loop]?.exitPoint
 
-        override fun getSubroutineExitPoint(labelElement: KtElement): Label? =// It's quite possible to have null here, e.g. for non-local returns (see KT-10823)
-                elementToSubroutineInfo[labelElement]?.exitPoint
+        override fun getSubroutineExitPoint(labelElement: KtElement): Label? =
+// It's quite possible to have null here, e.g. for non-local returns (see KT-10823)
+            elementToSubroutineInfo[labelElement]?.exitPoint
 
         private val currentScope: BlockScope
             get() = blockScopes.peek()
@@ -177,8 +191,8 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             val currentScope = currentScope
             assert(currentScope.block === block) {
                 "Exit from not the current block scope.\n" +
-                "Current scope is for a block: " + currentScope.block.text + ".\n" +
-                "Exit from the scope for: " + block.text
+                        "Current scope is for a block: " + currentScope.block.text + ".\n" +
+                        "Exit from the scope for: " + block.text
             }
             blockScopes.pop()
         }
@@ -201,7 +215,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             }
         }
 
-        override fun exitSubroutine(subroutine: KtElement): Pseudocode {
+        override fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind?): Pseudocode {
             getSubroutineExitPoint(subroutine)?.let { bindLabel(it) }
             pseudocode.addExitInstruction(SubroutineExitInstruction(subroutine, currentScope, false))
             bindLabel(error)
@@ -238,11 +252,12 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         }
 
         override fun write(
-                assignment: KtElement,
-                lValue: KtElement,
-                rValue: PseudoValue,
-                target: AccessTarget,
-                receiverValues: Map<PseudoValue, ReceiverValue>) {
+            assignment: KtElement,
+            lValue: KtElement,
+            rValue: PseudoValue,
+            target: AccessTarget,
+            receiverValues: Map<PseudoValue, ReceiverValue>
+        ) {
             add(WriteValueInstruction(assignment, currentScope, target, receiverValues, lValue, rValue))
         }
 
@@ -256,6 +271,10 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
 
         override fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode) {
             add(LocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope))
+        }
+
+        override fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, invocationKind: InvocationKind) {
+            add(InlinedLocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope, invocationKind))
         }
 
         override fun declareEntryOrObject(entryOrObject: KtClassOrObject) {
@@ -324,22 +343,24 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override fun createAnonymousObject(expression: KtObjectLiteralExpression) = read(expression)
 
         override fun createLambda(expression: KtFunction) =
-                read(if (expression is KtFunctionLiteral) expression.getParent() as KtLambdaExpression else expression)
+            read(if (expression is KtFunctionLiteral) expression.getParent() as KtLambdaExpression else expression)
 
         override fun loadStringTemplate(
-                expression: KtStringTemplateExpression,
-                inputValues: List<PseudoValue>
+            expression: KtStringTemplateExpression,
+            inputValues: List<PseudoValue>
         ): InstructionWithValue =
-                if (inputValues.isEmpty()) read(expression)
-                else magic(expression, expression, inputValues, MagicKind.STRING_TEMPLATE)
+            if (inputValues.isEmpty()) read(expression)
+            else magic(expression, expression, inputValues, MagicKind.STRING_TEMPLATE)
 
         override fun magic(
-                instructionElement: KtElement,
-                valueElement: KtElement?,
-                inputValues: List<PseudoValue>,
-                kind: MagicKind): MagicInstruction {
+            instructionElement: KtElement,
+            valueElement: KtElement?,
+            inputValues: List<PseudoValue>,
+            kind: MagicKind
+        ): MagicInstruction {
             val instruction = MagicInstruction(
-                    instructionElement, valueElement, currentScope, inputValues, kind, valueFactory)
+                instructionElement, valueElement, currentScope, inputValues, kind, valueFactory
+            )
             add(instruction)
             return instruction
         }
@@ -351,32 +372,35 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         }
 
         override fun readVariable(
-                expression: KtExpression,
-                resolvedCall: ResolvedCall<*>,
-                receiverValues: Map<PseudoValue, ReceiverValue>
+            expression: KtExpression,
+            resolvedCall: ResolvedCall<*>,
+            receiverValues: Map<PseudoValue, ReceiverValue>
         ) = read(expression, resolvedCall, receiverValues)
 
         override fun call(
-                valueElement: KtElement,
-                resolvedCall: ResolvedCall<*>,
-                receiverValues: Map<PseudoValue, ReceiverValue>,
-                arguments: Map<PseudoValue, ValueParameterDescriptor>): CallInstruction {
+            valueElement: KtElement,
+            resolvedCall: ResolvedCall<*>,
+            receiverValues: Map<PseudoValue, ReceiverValue>,
+            arguments: Map<PseudoValue, ValueParameterDescriptor>
+        ): CallInstruction {
             val returnType = resolvedCall.resultingDescriptor.returnType
             val instruction = CallInstruction(
-                    valueElement,
-                    currentScope,
-                    resolvedCall,
-                    receiverValues,
-                    arguments,
-                    if (returnType != null && KotlinBuiltIns.isNothing(returnType)) null else valueFactory)
+                valueElement,
+                currentScope,
+                resolvedCall,
+                receiverValues,
+                arguments,
+                if (returnType != null && KotlinBuiltIns.isNothing(returnType)) null else valueFactory
+            )
             add(instruction)
             return instruction
         }
 
         override fun predefinedOperation(
-                expression: KtExpression,
-                operation: ControlFlowBuilder.PredefinedOperation,
-                inputValues: List<PseudoValue>): OperationInstruction = magic(expression, expression, inputValues, getMagicKind(operation))
+            expression: KtExpression,
+            operation: ControlFlowBuilder.PredefinedOperation,
+            inputValues: List<PseudoValue>
+        ): OperationInstruction = magic(expression, expression, inputValues, getMagicKind(operation))
 
         private fun getMagicKind(operation: ControlFlowBuilder.PredefinedOperation) = when (operation) {
             ControlFlowBuilder.PredefinedOperation.AND -> MagicKind.AND
@@ -385,17 +409,17 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         }
 
         override fun read(
-                element: KtElement,
-                target: AccessTarget,
-                receiverValues: Map<PseudoValue, ReceiverValue>
+            element: KtElement,
+            target: AccessTarget,
+            receiverValues: Map<PseudoValue, ReceiverValue>
         ) = ReadValueInstruction(element, currentScope, target, receiverValues, valueFactory).apply {
             add(this)
         }
 
         private fun read(
-                expression: KtExpression,
-                resolvedCall: ResolvedCall<*>? = null,
-                receiverValues: Map<PseudoValue, ReceiverValue> = emptyMap()
+            expression: KtExpression,
+            resolvedCall: ResolvedCall<*>? = null,
+            receiverValues: Map<PseudoValue, ReceiverValue> = emptyMap()
         ) = read(expression, if (resolvedCall != null) AccessTarget.Call(resolvedCall) else AccessTarget.BlackBox, receiverValues)
     }
 

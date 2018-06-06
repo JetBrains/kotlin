@@ -20,8 +20,10 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.inspections.SimplifyNegatedBinaryExpressionInspection
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -40,7 +42,7 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
         if (functionLiterals.size > 1) return false
         if (functionLiterals.size == 1 && argumentSize == 1) return false // "assert {...}" is incorrect
 
-        val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
+        val resolvedCall = element.resolveToCall() ?: return false
         return DescriptorUtils.getFqName(resolvedCall.resultingDescriptor).asString() == "kotlin.assert"
     }
 
@@ -48,7 +50,7 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
         val args = element.valueArguments
         val conditionText = args[0]?.getArgumentExpression()?.text ?: return
         val functionLiteralArgument = element.lambdaArguments.singleOrNull()
-        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         val psiFactory = KtPsiFactory(element)
 
         val messageFunctionExpr = when {
@@ -104,9 +106,9 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
 
     private fun simplifyConditionIfPossible(ifExpression: KtIfExpression, editor: Editor?) {
         val condition = ifExpression.condition as KtPrefixExpression
-        val simplifier = SimplifyNegatedBinaryExpressionIntention()
-        if (simplifier.isApplicableTo(condition)) {
-            simplifier.applyTo(condition, editor)
+        val simplifier = SimplifyNegatedBinaryExpressionInspection()
+        if (simplifier.isApplicable(condition)) {
+            simplifier.applyTo(condition.operationReference, editor = editor)
         }
     }
 

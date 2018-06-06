@@ -38,6 +38,8 @@ abstract class AbstractMultiModuleMoveTest : KotlinMultiFileTestCase() {
             val modulesWithJvmRuntime: List<Module>
             val modulesWithJsRuntime: List<Module>
 
+            PluginTestCaseBase.addJdk(testRootDisposable, PluginTestCaseBase::mockJdk)
+
             val withRuntime = config["withRuntime"]?.asBoolean ?: false
             if (withRuntime) {
                 val moduleManager = ModuleManager.getInstance(project)

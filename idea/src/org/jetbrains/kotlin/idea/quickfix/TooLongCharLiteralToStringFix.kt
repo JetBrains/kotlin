@@ -4,13 +4,12 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class TooLongCharLiteralToStringFix(
-        element: KtConstantExpression
+    element: KtConstantExpression
 ) : KotlinQuickFixAction<KtConstantExpression>(element) {
     override fun getText(): String = "Convert too long character literal to string"
 
@@ -22,8 +21,9 @@ class TooLongCharLiteralToStringFix(
         }
 
         val newStringContent = text
-                .slice(1..text.length - 2)
-                .replace("\"", "\\\"")
+            .slice(1..text.length - 2)
+            .replace("\\\"", "\"")
+            .replace("\"", "\\\"")
         val newElement = KtPsiFactory(element).createStringTemplate(newStringContent)
 
         element.replace(newElement)
@@ -33,7 +33,9 @@ class TooLongCharLiteralToStringFix(
 
     companion object Factory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val element = Errors.TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.cast(diagnostic).psiElement
+            val element = diagnostic.psiElement as? KtConstantExpression ?: return null
+            if (element.text == "'\\'") return null
+            if (element.text.startsWith("\"")) return null
             return TooLongCharLiteralToStringFix(element = element)
         }
     }

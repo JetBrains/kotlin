@@ -5,7 +5,8 @@ internal interface WindowListener {
 }
 
 internal interface EmptyWindowListener
-internal open class EmptyWindowAdapter
+
+internal open class EmptyWindowAdapter : EmptyWindowListener
 
 internal open class WindowAdapter : WindowListener {
     override fun windowClosing() {}

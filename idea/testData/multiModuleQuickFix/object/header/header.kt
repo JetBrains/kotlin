@@ -1,5 +1,5 @@
-// "Create header class implementation for platform JVM" "true"
+// "Create actual object for module testModule_JVM (JVM)" "true"
 
-header object <caret>Object {
+expect object <caret>Object {
     fun foo(): String
 }

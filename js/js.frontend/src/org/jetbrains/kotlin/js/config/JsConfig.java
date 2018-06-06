@@ -23,9 +23,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.util.SmartList;
 import com.intellij.util.io.URLUtil;
-import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.*;
@@ -88,7 +86,9 @@ public class JsConfig {
             @Nullable List<JsModuleDescriptor<KotlinJavaScriptLibraryParts>> metadataCache,
             @Nullable Set<String> librariesToSkip) {
         this.project = project;
-        this.configuration = configuration;
+        this.configuration = configuration.copy();
+        CommonConfigurationKeysKt.setLanguageVersionSettings(this.configuration, new ReleaseCoroutinesDisabledLanguageVersionSettings(
+                CommonConfigurationKeysKt.getLanguageVersionSettings(this.configuration)));
         this.metadataCache = metadataCache;
         this.librariesToSkip = librariesToSkip;
     }
@@ -125,7 +125,11 @@ public class JsConfig {
 
     @NotNull
     public List<String> getSourceMapRoots() {
-        return configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, Collections.singletonList("."));
+        return configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, Collections.emptyList());
+    }
+
+    public boolean shouldGenerateRelativePathsInSourceMap() {
+        return getSourceMapPrefix().isEmpty() && getSourceMapRoots().isEmpty();
     }
 
     @NotNull
@@ -139,6 +143,12 @@ public class JsConfig {
         return getConfiguration().getList(JSConfigurationKeys.FRIEND_PATHS);
     }
 
+    public boolean isAtLeast(@NotNull LanguageVersion expected) {
+        LanguageVersion actual = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration).getLanguageVersion();
+        return actual.getMajor() > expected.getMajor() ||
+               actual.getMajor() == expected.getMajor() && actual.getMinor() >= expected.getMinor();
+    }
+
 
     public static abstract class Reporter {
         public void error(@NotNull String message) { /*Do nothing*/ }
@@ -147,13 +157,12 @@ public class JsConfig {
     }
 
     public boolean checkLibFilesAndReportErrors(@NotNull JsConfig.Reporter report) {
-        return checkLibFilesAndReportErrors(getLibraries(), report, null);
+        return checkLibFilesAndReportErrors(getLibraries(), report);
     }
 
     private boolean checkLibFilesAndReportErrors(
             @NotNull Collection<String> libraries,
-            @NotNull JsConfig.Reporter report,
-            @Nullable Function1<List<KotlinJavascriptMetadata>, Unit> action
+            @NotNull JsConfig.Reporter report
     ) {
         if (libraries.isEmpty()) {
             return false;
@@ -195,6 +204,8 @@ public class JsConfig {
                 continue;
             }
 
+            Set<String> moduleNames = new LinkedHashSet<>();
+
             for (KotlinJavascriptMetadata metadata : metadataList) {
                 if (!metadata.getVersion().isCompatible() && !skipMetadataVersionCheck) {
                     report.error("File '" + path + "' was compiled with an incompatible version of Kotlin. " +
@@ -202,25 +213,40 @@ public class JsConfig {
                                  ", expected version is " + JsMetadataVersion.INSTANCE);
                     return true;
                 }
-                if (!modules.add(metadata.getModuleName())) {
-                    report.warning("Module \"" + metadata.getModuleName() + "\" is defined in more than one file");
+
+                moduleNames.add(metadata.getModuleName());
+            }
+
+            for (String moduleName : moduleNames) {
+                if (!modules.add(moduleName)) {
+                    report.warning("Module \"" + moduleName + "\" is defined in more than one file");
                 }
             }
 
-            if (action != null) {
-                action.invoke(metadataList);
+            if (modules.contains(getModuleId())) {
+                report.warning("Module \"" + getModuleId() + "\" depends on module with the same name");
+            }
+
+            Set<String> friendLibsSet = new HashSet<>(getFriends());
+            metadata.addAll(metadataList);
+            if (friendLibsSet.contains(path)){
+                friends.addAll(metadataList);
             }
         }
 
+        initialized = true;
         return false;
     }
 
     @NotNull
     public List<JsModuleDescriptor<ModuleDescriptorImpl>> getModuleDescriptors() {
         init();
-        if (moduleDescriptors != null) return moduleDescriptors;
+        return moduleDescriptors;
+    }
 
-        moduleDescriptors = new SmartList<>();
+    @NotNull
+    private List<JsModuleDescriptor<ModuleDescriptorImpl>> createModuleDescriptors() {
+        List<JsModuleDescriptor<ModuleDescriptorImpl>> moduleDescriptors = new SmartList<>();
         List<ModuleDescriptorImpl> kotlinModuleDescriptors = new ArrayList<>();
         for (KotlinJavascriptMetadata metadataEntry : metadata) {
             JsModuleDescriptor<ModuleDescriptorImpl> descriptor = createModuleDescriptor(metadataEntry);
@@ -263,9 +289,12 @@ public class JsConfig {
     @NotNull
     public List<JsModuleDescriptor<ModuleDescriptorImpl>> getFriendModuleDescriptors() {
         init();
-        if (friendModuleDescriptors != null) return friendModuleDescriptors;
+        return friendModuleDescriptors;
+    }
 
-        friendModuleDescriptors = new SmartList<>();
+    @NotNull
+    private List<JsModuleDescriptor<ModuleDescriptorImpl>> createFriendModuleDescriptors() {
+        List<JsModuleDescriptor<ModuleDescriptorImpl>> friendModuleDescriptors = new SmartList<>();
         for (KotlinJavascriptMetadata metadataEntry : friends) {
             JsModuleDescriptor<ModuleDescriptorImpl> descriptor = createModuleDescriptor(metadataEntry);
             friendModuleDescriptors.add(descriptor);
@@ -276,10 +305,8 @@ public class JsConfig {
         return friendModuleDescriptors;
     }
 
-    private void init() {
-        if (initialized) return;
-
-        if (!getLibraries().isEmpty()) {
+    public void init() {
+        if (!initialized) {
             JsConfig.Reporter reporter = new Reporter() {
                 @Override
                 public void error(@NotNull String message) {
@@ -287,24 +314,16 @@ public class JsConfig {
                 }
             };
 
-            boolean hasErrors = checkLibFilesAndReportErrors(getFriends(), reporter, metaList -> {
-                metadata.addAll(metaList);
-                friends.addAll(metaList);
-
-                return Unit.INSTANCE;
-            });
-
-
-            hasErrors |= checkLibFilesAndReportErrors(CollectionsKt.subtract(getLibraries(), getFriends()), reporter, metaList -> {
-                metadata.addAll(metaList);
-
-                return Unit.INSTANCE;
-            });
-
-            assert !hasErrors : "hasErrors should be false";
+            checkLibFilesAndReportErrors(reporter);
         }
 
-        initialized = true;
+        if (moduleDescriptors == null) {
+            moduleDescriptors = createModuleDescriptors();
+        }
+
+        if (friendModuleDescriptors == null) {
+            friendModuleDescriptors = createFriendModuleDescriptors();
+        }
     }
 
     private final IdentityHashMap<KotlinJavascriptMetadata, JsModuleDescriptor<ModuleDescriptorImpl>> factoryMap = new IdentityHashMap<>();

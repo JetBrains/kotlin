@@ -28,7 +28,10 @@ abstract class InstructionVisitorWithResult<out R> {
     open fun visitReadValue(instruction: ReadValueInstruction): R = visitAccessInstruction(instruction)
 
     open fun visitLocalFunctionDeclarationInstruction(instruction: LocalFunctionDeclarationInstruction): R =
-            visitInstructionWithNext(instruction)
+        visitInstructionWithNext(instruction)
+
+    open fun visitInlinedFunctionDeclarationInstruction(instruction: InlinedLocalFunctionDeclarationInstruction): R =
+        visitLocalFunctionDeclarationInstruction(instruction)
 
     open fun visitVariableDeclarationInstruction(instruction: VariableDeclarationInstruction): R = visitInstructionWithNext(instruction)
 

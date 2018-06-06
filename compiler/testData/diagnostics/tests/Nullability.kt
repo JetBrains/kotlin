@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun test() {
   val a : Int? = 0
   if (a != null) {
@@ -146,7 +147,7 @@ fun test() {
   
   while (out2 == null) {
     <!DEBUG_INFO_CONSTANT!>out2<!>?.println();
-    <!DEBUG_INFO_CONSTANT!>out2<!><!UNSAFE_CALL!>.<!>println();
+    <!OI;DEBUG_INFO_CONSTANT!>out2<!><!UNSAFE_CALL!>.<!>println();
   }
   <!DEBUG_INFO_SMARTCAST!>out2<!>.println()
 

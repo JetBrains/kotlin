@@ -10,12 +10,12 @@ where possible options include:
   -output-postfix <path>     Path to file which will be added to the end of output file
   -output-prefix <path>      Path to file which will be added to the beginning of output file
   -source-map                Generate source map
+  -source-map-base-dirs <path> Base directories which are used to calculate relative paths to source files in source map
   -source-map-embed-sources { always, never, inlining }
                              Embed source files into source map
   -source-map-prefix         Prefix for paths in a source map
-  -source-map-source-roots <path>
-                             Base directories which are used to calculate relative paths to source files in source map
   -target { v5 }             Generate JS files for specific ECMA version
+  -Werror                    Report an error if there are any warnings
   -api-version <version>     Allow to use declarations only from the specified version of bundled libraries
   -X                         Print a synopsis of advanced options
   -help (-h)                 Print a synopsis of standard options

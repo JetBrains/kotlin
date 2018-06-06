@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.RecursivePropertyAccessorInspection
-import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
+import org.jetbrains.kotlin.idea.util.getReceiverTargetDescriptor
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -53,7 +53,7 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
                 val lineNumber = element.getLineNumber()
                 if (lineNumber !in markedLineNumbers && isRecursiveCall(element)) {
                     markedLineNumbers.add(lineNumber)
-                    result.add(RecursiveMethodCallMarkerInfo(element))
+                    result.add(RecursiveMethodCallMarkerInfo(getElementForLineMark(element)))
                 }
             }
         }
@@ -62,7 +62,12 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
     private fun getEnclosingFunction(element: KtElement, stopOnNonInlinedLambdas: Boolean): KtNamedFunction? {
         for (parent in element.parents) {
             when (parent) {
-                is KtFunctionLiteral -> if (stopOnNonInlinedLambdas && !InlineUtil.isInlinedArgument(parent, parent.analyze(), false)) return null
+                is KtFunctionLiteral -> if (stopOnNonInlinedLambdas && !InlineUtil.isInlinedArgument(
+                        parent,
+                        parent.analyze(),
+                        false
+                    )
+                ) return null
                 is KtNamedFunction -> {
                     when (parent.parent) {
                         is KtBlockExpression, is KtClassBody, is KtFile, is KtScript -> return parent
@@ -82,7 +87,10 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
         val resolveName = getCallNameFromPsi(element) ?: return false
         val enclosingFunction = getEnclosingFunction(element, false) ?: return false
 
-        if (enclosingFunction.name != resolveName.asString()) return false
+        val enclosingFunctionName = enclosingFunction.name
+        if (enclosingFunctionName != OperatorNameConventions.INVOKE.asString()
+            && enclosingFunctionName != resolveName.asString()
+        ) return false
 
         // Check that there were no not-inlined lambdas on the way to enclosing function
         if (enclosingFunction != getEnclosingFunction(element, true)) return false
@@ -98,12 +106,12 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
         fun isDifferentReceiver(receiver: Receiver?): Boolean {
             if (receiver !is ReceiverValue) return false
 
-            val receiverOwner = receiver.getThisReceiverOwner(bindingContext) ?: return true
+            val receiverOwner = receiver.getReceiverTargetDescriptor(bindingContext) ?: return true
 
             return when (receiverOwner) {
                 is SimpleFunctionDescriptor -> receiverOwner != enclosingFunctionDescriptor
                 is ClassDescriptor -> receiverOwner != enclosingFunctionDescriptor.containingDeclaration
-                else -> throw IllegalStateException("Unexpected receiver owner: $receiverOwner")
+                else -> return true
             }
         }
 
@@ -111,25 +119,33 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
         return true
     }
 
-    private class RecursiveMethodCallMarkerInfo(callElement: KtElement)
-            : LineMarkerInfo<KtElement>(
-            callElement,
-            callElement.textRange,
-            AllIcons.Gutter.RecursiveMethod,
-            Pass.LINE_MARKERS,
-            { "Recursive call" },
-            null,
-            GutterIconRenderer.Alignment.RIGHT
+    private class RecursiveMethodCallMarkerInfo(callElement: PsiElement) : LineMarkerInfo<PsiElement>(
+        callElement,
+        callElement.textRange,
+        AllIcons.Gutter.RecursiveMethod,
+        Pass.LINE_MARKERS,
+        { "Recursive call" },
+        null,
+        GutterIconRenderer.Alignment.RIGHT
     ) {
 
         override fun createGutterRenderer(): GutterIconRenderer? {
-            return object : LineMarkerInfo.LineMarkerGutterIconRenderer<KtElement>(this) {
+            return object : LineMarkerInfo.LineMarkerGutterIconRenderer<PsiElement>(this) {
                 override fun getClickAction() = null // to place breakpoint on mouse click
             }
         }
     }
 
 }
+
+internal fun getElementForLineMark(callElement: PsiElement): PsiElement =
+    when (callElement) {
+        is KtSimpleNameExpression -> callElement.getReferencedNameElement()
+        else ->
+            // a fallback,
+            //but who knows what to reference in KtArrayAccessExpression ?
+            generateSequence(callElement, { it.firstChild }).last()
+    }
 
 private fun PsiElement.getLineNumber(): Int {
     return PsiDocumentManager.getInstance(project).getDocument(containingFile)!!.getLineNumber(textOffset)
@@ -147,13 +163,12 @@ private fun getCallNameFromPsi(element: KtElement): Name? {
                         val node = operationReference.getReferencedNameElementType()
                         return if (node is KtToken) {
                             val conventionName = if (elementParent is KtPrefixExpression)
-                                OperatorConventions.getNameForOperationSymbol(node, true,  false)
+                                OperatorConventions.getNameForOperationSymbol(node, true, false)
                             else
                                 OperatorConventions.getNameForOperationSymbol(node)
 
                             conventionName ?: Name.identifier(element.getText())
-                        }
-                        else {
+                        } else {
                             Name.identifier(element.getText())
                         }
                     }

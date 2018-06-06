@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils;
 import org.jetbrains.kotlin.psi.KtExpression;
 
 public final class ErrorReportingUtils {
@@ -28,7 +29,7 @@ public final class ErrorReportingUtils {
 
     @NotNull
     public static RuntimeException reportErrorWithLocation(@NotNull KtExpression selector, @NotNull RuntimeException e) {
-        return reportErrorWithLocation(e, DiagnosticUtils.atLocation(selector));
+        return reportErrorWithLocation(e, PsiDiagnosticUtils.atLocation(selector));
     }
 
     @NotNull
@@ -38,7 +39,7 @@ public final class ErrorReportingUtils {
 
     @NotNull
     public static String message(@NotNull PsiElement expression, @NotNull String messageText) {
-        return messageText + " at " + DiagnosticUtils.atLocation(expression) + ".";
+        return messageText + " at " + PsiDiagnosticUtils.atLocation(expression) + ".";
     }
 
     @NotNull
@@ -48,6 +49,6 @@ public final class ErrorReportingUtils {
 
     @NotNull
     public static String message(@NotNull PsiElement element) {
-        return "Error at " + DiagnosticUtils.atLocation(element) + ".";
+        return "Error at " + PsiDiagnosticUtils.atLocation(element) + ".";
     }
 }

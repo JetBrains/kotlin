@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/experimentalIsNotMarker.kt
+-d
+$TEMP_DIR$
+-Xexperimental=org.test.NotAMarker1
+-Xuse-experimental=org.test.NotAMarker2

@@ -1,0 +1,4 @@
+[NotNull Values]
+4 	fun foo(<bold>n: Int</bold>, s: String = "???") {
+4 		fun foo(<bold>n: Int</bold>, s: String = "???") {
+

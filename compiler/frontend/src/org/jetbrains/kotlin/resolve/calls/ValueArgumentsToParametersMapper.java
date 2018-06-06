@@ -28,11 +28,12 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.ReservedCheckingKt;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.components.ArgumentsUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
 import java.util.Iterator;
 import java.util.List;
@@ -181,13 +182,13 @@ public class ValueArgumentsToParametersMapper {
                 ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(argumentName.getAsName());
                 KtSimpleNameExpression nameReference = argumentName.getReferenceExpression();
 
-                KtPsiUtilKt.checkReservedYield(nameReference, candidateCall.getTrace());
+                ReservedCheckingKt.checkReservedYield(nameReference, candidateCall.getTrace());
                 if (nameReference != null) {
-                    if (candidate instanceof MemberDescriptor && ((MemberDescriptor) candidate).isHeader() &&
+                    if (candidate instanceof MemberDescriptor && ((MemberDescriptor) candidate).isExpect() &&
                         candidate.getContainingDeclaration() instanceof ClassDescriptor) {
-                        // We do not allow named arguments for members of header classes until we're able to use both
-                        // headers and platform definitions when compiling platform code
-                        report(NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference, HEADER_CLASS_MEMBER));
+                        // We do not allow named arguments for members of expected classes until we're able to use both
+                        // expected and actual definitions when compiling platform code
+                        report(NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference, EXPECTED_CLASS_MEMBER));
                     }
                     else if (!candidate.hasStableParameterNames()) {
                         report(NAMED_ARGUMENTS_NOT_ALLOWED.on(
@@ -311,7 +312,7 @@ public class ValueArgumentsToParametersMapper {
         private void reportUnmappedParameters() {
             for (ValueParameterDescriptor valueParameter : parameters) {
                 if (!usedParameters.contains(valueParameter)) {
-                    if (DescriptorUtilsKt.hasDefaultValue(valueParameter)) {
+                    if (ArgumentsUtilsKt.hasDefaultValue(valueParameter)) {
                         candidateCall.recordValueArgument(valueParameter, DefaultValueArgument.DEFAULT);
                     }
                     else if (valueParameter.getVarargElementType() != null) {

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.inspections.collections
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -31,34 +32,43 @@ class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         (descriptor.psiElement as? KtQualifiedExpression)?.let { secondQualifiedExpression ->
             val factory = KtPsiFactory(secondQualifiedExpression)
-            val firstQualifiedExpression = secondQualifiedExpression.receiverExpression as? KtQualifiedExpression ?: return
-            val operationSign = if (firstQualifiedExpression is KtSafeQualifiedExpression) "?." else "."
-            val firstCallExpression = firstQualifiedExpression.selectorExpression as? KtCallExpression ?: return
+            val firstExpression = secondQualifiedExpression.receiverExpression
+
+            val operationSign = when (firstExpression) {
+                is KtSafeQualifiedExpression -> "?."
+                is KtQualifiedExpression -> "."
+                else -> ""
+            }
+
+            val receiverExpression = (firstExpression as? KtQualifiedExpression)?.receiverExpression
+
+            val firstCallExpression = AbstractCallChainChecker.getCallExpression(firstExpression) ?: return
             val secondCallExpression = secondQualifiedExpression.selectorExpression as? KtCallExpression ?: return
 
             val lastArgumentPrefix = if (newName.startsWith("joinTo")) "transform = " else ""
             val arguments = secondCallExpression.valueArgumentList?.arguments.orEmpty().map { it.text } +
-                            firstCallExpression.valueArgumentList?.arguments.orEmpty().map { "$lastArgumentPrefix${it.text}"}
-            val lambdaArgument = firstCallExpression.lambdaArguments.singleOrNull()
+                    firstCallExpression.valueArgumentList?.arguments.orEmpty().map { "$lastArgumentPrefix${it.text}" }
+            val lambdaExpression = firstCallExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()
 
             val argumentsText = arguments.ifNotEmpty { joinToString(prefix = "(", postfix = ")") } ?: ""
-            val newQualifiedExpression = if (lambdaArgument != null) factory.createExpressionByPattern(
-                    "$0$1$2 $3 $4",
-                    firstQualifiedExpression.receiverExpression,
-                    operationSign,
-                    newName,
-                    argumentsText,
-                    lambdaArgument.getLambdaExpression().text
+            val newQualifiedExpression = if (lambdaExpression != null) factory.createExpressionByPattern(
+                "$0$1$2 $3 $4",
+                receiverExpression ?: "",
+                operationSign,
+                newName,
+                argumentsText,
+                lambdaExpression.text
             )
             else factory.createExpressionByPattern(
-                    "$0$1$2 $3",
-                    firstQualifiedExpression.receiverExpression,
-                    operationSign,
-                    newName,
-                    argumentsText
+                "$0$1$2 $3",
+                receiverExpression ?: "",
+                operationSign,
+                newName,
+                argumentsText
             )
 
-            secondQualifiedExpression.replaced(newQualifiedExpression)
+            val result = secondQualifiedExpression.replaced(newQualifiedExpression)
+            ShortenReferences.DEFAULT.process(result)
         }
     }
 }

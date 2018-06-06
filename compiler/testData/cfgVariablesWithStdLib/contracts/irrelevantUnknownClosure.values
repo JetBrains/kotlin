@@ -1,0 +1,71 @@
+== myRun ==
+inline fun myRun(block: () -> Unit): Unit {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+                                                                                   <v0>: {<: () -> Unit}                   NEW: magic[FAKE_INITIALIZER](block: () -> Unit) -> <v0>
+{ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                               <v1>: {<: ContractBuilder.() -> Unit}   NEW: r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                      <v2>: *                                 NEW: call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+block                                                                              <v3>: {<: () -> Unit}                   NEW: r(block) -> <v3>
+block()                                                                            <v4>: Unit                              NEW: call(block(), invoke|<v3>) -> <v4>
+return block()                                                                     !<v5>: *
+{ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() }   !<v5>: *                                COPY
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+                                                   <v0>: {<: ContractBuilder}   NEW: magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+block                                              <v1>: {<: Function<Unit>}    NEW: r(block) -> <v1>
+EXACTLY_ONCE                                       <v2>: {<: InvocationKind}    NEW: r(EXACTLY_ONCE) -> <v2>
+InvocationKind.EXACTLY_ONCE                        <v2>: {<: InvocationKind}    COPY
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      NEW: call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      COPY
+=====================
+== unknownRun ==
+inline fun unknownRun(block: () -> Unit) { block() }
+---------------------
+              <v0>: {<: () -> Unit}   NEW: magic[FAKE_INITIALIZER](block: () -> Unit) -> <v0>
+block         <v1>: {<: () -> Unit}   NEW: r(block) -> <v1>
+block()       <v2>: *                 NEW: call(block(), invoke|<v1>) -> <v2>
+{ block() }   <v2>: *                 COPY
+=====================
+== foo ==
+fun foo() {
+    val x: Int
+    myRun {
+        unknownRun { println("shouldn't change anything") }
+        x = 42
+    }
+    println(x)
+}
+---------------------
+{ unknownRun { println("shouldn't change anything") } x = 42 }                                   <v0>: {<: () -> Unit}   NEW: r({ unknownRun { println("shouldn't change anything") } x = 42 }) -> <v0>
+myRun { unknownRun { println("shouldn't change anything") } x = 42 }                             <v1>: *                 NEW: call(myRun { unknownRun { println("shouldn't change anything") } x = 42 }, myRun|<v0>) -> <v1>
+x                                                                                                <v2>: Int               NEW: r(x) -> <v2>
+println(x)                                                                                       <v3>: *                 NEW: call(println(x), println|<v2>) -> <v3>
+{ val x: Int myRun { unknownRun { println("shouldn't change anything") } x = 42 } println(x) }   <v3>: *                 COPY
+=====================
+== inlined anonymous_1 ==
+{
+        unknownRun { println("shouldn't change anything") }
+        x = 42
+    }
+---------------------
+{ println("shouldn't change anything") }                     <v0>: {<: () -> Unit}   NEW: r({ println("shouldn't change anything") }) -> <v0>
+unknownRun { println("shouldn't change anything") }          <v1>: *                 NEW: call(unknownRun { println("shouldn't change anything") }, unknownRun|<v0>) -> <v1>
+42                                                           <v2>: Int               NEW: r(42) -> <v2>
+x = 42                                                       !<v3>: *
+unknownRun { println("shouldn't change anything") } x = 42   !<v3>: *                COPY
+=====================
+== anonymous_2 ==
+{ println("shouldn't change anything") }
+---------------------
+"shouldn't change anything"            <v0>: *   NEW: r("shouldn't change anything") -> <v0>
+println("shouldn't change anything")   <v1>: *   NEW: call(println("shouldn't change anything"), println|<v0>) -> <v1>
+println("shouldn't change anything")   <v1>: *   COPY
+=====================

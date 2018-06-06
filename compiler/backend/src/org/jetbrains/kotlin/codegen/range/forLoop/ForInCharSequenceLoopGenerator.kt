@@ -22,12 +22,19 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class ForInCharSequenceLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression)
-    : AbstractForLoopGenerator(codegen, forExpression)
-{
+class ForInCharSequenceLoopGenerator(
+    codegen: ExpressionCodegen,
+    forExpression: KtForExpression,
+    private val canCacheLength: Boolean,
+    private val charSequenceClassType: Type?
+) : AbstractForLoopGenerator(codegen, forExpression) {
     private var indexVar: Int = 0
     private var charSequenceVar: Int = 0
+    private var charSequenceLengthVar: Int = 0
+
+    private val charSequenceType = charSequenceClassType ?: CHAR_SEQUENCE_TYPE
 
     override fun beforeLoop() {
         super.beforeLoop()
@@ -42,9 +49,16 @@ class ForInCharSequenceLoopGenerator(codegen: ExpressionCodegen, forExpression: 
         // NB even if we already have a loop range stored in local variable, that variable might be modified in the loop body
         // (see controlStructures/forInCharSequenceMut.kt).
         // We should always store the corresponding CharSequence to a local variable to preserve the Iterator-based behavior.
-        charSequenceVar = createLoopTempVariable(CHAR_SEQUENCE_TYPE)
+        charSequenceVar = createLoopTempVariable(charSequenceType)
         value.put(asmLoopRangeType, v)
-        v.store(charSequenceVar, CHAR_SEQUENCE_TYPE)
+        v.store(charSequenceVar, charSequenceType)
+
+        if (canCacheLength) {
+            charSequenceLengthVar = createLoopTempVariable(Type.INT_TYPE)
+            v.load(charSequenceVar, charSequenceType)
+            v.invokeCharSequenceMethod("length", "()I")
+            v.store(charSequenceLengthVar, Type.INT_TYPE)
+        }
 
         v.iconst(0)
         v.store(indexVar, Type.INT_TYPE)
@@ -54,21 +68,34 @@ class ForInCharSequenceLoopGenerator(codegen: ExpressionCodegen, forExpression: 
 
     override fun checkPreCondition(loopExit: Label) {
         v.load(indexVar, Type.INT_TYPE)
-        v.load(charSequenceVar, CHAR_SEQUENCE_TYPE)
-        v.invokeinterface(CHAR_SEQUENCE_TYPE.internalName, "length", "()I")
+        if (canCacheLength) {
+            v.load(charSequenceLengthVar, Type.INT_TYPE)
+        } else {
+            v.load(charSequenceVar, charSequenceType)
+            v.invokeCharSequenceMethod("length", "()I")
+        }
         v.ificmpge(loopExit)
     }
 
     override fun assignToLoopParameter() {
-        v.load(charSequenceVar, CHAR_SEQUENCE_TYPE)
+        v.load(charSequenceVar, charSequenceType)
         v.load(indexVar, Type.INT_TYPE)
-        v.invokeinterface(CHAR_SEQUENCE_TYPE.internalName, "charAt", "(I)C")
+        v.invokeCharSequenceMethod("charAt", "(I)C")
         StackValue.onStack(Type.CHAR_TYPE).put(asmElementType, codegen.v)
         v.store(loopParameterVar, asmElementType)
     }
 
     override fun checkPostConditionAndIncrement(loopExit: Label) {
         v.iinc(indexVar, 1)
+    }
+
+    private fun InstructionAdapter.invokeCharSequenceMethod(name: String, desc: String) {
+        val charSequenceClassType = charSequenceClassType
+        if (charSequenceClassType != null) {
+            invokevirtual(charSequenceClassType.internalName, name, desc, false)
+        } else {
+            invokeinterface(CHAR_SEQUENCE_TYPE.internalName, name, desc)
+        }
     }
 
     companion object {

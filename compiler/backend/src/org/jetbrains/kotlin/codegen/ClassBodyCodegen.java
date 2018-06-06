@@ -1,23 +1,14 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
 
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
 import org.jetbrains.kotlin.codegen.context.ClassContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -63,7 +54,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     @Override
     protected void generateBody() {
         List<KtObjectDeclaration> companions = new ArrayList<>();
-        if (kind != OwnerKind.DEFAULT_IMPLS) {
+        if (kind != OwnerKind.DEFAULT_IMPLS && kind != OwnerKind.ERASED_INLINE_CLASS) {
             //generate nested classes first and only then generate class body. It necessary to access to nested CodegenContexts
             for (KtDeclaration declaration : myClass.getDeclarations()) {
                 if (shouldProcessFirst(declaration)) {
@@ -91,17 +82,13 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
             generatePrimaryConstructorProperties();
             generateConstructors();
             generateDefaultImplsIfNeeded();
+            generateErasedInlineClassIfNeeded();
+            generateUnboxMethodForInlineClass();
         }
 
         // Generate _declared_ companions
         for (KtObjectDeclaration companion : companions) {
             genClassOrObject(companion);
-        }
-
-        // Generate synthetic (non-declared) companion if needed
-        ClassDescriptor companionObjectDescriptor = descriptor.getCompanionObjectDescriptor();
-        if (companionObjectDescriptor instanceof SyntheticClassOrObjectDescriptor) {
-            genSyntheticClassOrObject((SyntheticClassOrObjectDescriptor) companionObjectDescriptor);
         }
 
         // Generate synthetic nested classes
@@ -150,13 +137,13 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
                state.getGenerateDeclaredClassFilter().shouldGenerateClassMembers((KtClassOrObject) myClass);
     }
 
-    protected void generateConstructors() {
+    protected void generateConstructors() {}
 
-    }
+    protected void generateDefaultImplsIfNeeded() {}
 
-    protected void generateDefaultImplsIfNeeded() {
+    protected void generateErasedInlineClassIfNeeded() {}
 
-    }
+    protected void generateUnboxMethodForInlineClass() {}
 
     private static boolean shouldProcessFirst(KtDeclaration declaration) {
         return !(declaration instanceof KtProperty || declaration instanceof KtNamedFunction);
@@ -178,16 +165,26 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     }
 
     private void generatePrimaryConstructorProperties() {
+        ClassConstructorDescriptor constructor = CollectionsKt.firstOrNull(descriptor.getConstructors());
+        if (constructor == null) return;
+
         boolean isAnnotation = descriptor.getKind() == ClassKind.ANNOTATION_CLASS;
+        FunctionDescriptor expectedAnnotationConstructor =
+                isAnnotation && constructor.isActual()
+                ? CodegenUtil.findExpectedFunctionForActual(constructor)
+                : null;
+
         for (KtParameter p : getPrimaryConstructorParameters()) {
             if (p.hasValOrVar()) {
                 PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
-                    if (!isAnnotation) {
-                        propertyCodegen.generatePrimaryConstructorProperty(p, propertyDescriptor);
+                    if (isAnnotation) {
+                        propertyCodegen.generateConstructorPropertyAsMethodForAnnotationClass(
+                                p, propertyDescriptor, expectedAnnotationConstructor
+                        );
                     }
                     else {
-                        propertyCodegen.generateConstructorPropertyAsMethodForAnnotationClass(p, propertyDescriptor);
+                        propertyCodegen.generatePrimaryConstructorProperty(p, propertyDescriptor);
                     }
                 }
             }

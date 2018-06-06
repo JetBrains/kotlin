@@ -1,0 +1,4 @@
+7 val <bold>x = foo</bold>
+7 	val x = <bold>foo</bold>
+4 		val <bold>foo: Int by D.INSTANCE</bold>
+9 			return <bold>1</bold>;

@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.resolve.inline
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
+import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReifiable
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -26,11 +28,12 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AnalyzerExtensions
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 
 class InlineAnalyzerExtension(
-        private val reasonableInlineRules: Iterable<ReasonableInlineRule>,
-        private val languageVersionSettings: LanguageVersionSettings
+    private val reasonableInlineRules: Iterable<ReasonableInlineRule>,
+    private val languageVersionSettings: LanguageVersionSettings
 ) : AnalyzerExtensions.AnalyzerExtension {
 
     override fun process(descriptor: CallableMemberDescriptor, functionOrProperty: KtCallableDeclaration, trace: BindingTrace) {
@@ -38,17 +41,16 @@ class InlineAnalyzerExtension(
         notSupportedInInlineCheck(descriptor, functionOrProperty, trace)
 
         if (descriptor is FunctionDescriptor) {
-            assert (functionOrProperty is KtNamedFunction) {
+            assert(functionOrProperty is KtNamedFunction) {
                 "Function descriptor $descriptor should have corresponded KtNamedFunction, but has $functionOrProperty"
             }
             checkDefaults(descriptor, functionOrProperty as KtNamedFunction, trace)
             checkHasInlinableAndNullability(descriptor, functionOrProperty, trace)
-        }
-        else {
-            assert (descriptor is PropertyDescriptor) {
+        } else {
+            assert(descriptor is PropertyDescriptor) {
                 "PropertyDescriptor expected, but was $descriptor"
             }
-            assert (functionOrProperty is KtProperty) {
+            assert(functionOrProperty is KtProperty) {
                 "Property descriptor $descriptor should have corresponded KtProperty, but has $functionOrProperty"
             }
 
@@ -59,7 +61,11 @@ class InlineAnalyzerExtension(
         }
     }
 
-    private fun notSupportedInInlineCheck(descriptor: CallableMemberDescriptor, functionOrProperty: KtCallableDeclaration, trace: BindingTrace) {
+    private fun notSupportedInInlineCheck(
+        descriptor: CallableMemberDescriptor,
+        functionOrProperty: KtCallableDeclaration,
+        trace: BindingTrace
+    ) {
         val visitor = object : KtVisitorVoid() {
             override fun visitKtElement(element: KtElement) {
                 super.visitKtElement(element)
@@ -67,15 +73,14 @@ class InlineAnalyzerExtension(
             }
 
             override fun visitClass(klass: KtClass) {
-                trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(klass, klass, descriptor))
+                trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(klass, "Local classes"))
             }
 
             override fun visitNamedFunction(function: KtNamedFunction) {
                 if (function.parent.parent is KtObjectDeclaration) {
                     super.visitNamedFunction(function)
-                }
-                else {
-                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(function, function, descriptor))
+                } else {
+                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(function, "Local functions"))
                 }
             }
         }
@@ -84,22 +89,39 @@ class InlineAnalyzerExtension(
     }
 
     private fun checkDefaults(
-            functionDescriptor: FunctionDescriptor,
-            function: KtFunction,
-            trace: BindingTrace) {
+        functionDescriptor: FunctionDescriptor,
+        function: KtFunction,
+        trace: BindingTrace
+    ) {
         val ktParameters = function.valueParameters
         for (parameter in functionDescriptor.valueParameters) {
             if (parameter.hasDefaultValue()) {
                 val ktParameter = ktParameters[parameter.index]
                 //Always report unsupported error on functional parameter with inherited default (there are some problems with inlining)
-                val inheritDefaultValues = !parameter.declaresDefaultValue()
-                if (checkInlinableParameter(parameter, ktParameter, functionDescriptor, null) || inheritDefaultValues) {
-                    if (inheritDefaultValues || !languageVersionSettings.supportsFeature(LanguageFeature.InlineDefaultFunctionalParameters)) {
-                        trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(ktParameter, ktParameter, functionDescriptor))
-                    }
-                    else {
+                val inheritsDefaultValue = !parameter.declaresDefaultValue() && parameter.declaresOrInheritsDefaultValue()
+                if (checkInlinableParameter(parameter, ktParameter, functionDescriptor, null) || inheritsDefaultValue) {
+                    if (inheritsDefaultValue || !languageVersionSettings.supportsFeature(LanguageFeature.InlineDefaultFunctionalParameters)) {
+                        trace.report(
+                            Errors.NOT_YET_SUPPORTED_IN_INLINE.on(
+                                ktParameter,
+                                "Functional parameters with inherited default values"
+                            )
+                        )
+                    } else {
                         checkDefaultValue(trace, parameter, ktParameter)
                     }
+                }
+                // Report unsupported error on inline/crossinline suspend lambdas with default values.
+                if (functionDescriptor.isSuspend &&
+                    InlineUtil.isInlineParameterExceptNullability(parameter) &&
+                    parameter.hasSuspendFunctionType
+                ) {
+                    trace.report(
+                        Errors.NOT_YET_SUPPORTED_IN_INLINE.on(
+                            ktParameter,
+                            "Suspend functional parameters with default values"
+                        )
+                    )
                 }
             }
         }
@@ -114,9 +136,10 @@ class InlineAnalyzerExtension(
     }
 
     private fun checkModalityAndOverrides(
-            callableDescriptor: CallableMemberDescriptor,
-            functionOrProperty: KtCallableDeclaration,
-            trace: BindingTrace) {
+        callableDescriptor: CallableMemberDescriptor,
+        functionOrProperty: KtCallableDeclaration,
+        trace: BindingTrace
+    ) {
         if (callableDescriptor.containingDeclaration is PackageFragmentDescriptor) {
             return
         }
@@ -148,20 +171,19 @@ class InlineAnalyzerExtension(
     }
 
     private fun CallableMemberDescriptor.isEffectivelyFinal(): Boolean =
-            modality == Modality.FINAL ||
-            containingDeclaration.let { containingDeclaration ->
-                containingDeclaration is ClassDescriptor && containingDeclaration.modality == Modality.FINAL
-            }
+        modality == Modality.FINAL ||
+                containingDeclaration.let { containingDeclaration ->
+                    containingDeclaration is ClassDescriptor && containingDeclaration.modality == Modality.FINAL
+                }
 
     private fun checkHasInlinableAndNullability(functionDescriptor: FunctionDescriptor, function: KtFunction, trace: BindingTrace) {
         var hasInlineArgs = false
-        function.valueParameters.zip(functionDescriptor.valueParameters).forEach {
-            (parameter, descriptor) ->
+        function.valueParameters.zip(functionDescriptor.valueParameters).forEach { (parameter, descriptor) ->
             hasInlineArgs = hasInlineArgs or checkInlinableParameter(descriptor, parameter, functionDescriptor, trace)
         }
         if (hasInlineArgs) return
 
-        if (functionDescriptor.isInlineOnlyOrReifiable() || functionDescriptor.isHeader) return
+        if (functionDescriptor.isInlineOnlyOrReifiable() || functionDescriptor.isExpect || functionDescriptor.isSuspend) return
 
         if (reasonableInlineRules.any { it.isInlineReasonable(functionDescriptor, function, trace.bindingContext) }) return
 
@@ -170,15 +192,15 @@ class InlineAnalyzerExtension(
     }
 
     private fun checkInlinableParameter(
-            parameter: ParameterDescriptor,
-            expression: KtElement,
-            functionDescriptor: CallableDescriptor,
-            trace: BindingTrace?): Boolean {
+        parameter: ParameterDescriptor,
+        expression: KtElement,
+        functionDescriptor: CallableDescriptor,
+        trace: BindingTrace?
+    ): Boolean {
         if (InlineUtil.isInlineParameterExceptNullability(parameter)) {
             if (parameter.type.isMarkedNullable) {
                 trace?.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor))
-            }
-            else {
+            } else {
                 return true
             }
         }

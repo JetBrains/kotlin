@@ -1,0 +1,7 @@
+package
+
+public fun implicitAlwaysFalse(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun implicitAlwaysFalseSpilling(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun isString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> x is String
+

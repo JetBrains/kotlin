@@ -1,0 +1,138 @@
+FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
+  CLASS ANNOTATION_CLASS name:A modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:A flags:primary
+      VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
+    PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:String flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:A flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): String'
+            GET_FIELD 'x: String' type=kotlin.String origin=null
+              receiver: GET_VAR 'this@A: A' type=A origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  CLASS CLASS name:Cell modality:FINAL visibility:public flags:
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Cell flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+    CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:Cell flags:primary
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Cell'
+    PROPERTY name:value type:kotlin.Int visibility:public modality:FINAL flags:var
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public flags:
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Cell) returnType:Int flags:
+        correspondingProperty: PROPERTY name:value type:kotlin.Int visibility:public modality:FINAL flags:var
+        $this: VALUE_PARAMETER name:<this> type:Cell flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-value>(): Int'
+            GET_FIELD 'value: Int' type=kotlin.Int origin=null
+              receiver: GET_VAR 'this@Cell: Cell' type=Cell origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:Cell, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:value type:kotlin.Int visibility:public modality:FINAL flags:var
+        $this: VALUE_PARAMETER name:<this> type:Cell flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
+        BLOCK_BODY
+          SET_FIELD 'value: Int' type=kotlin.Unit origin=null
+            receiver: GET_VAR 'this@Cell: Cell' type=Cell origin=null
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    FUN name:getValue visibility:public modality:FINAL <> ($this:Cell, thisRef:kotlin.Any?, kProp:kotlin.Any?) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:Cell flags:
+      VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any? flags:
+      VALUE_PARAMETER name:kProp index:1 type:kotlin.Any? flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='getValue(Any?, Any?): Int'
+          CALL '<get-value>(): Int' type=kotlin.Int origin=GET_PROPERTY
+            $this: GET_VAR 'this@Cell: Cell' type=Cell origin=null
+    FUN name:setValue visibility:public modality:FINAL <> ($this:Cell, thisRef:kotlin.Any?, kProp:kotlin.Any?, newValue:kotlin.Int) returnType:Unit flags:
+      $this: VALUE_PARAMETER name:<this> type:Cell flags:
+      VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any? flags:
+      VALUE_PARAMETER name:kProp index:1 type:kotlin.Any? flags:
+      VALUE_PARAMETER name:newValue index:2 type:kotlin.Int flags:
+      BLOCK_BODY
+        CALL '<set-value>(Int): Unit' type=kotlin.Unit origin=EQ
+          $this: GET_VAR 'this@Cell: Cell' type=Cell origin=null
+          <set-?>: GET_VAR 'value-parameter newValue: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:delegated,val
+    FIELD DELEGATE name:test1$delegate type:Cell visibility:private flags:final
+      EXPRESSION_BODY
+        CALL 'constructor Cell(Int)' type=Cell origin=null
+          value: CONST Int type=kotlin.Int value=1
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
+      annotations:
+        CALL 'constructor A(String)' type=A origin=null
+          x: CONST String type=kotlin.String value=test1.get
+      correspondingProperty: PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:delegated,val
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test1>(): Int'
+          CALL 'getValue(Any?, Any?): Int' type=kotlin.Int origin=null
+            $this: GET_FIELD '`test1$delegate`: Cell' type=Cell origin=null
+            thisRef: CONST Null type=kotlin.Nothing? value=null
+            kProp: PROPERTY_REFERENCE 'test1: Int' field=null getter='<get-test1>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+  PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:delegated,var
+    FIELD DELEGATE name:test2$delegate type:Cell visibility:private flags:final
+      EXPRESSION_BODY
+        CALL 'constructor Cell(Int)' type=Cell origin=null
+          value: CONST Int type=kotlin.Int value=2
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:Int flags:
+      annotations:
+        CALL 'constructor A(String)' type=A origin=null
+          x: CONST String type=kotlin.String value=test2.get
+      correspondingProperty: PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:delegated,var
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test2>(): Int'
+          CALL 'getValue(Any?, Any?): Int' type=kotlin.Int origin=null
+            $this: GET_FIELD '`test2$delegate`: Cell' type=Cell origin=null
+            thisRef: CONST Null type=kotlin.Nothing? value=null
+            kProp: PROPERTY_REFERENCE 'test2: Int' field=null getter='<get-test2>(): Int' setter='<set-test2>(Int): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test2> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
+      annotations:
+        CALL 'constructor A(String)' type=A origin=null
+          x: CONST String type=kotlin.String value=test2.set
+      correspondingProperty: PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:delegated,var
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
+        annotations:
+          CALL 'constructor A(String)' type=A origin=null
+            x: CONST String type=kotlin.String value=test2.set.param
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<set-test2>(Int): Unit'
+          CALL 'setValue(Any?, Any?, Int): Unit' type=kotlin.Unit origin=null
+            $this: GET_FIELD '`test2$delegate`: Cell' type=Cell origin=null
+            thisRef: CONST Null type=kotlin.Nothing? value=null
+            kProp: PROPERTY_REFERENCE 'test2: Int' field=null getter='<get-test2>(): Int' setter='<set-test2>(Int): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            newValue: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+

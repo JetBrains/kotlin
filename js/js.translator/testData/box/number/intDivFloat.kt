@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 996
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1114
 // http://youtrack.jetbrains.com/issue/KT-5345
 // KT-5345 (Javascript) Type mismatch on Int / Float division
 // If any of Number operands is floating-point, the result should be float too.

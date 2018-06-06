@@ -35,8 +35,7 @@ abstract class JsCallDataRenderer : DiagnosticParameterRenderer<JsCallData> {
     override fun render(data: JsCallData, context: RenderingContext): String =
             when (data) {
                 is JsCallDataWithCode -> format(data)
-                is JsCallData -> data.message
-                else -> throw AssertionError("Cannot render null data")
+                else -> data.message
             }
 }
 

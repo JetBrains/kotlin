@@ -1,7 +1,7 @@
 package test
 
-impl class C(s: String) {
-    constructor(n: Int): this("")
+actual class C(s: String) {
+    actual constructor(n: Int): this("")
 }
 
 fun test() {

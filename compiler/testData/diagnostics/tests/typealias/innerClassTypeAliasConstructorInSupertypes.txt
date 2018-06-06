@@ -127,11 +127,11 @@ package test {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
-    public typealias GG</*0*/ T1, /*1*/ T2>  = test.Generic<T1>.Generic<T2>
-    public typealias GGInt</*0*/ T1>  = test.Generic<T1>.Generic<kotlin.Int>
-    public typealias GI</*0*/ T>  = test.Generic<T>.Inner
+    public typealias GG</*0*/ T1, /*1*/ T2> = test.Generic<T1>.Generic<T2>
+    public typealias GGInt</*0*/ T1> = test.Generic<T1>.Generic<kotlin.Int>
+    public typealias GI</*0*/ T> = test.Generic<T>.Inner
     public typealias GIInt = test.Generic<kotlin.Int>.Inner
     public typealias GIStar = test.Generic<*>.Inner
-    public typealias GIntG</*0*/ T2>  = test.Generic<kotlin.Int>.Generic<T2>
+    public typealias GIntG</*0*/ T2> = test.Generic<kotlin.Int>.Generic<T2>
     public typealias OI = test.Outer.Inner
 }

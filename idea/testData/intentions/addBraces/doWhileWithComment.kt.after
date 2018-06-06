@@ -1,0 +1,7 @@
+fun foo() {}
+
+fun test() {
+    do {
+        /* aaa */ foo() // comment
+    } while(true)
+}

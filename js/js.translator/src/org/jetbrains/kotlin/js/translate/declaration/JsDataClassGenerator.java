@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.components.ArgumentsUtilsKt;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
             JsExpression argumentValue;
             JsExpression parameterValue = new JsNameRef(paramName);
             if (!constructorParam.hasValOrVar()) {
-                assert !DescriptorUtilsKt.hasDefaultValue(function.getValueParameters().get(i));
+                assert !ArgumentsUtilsKt.hasDefaultValue(function.getValueParameters().get(i));
                 // Caller cannot rely on default value and pass undefined here.
                 argumentValue = parameterValue;
             }

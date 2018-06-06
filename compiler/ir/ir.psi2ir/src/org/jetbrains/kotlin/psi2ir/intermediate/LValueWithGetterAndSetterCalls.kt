@@ -23,18 +23,17 @@ import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
 import org.jetbrains.kotlin.types.KotlinType
 
 class LValueWithGetterAndSetterCalls(
-        val callGenerator: CallGenerator,
-        val getterCall: CallBuilder?,
-        val setterCall: CallBuilder?,
-        override val type: KotlinType,
-        val startOffset: Int,
-        val endOffset: Int,
-        val origin: IrStatementOrigin? = null
+    val callGenerator: CallGenerator,
+    val getterCall: CallBuilder?,
+    val setterCall: CallBuilder?,
+    override val type: KotlinType,
+    val startOffset: Int,
+    val endOffset: Int,
+    val origin: IrStatementOrigin? = null
 ) : LValue {
     private val descriptor: CallableDescriptor =
-            getterCall?.descriptor ?:
-            setterCall?.descriptor ?:
-            throw AssertionError("Call-based LValue should have either a getter or a setter call")
+        getterCall?.descriptor ?: setterCall?.descriptor
+        ?: throw AssertionError("Call-based LValue should have either a getter or a setter call")
 
     override fun load(): IrExpression {
         if (getterCall == null) throw AssertionError("No getter call for $descriptor")

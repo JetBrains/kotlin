@@ -1,3 +1,3 @@
-// "Create header function implementation for platform JVM" "true"
+// "Create actual function for module testModule_JVM (JVM)" "true"
 
-header fun <caret>foo(arg: Int): String
+expect fun <caret>foo(arg: Int): String

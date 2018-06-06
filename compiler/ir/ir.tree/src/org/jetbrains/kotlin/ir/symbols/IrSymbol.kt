@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 
 interface IrSymbol {
-    val owner : IrSymbolOwner
+    val owner: IrSymbolOwner
     val descriptor: DeclarationDescriptor
     val isBound: Boolean
 }
@@ -36,6 +36,7 @@ interface IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner> : I
 interface IrPackageFragmentSymbol : IrSymbol {
     override val descriptor: PackageFragmentDescriptor
 }
+
 interface IrFileSymbol : IrPackageFragmentSymbol, IrBindableSymbol<PackageFragmentDescriptor, IrFile>
 interface IrExternalPackageFragmentSymbol : IrPackageFragmentSymbol, IrBindableSymbol<PackageFragmentDescriptor, IrExternalPackageFragment>
 
@@ -47,19 +48,28 @@ interface IrFieldSymbol : IrBindableSymbol<PropertyDescriptor, IrField>
 interface IrClassifierSymbol : IrSymbol {
     override val descriptor: ClassifierDescriptor
 }
+
 interface IrClassSymbol : IrClassifierSymbol, IrBindableSymbol<ClassDescriptor, IrClass>
 interface IrTypeParameterSymbol : IrClassifierSymbol, IrBindableSymbol<TypeParameterDescriptor, IrTypeParameter>
 
 interface IrValueSymbol : IrSymbol {
     override val descriptor: ValueDescriptor
+    override val owner: IrValueDeclaration
 }
+
 interface IrValueParameterSymbol : IrValueSymbol, IrBindableSymbol<ParameterDescriptor, IrValueParameter>
 interface IrVariableSymbol : IrValueSymbol, IrBindableSymbol<VariableDescriptor, IrVariable>
 
-interface IrFunctionSymbol : IrSymbol {
+interface IrReturnTargetSymbol : IrSymbol {
     override val descriptor: FunctionDescriptor
+    override val owner: IrReturnTarget
 }
+
+interface IrFunctionSymbol : IrReturnTargetSymbol {
+    override val owner: IrFunction
+}
+
 interface IrConstructorSymbol : IrFunctionSymbol, IrBindableSymbol<ClassConstructorDescriptor, IrConstructor>
 interface IrSimpleFunctionSymbol : IrFunctionSymbol, IrBindableSymbol<FunctionDescriptor, IrSimpleFunction>
 
-interface IrReturnableBlockSymbol : IrFunctionSymbol, IrBindableSymbol<FunctionDescriptor, IrReturnableBlock>
+interface IrReturnableBlockSymbol : IrReturnTargetSymbol, IrBindableSymbol<FunctionDescriptor, IrReturnableBlock>

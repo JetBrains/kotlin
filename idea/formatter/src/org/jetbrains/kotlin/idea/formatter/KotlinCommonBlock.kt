@@ -1,25 +1,19 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
@@ -31,10 +25,16 @@ import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
-import java.util.*
+import org.jetbrains.kotlin.psi.psiUtil.children
+import org.jetbrains.kotlin.psi.psiUtil.leaves
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 private val QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS)
-private val KDOC_COMMENT_INDENT = 1
+private val QUALIFIED_EXPRESSIONS = TokenSet.create(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION)
+private val ELVIS_SET = TokenSet.create(KtTokens.ELVIS)
+
+private const val KDOC_COMMENT_INDENT = 1
 
 private val BINARY_EXPRESSIONS = TokenSet.create(KtNodeTypes.BINARY_EXPRESSION, KtNodeTypes.BINARY_WITH_TYPE, KtNodeTypes.IS_EXPRESSION)
 private val KDOC_CONTENT = TokenSet.create(KDocTokens.KDOC, KDocElementTypes.KDOC_SECTION, KDocElementTypes.KDOC_TAG)
@@ -44,38 +44,58 @@ private val CODE_BLOCKS = TokenSet.create(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_B
 private val ALIGN_FOR_BINARY_OPERATIONS = TokenSet.create(MUL, DIV, PERC, PLUS, MINUS, ELVIS, LT, GT, LTEQ, GTEQ, ANDAND, OROR)
 private val ANNOTATIONS = TokenSet.create(KtNodeTypes.ANNOTATION_ENTRY, KtNodeTypes.ANNOTATION)
 
-val CodeStyleSettings.kotlinSettings
-    get() = getCustomSettings(KotlinCodeStyleSettings::class.java)
+val CodeStyleSettings.kotlinCommonSettings: KotlinCommonCodeStyleSettings
+    get() = getCommonSettings(KotlinLanguage.INSTANCE) as KotlinCommonCodeStyleSettings
+
+val CodeStyleSettings.kotlinCustomSettings: KotlinCodeStyleSettings
+    get() = getCustomSettings(KotlinCodeStyleSettings::class.java)!!
+
+typealias WrappingStrategy = (childElement: ASTNode) -> Wrap?
+
+fun noWrapping(childElement: ASTNode): Wrap? = null
 
 abstract class KotlinCommonBlock(
-        private val node: ASTNode,
-        private val settings: CodeStyleSettings,
-        private val spacingBuilder: KotlinSpacingBuilder,
-        private val alignmentStrategy: CommonAlignmentStrategy) {
-    private @Volatile var mySubBlocks: List<Block>? = null
+    private val node: ASTNode,
+    private val settings: CodeStyleSettings,
+    private val spacingBuilder: KotlinSpacingBuilder,
+    private val alignmentStrategy: CommonAlignmentStrategy,
+    private val overrideChildren: Sequence<ASTNode>? = null
+) {
+    @Volatile
+    private var mySubBlocks: List<ASTBlock>? = null
 
-    abstract protected fun createBlock(node: ASTNode,
-                                       alignmentStrategy: CommonAlignmentStrategy,
-                                       indent: Indent?,
-                                       wrap: Wrap?,
-                                       settings: CodeStyleSettings,
-                                       spacingBuilder: KotlinSpacingBuilder): Block
+    fun getTextRange(): TextRange {
+        if (overrideChildren != null) {
+            return TextRange(overrideChildren.first().startOffset, overrideChildren.last().textRange.endOffset)
+        }
+        return node.textRange
+    }
 
-    abstract protected fun createSyntheticSpacingNodeBlock(node: ASTNode): ASTBlock
+    protected abstract fun createBlock(
+        node: ASTNode,
+        alignmentStrategy: CommonAlignmentStrategy,
+        indent: Indent?,
+        wrap: Wrap?,
+        settings: CodeStyleSettings,
+        spacingBuilder: KotlinSpacingBuilder,
+        overrideChildren: Sequence<ASTNode>? = null
+    ): ASTBlock
 
-    abstract protected fun getSubBlocks(): List<Block>
+    protected abstract fun createSyntheticSpacingNodeBlock(node: ASTNode): ASTBlock
 
-    abstract protected fun getSuperChildAttributes(newChildIndex: Int): ChildAttributes
+    protected abstract fun getSubBlocks(): List<Block>
 
-    abstract protected fun isIncompleteInSuper(): Boolean
+    protected abstract fun getSuperChildAttributes(newChildIndex: Int): ChildAttributes
 
-    abstract protected fun getAlignmentForCaseBranch(shouldAlignInColumns: Boolean): CommonAlignmentStrategy
+    protected abstract fun isIncompleteInSuper(): Boolean
 
-    abstract protected fun getAlignment(): Alignment?
+    protected abstract fun getAlignmentForCaseBranch(shouldAlignInColumns: Boolean): CommonAlignmentStrategy
 
-    abstract protected fun createAlignmentStrategy(alignOption: Boolean, defaultAlignment: Alignment?): CommonAlignmentStrategy
+    protected abstract fun getAlignment(): Alignment?
 
-    abstract protected fun getNullAlignmentStrategy(): CommonAlignmentStrategy
+    protected abstract fun createAlignmentStrategy(alignOption: Boolean, defaultAlignment: Alignment?): CommonAlignmentStrategy
+
+    protected abstract fun getNullAlignmentStrategy(): CommonAlignmentStrategy
 
     fun isLeaf(): Boolean = node.firstChildNode == null
 
@@ -86,24 +106,12 @@ abstract class KotlinCommonBlock(
 
         var nodeSubBlocks = buildSubBlocks()
 
-        if (node.elementType === KtNodeTypes.DOT_QUALIFIED_EXPRESSION || node.elementType === KtNodeTypes.SAFE_ACCESS_EXPRESSION) {
-            val operationBlockIndex = findNodeBlockIndex(nodeSubBlocks, QUALIFIED_OPERATION)
-            if (operationBlockIndex != -1) {
-                // Create fake ".something" or "?.something" block here, so child indentation will be
-                // relative to it when it starts from new line (see Indent javadoc).
-
-                val operationBlock = nodeSubBlocks[operationBlockIndex]
-                val indent = if (settings.kotlinSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS)
-                    Indent.getContinuationWithoutFirstIndent()
-                else
-                    Indent.getNormalIndent()
-                val operationSyntheticBlock = SyntheticKotlinBlock(
-                        (operationBlock as ASTBlock).node,
-                        nodeSubBlocks.subList(operationBlockIndex, nodeSubBlocks.size),
-                        null, indent, null, spacingBuilder) { createSyntheticSpacingNodeBlock(it) }
-
-                nodeSubBlocks = ArrayList<Block>(nodeSubBlocks.subList(0, operationBlockIndex))
-                nodeSubBlocks.add(operationSyntheticBlock)
+        if (node.elementType in QUALIFIED_EXPRESSIONS) {
+            nodeSubBlocks = splitSubBlocksOnDot(nodeSubBlocks)
+        } else {
+            val psi = node.psi
+            if (psi is KtBinaryExpression && psi.operationToken == KtTokens.ELVIS) {
+                nodeSubBlocks = splitSubBlocksOnElvis(nodeSubBlocks)
             }
         }
 
@@ -112,7 +120,88 @@ abstract class KotlinCommonBlock(
         return nodeSubBlocks
     }
 
-    fun createChildIndent(child: ASTNode): Indent? {
+    private fun splitSubBlocksOnDot(nodeSubBlocks: List<ASTBlock>): List<ASTBlock> {
+        val operationBlockIndex = nodeSubBlocks.indexOfBlockWithType(QUALIFIED_OPERATION)
+        if (operationBlockIndex != -1) {
+            // Create fake ".something" or "?.something" block here, so child indentation will be
+            // relative to it when it starts from new line (see Indent javadoc).
+
+            val isNonFirstChainedCall = operationBlockIndex > 0 && isCallBlock(nodeSubBlocks[operationBlockIndex - 1])
+
+            // enforce indent to children when there's a line break before the dot in any call in the chain (meaning that
+            // the call chain following that call is indented)
+            val enforceIndentToChildren = anyCallInCallChainIsWrapped(nodeSubBlocks[operationBlockIndex - 1])
+
+            val indentType = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS) {
+                if (enforceIndentToChildren) Indent.Type.CONTINUATION else Indent.Type.CONTINUATION_WITHOUT_FIRST
+            } else {
+                Indent.Type.NORMAL
+            }
+            val indent = Indent.getIndent(
+                indentType, false,
+                enforceIndentToChildren
+            )
+            val wrap = if ((settings.kotlinCommonSettings.WRAP_FIRST_METHOD_IN_CALL_CHAIN || isNonFirstChainedCall) &&
+                canWrapCallChain(node))
+                Wrap.createWrap(settings.kotlinCommonSettings.METHOD_CALL_CHAIN_WRAP, true)
+            else
+                null
+
+            return nodeSubBlocks.splitAtIndex(operationBlockIndex, indent, wrap)
+        }
+        return nodeSubBlocks
+    }
+
+    private fun List<ASTBlock>.splitAtIndex(index: Int, indent: Indent?, wrap: Wrap?): List<ASTBlock> {
+        val operationBlock = this[index]
+        val operationSyntheticBlock = SyntheticKotlinBlock(
+            operationBlock.node,
+            subList(index, size),
+            null, indent, wrap, spacingBuilder
+        ) { createSyntheticSpacingNodeBlock(it) }
+
+        return subList(0, index) + operationSyntheticBlock
+    }
+
+    private fun anyCallInCallChainIsWrapped(astBlock: ASTBlock): Boolean {
+        var result: ASTBlock? = astBlock
+        while (true) {
+            if (result == null || !isCallBlock(result)) return false
+            val dot = result.node?.findChildByType(QUALIFIED_OPERATION)
+            if (dot != null && hasLineBreakBefore(dot)) {
+                return true
+            }
+            result = result.subBlocks.firstOrNull() as? ASTBlock?
+        }
+    }
+
+    private fun isCallBlock(astBlock: ASTBlock): Boolean {
+        val node = astBlock.node
+        return node.elementType in QUALIFIED_EXPRESSIONS && node.lastChildNode?.elementType == KtNodeTypes.CALL_EXPRESSION
+    }
+
+    private fun canWrapCallChain(node: ASTNode): Boolean {
+        val callChainParent = node.parents().firstOrNull { it.elementType !in QUALIFIED_EXPRESSIONS } ?: return true
+        return callChainParent.elementType in CODE_BLOCKS ||
+                callChainParent.elementType == KtNodeTypes.PROPERTY ||
+                (callChainParent.elementType == KtNodeTypes.BINARY_EXPRESSION &&
+                        (callChainParent.psi as KtBinaryExpression).operationToken in KtTokens.ALL_ASSIGNMENTS) ||
+                callChainParent.elementType == KtNodeTypes.RETURN
+    }
+
+    private fun splitSubBlocksOnElvis(nodeSubBlocks: List<ASTBlock>): List<ASTBlock> {
+        val elvisIndex = nodeSubBlocks.indexOfBlockWithType(ELVIS_SET)
+        if (elvisIndex >= 0) {
+            return nodeSubBlocks.splitAtIndex(
+                elvisIndex,
+                Indent.getContinuationIndent(),
+                null
+            )
+        }
+        return nodeSubBlocks
+    }
+
+    private fun createChildIndent(child: ASTNode): Indent? {
         val childParent = child.treeParent
         val childType = child.elementType
 
@@ -147,7 +236,10 @@ abstract class KotlinCommonBlock(
                     return Indent.getNoneIndent()
                 }
 
-                return Indent.getContinuationWithoutFirstIndent()
+                return if (settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_ARGUMENT_LISTS)
+                    Indent.getContinuationWithoutFirstIndent()
+                else
+                    Indent.getNormalIndent()
             }
 
             if (parentType === KtNodeTypes.TYPE_PARAMETER_LIST || parentType === KtNodeTypes.TYPE_ARGUMENT_LIST) {
@@ -167,29 +259,42 @@ abstract class KotlinCommonBlock(
 
         if (type == KtNodeTypes.IF) {
             val elseBlock = mySubBlocks?.getOrNull(newChildIndex)
-            if (elseBlock is ASTBlock && elseBlock.node.elementType == KtTokens.ELSE_KEYWORD) {
+            if (elseBlock != null && elseBlock.node.elementType == KtTokens.ELSE_KEYWORD) {
                 return ChildAttributes.DELEGATE_TO_NEXT_CHILD
             }
         }
 
+        if (newChildIndex > 0) {
+            val prevBlock = mySubBlocks?.get(newChildIndex - 1)
+            if (prevBlock?.node?.elementType == KtNodeTypes.MODIFIER_LIST) {
+                return ChildAttributes(Indent.getNoneIndent(), null)
+            }
+        }
+
         return when (type) {
-            in CODE_BLOCKS, KtNodeTypes.WHEN, KtNodeTypes.IF, KtNodeTypes.FOR, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE -> ChildAttributes(Indent.getNormalIndent(), null)
+            in CODE_BLOCKS, KtNodeTypes.WHEN, KtNodeTypes.IF, KtNodeTypes.FOR, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE -> ChildAttributes(
+                Indent.getNormalIndent(),
+                null
+            )
 
             KtNodeTypes.TRY -> ChildAttributes(Indent.getNoneIndent(), null)
 
-            KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION -> ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null)
+            in QUALIFIED_EXPRESSIONS -> ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null)
 
             KtNodeTypes.VALUE_PARAMETER_LIST, KtNodeTypes.VALUE_ARGUMENT_LIST -> {
                 val subBlocks = getSubBlocks()
                 if (newChildIndex != 1 && newChildIndex != 0 && newChildIndex < subBlocks.size) {
                     val block = subBlocks[newChildIndex]
                     ChildAttributes(block.indent, block.alignment)
-                }
-                else {
-                    val indent = if (type == KtNodeTypes.VALUE_PARAMETER_LIST && !settings.kotlinSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS)
-                        Indent.getNormalIndent()
-                    else
-                        Indent.getContinuationIndent()
+                } else {
+                    val indent =
+                        if ((type == KtNodeTypes.VALUE_PARAMETER_LIST && !settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS) ||
+                            (type == KtNodeTypes.VALUE_ARGUMENT_LIST && !settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_ARGUMENT_LISTS)
+                        ) {
+                            Indent.getNormalIndent()
+                        } else {
+                            Indent.getContinuationIndent()
+                        }
                     ChildAttributes(indent, null)
                 }
             }
@@ -218,35 +323,38 @@ abstract class KotlinCommonBlock(
     }
 
     private fun getChildrenAlignmentStrategy(): CommonAlignmentStrategy {
-        val jetCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)
-        val kotlinSettings = settings.kotlinSettings
+        val kotlinCommonSettings = settings.kotlinCommonSettings
+        val kotlinCustomSettings = settings.kotlinCustomSettings
         val parentType = node.elementType
         return when {
             parentType === KtNodeTypes.VALUE_PARAMETER_LIST ->
                 getAlignmentForChildInParenthesis(
-                        jetCommonSettings.ALIGN_MULTILINE_PARAMETERS, KtNodeTypes.VALUE_PARAMETER, COMMA,
-                        jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR)
+                    kotlinCommonSettings.ALIGN_MULTILINE_PARAMETERS, KtNodeTypes.VALUE_PARAMETER, COMMA,
+                    kotlinCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR
+                )
 
             parentType === KtNodeTypes.VALUE_ARGUMENT_LIST ->
                 getAlignmentForChildInParenthesis(
-                        jetCommonSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS, KtNodeTypes.VALUE_ARGUMENT, COMMA,
-                        jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR)
+                    kotlinCommonSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS, KtNodeTypes.VALUE_ARGUMENT, COMMA,
+                    kotlinCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR
+                )
 
             parentType === KtNodeTypes.WHEN ->
-                getAlignmentForCaseBranch(kotlinSettings.ALIGN_IN_COLUMNS_CASE_BRANCH)
+                getAlignmentForCaseBranch(kotlinCustomSettings.ALIGN_IN_COLUMNS_CASE_BRANCH)
 
             parentType === KtNodeTypes.WHEN_ENTRY ->
                 alignmentStrategy
 
             parentType in BINARY_EXPRESSIONS && getOperationType(node) in ALIGN_FOR_BINARY_OPERATIONS ->
-                createAlignmentStrategy(jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())
+                createAlignmentStrategy(kotlinCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())
 
             parentType === KtNodeTypes.SUPER_TYPE_LIST || parentType === KtNodeTypes.INITIALIZER_LIST ->
-                createAlignmentStrategy(jetCommonSettings.ALIGN_MULTILINE_EXTENDS_LIST, getAlignment())
+                createAlignmentStrategy(kotlinCommonSettings.ALIGN_MULTILINE_EXTENDS_LIST, getAlignment())
 
             parentType === KtNodeTypes.PARENTHESIZED ->
                 object : CommonAlignmentStrategy() {
-                    private var bracketsAlignment: Alignment? = if (jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION) Alignment.createAlignment() else null
+                    private var bracketsAlignment: Alignment? =
+                        if (kotlinCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION) Alignment.createAlignment() else null
 
                     override fun getAlignment(node: ASTNode): Alignment? {
                         val childNodeType = node.elementType
@@ -273,85 +381,122 @@ abstract class KotlinCommonBlock(
     }
 
 
-    private fun buildSubBlock(child: ASTNode, alignmentStrategy: CommonAlignmentStrategy, wrappingStrategy: WrappingStrategy): Block {
-        val childWrap = wrappingStrategy.getWrap(child)
+    private fun buildSubBlock(
+        child: ASTNode,
+        alignmentStrategy: CommonAlignmentStrategy,
+        wrappingStrategy: WrappingStrategy,
+        overrideChildren: Sequence<ASTNode>? = null
+    ): ASTBlock {
+        val childWrap = wrappingStrategy(child)
 
         // Skip one sub-level for operators, so type of block node is an element type of operator
         if (child.elementType === KtNodeTypes.OPERATION_REFERENCE) {
             val operationNode = child.firstChildNode
             if (operationNode != null) {
                 return createBlock(
-                        operationNode,
-                        alignmentStrategy,
-                        createChildIndent(child),
-                        childWrap,
-                        settings,
-                        spacingBuilder)
+                    operationNode,
+                    alignmentStrategy,
+                    createChildIndent(child),
+                    childWrap,
+                    settings,
+                    spacingBuilder,
+                    overrideChildren
+                )
             }
         }
 
-        return createBlock(child, alignmentStrategy, createChildIndent(child), childWrap, settings, spacingBuilder)
+        return createBlock(child, alignmentStrategy, createChildIndent(child), childWrap, settings, spacingBuilder, overrideChildren)
     }
 
-    private fun buildSubBlocks(): ArrayList<Block> {
-        val blocks = ArrayList<Block>()
-
+    private fun buildSubBlocks(): List<ASTBlock> {
         val childrenAlignmentStrategy = getChildrenAlignmentStrategy()
         val wrappingStrategy = getWrappingStrategy()
 
-        var child: ASTNode? = node.firstChildNode
-        while (child != null) {
-            val childType = child.elementType
-
-            if (child.textRange.length == 0) {
-                child = child.treeNext
-                continue
+        val childNodes = when {
+            overrideChildren != null -> overrideChildren.asSequence()
+            node.elementType == KtNodeTypes.BINARY_EXPRESSION -> {
+                val binaryExpressionChildren = mutableListOf<ASTNode>()
+                collectBinaryExpressionChildren(node, binaryExpressionChildren)
+                binaryExpressionChildren.asSequence()
             }
-
-            if (childType === TokenType.WHITE_SPACE) {
-                child = child.treeNext
-                continue
-            }
-
-            blocks.add(buildSubBlock(child, childrenAlignmentStrategy, wrappingStrategy))
-            child = child.treeNext
+            else -> node.children()
         }
 
-        return blocks
+        return childNodes
+            .filter { it.textRange.length > 0 && it.elementType != TokenType.WHITE_SPACE }
+            .flatMap { buildSubBlocksForChildNode(it, childrenAlignmentStrategy, wrappingStrategy) }
+            .toList()
+    }
+
+    private fun buildSubBlocksForChildNode(
+        node: ASTNode,
+        childrenAlignmentStrategy: CommonAlignmentStrategy,
+        wrappingStrategy: WrappingStrategy
+    ): Sequence<ASTBlock> {
+        if (node.elementType == KtNodeTypes.FUN && false /* TODO fix tests and restore */) {
+            val filteredChildren = node.children().filter {
+                it.textRange.length > 0 && it.elementType != TokenType.WHITE_SPACE
+            }
+            val significantChildren = filteredChildren.dropWhile { it.elementType == KtTokens.EOL_COMMENT }
+            val funIndent = extractIndent(significantChildren.first())
+            val eolComments = filteredChildren.takeWhile {
+                it.elementType == KtTokens.EOL_COMMENT && extractIndent(it) != funIndent
+            }.toList()
+            val remainingChildren = filteredChildren.drop(eolComments.size)
+
+            val blocks = eolComments.map { buildSubBlock(it, childrenAlignmentStrategy, wrappingStrategy) } +
+                    sequenceOf(buildSubBlock(node, childrenAlignmentStrategy, wrappingStrategy, remainingChildren))
+            val blockList = blocks.toList()
+            return blockList.asSequence()
+        }
+
+        return sequenceOf(buildSubBlock(node, childrenAlignmentStrategy, wrappingStrategy))
+    }
+
+    private fun collectBinaryExpressionChildren(node: ASTNode, result: MutableList<ASTNode>) {
+        for (child in node.children()) {
+            if (child.elementType == KtNodeTypes.BINARY_EXPRESSION) {
+                collectBinaryExpressionChildren(child, result)
+            } else {
+                result.add(child)
+            }
+        }
     }
 
     private fun getWrappingStrategy(): WrappingStrategy {
-        val commonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)
+        val commonSettings = settings.kotlinCommonSettings
         val elementType = node.elementType
+        val parentElementType = node.treeParent?.elementType
         val nodePsi = node.psi
 
         when {
-            elementType === KtNodeTypes.VALUE_ARGUMENT_LIST ->
-                return getWrappingStrategyForItemList(commonSettings.CALL_PARAMETERS_WRAP, KtNodeTypes.VALUE_ARGUMENT)
+            elementType === KtNodeTypes.VALUE_ARGUMENT_LIST -> {
+                val wrapSetting = commonSettings.CALL_PARAMETERS_WRAP
+                if ((wrapSetting == CommonCodeStyleSettings.WRAP_AS_NEEDED || wrapSetting == CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM) &&
+                    !needWrapArgumentList(nodePsi)
+                ) {
+                    return ::noWrapping
+                }
+                return getWrappingStrategyForItemList(wrapSetting, KtNodeTypes.VALUE_ARGUMENT)
+            }
 
             elementType === KtNodeTypes.VALUE_PARAMETER_LIST -> {
-                val parentElementType = node.treeParent.elementType
                 if (parentElementType === KtNodeTypes.FUN ||
                     parentElementType === KtNodeTypes.PRIMARY_CONSTRUCTOR ||
                     parentElementType === KtNodeTypes.SECONDARY_CONSTRUCTOR) {
                     val wrap = Wrap.createWrap(commonSettings.METHOD_PARAMETERS_WRAP, false)
-                    return object : WrappingStrategy {
-                        override fun getWrap(childElement: ASTNode): Wrap? {
-                            return if (childElement.elementType === KtNodeTypes.VALUE_PARAMETER && !childElement.startsWithAnnotation())
-                                wrap
-                            else
-                                null
-                        }
+                    return { childElement ->
+                        if (childElement.elementType === KtNodeTypes.VALUE_PARAMETER && !childElement.startsWithAnnotation())
+                            wrap
+                        else
+                            null
                     }
                 }
             }
 
             elementType === KtNodeTypes.SUPER_TYPE_LIST -> {
                 val wrap = Wrap.createWrap(commonSettings.EXTENDS_LIST_WRAP, false)
-                return object : WrappingStrategy {
-                    override fun getWrap(childElement: ASTNode): Wrap? =
-                        if (childElement.psi is KtSuperTypeListEntry) wrap else null
-                }
+                return { childElement -> if (childElement.psi is KtSuperTypeListEntry) wrap else null }
             }
 
             elementType === KtNodeTypes.CLASS_BODY ->
@@ -361,23 +506,31 @@ abstract class KotlinCommonBlock(
                 val parent = node.treeParent.psi
                 when (parent) {
                     is KtParameter ->
-                        return getWrappingStrategyForItemList(commonSettings.PARAMETER_ANNOTATION_WRAP,
-                                                              ANNOTATIONS,
-                                                              !node.treeParent.isFirstParameter())
+                        return getWrappingStrategyForItemList(
+                            commonSettings.PARAMETER_ANNOTATION_WRAP,
+                            ANNOTATIONS,
+                            !node.treeParent.isFirstParameter()
+                        )
                     is KtClassOrObject ->
-                        return getWrappingStrategyForItemList(commonSettings.CLASS_ANNOTATION_WRAP,
-                                                              ANNOTATIONS)
+                        return getWrappingStrategyForItemList(
+                            commonSettings.CLASS_ANNOTATION_WRAP,
+                            ANNOTATIONS
+                        )
 
                     is KtNamedFunction ->
-                        return getWrappingStrategyForItemList(commonSettings.METHOD_ANNOTATION_WRAP,
-                                                              ANNOTATIONS)
+                        return getWrappingStrategyForItemList(
+                            commonSettings.METHOD_ANNOTATION_WRAP,
+                            ANNOTATIONS
+                        )
 
                     is KtProperty ->
-                        return getWrappingStrategyForItemList(if (parent.isLocal)
-                                                                  commonSettings.VARIABLE_ANNOTATION_WRAP
-                                                              else
-                                                                  commonSettings.FIELD_ANNOTATION_WRAP,
-                                                              ANNOTATIONS)
+                        return getWrappingStrategyForItemList(
+                            if (parent.isLocal)
+                                commonSettings.VARIABLE_ANNOTATION_WRAP
+                            else
+                                commonSettings.FIELD_ANNOTATION_WRAP,
+                            ANNOTATIONS
+                        )
                 }
             }
 
@@ -388,16 +541,53 @@ abstract class KotlinCommonBlock(
                 return wrapAfterAnnotation(commonSettings.CLASS_ANNOTATION_WRAP)
 
             nodePsi is KtNamedFunction ->
-                return wrapAfterAnnotation(commonSettings.METHOD_ANNOTATION_WRAP)
+                return wrap@{ childElement ->
+                    getWrapAfterAnnotation(childElement, commonSettings.METHOD_ANNOTATION_WRAP)?.let {
+                        return@wrap it
+                    }
+                    if (getPrevWithoutWhitespaceAndComments(childElement)?.elementType == KtTokens.EQ) {
+                        return@wrap Wrap.createWrap(settings.kotlinCustomSettings.WRAP_EXPRESSION_BODY_FUNCTIONS, true)
+                    }
+                    null
+                }
 
             nodePsi is KtProperty ->
-                return wrapAfterAnnotation(if (nodePsi.isLocal)
-                                               commonSettings.VARIABLE_ANNOTATION_WRAP
-                                           else
-                                               commonSettings.FIELD_ANNOTATION_WRAP)
+                return wrap@{ childElement ->
+                    val wrapSetting =
+                        if (nodePsi.isLocal) commonSettings.VARIABLE_ANNOTATION_WRAP else commonSettings.FIELD_ANNOTATION_WRAP
+                    getWrapAfterAnnotation(childElement, wrapSetting)?.let {
+                        return@wrap it
+                    }
+                    if (getPrevWithoutWhitespaceAndComments(childElement)?.elementType == KtTokens.EQ) {
+                        return@wrap Wrap.createWrap(settings.kotlinCommonSettings.ASSIGNMENT_WRAP, true)
+                    }
+                    null
+                }
+
+            nodePsi is KtBinaryExpression -> {
+                if (nodePsi.operationToken == KtTokens.EQ) {
+                    return { childElement ->
+                        if (getPrevWithoutWhitespaceAndComments(childElement)?.elementType == KtNodeTypes.OPERATION_REFERENCE) {
+                            Wrap.createWrap(settings.kotlinCommonSettings.ASSIGNMENT_WRAP, true)
+                        } else {
+                            null
+                        }
+                    }
+                }
+                if (nodePsi.operationToken == KtTokens.ELVIS) {
+                    return { childElement ->
+                        if (childElement.elementType == KtNodeTypes.OPERATION_REFERENCE) {
+                            Wrap.createWrap(settings.kotlinCustomSettings.WRAP_ELVIS_EXPRESSIONS, true)
+                        } else {
+                            null
+                        }
+                    }
+                }
+                return ::noWrapping
+            }
         }
 
-        return WrappingStrategy.NoWrapping
+        return ::noWrapping
     }
 }
 
@@ -406,142 +596,235 @@ private fun ASTNode.startsWithAnnotation() = firstChildNode?.firstChildNode?.ele
 private fun ASTNode.isFirstParameter(): Boolean = treePrev?.elementType == KtTokens.LPAR
 
 private fun wrapAfterAnnotation(wrapType: Int): WrappingStrategy {
-    return object : WrappingStrategy {
-        override fun getWrap(childElement: ASTNode): Wrap? {
-            if (childElement.elementType in KtTokens.COMMENTS) return null
-            var prevLeaf = childElement.treePrev
-            while (prevLeaf?.elementType == TokenType.WHITE_SPACE) {
-                prevLeaf = prevLeaf.treePrev
-            }
-            if (prevLeaf?.elementType == KtNodeTypes.MODIFIER_LIST) {
-                if (prevLeaf?.lastChildNode?.elementType in ANNOTATIONS) {
-                    return Wrap.createWrap(wrapType, true)
-                }
-            }
-            return null
+    return { childElement -> getWrapAfterAnnotation(childElement, wrapType) }
+}
+
+private fun getWrapAfterAnnotation(childElement: ASTNode, wrapType: Int): Wrap? {
+    if (childElement.elementType in COMMENTS) return null
+    var prevLeaf = childElement.treePrev
+    while (prevLeaf?.elementType == TokenType.WHITE_SPACE) {
+        prevLeaf = prevLeaf.treePrev
+    }
+    if (prevLeaf?.elementType == KtNodeTypes.MODIFIER_LIST) {
+        if (prevLeaf?.lastChildNode?.elementType in ANNOTATIONS) {
+            return Wrap.createWrap(wrapType, true)
         }
+    }
+    return null
+}
+
+fun needWrapArgumentList(psi: PsiElement): Boolean {
+    val args = (psi as? KtValueArgumentList)?.arguments
+    return args?.singleOrNull()?.getArgumentExpression() !is KtObjectLiteralExpression
+}
+
+private fun hasLineBreakBefore(node: ASTNode): Boolean {
+    val prevSibling = node.leaves(false)
+        .dropWhile { it.psi is PsiComment }
+        .firstOrNull()
+    return prevSibling?.elementType == TokenType.WHITE_SPACE && prevSibling?.textContains('\n') == true
+}
+
+fun NodeIndentStrategy.PositionStrategy.continuationIf(
+    option: (KotlinCodeStyleSettings) -> Boolean,
+    indentFirst: Boolean = false
+): NodeIndentStrategy {
+    return set { settings ->
+        if (option(settings.kotlinCustomSettings)) {
+            if (indentFirst)
+                Indent.getContinuationIndent()
+            else
+                Indent.getContinuationWithoutFirstIndent()
+        } else
+            Indent.getNormalIndent()
     }
 }
 
-private val INDENT_RULES = arrayOf<NodeIndentStrategy>(
-        strategy("No indent for braces in blocks")
-                .within(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_BODY, KtNodeTypes.FUNCTION_LITERAL)
-                .forType(RBRACE, LBRACE)
-                .set(Indent.getNoneIndent()),
+private val INDENT_RULES = arrayOf(
+    strategy("No indent for braces in blocks")
+        .within(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_BODY, KtNodeTypes.FUNCTION_LITERAL)
+        .forType(RBRACE, LBRACE)
+        .set(Indent.getNoneIndent()),
 
-        strategy("Indent for block content")
-                .within(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_BODY, KtNodeTypes.FUNCTION_LITERAL)
-                .notForType(RBRACE, LBRACE, KtNodeTypes.BLOCK)
-                .set(Indent.getNormalIndent(false)),
+    strategy("Indent for block content")
+        .within(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_BODY, KtNodeTypes.FUNCTION_LITERAL)
+        .notForType(RBRACE, LBRACE, KtNodeTypes.BLOCK)
+        .set(Indent.getNormalIndent(false)),
 
-        strategy("Indent for property accessors")
-                .within(KtNodeTypes.PROPERTY).forType(KtNodeTypes.PROPERTY_ACCESSOR)
-                .set(Indent.getNormalIndent()),
+    strategy("Indent for property accessors")
+        .within(KtNodeTypes.PROPERTY).forType(KtNodeTypes.PROPERTY_ACCESSOR)
+        .set(Indent.getNormalIndent()),
 
-        strategy("For a single statement in 'for'")
-                .within(KtNodeTypes.BODY).notForType(KtNodeTypes.BLOCK)
-                .set(Indent.getNormalIndent()),
+    strategy("For a single statement in 'for'")
+        .within(KtNodeTypes.BODY).notForType(KtNodeTypes.BLOCK)
+        .set(Indent.getNormalIndent()),
 
-        strategy("For the entry in when")
-                .forType(KtNodeTypes.WHEN_ENTRY)
-                .set(Indent.getNormalIndent()),
+    strategy("For the entry in when")
+        .forType(KtNodeTypes.WHEN_ENTRY)
+        .set(Indent.getNormalIndent()),
 
-        strategy("For single statement in THEN and ELSE")
-                .within(KtNodeTypes.THEN, KtNodeTypes.ELSE).notForType(KtNodeTypes.BLOCK)
-                .set(Indent.getNormalIndent()),
+    strategy("For single statement in THEN and ELSE")
+        .within(KtNodeTypes.THEN, KtNodeTypes.ELSE).notForType(KtNodeTypes.BLOCK)
+        .set(Indent.getNormalIndent()),
 
-        strategy("Expression body")
-                .within(KtNodeTypes.FUN)
-                .forElement {
-                    it.psi is KtExpression && it.psi !is KtBlockExpression
-                }
-                .set { settings ->
-                    if (settings.kotlinSettings.CONTINUATION_INDENT_FOR_EXPRESSION_BODIES)
-                        Indent.getContinuationIndent()
-                    else
-                        Indent.getNormalIndent()
-                },
+    strategy("Expression body")
+        .within(KtNodeTypes.FUN)
+        .forElement {
+            it.psi is KtExpression && it.psi !is KtBlockExpression
+        }
+        .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES, indentFirst = true),
 
-        strategy("Property accessor expression body")
-                .within(KtNodeTypes.PROPERTY_ACCESSOR)
-                .forElement {
-                    it.psi is KtExpression && it.psi !is KtBlockExpression
-                }
-                .set(Indent.getNormalIndent()),
+    strategy("If condition")
+        .within(KtNodeTypes.CONDITION)
+        .set { settings ->
+            val indentType = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_IF_CONDITIONS)
+                Indent.Type.CONTINUATION
+            else
+                Indent.Type.NORMAL
+            Indent.getIndent(indentType, false, true)
+        },
 
-        strategy("Indent for parts")
-                .within(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION, KtNodeTypes.SECONDARY_CONSTRUCTOR)
-                .notForType(KtNodeTypes.BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, CONSTRUCTOR_KEYWORD)
-                .set(Indent.getContinuationWithoutFirstIndent()),
+    strategy("Property accessor expression body")
+        .within(KtNodeTypes.PROPERTY_ACCESSOR)
+        .forElement {
+            it.psi is KtExpression && it.psi !is KtBlockExpression
+        }
+        .set(Indent.getNormalIndent()),
 
-        strategy("Chained calls")
-                .within(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.SAFE_ACCESS_EXPRESSION)
-                .notForType(KtTokens.DOT, KtTokens.SAFE_ACCESS)
-                .forElement { it.treeParent.firstChildNode != it }
-                .set { settings ->
-                    if (settings.kotlinSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS)
-                        Indent.getContinuationWithoutFirstIndent()
-                    else
-                        Indent.getNormalIndent()
-                },
+    strategy("Property initializer")
+        .within(KtNodeTypes.PROPERTY)
+        .forElement {
+            it.psi is KtExpression
+        }
+        .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES),
 
-        strategy("Colon of delegation list")
-                .within(KtNodeTypes.CLASS, KtNodeTypes.OBJECT_DECLARATION)
-                .forType(KtTokens.COLON)
-                .set(Indent.getNormalIndent(false)),
+    strategy("Indent for parts")
+        .within(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION, KtNodeTypes.SECONDARY_CONSTRUCTOR)
+        .notForType(
+            KtNodeTypes.BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, CONSTRUCTOR_KEYWORD, KtTokens.RPAR,
+            KtTokens.EOL_COMMENT
+        )
+        .set(Indent.getContinuationWithoutFirstIndent()),
 
-        strategy("Delegation list")
-                .within(KtNodeTypes.SUPER_TYPE_LIST, KtNodeTypes.INITIALIZER_LIST)
-                .set(Indent.getContinuationIndent(false)),
+    strategy("Chained calls")
+        .within(QUALIFIED_EXPRESSIONS)
+        .notForType(KtTokens.DOT, KtTokens.SAFE_ACCESS)
+        .forElement { it.treeParent.firstChildNode != it }
+        .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_CHAINED_CALLS),
 
-        strategy("Indices")
-                .within(KtNodeTypes.INDICES)
-                .set(Indent.getContinuationIndent(false)),
+    strategy("Colon of delegation list")
+        .within(KtNodeTypes.CLASS, KtNodeTypes.OBJECT_DECLARATION)
+        .forType(KtTokens.COLON)
+        .set(Indent.getNormalIndent(false)),
 
-        strategy("Binary expressions")
-                .within(BINARY_EXPRESSIONS)
-                .set(Indent.getContinuationWithoutFirstIndent(false)),
+    strategy("Delegation list")
+        .within(KtNodeTypes.SUPER_TYPE_LIST, KtNodeTypes.INITIALIZER_LIST)
+        .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_SUPERTYPE_LISTS, indentFirst = true),
 
-        strategy("Parenthesized expression")
-                .within(KtNodeTypes.PARENTHESIZED)
-                .set(Indent.getContinuationWithoutFirstIndent(false)),
+    strategy("Indices")
+        .within(KtNodeTypes.INDICES)
+        .notForType(KtTokens.RBRACKET)
+        .set(Indent.getContinuationIndent(false)),
 
-        strategy("Round Brackets around conditions")
-                .forType(LPAR, RPAR)
-                .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
-                .set(Indent.getContinuationWithoutFirstIndent(true)),
+    strategy("Binary expressions")
+        .within(BINARY_EXPRESSIONS)
+        .forElement { node -> !node.suppressBinaryExpressionIndent() }
+        .set(Indent.getContinuationWithoutFirstIndent(false)),
 
-        strategy("KDoc comment indent")
-                .within(KDOC_CONTENT)
-                .forType(KDocTokens.LEADING_ASTERISK, KDocTokens.END)
-                .set(Indent.getSpaceIndent(KDOC_COMMENT_INDENT)),
+    strategy("Parenthesized expression")
+        .within(KtNodeTypes.PARENTHESIZED)
+        .set(Indent.getContinuationWithoutFirstIndent(false)),
 
-        strategy("Block in when entry")
-                .within(KtNodeTypes.WHEN_ENTRY)
-                .notForType(KtNodeTypes.BLOCK, KtNodeTypes.WHEN_CONDITION_EXPRESSION, KtNodeTypes.WHEN_CONDITION_IN_RANGE, KtNodeTypes.WHEN_CONDITION_IS_PATTERN, ELSE_KEYWORD, ARROW)
-                .set(Indent.getNormalIndent()),
+    strategy("Opening parenthesis for conditions")
+        .forType(LPAR)
+        .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+        .set(Indent.getContinuationWithoutFirstIndent(true)),
 
-        strategy("Parameter list")
-                .within(KtNodeTypes.VALUE_PARAMETER_LIST)
-                .forElement { it.elementType == KtNodeTypes.VALUE_PARAMETER && it.psi.prevSibling != null }
-                .set { settings ->
-                    if (settings.kotlinSettings.CONTINUATION_INDENT_IN_PARAMETER_LISTS)
-                        Indent.getContinuationIndent()
-                    else
-                        Indent.getNormalIndent()
-                },
+    strategy("Closing parenthesis for conditions")
+        .forType(RPAR)
+        .forElement { node -> !hasErrorElementBefore(node) }
+        .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+        .set(Indent.getNoneIndent()),
 
-        strategy("Where clause")
-                .within(KtNodeTypes.CLASS, KtNodeTypes.FUN, KtNodeTypes.PROPERTY)
-                .forType(KtTokens.WHERE_KEYWORD)
-                .set(Indent.getContinuationIndent()))
+    strategy("Closing parenthesis for incomplete conditions")
+        .forType(RPAR)
+        .forElement { node -> hasErrorElementBefore(node) }
+        .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+        .set(Indent.getContinuationWithoutFirstIndent()),
+
+    strategy("KDoc comment indent")
+        .within(KDOC_CONTENT)
+        .forType(KDocTokens.LEADING_ASTERISK, KDocTokens.END)
+        .set(Indent.getSpaceIndent(KDOC_COMMENT_INDENT)),
+
+    strategy("Block in when entry")
+        .within(KtNodeTypes.WHEN_ENTRY)
+        .notForType(
+            KtNodeTypes.BLOCK,
+            KtNodeTypes.WHEN_CONDITION_EXPRESSION,
+            KtNodeTypes.WHEN_CONDITION_IN_RANGE,
+            KtNodeTypes.WHEN_CONDITION_IS_PATTERN,
+            ELSE_KEYWORD,
+            ARROW
+        )
+        .set(Indent.getNormalIndent()),
+
+    strategy("Parameter list")
+        .within(KtNodeTypes.VALUE_PARAMETER_LIST)
+        .forElement { it.elementType == KtNodeTypes.VALUE_PARAMETER && it.psi.prevSibling != null }
+        .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_PARAMETER_LISTS, indentFirst = true),
+
+    strategy("Where clause")
+        .within(KtNodeTypes.CLASS, KtNodeTypes.FUN, KtNodeTypes.PROPERTY)
+        .forType(KtTokens.WHERE_KEYWORD)
+        .set(Indent.getContinuationIndent()),
+
+    strategy("Array literals")
+        .within(KtNodeTypes.COLLECTION_LITERAL_EXPRESSION)
+        .notForType(LBRACKET, RBRACKET)
+        .set(Indent.getNormalIndent()),
+
+    strategy("Type aliases")
+        .within(KtNodeTypes.TYPEALIAS)
+        .notForType(
+            KtTokens.TYPE_ALIAS_KEYWORD, KtTokens.EOL_COMMENT, KtNodeTypes.MODIFIER_LIST, KtTokens.BLOCK_COMMENT,
+            KtTokens.DOC_COMMENT
+        )
+        .set(Indent.getContinuationIndent()),
+
+    strategy("Default parameter values")
+        .within(KtNodeTypes.VALUE_PARAMETER)
+        .forElement { node -> node.psi != null && node.psi == (node.psi.parent as? KtParameter)?.defaultValue }
+        .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES, indentFirst = true)
+)
 
 
-private fun getOperationType(node: ASTNode): IElementType? = node.findChildByType(KtNodeTypes.OPERATION_REFERENCE)?.firstChildNode?.elementType
+private fun getOperationType(node: ASTNode): IElementType? =
+    node.findChildByType(KtNodeTypes.OPERATION_REFERENCE)?.firstChildNode?.elementType
+
+fun hasErrorElementBefore(node: ASTNode): Boolean {
+    val prevSibling = getPrevWithoutWhitespace(node) ?: return false
+    if (prevSibling.elementType == TokenType.ERROR_ELEMENT) return true
+    val lastChild = TreeUtil.getLastChild(prevSibling)
+    return lastChild?.elementType == TokenType.ERROR_ELEMENT
+}
+
+/**
+ * Suppress indent for binary expressions when there is a block higher in the tree that forces
+ * its indent to children ('if' condition or elvis).
+ */
+private fun ASTNode.suppressBinaryExpressionIndent(): Boolean {
+    var psi = psi.parent as? KtBinaryExpression ?: return false
+    while (psi.parent is KtBinaryExpression) {
+        psi = psi.parent as KtBinaryExpression
+    }
+    return psi.parent?.node?.elementType == KtNodeTypes.CONDITION || psi.operationToken == KtTokens.ELVIS
+}
 
 private fun getAlignmentForChildInParenthesis(
-        shouldAlignChild: Boolean, parameter: IElementType, delimiter: IElementType,
-        shouldAlignParenthesis: Boolean, openBracket: IElementType, closeBracket: IElementType): CommonAlignmentStrategy {
+    shouldAlignChild: Boolean, parameter: IElementType, delimiter: IElementType,
+    shouldAlignParenthesis: Boolean, openBracket: IElementType, closeBracket: IElementType
+): CommonAlignmentStrategy {
     val parameterAlignment = if (shouldAlignChild) Alignment.createAlignment() else null
     val bracketsAlignment = if (shouldAlignParenthesis) Alignment.createAlignment() else null
 
@@ -568,49 +851,41 @@ private fun getAlignmentForChildInParenthesis(
     }
 }
 
-private fun getPrevWithoutWhitespace(pNode: ASTNode?): ASTNode? {
-    var node = pNode
-    node = node!!.treePrev
-    while (node != null && node.elementType === TokenType.WHITE_SPACE) {
-        node = node.treePrev
-    }
-
-    return node
+private fun getPrevWithoutWhitespace(pNode: ASTNode): ASTNode? {
+    return pNode.siblings(forward = false).firstOrNull { it.elementType != TokenType.WHITE_SPACE }
 }
 
-private fun getPrevWithoutWhitespaceAndComments(pNode: ASTNode?): ASTNode? {
-    var node = pNode
-    node = node!!.treePrev
-    while (node != null && (node.elementType === TokenType.WHITE_SPACE || COMMENTS.contains(node.elementType))) {
-        node = node.treePrev
+private fun getPrevWithoutWhitespaceAndComments(pNode: ASTNode): ASTNode? {
+    return pNode.siblings(forward = false).firstOrNull {
+        it.elementType != TokenType.WHITE_SPACE && it.elementType !in COMMENTS
     }
-
-    return node
 }
 
 private fun getWrappingStrategyForItemList(wrapType: Int, itemType: IElementType, wrapFirstElement: Boolean = false): WrappingStrategy {
     val itemWrap = Wrap.createWrap(wrapType, wrapFirstElement)
-    return object : WrappingStrategy {
-        override fun getWrap(childElement: ASTNode): Wrap? {
-            return if (childElement.elementType === itemType) itemWrap else null
-        }
-    }
+    return { childElement -> if (childElement.elementType === itemType) itemWrap else null }
 }
 
 private fun getWrappingStrategyForItemList(wrapType: Int, itemTypes: TokenSet, wrapFirstElement: Boolean = false): WrappingStrategy {
     val itemWrap = Wrap.createWrap(wrapType, wrapFirstElement)
-    return object : WrappingStrategy {
-        override fun getWrap(childElement: ASTNode): Wrap? {
-            return if (childElement.elementType in itemTypes) itemWrap else null
-        }
+    return { childElement ->
+        val thisType = childElement.elementType
+        val prevType = getPrevWithoutWhitespace(childElement)?.elementType
+        if (thisType in itemTypes || prevType in itemTypes &&
+            thisType != KtTokens.EOL_COMMENT && prevType != KtTokens.EOL_COMMENT)
+            itemWrap
+        else
+            null
     }
 }
 
-private fun findNodeBlockIndex(blocks: List<Block>, tokenSet: TokenSet): Int {
-    return blocks.indexOfFirst { block ->
-        if (block !is ASTBlock) return@indexOfFirst false
+private fun List<ASTBlock>.indexOfBlockWithType(tokenSet: TokenSet): Int {
+    return indexOfFirst { block -> block.node?.elementType in tokenSet }
+}
 
-        val node = block.node
-        node != null && node.elementType in tokenSet
-    }
+private fun extractIndent(node: ASTNode): String {
+    val prevNode = node.treePrev
+    if (prevNode?.elementType != TokenType.WHITE_SPACE)
+        return ""
+    return prevNode.text.substringAfterLast("\n", prevNode.text)
 }

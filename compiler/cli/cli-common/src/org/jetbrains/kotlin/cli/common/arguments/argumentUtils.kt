@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import com.intellij.util.text.VersionComparatorUtil
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -96,6 +97,12 @@ fun <T : Any> collectProperties(kClass: KClass<T>, inheritedOnly: Boolean): List
         properties.removeAll(kClass.declaredMemberProperties)
     }
     return properties.filter {
-        it.visibility == KVisibility.PUBLIC && it.findAnnotation<Transient>() == null
+        it.visibility == KVisibility.PUBLIC && (it.annotations.firstOrNull { it is Transient } as Transient?) == null
+    }
+}
+
+fun CommonCompilerArguments.setApiVersionToLanguageVersionIfNeeded() {
+    if (languageVersion != null && VersionComparatorUtil.compare(languageVersion, apiVersion) < 0) {
+        apiVersion = languageVersion
     }
 }

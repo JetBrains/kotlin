@@ -1,6 +1,10 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.collections
 
-import org.junit.Test
 import kotlin.test.*
 
 class GroupingTest {
@@ -54,16 +58,16 @@ class GroupingTest {
 
         val elements = listOf("foo", "bar", "flea", "zoo", "biscuit")
         val result = elements.groupingBy { it.first() }
-                .fold({ k, _ -> Collector<Char, String>(k)}, { _, acc, e -> acc.accumulateIfEven(e) })
+            .fold({ k, _ -> Collector<Char, String>(k) }, { _, acc, e -> acc.accumulateIfEven(e) })
 
         val ordered = result.values.sortedBy { it.key }.map { it.toPair() }
         assertEquals(listOf('b' to emptyList(), 'f' to listOf("flea"), 'z' to emptyList()), ordered)
 
         val moreElements = listOf("fire", "zero")
         val result2 = moreElements.groupingBy { it.first() }
-                .foldTo(HashMap(result),
-                        { k, _ -> error("should not be called for $k") },
-                        { _, acc, e -> acc.accumulateIfEven(e) })
+            .foldTo(HashMap(result),
+                    { k, _ -> error("should not be called for $k") },
+                    { _, acc, e -> acc.accumulateIfEven(e) })
 
         val ordered2 = result2.values.sortedBy { it.key }.map { it.toPair() }
         assertEquals(listOf('b' to emptyList(), 'f' to listOf("flea", "fire"), 'z' to listOf("zero")), ordered2)
@@ -97,7 +101,7 @@ class GroupingTest {
         assertEquals(mapOf('f' to 2, 'b' to 3, 'a' to 1, 'z' to 2), counts2)
     }
 
-/**
+/*
     @Test fun sumEach() {
         val values = listOf("k" to 50, "b" to 20, "k" to 1000 )
         val summary = values.groupingBy { it.first }.eachSumOf { it.second }

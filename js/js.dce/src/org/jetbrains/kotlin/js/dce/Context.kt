@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.js.dce
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
+import org.jetbrains.kotlin.js.backend.ast.metadata.specialFunction
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.array
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.index
 
@@ -30,6 +33,45 @@ class Context {
 
     fun addNodesForLocalVars(names: Collection<JsName>) {
         nodes += names.filter { it !in nodes }.associate { it to Node(it) }
+    }
+
+    fun markSpecialFunctions(root: JsNode) {
+        val candidates = mutableMapOf<JsName, SpecialFunction>()
+        val unsuitableNames = mutableSetOf<JsName>()
+        val assignedNames = mutableSetOf<JsName>()
+        root.accept(object : RecursiveJsVisitor() {
+            override fun visit(x: JsVars.JsVar) {
+                val name = x.name
+                if (!assignedNames.add(name)) {
+                    unsuitableNames += name
+                }
+
+                val initializer = x.initExpression
+                if (initializer != null) {
+                    val specialName = when {
+                        isDefineInlineFunction(initializer) -> SpecialFunction.DEFINE_INLINE_FUNCTION
+                        isWrapFunction(initializer) -> SpecialFunction.WRAP_FUNCTION
+                        else -> null
+                    }
+                    specialName?.let { candidates[name] = specialName }
+                }
+                super.visit(x)
+            }
+
+            override fun visitBinaryExpression(x: JsBinaryOperation) {
+                JsAstUtils.decomposeAssignmentToVariable(x)?.let { (left, _) -> unsuitableNames += left }
+            }
+
+            override fun visitFunction(x: JsFunction) {
+                x.name?.let { unsuitableNames += it }
+            }
+        })
+
+        for ((name, function) in candidates) {
+            if (name !in unsuitableNames) {
+                name.specialFunction = function
+            }
+        }
     }
 
     fun extractNode(expression: JsExpression): Node? {

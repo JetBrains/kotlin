@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import java.io.File
+import java.util.zip.ZipFile
 
 abstract class Kapt3BaseIT : BaseGradleIT() {
     companion object {
@@ -27,7 +28,7 @@ abstract class Kapt3BaseIT : BaseGradleIT() {
     }
 
     override fun defaultBuildOptions(): BuildOptions =
-            super.defaultBuildOptions().copy(withDaemon = true)
+        super.defaultBuildOptions().copy(withDaemon = true)
 
     fun CompiledProject.assertKaptSuccessful() {
         KAPT_SUCCESSFUL_REGEX.findAll(this.output).count() > 0
@@ -35,144 +36,139 @@ abstract class Kapt3BaseIT : BaseGradleIT() {
 }
 
 open class Kapt3IT : Kapt3BaseIT() {
-    companion object {
-        private const val GRADLE_VERSION = "3.3"
-    }
-
     @Test
     fun testAnnotationProcessorAsFqName() {
-        val project = Project("annotationProcessorAsFqName", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("annotationProcessorAsFqName", directoryPrefix = "kapt2")
 
         project.build("build") {
             assertSuccessful()
             assertKaptSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
         }
     }
 
     @Test
     fun testSimple() {
-        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("simple", directoryPrefix = "kapt2")
 
         project.build("build") {
             assertSuccessful()
             assertKaptSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
-            assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
-            assertFileExists("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
-            assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            val javaClassesDir = javaClassesDir()
+            assertFileExists(javaClassesDir + "example/TestClassGenerated.class")
+            assertFileExists(javaClassesDir + "example/SourceAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir + "example/BinaryAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir + "example/RuntimeAnnotatedTestClassGenerated.class")
             assertContains("example.JavaTest PASSED")
             assertClassFilesNotContain(File(project.projectDir, "build/classes"), "ExampleSourceAnnotation")
             assertNotContains("warning: The following options were not recognized by any processor")
+            assertContains("Need to discovery annotation processors in the AP classpath")
         }
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE")
-            assertContains(":compileJava UP-TO-DATE")
+            assertTasksUpToDate(":compileKotlin", ":compileJava")
         }
     }
 
     @Test
     fun testSimpleWithIC() {
         val options = defaultBuildOptions().copy(incremental = true)
-        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
-        val classesDir = File(project.projectDir, "build/classes")
+        val project = Project("simple", directoryPrefix = "kapt2")
+        val javaClassesDir = File(project.projectDir, project.classesDir(language = "java"))
 
         project.build("clean", "build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
-            assertClassFilesNotContain(classesDir, "ExampleSourceAnnotation")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
+            assertClassFilesNotContain(javaClassesDir, "ExampleSourceAnnotation")
         }
 
         project.projectDir.getFilesByNames("InternalDummy.kt", "test.kt").forEach { it.appendText(" ") }
         project.build("build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
-            assertClassFilesNotContain(classesDir, "ExampleSourceAnnotation")
+            assertTasksExecuted(":compileKotlin")
+            // there are no actual changes in Java sources, generated sources, Kotlin classes
+            assertTasksUpToDate(":compileJava")
+            assertClassFilesNotContain(javaClassesDir, "ExampleSourceAnnotation")
         }
 
         // emulating wipe by android plugin's IncrementalSafeguardTask
-        classesDir.deleteRecursively()
+        javaClassesDir.deleteRecursively()
         project.build("build", options = options) {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE")
-            assertContains(":kaptGenerateStubsKotlin UP-TO-DATE")
-            assertContains(":kaptKotlin UP-TO-DATE")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertClassFilesNotContain(classesDir, "ExampleSourceAnnotation")
+            assertTasksUpToDate(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            assertClassFilesNotContain(javaClassesDir, "ExampleSourceAnnotation")
         }
     }
 
     @Test
     fun testDisableIcForGenerateStubs() {
-        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("simple", directoryPrefix = "kapt2")
         project.build("build", options = defaultBuildOptions().copy(incremental = false)) {
             assertSuccessful()
-            assertContains(":kaptGenerateStubsKotlin")
+            assertTasksExecuted(":kaptGenerateStubsKotlin")
             assertNotContains(USING_INCREMENTAL_COMPILATION_MESSAGE)
         }
     }
 
     @Test
     fun testArguments() {
-        Project("arguments", GRADLE_VERSION, directoryPrefix = "kapt2").build("build") {
+        Project("arguments", directoryPrefix = "kapt2").build("build") {
             assertSuccessful()
             assertKaptSuccessful()
-            assertContains("Options: {suffix=Customized, justColon=:, justEquals==, containsColon=a:b, " +
-                    "containsEquals=a=b, startsWithColon=:a, startsWithEquals==a, endsWithColon=a:, " +
-                    "endsWithEquals=a:, withSpace=a b c,")
+            assertContains(
+                "Options: {suffix=Customized, justColon=:, justEquals==, containsColon=a:b, " +
+                        "containsEquals=a=b, startsWithColon=:a, startsWithEquals==a, endsWithColon=a:, " +
+                        "endsWithEquals=a:, withSpace=a b c,"
+            )
             assertContains("-Xmaxerrs=500, -Xlint:all=-Xlint:all") // Javac options test
             assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertFileExists("build/classes/main/example/TestClassCustomized.class")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            assertFileExists(javaClassesDir() + "example/TestClassCustomized.class")
+            assertContains("Annotation processor class names are set, skip AP discovery")
         }
     }
 
     @Test
     fun testInheritedAnnotations() {
-        Project("inheritedAnnotations", GRADLE_VERSION, directoryPrefix = "kapt2").build("build") {
+        Project("inheritedAnnotations", directoryPrefix = "kapt2").build("build") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists("build/generated/source/kapt/main/example/AncestorClassGenerated.java")
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
-            assertFileExists("build/classes/main/example/AncestorClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/AncestorClassGenerated.class")
         }
     }
 
     @Test
     fun testGeneratedDirectoryIsUpToDate() {
-        val project = Project("generatedDirUpToDate", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("generatedDirUpToDate", directoryPrefix = "kapt2")
 
         project.build("build") {
             assertSuccessful()
             assertKaptSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
-            assertFileExists("build/classes/main/example/TestClass.class")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
 
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists("build/generated/source/kapt/main/example/SourceAnnotatedTestClassGenerated.java")
             assertFileExists("build/generated/source/kapt/main/example/BinaryAnnotatedTestClassGenerated.java")
             assertFileExists("build/generated/source/kapt/main/example/RuntimeAnnotatedTestClassGenerated.java")
 
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
-            assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
-            assertFileExists("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
-            assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/SourceAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/BinaryAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/RuntimeAnnotatedTestClassGenerated.class")
         }
 
         val testKt = project.projectDir.getFileByName("test.kt")
@@ -180,32 +176,79 @@ open class Kapt3IT : Kapt3BaseIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
-            assertFileExists("build/classes/main/example/TestClass.class")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
 
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists("build/generated/source/kapt/main/example/SourceAnnotatedTestClassGenerated.java")
             /*!*/   assertNoSuchFile("build/generated/source/kapt/main/example/BinaryAnnotatedTestClassGenerated.java")
             assertFileExists("build/generated/source/kapt/main/example/RuntimeAnnotatedTestClassGenerated.java")
 
-            assertFileExists("build/classes/main/example/TestClassGenerated.class")
-            assertFileExists("build/classes/main/example/SourceAnnotatedTestClassGenerated.class")
-            /*!*/   assertNoSuchFile("build/classes/main/example/BinaryAnnotatedTestClassGenerated.class")
-            assertFileExists("build/classes/main/example/RuntimeAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/SourceAnnotatedTestClassGenerated.class")
+            /*!*/   assertNoSuchFile(javaClassesDir() + "example/BinaryAnnotatedTestClassGenerated.class")
+            assertFileExists(javaClassesDir() + "example/RuntimeAnnotatedTestClassGenerated.class")
+        }
+    }
+
+    @Test
+    fun testRemoveJavaClassICRebuild() {
+        testICRebuild { project ->
+            project.projectFile("Foo.java").delete()
+        }
+    }
+
+    @Test
+    fun testChangeClasspathICRebuild() {
+        testICRebuild { project ->
+            project.projectFile("build.gradle").modify {
+                "$it\ndependencies { compile 'org.jetbrains.kotlin:kotlin-reflect:' + kotlin_version }"
+            }
+        }
+    }
+
+    // tests all output directories are cleared when IC rebuilds
+    private fun testICRebuild(performChange: (Project) -> Unit) {
+        val project = Project("incrementalRebuild", directoryPrefix = "kapt2")
+        val options = defaultBuildOptions().copy(incremental = true)
+        val generatedSrc = "build/generated/source/kapt/main"
+
+        project.build("build", options = options) {
+            assertSuccessful()
+
+            // generated sources
+            assertFileExists("$generatedSrc/bar/UseBar_MembersInjector.java")
+        }
+
+        performChange(project)
+        project.projectFile("UseBar.kt").modify { it.replace("package bar", "package foo.bar") }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin", ":compileJava")
+
+            // generated sources
+            assertFileExists("$generatedSrc/foo/bar/UseBar_MembersInjector.java")
+            assertNoSuchFile("$generatedSrc/bar/UseBar_MembersInjector.java")
+
+            // classes
+            assertFileExists(kotlinClassesDir() + "foo/bar/UseBar.class")
+            assertNoSuchFile(kotlinClassesDir() + "bar/UseBar.class")
+            assertFileExists(javaClassesDir() + "foo/bar/UseBar_MembersInjector.class")
+            assertNoSuchFile(javaClassesDir() + "bar/UseBar_MembersInjector.class")
         }
     }
 
     @Test
     fun testRemoveAnnotationIC() {
-        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("simple", directoryPrefix = "kapt2")
         val options = defaultBuildOptions().copy(incremental = true)
         project.setupWorkingDir()
         val internalDummyKt = project.projectDir.getFileByName("InternalDummy.kt")
 
         // add annotation
         val exampleAnn = "@example.ExampleAnnotation "
-        internalDummyKt.modify { it.addBeforeSubstring(exampleAnn, "internal class InternalDummy")}
+        internalDummyKt.modify { it.addBeforeSubstring(exampleAnn, "internal class InternalDummy") }
 
         project.build("classes", options = options) {
             assertSuccessful()
@@ -213,7 +256,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
 
         // remove annotation
-        internalDummyKt.modify { it.replace(exampleAnn, "")}
+        internalDummyKt.modify { it.replace(exampleAnn, "") }
 
         project.build("classes", options = options) {
             assertSuccessful()
@@ -225,7 +268,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testKt18799() {
-        val project = Project("kt18799", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("kt18799", directoryPrefix = "kapt2")
 
         project.build("kaptKotlin") {
             assertSuccessful()
@@ -244,7 +287,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testKaptClassesDirSync() {
-        val project = Project("autoService", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("autoService", GradleVersionRequired.Exact("3.5"), directoryPrefix = "kapt2")
 
         project.build("build") {
             assertSuccessful()
@@ -269,7 +312,7 @@ open class Kapt3IT : Kapt3BaseIT() {
      */
     @Test
     fun testCopyCompileArguments() {
-        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("simple", directoryPrefix = "kapt2")
         project.setupWorkingDir()
 
         val arg = "-Xskip-runtime-version-check"
@@ -291,13 +334,127 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testOutputKotlinCode() {
-        Project("kaptOutputKotlinCode", GRADLE_VERSION, directoryPrefix = "kapt2").build("build") {
+        Project("kaptOutputKotlinCode", directoryPrefix = "kapt2").build("build") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
             assertFileExists("build/generated/source/kaptKotlin/main/TestClass.kt")
-            assertFileExists("build/classes/main/example/TestClass.class")
-            assertFileExists("build/classes/main/example/TestClassCustomized.class")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            assertFileExists(javaClassesDir() + "example/TestClassCustomized.class")
+        }
+    }
+
+    @Test
+    fun testLocationMapping() {
+        val project = Project("locationMapping", directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertFailed()
+
+            assertContains("Test.java:9: error: GenError element")
+            assertContains("Test.java:17: error: GenError element")
+        }
+
+        project.projectDir.getFileByName("build.gradle").modify {
+            it.replace("mapDiagnosticLocations = false", "mapDiagnosticLocations = true")
+        }
+
+        project.build("build") {
+            assertFailed()
+
+            assertNotContains("Test.java:9: error: GenError element")
+            assertNotContains("Test.java:17: error: GenError element")
+
+            assertContains("test.kt:3: error: GenError element")
+            assertContains("test.kt:7: error: GenError element")
+        }
+    }
+
+    @Test
+    fun testChangesInLocalAnnotationProcessor() {
+        val project = Project("localAnnotationProcessor", directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val testAnnotationProcessor = project.projectDir.getFileByName("TestAnnotationProcessor.kt")
+        testAnnotationProcessor.modify { text ->
+            val commentText = "// print warning "
+            assert(text.contains(commentText))
+            text.replace(commentText, "")
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains(
+                ":example:kaptKotlin UP-TO-DATE",
+                ":example:kaptGenerateStubsKotlin UP-TO-DATE"
+            )
+
+            assertContains("Additional warning message from AP")
+        }
+    }
+
+    @Test
+    fun testKaptConfigurationLazyResolution() = with(Project("simple", directoryPrefix = "kapt2")) {
+        setupWorkingDir()
+        File(projectDir, "build.gradle").appendText(
+            "\ndependencies { kapt project.files { throw new GradleException(\"Resolved!\") } }"
+        )
+        // Check that the kapt configuration does not get resolved during the project evaluation:
+        build("tasks") {
+            assertSuccessful()
+            assertNotContains("Resolved!")
+        }
+    }
+
+    @Test
+    fun testKt19179() {
+        val project = Project("kt19179", directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+            assertFileExists("processor/build/tmp/kapt3/classes/main/META-INF/services/javax.annotation.processing.Processor")
+
+            val processorJar = fileInWorkingDir("processor/build/libs/processor.jar")
+            assert(processorJar.exists())
+
+            val zip = ZipFile(processorJar)
+            @Suppress("ConvertTryFinallyToUseCall")
+            try {
+                assert(zip.getEntry("META-INF/services/javax.annotation.processing.Processor") != null)
+            } finally {
+                zip.close()
+            }
+
+            assertTasksExecuted(
+                ":processor:kaptGenerateStubsKotlin",
+                ":processor:kaptKotlin",
+                ":app:kaptGenerateStubsKotlin",
+                ":app:kaptKotlin"
+            )
+        }
+
+        project.projectDir.getFileByName("Test.kt").modify { text ->
+            assert("SomeClass()" in text)
+            text.replace("SomeClass()", "SomeClass(); val a = 5")
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksUpToDate(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin", ":app:kaptKotlin")
+            assertTasksExecuted(":app:kaptGenerateStubsKotlin")
+        }
+
+        project.projectDir.getFileByName("Test.kt").modify { text ->
+            text + "\n\nfun t() {}"
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksUpToDate(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin")
+            assertTasksExecuted(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin")
         }
     }
 }

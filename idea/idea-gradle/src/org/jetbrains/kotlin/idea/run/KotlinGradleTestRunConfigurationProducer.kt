@@ -31,9 +31,11 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 
 class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationProducer() {
 
-    override fun doSetupConfigurationFromContext(configuration: ExternalSystemRunConfiguration,
-                                                 context: ConfigurationContext,
-                                                 sourceElement: Ref<PsiElement>): Boolean {
+    override fun doSetupConfigurationFromContext(
+        configuration: ExternalSystemRunConfiguration,
+        context: ConfigurationContext,
+        sourceElement: Ref<PsiElement>
+    ): Boolean {
         val contextLocation = context.location ?: return false
         val module = context.module ?: return false
 
@@ -53,7 +55,7 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
 
         configuration.settings.externalProjectPath = projectPath
         configuration.settings.taskNames = tasksToRun
-        configuration.settings.scriptParameters = String.format("--tests %s", testClass.qualifiedName)
+        configuration.settings.scriptParameters = String.format("--tests \"%s\"", testClass.qualifiedName)
         configuration.name = testClass.name
 
         JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, contextLocation)
@@ -86,16 +88,18 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
         if (i == -1) return false
 
         val str = scriptParameters.substringAfter("--tests ").trim() + ' '
-        return str.startsWith(testClass.qualifiedName + ' ') && !str.contains("--tests")
+        return str.startsWith("\"" + testClass.qualifiedName + "\"" + ' ') && !str.contains("--tests")
     }
 }
 
 class KotlinTestMethodGradleConfigurationProducer
     : TestMethodGradleConfigurationProducer() {
 
-    override fun doSetupConfigurationFromContext(configuration: ExternalSystemRunConfiguration,
-                                                  context: ConfigurationContext,
-                                                  sourceElement: Ref<PsiElement>): Boolean {
+    override fun doSetupConfigurationFromContext(
+        configuration: ExternalSystemRunConfiguration,
+        context: ConfigurationContext,
+        sourceElement: Ref<PsiElement>
+    ): Boolean {
         val contextLocation = context.location ?: return false
         if (context.module == null) return false
 
@@ -142,10 +146,12 @@ class KotlinTestMethodGradleConfigurationProducer
         return scriptParameters.contains(testFilter!!)
     }
 
-    private fun applyTestMethodConfiguration(configuration: ExternalSystemRunConfiguration,
-                                             context: ConfigurationContext,
-                                             psiMethod: PsiMethod,
-                                             vararg containingClasses: PsiClass): Boolean {
+    private fun applyTestMethodConfiguration(
+        configuration: ExternalSystemRunConfiguration,
+        context: ConfigurationContext,
+        psiMethod: PsiMethod,
+        vararg containingClasses: PsiClass
+    ): Boolean {
         val module = context.module ?: return false
 
         if (!ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module)) return false

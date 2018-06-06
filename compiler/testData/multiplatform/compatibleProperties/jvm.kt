@@ -1,1 +1,1 @@
-impl val bar = "Hello"
+actual val bar = "Hello"

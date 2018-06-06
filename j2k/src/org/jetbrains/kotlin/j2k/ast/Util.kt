@@ -48,7 +48,7 @@ private fun Expression.precedence(): Int? {
 
         is BinaryExpression -> op.precedence
 
-        is RangeExpression, is DownToExpression -> 5
+        is RangeExpression, is UntilExpression, is DownToExpression -> 5
 
         is IsOperator -> 8
 

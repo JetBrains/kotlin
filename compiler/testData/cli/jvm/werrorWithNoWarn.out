@@ -1,0 +1,5 @@
+error: warnings found and -Werror specified
+compiler/testData/cli/jvm/werrorWithNoWarn.kt:2:6: warning: unnecessary non-null assertion (!!) on a non-null receiver of type String
+    s!!
+     ^
+COMPILATION_ERROR

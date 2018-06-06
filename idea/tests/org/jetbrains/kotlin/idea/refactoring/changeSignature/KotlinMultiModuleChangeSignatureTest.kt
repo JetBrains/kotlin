@@ -101,4 +101,8 @@ class KotlinMultiModuleChangeSignatureTest : KotlinMultiFileTestCase() {
     fun testImplSecondaryConstructor() = doTest("JS/src/test/test.kt") {
         addParameter("b", KotlinChangeSignatureTest.BUILT_INS.booleanType, "false")
     }
+
+    fun testSuspendImpls() = doTest("Common/src/test/test.kt") {
+        addParameter("n", KotlinChangeSignatureTest.BUILT_INS.intType, "0")
+    }
 }

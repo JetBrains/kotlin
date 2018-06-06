@@ -108,7 +108,7 @@ private fun Scope.liftUsedNames(): Scope {
         scope.children.forEach { child ->
             scope.usedNames += scope.declaredNames
             traverse(child)
-            scope.usedNames += child.usedNames.filter { !it.isTemporary }
+            scope.usedNames += child.usedNames
         }
     }
     traverse(this)

@@ -6,12 +6,18 @@ interface I
 open class C
 interface J
 
-header class Foo : I, C, J
+expect class Foo : I, C, J
+
+expect class Bar : <!SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, JS:SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, JVM:SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR!>C<!SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, JS:SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS, JVM:SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS!>()<!><!>
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
-impl class Foo : I, C(), J
+actual class Foo : I, C(), J
+
+actual class <!ACTUAL_WITHOUT_EXPECT!>Bar<!>
 
 // MODULE: m3-js(m1-common)
 // FILE: js.kt
-impl class Foo : I, J, C()
+actual class Foo : I, J, C()
+
+actual class Bar : C()

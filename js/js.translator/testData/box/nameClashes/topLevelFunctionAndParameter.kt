@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 995
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1113
 fun f(x: Int) = x * 2
 
 fun test(f: (Long) -> Long) = Pair(f(23 as Int), f(42L))

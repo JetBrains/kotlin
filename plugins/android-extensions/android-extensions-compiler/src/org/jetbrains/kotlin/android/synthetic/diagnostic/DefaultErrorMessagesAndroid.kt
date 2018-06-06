@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.android.synthetic.diagnostic
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_TYPE
 
 object DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
     private val MAP = DiagnosticFactoryToRendererMap("Android")
@@ -70,16 +72,34 @@ object DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
                 "'Parcelable' constructor parameter should be 'val' or 'var'")
 
         MAP.put(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED,
-                "Property would not be serialized into a 'Parcel'. Add '@Transient' annotation to remove the warning")
+                "Property would not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning")
 
         MAP.put(ErrorsAndroid.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED,
-                "Overriding 'writeToParcel' is not allowed. Use 'Parceler' companion object instead.")
+                "Overriding 'writeToParcel' is not allowed. Use 'Parceler' companion object instead")
 
         MAP.put(ErrorsAndroid.CREATOR_DEFINITION_IS_NOT_ALLOWED,
-                "'CREATOR' definition is not allowed. Use 'Parceler' companion object instead.")
+                "'CREATOR' definition is not allowed. Use 'Parceler' companion object instead")
 
         MAP.put(ErrorsAndroid.PARCELABLE_TYPE_NOT_SUPPORTED,
                 "Type is not directly supported by 'Parcelize'. " +
                 "Annotate the parameter type with '@RawValue' if you want it to be serialized using 'writeValue()'")
+
+        MAP.put(ErrorsAndroid.PARCELER_SHOULD_BE_OBJECT,
+                "Parceler should be an object")
+
+        MAP.put(ErrorsAndroid.PARCELER_TYPE_INCOMPATIBLE,
+                "Parceler type {0} is incompatible with {1}",
+                RENDER_TYPE, RENDER_TYPE)
+
+        MAP.put(ErrorsAndroid.DUPLICATING_TYPE_PARCELERS,
+                "Duplicating ''TypeParceler'' annotations")
+
+        MAP.put(ErrorsAndroid.REDUNDANT_TYPE_PARCELER,
+                "This ''TypeParceler'' is already provided for {0}",
+                RENDER_CLASS_OR_OBJECT)
+
+        MAP.put(ErrorsAndroid.CLASS_SHOULD_BE_PARCELIZE,
+                "{0} should be annotated with ''@Parcelize''",
+                RENDER_CLASS_OR_OBJECT)
     }
 }

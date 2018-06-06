@@ -23,61 +23,60 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 abstract class ReferenceTrackingInterpreter : OptimizationBasicInterpreter() {
     override fun merge(v: BasicValue, w: BasicValue): BasicValue =
-            when {
-                v is ProperTrackedReferenceValue && w is ProperTrackedReferenceValue ->
-                    if (v.descriptor == w.descriptor)
-                        v
-                    else
-                        createTaintedValue(v, w)
-
-                v is TrackedReferenceValue && w is TrackedReferenceValue ->
-                    createPossiblyMergedValue(v, w)
-
-                v is TrackedReferenceValue || w is TrackedReferenceValue ->
+        when {
+            v is ProperTrackedReferenceValue && w is ProperTrackedReferenceValue ->
+                if (v.descriptor == w.descriptor)
+                    v
+                else
                     createTaintedValue(v, w)
 
-                else ->
-                    super.merge(v, w)
-            }
+            v is TrackedReferenceValue && w is TrackedReferenceValue ->
+                createPossiblyMergedValue(v, w)
 
-    protected fun createTaintedValue(v: BasicValue, w: BasicValue) : TrackedReferenceValue =
-            TaintedTrackedReferenceValue(
-                    getMergedValueType(v.type, w.type),
-                    mergeDescriptors(v, w).also {
-                        assert(it.isNotEmpty()) { "At least one of ($v, $w) should be a tracked reference" }
-                    }
-            )
+            v is TrackedReferenceValue || w is TrackedReferenceValue ->
+                createTaintedValue(v, w)
+
+            else ->
+                super.merge(v, w)
+        }
+
+    protected fun createTaintedValue(v: BasicValue, w: BasicValue): TrackedReferenceValue =
+        TaintedTrackedReferenceValue(
+            getMergedValueType(v.type, w.type),
+            mergeDescriptors(v, w).also {
+                assert(it.isNotEmpty()) { "At least one of ($v, $w) should be a tracked reference" }
+            }
+        )
 
     protected fun createMergedValue(v: TrackedReferenceValue, w: TrackedReferenceValue): TrackedReferenceValue =
-            if (v is TaintedTrackedReferenceValue || w is TaintedTrackedReferenceValue)
-                createTaintedValue(v, w)
-            else
-                MergedTrackedReferenceValue(getMergedValueType(v.type, w.type), mergeDescriptors(v, w))
+        if (v is TaintedTrackedReferenceValue || w is TaintedTrackedReferenceValue)
+            createTaintedValue(v, w)
+        else
+            MergedTrackedReferenceValue(getMergedValueType(v.type, w.type), mergeDescriptors(v, w))
 
     protected open fun createPossiblyMergedValue(v: TrackedReferenceValue, w: TrackedReferenceValue): TrackedReferenceValue =
-            createTaintedValue(v, w)
+        createTaintedValue(v, w)
 
     private fun mergeDescriptors(v: BasicValue, w: BasicValue) =
-            v.referenceValueDescriptors + w.referenceValueDescriptors
+        v.referenceValueDescriptors + w.referenceValueDescriptors
 
     private val BasicValue.referenceValueDescriptors: Set<ReferenceValueDescriptor>
         get() = if (this is TrackedReferenceValue) this.descriptors else emptySet()
 
     protected fun getMergedValueType(type1: Type?, type2: Type?): Type =
-            when {
-                type1 == null || type2 == null -> AsmTypes.OBJECT_TYPE
-                type1 == type2 -> type1
-                else -> AsmTypes.OBJECT_TYPE
-            }
+        when {
+            type1 == null || type2 == null -> AsmTypes.OBJECT_TYPE
+            type1 == type2 -> type1
+            else -> AsmTypes.OBJECT_TYPE
+        }
 
     override fun copyOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue? =
-            if (value is TrackedReferenceValue) {
-                checkRefValuesUsages(insn, listOf(value))
-                value
-            }
-            else {
-                super.copyOperation(insn, value)
-            }
+        if (value is TrackedReferenceValue) {
+            checkRefValuesUsages(insn, listOf(value))
+            value
+        } else {
+            super.copyOperation(insn, value)
+        }
 
     override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue? {
         checkRefValuesUsages(insn, listOf(value))

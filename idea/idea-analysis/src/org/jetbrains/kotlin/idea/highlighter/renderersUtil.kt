@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.hasTypeMismatchErrorOnParameter
 import org.jetbrains.kotlin.resolve.calls.callUtil.hasUnmappedArguments
+import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.ErrorUtils
 
 private val RED_TEMPLATE = "<font color=red><b>%s</b></font>"

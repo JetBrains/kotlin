@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.stubindex
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
@@ -35,16 +34,13 @@ class KotlinSourceFilterScope private constructor(
 
     private val index = ProjectRootManager.getInstance(project).fileIndex
 
-    //NOTE: avoid recomputing in potentially bottleneck 'contains' method
-    private val isJsProjectRef = Ref<Boolean?>(null)
-
     override fun getProject() = project
 
     override fun contains(file: VirtualFile): Boolean {
         if (!super.contains(file)) return false
 
         return ProjectRootsUtil.isInContent(
-                project, file, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, includeScriptDependencies, index, isJsProjectRef
+                project, file, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, includeScriptDependencies, index
         )
     }
 
@@ -88,9 +84,6 @@ class KotlinSourceFilterScope private constructor(
 
         @JvmStatic
         fun projectSourceAndClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, true, false, project)
-
-        @JvmStatic
-        fun sources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, false, true, project)
 
         @JvmStatic
         fun projectSources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, false, false, project)

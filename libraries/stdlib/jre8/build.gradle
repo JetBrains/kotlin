@@ -1,9 +1,12 @@
-description = 'Kotlin Standard Library JRE 8 extension'
+description = 'Kotlin Standard Library JRE 8 extension (deprecated)'
 
 apply plugin: 'kotlin'
 
-configureJvmProject(project)
+configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
+ext.javaHome = JDK_18
+ext.jvmTarget = "1.8"
 
 dependencies {
     compile project(':kotlin-stdlib')
@@ -21,6 +24,8 @@ sourceSets {
         kotlin {
             srcDir 'test'
             if(!System.properties.'idea.active') {
+                srcDir '../jvm/test'
+                srcDir '../common/test'
                 srcDir '../test'
                 srcDir '../jre7/test'
             }
@@ -50,13 +55,13 @@ compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
-            "-Xdump-declarations-to", "${buildDir}/stdlib-jre8-declarations.json",
+            "-Xnormalize-constructor-calls=enable",
             "-module-name", project.name
     ]
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable", "-Xmulti-platform"]
 }
 
 kotlin.experimental.coroutines 'enable'
@@ -67,13 +72,18 @@ test {
 
 
 task testJre6Tests(type: Test) {
-    dependsOn project(':kotlin-stdlib').tasks.testClasses
+    dependsOn(':kotlin-stdlib:testClasses')
     group = "verification"
 
     executable = "$JDK_18/bin/java"
 
-    testClassesDir = project.file('../build/classes/test')
-    classpath = project.files('../build/classes/test') + sourceSets.test.compileClasspath
+    doFirst {
+        testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
+        classpath = files(
+                testClassesDirs,
+                configurations.testCompile
+        )
+    }
 }
 
 check.dependsOn testJre6Tests

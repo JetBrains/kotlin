@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
 import org.jetbrains.kotlin.psi.debugText.DebugTextUtilKt;
@@ -45,7 +45,7 @@ public class AnalyzingUtils {
             public void visitErrorElement(@NotNull PsiErrorElement element) {
                 throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " +
                                                    element.getNode().getElementType() + " '" +
-                                                   element.getText() + DiagnosticUtils.atLocation(element));
+                                                   element.getText() + PsiDiagnosticUtils.atLocation(element));
             }
         });
     }

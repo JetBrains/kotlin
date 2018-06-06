@@ -35,7 +35,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
         return this
     }
 
-    override fun loadState(state: KotlinCompilerWorkspaceSettings?) {
-        XmlSerializerUtil.copyBean(state!!, this)
+    override fun loadState(state: KotlinCompilerWorkspaceSettings) {
+        XmlSerializerUtil.copyBean(state, this)
     }
 }

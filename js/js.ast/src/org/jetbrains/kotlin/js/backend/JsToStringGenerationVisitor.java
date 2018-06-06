@@ -644,7 +644,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         JsStatement thenStmt = x.getThenStatement();
         JsStatement elseStatement = x.getElseStatement();
-        if (elseStatement != null && thenStmt instanceof JsIf && ((JsIf)thenStmt).getElseStatement() == null) {
+        if (elseStatement != null && isIfWithoutElse(thenStmt)) {
             thenStmt = new JsBlock(thenStmt);
         }
         nestedPush(thenStmt);
@@ -678,6 +678,18 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                 nestedPop(elseStatement);
             }
         }
+    }
+
+    private static boolean isIfWithoutElse(@NotNull JsStatement statement) {
+        while (statement instanceof JsIf) {
+            JsIf ifStatement = (JsIf) statement;
+            if (ifStatement.getElseStatement() == null) {
+                return true;
+            }
+            statement = ifStatement.getElseStatement();
+        }
+
+        return false;
     }
 
     @Override

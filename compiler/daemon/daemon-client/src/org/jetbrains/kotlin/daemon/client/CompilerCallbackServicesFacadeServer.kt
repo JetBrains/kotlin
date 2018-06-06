@@ -37,31 +37,40 @@ open class CompilerCallbackServicesFacadeServer(
         val compilationCanceledStatus: CompilationCanceledStatus? = null,
         port: Int = SOCKET_ANY_FREE_PORT
 ) : CompilerCallbackServicesFacade,
-    UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
-{
+        UnicastRemoteObject(
+                port,
+                LoopbackNetworkInterface.clientLoopbackSocketFactory,
+                LoopbackNetworkInterface.serverLoopbackSocketFactory
+        ) {
     override fun hasIncrementalCaches(): Boolean = incrementalCompilationComponents != null
 
-    override fun hasLookupTracker(): Boolean = incrementalCompilationComponents != null
+    override fun hasLookupTracker(): Boolean = lookupTracker != null
 
     override fun hasCompilationCanceledStatus(): Boolean = compilationCanceledStatus != null
 
     // TODO: consider replacing NPE with other reporting, although NPE here means most probably incorrect usage
 
-    override fun incrementalCache_getObsoletePackageParts(target: TargetId): Collection<String> = incrementalCompilationComponents!!.getIncrementalCache(target).getObsoletePackageParts()
+    override fun incrementalCache_getObsoletePackageParts(target: TargetId): Collection<String> =
+            incrementalCompilationComponents!!.getIncrementalCache(target).getObsoletePackageParts()
 
-    override fun incrementalCache_getObsoleteMultifileClassFacades(target: TargetId): Collection<String> = incrementalCompilationComponents!!.getIncrementalCache(target).getObsoleteMultifileClasses()
+    override fun incrementalCache_getObsoleteMultifileClassFacades(target: TargetId): Collection<String> =
+            incrementalCompilationComponents!!.getIncrementalCache(target).getObsoleteMultifileClasses()
 
-    override fun incrementalCache_getMultifileFacadeParts(target: TargetId, internalName: String): Collection<String>? = incrementalCompilationComponents!!.getIncrementalCache(target).getStableMultifileFacadeParts(internalName)
+    override fun incrementalCache_getMultifileFacadeParts(target: TargetId, internalName: String): Collection<String>? =
+            incrementalCompilationComponents!!.getIncrementalCache(target).getStableMultifileFacadeParts(internalName)
 
-    override fun incrementalCache_getPackagePartData(target: TargetId, partInternalName: String): JvmPackagePartProto? = incrementalCompilationComponents!!.getIncrementalCache(target).getPackagePartData(partInternalName)
+    override fun incrementalCache_getPackagePartData(target: TargetId, partInternalName: String): JvmPackagePartProto? =
+            incrementalCompilationComponents!!.getIncrementalCache(target).getPackagePartData(partInternalName)
 
-    override fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray? = incrementalCompilationComponents!!.getIncrementalCache(target).getModuleMappingData()
+    override fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray? =
+            incrementalCompilationComponents!!.getIncrementalCache(target).getModuleMappingData()
 
     // todo: remove (the method it called was relevant only for old IC)
     override fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String) {
     }
 
-    override fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String = incrementalCompilationComponents!!.getIncrementalCache(target).getClassFilePath(internalClassName)
+    override fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String =
+            incrementalCompilationComponents!!.getIncrementalCache(target).getClassFilePath(internalClassName)
 
     override fun incrementalCache_close(target: TargetId) {
         incrementalCompilationComponents!!.getIncrementalCache(target).close()

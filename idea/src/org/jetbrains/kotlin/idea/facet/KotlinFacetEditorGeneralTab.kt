@@ -16,12 +16,9 @@
 
 package org.jetbrains.kotlin.idea.facet
 
-import com.intellij.facet.impl.ui.libraries.DelegatingLibrariesValidatorContext
 import com.intellij.facet.ui.*
-import com.intellij.facet.ui.libraries.FrameworkLibraryValidator
 import com.intellij.ide.actions.ShowSettingsUtilImpl
 import com.intellij.openapi.project.Project
-import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.HoverHyperlinkLabel
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.ThreeStateCheckBox
@@ -31,10 +28,10 @@ import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.config.createCompilerArguments
 import org.jetbrains.kotlin.config.splitArgumentString
 import org.jetbrains.kotlin.idea.compiler.configuration.*
+import org.jetbrains.kotlin.idea.util.onTextChange
 import java.awt.BorderLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
-import javax.swing.event.DocumentEvent
 import kotlin.reflect.full.findAnnotation
 
 class KotlinFacetEditorGeneralTab(
@@ -170,6 +167,7 @@ class KotlinFacetEditorGeneralTab(
             val fieldNamesToCheck = when (platform) {
                 is TargetPlatformKind.Jvm -> jvmUIExposedFields
                 is TargetPlatformKind.JavaScript -> jsUIExposedFields
+                is TargetPlatformKind.Common-> metadataUIExposedFields
                 else -> commonUIExposedFields
             }
 
@@ -205,20 +203,14 @@ class KotlinFacetEditorGeneralTab(
 
     val editor = EditorComponent(editorContext.project, configuration)
 
-    private val libraryValidator: FrameworkLibraryValidator
-    private val coroutineValidator = ArgumentConsistencyValidator()
-
     private var enableValidation = false
 
     init {
-        libraryValidator = FrameworkLibraryValidatorWithDynamicDescription(
-                DelegatingLibrariesValidatorContext(editorContext),
-                validatorsManager,
-                "kotlin"
-        ) { editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*> }
+        for (creator in KotlinFacetValidatorCreator.EP_NAME.getExtensions()) {
+          validatorsManager.registerValidator(creator.create(editor, validatorsManager, editorContext))
+        }
 
-        validatorsManager.registerValidator(libraryValidator)
-        validatorsManager.registerValidator(coroutineValidator)
+        validatorsManager.registerValidator(ArgumentConsistencyValidator())
 
         with(editor.compilerConfigurable) {
             reportWarningsCheckBox.validateOnChange()
@@ -243,21 +235,12 @@ class KotlinFacetEditorGeneralTab(
 
     private fun restrictAPIVersions() {
         with(editor.compilerConfigurable) {
-            val targetPlatform = editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
-            val libraryLevel = getLibraryLanguageLevel(editorContext.module, editorContext.rootModel, targetPlatform)
-            val versionUpperBound = minOf(selectedLanguageVersion, libraryLevel)
-            restrictAPIVersions(versionUpperBound)
+            restrictAPIVersions(selectedLanguageVersionView)
         }
     }
 
     private fun JTextField.validateOnChange() {
-        document.addDocumentListener(
-                object : DocumentAdapter() {
-                    override fun textChanged(e: DocumentEvent) {
-                        doValidate()
-                    }
-                }
-        )
+        onTextChange { doValidate() }
     }
 
     private fun AbstractButton.validateOnChange() {
@@ -316,6 +299,7 @@ class KotlinFacetEditorGeneralTab(
                         }
                     }
                 }
+                updateMergedArguments()
             }
         }
     }

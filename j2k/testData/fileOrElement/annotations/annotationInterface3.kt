@@ -1,5 +1,5 @@
-// ERROR: Body is not allowed for annotation class
-// ERROR: Modifier 'companion' is not applicable inside 'annotation class'
+// ERROR: Members are not allowed in annotation class
+// ERROR: Members are not allowed in annotation class
 internal annotation class Anon(val value: String) {
 
     enum class E {

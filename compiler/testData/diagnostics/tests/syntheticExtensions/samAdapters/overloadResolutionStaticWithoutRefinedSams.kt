@@ -1,4 +1,4 @@
-// !LANGUAGE: -RefinedSamAdaptersPriority
+// !LANGUAGE: -RefinedSamAdaptersPriority -NewInference
 // !CHECK_TYPE
 // FILE: A.java
 public class A {

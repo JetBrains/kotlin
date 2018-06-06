@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -39,13 +28,13 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
+import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -203,12 +192,14 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             erasedInterfaceFunction = getErasedInvokeFunction(funDescriptor);
         }
         else {
-            erasedInterfaceFunction = samType.getAbstractMethod().getOriginal();
+            erasedInterfaceFunction = samType.getOriginalAbstractMethod();
         }
 
         generateBridge(
                 typeMapper.mapAsmMethod(erasedInterfaceFunction),
-                typeMapper.mapAsmMethod(funDescriptor)
+                erasedInterfaceFunction.getReturnType(),
+                typeMapper.mapAsmMethod(funDescriptor),
+                funDescriptor.getReturnType()
         );
 
         //TODO: rewrite cause ugly hack
@@ -275,7 +266,12 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         );
     }
 
-    protected void generateBridge(@NotNull Method bridge, @NotNull Method delegate) {
+    protected void generateBridge(
+            @NotNull Method bridge,
+            @Nullable KotlinType bridgeReturnType,
+            @NotNull Method delegate,
+            @Nullable KotlinType delegateReturnType
+    ) {
         if (bridge.equals(delegate)) return;
 
         MethodVisitor mv =
@@ -301,12 +297,17 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         int slot = 1;
         for (int i = 0; i < calleeParameters.size(); i++) {
             Type type = myParameterTypes[i];
-            StackValue.local(slot, type).put(typeMapper.mapType(calleeParameters.get(i)), iv);
+            ParameterDescriptor calleeParameter = calleeParameters.get(i);
+            KotlinType parameterType = calleeParameter.getType();
+            StackValue.local(slot, type, parameterType).put(typeMapper.mapType(calleeParameter), parameterType, iv);
             slot += type.getSize();
         }
 
         iv.invokevirtual(asmType.getInternalName(), delegate.getName(), delegate.getDescriptor(), false);
-        StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), iv);
+
+        StackValue
+                .onStack(delegate.getReturnType(), delegateReturnType)
+                .put(bridge.getReturnType(), bridgeReturnType, iv);
 
         iv.areturn(bridge.getReturnType());
 
@@ -421,7 +422,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
             String superClassConstructorDescriptor;
             if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE) ||
-                superClassAsmType.equals(CoroutineCodegenUtilKt.COROUTINE_IMPL_ASM_TYPE)) {
+                superClassAsmType.equals(CoroutineCodegenUtilKt.coroutineImplAsmType(state.getLanguageVersionSettings()))) {
                 int arity = calculateArity();
                 iv.iconst(arity);
                 if (shouldHaveBoundReferenceReceiver) {

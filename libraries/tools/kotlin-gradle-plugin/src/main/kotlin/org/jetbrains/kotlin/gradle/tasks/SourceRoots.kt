@@ -3,10 +3,10 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.incremental.isJavaFile
-import org.jetbrains.kotlin.incremental.isKotlinFile
+import org.jetbrains.kotlin.gradle.utils.isJavaFile
+import org.jetbrains.kotlin.gradle.utils.isKotlinFile
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import java.io.File
 import java.util.*
 
@@ -35,7 +35,7 @@ internal sealed class SourceRoots(val kotlinSourceFiles: List<File>) {
 
                 for (sourceDir in sourceDirs) {
                     for (sourceRoot in allSourceRoots) {
-                        if (FileUtil.isAncestor(sourceRoot, sourceDir, /* strict = */false)) {
+                        if (sourceRoot.isParentOf(sourceDir)) {
                             resultRoots.add(sourceRoot)
                         }
                     }

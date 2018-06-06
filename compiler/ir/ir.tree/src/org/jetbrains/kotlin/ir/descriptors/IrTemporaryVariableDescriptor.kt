@@ -27,13 +27,12 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 interface IrTemporaryVariableDescriptor : VariableDescriptor
 
 class IrTemporaryVariableDescriptorImpl(
-        containingDeclaration: DeclarationDescriptor,
-        name: Name,
-        outType: KotlinType,
-        private val isMutable: Boolean = false
-): VariableDescriptorImpl(containingDeclaration, Annotations.EMPTY, name, outType, SourceElement.NO_SOURCE),
-        IrTemporaryVariableDescriptor
-{
+    containingDeclaration: DeclarationDescriptor,
+    name: Name,
+    outType: KotlinType,
+    private val isMutable: Boolean = false
+) : VariableDescriptorImpl(containingDeclaration, Annotations.EMPTY, name, outType, SourceElement.NO_SOURCE),
+    IrTemporaryVariableDescriptor {
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
 
     override fun getVisibility(): Visibility = Visibilities.LOCAL
@@ -44,6 +43,8 @@ class IrTemporaryVariableDescriptorImpl(
 
     override fun isVar(): Boolean = isMutable
 
+    override fun isLateInit(): Boolean = false
+
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
-            visitor.visitVariableDescriptor(this, data)
+        visitor.visitVariableDescriptor(this, data)
 }

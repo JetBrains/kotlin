@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -34,22 +23,23 @@ public class FieldInfo {
         }
 
         if (isNonCompanionObject(classDescriptor) || CompanionObjectMapping.INSTANCE.isMappedIntrinsicCompanionObject(classDescriptor)) {
-            return createSingletonViaInstance(classDescriptor, typeMapper);
+            return createSingletonViaInstance(classDescriptor, typeMapper, JvmAbi.INSTANCE_FIELD);
         }
 
         ClassDescriptor ownerDescriptor = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
         assert ownerDescriptor != null : "Owner not found for class: " + classDescriptor;
-        Type ownerType = typeMapper.mapType(ownerDescriptor);
+        Type ownerType = typeMapper.mapClass(ownerDescriptor);
         return new FieldInfo(ownerType, typeMapper.mapType(classDescriptor), classDescriptor.getName().asString(), true);
     }
 
     @NotNull
     public static FieldInfo createSingletonViaInstance(
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull KotlinTypeMapper typeMapper
+            @NotNull KotlinTypeMapper typeMapper,
+            @NotNull String name
     ) {
         Type type = typeMapper.mapType(classDescriptor);
-        return new FieldInfo(type, type, JvmAbi.INSTANCE_FIELD, true);
+        return new FieldInfo(type, type, name, true);
     }
 
     @NotNull

@@ -1,20 +1,22 @@
-<error descr="[IMPLEMENTATION_WITHOUT_HEADER] Modifier 'impl' is only applicable to members that are initially declared in platform-independent code">impl</error> class My {
+package foo
 
-    <error descr="[IMPLEMENTATION_WITHOUT_HEADER] Modifier 'impl' is only applicable to members that are initially declared in platform-independent code">impl</error> fun foo() = 42
+actual class <error>My</error> {
+
+    actual fun foo() = 42
 }
 
-<error descr="[IMPLEMENTATION_WITHOUT_HEADER] Modifier 'impl' is only applicable to members that are initially declared in platform-independent code">impl</error> class Your {
+actual class <error>Your</error> {
 
-    <error descr="[IMPLEMENTATION_WITHOUT_HEADER] Modifier 'impl' is only applicable to members that are initially declared in platform-independent code">impl</error> fun foo() = 13
+    actual fun foo() = 13
 
-    <error descr="[IMPLEMENTATION_WITHOUT_HEADER] Modifier 'impl' is only applicable to members that are initially declared in platform-independent code">impl</error> fun bar(arg: Int) = arg
+    actual fun <error>bar</error>(arg: Int) = arg
 
 }
 
-impl class His {
+actual class His {
 
-    impl fun foo() = 7
+    actual fun foo() = 7
 
-    impl fun bar(arg: Int) = arg == foo()
+    actual fun bar(arg: Int) = arg == foo()
 
 }

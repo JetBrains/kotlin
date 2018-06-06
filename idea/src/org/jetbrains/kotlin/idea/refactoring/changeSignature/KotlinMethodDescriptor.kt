@@ -58,7 +58,7 @@ val KotlinMethodDescriptor.returnTypeInfo: KotlinTypeInfo
     get() {
         val type = baseDescriptor.returnType
         val text = (baseDeclaration as? KtCallableDeclaration)?.typeReference?.text
-                   ?: type?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type) }
+                   ?: type?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type) }
                    ?: "Unit"
         return KotlinTypeInfo(true, type, text)
     }
@@ -67,6 +67,6 @@ val KotlinMethodDescriptor.receiverTypeInfo: KotlinTypeInfo
     get() {
         val type = baseDescriptor.extensionReceiverParameter?.type
         val text = (baseDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.text
-                   ?: type?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type) }
+                   ?: type?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type) }
         return KotlinTypeInfo(false, type, text)
     }

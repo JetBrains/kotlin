@@ -41,13 +41,13 @@ abstract class AbstractNavigateToLibraryTest : KotlinCodeInsightTestCase() {
     abstract val expectedFileExt: String
 
     protected fun doTestEx(path: String, additionalConfig: (() -> Unit)? = null) {
-        configureByFile(path)
         module.configureAs(getProjectDescriptor())
 
         if (additionalConfig != null) {
             additionalConfig()
         }
 
+        configureByFile(path)
         NavigationChecker.checkAnnotatedCode(file, File(path.replace(".kt", expectedFileExt)))
     }
 
@@ -61,7 +61,10 @@ abstract class AbstractNavigateToLibraryTest : KotlinCodeInsightTestCase() {
 
 
     open fun getProjectDescriptor(): KotlinLightProjectDescriptor =
-            JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", withSource)
+        SdkAndMockLibraryProjectDescriptor(
+            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library",
+            withSource
+        )
 }
 
 abstract class AbstractNavigateToDecompiledLibraryTest : AbstractNavigateToLibraryTest() {

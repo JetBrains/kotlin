@@ -17,23 +17,26 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.searches.OverridingMethodsSearch
+import com.intellij.psi.PsiMethod
 import com.intellij.refactoring.changeSignature.MethodDescriptor
 import com.intellij.refactoring.changeSignature.OverriderUsageInfo
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
-import org.jetbrains.kotlin.idea.highlighter.markers.isHeaderOrHeaderClassMember
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
+import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
 class KotlinChangeSignatureData(
@@ -57,7 +60,7 @@ class KotlinChangeSignatureData(
                     val jetParameter = valueParameters?.get(parameterDescriptor.index)
                     val parameterType = parameterDescriptor.type
                     val parameterTypeText = jetParameter?.typeReference?.text
-                                            ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(parameterType)
+                                            ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(parameterType)
                     KotlinParameterInfo(
                             callableDescriptor = baseDescriptor,
                             originalIndex = parameterDescriptor.index,
@@ -73,7 +76,7 @@ class KotlinChangeSignatureData(
         val receiverType = baseDescriptor.extensionReceiverParameter?.type ?: return null
         val receiverName = suggestReceiverNames(baseDeclaration.project, baseDescriptor).first()
         val receiverTypeText = (baseDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.text
-                               ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)
+                               ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(receiverType)
         return KotlinParameterInfo(callableDescriptor = baseDescriptor,
                                    name = receiverName,
                                    originalTypeInfo = KotlinTypeInfo(false, receiverType, receiverTypeText))
@@ -98,9 +101,9 @@ class KotlinChangeSignatureData(
         primaryCallables + primaryCallables.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
             val primaryDeclaration = primaryFunction.declaration as? KtDeclaration ?: return@flatMapTo emptyList()
 
-            if (primaryDeclaration.isHeaderOrHeaderClassMember()) {
-                return@flatMapTo primaryDeclaration.headerImplementations().mapNotNull {
-                    val descriptor = it.resolveToDescriptor()
+            if (primaryDeclaration.isExpectDeclaration()) {
+                return@flatMapTo primaryDeclaration.actualsForExpected().mapNotNull {
+                    val descriptor = it.unsafeResolveToDescriptor()
                     val callableDescriptor = when (descriptor) {
                         is CallableDescriptor -> descriptor
                         is ClassDescriptor -> descriptor.unsubstitutedPrimaryConstructor ?: return@mapNotNull null
@@ -112,18 +115,28 @@ class KotlinChangeSignatureData(
 
             if (primaryDeclaration !is KtCallableDeclaration) return@flatMapTo emptyList()
 
-            primaryDeclaration.toLightMethods().flatMap { baseMethod ->
-                OverridingMethodsSearch
-                        .search(baseMethod)
-                        .mapNotNullTo(HashSet<UsageInfo>()) { overridingMethod ->
-                            if (overridingMethod is KtLightMethod) {
-                                val overridingDeclaration = overridingMethod.namedUnwrappedElement as KtNamedDeclaration
-                                val overridingDescriptor = overridingDeclaration.resolveToDescriptor() as CallableDescriptor
-                                KotlinCallableDefinitionUsage<PsiElement>(overridingDeclaration, overridingDescriptor, primaryFunction, null)
-                            }
-                            else OverriderUsageInfo(overridingMethod, baseMethod, true, true, true)
-                        }
+            val results = SmartList<UsageInfo>()
+
+            primaryDeclaration.forEachOverridingElement { baseElement, overridingElement ->
+                val currentDeclaration = overridingElement.namedUnwrappedElement
+                results += when (currentDeclaration) {
+                    is KtDeclaration -> {
+                        val overridingDescriptor = currentDeclaration.unsafeResolveToDescriptor() as CallableDescriptor
+                        KotlinCallableDefinitionUsage(currentDeclaration, overridingDescriptor, primaryFunction, null)
+                    }
+
+                    is PsiMethod -> {
+                        val baseMethod = baseElement as? PsiMethod ?: return@forEachOverridingElement true
+                        OverriderUsageInfo(currentDeclaration, baseMethod, true, true, true)
+                    }
+
+                    else -> return@forEachOverridingElement true
+                }
+
+                true
             }
+
+            results
         }
     }
 

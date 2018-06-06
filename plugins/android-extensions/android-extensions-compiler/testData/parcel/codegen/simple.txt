@@ -1,4 +1,4 @@
-public static class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
+public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
     public final java.lang.Object createFromParcel(android.os.Parcel p0) {
@@ -6,6 +6,7 @@ public static class User$Creator : java/lang/Object, android/os/Parcelable$Creat
           ALOAD (1)
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
           NEW
           DUP
           ALOAD (1)
@@ -16,16 +17,26 @@ public static class User$Creator : java/lang/Object, android/os/Parcelable$Creat
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          IFEQ (L2)
+          ICONST_1
+          GOTO (L3)
+        LABEL (L2)
+          ICONST_0
+        LABEL (L3)
           INVOKESPECIAL (User, <init>, (Ljava/lang/String;Ljava/lang/String;IZ)V)
           ARETURN
-        LABEL (L1)
+        LABEL (L4)
+
+        Local variables:
+            this: LUser$Creator;
+            in: Landroid/os/Parcel;
     }
 
-    public final User[] newArray(int p0)
+    public final java.lang.Object[] newArray(int p0)
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
-    public final static User$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     private final int age
 
@@ -39,7 +50,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
           NEW
           DUP
           INVOKESPECIAL (User$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, LUser$Creator;)
+          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 
@@ -50,6 +61,9 @@ public final class User : java/lang/Object, android/os/Parcelable {
           LDC (0)
           IRETURN
         LABEL (L1)
+
+        Local variables:
+            this: LUser;
     }
 
     public final int getAge()
@@ -83,5 +97,10 @@ public final class User : java/lang/Object, android/os/Parcelable {
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
           RETURN
         LABEL (L1)
+
+        Local variables:
+            this: LUser;
+            parcel: Landroid/os/Parcel;
+            flags: I
     }
 }

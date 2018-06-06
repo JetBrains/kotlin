@@ -1,27 +1,14 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.liveTemplates
 
 import com.intellij.codeInsight.lookup.LookupManager
-import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.codeInsight.template.impl.TemplateState
 import com.intellij.ide.DataManager
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.testFramework.LightProjectDescriptor
@@ -38,12 +25,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
         myFixture.testDataPath = File(TEST_DATA_BASE_PATH).path + File.separator
-        (TemplateManager.getInstance(project) as TemplateManagerImpl).setTemplateTesting(true)
-    }
-
-    override fun tearDown() {
-        (TemplateManager.getInstance(project) as TemplateManagerImpl).setTemplateTesting(false)
-        super.tearDown()
+        TemplateManagerImpl.setTemplateTesting(myModule.project, testRootDisposable)
     }
 
     fun testSout() {
@@ -74,6 +56,14 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
         paremeterless()
     }
 
+    fun testSoutf() {
+        paremeterless()
+    }
+
+    fun testSoutf_InCompanion() {
+        paremeterless()
+    }
+
     fun testSerr() {
         paremeterless()
     }
@@ -85,7 +75,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testSoutv() {
         start()
 
-        assertStringItems("ASSERTIONS_ENABLED", "args", "defaultBlockSize", "defaultBufferSize", "minimumBlockSize", "x", "y")
+        assertStringItems("DEFAULT_BUFFER_SIZE", "args", "x", "y")
         typeAndNextTab("y")
 
         checkAfter()
@@ -190,7 +180,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testIter() {
         start()
 
-        assertStringItems("args", "myList", "o", "str", "stream")
+        assertStringItems("args", "myList", "o", "str")
         type("args")
         nextTab(2)
 
@@ -303,7 +293,10 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun doAction(actionId: String) {
         val actionManager = EditorActionManager.getInstance()
         val actionHandler = actionManager.getActionHandler(actionId)
-        actionHandler.execute(myFixture.editor, DataManager.getInstance().getDataContext(myFixture.editor.component))
+        actionHandler.execute(
+            myFixture.editor, myFixture.editor.caretModel.currentCaret,
+            DataManager.getInstance().getDataContext(myFixture.editor.component)
+        )
     }
 
     private fun assertStringItems(@NonNls vararg items: String) {

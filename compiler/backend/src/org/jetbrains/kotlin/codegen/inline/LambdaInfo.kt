@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
@@ -56,6 +45,8 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : LabelOwner {
     lateinit var node: SMAPAndMethodNode
 
     abstract fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner)
+
+    open val hasDispatchReceiver = true
 
     fun addAllParameters(remapper: FieldRemapper): Parameters {
         val builder = ParametersBuilder.initializeBuilderFrom(AsmTypes.OBJECT_TYPE, invokeMethod.descriptor, this)
@@ -164,7 +155,7 @@ class DefaultLambda(
                 classReader.b,
                 invokeMethod.name,
                 invokeMethod.descriptor,
-                lambdaClassType)!!
+                lambdaClassType) ?: error("Can't find method '${invokeMethod.name}${invokeMethod.descriptor}' in '${classReader.className}'")
 
         if (needReification) {
             //nested classes could also require reification
@@ -175,13 +166,32 @@ class DefaultLambda(
 
 fun Type.boxReceiverForBoundReference() = AsmUtil.boxType(this)
 
+abstract class ExpressionLambda(protected val typeMapper: KotlinTypeMapper, isCrossInline: Boolean): LambdaInfo(isCrossInline) {
 
-class ExpressionLambda(
+    override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner) {
+        val jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
+        val asmMethod = jvmMethodSignature.asmMethod
+        val methodNode = MethodNode(
+                API, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, OwnerKind.IMPLEMENTATION, sourceCompiler.state),
+                asmMethod.name, asmMethod.descriptor, null, null
+        )
+
+        node = wrapWithMaxLocalCalc(methodNode).let { adapter ->
+            val smap = sourceCompiler.generateLambdaBody(
+                    adapter, jvmMethodSignature, this
+            )
+            adapter.visitMaxs(-1, -1)
+            SMAPAndMethodNode(methodNode, smap)
+        }
+    }
+}
+
+class PsiExpressionLambda(
         expression: KtExpression,
-        private val typeMapper: KotlinTypeMapper,
+        typeMapper: KotlinTypeMapper,
         isCrossInline: Boolean,
         override val isBoundCallableReference: Boolean
-) : LambdaInfo(isCrossInline) {
+) : ExpressionLambda(typeMapper, isCrossInline) {
 
     override val lambdaClassType: Type
 
@@ -268,21 +278,4 @@ class ExpressionLambda(
 
     val isPropertyReference: Boolean
         get() = propertyReferenceInfo != null
-
-    override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner) {
-        val jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
-        val asmMethod = jvmMethodSignature.asmMethod
-        val methodNode = MethodNode(
-                API, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, OwnerKind.IMPLEMENTATION, sourceCompiler.state),
-                asmMethod.name, asmMethod.descriptor, null, null
-        )
-
-        node = wrapWithMaxLocalCalc(methodNode).let { adapter ->
-            val smap = sourceCompiler.generateLambdaBody(
-                    adapter, jvmMethodSignature, this
-            )
-            adapter.visitMaxs(-1, -1)
-            SMAPAndMethodNode(methodNode, smap)
-        }
-    }
 }

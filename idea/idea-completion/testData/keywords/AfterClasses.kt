@@ -36,6 +36,7 @@ class B {
 // EXIST:  const
 // EXIST:  suspend
 // EXIST:  typealias
-// EXIST:  header
-// EXIST:  impl
+// EXIST:  expect
+// EXIST:  actual
+// EXIST:  lateinit var
 // NOTHING_ELSE

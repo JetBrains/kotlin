@@ -1,0 +1,5 @@
+// "Add annotation target" "true"
+@Target(AnnotationTarget.PROPERTY_GETTER)
+annotation class GetAnn
+
+class Get(@get:GetAnn val foo: String)

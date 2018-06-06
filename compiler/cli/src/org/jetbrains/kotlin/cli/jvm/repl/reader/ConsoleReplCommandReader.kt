@@ -23,6 +23,8 @@ import org.jline.reader.LineReaderBuilder
 import org.jline.reader.UserInterruptException
 import org.jline.terminal.TerminalBuilder
 import java.io.File
+import java.util.logging.Level
+import java.util.logging.Logger
 
 class ConsoleReplCommandReader : ReplCommandReader {
     private val lineReader = LineReaderBuilder.builder()
@@ -50,4 +52,10 @@ class ConsoleReplCommandReader : ReplCommandReader {
     }
 
     override fun flushHistory() = lineReader.history.save()
+
+    private companion object {
+        init {
+            Logger.getLogger("org.jline").level = Level.OFF;
+        }
+    }
 }

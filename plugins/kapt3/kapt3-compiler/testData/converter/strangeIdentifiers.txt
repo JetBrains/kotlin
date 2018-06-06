@@ -1,0 +1,65 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+
+    public abstract StrangeEnum size();
+
+    public abstract java.lang.String name();
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public enum StrangeEnum {
+    /*public static final*/ InvalidFieldName /* = new StrangeEnum() */;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String size = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getSize() {
+        return null;
+    }
+
+    StrangeEnum(@org.jetbrains.annotations.NotNull()
+    java.lang.String size) {
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Test {
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String simpleName;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getSimpleName() {
+        return null;
+    }
+
+    public final void simpleFun() {
+    }
+
+    @Anno(name = "Woofwoof", size = StrangeEnum.InvalidFieldName)
+    public final void simpleFun2(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, @org.jetbrains.annotations.NotNull()
+    java.lang.String b) {
+    }
+
+    public final void strangeFun4(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, @org.jetbrains.annotations.NotNull()
+    java.lang.String p1_949560896) {
+    }
+
+    public Test() {
+        super();
+    }
+}

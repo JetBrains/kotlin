@@ -19,9 +19,15 @@ package org.jetbrains.kotlin.android.synthetic.res
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
-import org.jetbrains.kotlin.android.synthetic.descriptors.*
+import org.jetbrains.kotlin.android.synthetic.descriptors.AndroidSyntheticPackageData
+import org.jetbrains.kotlin.android.synthetic.descriptors.AndroidSyntheticPackageFragmentDescriptor
+import org.jetbrains.kotlin.android.synthetic.descriptors.LazySyntheticElementResolveContext
+import org.jetbrains.kotlin.android.synthetic.descriptors.PredefinedPackageFragmentDescriptor
 import org.jetbrains.kotlin.android.synthetic.forEachUntilLast
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -38,7 +44,8 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
             module: ModuleDescriptor,
             storageManager: StorageManager,
             trace: BindingTrace,
-            moduleInfo: ModuleInfo?
+            moduleInfo: ModuleInfo?,
+            lookupTracker: LookupTracker
     ): PackageFragmentProvider? {
         val isExperimental = isExperimental(moduleInfo)
 
@@ -58,7 +65,9 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
                     val resources = layoutXmlFileManager.extractResources(AndroidLayoutGroupData(layoutName, layouts), module)
                     val packageData = AndroidSyntheticPackageData(moduleData, forView, isDeprecated, resources)
                     val packageDescriptor = AndroidSyntheticPackageFragmentDescriptor(
-                            module, FqName(fqName), packageData, lazyContext, storageManager, isExperimental)
+                            module, FqName(fqName), packageData, lazyContext, storageManager, isExperimental,
+                            lookupTracker, layoutName
+                    )
                     packagesToLookupInCompletion += packageDescriptor
                     allPackageDescriptors += packageDescriptor
                 }

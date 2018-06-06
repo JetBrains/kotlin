@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.js.ast
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.BinaryOperation.Type.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.UnaryOperation.Type.*
@@ -33,8 +34,12 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
     private val nameMap = mutableMapOf<JsName, Int>()
     private val stringMap = mutableMapOf<String, Int>()
     private val fileStack: Deque<String> = ArrayDeque()
+    private val importedNames = mutableSetOf<JsName>()
 
     fun serialize(fragment: JsProgramFragment, output: OutputStream) {
+        val namesBySignature = fragment.nameBindings.associate { it.key to it.name }
+        importedNames.clear()
+        importedNames += fragment.imports.map { namesBySignature[it.key]!! }
         serialize(fragment).writeTo(output)
     }
 
@@ -104,6 +109,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         val builder = ClassModel.newBuilder()
         builder.nameId = serialize(classModel.name)
         classModel.superName?.let { builder.superNameId = serialize(it) }
+        classModel.interfaces.forEach { builder.addInterfaceNameId(serialize(it)) }
         if (classModel.postDeclarationBlock.statements.isNotEmpty()) {
             builder.postDeclarationBlock = serializeBlock(classModel.postDeclarationBlock)
         }
@@ -190,6 +196,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
                 switchBuilder.expression = serialize(x.expression)
                 for (case in x.cases) {
                     val entryBuilder = SwitchEntry.newBuilder()
+                    withLocation(case, { entryBuilder.fileId = it }, { entryBuilder.location = it }) {}
                     if (case is JsCase) {
                         entryBuilder.label = serialize(case.caseExpression)
                     }
@@ -257,7 +264,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
             }
         }
 
-        withLocation(statement, { visitor.builder.fileId = it }, {visitor.builder.location = it }) {
+        withLocation(statement, { visitor.builder.fileId = it }, { visitor.builder.location = it }) {
             statement.accept(visitor)
         }
 
@@ -435,6 +442,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         with (visitor.builder) {
             synthetic = expression.synthetic
             sideEffects = map(expression.sideEffects)
+            expression.localAlias?.let { localAlias = serialize(it) }
         }
 
         return visitor.builder.build()
@@ -547,11 +555,35 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         KotlinInlineStrategy.NOT_INLINE -> InlineStrategy.NOT_INLINE
     }
 
-    private fun serialize(name: JsName) = nameMap.getOrPut(name) {
-        val result = nameTableBuilder.entryCount
+    private fun map(specialFunction: SpecialFunction) = when (specialFunction) {
+        SpecialFunction.DEFINE_INLINE_FUNCTION -> JsAstProtoBuf.SpecialFunction.DEFINE_INLINE_FUNCTION
+        SpecialFunction.WRAP_FUNCTION -> JsAstProtoBuf.SpecialFunction.WRAP_FUNCTION
+        SpecialFunction.TO_BOXED_CHAR -> JsAstProtoBuf.SpecialFunction.TO_BOXED_CHAR
+        SpecialFunction.UNBOX_CHAR -> JsAstProtoBuf.SpecialFunction.UNBOX_CHAR
+        SpecialFunction.SUSPEND_CALL -> JsAstProtoBuf.SpecialFunction.SUSPEND_CALL
+        SpecialFunction.COROUTINE_RESULT -> JsAstProtoBuf.SpecialFunction.COROUTINE_RESULT
+        SpecialFunction.COROUTINE_CONTROLLER -> JsAstProtoBuf.SpecialFunction.COROUTINE_CONTROLLER
+        SpecialFunction.COROUTINE_RECEIVER -> JsAstProtoBuf.SpecialFunction.COROUTINE_RECEIVER
+        SpecialFunction.SET_COROUTINE_RESULT -> JsAstProtoBuf.SpecialFunction.SET_COROUTINE_RESULT
+    }
+
+    private fun serialize(name: JsName): Int = nameMap.getOrPut(name) {
         val builder = Name.newBuilder()
         builder.identifier = serialize(name.ident)
         builder.temporary = name.isTemporary
+        name.localAlias?.let {
+            builder.localNameId = serialize(it)
+        }
+
+        if (name.imported && name !in importedNames) {
+            builder.imported = true
+        }
+
+        name.specialFunction?.let {
+            builder.specialFunction = map(it)
+        }
+
+        val result = nameTableBuilder.entryCount
         nameTableBuilder.addEntry(builder)
         result
     }

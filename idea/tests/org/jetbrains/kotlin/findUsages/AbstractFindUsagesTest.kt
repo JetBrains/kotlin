@@ -28,6 +28,9 @@ import com.intellij.lang.properties.psi.PropertiesFile
 import com.intellij.lang.properties.psi.Property
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
@@ -77,12 +80,14 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
 
         val isPropertiesFile = FileUtilRt.getExtension(path) == "properties"
 
+        val isFindFileUsages = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "## FIND_FILE_USAGES")
+
         @Suppress("UNCHECKED_CAST")
         val caretElementClass = (if (!isPropertiesFile) {
             val caretElementClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, "// PSI_ELEMENT: ")
             Class.forName(caretElementClassNames.single())
         }
-        else if (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "## FIND_FILE_USAGES")) {
+        else if (isFindFileUsages) {
             PropertiesFile::class.java
         }
         else {
@@ -114,11 +119,16 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
             }
             myFixture.configureByFile(mainFileName)
 
-            val caretElement = if (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF"))
-                TargetElementUtil.findTargetElement(myFixture.editor,
-                                                    TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or JavaTargetElementEvaluator.NEW_AS_CONSTRUCTOR)!!
-            else
-                myFixture.elementAtCaret
+            val caretElement = when {
+                InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF") -> TargetElementUtil.findTargetElement(
+                    myFixture.editor,
+                    TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or JavaTargetElementEvaluator.NEW_AS_CONSTRUCTOR
+                )!!
+
+                isFindFileUsages -> myFixture.file
+
+                else -> myFixture.elementAtCaret
+            }
             UsefulTestCase.assertInstanceOf(caretElement, caretElementClass)
 
             val containingFile = caretElement.containingFile
@@ -147,7 +157,7 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
 
 
     companion object {
-        val SUPPORTED_EXTENSIONS = setOf("kt", "java", "xml", "properties", "txt", "groovy")
+        val SUPPORTED_EXTENSIONS = setOf("kt", "kts", "java", "xml", "properties", "txt", "groovy")
 
         val USAGE_VIEW_PRESENTATION = UsageViewPresentation()
 
@@ -308,12 +318,13 @@ internal fun findUsages(
                 }
             }
             else {
-                // run in another thread to test read-action assertions
-                val thread = Thread {
-                    handler.processElementUsages(psiElement, processor, options)
-                }
-                thread.start()
-                thread.join()
+                ProgressManager.getInstance().run(object : Task(project, "",false) {
+                    override fun isModal() = true
+
+                    override fun run(indicator: ProgressIndicator) {
+                        handler.processElementUsages(psiElement, processor, options)
+                    }
+                })
             }
         }
 

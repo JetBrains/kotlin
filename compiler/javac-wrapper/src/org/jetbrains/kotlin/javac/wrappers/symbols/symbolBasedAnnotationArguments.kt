@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import com.sun.tools.javac.code.Symbol
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
@@ -26,13 +28,13 @@ import javax.lang.model.type.TypeMirror
 
 sealed class SymbolBasedAnnotationArgument(
         override val name: Name,
-        val javac: JavacWrapper
+        protected val javac: JavacWrapper
 ) : JavaAnnotationArgument, JavaElement {
 
     companion object {
         fun create(value: Any, name: Name, javac: JavacWrapper): JavaAnnotationArgument = when (value) {
             is AnnotationMirror -> SymbolBasedAnnotationAsAnnotationArgument(value, name, javac)
-            is VariableElement -> SymbolBasedReferenceAnnotationArgument(value, javac)
+            is VariableElement -> SymbolBasedReferenceAnnotationArgument(value, name, javac)
             is TypeMirror -> SymbolBasedClassObjectAnnotationArgument(value, name, javac)
             is Collection<*> -> arrayAnnotationArguments(value, name, javac)
             is AnnotationValue -> create(value.value, name, javac)
@@ -40,7 +42,7 @@ sealed class SymbolBasedAnnotationArgument(
         }
 
         private fun arrayAnnotationArguments(values: Collection<*>, name: Name, javac: JavacWrapper): JavaArrayAnnotationArgument =
-                values.map { if (it is Collection<*>) arrayAnnotationArguments(it, name, javac) else create(it!!, name, javac) }
+                values.map { create(it!!, name, javac) }
                 .let { argumentList -> SymbolBasedArrayAnnotationArgument(argumentList, name, javac) }
 
     }
@@ -48,7 +50,7 @@ sealed class SymbolBasedAnnotationArgument(
 }
 
 class SymbolBasedAnnotationAsAnnotationArgument(
-        val mirror: AnnotationMirror,
+        private val mirror: AnnotationMirror,
         name: Name,
         javac: JavacWrapper
 ) : SymbolBasedAnnotationArgument(name, javac), JavaAnnotationAsAnnotationArgument {
@@ -59,17 +61,24 @@ class SymbolBasedAnnotationAsAnnotationArgument(
 
 class SymbolBasedReferenceAnnotationArgument(
         val element: VariableElement,
+        name: Name,
         javac: JavacWrapper
-) : SymbolBasedAnnotationArgument(Name.identifier(element.simpleName.toString()), javac), JavaEnumValueAnnotationArgument {
+) : SymbolBasedAnnotationArgument(name, javac), JavaEnumValueAnnotationArgument {
+    // TODO: do not create extra objects here
+    private val javaField: JavaField? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val containingClass = element.enclosingElement as Symbol.ClassSymbol
+        SymbolBasedField(element, SymbolBasedClass(containingClass, javac, null, containingClass.classfile), javac)
+    }
+
+    override val enumClassId: ClassId?
+        get() = javaField?.containingClass?.classId
+
     override val entryName: Name?
-        get() = Name.identifier(element.simpleName.toString())
-
-    override fun resolve() = SymbolBasedField(element, javac)
-
+        get() = javaField?.name
 }
 
 class SymbolBasedClassObjectAnnotationArgument(
-        val type: TypeMirror,
+        private val type: TypeMirror,
         name : Name,
         javac: JavacWrapper
 ) : SymbolBasedAnnotationArgument(name, javac), JavaClassObjectAnnotationArgument {

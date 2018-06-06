@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import kotlin.collections.CollectionsKt;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -24,14 +27,13 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -54,6 +56,7 @@ public class SamWrapperCodegen {
     private final SamType samType;
     private final MemberCodegen<?> parentCodegen;
     private final int visibility;
+    public static final String SAM_WRAPPER_SUFFIX = "$0";
 
     public SamWrapperCodegen(
             @NotNull GenerationState state,
@@ -70,9 +73,12 @@ public class SamWrapperCodegen {
     }
 
     @NotNull
-    public Type genWrapper(@NotNull KtFile file) {
+    public Type genWrapper(
+            @NotNull KtFile file,
+            @NotNull CallableMemberDescriptor contextDescriptor
+    ) {
         // Name for generated class, in form of whatever$1
-        FqName fqName = getWrapperName(file);
+        FqName fqName = getWrapperName(file, contextDescriptor);
         Type asmType = asmTypeByFqNameWithoutInnerClasses(fqName);
 
         // e.g. (T, T) -> Int
@@ -85,10 +91,11 @@ public class SamWrapperCodegen {
                 ClassKind.CLASS,
                 Collections.singleton(samType.getType()),
                 SourceElement.NO_SOURCE,
-                /* isExternal = */ false
+                /* isExternal = */ false,
+                LockBasedStorageManager.NO_LOCKS
         );
         // e.g. compare(T, T)
-        SimpleFunctionDescriptor erasedInterfaceFunction = samType.getAbstractMethod().getOriginal().copy(
+        SimpleFunctionDescriptor erasedInterfaceFunction = samType.getOriginalAbstractMethod().copy(
                 classDescriptor,
                 Modality.FINAL,
                 Visibilities.PUBLIC,
@@ -167,7 +174,7 @@ public class SamWrapperCodegen {
 
         // generate sam bridges
         // TODO: erasedInterfaceFunction is actually not an interface function, but function in generated class
-        SimpleFunctionDescriptor originalInterfaceErased = samType.getAbstractMethod().getOriginal();
+        SimpleFunctionDescriptor originalInterfaceErased = samType.getOriginalAbstractMethod();
         SimpleFunctionDescriptorImpl descriptorForBridges = SimpleFunctionDescriptorImpl
                 .create(erasedInterfaceFunction.getContainingDeclaration(), erasedInterfaceFunction.getAnnotations(), originalInterfaceErased.getName(),
                         CallableMemberDescriptor.Kind.DECLARATION, erasedInterfaceFunction.getSource());
@@ -182,18 +189,42 @@ public class SamWrapperCodegen {
     }
 
     @NotNull
-    private FqName getWrapperName(@NotNull KtFile containingFile) {
-        FqName fileClassFqName = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile).getFileClassFqName();
-        JavaClassDescriptor descriptor = samType.getJavaClassDescriptor();
-        int hash = PackagePartClassUtils.getPathHashCode(containingFile.getVirtualFile()) * 31 +
-                DescriptorUtils.getFqNameSafe(descriptor).hashCode();
+    private FqName getWrapperName(
+            @NotNull KtFile containingFile,
+            CallableMemberDescriptor contextDescriptor
+    ) {
+        boolean hasPackagePartClass =
+                CollectionsKt.any(CodegenUtil.getActualDeclarations(containingFile), PackageCodegenImpl::isFilePartDeclaration);
+        FqName filePartFqName = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile).getFileClassFqName();
+
+        FqName outermostOwner;
+        if (hasPackagePartClass) {
+            outermostOwner = filePartFqName;
+        }
+        else {
+            ClassifierDescriptor outermostClassifier = getOutermostParentClass(contextDescriptor);
+            if (outermostClassifier == null) throw new IllegalStateException("Can't find outermost parent class for " + contextDescriptor);
+            String internalName = typeMapper.mapType(outermostClassifier).getInternalName();
+            outermostOwner = filePartFqName.parent().child(Name.identifier(StringsKt.substringAfterLast(internalName, '/', internalName)));
+        }
+
         String shortName = String.format(
-                "%s$sam$%s%s$%08x",
-                fileClassFqName.shortName().asString(),
-                descriptor.getName().asString(),
+                "%s$sam%s$%s" + SAM_WRAPPER_SUFFIX,
+                outermostOwner.shortName().asString(),
                 (isInsideInline ? "$i" : ""),
-                hash
+                DescriptorUtils.getFqNameSafe(samType.getJavaClassDescriptor()).asString().replace('.', '_')
         );
-        return fileClassFqName.parent().child(Name.identifier(shortName));
+        return outermostOwner.parent().child(Name.identifier(shortName));
+    }
+
+    private static ClassDescriptor getOutermostParentClass(CallableMemberDescriptor contextDescriptor) {
+        ClassDescriptor parent = DescriptorUtils.getParentOfType(contextDescriptor, ClassDescriptor.class, true);
+        ClassDescriptor next;
+        do {
+            next = DescriptorUtils.getParentOfType(parent, ClassDescriptor.class, true);
+            if (next != null) parent = next;
+        }
+        while (next != null);
+        return parent;
     }
 }

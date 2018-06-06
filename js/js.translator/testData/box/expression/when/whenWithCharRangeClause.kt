@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1039
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1157
 // see KT-7683
 // WhenTranslator must recognize KtWhenConditionInRange
 package foo

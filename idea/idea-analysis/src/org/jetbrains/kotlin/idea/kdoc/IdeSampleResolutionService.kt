@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -50,7 +50,7 @@ class IdeSampleResolutionService(val project: Project) : SampleResolutionService
 
         val descriptors = (functions + classes)
                 .filter { it.fqName == targetFqName }
-                .map { it.resolveToDescriptor(BodyResolveMode.PARTIAL) } // TODO Filter out not visible due dependencies config descriptors
+                .map { it.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL) } // TODO Filter out not visible due dependencies config descriptors
                 .toList()
         if (descriptors.isNotEmpty())
             return descriptors
@@ -75,8 +75,8 @@ private class GlobalSyntheticPackageViewDescriptor(override val fqName: FqName, 
         override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = shouldNotBeCalled()
 
         override fun getFunctionNames(): Set<Name> = shouldNotBeCalled()
-
         override fun getVariableNames(): Set<Name> = shouldNotBeCalled()
+        override fun getClassifierNames(): Set<Name> = shouldNotBeCalled()
 
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = shouldNotBeCalled()
 
@@ -104,7 +104,7 @@ private class GlobalSyntheticPackageViewDescriptor(override val fqName: FqName, 
                 .filter { it.isChildOf(fqName) }
                 .filter { nameFilter(it.shortName()) }
                 .flatMap { KotlinTopLevelFunctionFqnNameIndex.getInstance()[it.asString(), project, scope].asSequence() }
-                .map { it.resolveToDescriptorIfAny() }
+                .map { it.resolveToDescriptorIfAny() as? DeclarationDescriptor }
 
         fun getSubpackages(nameFilter: (Name) -> Boolean) =
                 PackageIndexUtil.getSubPackageFqNames(fqName, scope, project, nameFilter)

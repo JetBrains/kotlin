@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInsight;
@@ -32,109 +21,101 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInExpressionType() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/expressionType"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("AnonymousObject.kt")
     public void testAnonymousObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/AnonymousObject.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/AnonymousObject.kt");
     }
 
     @TestMetadata("BlockBodyFunction.kt")
     public void testBlockBodyFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/BlockBodyFunction.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/BlockBodyFunction.kt");
     }
 
     @TestMetadata("IfAsExpression.kt")
     public void testIfAsExpression() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/IfAsExpression.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/IfAsExpression.kt");
     }
 
     @TestMetadata("IfAsExpressionInsideBlock.kt")
     public void testIfAsExpressionInsideBlock() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/IfAsExpressionInsideBlock.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/IfAsExpressionInsideBlock.kt");
     }
 
     @TestMetadata("Kt11601.kt")
     public void testKt11601() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/Kt11601.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/Kt11601.kt");
     }
 
     @TestMetadata("Lambda.kt")
     public void testLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/Lambda.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/Lambda.kt");
     }
 
     @TestMetadata("MethodName.kt")
     public void testMethodName() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MethodName.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/MethodName.kt");
     }
 
     @TestMetadata("MethodReference.kt")
     public void testMethodReference() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MethodReference.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/MethodReference.kt");
     }
 
     @TestMetadata("MultiDeclaration.kt")
     public void testMultiDeclaration() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MultiDeclaration.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/MultiDeclaration.kt");
     }
 
     @TestMetadata("MultiDeclarationInLambda.kt")
     public void testMultiDeclarationInLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MultiDeclarationInLambda.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/MultiDeclarationInLambda.kt");
     }
 
     @TestMetadata("MultiDeclarationInLoop.kt")
     public void testMultiDeclarationInLoop() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/MultiDeclarationInLoop.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/MultiDeclarationInLoop.kt");
     }
 
     @TestMetadata("PropertyAccessor.kt")
     public void testPropertyAccessor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/PropertyAccessor.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/PropertyAccessor.kt");
     }
 
     @TestMetadata("SmartCast.kt")
     public void testSmartCast() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/SmartCast.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/SmartCast.kt");
     }
 
     @TestMetadata("SoftSmartCast.kt")
     public void testSoftSmartCast() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/SoftSmartCast.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/SoftSmartCast.kt");
     }
 
     @TestMetadata("SoftSmartCastMultipleTypes.kt")
     public void testSoftSmartCastMultipleTypes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/SoftSmartCastMultipleTypes.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/SoftSmartCastMultipleTypes.kt");
     }
 
     @TestMetadata("ThisInLambda.kt")
     public void testThisInLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/ThisInLambda.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/ThisInLambda.kt");
+    }
+
+    @TestMetadata("typeOfLambda.kt")
+    public void testTypeOfLambda() throws Exception {
+        runTest("idea/testData/codeInsight/expressionType/typeOfLambda.kt");
     }
 
     @TestMetadata("VariableDeclaration.kt")
     public void testVariableDeclaration() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/expressionType/VariableDeclaration.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/expressionType/VariableDeclaration.kt");
     }
 }

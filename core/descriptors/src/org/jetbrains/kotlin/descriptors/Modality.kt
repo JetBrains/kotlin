@@ -39,7 +39,9 @@ enum class Modality {
 }
 
 val CallableMemberDescriptor.isOverridable: Boolean
-    get() = modality != Modality.FINAL && (containingDeclaration as? ClassDescriptor)?.isFinalClass != true
+    get() = visibility != Visibilities.PRIVATE
+            && modality != Modality.FINAL
+            && (containingDeclaration as? ClassDescriptor)?.isFinalClass != true
 
 val CallableMemberDescriptor.isOverridableOrOverrides: Boolean
     get() = isOverridable || DescriptorUtils.isOverride(this)

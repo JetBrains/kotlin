@@ -78,7 +78,7 @@ inline fun <Scope, T : ClassifierDescriptor> getFirstClassifierDiscriminateHeade
     for (scope in scopes) {
         val newResult = callback(scope)
         if (newResult != null) {
-            if (newResult is ClassifierDescriptorWithTypeParameters && newResult.isHeader) {
+            if (newResult is ClassifierDescriptorWithTypeParameters && newResult.isExpect) {
                 if (result == null) result = newResult
             }
             // this class is Impl or usual class

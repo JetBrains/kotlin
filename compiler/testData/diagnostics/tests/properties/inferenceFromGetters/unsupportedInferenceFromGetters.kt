@@ -1,4 +1,6 @@
+// !WITH_NEW_INFERENCE
 // !LANGUAGE: -ShortSyntaxForPropertyGetters
+// NI_EXPECTED_FILE
 
 // blockBodyGetter.kt
 <!UNSUPPORTED_FEATURE!>val x get() {
@@ -6,8 +8,8 @@
 }<!>
 
 // cantBeInferred.kt
-<!UNSUPPORTED_FEATURE!>val x1 get() = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>()<!>
-<!UNSUPPORTED_FEATURE!>val y1 get() = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>()<!>
+<!UNSUPPORTED_FEATURE!>val <!NI;IMPLICIT_NOTHING_PROPERTY_TYPE!>x1<!> get() = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>()<!>
+<!UNSUPPORTED_FEATURE!>val y1 get() = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>()<!>
 
 fun <E> foo(): E = null!!
 fun <E> bar(): List<E> = null!!
@@ -37,11 +39,11 @@ fun <E> l(<!UNUSED_PARAMETER!>x<!>: E): List<E> = null!!
 // vars
 <!UNSUPPORTED_FEATURE!>var x3
     get() = 1
-    set(q) {
+    set(<!UNUSED_PARAMETER!>q<!>) {
     }<!>
 
 // recursive
-<!UNSUPPORTED_FEATURE!>val x4 get() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>x4<!><!>
+<!UNSUPPORTED_FEATURE!>val x4 get() = <!NI;DEBUG_INFO_MISSING_UNRESOLVED, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>x4<!><!>
 
 // null as nothing
 <!UNSUPPORTED_FEATURE!>val x5 get() = null<!>

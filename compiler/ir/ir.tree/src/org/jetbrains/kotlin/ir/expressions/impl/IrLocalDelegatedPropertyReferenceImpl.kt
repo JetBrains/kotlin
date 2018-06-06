@@ -25,17 +25,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrLocalDelegatedPropertyReferenceImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val descriptor: VariableDescriptorWithAccessors,
-        override val delegate: IrVariableSymbol,
-        override val getter: IrFunctionSymbol,
-        override val setter: IrFunctionSymbol?,
-        origin: IrStatementOrigin? = null
-) : IrLocalDelegatedPropertyReference,
-        IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, null, origin)
-{
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    override val descriptor: VariableDescriptorWithAccessors,
+    override val delegate: IrVariableSymbol,
+    override val getter: IrFunctionSymbol,
+    override val setter: IrFunctionSymbol?,
+    origin: IrStatementOrigin? = null
+) : IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, 0, origin),
+    IrLocalDelegatedPropertyReference {
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitLocalDelegatedPropertyReference(this, data)
+        visitor.visitLocalDelegatedPropertyReference(this, data)
 }

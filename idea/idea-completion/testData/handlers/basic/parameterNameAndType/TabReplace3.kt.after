@@ -1,0 +1,6 @@
+class Foo
+
+fun f(foo: Foo)
+
+// ELEMENT_TEXT: foo: Foo
+// CHAR: '\t'

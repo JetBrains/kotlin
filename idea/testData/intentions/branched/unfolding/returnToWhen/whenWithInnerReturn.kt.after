@@ -1,0 +1,8 @@
+fun test(b: Boolean): Int {
+    while (true) {
+        when (b) {
+            true -> return 1
+            else -> return 0
+        }
+    }
+}

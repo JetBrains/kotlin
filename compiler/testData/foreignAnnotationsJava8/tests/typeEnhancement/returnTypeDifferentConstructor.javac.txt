@@ -1,0 +1,68 @@
+package
+
+public/*package*/ interface Base</*0*/ T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public/*package*/ interface Derived</*0*/ E : kotlin.Any!> : Base<E!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public/*package*/ open class Outer {
+    public/*package*/ constructor Outer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public/*package*/ open inner class A {
+        public/*package*/ constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @org.checkerframework.checker.nullness.qual.Nullable public/*package*/ open fun foo(): @org.checkerframework.checker.nullness.qual.Nullable Base<@org.checkerframework.checker.nullness.qual.NonNull kotlin.String>?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open inner class B : Outer.A {
+        public/*package*/ constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @java.lang.Override public/*package*/ open override /*1*/ fun foo(): Base<kotlin.String>?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open inner class C : Outer.A {
+        public/*package*/ constructor C()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @java.lang.Override @org.checkerframework.checker.nullness.qual.NonNull public/*package*/ open override /*1*/ fun foo(): @org.checkerframework.checker.nullness.qual.NonNull Base<kotlin.String>
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open inner class D : Outer.A {
+        public/*package*/ constructor D()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @java.lang.Override public/*package*/ open override /*1*/ fun foo(): Derived<kotlin.String!>?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open inner class E : Outer.A {
+        public/*package*/ constructor E()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @java.lang.Override @org.checkerframework.checker.nullness.qual.NonNull public/*package*/ open override /*1*/ fun foo(): @org.checkerframework.checker.nullness.qual.NonNull Derived<kotlin.String!>
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open inner class F : Outer.A {
+        public/*package*/ constructor F()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @java.lang.Override @org.checkerframework.checker.nullness.qual.NonNull public/*package*/ open override /*1*/ fun foo(): @org.checkerframework.checker.nullness.qual.NonNull Derived<@org.checkerframework.checker.nullness.qual.NonNull kotlin.String!>
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import java.util.*
 
-class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpression>(KtForExpression::class.java, "Replace with a 'forEach' function call") {
+class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpression>(
+    KtForExpression::class.java,
+    "Replace with a 'forEach' function call"
+) {
     override fun isApplicableTo(element: KtForExpression, caretOffset: Int): Boolean {
         val rParen = element.rightParenthesis ?: return false
         if (caretOffset > rParen.endOffset) return false // available only on the loop header, not in the body
@@ -34,7 +37,7 @@ class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpres
     }
 
     override fun applyTo(element: KtForExpression, editor: Editor?) {
-        val commentSaver = CommentSaver(element)
+        val commentSaver = CommentSaver(element, saveLineBreaks = true)
 
         val labelName = element.getLabelName()
 
@@ -45,7 +48,8 @@ class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpres
 
         val psiFactory = KtPsiFactory(element)
         val foreachExpression = psiFactory.createExpressionByPattern(
-                "$0.forEach{$1->$2}", element.loopRange!!, loopParameter, functionBodyArgument)
+            "$0.forEach{$1->\n$2}", element.loopRange!!, loopParameter, functionBodyArgument
+        )
         val result = element.replace(foreachExpression) as KtElement
 
         result.findDescendantOfType<KtFunctionLiteral>()!!.getContinuesWithLabel(labelName).forEach {

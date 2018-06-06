@@ -62,9 +62,9 @@ import java.util.*
  * @author Dmitry Petrov
  */
 open class MethodAnalyzer<V : Value>(
-        val owner: String,
-        val method: MethodNode,
-        protected val interpreter: Interpreter<V>
+    val owner: String,
+    val method: MethodNode,
+    protected val interpreter: Interpreter<V>
 ) {
     val instructions: InsnList = method.instructions
     private val nInsns: Int = instructions.size()
@@ -91,7 +91,7 @@ open class MethodAnalyzer<V : Value>(
     protected open fun visitControlFlowExceptionEdge(insn: Int, successor: Int): Boolean = true
 
     protected open fun visitControlFlowExceptionEdge(insn: Int, tcb: TryCatchBlockNode): Boolean =
-            visitControlFlowExceptionEdge(insn, instructions.indexOf(tcb.handler))
+        visitControlFlowExceptionEdge(insn, instructions.indexOf(tcb.handler))
 
     fun analyze(): Array<Frame<V>?> {
         if (nInsns == 0) return frames
@@ -116,8 +116,7 @@ open class MethodAnalyzer<V : Value>(
 
                 if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
                     visitNopInsn(f, insn)
-                }
-                else {
+                } else {
                     current.init(f).execute(insnNode, interpreter)
 
                     when {
@@ -129,12 +128,13 @@ open class MethodAnalyzer<V : Value>(
                             visitTableSwitchInsnNode(insnNode, current, insn)
                         insnOpcode != Opcodes.ATHROW && (insnOpcode < Opcodes.IRETURN || insnOpcode > Opcodes.RETURN) ->
                             visitOpInsn(current, insn)
-                        else -> {}
+                        else -> {
+                        }
                     }
                 }
 
                 handlers[insn]?.forEach { tcb ->
-                    val exnType = Type.getObjectType(tcb.type?:"java/lang/Throwable")
+                    val exnType = Type.getObjectType(tcb.type ?: "java/lang/Throwable")
                     val jump = instructions.indexOf(tcb.handler)
                     if (visitControlFlowExceptionEdge(insn, tcb)) {
                         handler.init(f)
@@ -144,11 +144,9 @@ open class MethodAnalyzer<V : Value>(
                     }
                 }
 
-            }
-            catch (e: AnalyzerException) {
+            } catch (e: AnalyzerException) {
                 throw AnalyzerException(e.node, "Error at instruction #$insn ${insnNode.insnText}: ${e.message}", e)
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 throw AnalyzerException(insnNode, "Error at instruction #$insn ${insnNode.insnText}: ${e.message}", e)
             }
 
@@ -158,7 +156,7 @@ open class MethodAnalyzer<V : Value>(
     }
 
     fun getFrame(insn: AbstractInsnNode): Frame<V>? =
-            frames[instructions.indexOf(insn)]
+        frames[instructions.indexOf(insn)]
 
     private fun checkAssertions() {
         if (instructions.toArray().any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
@@ -250,12 +248,12 @@ open class MethodAnalyzer<V : Value>(
     private fun mergeControlFlowEdge(insn: Int, frame: Frame<V>) {
         val oldFrame = frames[insn]
         val changes =
-                if (oldFrame != null)
-                    oldFrame.merge(frame, interpreter)
-                else {
-                    frames[insn] = newFrame(frame)
-                    true
-                }
+            if (oldFrame != null)
+                oldFrame.merge(frame, interpreter)
+            else {
+                frames[insn] = newFrame(frame)
+                true
+            }
         if (changes && !queued[insn]) {
             queued[insn] = true
             queue[top++] = insn

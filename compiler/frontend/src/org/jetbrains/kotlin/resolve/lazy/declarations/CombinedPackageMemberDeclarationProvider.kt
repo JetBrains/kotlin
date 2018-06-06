@@ -18,17 +18,20 @@ package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 class CombinedPackageMemberDeclarationProvider(
-        val providers: Collection<PackageMemberDeclarationProvider>
+    val providers: Collection<PackageMemberDeclarationProvider>
 ) : PackageMemberDeclarationProvider {
     override fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean) = providers.flatMap { it.getAllDeclaredSubPackages(nameFilter) }
 
     override fun getPackageFiles() = providers.flatMap { it.getPackageFiles() }
 
-    override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = providers.flatMap { it.getDeclarations(kindFilter, nameFilter) }
+    override fun containsFile(file: KtFile) = providers.any { it.containsFile(file) }
+
+    override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) =
+        providers.flatMap { it.getDeclarations(kindFilter, nameFilter) }
 
     override fun getFunctionDeclarations(name: Name) = providers.flatMap { it.getFunctionDeclarations(name) }
 
@@ -41,4 +44,6 @@ class CombinedPackageMemberDeclarationProvider(
     override fun getClassOrObjectDeclarations(name: Name) = providers.flatMap { it.getClassOrObjectDeclarations(name) }
 
     override fun getTypeAliasDeclarations(name: Name) = providers.flatMap { it.getTypeAliasDeclarations(name) }
+
+    override fun getDeclarationNames(): Set<Name> = providers.flatMapTo(HashSet()) { it.getDeclarationNames() }
 }

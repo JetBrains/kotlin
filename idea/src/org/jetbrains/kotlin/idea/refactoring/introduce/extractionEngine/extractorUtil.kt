@@ -65,7 +65,9 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
         else -> CallableBuilder.Target.READ_ONLY_PROPERTY
     }
     return CallableBuilder(builderTarget).apply {
-        val modifiers = listOf(config.descriptor.visibility) + config.descriptor.modifiers.map { it.value }
+        val visibility = config.descriptor.visibility
+        val extraModifiers = config.descriptor.modifiers.map { it.value }
+        val modifiers = if (visibility.isNotEmpty()) listOf(visibility) + extraModifiers else extraModifiers
         modifier(modifiers.joinToString(separator = " "))
 
         typeParams(
@@ -404,10 +406,10 @@ private fun makeCall(
 }
 
 private var KtExpression.isJumpElementToReplace: Boolean
-        by NotNullableCopyableUserDataProperty(Key.create("IS_JUMP_ELEMENT_TO_REPLACE"), false)
+        by NotNullablePsiCopyableUserDataProperty(Key.create("IS_JUMP_ELEMENT_TO_REPLACE"), false)
 
 private var KtReturnExpression.isReturnForLabelRemoval: Boolean
-        by NotNullableCopyableUserDataProperty(Key.create("IS_RETURN_FOR_LABEL_REMOVAL"), false)
+        by NotNullablePsiCopyableUserDataProperty(Key.create("IS_RETURN_FOR_LABEL_REMOVAL"), false)
 
 fun ExtractionGeneratorConfiguration.generateDeclaration(
         declarationToReplace: KtNamedDeclaration? = null

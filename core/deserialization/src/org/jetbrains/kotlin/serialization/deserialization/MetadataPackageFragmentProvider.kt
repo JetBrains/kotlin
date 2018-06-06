@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -25,14 +24,14 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.ClassData
-import org.jetbrains.kotlin.serialization.ClassDataWithSource
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
@@ -57,7 +56,10 @@ class MetadataPackageFragmentProvider(
                 LookupTracker.DO_NOTHING,
                 FlexibleTypeDeserializer.ThrowException,
                 emptyList(),
-                notFoundClasses, AdditionalClassPartsProvider.None, PlatformDependentDeclarationFilter.All
+                notFoundClasses,
+                ContractDeserializer.DEFAULT,
+                AdditionalClassPartsProvider.None, PlatformDependentDeclarationFilter.All,
+                BuiltInSerializerProtocol.extensionRegistry
         )
     }
 
@@ -81,7 +83,7 @@ class MetadataPackageFragment(
         message.class_List.firstOrNull { classProto ->
             nameResolver.getClassId(classProto.fqName) == classId
         }?.let { classProto ->
-            ClassDataWithSource(ClassData(nameResolver, classProto), SourceElement.NO_SOURCE)
+            ClassData(nameResolver, classProto, SourceElement.NO_SOURCE)
         }
     }
 
@@ -106,6 +108,8 @@ class MetadataPackageFragment(
                 containerSource = null, components = components, classNames = { emptyList() }
         ) {
             override fun hasClass(name: Name): Boolean = hasTopLevelClass(name)
+            override fun definitelyDoesNotContainName(name: Name) = false
+            override fun getClassifierNames(): Set<Name>? = null
         })
 
         return ChainedMemberScope.create("Metadata scope", scopes)

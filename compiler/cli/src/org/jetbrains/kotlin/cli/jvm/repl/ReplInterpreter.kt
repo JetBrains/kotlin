@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
+import org.jetbrains.kotlin.cli.jvm.repl.configuration.ReplConfiguration
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
@@ -35,8 +36,7 @@ class ReplInterpreter(
         disposable: Disposable,
         private val configuration: CompilerConfiguration,
         private val replConfiguration: ReplConfiguration
-): ReplConfiguration by replConfiguration {
-
+) {
     private val lineNumber = AtomicInteger()
 
     private val previousIncompleteLines = arrayListOf<String>()
@@ -92,12 +92,12 @@ class ReplInterpreter(
         try {
 
             val evalRes = scriptEvaluator.compileAndEval(evalState, ReplCodeLine(lineNumber.getAndIncrement(), 0, fullText), null, object : InvokeWrapper {
-                override fun <T> invoke(body: () -> T): T = executeUserCode { body() }
+                override fun <T> invoke(body: () -> T): T = replConfiguration.executionInterceptor.execute(body)
             })
 
             when {
                 evalRes !is ReplEvalResult.Incomplete -> previousIncompleteLines.clear()
-                allowIncompleteLines -> previousIncompleteLines.add(line)
+                replConfiguration.allowIncompleteLines -> previousIncompleteLines.add(line)
                 else -> return ReplEvalResult.Error.CompileTime("incomplete code")
             }
             return evalRes
@@ -107,16 +107,6 @@ class ReplInterpreter(
             classLoader.dumpClasses(writer)
             writer.flush()
             throw e
-        }
-    }
-
-    private fun <T> executeUserCode(body: () -> T): T {
-        try {
-            onUserCodeExecuting(true)
-            return body()
-        }
-        finally {
-            onUserCodeExecuting(false)
         }
     }
 

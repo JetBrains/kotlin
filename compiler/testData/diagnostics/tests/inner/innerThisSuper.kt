@@ -1,3 +1,5 @@
+// NI_EXPECTED_FILE
+
 interface Trait {
     fun bar() = 42
 }

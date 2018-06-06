@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.psi.KtElement
 
 class PseudocodeLabel internal constructor(
-        override val pseudocode: PseudocodeImpl, override val name: String, private val comment: String?
+    override val pseudocode: PseudocodeImpl, override val name: String, private val comment: String?
 ) : Label {
 
     private val instructionList: List<Instruction> get() = pseudocode.mutableInstructionList
@@ -36,16 +36,20 @@ class PseudocodeLabel internal constructor(
         val index = targetInstructionIndex
         when {
             index < 0 ->
-                error("resolveToInstruction: unbound label $name " +
-                      "in subroutine ${correspondingElement.text} with instructions $instructionList")
+                error(
+                    "resolveToInstruction: unbound label $name " +
+                            "in subroutine ${correspondingElement.text} with instructions $instructionList"
+                )
             index >= instructionList.size ->
-                error("resolveToInstruction: incorrect index $index for label $name " +
-                      "in subroutine ${correspondingElement.text} with instructions $instructionList")
+                error(
+                    "resolveToInstruction: incorrect index $index for label $name " +
+                            "in subroutine ${correspondingElement.text} with instructions $instructionList"
+                )
             else ->
                 return instructionList[index]
         }
     }
 
     fun copy(newPseudocode: PseudocodeImpl, newLabelIndex: Int): PseudocodeLabel =
-            PseudocodeLabel(newPseudocode, "L" + newLabelIndex, "copy of $name, $comment")
+        PseudocodeLabel(newPseudocode, "L" + newLabelIndex, "copy of $name, $comment")
 }

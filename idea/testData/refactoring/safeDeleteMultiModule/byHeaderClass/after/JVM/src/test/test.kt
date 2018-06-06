@@ -1,4 +1,4 @@
 package test
 
 open class Foo
-impl class ChildOfFoo : Foo()
+actual class ChildOfFoo : Foo()

@@ -10,4 +10,4 @@ open class Delegate : Parcelable {
 }
 
 @Parcelize
-class Test : Parcelable <error descr="[PLUGIN_ERROR] PARCELABLE_DELEGATE_IS_NOT_ALLOWED: Delegating 'Parcelable' is now allowed">by</error> Delegate()
+class Test : Parcelable <error descr="[PLUGIN_ERROR] Delegating 'Parcelable' is now allowed">by</error> Delegate()

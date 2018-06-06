@@ -3,6 +3,7 @@
   <component name="FacetManager">
       <facet type="kotlin-language" name="Kotlin">
         <configuration version="2" platform="JavaScript " useProjectSettings="false">
+            <implements>Common</implements>
             <compilerSettings/>
             <compilerArguments/>
         </configuration>

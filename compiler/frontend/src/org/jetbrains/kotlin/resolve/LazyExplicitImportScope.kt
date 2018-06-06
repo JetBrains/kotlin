@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class LazyExplicitImportScope(
-        private val packageOrClassDescriptor: DeclarationDescriptor,
-        private val packageFragmentForVisibilityCheck: PackageFragmentDescriptor?,
-        private val declaredName: Name,
-        private val aliasName: Name,
-        private val storeReferences: (Collection<DeclarationDescriptor>) -> Unit
-): BaseImportingScope(null) {
+    private val packageOrClassDescriptor: DeclarationDescriptor,
+    private val packageFragmentForVisibilityCheck: PackageFragmentDescriptor?,
+    private val declaredName: Name,
+    private val aliasName: Name,
+    private val storeReferences: (Collection<DeclarationDescriptor>) -> Unit
+) : BaseImportingScope(null) {
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         if (name != aliasName) return null
@@ -58,9 +58,9 @@ class LazyExplicitImportScope(
     }
 
     override fun getContributedDescriptors(
-            kindFilter: DescriptorKindFilter,
-            nameFilter: (Name) -> Boolean,
-            changeNamesForAliased: Boolean
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean,
+        changeNamesForAliased: Boolean
     ): Collection<DeclarationDescriptor> {
         val descriptors = SmartList<DeclarationDescriptor>()
 
@@ -86,10 +86,10 @@ class LazyExplicitImportScope(
 
                     is CallableMemberDescriptor -> {
                         descriptor
-                                .newCopyBuilder()
-                                .setName(aliasName)
-                                .setOriginal(descriptor)
-                                .build()!!
+                            .newCopyBuilder()
+                            .setName(aliasName)
+                            .setOriginal(descriptor)
+                            .build()!!
                     }
 
                     else -> error("Unknown kind of descriptor in import alias: $descriptor")
@@ -101,6 +101,8 @@ class LazyExplicitImportScope(
         return descriptors
     }
 
+    override fun computeImportedNames() = setOf(aliasName)
+
     override fun printStructure(p: Printer) {
         p.println(this::class.java.simpleName, ": ", aliasName)
     }
@@ -109,8 +111,8 @@ class LazyExplicitImportScope(
     internal fun storeReferencesToDescriptors() = getContributedDescriptors().apply(storeReferences)
 
     private fun <D : CallableMemberDescriptor> collectCallableMemberDescriptors(
-            location: LookupLocation,
-            getDescriptors: MemberScope.(Name, LookupLocation) -> Collection<D>
+        location: LookupLocation,
+        getDescriptors: MemberScope.(Name, LookupLocation) -> Collection<D>
     ): Collection<D> {
         val descriptors = SmartList<D>()
 
@@ -126,8 +128,8 @@ class LazyExplicitImportScope(
 
                 if (packageOrClassDescriptor.kind == ClassKind.OBJECT) {
                     descriptors.addAll(
-                            packageOrClassDescriptor.unsubstitutedMemberScope.getDescriptors(declaredName, location)
-                                    .mapNotNull { it.asImportedFromObjectIfPossible() }
+                        packageOrClassDescriptor.unsubstitutedMemberScope.getDescriptors(declaredName, location)
+                            .mapNotNull { it.asImportedFromObjectIfPossible() }
                     )
                 }
             }
@@ -146,6 +148,5 @@ class LazyExplicitImportScope(
     }
 
     private fun <D : CallableMemberDescriptor> Collection<D>.choseOnlyVisibleOrAll() =
-            filter { isVisible(it, packageFragmentForVisibilityCheck, position = QualifierPosition.IMPORT) }.
-                    takeIf { it.isNotEmpty() } ?: this
+        filter { isVisible(it, packageFragmentForVisibilityCheck, position = QualifierPosition.IMPORT) }.takeIf { it.isNotEmpty() } ?: this
 }

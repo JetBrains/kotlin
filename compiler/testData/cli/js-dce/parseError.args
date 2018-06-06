@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/parseError.js
+-output-dir
+$TEMP_DIR$/min

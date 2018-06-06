@@ -21,4 +21,4 @@ object<error> </error>{
 
 enum class<error> </error>{}
 
-annotation class<error> </error><error>{}</error>
+annotation class<error> </error>{}

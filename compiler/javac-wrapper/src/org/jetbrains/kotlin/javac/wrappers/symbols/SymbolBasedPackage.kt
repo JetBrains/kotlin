@@ -34,7 +34,7 @@ class SymbolBasedPackage(
         get() = FqName(element.qualifiedName.toString())
 
     override val subPackages: Collection<JavaPackage>
-        get() = javac.findSubPackages(FqName(element.qualifiedName.toString()))
+        get() = javac.findSubPackages(fqName)
 
 
     override val annotations: Collection<JavaAnnotation>

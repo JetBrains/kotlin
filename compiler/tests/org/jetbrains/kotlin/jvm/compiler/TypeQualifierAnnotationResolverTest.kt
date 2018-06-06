@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.resolveClassByFqName
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
@@ -96,7 +97,7 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
                 listOf(File(TEST_DATA_PATH))
         ).apply {
             languageVersionSettings = LanguageVersionSettingsImpl(
-                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.jsr305GlobalState to Jsr305State.ENABLE)
+                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.jsr305 to Jsr305State.STRICT)
             )
         }
 
@@ -128,7 +129,7 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
     private fun ClassDescriptor.findSingleTypeQualifierAnnotationOnMethod(
             name: String,
             typeQualifierResolver: AnnotationTypeQualifierResolver
-    ) = unsubstitutedMemberScope
+    ): AnnotationDescriptor = unsubstitutedMemberScope
             .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_TEST)
             .single()
             .annotations.single()

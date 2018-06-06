@@ -23,18 +23,24 @@ interface Annotated {
 }
 
 interface Annotations : Iterable<AnnotationDescriptor> {
-
+    /**
+     * @return `true` iff there are no "direct" annotations applicable to this declaration. Note that even if [isEmpty] is `true`,
+     * there may be use-site-targeted annotations applicable to the declaration!
+     *
+     * @see getUseSiteTargetedAnnotations
+     * @see getAllAnnotations
+     */
     fun isEmpty(): Boolean
 
     fun findAnnotation(fqName: FqName): AnnotationDescriptor? = firstOrNull { it.fqName == fqName }
 
     fun hasAnnotation(fqName: FqName): Boolean = findAnnotation(fqName) != null
 
-    fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor? = null
-
     fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget>
 
-    // Returns both targeted and annotations without target. Annotation order is preserved.
+    /**
+     * @return both targeted and annotations without target. Annotation order is preserved.
+     */
     fun getAllAnnotations(): List<AnnotationWithTarget>
 
     companion object {
@@ -81,10 +87,6 @@ class FilteredAnnotations(
             if (fqNameFilter(fqName)) delegate.findAnnotation(fqName)
             else null
 
-    override fun findExternalAnnotation(fqName: FqName) =
-            if (fqNameFilter(fqName)) delegate.findExternalAnnotation(fqName)
-            else null
-
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
         return delegate.getUseSiteTargetedAnnotations().filter { shouldBeReturned(it.annotation) }
     }
@@ -113,8 +115,6 @@ class CompositeAnnotations(
     override fun hasAnnotation(fqName: FqName) = delegates.asSequence().any { it.hasAnnotation(fqName) }
 
     override fun findAnnotation(fqName: FqName) = delegates.asSequence().mapNotNull { it.findAnnotation(fqName) }.firstOrNull()
-
-    override fun findExternalAnnotation(fqName: FqName) = delegates.asSequence().mapNotNull { it.findExternalAnnotation(fqName) }.firstOrNull()
 
     override fun getUseSiteTargetedAnnotations() = delegates.flatMap { it.getUseSiteTargetedAnnotations() }
 

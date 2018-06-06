@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 //   val y = other.x // return false for `other.x` as it's receiver is not `this`
 // }
 fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
-        context: BindingContext
+    context: BindingContext
 ): Boolean {
     val dispatchReceiverValue = dispatchReceiver
     if (resultingDescriptor.dispatchReceiverParameter == null || dispatchReceiverValue == null) return true
@@ -77,30 +77,30 @@ fun ResolvedCall<*>.getExplicitReceiverValue(): ReceiverValue? {
 }
 
 fun ResolvedCall<*>.getImplicitReceiverValue(): ImplicitReceiver? =
-        getImplicitReceivers().firstOrNull() as? ImplicitReceiver
+    getImplicitReceivers().firstOrNull() as? ImplicitReceiver
 
 fun ResolvedCall<*>.getImplicitReceivers(): Collection<ReceiverValue> =
-        when (explicitReceiverKind) {
-            ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> listOfNotNull(extensionReceiver, dispatchReceiver)
-            ExplicitReceiverKind.DISPATCH_RECEIVER -> listOfNotNull(extensionReceiver)
-            ExplicitReceiverKind.EXTENSION_RECEIVER -> listOfNotNull(dispatchReceiver)
-            ExplicitReceiverKind.BOTH_RECEIVERS -> emptyList()
-        }
+    when (explicitReceiverKind) {
+        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> listOfNotNull(extensionReceiver, dispatchReceiver)
+        ExplicitReceiverKind.DISPATCH_RECEIVER -> listOfNotNull(extensionReceiver)
+        ExplicitReceiverKind.EXTENSION_RECEIVER -> listOfNotNull(dispatchReceiver)
+        ExplicitReceiverKind.BOTH_RECEIVERS -> emptyList()
+    }
 
 private fun ResolvedCall<*>.hasSafeNullableReceiver(context: CallResolutionContext<*>): Boolean {
     if (!call.isSafeCall()) return false
-    val receiverValue = getExplicitReceiverValue()?.let { DataFlowValueFactory.createDataFlowValue(it, context) }
-                        ?: return false
+    val receiverValue = getExplicitReceiverValue()?.let { context.dataFlowValueFactory.createDataFlowValue(it, context) }
+            ?: return false
     return context.dataFlowInfo.getStableNullability(receiverValue).canBeNull()
 }
 
 fun ResolvedCall<*>.makeNullableTypeIfSafeReceiver(type: KotlinType?, context: CallResolutionContext<*>) =
-        type?.let { TypeUtils.makeNullableIfNeeded(type, hasSafeNullableReceiver(context)) }
+    type?.let { TypeUtils.makeNullableIfNeeded(type, hasSafeNullableReceiver(context)) }
 
 fun ResolvedCall<*>.hasBothReceivers() = dispatchReceiver != null && extensionReceiver != null
 
-fun ResolvedCall<*>.getDispatchReceiverWithSmartCast(): ReceiverValue?
-        = getReceiverValueWithSmartCast(dispatchReceiver, smartCastDispatchReceiverType)
+fun ResolvedCall<*>.getDispatchReceiverWithSmartCast(): ReceiverValue? =
+    getReceiverValueWithSmartCast(dispatchReceiver, smartCastDispatchReceiverType)
 
 fun KtCallElement.getArgumentByParameterIndex(index: Int, context: BindingContext): List<ValueArgument> {
     val resolvedCall = getResolvedCall(context) ?: return emptyList()

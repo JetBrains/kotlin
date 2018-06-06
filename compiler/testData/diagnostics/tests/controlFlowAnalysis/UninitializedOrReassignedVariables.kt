@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package uninitialized_reassigned_variables
 
 fun doSmth(<!UNUSED_PARAMETER!>s<!>: String) {}
@@ -53,7 +54,7 @@ fun t2() {
 
 class A() {}
 
-fun t4(a: A) {
+fun t4(<!UNUSED_PARAMETER!>a<!>: A) {
     <!UNUSED_VALUE!><!VAL_REASSIGNMENT!>a<!> =<!> A()
 }
 
@@ -61,7 +62,7 @@ fun t4(a: A) {
 // reassigned vals
 
 fun t1() {
-    val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>a<!> : Int = 1
+    val <!UNUSED_VARIABLE!>a<!> : Int = 1
     <!UNUSED_VALUE!><!VAL_REASSIGNMENT!>a<!> =<!> 2
 
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>b<!> : Int = 1
@@ -83,7 +84,7 @@ enum class ProtocolState {
 fun t3() {
    val x: ProtocolState = ProtocolState.WAITING
    <!VAL_REASSIGNMENT!>x<!> = x.signal()
-   <!UNUSED_VALUE!>x =<!> x.signal() //repeat for x
+   x = x.signal() //repeat for x
 }
 
 fun t4() {
@@ -187,7 +188,7 @@ class AnonymousInitializers(var a: String, val b: String) {
     }
 }
 
-fun reassignFunParams(a: Int) {
+fun reassignFunParams(<!UNUSED_PARAMETER!>a<!>: Int) {
     <!UNUSED_VALUE!><!VAL_REASSIGNMENT!>a<!> =<!> 1
 }
 
@@ -240,7 +241,7 @@ class Outer() {
 }
 
 class ForwardAccessToBackingField() { //kt-147
-    val a = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE!>a<!> // error
+    val a = <!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;UNINITIALIZED_VARIABLE, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>a<!> // error
     val b = <!UNINITIALIZED_VARIABLE!>c<!> // error
     val c = 1
 }

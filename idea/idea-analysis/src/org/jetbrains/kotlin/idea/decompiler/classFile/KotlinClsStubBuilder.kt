@@ -28,14 +28,15 @@ import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 open class KotlinClsStubBuilder : ClsStubBuilder() {
@@ -55,14 +56,15 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
         val kotlinClass = IDEKotlinBinaryClassCache.getKotlinBinaryClass(file, fileContent) ?: error("Can't find binary class for Kotlin file: $file")
         val header = kotlinClass.classHeader
         val classId = kotlinClass.classId
-        val packageFqName = classId.packageFqName
+        val packageFqName = header.packageName?.let { FqName(it) } ?: classId.packageFqName
+
         if (!header.metadataVersion.isCompatible()) {
             return createIncompatibleAbiVersionFileStub()
         }
 
         val components = createStubBuilderComponents(file, packageFqName, fileContent)
         if (header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS) {
-            val partFiles = findMultifileClassParts(file, classId, header)
+            val partFiles = findMultifileClassParts(file, classId, header.multifilePartNames)
             return createMultifileClassStub(header, partFiles, classId.asSingleFqName(), components)
         }
 
@@ -86,7 +88,9 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
             KotlinClassHeader.Kind.FILE_FACADE -> {
                 val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
-                createFileFacadeStub(packageProto, classId.asSingleFqName(), context)
+                val fqName = header.packageName?.let { ClassId(FqName(it), classId.relativeClassName, classId.isLocal).asSingleFqName() }
+                             ?: classId.asSingleFqName()
+                createFileFacadeStub(packageProto, fqName, context)
             }
             else -> throw IllegalStateException("Should have processed " + file.path + " with header $header")
         }

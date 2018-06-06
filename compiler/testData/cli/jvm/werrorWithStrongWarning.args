@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/werrorWithStrongWarning.kt
+-Xdisable-default-scripting-plugin
+-d
+$TEMP_DIR$
+-Werror
+-cp
+non-existing-path.jar

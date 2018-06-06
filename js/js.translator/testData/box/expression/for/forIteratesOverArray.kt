@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 998
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1113
 package foo
 
 val a1 = arrayOfNulls<Int>(10)

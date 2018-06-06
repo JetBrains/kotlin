@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.unwrappedTargets
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
@@ -43,9 +45,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 val KtDeclaration.descriptor: DeclarationDescriptor?
-    get() = this.analyze().get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
+    get() = if (this is KtParameter) this.descriptor else this.resolveToDescriptorIfAny(BodyResolveMode.FULL)
 
 val KtDeclaration.constructor: ConstructorDescriptor?
     get() {
@@ -57,8 +60,11 @@ val KtDeclaration.constructor: ConstructorDescriptor?
         }
     }
 
+val KtParameter.descriptor: ValueParameterDescriptor?
+    get() = this.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL)
+
 val KtParameter.propertyDescriptor: PropertyDescriptor?
-    get() = this.analyze().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
+    get() = this.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? PropertyDescriptor
 
 fun PsiReference.checkUsageVsOriginalDescriptor(
         targetDescriptor: DeclarationDescriptor,

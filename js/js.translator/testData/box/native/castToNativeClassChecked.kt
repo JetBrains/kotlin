@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 994
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1112
 // FILE: castToNativeClassChecked.kt
 external abstract class S() {
     abstract fun foo(): String

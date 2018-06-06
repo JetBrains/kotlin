@@ -3,36 +3,85 @@ where advanced options include:
   -Xadd-compiler-builtins    Add definitions of built-in declarations to the compilation classpath (useful with -no-stdlib)
   -Xadd-modules=<module[,]>  Root modules to resolve in addition to the initial modules,
                              or all modules on the module path if <module> is ALL-MODULE-PATH
+  -Xassertions={always-enable|always-disable|jvm|legacy}
+                             Assert calls behaviour
+                             -Xassertions=always-enable:  enable, ignore jvm assertion settings;
+                             -Xassertions=always-disable: disable, ignore jvm assertion settings;
+                             -Xassertions=jvm:            enable, depend on jvm assertion settings;
+                             -Xassertions=legacy:         calculate condition on each call, check depends on jvm assertion settings in the kotlin package;
+                             default: legacy
   -Xbuild-file=<path>        Path to the .xml build file to compile
+  -Xcompile-java             Reuse javac analysis and compile Java source files
+  -Xnormalize-constructor-calls={disable|enable}
+                             Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
+  -Xdisable-default-scripting-plugin
+                             Do not enable scripting plugin by default
+  -Xdisable-standard-script  Disable standard kotlin script support
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
   -Xjavac-arguments=<option[,]> Java compiler arguments
-  -Xjsr305-annotations={ignore|enable|warn}
-                             Specify global behavior for JSR-305 nullability annotations: ignore, treat as other supported nullability annotations, or report a warning
+  -Xjsr305={ignore/strict/warn}|under-migration:{ignore/strict/warn}|@<fq.name>:{ignore/strict/warn}
+                             Specify behavior for JSR-305 nullability annotations:
+                             -Xjsr305={ignore/strict/warn}                   globally (all non-@UnderMigration annotations)
+                             -Xjsr305=under-migration:{ignore/strict/warn}   all @UnderMigration annotations
+                             -Xjsr305=@<fq.name>:{ignore/strict/warn}        annotation with the given fully qualified class name
+                             Modes:
+                               * ignore
+                               * strict (experimental; treat as other supported nullability annotations)
+                               * warn (report a warning)
+  -Xjvm-default={disable|enable|compatibility}
+                             Allow to use '@JvmDefault' annotation for JVM default method support.
+                             -Xjvm-default=disable         Prohibit usages of @JvmDefault
+                             -Xjvm-default=enable          Allow usages of @JvmDefault; only generate the default method
+                                                           in the interface (annotating an existing method can break binary compatibility)
+                             -Xjvm-default=compatibility   Allow usages of @JvmDefault; generate a compatibility accessor
+                                                           in the 'DefaultImpls' class in addition to the interface method
+
   -Xload-builtins-from-dependencies
                              Load definitions of built-in declarations from module dependencies, instead of from the compiler
-  -Xno-call-assertions       Don't generate not-null assertion after each invocation of method returning not-null
+  -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types
+  -Xno-exception-on-explicit-equals-for-boxed-null
+                             Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type
   -Xno-optimize              Disable optimizations
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
-  -Xreport-perf              Report detailed performance statistics
+  -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
   -Xscript-resolver-environment=<key=value[,]>
                              Script resolver environment in key-value pairs (the value could be quoted and escaped)
   -Xsingle-module            Combine modules for source files and binary dependencies into a single module
   -Xskip-runtime-version-check Allow Kotlin runtime libraries of incompatible versions in the classpath
+  -Xstrict-java-nullability-assertions
+                             Generate nullability assertions for non-null Java expressions
+  -Xsupport-compatqual-checker-framework-annotations=enable|disable
+                             Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).
+                             Default value is 'enable'
   -Xuse-javac                Use javac for Java source and class files analysis
   -Xuse-old-class-files-reading Use old class files reading implementation (may slow down the build and should be used in case of problems with the new implementation)
-  -Xallow-kotlin-package     Allow compiling code in package 'kotlin'
+  -Xuse-type-table           Use type table in metadata serialization
+  -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
+  -Xdump-perf=<path>         Dump detailed performance statistics to the specified file
+  -Xeffect-system            Enable experimental language feature: effect system
+  -Xexperimental=<fq.name>   Enable and propagate usages of experimental API for marker annotation with the given fully qualified name
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
+  -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block
   -Xmulti-platform           Enable experimental language support for multi-platform projects
-  -Xno-check-impl            Do not check presence of 'impl' modifier in multi-platform projects
+  -Xnew-inference            Enable new experimental generic type inference algorithm
+  -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
   -Xplugin=<path>            Load plugins from the given classpath
-  -Xrepeat=<count>           Repeat compilation (for performance analysis)
+  -Xprogressive              Enable compiler progressive mode.
+                             In this mode, deprecations and bug fixes for unstable code take effect immediately,
+                             instead of going through graceful migration cycle.
+                             Code, written in progressive mode is backward compatible; however, code written in
+                             non-progressive mode may cause compilation errors in progressive mode.
+  -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
+  -Xread-deserialized-contracts Enable reading of contracts from metadata
   -Xreport-output-files      Report source to output files mapping
+  -Xreport-perf              Report detailed performance statistics
   -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
+  -Xuse-experimental=<fq.name> Enable usages of COMPILATION-affecting experimental API for marker annotation with the given fully qualified name
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

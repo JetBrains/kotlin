@@ -73,6 +73,46 @@ class KotlinJsr223LocalScriptEngineIT {
     }
 
     @Test
+    fun testEvalWithError() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+
+        try {
+            engine.eval("java.lang.fish")
+            Assert.fail("Script error expected")
+        }
+        catch (e: ScriptException) {}
+
+        val res1 = engine.eval("val x = 3")
+        Assert.assertNull(res1)
+
+        try {
+            engine.eval("y")
+            Assert.fail("Script error expected")
+        }
+        catch (e: ScriptException) {
+            Assert.assertTrue("Expected message to contain \"unresolved reference: y\", actual: \"${e.message}\"",
+                              e.message?.contains("unresolved reference: y") ?: false)
+        }
+
+        val res3 = engine.eval("x + 2")
+        Assert.assertEquals(5, res3)
+    }
+
+    @Test
+    fun testEngineRepeatWithReset() {
+        val code = "open class A {}\n" +
+                   "class B : A() {}"
+        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223JvmLocalScriptEngine
+
+        val res1 = engine.eval(code)
+        Assert.assertNull(res1)
+
+        engine.state.history.reset()
+
+        engine.eval(code)
+    }
+
+    @Test
     fun testInvocable() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
         val res1 = engine.eval("""

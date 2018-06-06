@@ -20,14 +20,18 @@ class MyActivity(): Activity() {
     val loginItem = Button(this)
 
     val entity = MyEntity(object : FrameLayout(this) {
-        override fun findViewById(id: Int) : View? = when(id) {
-            R.id.login -> loginItem
+        override fun <T : View> findViewById(id: Int): T? = when(id) {
+            R.id.login -> loginItem as T
             else -> null
         }
     })
 
+    val entity2: LayoutContainer = entity
+
     public fun box(): String {
-        return if (entity.login.toString() == "Button") "OK" else ""
+        val o = if (entity.login.toString() == "Button") "O" else ""
+        val k = if (entity2.login.toString() == "Button") "K" else ""
+        return o + k // "OK"
     }
 }
 

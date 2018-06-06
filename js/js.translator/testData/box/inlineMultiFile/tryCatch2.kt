@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1015
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1133
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/tryCatchFinally/tryCatch2.1.kt

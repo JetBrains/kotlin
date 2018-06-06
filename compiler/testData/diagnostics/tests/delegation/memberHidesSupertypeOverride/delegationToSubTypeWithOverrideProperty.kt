@@ -1,14 +1,14 @@
 public interface Base {
     var test: String
         get() = "OK"
-        set(s: String) {
+        set(<!UNUSED_PARAMETER!>s<!>: String) {
         }
 }
 
 public interface Base2 : Base {
     override var test: String
             get() = "OK2"
-            set(value) {}
+            set(<!UNUSED_PARAMETER!>value<!>) {}
 }
 
 class Delegate : Base2 {

@@ -37,14 +37,15 @@ object NullBasicValue : StrictBasicValue(AsmTypes.OBJECT_TYPE)
 
 enum class Nullability {
     NULL, NOT_NULL, NULLABLE;
+
     fun isNull() = this == NULL
     fun isNotNull() = this == NOT_NULL
 }
 
 fun BasicValue.getNullability(): Nullability =
-        when (this) {
-            is NullBasicValue -> Nullability.NULL
-            is NotNullBasicValue -> Nullability.NOT_NULL
-            is ProgressionIteratorBasicValue -> Nullability.NOT_NULL
-            else -> Nullability.NULLABLE
-        }
+    when (this) {
+        is NullBasicValue -> Nullability.NULL
+        is NotNullBasicValue -> Nullability.NOT_NULL
+        is ProgressionIteratorBasicValue -> Nullability.NOT_NULL
+        else -> Nullability.NULLABLE
+    }

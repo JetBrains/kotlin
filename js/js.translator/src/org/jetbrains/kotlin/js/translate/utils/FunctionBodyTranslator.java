@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.js.translate.utils;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.js.translate.expression.LocalFunctionCollector;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
+import org.jetbrains.kotlin.psi.KtBlockExpression;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
@@ -41,7 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDefaultArgument;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
@@ -73,23 +75,40 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public static List<JsStatement> setDefaultValueForArguments(@NotNull FunctionDescriptor descriptor,
-            @NotNull TranslationContext functionBodyContext) {
+    public static List<JsStatement> setDefaultValueForArguments(
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
         List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
+        List<ValueParameterDescriptor> valueParametersForDefaultValue =
+                CodegenUtil.getFunctionParametersForDefaultValueGeneration(descriptor, context.bindingTrace());
 
         List<JsStatement> result = new ArrayList<>(valueParameters.size());
-        for (ValueParameterDescriptor valueParameter : valueParameters) {
-            if (!valueParameter.declaresDefaultValue()) continue;
+        for (int i = 0; i < valueParameters.size(); i++) {
+            ValueParameterDescriptor valueParameter = valueParameters.get(i);
+            ValueParameterDescriptor valueParameterForDefaultValue = valueParametersForDefaultValue.get(i);
 
-            JsExpression jsNameRef = ReferenceTranslator.translateAsValueReference(valueParameter, functionBodyContext);
-            KtExpression defaultArgument = getDefaultArgument(valueParameter);
+            if (!valueParameterForDefaultValue.declaresDefaultValue()) continue;
+
+            JsExpression jsNameRef = ReferenceTranslator.translateAsValueReference(valueParameter, context);
+
+            KtExpression defaultArgument = BindingUtils.getDefaultArgument(valueParameterForDefaultValue);
             JsBlock defaultArgBlock = new JsBlock();
-            JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
+            JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, context, defaultArgBlock);
+
+            // parameterName = defaultValue
             PsiElement psi = KotlinSourceElementKt.getPsi(valueParameter.getSource());
             JsStatement assignStatement = assignment(jsNameRef, defaultValue).source(psi).makeStmt();
+
             JsStatement thenStatement = JsAstUtils.mergeStatementInBlockIfNeeded(assignStatement, defaultArgBlock);
+
+            // parameterName === undefined
             JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, Namer.getUndefinedExpression());
-            checkArgIsUndefined.source(KotlinSourceElementKt.getPsi(valueParameter.getSource()));
+            checkArgIsUndefined.source(psi);
+
+            // if (parameterName === undefined) {
+            //     parameterName = defaultValue
+            // }
             JsIf jsIf = JsAstUtils.newJsIf(checkArgIsUndefined, thenStatement);
             jsIf.setSource(checkArgIsUndefined.getSource());
             result.add(jsIf);
@@ -120,6 +139,16 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
 
         JsNode jsBody = Translation.translateExpression(jetBodyExpression, context(), jsBlock);
         jsBlock.getStatements().addAll(mayBeWrapWithReturn(jsBody).getStatements());
+
+        if (jetBodyExpression instanceof KtBlockExpression &&
+            descriptor.getReturnType() != null && KotlinBuiltIns.isUnit(descriptor.getReturnType()) &&
+            !KotlinBuiltIns.isUnit(TranslationUtils.getReturnTypeForCoercion(descriptor))) {
+            ClassDescriptor unit = context().getCurrentModule().getBuiltIns().getUnit();
+            JsReturn jsReturn = new JsReturn(ReferenceTranslator.translateAsValueReference(unit, context()));
+            jsReturn.setSource(UtilsKt.getFinalElement(declaration));
+            jsBlock.getStatements().add(jsReturn);
+        }
+
         return jsBlock;
     }
 
@@ -145,12 +174,8 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             }
 
             assert declaration.getBodyExpression() != null;
-            assert descriptor.getReturnType() != null;
-            KotlinType bodyType = context().bindingContext().getType(declaration.getBodyExpression());
-            if (bodyType == null && KotlinBuiltIns.isCharOrNullableChar(descriptor.getReturnType()) ||
-                bodyType != null && KotlinBuiltIns.isCharOrNullableChar(bodyType) && TranslationUtils.shouldBoxReturnValue(descriptor)) {
-                node = JsAstUtils.charToBoxedChar((JsExpression) node);
-            }
+            KotlinType returnType = TranslationUtils.getReturnTypeForCoercion(descriptor);
+            node = TranslationUtils.coerce(context(), (JsExpression) node, returnType);
 
             JsReturn jsReturn = new JsReturn((JsExpression) node);
             jsReturn.setSource(declaration.getBodyExpression());

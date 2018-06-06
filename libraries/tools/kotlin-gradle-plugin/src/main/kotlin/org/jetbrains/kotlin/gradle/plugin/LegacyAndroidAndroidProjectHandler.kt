@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.BaseExtension
@@ -16,8 +21,6 @@ import org.jetbrains.kotlin.gradle.internal.registerGeneratedJavaSource
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.checkedReflection
-import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProviderAndroidWrapper
 import java.io.File
 
 internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools)
@@ -42,8 +45,7 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
                                  androidExt: BaseExtension,
                                  variantData: BaseVariantData<out BaseVariantOutputData>,
                                  javaTask: AbstractCompile,
-                                 kotlinTask: KotlinCompile,
-                                 kotlinAfterJavaTask: KotlinCompile?
+                                 kotlinTask: KotlinCompile
     ) {
         kotlinTask.dependsOn(*javaTask.dependsOn.toTypedArray())
 
@@ -58,12 +60,12 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
         }
 
         configureJavaTask(kotlinTask, javaTask, logger)
-        createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, getVariantName(variantData))
+        createSyncOutputTask(project, kotlinTask, javaTask, getVariantName(variantData))
 
         // In lib modules, the androidTest variants get the classes jar in their classpath instead of the Java
-        // destination dir. To use it as a friend path, set the jar as the javaOutputDir (see its usages):
+        // destination dir. Attach the JAR to be consumed as friend path:
         if (variantData is LibraryVariantData) {
-            variantData.dependencyJarOrNull?.let { kotlinTask.javaOutputDir = it }
+            variantData.dependencyJarOrNull?.let { jar -> kotlinTask.attachClassesDir { jar } }
         }
     }
 
@@ -99,36 +101,11 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
                                                       javaSourceDirectory: File) =
             variantData.addJavaSourceFoldersToModel(javaSourceDirectory)
 
-    override fun configureMultiProjectIc(project: Project, variantData: BaseVariantData<out BaseVariantOutputData>, javaTask: AbstractCompile, kotlinTask: KotlinCompile, kotlinAfterJavaTask: KotlinCompile?) {
-        if ((kotlinAfterJavaTask ?: kotlinTask).incremental) {
-            val artifactFile = project.tryGetSingleArtifact(variantData)
-            val artifactDifferenceRegistryProvider = ArtifactDifferenceRegistryProviderAndroidWrapper(
-                    artifactDifferenceRegistryProvider,
-                    { AndroidGradleWrapper.getJarToAarMapping(variantData) }
-            )
-            configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
-                                                        artifactDifferenceRegistryProvider, artifactFile)
-        }
-    }
-
     override fun getTestedVariantData(variantData: BaseVariantData<*>): BaseVariantData<*>? =
             ((variantData as? TestVariantData)?.testedVariantData as? BaseVariantData<*>)
 
     override fun getResDirectories(variantData: BaseVariantData<out BaseVariantOutputData>): List<File> {
         return variantData.mergeResourcesTask?.rawInputFolders?.toList() ?: emptyList()
-    }
-
-    private fun Project.tryGetSingleArtifact(variantData: BaseVariantData<*>): File? {
-        val log = logger
-        log.kotlinDebug { "Trying to determine single artifact for project $path" }
-
-        val outputs = variantData.outputs
-        if (outputs.size != 1) {
-            log.kotlinDebug { "Output count != 1 for variant: ${outputs.map { it.outputFile.relativeTo(rootDir).path }.joinToString()}" }
-            return null
-        }
-
-        return variantData.outputs.first().outputFile
     }
 
     private val BaseVariantData<*>.sourceProviders: List<SourceProvider>

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 
 class A {
     operator fun component1() = 1
@@ -25,7 +26,7 @@ fun test() {
         foo(<!UNRESOLVED_REFERENCE!>_<!>, <!UNRESOLVED_REFERENCE!>_<!>)
     }
 
-    for ((_ : String, _ : Int) in <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>C()<!>) {
+    for ((<!NI;TYPE_MISMATCH!>_ : String<!>, <!NI;TYPE_MISMATCH!>_ : Int<!>) in <!OI;COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, OI;COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>C()<!>) {
         foo(<!UNRESOLVED_REFERENCE!>_<!>, <!UNRESOLVED_REFERENCE!>_<!>)
     }
 

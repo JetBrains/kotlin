@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.*
 import org.my.cool.MyButton
 import kotlinx.android.synthetic.main.layout.*
+import kotlinx.android.synthetic.clearFindViewByIdCache
 
 class R {
     class id {
@@ -19,9 +20,9 @@ class R {
 class BaseView(ctx: Context) : View(ctx) {
     val buttonWidget = MyButton(ctx)
 
-    override fun findViewById(id: Int): View? {
+    override fun <T : View> findViewById(id: Int): T? {
         return when (id) {
-            R.id.login -> buttonWidget
+            R.id.login -> buttonWidget as T
             else -> null
         }
     }
@@ -36,7 +37,9 @@ class MyFragment(): Fragment() {
     override fun getView(): View = baseView
 
     public fun box(): String {
-        return if (login.toString() == "MyButton") "OK" else ""
+        val result = if (login.toString() == "MyButton") "OK" else ""
+        clearFindViewByIdCache()
+        return result
     }
 }
 

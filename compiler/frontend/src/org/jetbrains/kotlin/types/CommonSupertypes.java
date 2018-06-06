@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types;
@@ -24,12 +13,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.utils.DFS;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.types.Variance.IN_VARIANCE;
 import static org.jetbrains.kotlin.types.Variance.OUT_VARIANCE;
@@ -110,7 +100,7 @@ public class CommonSupertypes {
     @NotNull
     private static SimpleType commonSuperTypeForInflexible(@NotNull Collection<SimpleType> types, int recursionDepth, int maxDepth) {
         assert !types.isEmpty();
-        Collection<SimpleType> typeSet = new HashSet<>(types);
+        Collection<SimpleType> typeSet = new LinkedHashSet<>(types);
 
         // If any of the types is nullable, the result must be nullable
         // This also removed Nothing and Nothing? because they are subtypes of everything else
@@ -142,13 +132,29 @@ public class CommonSupertypes {
         // constructor of the supertype -> all of its instantiations occurring as supertypes
         Map<TypeConstructor, Set<SimpleType>> commonSupertypes = computeCommonRawSupertypes(typeSet);
         while (commonSupertypes.size() > 1) {
-            Set<SimpleType> merge = new HashSet<>();
+            Set<SimpleType> merge = new LinkedHashSet<>();
             for (Set<SimpleType> supertypes : commonSupertypes.values()) {
                 merge.addAll(supertypes);
             }
             commonSupertypes = computeCommonRawSupertypes(merge);
         }
-        assert !commonSupertypes.isEmpty() : commonSupertypes + " <- " + types;
+
+        if (commonSupertypes.isEmpty()) {
+            StringBuilder info = new StringBuilder();
+            for (SimpleType type : types) {
+                String superTypes = TypeUtils.getAllSupertypes(type).stream()
+                        .map(t -> "-- " + renderTypeFully(t))
+                        .collect(Collectors.joining("\n"));
+
+                info
+                        .append("Info about ").append(renderTypeFully(type)).append(": ").append('\n')
+                        .append("- Supertypes: ").append('\n')
+                        .append(superTypes).append('\n')
+                        .append("- DeclarationDescriptor class: ").append(classOfDeclarationDescriptor(type)).append('\n')
+                        .append('\n');
+            }
+            throw new IllegalStateException("There is no common supertype for: " + types + " \n" + info.toString());
+        }
 
         // constructor of the supertype -> all of its instantiations occurring as supertypes
         Map.Entry<TypeConstructor, Set<SimpleType>> entry = commonSupertypes.entrySet().iterator().next();
@@ -156,6 +162,32 @@ public class CommonSupertypes {
         // Reconstructing type arguments if possible
         SimpleType result = computeSupertypeProjections(entry.getKey(), entry.getValue(), recursionDepth, maxDepth);
         return TypeUtils.makeNullableIfNeeded(result, nullable);
+    }
+
+    @NotNull
+    private static String renderTypeFully(@NotNull KotlinType type) {
+        return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type) + ", typeConstructor debug: " +
+               renderTypeConstructorVerboseDebugInformation(type.getConstructor());
+    }
+
+    @SuppressWarnings("deprecation")
+    private static String renderTypeConstructorVerboseDebugInformation(TypeConstructor typeConstructor) {
+        if (!(typeConstructor instanceof AbstractTypeConstructor)) {
+            return typeConstructor.toString() + "[" + typeConstructor.getClass().getName() + "]";
+        }
+
+        AbstractTypeConstructor abstractTypeConstructor = (AbstractTypeConstructor) typeConstructor;
+        return abstractTypeConstructor.renderAdditionalDebugInformation();
+    }
+
+    @Nullable
+    private static Class<?> classOfDeclarationDescriptor(@NotNull KotlinType type) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        if (descriptor != null) {
+            return descriptor.getClass();
+        }
+
+        return null;
     }
 
     // Raw supertypes are superclasses w/o type arguments
@@ -182,7 +214,7 @@ public class CommonSupertypes {
         assert order != null;
 
         Set<TypeConstructor> notSource = new HashSet<>();
-        Map<TypeConstructor, Set<SimpleType>> result = new HashMap<>();
+        Map<TypeConstructor, Set<SimpleType>> result = new LinkedHashMap<>();
         for (TypeConstructor superConstructor : order) {
             if (!commonSuperclasses.contains(superConstructor)) {
                 continue;
@@ -212,7 +244,7 @@ public class CommonSupertypes {
         List<TypeParameterDescriptor> parameters = constructor.getParameters();
         List<TypeProjection> newProjections = new ArrayList<>(parameters.size());
         for (TypeParameterDescriptor parameterDescriptor : parameters) {
-            Set<TypeProjection> typeProjections = new HashSet<>();
+            Set<TypeProjection> typeProjections = new LinkedHashSet<>();
             for (KotlinType type : types) {
                 typeProjections.add(type.getArguments().get(parameterDescriptor.getIndex()));
             }
@@ -235,7 +267,7 @@ public class CommonSupertypes {
         else {
             newScope = ErrorUtils.createErrorScope("A scope for common supertype which is not a normal classifier", true);
         }
-        return KotlinTypeFactory.simpleType(Annotations.Companion.getEMPTY(), constructor, newProjections, nullable, newScope);
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(Annotations.Companion.getEMPTY(), constructor, newProjections, nullable, newScope);
     }
 
     @NotNull
@@ -255,8 +287,8 @@ public class CommonSupertypes {
             return TypeUtils.makeStarProjection(parameterDescriptor);
         }
 
-        Set<KotlinType> ins = new HashSet<>();
-        Set<KotlinType> outs = new HashSet<>();
+        Set<KotlinType> ins = new LinkedHashSet<>();
+        Set<KotlinType> outs = new LinkedHashSet<>();
 
         Variance variance = parameterDescriptor.getVariance();
         switch (variance) {
@@ -305,7 +337,7 @@ public class CommonSupertypes {
         }
         if (ins != null) {
             assert !ins.isEmpty() : "In projections is empty for parameter " + parameterDescriptor + ", type projections " + typeProjections;
-            KotlinType intersection = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, ins);
+            KotlinType intersection = TypeIntersector.intersectTypes(ins);
             if (intersection == null) {
                 return TypeUtils.makeStarProjection(parameterDescriptor);
             }
@@ -349,7 +381,7 @@ public class CommonSupertypes {
                     @Override
                     public boolean beforeChildren(SimpleType current) {
                         Set<SimpleType> instances =
-                                constructorToAllInstances.computeIfAbsent(current.getConstructor(), k -> new HashSet<>());
+                                constructorToAllInstances.computeIfAbsent(current.getConstructor(), k -> new LinkedHashSet<>());
                         instances.add(current);
 
                         return true;

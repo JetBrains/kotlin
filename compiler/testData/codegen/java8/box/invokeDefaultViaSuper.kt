@@ -7,7 +7,7 @@ public interface Test {
 }
 
 // FILE: test.kt
-
+// JVM_TARGET: 1.8
 interface KInterface : Test {
 
 }

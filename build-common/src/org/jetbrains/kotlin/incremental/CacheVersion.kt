@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import java.io.File
 import java.io.IOException
 
@@ -95,18 +95,18 @@ class CacheVersion(
     }
 }
 
-fun normalCacheVersion(dataRoot: File): CacheVersion =
+fun normalCacheVersion(dataRoot: File, enabled: Boolean? = null): CacheVersion =
         CacheVersion(ownVersion = NORMAL_VERSION,
                      versionFile = File(dataRoot, NORMAL_VERSION_FILE_NAME),
                      whenVersionChanged = CacheVersion.Action.REBUILD_CHUNK,
                      whenTurnedOn = CacheVersion.Action.REBUILD_CHUNK,
                      whenTurnedOff = CacheVersion.Action.CLEAN_NORMAL_CACHES,
-                     isEnabled = { IncrementalCompilation.isEnabled() })
+                     isEnabled = { enabled ?: IncrementalCompilation.isEnabled() })
 
-fun dataContainerCacheVersion(dataRoot: File): CacheVersion =
+fun dataContainerCacheVersion(dataRoot: File, enabled: Boolean? = null): CacheVersion =
         CacheVersion(ownVersion = DATA_CONTAINER_VERSION,
                      versionFile = File(dataRoot, DATA_CONTAINER_VERSION_FILE_NAME),
                      whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                      whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                      whenTurnedOff = CacheVersion.Action.CLEAN_DATA_CONTAINER,
-                     isEnabled = { IncrementalCompilation.isEnabled() })
+                     isEnabled = { enabled ?: IncrementalCompilation.isEnabled() })

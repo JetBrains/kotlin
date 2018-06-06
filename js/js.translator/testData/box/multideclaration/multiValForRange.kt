@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1131
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1123
 package foo
 
 class C(val i: Int) : Comparable<C>, A() {

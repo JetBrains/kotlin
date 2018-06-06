@@ -1,0 +1,17 @@
+<FrameLayout xmlns:a="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             a:id="@+id/item_detail_container"
+             a:layout_width="match_parent"
+             a:layout_height="match_parent"
+             tools:context=".ItemDetailActivity"
+             tools:ignore="MergeRootFrame" >
+
+
+
+    <Button
+        a:id="@+id/login"
+        a:layout_width="match_parent"
+        a:layout_height="wrap_content"
+        a:text="Sign in" />
+
+</FrameLayout>

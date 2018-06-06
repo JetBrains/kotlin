@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class Point() {
 }
 
@@ -8,7 +9,7 @@ fun <T> f(<!UNUSED_PARAMETER!>expression<!> : T) : G<out T> = G<T>()
 
 fun foo() : G<Point> {
   val p = Point()
-  return <!TYPE_MISMATCH!>f<Point>(p)<!>
+  return <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>f<Point>(p)<!>
 }
 
 class Out<out T>() {}

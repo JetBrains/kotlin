@@ -54,8 +54,8 @@ public final class Outer</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-    public typealias GenericInnerAlias</*0*/ TT>  /*captured type parameters: /*1*/ T*/ = Outer<T>.GenericInner<TT>
-    public typealias GenericNestedAlias</*0*/ TT>  = Outer.GenericNested<TT>
+    public typealias GenericInnerAlias</*0*/ TT> /*captured type parameters: /*1*/ T*/ = Outer<T>.GenericInner<TT>
+    public typealias GenericNestedAlias</*0*/ TT> = Outer.GenericNested<TT>
     public typealias InnerAlias /*captured type parameters: /*0*/ T*/ = Outer<T>.Inner
     public typealias NestedAlias = Outer.Nested
 }

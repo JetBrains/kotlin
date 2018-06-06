@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.search;
@@ -32,49 +21,46 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class InheritorsSearchTestGenerated extends AbstractInheritorsSearchTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInInheritance() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/search/inheritance"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("annotationClass.kt")
     public void testAnnotationClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/inheritance/annotationClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/inheritance/annotationClass.kt");
     }
 
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/inheritance/enum.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/inheritance/enum.kt");
     }
 
     @TestMetadata("interfaces.kt")
     public void testInterfaces() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/inheritance/interfaces.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/inheritance/interfaces.kt");
     }
 
     @TestMetadata("object.kt")
     public void testObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/inheritance/object.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/inheritance/object.kt");
     }
 
     @TestMetadata("simpleClass.kt")
     public void testSimpleClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/inheritance/simpleClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/inheritance/simpleClass.kt");
     }
 
     @TestMetadata("testInheritanceFromJavaClass.kt")
     public void testTestInheritanceFromJavaClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/inheritance/testInheritanceFromJavaClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/inheritance/testInheritanceFromJavaClass.kt");
     }
 
     @TestMetadata("testInheritanceFromKotlinClass.kt")
     public void testTestInheritanceFromKotlinClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/inheritance/testInheritanceFromKotlinClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/inheritance/testInheritanceFromKotlinClass.kt");
     }
 }

@@ -4,6 +4,7 @@
 // WITH_REFLECT
 
 import kotlin.reflect.*
+import kotlin.reflect.full.*
 import kotlin.test.assertEquals
 
 var foo = ""

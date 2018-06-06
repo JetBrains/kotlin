@@ -1,41 +1,35 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
-import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.*
-import org.jetbrains.kotlin.resolve.calls.inference.components.*
-import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
+import org.jetbrains.kotlin.types.StubType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.SmartList
-import java.util.*
 
-class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val resultTypeResolver: ResultTypeResolver):
-        NewConstraintSystem,
-        ConstraintSystemBuilder,
-        ConstraintInjector.Context,
-        ResultTypeResolver.Context,
-        KotlinCallCompleter.Context,
-        FixationOrderCalculator.Context
-{
+class NewConstraintSystemImpl(
+    private val constraintInjector: ConstraintInjector,
+    override val builtIns: KotlinBuiltIns
+) :
+    NewConstraintSystem,
+    ConstraintSystemBuilder,
+    ConstraintInjector.Context,
+    ResultTypeResolver.Context,
+    KotlinConstraintSystemCompleter.Context,
+    PostponedArgumentsAnalyzer.Context {
     private val storage = MutableConstraintStorage()
     private var state = State.BUILDING
     private val typeVariablesTransaction: MutableList<NewTypeVariable> = SmartList()
@@ -58,19 +52,15 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
 
     override fun getBuilder() = apply { checkState(State.BUILDING, State.COMPLETION) }
 
-    override fun asConstraintInjectorContext() = apply { checkState(State.BUILDING, State.COMPLETION) }
-
     override fun asReadOnlyStorage(): ConstraintStorage {
         checkState(State.BUILDING, State.FREEZED)
         state = State.FREEZED
         return storage
     }
 
-    override fun asCallCompleterContext(): KotlinCallCompleter.Context {
-        checkState(State.BUILDING, State.COMPLETION)
-        state = State.COMPLETION
-        return this
-    }
+    override fun asConstraintSystemCompleterContext() = apply { checkState(State.BUILDING) }
+
+    override fun asPostponedArgumentsAnalyzerContext() = apply { checkState(State.BUILDING) }
 
     // ConstraintSystemOperation
     override fun registerVariable(variable: NewTypeVariable) {
@@ -81,11 +71,29 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         storage.notFixedTypeVariables[variable.freshTypeConstructor] = MutableVariableWithConstraints(variable)
     }
 
+    override fun markPostponedVariable(variable: NewTypeVariable) {
+        storage.postponedTypeVariables += variable
+    }
+
+    override fun unmarkPostponedVariable(variable: NewTypeVariable) {
+        storage.postponedTypeVariables -= variable
+    }
+
     override fun addSubtypeConstraint(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition) =
-            constraintInjector.addInitialSubtypeConstraint(apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }, lowerType, upperType, position)
+        constraintInjector.addInitialSubtypeConstraint(
+            apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
+            lowerType,
+            upperType,
+            position
+        )
 
     override fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition) =
-            constraintInjector.addInitialEqualityConstraint(apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }, a, b, position)
+        constraintInjector.addInitialEqualityConstraint(
+            apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
+            a,
+            b,
+            position
+        )
 
     override fun getProperSuperTypeConstructors(type: UnwrappedType): List<TypeConstructor> {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
@@ -143,62 +151,29 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         return false
     }
 
-    override fun addPostponedArgument(postponedArgument: PostponedKotlinCallArgument) {
-        checkState(State.BUILDING, State.COMPLETION)
-        storage.postponedArguments.add(postponedArgument)
-    }
-
-    private fun getVariablesForFixation(): Map<NewTypeVariable, UnwrappedType> {
-        val fixedVariables = LinkedHashMap<NewTypeVariable, UnwrappedType>()
-
-        for (variableWithConstrains in storage.notFixedTypeVariables.values) {
-            val resultType = resultTypeResolver.findResultIfThereIsEqualsConstraint(
-                    apply { checkState(State.BUILDING) },
-                    variableWithConstrains,
-                    allowedFixToNotProperType = false
-            )
-            if (resultType != null) {
-                fixedVariables[variableWithConstrains.typeVariable] = resultType
-            }
-        }
-        return fixedVariables
-    }
-
-    override fun simplify(): NewTypeSubstitutor {
-        checkState(State.BUILDING)
-
-        var fixedVariables = getVariablesForFixation()
-        while (fixedVariables.isNotEmpty()) {
-            for ((variable, resultType) in fixedVariables) {
-                fixVariable(variable, resultType)
-            }
-            fixedVariables = getVariablesForFixation()
-        }
-
-        return storage.buildCurrentSubstitutor()
-    }
-
-    // ConstraintSystemBuilder, KotlinCallCompleter.Context
+    // ConstraintSystemBuilder, KotlinConstraintSystemCompleter.Context
     override val hasContradiction: Boolean
-        get() = diagnostics.any { !it.candidateApplicability.isSuccess }.apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }
+        get() = storage.hasContradiction.also {
+            checkState(
+                State.FREEZED,
+                State.BUILDING,
+                State.COMPLETION,
+                State.TRANSACTION
+            )
+        }
 
-    override fun addInnerCall(innerCall: ResolvedKotlinCall.OnlyResolvedKotlinCall) {
-        checkState(State.BUILDING, State.COMPLETION)
-        storage.innerCalls.add(innerCall)
-
-        val otherSystem = innerCall.candidate.lastCall.constraintSystem.asReadOnlyStorage()
+    override fun addOtherSystem(otherSystem: ConstraintStorage) {
         storage.allTypeVariables.putAll(otherSystem.allTypeVariables)
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
             notFixedTypeVariables[variable] = MutableVariableWithConstraints(constraints.typeVariable, constraints.constraints)
         }
         storage.initialConstraints.addAll(otherSystem.initialConstraints)
-        storage.maxTypeDepthFromInitialConstraints = Math.max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
+        storage.maxTypeDepthFromInitialConstraints =
+                Math.max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
         storage.errors.addAll(otherSystem.errors)
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
-        storage.postponedArguments.addAll(otherSystem.postponedArguments)
-        storage.innerCalls.addAll(otherSystem.innerCalls)
+        storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
     }
-
 
     // ResultTypeResolver.Context, ConstraintSystemBuilder
     override fun isProperType(type: UnwrappedType): Boolean {
@@ -208,11 +183,22 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         }
     }
 
-    // ConstraintInjector.Context
-    override val allTypeVariables: Map<TypeConstructor, NewTypeVariable> get() {
+    override fun isTypeVariable(type: UnwrappedType): Boolean {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
-        return storage.allTypeVariables
+        return notFixedTypeVariables.containsKey(type.constructor)
     }
+
+    override fun isPostponedTypeVariable(typeVariable: NewTypeVariable): Boolean {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+        return typeVariable in postponedTypeVariables
+    }
+
+    // ConstraintInjector.Context
+    override val allTypeVariables: Map<TypeConstructor, NewTypeVariable>
+        get() {
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+            return storage.allTypeVariables
+        }
 
     override var maxTypeDepthFromInitialConstraints: Int
         get() = storage.maxTypeDepthFromInitialConstraints
@@ -227,32 +213,31 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
     }
 
     // ConstraintInjector.Context, FixationOrderCalculator.Context
-    override val notFixedTypeVariables: MutableMap<TypeConstructor, MutableVariableWithConstraints> get() {
-        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
-        return storage.notFixedTypeVariables
-    }
+    override val notFixedTypeVariables: MutableMap<TypeConstructor, MutableVariableWithConstraints>
+        get() {
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+            return storage.notFixedTypeVariables
+        }
 
-    // ConstraintInjector.Context, KotlinCallCompleter.Context
+    override val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType>
+        get() {
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+            return storage.fixedTypeVariables
+        }
+
+    override val postponedTypeVariables: List<NewTypeVariable>
+        get() {
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+            return storage.postponedTypeVariables
+        }
+
+    // ConstraintInjector.Context, KotlinConstraintSystemCompleter.Context
     override fun addError(error: KotlinCallDiagnostic) {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         storage.errors.add(error)
     }
 
-    //  KotlinCallCompleter.Context, FixationOrderCalculator.Context
-    override val lambdaArguments: List<PostponedLambdaArgument> get() {
-        checkState(State.COMPLETION)
-        return storage.postponedArguments.filterIsInstance<PostponedLambdaArgument>()
-    }
-
-    // FixationOrderCalculator.Context
-    override val postponedArguments: List<PostponedKotlinCallArgument>
-        get() = storage.postponedArguments
-
-    // KotlinCallCompleter.Context
-    override fun asResultTypeResolverContext() = apply { checkState(State.COMPLETION) }
-
-    override fun asFixationOrderCalculatorContext() = apply { checkState(State.COMPLETION) }
-
+    // KotlinConstraintSystemCompleter.Context
     override fun fixVariable(variable: NewTypeVariable, resultType: UnwrappedType) {
         checkState(State.BUILDING, State.COMPLETION)
 
@@ -268,30 +253,47 @@ class NewConstraintSystemImpl(val constraintInjector: ConstraintInjector, val re
         storage.fixedTypeVariables[variable.freshTypeConstructor] = resultType
     }
 
-    override val innerCalls: List<ResolvedKotlinCall.OnlyResolvedKotlinCall> get() {
-        checkState(State.COMPLETION)
-        return storage.innerCalls
-    }
-
+    // KotlinConstraintSystemCompleter.Context, PostponedArgumentsAnalyzer.Context
     override fun canBeProper(type: UnwrappedType): Boolean {
-        checkState(State.COMPLETION)
+        checkState(State.BUILDING, State.COMPLETION)
         return !type.contains { storage.notFixedTypeVariables.containsKey(it.constructor) }
     }
 
-    override fun buildCurrentSubstitutor(): NewTypeSubstitutor {
-        checkState(State.COMPLETION)
-        return storage.buildCurrentSubstitutor()
+    override fun containsOnlyFixedOrPostponedVariables(type: UnwrappedType): Boolean {
+        checkState(State.BUILDING, State.COMPLETION)
+        return !type.contains {
+            val variable = storage.notFixedTypeVariables[it.constructor]?.typeVariable
+            variable !in storage.postponedTypeVariables && storage.notFixedTypeVariables.containsKey(it.constructor)
+        }
     }
 
-    override fun buildResultingSubstitutor(): NewTypeSubstitutor {
-        checkState(State.COMPLETION)
-        val currentSubstitutorMap = storage.fixedTypeVariables.entries.associate {
-            it.key to it.value
-        }
-        val uninferredSubstitutorMap = storage.notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
-            freshTypeConstructor to ErrorUtils.createErrorTypeWithCustomConstructor("Uninferred type", typeVariable.typeVariable.freshTypeConstructor)
-        }
+    // PostponedArgumentsAnalyzer.Context
+    override fun buildCurrentSubstitutor(): NewTypeSubstitutor {
+        checkState(State.BUILDING, State.COMPLETION)
+        return buildCurrentSubstitutor(emptyMap())
+    }
 
-        return NewTypeSubstitutorByConstructorMap(currentSubstitutorMap + uninferredSubstitutorMap)
+    override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructor, StubType>): NewTypeSubstitutor {
+        checkState(State.BUILDING, State.COMPLETION)
+        return storage.buildCurrentSubstitutor(additionalBindings)
+    }
+
+    override fun bindingStubsForPostponedVariables(): Map<NewTypeVariable, StubType> {
+        checkState(State.BUILDING, State.COMPLETION)
+        return storage.postponedTypeVariables.associate { it to StubType(it.freshTypeConstructor, it.defaultType.isMarkedNullable) }
+    }
+
+    override fun currentStorage(): ConstraintStorage {
+        checkState(State.BUILDING, State.COMPLETION)
+        return storage
+    }
+
+    // PostponedArgumentsAnalyzer.Context
+    override fun hasUpperUnitConstraint(type: UnwrappedType): Boolean {
+        checkState(State.BUILDING, State.COMPLETION, State.FREEZED)
+
+        val constraints = storage.notFixedTypeVariables[type.constructor]?.constraints ?: return false
+
+        return constraints.any { it.kind == ConstraintKind.UPPER && it.type.isUnit() }
     }
 }

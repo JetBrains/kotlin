@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.script.jsr223
 
-import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -37,9 +36,8 @@ import kotlin.reflect.KClass
 // TODO: need to manage resources here, i.e. call replCompiler.dispose when engine is collected
 
 class KotlinJsr223JvmDaemonCompileScriptEngine(
-        disposable: Disposable,
         factory: ScriptEngineFactory,
-        compilerJar: File,
+        compilerClasspath: List<File>,
         templateClasspath: List<File>,
         templateClassName: String,
         val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
@@ -47,7 +45,7 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
         compilerOut: OutputStream = System.err
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
 
-    private val daemon by lazy { connectToCompileService(compilerJar) }
+    private val daemon by lazy { connectToCompileService(compilerClasspath) }
 
     override val replCompiler by lazy {
         daemon.let {
@@ -73,8 +71,8 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
 
     override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = getScriptArgs(context, scriptArgsTypes)
 
-    private fun connectToCompileService(compilerJar: File): CompileService {
-        val compilerId = CompilerId.makeCompilerId(compilerJar)
+    private fun connectToCompileService(compilerCP: List<File>): CompileService {
+        val compilerId = CompilerId.makeCompilerId(*compilerCP.toTypedArray())
         val daemonOptions = configureDaemonOptions()
         val daemonJVMOptions = DaemonJVMOptions()
 

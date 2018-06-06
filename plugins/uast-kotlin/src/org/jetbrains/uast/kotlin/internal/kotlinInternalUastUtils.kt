@@ -20,6 +20,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPrimitiveType
 import com.intellij.psi.PsiType
 import com.intellij.psi.impl.cache.TypeInfo
@@ -28,22 +29,27 @@ import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTypesUtil
+import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeApproximator
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.uast.*
@@ -68,10 +74,14 @@ internal fun DeclarationDescriptor.toSource(): PsiElement? {
     }
 }
 
-internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
+internal fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.SYNCHRONIZED, initializer)
 
 internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: Boolean): PsiType {
     if (this.isError) return UastErrorType
+
+    (constructor.declarationDescriptor as? TypeAliasDescriptor)?.let { typeAlias ->
+        return typeAlias.expandedType.toPsiType(source, element, boxed)
+    }
 
     if (arguments.isEmpty()) {
         val typeFqName = this.constructor.declarationDescriptor?.fqNameSafe?.asString()
@@ -86,7 +96,14 @@ internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: B
             "kotlin.Double" -> PsiType.DOUBLE.orBoxed()
             "kotlin.Float" -> PsiType.FLOAT.orBoxed()
             "kotlin.String" -> PsiType.getJavaLangString(element.manager, GlobalSearchScope.projectScope(element.project))
-            else -> null
+            else -> {
+                val typeConstructor = this.constructor
+                if (typeConstructor is IntegerValueTypeConstructor) {
+                    TypeUtils.getDefaultPrimitiveNumberType(typeConstructor).toPsiType(source, element, boxed)
+                } else {
+                    null
+                }
+            }
         }
         if (psiType != null) return psiType
     }
@@ -99,7 +116,8 @@ internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: B
 
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
     val typeMappingMode = if (boxed) TypeMappingMode.GENERIC_ARGUMENT else TypeMappingMode.DEFAULT
-    typeMapper.mapType(this, signatureWriter, typeMappingMode)
+    val approximatedType = TypeApproximator().approximateDeclarationType(this, true, element.languageVersionSettings)
+    typeMapper.mapType(approximatedType, signatureWriter, typeMappingMode)
 
     val signature = StringCharacterIterator(signatureWriter.toString())
 
@@ -112,11 +130,8 @@ internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: B
 
 private fun KotlinType.containsLocalTypes(): Boolean {
     val typeDeclarationDescriptor = this.constructor.declarationDescriptor
-    if (typeDeclarationDescriptor is ClassDescriptor) {
-        val containerDescriptor = typeDeclarationDescriptor.containingDeclaration
-        if (containerDescriptor is PropertyDescriptor || containerDescriptor is FunctionDescriptor) {
-            return true
-        }
+    if (typeDeclarationDescriptor is ClassDescriptor && DescriptorUtils.isLocal(typeDeclarationDescriptor)) {
+        return true
     }
 
     return arguments.any { !it.isStarProjection && it.type.containsLocalTypes() }
@@ -174,6 +189,7 @@ internal fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
 }
 
 internal fun KtElement.analyze(): BindingContext {
+    if(containingFile !is KtFile) return BindingContext.EMPTY // EA-114080, EA-113475
     return ServiceManager.getService(project, KotlinUastBindingContextProviderService::class.java)
             ?.getBindingContext(this) ?: BindingContext.EMPTY
 }
@@ -198,3 +214,5 @@ internal fun KotlinULambdaExpression.getFunctionalInterfaceType(): PsiType? {
         else -> psi.getExpectedType()?.getFunctionalInterfaceType(this, psi)
     }
 }
+
+internal fun unwrapFakeFileForLightClass(file: PsiFile): PsiFile = (file as? FakeFileForLightClass)?.ktFile ?: file

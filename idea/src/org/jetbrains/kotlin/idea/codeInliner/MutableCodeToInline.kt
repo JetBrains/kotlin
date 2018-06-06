@@ -29,9 +29,10 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 private val POST_INSERTION_ACTION: Key<(KtElement) -> Unit> = Key("POST_INSERTION_ACTION")
 
 internal class MutableCodeToInline(
-        var mainExpression: KtExpression?,
-        val statementsBefore: MutableList<KtExpression>,
-        val fqNamesToImport: MutableCollection<FqName>
+    var mainExpression: KtExpression?,
+    val statementsBefore: MutableList<KtExpression>,
+    val fqNamesToImport: MutableCollection<FqName>,
+    val alwaysKeepMainExpression: Boolean
 ) {
     fun <TElement : KtElement> addPostInsertionAction(element: TElement, action: (TElement) -> Unit) {
         assert(element in this)
@@ -82,13 +83,15 @@ internal class MutableCodeToInline(
 
 internal fun CodeToInline.toMutable(): MutableCodeToInline {
     return MutableCodeToInline(
-            mainExpression?.copied(),
-            statementsBefore.map { it.copied() }.toMutableList(),
-            fqNamesToImport.toMutableSet())
+        mainExpression?.copied(),
+        statementsBefore.map { it.copied() }.toMutableList(),
+        fqNamesToImport.toMutableSet(),
+        alwaysKeepMainExpression
+    )
 }
 
 internal fun MutableCodeToInline.toNonMutable(): CodeToInline {
-    return CodeToInline(mainExpression, statementsBefore, fqNamesToImport)
+    return CodeToInline(mainExpression, statementsBefore, fqNamesToImport, alwaysKeepMainExpression)
 }
 
 internal inline fun <reified T : PsiElement> MutableCodeToInline.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {

@@ -1,4 +1,0 @@
-javax.inject.Inject org.test.OtherClass annotatedFunction
-javax.inject.Inject org.test.SomeClass annotatedFunction
-javax.inject.Named org.test.OtherClass.annotatedFunction.1 invoke
-javax.inject.Named org.test.SomeClass.annotatedFunction.1 invoke

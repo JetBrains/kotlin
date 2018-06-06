@@ -43,8 +43,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean isExternal = false;
     private boolean isInline = false;
     private boolean isTailrec = false;
-    private boolean isHeader = false;
-    private boolean isImpl = false;
+    private boolean isExpect = false;
+    private boolean isActual = false;
     // Difference between these hidden kinds:
     // 1. isHiddenToOvercomeSignatureClash prohibit calling such functions even in super-call context
     // 2. isHiddenForResolutionEverywhereBesideSupercalls propagates to it's overrides descriptors while isHiddenToOvercomeSignatureClash does not
@@ -136,12 +136,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.isTailrec = isTailrec;
     }
 
-    public void setHeader(boolean isHeader) {
-        this.isHeader = isHeader;
+    public void setExpect(boolean isExpect) {
+        this.isExpect = isExpect;
     }
 
-    public void setImpl(boolean isImpl) {
-        this.isImpl = isImpl;
+    public void setActual(boolean isActual) {
+        this.isActual = isActual;
     }
 
     private void setHiddenToOvercomeSignatureClash(boolean hiddenToOvercomeSignatureClash) {
@@ -170,6 +170,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     public void setHasSynthesizedParameterNames(boolean hasSynthesizedParameterNames) {
         this.hasSynthesizedParameterNames = hasSynthesizedParameterNames;
+    }
+
+    public void setExtensionReceiverParameter(@NotNull ReceiverParameterDescriptor extensionReceiverParameter) {
+        this.extensionReceiverParameter = extensionReceiverParameter;
     }
 
     @Nullable
@@ -258,13 +262,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
-    public boolean isHeader() {
-        return isHeader;
+    public boolean isExpect() {
+        return isExpect;
     }
 
     @Override
-    public boolean isImpl() {
-        return isImpl;
+    public boolean isActual() {
+        return isActual;
     }
 
     @Override
@@ -372,6 +376,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         private Map<UserDataKey<?>, Object> userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
         private Boolean newHasSynthesizedParameterNames = null;
         protected boolean justForTypeSubstitution = false;
+        private boolean dropSuspend = false;
 
         public CopyConfiguration(
                 @NotNull TypeSubstitution substitution,
@@ -502,6 +507,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         @Override
         @NotNull
+        public CopyConfiguration setDropSuspend() {
+            this.dropSuspend = true;
+            return this;
+        }
+
+        @Override
+        @NotNull
         public CopyConfiguration setHiddenToOvercomeSignatureClash() {
             isHiddenToOvercomeSignatureClash = true;
             return this;
@@ -599,6 +611,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         final TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
                 unsubstitutedTypeParameters, configuration.substitution, substitutedDescriptor, substitutedTypeParameters, wereChanges
         );
+        if (substitutor == null) return null;
 
         KotlinType substitutedReceiverParameterType = null;
         if (configuration.newExtensionReceiverParameterType != null) {
@@ -663,9 +676,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setExternal(isExternal);
         substitutedDescriptor.setInline(isInline);
         substitutedDescriptor.setTailrec(isTailrec);
-        substitutedDescriptor.setSuspend(isSuspend);
-        substitutedDescriptor.setHeader(isHeader);
-        substitutedDescriptor.setImpl(isImpl);
+        if (configuration.dropSuspend) {
+            substitutedDescriptor.setSuspend(false);
+        } else {
+            substitutedDescriptor.setSuspend(isSuspend);
+        }
+        substitutedDescriptor.setExpect(isExpect);
+        substitutedDescriptor.setActual(isActual);
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);
         substitutedDescriptor.setHiddenToOvercomeSignatureClash(configuration.isHiddenToOvercomeSignatureClash);
         substitutedDescriptor.setHiddenForResolutionEverywhereBesideSupercalls(configuration.isHiddenForResolutionEverywhereBesideSupercalls);
@@ -772,6 +789,15 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     public static List<ValueParameterDescriptor> getSubstitutedValueParameters(
             FunctionDescriptor substitutedDescriptor,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
+            @NotNull TypeSubstitutor substitutor
+    ) {
+        return getSubstitutedValueParameters(substitutedDescriptor, unsubstitutedValueParameters, substitutor, false, false, null);
+    }
+
+    @Nullable
+    public static List<ValueParameterDescriptor> getSubstitutedValueParameters(
+            FunctionDescriptor substitutedDescriptor,
+            @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull TypeSubstitutor substitutor,
             boolean dropOriginal,
             boolean preserveSourceElement,
@@ -817,5 +843,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     private void setInitialSignatureDescriptor(@Nullable FunctionDescriptor initialSignatureDescriptor) {
         this.initialSignatureDescriptor = initialSignatureDescriptor;
+    }
+
+    // Don't use on published descriptors
+    public <V> void putInUserDataMap(UserDataKey<V> key, Object value) {
+        userDataMap.put(key, value);
     }
 }

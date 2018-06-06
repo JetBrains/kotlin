@@ -1,0 +1,3 @@
+// "Remove parameter 'a'" "true"
+
+class Foo(<caret>b: String)

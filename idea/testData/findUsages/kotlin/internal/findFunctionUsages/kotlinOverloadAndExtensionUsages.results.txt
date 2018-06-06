@@ -1,0 +1,7 @@
+[kotlinOverloadAndExtensionUsages.0.kt] Function call 11 x.foo(1, 2)
+[kotlinOverloadAndExtensionUsages.0.kt] Function call 25 foo(t)
+[kotlinOverloadAndExtensionUsages.0.kt] Function call 30 a.foo(1, "")
+[kotlinOverloadAndExtensionUsages.0.kt] Function call 35 foo(t)
+[kotlinOverloadAndExtensionUsages.0.kt] Function call 39 foo(s)
+[kotlinOverloadAndExtensionUsages.1.kt] Function call 11 a.foo(0, "")
+[kotlinOverloadAndExtensionUsages.1.kt] Function call 3 super<A>.foo(t)

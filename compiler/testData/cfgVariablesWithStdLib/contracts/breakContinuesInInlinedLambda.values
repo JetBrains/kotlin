@@ -1,0 +1,157 @@
+== myRun ==
+inline fun <T> myRun(block: () -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+                                                                                   <v0>: {<: () -> T}                      NEW: magic[FAKE_INITIALIZER](block: () -> T) -> <v0>
+{ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                               <v1>: {<: ContractBuilder.() -> Unit}   NEW: r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                      <v2>: *                                 NEW: call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+block                                                                              <v3>: {<: () -> T}                      NEW: r(block) -> <v3>
+block()                                                                            <v4>: {<: T}                            NEW: call(block(), invoke|<v3>) -> <v4>
+return block()                                                                     !<v5>: *
+{ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() }   !<v5>: *                                COPY
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+                                                   <v0>: {<: ContractBuilder}   NEW: magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+block                                              <v1>: {<: Function<T>}       NEW: r(block) -> <v1>
+EXACTLY_ONCE                                       <v2>: {<: InvocationKind}    NEW: r(EXACTLY_ONCE) -> <v2>
+InvocationKind.EXACTLY_ONCE                        <v2>: {<: InvocationKind}    COPY
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      NEW: call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      COPY
+=====================
+== getBoolean ==
+fun getBoolean(): Boolean = false
+---------------------
+false   <v0>: Boolean   NEW: r(false) -> <v0>
+=====================
+== test ==
+fun test() {
+    val x: Int
+
+    if (getBoolean())
+        myRun {
+            while (getBoolean()) {
+                do {
+                    myRun {
+                        if (getBoolean()) {
+                            x = 42
+                        }
+                        else {
+                            x = 43
+                        }
+                    }
+                    break
+                } while (getBoolean())
+                myRun { x.inc() }
+                myRun { x = 42 }
+                break
+            }
+            x = 42
+        }
+    else
+        myRun {
+            x = 42
+        }
+
+    x.inc()
+}
+---------------------
+getBoolean()                                                                                                                                                                                                                                 <v0>: Boolean           NEW: call(getBoolean(), getBoolean) -> <v0>
+{ while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42 }                                                                        <v1>: {<: () -> Unit}   NEW: r({ while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42 }) -> <v1>
+myRun { while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42 }                                                                  <v2>: *                 NEW: call(myRun { while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42 }, myRun|<v1>) -> <v2>
+{ x = 42 }                                                                                                                                                                                                                                   <v3>: {<: () -> Unit}   NEW: r({ x = 42 }) -> <v3>
+myRun { x = 42 }                                                                                                                                                                                                                             <v4>: *                 NEW: call(myRun { x = 42 }, myRun|<v3>) -> <v4>
+if (getBoolean()) myRun { while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42 } else myRun { x = 42 }                          <v5>: *                 NEW: merge(if (getBoolean()) myRun { while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42 } else myRun { x = 42 }|<v2>, <v4>) -> <v5>
+x                                                                                                                                                                                                                                            <v6>: Int               NEW: r(x) -> <v6>
+inc()                                                                                                                                                                                                                                        <v7>: *                 NEW: call(inc(), inc|<v6>) -> <v7>
+x.inc()                                                                                                                                                                                                                                      <v7>: *                 COPY
+{ val x: Int if (getBoolean()) myRun { while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42 } else myRun { x = 42 } x.inc() }   <v7>: *                 COPY
+=====================
+== inlined anonymous_1 ==
+{
+            while (getBoolean()) {
+                do {
+                    myRun {
+                        if (getBoolean()) {
+                            x = 42
+                        }
+                        else {
+                            x = 43
+                        }
+                    }
+                    break
+                } while (getBoolean())
+                myRun { x.inc() }
+                myRun { x = 42 }
+                break
+            }
+            x = 42
+        }
+---------------------
+getBoolean()                                                                                                                                                        <v0>: Boolean           NEW: call(getBoolean(), getBoolean) -> <v0>
+{ if (getBoolean()) { x = 42 } else { x = 43 } }                                                                                                                    <v1>: {<: () -> Unit}   NEW: r({ if (getBoolean()) { x = 42 } else { x = 43 } }) -> <v1>
+myRun { if (getBoolean()) { x = 42 } else { x = 43 } }                                                                                                              <v2>: *                 NEW: call(myRun { if (getBoolean()) { x = 42 } else { x = 43 } }, myRun|<v1>) -> <v2>
+break                                                                                                                                                               !<v3>: *
+{ myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break }                                                                                                    !<v3>: *                COPY
+getBoolean()                                                                                                                                                        <v4>: Boolean           NEW: call(getBoolean(), getBoolean) -> <v4>
+{ x.inc() }                                                                                                                                                         <v5>: {<: () -> Int}    NEW: r({ x.inc() }) -> <v5>
+myRun { x.inc() }                                                                                                                                                   <v6>: *                 NEW: call(myRun { x.inc() }, myRun|<v5>) -> <v6>
+{ x = 42 }                                                                                                                                                          <v7>: {<: () -> Unit}   NEW: r({ x = 42 }) -> <v7>
+myRun { x = 42 }                                                                                                                                                    <v8>: *                 NEW: call(myRun { x = 42 }, myRun|<v7>) -> <v8>
+break                                                                                                                                                               !<v9>: *
+{ do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break }                               !<v9>: *                COPY
+42                                                                                                                                                                  <v10>: Int              NEW: r(42) -> <v10>
+x = 42                                                                                                                                                              !<v11>: *
+while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42   !<v11>: *               COPY
+=====================
+== inlined anonymous_2 ==
+{
+                        if (getBoolean()) {
+                            x = 42
+                        }
+                        else {
+                            x = 43
+                        }
+                    }
+---------------------
+getBoolean()                                   <v0>: Boolean   NEW: call(getBoolean(), getBoolean) -> <v0>
+42                                             <v1>: Int       NEW: r(42) -> <v1>
+x = 42                                         !<v2>: *
+{ x = 42 }                                     !<v2>: *        COPY
+43                                             <v3>: Int       NEW: r(43) -> <v3>
+x = 43                                         !<v4>: *
+{ x = 43 }                                     !<v4>: *        COPY
+if (getBoolean()) { x = 42 } else { x = 43 }   <v5>: *         NEW: merge(if (getBoolean()) { x = 42 } else { x = 43 }|!<v2>, !<v4>) -> <v5>
+if (getBoolean()) { x = 42 } else { x = 43 }   <v5>: *         COPY
+=====================
+== inlined anonymous_3 ==
+{ x.inc() }
+---------------------
+x         <v0>: Int   NEW: r(x) -> <v0>
+inc()     <v1>: Int   NEW: call(inc(), inc|<v0>) -> <v1>
+x.inc()   <v1>: Int   COPY
+x.inc()   <v1>: Int   COPY
+=====================
+== inlined anonymous_4 ==
+{ x = 42 }
+---------------------
+42       <v0>: Int   NEW: r(42) -> <v0>
+x = 42   !<v1>: *
+x = 42   !<v1>: *    COPY
+=====================
+== inlined anonymous_5 ==
+{
+            x = 42
+        }
+---------------------
+42       <v0>: Int   NEW: r(42) -> <v0>
+x = 42   !<v1>: *
+x = 42   !<v1>: *    COPY
+=====================

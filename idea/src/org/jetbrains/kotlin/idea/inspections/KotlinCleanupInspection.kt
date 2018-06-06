@@ -26,7 +26,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
@@ -50,7 +50,7 @@ class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionToo
             return null
         }
 
-        val analysisResult = file.analyzeFullyAndGetResult()
+        val analysisResult = file.analyzeWithAllCompilerChecks()
         if (analysisResult.isError()) {
             throw ProcessCanceledException(analysisResult.error)
         }
@@ -94,12 +94,13 @@ class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionToo
             Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION,
             Errors.OPERATOR_MODIFIER_REQUIRED,
             Errors.INFIX_MODIFIER_REQUIRED,
-            Errors.CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS,
             Errors.DEPRECATED_TYPE_PARAMETER_SYNTAX,
             Errors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS,
             Errors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT,
             ErrorsJs.WRONG_EXTERNAL_DECLARATION,
-            Errors.YIELD_IS_RESERVED
+            Errors.YIELD_IS_RESERVED,
+            Errors.DEPRECATED_MODIFIER_FOR_TARGET,
+            Errors.DEPRECATED_MODIFIER
     )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {

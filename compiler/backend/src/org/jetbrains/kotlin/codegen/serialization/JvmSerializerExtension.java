@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.serialization;
@@ -24,21 +13,26 @@ import org.jetbrains.kotlin.codegen.FakeDescriptorsForReferencesKt;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl;
-import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer;
 import org.jetbrains.kotlin.load.kotlin.TypeSignatureMappingKt;
+import org.jetbrains.kotlin.metadata.ProtoBuf;
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.serialization.*;
-import org.jetbrains.kotlin.serialization.jvm.ClassMapperLite;
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.serialization.AnnotationSerializer;
+import org.jetbrains.kotlin.serialization.DescriptorSerializer;
+import org.jetbrains.kotlin.serialization.SerializerExtension;
 import org.jetbrains.kotlin.types.FlexibleType;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -52,26 +46,28 @@ public class JvmSerializerExtension extends SerializerExtension {
     private final JvmSerializationBindings bindings;
     private final BindingContext codegenBinding;
     private final KotlinTypeMapper typeMapper;
-    private final StringTable stringTable;
+    private final JvmCodegenStringTable stringTable;
     private final AnnotationSerializer annotationSerializer;
     private final boolean useTypeTable;
     private final String moduleName;
     private final ClassBuilderMode classBuilderMode;
+    private final boolean isReleaseCoroutines;
 
     public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull GenerationState state) {
         this.bindings = bindings;
         this.codegenBinding = state.getBindingContext();
         this.typeMapper = state.getTypeMapper();
-        this.stringTable = new JvmStringTable(typeMapper);
+        this.stringTable = new JvmCodegenStringTable(typeMapper);
         this.annotationSerializer = new AnnotationSerializer(stringTable);
         this.useTypeTable = state.getUseTypeTableInSerializer();
         this.moduleName = state.getModuleName();
         this.classBuilderMode = state.getClassBuilderMode();
+        this.isReleaseCoroutines = state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines);
     }
 
     @NotNull
     @Override
-    public StringTable getStringTable() {
+    public JvmCodegenStringTable getStringTable() {
         return stringTable;
     }
 
@@ -127,7 +123,7 @@ public class JvmSerializerExtension extends SerializerExtension {
             @NotNull ProtoBuf.Type.Builder lowerProto,
             @NotNull ProtoBuf.Type.Builder upperProto
     ) {
-        lowerProto.setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(JavaFlexibleTypeDeserializer.INSTANCE.getId()));
+        lowerProto.setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(JvmProtoBufUtil.PLATFORM_TYPE_ID));
 
         if (flexibleType instanceof RawTypeImpl) {
             lowerProto.setExtension(JvmProtoBuf.isRaw, true);
@@ -140,16 +136,14 @@ public class JvmSerializerExtension extends SerializerExtension {
     @Override
     public void serializeType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder proto) {
         // TODO: don't store type annotations in our binary metadata on Java 8, use *TypeAnnotations attributes instead
-        for (AnnotationDescriptor annotation : type.getAnnotations()) {
+        for (AnnotationDescriptor annotation : DescriptorUtilsKt.getNonSourceAnnotations(type)) {
             proto.addExtension(JvmProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation));
         }
     }
 
     @Override
-    public void serializeTypeParameter(
-            @NotNull TypeParameterDescriptor typeParameter, @NotNull ProtoBuf.TypeParameter.Builder proto
-    ) {
-        for (AnnotationDescriptor annotation : typeParameter.getAnnotations()) {
+    public void serializeTypeParameter(@NotNull TypeParameterDescriptor typeParameter, @NotNull ProtoBuf.TypeParameter.Builder proto) {
+        for (AnnotationDescriptor annotation : DescriptorUtilsKt.getNonSourceAnnotations(typeParameter)) {
             proto.addExtension(JvmProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(annotation));
         }
     }
@@ -202,7 +196,7 @@ public class JvmSerializerExtension extends SerializerExtension {
 
     @Override
     public void serializeErrorType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder builder) {
-        if (classBuilderMode == ClassBuilderMode.KAPT || classBuilderMode == ClassBuilderMode.KAPT3) {
+        if (classBuilderMode == ClassBuilderMode.KAPT3) {
             builder.setClassName(stringTable.getStringIndex(TypeSignatureMappingKt.NON_EXISTENT_CLASS_NAME));
             return;
         }
@@ -259,23 +253,8 @@ public class JvmSerializerExtension extends SerializerExtension {
         private String mapTypeDefault(@NotNull KotlinType type) {
             ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
             if (!(classifier instanceof ClassDescriptor)) return null;
-            ClassId classId = classId((ClassDescriptor) classifier);
-            return classId == null ? null : ClassMapperLite.mapClass(classId);
-        }
-
-        @Nullable
-        private ClassId classId(@NotNull ClassDescriptor descriptor) {
-            DeclarationDescriptor container = descriptor.getContainingDeclaration();
-            if (container instanceof PackageFragmentDescriptor) {
-                return ClassId.topLevel(((PackageFragmentDescriptor) container).getFqName().child(descriptor.getName()));
-            }
-            else if (container instanceof ClassDescriptor) {
-                ClassId outerClassId = classId((ClassDescriptor) container);
-                return outerClassId == null ? null : outerClassId.createNestedClassId(descriptor.getName());
-            }
-            else {
-                return null;
-            }
+            ClassId classId = DescriptorUtilsKt.getClassId((ClassDescriptor) classifier);
+            return classId == null ? null : ClassMapperLite.mapClass(classId.asString());
         }
 
         @NotNull
@@ -323,5 +302,10 @@ public class JvmSerializerExtension extends SerializerExtension {
             }
             return builder.build();
         }
+    }
+
+    @Override
+    public boolean releaseCoroutines() {
+        return isReleaseCoroutines;
     }
 }

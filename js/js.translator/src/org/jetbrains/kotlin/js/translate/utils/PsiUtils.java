@@ -16,16 +16,23 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
+import com.intellij.openapi.editor.Document;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.js.backend.ast.JsLocation;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,13 +71,6 @@ public final class PsiUtils {
     }
 
     @NotNull
-    public static KtSimpleNameExpression getNotNullSimpleNameSelector(@NotNull KtQualifiedExpression expression) {
-        KtSimpleNameExpression selectorAsSimpleName = getSelectorAsSimpleName(expression);
-        assert selectorAsSimpleName != null;
-        return selectorAsSimpleName;
-    }
-
-    @NotNull
     public static KtToken getOperationToken(@NotNull KtOperationExpression expression) {
         KtSimpleNameExpression operationExpression = expression.getOperationReference();
         IElementType elementType = operationExpression.getReferencedNameElementType();
@@ -98,7 +98,7 @@ public final class PsiUtils {
     }
 
     @NotNull
-    public static List<KtParameter> getPrimaryConstructorParameters(@NotNull KtClassOrObject classDeclaration) {
+    public static List<KtParameter> getPrimaryConstructorParameters(@NotNull KtPureClassOrObject classDeclaration) {
         if (classDeclaration instanceof KtClass) {
             return classDeclaration.getPrimaryConstructorParameters();
         }
@@ -119,5 +119,19 @@ public final class PsiUtils {
         }
 
         return resolvedCall.getCandidateDescriptor();
+    }
+
+    @NotNull
+    public static JsLocation extractLocationFromPsi(@NotNull PsiElement element, @NotNull SourceFilePathResolver pathResolver)
+            throws IOException {
+        PsiFile psiFile = element.getContainingFile();
+        int offset = element.getNode().getStartOffset();
+        Document document = psiFile.getViewProvider().getDocument();
+        assert document != null;
+        int sourceLine = document.getLineNumber(offset);
+        int sourceColumn = offset - document.getLineStartOffset(sourceLine);
+
+        File file = new File(psiFile.getViewProvider().getVirtualFile().getPath());
+        return new JsLocation(pathResolver.getPathRelativeToSourceRoots(file), sourceLine, sourceColumn);
     }
 }

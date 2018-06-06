@@ -1,15 +1,16 @@
-<error descr="[IMPLEMENTATION_WITHOUT_HEADER] Modifier 'impl' is only applicable to members that are initially declared in platform-independent code">impl</error> class Your {
+actual class <error descr="[ACTUAL_WITHOUT_EXPECT] Actual class 'Your' has no corresponding expected declaration">Your</error> {
 
 }
 
-header class <error descr="[HEADER_WITHOUT_IMPLEMENTATION] Header declaration 'His' has no implementation in module jvm for JVM">His</error> {
+expect class <error descr="[NO_ACTUAL_FOR_EXPECT] Expected class 'His' has no actual declaration in module testModule_JVM for JVM">His</error> {
 
 }
 
-header class Their {
+// NOTE: can declare expect and actual in platform module
+expect class Their {
 
 }
 
-impl class Their {
+actual class Their {
 
 }

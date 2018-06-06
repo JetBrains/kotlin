@@ -1,4 +1,4 @@
-header class <lineMarker>Header</lineMarker> {
+expect class <lineMarker>Header</lineMarker> {
 
 }
 

@@ -7,5 +7,30 @@ End of files
 Compiling files:
   src/const.kt
 End of files
+Marked as dirty by Kotlin:
+  src/usage.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/UsageKt.class
+End of files
+Compiling files:
+  src/usage.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Unresolved reference: FOO
+
+================ Step #2 =================
+
+Cleaning output files:
+  out/production/module/test/ConstKt.class
+End of files
+Compiling files:
+  src/const.kt
+  src/usage.kt
+End of files
 Exit code: OK
 ------------------------------------------

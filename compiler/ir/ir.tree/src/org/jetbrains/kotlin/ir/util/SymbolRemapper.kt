@@ -37,5 +37,6 @@ interface SymbolRemapper {
     fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol
     fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol
     fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol
+    fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol
     fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol
 }

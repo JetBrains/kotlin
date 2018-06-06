@@ -1,6 +1,6 @@
 // "Convert receiver to parameter" "true"
 
-header class Foo {
+expect class Foo {
     fun <caret>String.foo(n: Int)
 }
 

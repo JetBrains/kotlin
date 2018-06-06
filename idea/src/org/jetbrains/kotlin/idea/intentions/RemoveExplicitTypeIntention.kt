@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
-        KtCallableDeclaration::class.java,
-        "Remove explicit type specification"
+    KtCallableDeclaration::class.java,
+    "Remove explicit type specification"
 ) {
 
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
@@ -41,24 +41,44 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
     companion object {
         fun getRange(element: KtCallableDeclaration): TextRange? {
             if (element.containingFile is KtCodeFragment) return null
-            if (element.typeReference == null) return null
+            val typeReference = element.typeReference ?: return null
+            if (typeReference.annotationEntries.isNotEmpty()) return null
 
-            if (element is KtParameter && (element.isLoopParameter || element.isSetterParameter)) {
-                return element.textRange
+            if (element is KtParameter) {
+                if (element.isLoopParameter) return element.textRange
+                if (element.isSetterParameter) return typeReference.textRange
             }
+
+            if (element !is KtProperty && element !is KtNamedFunction) return null
+
+            if (element is KtNamedFunction
+                && element.hasBlockBody()
+                && (element.descriptor as? FunctionDescriptor)?.returnType?.isUnit()?.not() != false
+            ) return null
 
             val initializer = (element as? KtDeclarationWithInitializer)?.initializer
-            if (element !is KtProperty && element !is KtNamedFunction) return null
-            (element as? KtNamedFunction)?.let {
-                if (it.hasBlockBody() && (element.descriptor as? FunctionDescriptor)?.returnType?.isUnit()?.not() ?: true) return null
-            }
+
+            if (!redundantTypeSpecification(element, initializer)) return null
 
             return when {
                 initializer != null -> TextRange(element.startOffset, initializer.startOffset - 1)
-                element is KtProperty && element.getter != null -> TextRange(element.startOffset, element.typeReference!!.endOffset)
-                element is KtNamedFunction -> TextRange(element.startOffset, element.typeReference!!.endOffset)
+                element is KtProperty && element.getter != null -> TextRange(element.startOffset, typeReference.endOffset)
+                element is KtNamedFunction -> TextRange(element.startOffset, typeReference.endOffset)
                 else -> null
             }
+        }
+
+        fun redundantTypeSpecification(element: KtCallableDeclaration, initializer: KtExpression?): Boolean {
+            if (initializer == null) return true
+            if (initializer !is KtLambdaExpression && initializer !is KtNamedFunction) return true
+            val functionType = element.typeReference?.typeElement as? KtFunctionType ?: return true
+            if (functionType.parameters.isEmpty()) return true
+            val valueParameters = when (initializer) {
+                is KtLambdaExpression -> initializer.valueParameters
+                is KtNamedFunction -> initializer.valueParameters
+                else -> emptyList()
+            }
+            return valueParameters.isNotEmpty() && valueParameters.none { it.typeReference == null }
         }
     }
 }

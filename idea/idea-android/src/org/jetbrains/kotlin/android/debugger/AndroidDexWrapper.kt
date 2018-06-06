@@ -18,28 +18,44 @@ package org.jetbrains.kotlin.android.debugger
 
 import com.android.dx.cf.direct.DirectClassFile
 import com.android.dx.cf.direct.StdAttributeFactory
-import com.android.dx.command.dexer.Main
+import com.android.dx.dex.DexOptions
+import com.android.dx.dex.cf.CfOptions
 import com.android.dx.dex.cf.CfTranslator
+import com.android.dx.dex.file.ClassDefItem
 import com.android.dx.dex.file.DexFile
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
+import java.lang.reflect.Modifier
 
 class AndroidDexWrapper {
     @Suppress("unused") // Used in AndroidOClassLoadingAdapter#dex
     fun dex(classes: Collection<ClassToLoad>): ByteArray? {
-        val dexArguments = Main.Arguments().apply { parse(arrayOf("testArgs")) }
+        val dexOptions = DexOptions()
+        val cfOptions = CfOptions()
 
-        val dexFile = DexFile(dexArguments.dexOptions)
+        val dexFile = DexFile(dexOptions)
+
+        val methodWithContext = CfTranslator::class.java.declaredMethods
+            .singleOrNull { it.name == "translate" && Modifier.isStatic(it.modifiers) && it.parameterCount == 6 }
+
+        val dxContext = methodWithContext?.let { Class.forName("com.android.dx.command.dexer.DxContext").newInstance() }
 
         for ((_, relativeFileName, bytes) in classes) {
             val cf = DirectClassFile(bytes, relativeFileName, true)
             cf.setAttributeFactory(StdAttributeFactory.THE_ONE)
-            val classDef = CfTranslator.translate(
+
+            val classDef = if (methodWithContext != null) {
+                methodWithContext(
+                    null,
+                    dxContext,
                     cf,
                     bytes,
-                    dexArguments.cfOptions,
-                    dexArguments.dexOptions,
+                    cfOptions,
+                    dexOptions,
                     dexFile
-            )
+                ) as ClassDefItem
+            } else {
+                CfTranslator.translate(cf, bytes, cfOptions, dexOptions, dexFile)
+            }
 
             dexFile.add(classDef)
         }

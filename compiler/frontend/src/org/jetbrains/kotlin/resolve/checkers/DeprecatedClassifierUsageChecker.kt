@@ -17,23 +17,16 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.psi.KtThisExpression
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.createDeprecationDiagnostic
-import org.jetbrains.kotlin.resolve.getDeprecations
 
 class DeprecatedClassifierUsageChecker : ClassifierUsageChecker {
-    override fun check(
-            targetDescriptor: ClassifierDescriptor,
-            trace: BindingTrace,
-            element: PsiElement,
-            languageVersionSettings: LanguageVersionSettings
-    ) {
+    override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
         if (element.parent is KtThisExpression) return
-        for (deprecation in targetDescriptor.getDeprecations(languageVersionSettings)) {
-            trace.report(createDeprecationDiagnostic(element, deprecation, languageVersionSettings))
+
+        for (deprecation in context.deprecationResolver.getDeprecations(targetDescriptor)) {
+            context.trace.report(createDeprecationDiagnostic(element, deprecation, context.languageVersionSettings))
         }
     }
 }

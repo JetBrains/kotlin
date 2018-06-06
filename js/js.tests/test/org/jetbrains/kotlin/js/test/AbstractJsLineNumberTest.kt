@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test
@@ -40,8 +29,6 @@ import org.jetbrains.kotlin.js.test.utils.LineCollector
 import org.jetbrains.kotlin.js.test.utils.LineOutputToStringVisitor
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
@@ -58,7 +45,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
         val sourceCode = file.readText()
 
         TestFileFactoryImpl().use { testFactory ->
-            val inputFiles = KotlinTestUtils.createTestFiles(file.name, sourceCode, testFactory, true)
+            val inputFiles = KotlinTestUtils.createTestFiles(file.name, sourceCode, testFactory, true, "")
             val modules = inputFiles
                     .map { it.module }.distinct()
                     .associateBy { it.name }
@@ -91,17 +78,13 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
                     writeText(generatedCode)
                 }
 
-                File(baseOutputPath + ".js").writeText(translationResult.program.globalBlock.toString())
-
-                val moduleDescription = JsModuleDescriptor(
-                        name = module.name,
-                        data = translationResult.moduleDescriptor,
-                        kind = ModuleKind.PLAIN,
-                        imported = emptyList()
-                )
-                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(
-                        translationResult.bindingContext, moduleDescription)
-                File(baseOutputPath + ".meta.js").writeText(metaFileContent)
+                val baseDir = File(baseOutputPath).parentFile
+                for (outputFile in translationResult.getOutputFiles(File(baseOutputPath + ".js"), null, null).asList()) {
+                    with (File(baseDir, outputFile.relativePath)) {
+                        parentFile.mkdirs()
+                        writeBytes(outputFile.asByteArray())
+                    }
+                }
 
                 val linesMatcher = module.files
                         .mapNotNull { LINES_PATTERN.find(File(it.fileName).readText()) }
@@ -118,15 +101,12 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
         }
     }
 
-    private fun TestModule.outputFileName(file: File): String {
-        return outputPath(file) + "-" + name
-    }
+    private fun TestModule.outputFileName(file: File): String = outputPath(file) + "-" + name
 
     private fun outputPath(file: File) = File(OUT_PATH, file.relativeTo(File(BASE_PATH)).path.removeSuffix(".kt")).path
 
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
-    }
+    override fun createEnvironment(): KotlinCoreEnvironment =
+            KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
     private fun createConfig(module: TestModule, inputFile: File, modules: Map<String, TestModule>): JsConfig {
         val dependencies = module.dependencies
@@ -135,13 +115,14 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
 
         val configuration = environment.configuration.copy()
 
-        configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies )
+        configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name)
         configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.v5)
 
         configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
+        configuration.put(JSConfigurationKeys.META_INFO, true)
 
         return JsConfig(project, configuration)
     }
@@ -154,8 +135,8 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
     }
 
     private inner class TestFileFactoryImpl : KotlinTestUtils.TestFileFactory<TestModule, TestFile>, Closeable {
-        val tmpDir = KotlinTestUtils.tmpDir("js-tests")
-        val defaultModule = TestModule(BasicBoxTest.TEST_MODULE, emptyList())
+        private val tmpDir = KotlinTestUtils.tmpDir("js-tests")
+        private val defaultModule = TestModule(BasicBoxTest.TEST_MODULE, emptyList())
 
         override fun createFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile? {
             val currentModule = module ?: defaultModule
@@ -168,9 +149,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
             return TestFile(temporaryFile.absolutePath, currentModule)
         }
 
-        override fun createModule(name: String, dependencies: List<String>, friends: List<String>): TestModule? {
-            return TestModule(name, dependencies)
-        }
+        override fun createModule(name: String, dependencies: List<String>, friends: List<String>) = TestModule(name, dependencies)
 
         override fun close() {
             FileUtil.delete(tmpDir)

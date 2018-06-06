@@ -4,7 +4,7 @@ interface X {
 }
 
 interface XX : X {
-    override open fun foo() {
+    open override fun foo() {
 
     }
 }

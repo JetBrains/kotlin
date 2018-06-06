@@ -1,7 +1,11 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.collections.binarySearch
 
-import org.junit.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 import kotlin.comparisons.*
 
 class ListBinarySearchTest {
@@ -78,7 +82,7 @@ class ListBinarySearchTest {
         val list = values.map { IncomparableDataItem(IncomparableDataItem(it)) }
 
         list.forEachIndexed { index, item ->
-            assertEquals(index, list.binarySearch { comparator.compare(it.value, item.value) } )
+            assertEquals(index, list.binarySearch { comparator.compare(it.value, item.value) })
             assertEquals(notFound(index), list.binarySearch { comparator.compare(it.value, item.value.pred()) })
             assertEquals(notFound(index + 1), list.binarySearch { comparator.compare(it.value, item.value.succ()) })
 
@@ -98,7 +102,7 @@ class ListBinarySearchTest {
         val list = values.flatMap { v1 -> values.map { v2 -> Pair(v1, v2) } }
 
         list.forEachIndexed { index, item ->
-            assertEquals(index,  list.binarySearch { compareValuesBy(it, item, { it.first }, { it.second }) })
+            assertEquals(index, list.binarySearch { compareValuesBy(it, item, { it.first }, { it.second }) })
         }
     }
 }

@@ -16,28 +16,29 @@
 
 package org.jetbrains.kotlin.js.translate.expression
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsFunction
-import org.jetbrains.kotlin.js.backend.ast.JsParameter
-import org.jetbrains.kotlin.js.backend.ast.JsScope
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.functionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.hasDefaultValue
-import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.backend.ast.metadata.type
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.descriptorUtils.shouldBeExported
+import org.jetbrains.kotlin.js.inline.util.FunctionWithWrapper
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator.shouldBeInlined
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.requiresStateMachineTransformation
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
+import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.source.PsiSourceFile
+import org.jetbrains.kotlin.resolve.source.getPsi
 
 fun TranslationContext.translateAndAliasParameters(
         descriptor: FunctionDescriptor,
@@ -59,7 +60,9 @@ fun TranslationContext.translateAndAliasParameters(
 
     if (descriptor.requiresExtensionReceiverParameter) {
         val receiverParameterName = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
-        aliases[descriptor.extensionReceiverParameter!!] = receiverParameterName.makeRef()
+        val receiverRef = receiverParameterName.makeRef()
+        receiverRef.type = descriptor.extensionReceiverParameter!!.type
+        aliases[descriptor.extensionReceiverParameter!!] = receiverRef
         targetList += JsParameter(receiverParameterName)
     }
 
@@ -74,12 +77,7 @@ fun TranslationContext.translateAndAliasParameters(
     if (continuationDescriptor != null) {
         val jsParameter = JsParameter(getNameForDescriptor(continuationDescriptor))
         targetList += jsParameter
-        aliases[continuationDescriptor] = if (!descriptor.requiresStateMachineTransformation(this)) {
-            JsAstUtils.pureFqn(jsParameter.name, null)
-        }
-        else {
-            JsAstUtils.stateMachineReceiver()
-        }
+        aliases[continuationDescriptor] = JsAstUtils.stateMachineReceiver()
     }
 
     return this.innerContextWithDescriptorsAliased(aliases)
@@ -101,12 +99,61 @@ fun TranslationContext.translateFunction(declaration: KtDeclarationWithBody, fun
     function.functionDescriptor = descriptor
 }
 
-fun TranslationContext.wrapWithInlineMetadata(function: JsFunction, descriptor: FunctionDescriptor, config: JsConfig): JsExpression {
-    return if (shouldBeInlined(descriptor, this) && descriptor.isEffectivelyPublicApi) {
-        val metadata = InlineMetadata.compose(function, descriptor, config)
-        metadata.functionWithMetadata
+fun TranslationContext.wrapWithInlineMetadata(
+        outerContext: TranslationContext,
+        function: JsFunction, descriptor: FunctionDescriptor
+): JsExpression {
+    val sourceInfo = descriptor.source.getPsi()
+    return if (descriptor.isInline) {
+        val incrementalResults = config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]
+        incrementalResults?.reportInlineFunction(descriptor, function, sourceInfo)
+
+        if (descriptor.shouldBeExported(config)) {
+            val metadata = InlineMetadata.compose(function, descriptor, this)
+            metadata.functionWithMetadata(outerContext, sourceInfo)
+        }
+        else {
+            val block =
+                inlineFunctionContext!!.let {
+                    JsBlock(it.importBlock.statements + it.prototypeBlock.statements + it.declarationsBlock.statements +
+                        JsReturn(function))
+                }
+            InlineMetadata.wrapFunction(outerContext, FunctionWithWrapper(function, block), sourceInfo)
+        }
     }
     else {
         function
     }
+}
+
+private fun IncrementalResultsConsumer.reportInlineFunction(
+        descriptor: FunctionDescriptor,
+        translatedFunction: JsExpression,
+        sourceInfo: PsiElement?
+) {
+    val psiFile = (descriptor.source.containingFile as? PsiSourceFile)?.psiFile ?: return
+    val file = VfsUtilCore.virtualToIoFile(psiFile.virtualFile)
+
+    if (effectiveVisibility(descriptor.visibility, descriptor, true).privateApi) return
+
+    val fqName = when (descriptor) {
+        is PropertyGetterDescriptor -> {
+            "<get>" + descriptor.correspondingProperty.fqNameSafe.asString()
+        }
+        is PropertySetterDescriptor -> {
+            "<set>" + descriptor.correspondingProperty.fqNameSafe.asString()
+        }
+        else -> descriptor.fqNameSafe.asString()
+    }
+
+    val offset = sourceInfo?.node?.startOffset
+    val document = psiFile.viewProvider.document
+    var sourceLine = -1
+    var sourceColumn = -1
+    if (offset != null && document != null) {
+        sourceLine = document.getLineNumber(offset)
+        sourceColumn = offset - document.getLineStartOffset(sourceLine)
+    }
+
+    processInlineFunction(file, fqName, translatedFunction, sourceLine, sourceColumn)
 }

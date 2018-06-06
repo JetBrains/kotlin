@@ -25,9 +25,6 @@ import java.io.File
 // todo: test daemon start (does not start every build)
 // todo: test daemon shutdown when gradle daemon dies
 class KotlinDaemonIT : BaseGradleIT() {
-    companion object {
-        private const val GRADLE_VERSION = "2.10"
-    }
 
     @Test
     fun testDaemonMultiproject() {
@@ -40,7 +37,7 @@ class KotlinDaemonIT : BaseGradleIT() {
             return result.toTypedArray()
         }
 
-        val project = Project("multiprojectWithDependency", GRADLE_VERSION)
+        val project = Project("multiprojectWithDependency")
         val strategyCLIArg = "-Dkotlin.compiler.execution.strategy=daemon"
 
         fun checkAfterNonIncrementalBuild(output: String) {
@@ -48,7 +45,11 @@ class KotlinDaemonIT : BaseGradleIT() {
             assert(createdSessions.size == 1) { "Created multiple sessions per build ${createdSessions.joinToString()}" }
 
             val existingSessions = output.findAllStringsPrefixed(EXISTING_SESSION_FILE_PREFIX)
-            Assert.assertArrayEquals("Existing sessions don't match created sessions for two module projects", createdSessions, existingSessions)
+            Assert.assertArrayEquals(
+                "Existing sessions don't match created sessions for two module projects",
+                createdSessions,
+                existingSessions
+            )
 
             val deletedSessions = output.findAllStringsPrefixed(DELETED_SESSION_FILE_PREFIX)
             Assert.assertArrayEquals("Deleted sessions don't match created sessions", createdSessions, deletedSessions)
@@ -78,7 +79,7 @@ class KotlinDaemonIT : BaseGradleIT() {
 
     @Test
     fun testClientFileIsDeletedOnExit() {
-        val project = Project("kotlinProject", GRADLE_VERSION)
+        val project = Project("kotlinProject")
         val options = defaultBuildOptions().copy(withDaemon = false)
 
         project.build("assemble", options = options) {

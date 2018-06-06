@@ -1,12 +1,12 @@
 // -- Module: <m1-common> --
 package
 
-public final header enum class Foo : kotlin.Enum<Foo> {
-    enum entry ENTRY1
+public final expect enum class Foo : kotlin.Enum<Foo> {
+    expect enum entry ENTRY1
 
-    enum entry ENTRY2
+    expect enum entry ENTRY2
 
-    enum entry ENTRY3
+    expect enum entry ENTRY3
 
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
@@ -25,7 +25,7 @@ public final header enum class Foo : kotlin.Enum<Foo> {
 // -- Module: <m2-jvm> --
 package
 
-public final impl enum class Foo : kotlin.Enum<Foo> {
+public final actual enum class Foo : kotlin.Enum<Foo> {
     enum entry ENTRY1
 
     enum entry ENTRY2

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
@@ -35,20 +24,17 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-                super.visitSimpleNameExpression(expression)
-                if (isRecursivePropertyAccess(expression)) {
-                    holder.registerProblem(expression,
-                                           "Recursive property accessor",
-                                           ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                           ReplaceWithFieldFix())
-                }
-                else if (isRecursiveSyntheticPropertyAccess(expression)) {
-                    holder.registerProblem(expression,
-                                           "Recursive synthetic property accessor",
-                                           ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
-                }
+        return simpleNameExpressionVisitor { expression ->
+            if (isRecursivePropertyAccess(expression)) {
+                holder.registerProblem(expression,
+                                       "Recursive property accessor",
+                                       ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                       ReplaceWithFieldFix())
+            }
+            else if (isRecursiveSyntheticPropertyAccess(expression)) {
+                holder.registerProblem(expression,
+                                       "Recursive synthetic property accessor",
+                                       ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
             }
         }
     }
@@ -95,6 +81,7 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
             if (element !is KtSimpleNameExpression) return false
             val propertyAccessor = element.getParentOfType<KtDeclarationWithBody>(true) as? KtPropertyAccessor ?: return false
             if (element.text != propertyAccessor.property.name) return false
+            if (element.parent is KtCallableReferenceExpression) return false
             val bindingContext = element.analyze()
             val target = bindingContext[REFERENCE_TARGET, element]
             if (target != bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, propertyAccessor.property]) return false
@@ -112,6 +99,7 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
             val isGetter = name == "get$referencedName"
             val isSetter = name == "set$referencedName"
             if (!isGetter && !isSetter) return false
+            if (element.parent is KtCallableReferenceExpression) return false
             val bindingContext = element.analyze()
             val syntheticDescriptor = bindingContext[REFERENCE_TARGET, element] as? SyntheticJavaPropertyDescriptor ?: return false
             val namedFunctionDescriptor = bindingContext[DECLARATION_TO_DESCRIPTOR, namedFunction]

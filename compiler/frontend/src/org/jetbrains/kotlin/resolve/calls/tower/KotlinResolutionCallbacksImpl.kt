@@ -1,222 +1,243 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnderKotlinPackage
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
+import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSession
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+
+data class LambdaContextInfo(
+    var typeInfo: KotlinTypeInfo? = null,
+    var dataFlowInfoAfter: DataFlowInfo? = null,
+    var lexicalScope: LexicalScope? = null,
+    var trace: BindingTrace? = null
+)
 
 class KotlinResolutionCallbacksImpl(
-        val topLevelCallContext: BasicCallResolutionContext,
-        val expressionTypingServices: ExpressionTypingServices,
-        val typeApproximator: TypeApproximator,
-        val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
-        val argumentTypeResolver: ArgumentTypeResolver,
-        val doubleColonExpressionResolver: DoubleColonExpressionResolver,
-        val languageVersionSettings: LanguageVersionSettings
-): KotlinResolutionCallbacks {
-    val trace: BindingTrace = topLevelCallContext.trace
-
+    val trace: BindingTrace,
+    val expressionTypingServices: ExpressionTypingServices,
+    val typeApproximator: TypeApproximator,
+    val argumentTypeResolver: ArgumentTypeResolver,
+    val languageVersionSettings: LanguageVersionSettings,
+    val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
+    val dataFlowValueFactory: DataFlowValueFactory,
+    override val inferenceSession: InferenceSession,
+    val constantExpressionEvaluator: ConstantExpressionEvaluator,
+    val typeResolver: TypeResolver,
+    val psiCallResolver: PSICallResolver,
+    val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
+    val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
+    val callComponents: KotlinCallComponents,
+    val doubleColonExpressionResolver: DoubleColonExpressionResolver,
+    val deprecationResolver: DeprecationResolver,
+    val moduleDescriptor: ModuleDescriptor,
+    val topLevelCallContext: BasicCallResolutionContext?
+) : KotlinResolutionCallbacks {
     class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
-        var dataFlowInfoAfter: DataFlowInfo? = null
-        val returnStatements = ArrayList<Pair<KtReturnExpression, KotlinTypeInfo?>>()
+        val returnStatements = ArrayList<Pair<KtReturnExpression, LambdaContextInfo?>>()
+        val lastExpressionInfo = LambdaContextInfo()
 
         companion object {
             val STUB_EMPTY = LambdaInfo(TypeUtils.NO_EXPECTED_TYPE, ContextDependency.INDEPENDENT)
         }
     }
 
-    override fun analyzeAndGetLambdaResultArguments(
-            outerCall: KotlinCall,
-            lambdaArgument: LambdaKotlinCallArgument,
-            isSuspend: Boolean,
-            receiverType: UnwrappedType?,
-            parameters: List<UnwrappedType>,
-            expectedReturnType: UnwrappedType?
-    ): List<SimpleKotlinCallArgument> {
-        val psiCallArgument = lambdaArgument.psiCallArgument
-        val outerCallContext = (psiCallArgument as? LambdaKotlinCallArgumentImpl)?.outerCallContext ?:
-                               (psiCallArgument as FunctionExpressionImpl).outerCallContext
+    override fun analyzeAndGetLambdaReturnArguments(
+        lambdaArgument: LambdaKotlinCallArgument,
+        isSuspend: Boolean,
+        receiverType: UnwrappedType?,
+        parameters: List<UnwrappedType>,
+        expectedReturnType: UnwrappedType?,
+        stubsForPostponedVariables: Map<NewTypeVariable, StubType>
+    ): Pair<List<KotlinCallArgument>, InferenceSession?> {
+        val psiCallArgument = lambdaArgument.psiCallArgument as PSIFunctionKotlinCallArgument
+        val outerCallContext = psiCallArgument.outerCallContext
 
-        fun createCallArgument(ktExpression: KtExpression, typeInfo: KotlinTypeInfo) =
-                createSimplePSICallArgument(trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
-                                            CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo)
+        fun createCallArgument(
+            ktExpression: KtExpression,
+            typeInfo: KotlinTypeInfo,
+            scope: LexicalScope?,
+            newTrace: BindingTrace?
+        ): PSIKotlinCallArgument? {
+            var newContext = outerCallContext
+            if (scope != null) newContext = newContext.replaceScope(scope)
+            if (newTrace != null) newContext = newContext.replaceBindingTrace(newTrace)
 
-        val expression: KtExpression = (psiCallArgument as? LambdaKotlinCallArgumentImpl)?.ktLambdaExpression ?:
-                               (psiCallArgument as FunctionExpressionImpl).ktFunction
+            processFunctionalExpression(
+                newContext, ktExpression, typeInfo.dataFlowInfo, CallMaker.makeExternalValueArgument(ktExpression),
+                null, outerCallContext.scope.ownerDescriptor.builtIns, typeResolver
+            )?.let {
+                it.setResultDataFlowInfoIfRelevant(typeInfo.dataFlowInfo)
+                return it
+            }
 
-        val ktFunction: KtFunction = (psiCallArgument as? LambdaKotlinCallArgumentImpl)?.ktLambdaExpression?.functionLiteral ?:
-                         (psiCallArgument as FunctionExpressionImpl).ktFunction
+            return createSimplePSICallArgument(
+                trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
+                CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo, languageVersionSettings,
+                dataFlowValueFactory
+            )
+        }
 
-        val lambdaInfo = LambdaInfo(expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE,
-                                    if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT)
+        val lambdaInfo = LambdaInfo(
+            expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE,
+            if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT
+        )
 
-        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, ktFunction, lambdaInfo)
+        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, lambdaInfo)
 
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
-        val expectedType = createFunctionType(builtIns, Annotations.EMPTY, receiverType, parameters, null,
-                           lambdaInfo.expectedType, isSuspend)
+        val expectedType = createFunctionType(
+            builtIns, Annotations.EMPTY, receiverType, parameters, null,
+            lambdaInfo.expectedType, isSuspend
+        )
 
-        val approximatesExpectedType = typeApproximator.approximateToSubType(expectedType, TypeApproximatorConfiguration.LocalDeclaration) ?: expectedType
+        val approximatesExpectedType =
+            typeApproximator.approximateToSubType(expectedType, TypeApproximatorConfiguration.LocalDeclaration) ?: expectedType
+
+        val coroutineSession =
+            if (stubsForPostponedVariables.isNotEmpty()) {
+                require(topLevelCallContext != null) { "Top level call context should not be null to analyze coroutine-lambda" }
+
+                CoroutineInferenceSession(
+                    psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
+                    callComponents, builtIns, topLevelCallContext, stubsForPostponedVariables, trace,
+                    kotlinToResolvedCallTransformer, expressionTypingServices, argumentTypeResolver,
+                    doubleColonExpressionResolver, deprecationResolver, moduleDescriptor
+                )
+            } else {
+                null
+            }
 
         val actualContext = outerCallContext
-                .replaceBindingTrace(trace)
-                .replaceContextDependency(lambdaInfo.contextDependency)
-                .replaceExpectedType(approximatesExpectedType)
-                .replaceDataFlowInfo(outerCall.psiKotlinCall.resultDataFlowInfo)
+            .replaceBindingTrace(trace)
+            .replaceContextDependency(lambdaInfo.contextDependency)
+            .replaceExpectedType(approximatesExpectedType)
+            .replaceDataFlowInfo(psiCallArgument.lambdaInitialDataFlowInfo).let {
+                if (coroutineSession != null) it.replaceInferenceSession(coroutineSession) else it
+            }
 
-        val functionTypeInfo = expressionTypingServices.getTypeInfo(expression, actualContext)
-        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, ktFunction, LambdaInfo.STUB_EMPTY)
+        val functionTypeInfo = expressionTypingServices.getTypeInfo(psiCallArgument.expression, actualContext)
+        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
 
         var hasReturnWithoutExpression = false
-        val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { (expression, typeInfo) ->
+        val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { (expression, contextInfo) ->
             val returnedExpression = expression.returnedExpression
             if (returnedExpression != null) {
                 createCallArgument(
-                        returnedExpression,
-                        typeInfo ?: throw AssertionError("typeInfo should be non-null for return with expression")
+                    returnedExpression,
+                    contextInfo?.typeInfo ?: throw AssertionError("typeInfo should be non-null for return with expression"),
+                    contextInfo.lexicalScope,
+                    contextInfo.trace
                 )
-            }
-            else {
+            } else {
                 hasReturnWithoutExpression = true
                 EmptyLabeledReturn(expression, builtIns)
             }
         }
 
-        if (!hasReturnWithoutExpression) {
-            val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
-                if (expectedReturnType?.isUnit() == true) return@let null // coercion to Unit
+        val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
+            if (expectedReturnType?.isUnit() == true) return@let null // coercion to Unit
 
-                val lastExpressionType = trace.getType(lastExpression)
-                val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, lambdaInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
-                createCallArgument(lastExpression, lastExpressionTypeInfo)
-            }
-            returnArguments.addIfNotNull(lastExpressionArgument)
+            // todo lastExpression can be if without else
+            val lastExpressionType = if (hasReturnWithoutExpression) null else trace.getType(lastExpression)
+            val contextInfo = lambdaInfo.lastExpressionInfo
+            val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, contextInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
+            createCallArgument(lastExpression, lastExpressionTypeInfo, contextInfo.lexicalScope, contextInfo.trace)
         }
 
-        return returnArguments
+        returnArguments.addIfNotNull(lastExpressionArgument)
+
+        return Pair(returnArguments, coroutineSession)
     }
 
     private fun getLastDeparentesizedExpression(psiCallArgument: PSIKotlinCallArgument): KtExpression? {
         val lastExpression: KtExpression?
         if (psiCallArgument is LambdaKotlinCallArgumentImpl) {
             lastExpression = psiCallArgument.ktLambdaExpression.bodyExpression?.statements?.lastOrNull()
-        }
-        else {
+        } else {
             lastExpression = (psiCallArgument as FunctionExpressionImpl).ktFunction.bodyExpression?.lastBlockStatementOrThis()
         }
 
         return KtPsiUtil.deparenthesize(lastExpression)
     }
 
-    override fun bindStubResolvedCallForCandidate(candidate: KotlinResolutionCandidate) {
-        kotlinToResolvedCallTransformer.createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(candidate, trace)
+    override fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom) {
+        kotlinToResolvedCallTransformer.createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(candidate, trace, emptyList())
     }
 
-    override fun completeCallableReference(
-            callableReferenceArgument: PostponedCallableReferenceArgument,
-            resultTypeParameters: List<UnwrappedType>
-    ) {
-        val callableCandidate = callableReferenceArgument.callableResolutionCandidate
-        val psiCallArgument = callableReferenceArgument.argument.psiCallArgument as CallableReferenceKotlinCallArgumentImpl
-        val callableReferenceExpression = psiCallArgument.ktCallableReferenceExpression
-        val resultSubstitutor = IndexedParametersSubstitution(callableCandidate.candidate.typeParameters, resultTypeParameters.map { it.asTypeProjection() }).buildSubstitutor()
+    override fun createReceiverWithSmartCastInfo(resolvedAtom: ResolvedCallAtom): ReceiverValueWithSmartCastInfo? {
+        val returnType = resolvedAtom.candidateDescriptor.returnType ?: return null
+        val psiKotlinCall = resolvedAtom.atom.psiKotlinCall
+        val callElement = psiKotlinCall.psiCall.callElement.safeAs<KtExpression>() ?: return null
+        val expression = findCommonParent(callElement, resolvedAtom.atom.psiKotlinCall.explicitReceiver)
 
-
-        // write down type for callable reference expression
-        val resultType = resultSubstitutor.safeSubstitute(callableCandidate.reflectionCandidateType, Variance.INVARIANT)
-        argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(trace, expressionTypingServices.statementFilter,
-                                                                    resultType,
-                                                                    callableReferenceExpression)
-        val reference = callableReferenceExpression.callableReference
-
-        val explicitCallableReceiver = when (callableCandidate.explicitReceiverKind) {
-            ExplicitReceiverKind.DISPATCH_RECEIVER -> callableCandidate.dispatchReceiver
-            ExplicitReceiverKind.EXTENSION_RECEIVER -> callableCandidate.extensionReceiver
-            else -> null
-        }
-
-        val explicitReceiver = explicitCallableReceiver?.receiver
-        val psiCall = CallMaker.makeCall(reference, explicitReceiver?.receiverValue, null, reference, emptyList())
-
-        val tracing = TracingStrategyImpl.create(reference, psiCall)
-        val temporaryTrace = TemporaryBindingTrace.create(trace, "callable reference fake call")
-
-        val resolvedCall = ResolvedCallImpl(psiCall, callableCandidate.candidate, callableCandidate.dispatchReceiver?.receiver?.receiverValue,
-                         callableCandidate.extensionReceiver?.receiver?.receiverValue, callableCandidate.explicitReceiverKind,
-                         null, temporaryTrace, tracing, MutableDataFlowInfoForArguments.WithoutArgumentsCheck(DataFlowInfo.EMPTY))
-        resolvedCall.setResultingSubstitutor(resultSubstitutor)
-
-        tracing.bindCall(trace, psiCall)
-        tracing.bindReference(trace, resolvedCall)
-        tracing.bindResolvedCall(trace, resolvedCall)
-
-        resolvedCall.setStatusToSuccess()
-        resolvedCall.markCallAsCompleted()
-
-        when (callableCandidate.candidate) {
-            is FunctionDescriptor -> doubleColonExpressionResolver.bindFunctionReference(callableReferenceExpression, resultType, topLevelCallContext)
-            is PropertyDescriptor -> doubleColonExpressionResolver.bindPropertyReference(callableReferenceExpression, resultType, topLevelCallContext)
-        }
-
-        // TODO: probably we should also record key 'DATA_FLOW_INFO_BEFORE', see ExpressionTypingVisitorDispatcher.getTypeInfo
-        trace.recordType(callableReferenceExpression, resultType)
-        trace.record(BindingContext.PROCESSED, callableReferenceExpression)
-
-        doubleColonExpressionResolver.checkReferenceIsToAllowedMember(callableCandidate.candidate, topLevelCallContext.trace, callableReferenceExpression)
+        return transformToReceiverWithSmartCastInfo(
+            resolvedAtom.candidateDescriptor,
+            trace.bindingContext,
+            psiKotlinCall.resultDataFlowInfo,
+            ExpressionReceiver.create(expression, returnType, trace.bindingContext),
+            languageVersionSettings, dataFlowValueFactory
+        )
     }
 
-    override fun completeCollectionLiteralCalls(collectionLiteralArgument: PostponedCollectionLiteralArgument) {
-        val psiCallArgument = collectionLiteralArgument.argument.psiCallArgument as CollectionLiteralKotlinCallArgumentImpl
-        val context = psiCallArgument.outerCallContext
+    override fun isCompileTimeConstant(resolvedAtom: ResolvedCallAtom, expectedType: UnwrappedType): Boolean {
+        val descriptor = resolvedAtom.candidateDescriptor
 
-        val actualContext = context
-                .replaceBindingTrace(trace)
-                .replaceExpectedType(collectionLiteralArgument.expectedType)
-                .replaceContextDependency(ContextDependency.INDEPENDENT)
+        if (!isUnderKotlinPackage(descriptor)) return false
 
-        expressionTypingServices.getTypeInfo(psiCallArgument.collectionLiteralExpression, actualContext)
+        val returnType = descriptor.returnType ?: return false
+        if (!isPrimitiveTypeOrNullablePrimitiveType(returnType) || !isPrimitiveTypeOrNullablePrimitiveType(expectedType)) return false
+
+        val callElement = resolvedAtom.atom.psiKotlinCall.psiCall.callElement.safeAs<KtExpression>() ?: return false
+        val expression = findCommonParent(callElement, resolvedAtom.atom.psiKotlinCall.explicitReceiver)
+
+        val temporaryBindingTrace = TemporaryBindingTrace.create(
+            trace,
+            "Trace to check if some expression is constant, we have to avoid writing probably wrong COMPILE_TIME_VALUE slice"
+        )
+        return constantExpressionEvaluator.evaluateExpression(expression, temporaryBindingTrace, expectedType) != null
+    }
+
+    private fun findCommonParent(callElement: KtExpression, receiver: ReceiverKotlinCallArgument?): KtExpression {
+        if (receiver == null) return callElement
+        return PsiTreeUtil.findCommonParent(callElement, receiver.psiExpression)?.safeAs() ?: callElement
     }
 }

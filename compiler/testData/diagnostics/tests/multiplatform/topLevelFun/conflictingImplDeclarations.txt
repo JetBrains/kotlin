@@ -1,18 +1,18 @@
 // -- Module: <m1-common> --
 package
 
-public header fun foo(): kotlin.Unit
+public expect fun foo(): kotlin.Unit
 
 
 // -- Module: <m2-jvm> --
 package
 
-public impl fun foo(): kotlin.Unit
-public impl fun foo(): kotlin.Unit
+public actual fun foo(): kotlin.Unit
+public actual fun foo(): kotlin.Unit
 
 
 // -- Module: <m3-js> --
 package
 
-public impl fun foo(): kotlin.Unit
-public impl fun foo(): kotlin.Unit
+public actual fun foo(): kotlin.Unit
+public actual fun foo(): kotlin.Unit

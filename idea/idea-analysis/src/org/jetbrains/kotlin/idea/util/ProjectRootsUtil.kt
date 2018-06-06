@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.util
@@ -19,24 +8,43 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.ide.highlighter.ArchiveFileType
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.injected.editor.VirtualFileWindow
+import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.FileIndex
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.kotlin.idea.KotlinModuleFileType
-import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
+import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
-private val kotlinBinaries = listOf(JavaClassFileType.INSTANCE, KotlinBuiltInFileType, KotlinModuleFileType.INSTANCE)
+abstract class KotlinBinaryExtension(val fileType: FileType) {
+    companion object {
+        val EP_NAME: ExtensionPointName<KotlinBinaryExtension> =
+                ExtensionPointName.create<KotlinBinaryExtension>("org.jetbrains.kotlin.binaryExtension")
 
-fun VirtualFile.isKotlinBinary(): Boolean = fileType in kotlinBinaries
+        val kotlinBinaries: List<FileType> by lazy(LazyThreadSafetyMode.NONE) {
+            EP_NAME.extensions.map { it.fileType }
+        }
+    }
+}
+
+class JavaClassBinary: KotlinBinaryExtension(JavaClassFileType.INSTANCE)
+class KotlinBuiltInBinary: KotlinBinaryExtension(KotlinBuiltInFileType)
+class KotlinModuleBinary: KotlinBinaryExtension(KotlinModuleFileType.INSTANCE)
+class KotlinJsMetaBinary: KotlinBinaryExtension(KotlinJavaScriptMetaFileType)
+
+fun FileType.isKotlinBinary(): Boolean = this in KotlinBinaryExtension.kotlinBinaries
 
 fun FileIndex.isInSourceContentWithoutInjected(file: VirtualFile): Boolean {
     return file !is VirtualFileWindow && isInSourceContent(file)
@@ -51,16 +59,16 @@ object ProjectRootsUtil {
     @JvmStatic fun isInContent(project: Project, file: VirtualFile, includeProjectSource: Boolean,
                                includeLibrarySource: Boolean, includeLibraryClasses: Boolean,
                                includeScriptDependencies: Boolean,
-                               fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project),
-                               isJsProjectRef: Ref<Boolean?>? = null): Boolean {
+                               fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)): Boolean {
 
         if (includeProjectSource && fileIndex.isInSourceContentWithoutInjected(file)) return true
 
         if (!includeLibraryClasses && !includeLibrarySource) return false
 
         // NOTE: the following is a workaround for cases when class files are under library source roots and source files are under class roots
-        val canContainClassFiles = file.fileType == ArchiveFileType.INSTANCE || file.isDirectory
-        val isBinary = file.isKotlinBinary()
+        val fileType = FileTypeManager.getInstance().getFileTypeByFileName(file.name)
+        val canContainClassFiles = fileType == ArchiveFileType.INSTANCE || file.isDirectory
+        val isBinary = fileType.isKotlinBinary()
 
         val scriptConfigurationManager = if (includeScriptDependencies) ScriptDependenciesManager.getInstance(project) else null
 
@@ -71,15 +79,6 @@ object ProjectRootsUtil {
         if (includeLibrarySource && !isBinary) {
             if (fileIndex.isInLibrarySource(file)) return true
             if (scriptConfigurationManager?.getAllLibrarySourcesScope()?.contains(file) == true) return true
-        }
-
-        if ((includeLibraryClasses && fileIndex.isInLibraryClasses(file)) ||
-            (includeLibrarySource && fileIndex.isInLibrarySource(file))) {
-
-            //NOTE: avoid computing isJsProject if redundant
-            val isJsProject = isJsProjectRef?.get() ?: JsProjectDetector.isJsProject(project)
-            isJsProjectRef?.set(isJsProject)
-            return isJsProject
         }
 
         return false
@@ -135,3 +134,14 @@ object ProjectRootsUtil {
         return isInContent(project, file, includeProjectSource = false, includeLibrarySource = true, includeLibraryClasses = true, includeScriptDependencies = true)
     }
 }
+
+val Module.rootManager: ModuleRootManager
+    get() = ModuleRootManager.getInstance(this)
+
+val Module.sourceRoots: Array<VirtualFile>
+    get() = rootManager.sourceRoots
+
+val PsiElement.module: Module?
+    get() = ModuleUtilCore.findModuleForPsiElement(this)
+
+fun VirtualFile.findModule(project: Project) = ModuleUtilCore.findModuleForFile(this, project)

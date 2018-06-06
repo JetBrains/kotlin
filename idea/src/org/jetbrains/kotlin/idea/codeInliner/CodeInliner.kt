@@ -20,13 +20,11 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.RenameProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.util.CommentSaver
@@ -42,7 +40,6 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
@@ -51,11 +48,12 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 class CodeInliner<TCallElement : KtElement>(
-        private val nameExpression: KtSimpleNameExpression,
-        private val bindingContext: BindingContext,
-        private val resolvedCall: ResolvedCall<out CallableDescriptor>,
-        private val callElement: TCallElement,
-        codeToInline: CodeToInline
+    private val nameExpression: KtSimpleNameExpression,
+    private val bindingContext: BindingContext,
+    private val resolvedCall: ResolvedCall<out CallableDescriptor>,
+    private val callElement: TCallElement,
+    private val inlineSetter: Boolean,
+    codeToInline: CodeToInline
 ) {
     private val codeToInline = codeToInline.toMutable()
     private val project = nameExpression.project
@@ -67,18 +65,19 @@ class CodeInliner<TCallElement : KtElement>(
 
         val qualifiedElement = if (callElement is KtExpression) callElement.getQualifiedExpressionForSelectorOrThis() else callElement
         val assignment = (qualifiedElement as? KtExpression)
-                ?.getAssignmentByLHS()
-                ?.takeIf { it.operationToken == KtTokens.EQ }
-        val elementToBeReplaced = assignment ?: qualifiedElement
+            ?.getAssignmentByLHS()
+            ?.takeIf { it.operationToken == KtTokens.EQ }
         val callableForParameters = if (assignment != null && descriptor is PropertyDescriptor)
-            descriptor.setter ?: descriptor
+            descriptor.setter?.takeIf { inlineSetter && it.hasBody() } ?: descriptor
         else
             descriptor
-
+        val elementToBeReplaced = assignment.takeIf { callableForParameters is PropertySetterDescriptor } ?: qualifiedElement
         val commentSaver = CommentSaver(elementToBeReplaced, saveLineBreaks = true)
 
         // if the value to be inlined is not used and has no side effects we may drop it
         if (codeToInline.mainExpression != null
+            && !codeToInline.alwaysKeepMainExpression
+            && assignment == null
             && elementToBeReplaced is KtExpression
             && !elementToBeReplaced.isUsedAsExpression(bindingContext)
             && !codeToInline.mainExpression.shouldKeepValue(usageCount = 0)
@@ -115,8 +114,7 @@ class CodeInliner<TCallElement : KtElement>(
 
         if (elementToBeReplaced is KtSafeQualifiedExpression) {
             wrapCodeForSafeCall(receiver!!, receiverType, elementToBeReplaced)
-        }
-        else if (callElement is KtBinaryExpression && callElement.operationToken == KtTokens.IDENTIFIER) {
+        } else if (callElement is KtBinaryExpression && callElement.operationToken == KtTokens.IDENTIFIER) {
             keepInfixFormIfPossible()
         }
 
@@ -130,13 +128,19 @@ class CodeInliner<TCallElement : KtElement>(
 
             for ((parameter, value, valueType) in introduceValuesForParameters) {
                 val usagesReplaced = codeToInline.collectDescendantsOfType<KtExpression> { it[PARAMETER_VALUE_KEY] == parameter }
-                codeToInline.introduceValue(value, valueType, usagesReplaced, elementToBeReplaced, nameSuggestion = parameter.name.asString())
+                codeToInline.introduceValue(
+                    value,
+                    valueType,
+                    usagesReplaced,
+                    elementToBeReplaced,
+                    nameSuggestion = parameter.name.asString()
+                )
             }
         }
 
         codeToInline.fqNamesToImport
-                .flatMap { file.resolveImportReference(it) }
-                .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
+            .flatMap { file.resolveImportReference(it) }
+            .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
 
         val replacementPerformer = when (elementToBeReplaced) {
             is KtExpression -> ExpressionReplacementPerformer(codeToInline, elementToBeReplaced)
@@ -153,8 +157,10 @@ class CodeInliner<TCallElement : KtElement>(
         })
     }
 
-    private fun renameDuplicates(declarations: List<KtNamedDeclaration>,
-                                 lexicalScope: LexicalScope) {
+    private fun renameDuplicates(
+        declarations: List<KtNamedDeclaration>,
+        lexicalScope: LexicalScope
+    ) {
 
         val validator = CollectingNameValidator { !it.nameHasConflictsInScope(lexicalScope) }
         for (declaration in declarations) {
@@ -202,9 +208,10 @@ class CodeInliner<TCallElement : KtElement>(
     }
 
     private data class IntroduceValueForParameter(
-            val parameter: ValueParameterDescriptor,
-            val value: KtExpression,
-            val valueType: KotlinType?)
+        val parameter: ValueParameterDescriptor,
+        val value: KtExpression,
+        val valueType: KotlinType?
+    )
 
     private fun processTypeParameterUsages() {
         val typeParameters = resolvedCall.resultingDescriptor.original.typeParameters
@@ -222,10 +229,9 @@ class CodeInliner<TCallElement : KtElement>(
 
             val type = resolvedCall.typeArguments[typeParameter]!!
             val typeElement = if (explicitTypeArgs != null) { // we use explicit type arguments if available to avoid shortening
-                val _typeElement = explicitTypeArgs[index].typeReference?.typeElement ?: continue
-                _typeElement.marked(USER_CODE_KEY)
-            }
-            else {
+                val explicitArgTypeElement = explicitTypeArgs[index].typeReference?.typeElement ?: continue
+                explicitArgTypeElement.marked(USER_CODE_KEY)
+            } else {
                 psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)).typeElement!!
             }
 
@@ -236,16 +242,16 @@ class CodeInliner<TCallElement : KtElement>(
                 if (parent is KtClassLiteralExpression && typeClassifier != null) {
                     // for class literal ("X::class") we need type arguments only for kotlin.Array
                     val arguments =
-                            if (typeElement is KtUserType && KotlinBuiltIns.isArray(type)) typeElement.typeArgumentList?.text.orEmpty()
-                            else ""
-                    codeToInline.replaceExpression(usage, psiFactory.createExpression(
+                        if (typeElement is KtUserType && KotlinBuiltIns.isArray(type)) typeElement.typeArgumentList?.text.orEmpty()
+                        else ""
+                    codeToInline.replaceExpression(
+                        usage, psiFactory.createExpression(
                             IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(typeClassifier) + arguments
-                    ))
-                }
-                else if (parent is KtUserType) {
+                        )
+                    )
+                } else if (parent is KtUserType) {
                     parent.replace(typeElement)
-                }
-                else {
+                } else {
                     //TODO: tests for this?
                     codeToInline.replaceExpression(usage, psiFactory.createExpression(typeElement.text))
                 }
@@ -271,8 +277,7 @@ class CodeInliner<TCallElement : KtElement>(
         if (expressionToBeReplaced.isUsedAsExpression(bindingContext)) {
             val thisReplaced = codeToInline.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
             codeToInline.introduceValue(receiver, receiverType, thisReplaced, expressionToBeReplaced, safeCall = true)
-        }
-        else {
+        } else {
             val ifExpression = psiFactory.buildExpression {
                 appendFixedText("if (")
                 appendExpression(receiver)
@@ -312,13 +317,21 @@ class CodeInliner<TCallElement : KtElement>(
         return when (this) {
             is KtSimpleNameExpression -> false
             is KtQualifiedExpression -> receiverExpression.shouldKeepValue(usageCount) || selectorExpression.shouldKeepValue(usageCount)
-            is KtUnaryExpression -> operationToken in setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) || baseExpression.shouldKeepValue(usageCount)
+            is KtUnaryExpression -> operationToken in setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) || baseExpression.shouldKeepValue(
+                usageCount
+            )
             is KtStringTemplateExpression -> entries.any { if (sideEffectOnly) it.expression.shouldKeepValue(usageCount) else it is KtStringTemplateEntryWithExpression }
             is KtThisExpression, is KtSuperExpression, is KtConstantExpression -> false
             is KtParenthesizedExpression -> expression.shouldKeepValue(usageCount)
-            is KtArrayAccessExpression -> if (sideEffectOnly) arrayExpression.shouldKeepValue(usageCount) || indexExpressions.any { it.shouldKeepValue(usageCount) } else true
+            is KtArrayAccessExpression -> if (sideEffectOnly) arrayExpression.shouldKeepValue(usageCount) || indexExpressions.any {
+                it.shouldKeepValue(
+                    usageCount
+                )
+            } else true
             is KtBinaryExpression -> if (sideEffectOnly) left.shouldKeepValue(usageCount) || right.shouldKeepValue(usageCount) else true
-            is KtIfExpression -> if (sideEffectOnly) condition.shouldKeepValue(usageCount) || then.shouldKeepValue(usageCount) || `else`.shouldKeepValue(usageCount) else true
+            is KtIfExpression -> if (sideEffectOnly) condition.shouldKeepValue(usageCount) || then.shouldKeepValue(usageCount) || `else`.shouldKeepValue(
+                usageCount
+            ) else true
             is KtBinaryExpressionWithTypeRHS -> true
             null -> false
             else -> true
@@ -326,17 +339,18 @@ class CodeInliner<TCallElement : KtElement>(
     }
 
     private class Argument(
-            val expression: KtExpression,
-            val expressionType: KotlinType?,
-            val isNamed: Boolean = false,
-            val isDefaultValue: Boolean = false)
+        val expression: KtExpression,
+        val expressionType: KotlinType?,
+        val isNamed: Boolean = false,
+        val isDefaultValue: Boolean = false
+    )
 
     private fun argumentForParameter(parameter: ValueParameterDescriptor, callableDescriptor: CallableDescriptor): Argument? {
         if (callableDescriptor is PropertySetterDescriptor) {
             val valueAssigned = (callElement as? KtExpression)
-                    ?.getQualifiedExpressionForSelectorOrThis()
-                    ?.getAssignmentByLHS()
-                    ?.right ?: return null
+                ?.getQualifiedExpressionForSelectorOrThis()
+                ?.getAssignmentByLHS()
+                ?.right ?: return null
             return Argument(valueAssigned, bindingContext.getType(valueAssigned))
         }
 
@@ -420,8 +434,7 @@ class CodeInliner<TCallElement : KtElement>(
         val shortenFilter = { element: PsiElement ->
             if (element[USER_CODE_KEY]) {
                 ShortenReferences.FilterResult.SKIP
-            }
-            else {
+            } else {
                 val thisReceiver = (element as? KtQualifiedExpression)?.receiverExpression as? KtThisExpression
                 if (thisReceiver != null && thisReceiver[USER_CODE_KEY]) // don't remove explicit 'this' coming from user's code
                     ShortenReferences.FilterResult.GO_INSIDE
@@ -431,7 +444,7 @@ class CodeInliner<TCallElement : KtElement>(
         }
 
         val newElements = elements.map {
-            ShortenReferences({ ShortenReferences.Options(removeThis = true) }).process(it, shortenFilter)
+            ShortenReferences { ShortenReferences.Options(removeThis = true) }.process(it, shortenFilter)
         }
 
         newElements.forEach {
@@ -463,8 +476,7 @@ class CodeInliner<TCallElement : KtElement>(
         }
 
         for (callExpression in callsToProcess) {
-            val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
-            val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return
+            val resolvedCall = callExpression.resolveToCall() ?: return
             if (!resolvedCall.isReallySuccess()) return
 
             val argumentsToMakeNamed = callExpression.valueArguments.dropWhile { !it[MAKE_ARGUMENT_NAMED_KEY] }
@@ -541,7 +553,7 @@ class CodeInliner<TCallElement : KtElement>(
         result.forEachDescendantOfType<KtValueArgument>(canGoInside = { !it[USER_CODE_KEY] }) { argument ->
             if (argument.getSpreadElement() != null && !argument.isNamed()) {
                 val argumentExpression = argument.getArgumentExpression() ?: return@forEachDescendantOfType
-                val resolvedCall = argumentExpression.getResolvedCall(argumentExpression.analyze(BodyResolveMode.PARTIAL)) ?: return@forEachDescendantOfType
+                val resolvedCall = argumentExpression.resolveToCall() ?: return@forEachDescendantOfType
                 val callExpression = resolvedCall.call.callElement as? KtCallExpression ?: return@forEachDescendantOfType
                 if (CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)) {
                     argumentsToExpand.add(argument to callExpression.valueArguments)
@@ -558,8 +570,7 @@ class CodeInliner<TCallElement : KtElement>(
         val list = parent as KtValueArgumentList
         if (arguments.isEmpty()) {
             list.removeArgument(this)
-        }
-        else {
+        } else {
             var anchor = this
             for (argument in arguments) {
                 anchor = list.addArgumentAfter(argument, anchor)
@@ -571,7 +582,7 @@ class CodeInliner<TCallElement : KtElement>(
     private fun restoreFunctionLiteralArguments(expression: KtElement) {
         val callExpressions = ArrayList<KtCallExpression>()
 
-        expression.forEachDescendantOfType<KtExpression>(fun (expr) {
+        expression.forEachDescendantOfType<KtExpression>(fun(expr) {
             if (!expr[WAS_FUNCTION_LITERAL_ARGUMENT_KEY]) return
             assert(expr.unpackFunctionLiteral() != null)
 
@@ -583,35 +594,37 @@ class CodeInliner<TCallElement : KtElement>(
             val callExpression = argumentList.parent as? KtCallExpression ?: return
             if (callExpression.lambdaArguments.isNotEmpty()) return
 
-            val resolvedCall = callExpression.getResolvedCall(callExpression.analyze(BodyResolveMode.PARTIAL)) ?: return
-            if (!resolvedCall.isReallySuccess()) return
-            val argumentMatch = resolvedCall.getArgumentMapping(argument) as ArgumentMatch
-            if (argumentMatch.valueParameter != resolvedCall.resultingDescriptor.valueParameters.last()) return
-
+            callExpression.resolveToCall() ?: return
             callExpressions.add(callExpression)
         })
 
-        callExpressions.forEach { it.moveFunctionLiteralOutsideParentheses() }
+        callExpressions.forEach {
+            if (it.canMoveLambdaOutsideParentheses()) {
+                it.moveFunctionLiteralOutsideParentheses()
+            }
+        }
     }
 
-    private operator fun <T: Any> PsiElement.get(key: Key<T>): T? = getCopyableUserData(key)
+    private operator fun <T : Any> PsiElement.get(key: Key<T>): T? = getCopyableUserData(key)
     private operator fun PsiElement.get(key: Key<Unit>): Boolean = getCopyableUserData(key) != null
-    private fun <T: Any> KtElement.clear(key: Key<T>) = putCopyableUserData(key, null)
-    private fun <T: Any> KtElement.put(key: Key<T>, value: T) = putCopyableUserData(key, value)
+    private fun <T : Any> KtElement.clear(key: Key<T>) = putCopyableUserData(key, null)
+    private fun <T : Any> KtElement.put(key: Key<T>, value: T) = putCopyableUserData(key, value)
     private fun KtElement.mark(key: Key<Unit>) = putCopyableUserData(key, Unit)
 
-    private fun <T: KtElement> T.marked(key: Key<Unit>): T {
+    private fun <T : KtElement> T.marked(key: Key<Unit>): T {
         putCopyableUserData(key, Unit)
         return this
     }
 
-    // keys below are used on expressions
-    private val USER_CODE_KEY = Key<Unit>("USER_CODE")
-    private val PARAMETER_VALUE_KEY = Key<ValueParameterDescriptor>("PARAMETER_VALUE")
-    private val RECEIVER_VALUE_KEY = Key<Unit>("RECEIVER_VALUE")
-    private val WAS_FUNCTION_LITERAL_ARGUMENT_KEY = Key<Unit>("WAS_FUNCTION_LITERAL_ARGUMENT")
+    companion object {
+        // keys below are used on expressions
+        private val USER_CODE_KEY = Key<Unit>("USER_CODE")
+        private val PARAMETER_VALUE_KEY = Key<ValueParameterDescriptor>("PARAMETER_VALUE")
+        private val RECEIVER_VALUE_KEY = Key<Unit>("RECEIVER_VALUE")
+        private val WAS_FUNCTION_LITERAL_ARGUMENT_KEY = Key<Unit>("WAS_FUNCTION_LITERAL_ARGUMENT")
 
-    // these keys are used on KtValueArgument
-    private val MAKE_ARGUMENT_NAMED_KEY = Key<Unit>("MAKE_ARGUMENT_NAMED")
-    private val DEFAULT_PARAMETER_VALUE_KEY = Key<Unit>("DEFAULT_PARAMETER_VALUE")
+        // these keys are used on KtValueArgument
+        private val MAKE_ARGUMENT_NAMED_KEY = Key<Unit>("MAKE_ARGUMENT_NAMED")
+        private val DEFAULT_PARAMETER_VALUE_KEY = Key<Unit>("DEFAULT_PARAMETER_VALUE")
+    }
 }

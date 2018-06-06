@@ -5,7 +5,7 @@
 
 import kotlin.test.assertNull
 import kotlin.test.assertNotNull
-import kotlin.reflect.*
+import kotlin.reflect.full.*
 
 class OnlyPrimary
 

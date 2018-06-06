@@ -24,13 +24,20 @@ import org.apache.maven.plugin.compiler.DependencyCoordinate;
 import org.apache.maven.plugins.annotations.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.cli.common.CLICompiler;
+import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.maven.K2JVMCompileMojo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import static org.jetbrains.kotlin.maven.Util.joinArrays;
 import static org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager.*;
 
 /** @noinspection UnusedDeclaration */
@@ -47,6 +54,15 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
     @Parameter
     private boolean correctErrorTypes = false;
+
+    @Parameter
+    private boolean mapDiagnosticLocations = false;
+
+    @Parameter
+    private List<String> annotationProcessorArgs;
+
+    @Parameter
+    private List<String> javacOptions;
 
     // Components for AnnotationProcessingManager
 
@@ -81,6 +97,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         options.add(new KaptOption("aptOnly", true));
         options.add(new KaptOption("useLightAnalysis", useLightAnalysis));
         options.add(new KaptOption("correctErrorTypes", correctErrorTypes));
+        options.add(new KaptOption("mapDiagnosticLocations", mapDiagnosticLocations));
         options.add(new KaptOption("processors", annotationProcessors));
 
         if (arguments.getVerbose()) {
@@ -93,30 +110,77 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
         String sourceSetName = getSourceSetName();
         File sourcesDirectory = getGeneratedSourcesDirectory(project, sourceSetName);
+        File kotlinSourcesDirectory = getGeneratedKotlinSourcesDirectory(project, sourceSetName);
         File classesDirectory = getGeneratedClassesDirectory(project, sourceSetName);
         File stubsDirectory = getStubsDirectory(project, sourceSetName);
 
         addKaptSourcesDirectory(sourcesDirectory.getPath());
+        addKaptSourcesDirectory(kotlinSourcesDirectory.getPath());
 
-        mkdirsSafe(sourcesDirectory);
         mkdirsSafe(classesDirectory);
         mkdirsSafe(stubsDirectory);
+        mkdirsSafe(kotlinSourcesDirectory);
 
         options.add(new KaptOption("sources", sourcesDirectory.getAbsolutePath()));
         options.add(new KaptOption("classes", classesDirectory.getAbsolutePath()));
         options.add(new KaptOption("stubs", stubsDirectory.getAbsolutePath()));
 
+        options.add(new KaptOption("javacArguments", encodeOptionList(parseOptionList(javacOptions))));
+
+        Map<String, String> allApOptions = parseOptionList(annotationProcessorArgs);
+        allApOptions.put("kapt.kotlin.generated", kotlinSourcesDirectory.getAbsolutePath());
+        options.add(new KaptOption("apoptions", encodeOptionList(allApOptions)));
+
         return options;
+    }
+
+    @NotNull
+    @Override
+    protected ExitCode execCompiler(
+            CLICompiler<K2JVMCompilerArguments> compiler,
+            MessageCollector messageCollector,
+            K2JVMCompilerArguments arguments,
+            List<File> sourceRoots
+    ) throws MojoExecutionException {
+        // Annotation processing can't run incrementally so we need to clear the directory for our stubs and generated sources
+        // TODO separate directories for the generated class files, and recreate the generated classfile dir also
+        String sourceSetName = getSourceSetName();
+        recreateDirectorySafe(getGeneratedSourcesDirectory(project, sourceSetName));
+        recreateDirectorySafe(getStubsDirectory(project, sourceSetName));
+        recreateDirectorySafe(getGeneratedKotlinSourcesDirectory(project, sourceSetName));
+
+        return super.execCompiler(compiler, messageCollector, arguments, sourceRoots);
+    }
+
+    @Override
+    protected List<String> getSourceFilePaths() {
+        File generatedSourcesDirectory = getGeneratedSourcesDirectory(project, getSourceSetName());
+        File generatedKotlinSourcesDirectory = getGeneratedKotlinSourcesDirectory(project, getSourceSetName());
+
+        return super.getSourceFilePaths()
+                .stream()
+                .filter(path -> {
+                    File pathFile = new File(path);
+                    return !pathFile.equals(generatedSourcesDirectory)
+                            && !pathFile.equals(generatedKotlinSourcesDirectory);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    protected List<String> getClasspath() {
+        File compileTargetDirectory = new File(this.output);
+
+        // TODO it seems for me that the target directory should not be in the compile classpath
+        // We filter out it here, but it's definitely a work-around.
+        return super.getClasspath()
+                .stream()
+                .filter(path -> !new File(path).equals(compileTargetDirectory))
+                .collect(Collectors.toList());
     }
 
     protected void addKaptSourcesDirectory(@NotNull String path) {
         project.addCompileSourceRoot(path);
-    }
-
-    private void mkdirsSafe(@NotNull File directory) {
-        if (!directory.mkdirs()) {
-            getLog().warn("Unable to create directory " + directory);
-        }
     }
 
     @Override
@@ -182,25 +246,84 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         return result;
     }
 
-    @NotNull
-    private String[] joinArrays(@Nullable String[] first, @Nullable String[] second) {
-        if (first == null) {
-            first = new String[0];
-        }
-        if (second == null) {
-            second = new String[0];
-        }
-
-        String[] result = new String[first.length + second.length];
-
-        System.arraycopy(first, 0, result, 0, first.length);
-        System.arraycopy(second, 0, result, first.length, second.length);
-
-        return result;
-    }
-
     @Override
     protected boolean isIncremental() {
         return false;
+    }
+
+    private void mkdirsSafe(@NotNull File directory) {
+        if (!directory.isDirectory() && !directory.mkdirs()) {
+            getLog().warn("Unable to create directory " + directory);
+        }
+    }
+
+    private void deleteRecursivelySafe(@NotNull File file) {
+        if (!file.exists()) {
+            return;
+        }
+
+        if (file.isDirectory()) {
+            File[] children = file.listFiles();
+
+            if (children != null) {
+                for (File child : children) {
+                    deleteRecursivelySafe(child);
+                }
+            }
+        }
+
+        if (!file.delete()) {
+            getLog().warn("Unable to delete file " + file);
+        }
+    }
+
+    private void recreateDirectorySafe(@NotNull File file) {
+        if (file.exists()) {
+            deleteRecursivelySafe(file);
+        }
+        mkdirsSafe(file);
+    }
+
+    private static Map<String, String> parseOptionList(@Nullable List<String> rawOptions) {
+        Map<String, String> map = new LinkedHashMap<>();
+
+        if (rawOptions == null) {
+            return map;
+        }
+
+        for (String option : rawOptions) {
+            if (option.isEmpty()) {
+                continue;
+            }
+
+            int equalsIndex = option.indexOf("=");
+            if (equalsIndex < 0) {
+                map.put(option, "");
+            }
+            else {
+                map.put(option.substring(0, equalsIndex).trim(), option.substring(equalsIndex + 1).trim());
+            }
+        }
+
+        return map;
+    }
+
+    private static String encodeOptionList(Map<String, String> options) {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+
+            oos.writeInt(options.size());
+            for (Map.Entry<String, String> entry : options.entrySet()) {
+                oos.writeUTF(entry.getKey());
+                oos.writeUTF(entry.getValue());
+            }
+
+            oos.flush();
+            return Base64.getEncoder().encodeToString(os.toByteArray());
+        } catch (IOException e) {
+            // Should not occur
+            throw new RuntimeException(e);
+        }
     }
 }

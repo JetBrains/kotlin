@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.codegen.range.inExpression.CallBasedInExpressionGene
 import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.org.objectweb.asm.Type
 
-class CharSequenceRangeValue : RangeValue {
+class CharSequenceRangeValue(private val canCacheLength: Boolean, private val charSequenceClassType: Type?) : RangeValue {
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            ForInCharSequenceLoopGenerator(codegen, forExpression)
+        ForInCharSequenceLoopGenerator(codegen, forExpression, canCacheLength, charSequenceClassType)
 
     override fun createInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator =
-            CallBasedInExpressionGenerator(codegen, operatorReference)
+        CallBasedInExpressionGenerator(codegen, operatorReference)
 }

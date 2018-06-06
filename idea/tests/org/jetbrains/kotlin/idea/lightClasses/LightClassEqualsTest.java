@@ -22,12 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.classes.KtLightClass;
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration;
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration;
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
-
-import static org.jetbrains.kotlin.asJava.LightClassUtilsKt.toLightClass;
 
 public class LightClassEqualsTest extends KotlinLightCodeInsightFixtureTestCase {
     @NotNull
@@ -59,8 +57,8 @@ public class LightClassEqualsTest extends KotlinLightCodeInsightFixtureTestCase 
     private static void doTestEquals(@Nullable KtClassOrObject origin) {
         assertNotNull(origin);
 
-        PsiClass lightClass1 = toLightClass(origin);
-        PsiClass lightClass2 = toLightClass(origin);
+        PsiClass lightClass1 = KtLightClassForSourceDeclaration.Companion.createNoCache(origin);
+        PsiClass lightClass2 = KtLightClassForSourceDeclaration.Companion.createNoCache(origin);
         assertNotNull(lightClass1);
         assertNotNull(lightClass2);
 

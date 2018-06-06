@@ -17,21 +17,22 @@
 package org.jetbrains.kotlin.noarg.ide
 
 import org.jetbrains.kotlin.annotation.plugin.ide.AbstractMavenImportHandler
+import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedCompilerPluginSetup.PluginOption
 import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor
 import org.jetbrains.kotlin.utils.PathUtil
 
 class NoArgMavenProjectImportHandler : AbstractMavenImportHandler() {
     private companion object {
         val ANNOTATATION_PARAMETER_PREFIX = "no-arg:${NoArgCommandLineProcessor.ANNOTATION_OPTION.name}="
+        val INVOKEINITIALIZERS_PARAMETER_PREFIX = "no-arg:${NoArgCommandLineProcessor.INVOKE_INITIALIZERS_OPTION.name}="
     }
 
     override val compilerPluginId = NoArgCommandLineProcessor.PLUGIN_ID
     override val pluginName = "noarg"
-    override val annotationOptionName = NoArgCommandLineProcessor.ANNOTATION_OPTION.name
     override val mavenPluginArtifactName = "kotlin-maven-noarg"
     override val pluginJarFileFromIdea = PathUtil.kotlinPathsForIdeaPlugin.noArgPluginJarPath
 
-    override fun getAnnotations(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<String>? {
+    override fun getOptions(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<PluginOption>? {
         if ("no-arg" !in enabledCompilerPlugins && "jpa" !in enabledCompilerPlugins) {
             return null
         }
@@ -48,6 +49,16 @@ class NoArgMavenProjectImportHandler : AbstractMavenImportHandler() {
             text.substring(ANNOTATATION_PARAMETER_PREFIX.length)
         })
 
-        return annotations
+        val options = annotations.mapTo(mutableListOf()) { PluginOption(NoArgCommandLineProcessor.ANNOTATION_OPTION.name, it) }
+
+        val invokeInitializerOptionValue = compilerPluginOptions
+                .firstOrNull { it.startsWith(INVOKEINITIALIZERS_PARAMETER_PREFIX) }
+                ?.drop(INVOKEINITIALIZERS_PARAMETER_PREFIX.length) == "true"
+
+        if (invokeInitializerOptionValue) {
+            options.add(PluginOption(NoArgCommandLineProcessor.INVOKE_INITIALIZERS_OPTION.name, "true"))
+        }
+
+        return options
     }
 }

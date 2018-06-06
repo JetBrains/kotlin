@@ -228,6 +228,8 @@ public abstract class AnnotationCodegen {
         annotationTargetMap.put(KotlinTarget.PROPERTY_SETTER, ElementType.METHOD);
         annotationTargetMap.put(KotlinTarget.FIELD, ElementType.FIELD);
         annotationTargetMap.put(KotlinTarget.VALUE_PARAMETER, ElementType.PARAMETER);
+        annotationTargetMap.put(KotlinTarget.TYPE_PARAMETER, ElementType.TYPE_PARAMETER);
+        annotationTargetMap.put(KotlinTarget.TYPE, ElementType.TYPE_USE);
     }
 
     private void generateTargetAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
@@ -297,6 +299,10 @@ public abstract class AnnotationCodegen {
         assert classDescriptor != null : "Annotation descriptor has no class: " + annotationDescriptor;
         RetentionPolicy rp = getRetentionPolicy(classDescriptor);
         if (rp == RetentionPolicy.SOURCE && !typeMapper.getClassBuilderMode().generateSourceRetentionAnnotations) {
+            return null;
+        }
+
+        if (classDescriptor.isExpect()) {
             return null;
         }
 
@@ -370,8 +376,9 @@ public abstract class AnnotationCodegen {
 
             @Override
             public Void visitEnumValue(EnumValue value, Void data) {
-                String propertyName = value.getValue().getName().asString();
-                annotationVisitor.visitEnum(name, typeMapper.mapType(value.getType()).getDescriptor(), propertyName);
+                String enumClassInternalName = AsmUtil.asmTypeByClassId(value.getEnumClassId()).getDescriptor();
+                String enumEntryName = value.getEnumEntryName().asString();
+                annotationVisitor.visitEnum(name, enumClassInternalName, enumEntryName);
                 return null;
             }
 
@@ -398,6 +405,26 @@ public abstract class AnnotationCodegen {
             public Void visitKClassValue(KClassValue value, Void data) {
                 annotationVisitor.visit(name, typeMapper.mapType(value.getValue()));
                 return null;
+            }
+
+            @Override
+            public Void visitUByteValue(UByteValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitUShortValue(UShortValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitUIntValue(UIntValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitULongValue(ULongValue value, Void data) {
+                return visitSimpleValue(value);
             }
 
             private Void visitSimpleValue(ConstantValue<?> value) {
@@ -437,7 +464,7 @@ public abstract class AnnotationCodegen {
     }
 
     @Nullable
-    private Set<ElementType> getJavaTargetList(ClassDescriptor descriptor) {
+    private static Set<ElementType> getJavaTargetList(ClassDescriptor descriptor) {
         AnnotationDescriptor targetAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Target.class.getName()));
         if (targetAnnotation != null) {
             Collection<ConstantValue<?>> valueArguments = targetAnnotation.getAllValueArguments().values();
@@ -448,12 +475,9 @@ public abstract class AnnotationCodegen {
                     Set<ElementType> result = EnumSet.noneOf(ElementType.class);
                     for (ConstantValue<?> value : values) {
                         if (value instanceof EnumValue) {
-                            ClassDescriptor enumEntry = ((EnumValue) value).getValue();
-                            KotlinType classObjectType = DescriptorUtilsKt.getClassValueType(enumEntry);
-                            if (classObjectType != null) {
-                                if ("java/lang/annotation/ElementType".equals(typeMapper.mapType(classObjectType).getInternalName())) {
-                                    result.add(ElementType.valueOf(enumEntry.getName().asString()));
-                                }
+                            FqName enumClassFqName = ((EnumValue) value).getEnumClassId().asSingleFqName();
+                            if (ElementType.class.getName().equals(enumClassFqName.asString())) {
+                                result.add(ElementType.valueOf(((EnumValue) value).getEnumEntryName().asString()));
                             }
                         }
                     }
@@ -465,21 +489,18 @@ public abstract class AnnotationCodegen {
     }
 
     @NotNull
-    private RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
+    private static RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
         KotlinRetention retention = DescriptorUtilsKt.getAnnotationRetention(descriptor);
         if (retention != null) {
             return annotationRetentionMap.get(retention);
         }
         AnnotationDescriptor retentionAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Retention.class.getName()));
         if (retentionAnnotation != null) {
-            ConstantValue<?> compileTimeConstant = CollectionsKt.firstOrNull(retentionAnnotation.getAllValueArguments().values());
-            if (compileTimeConstant instanceof EnumValue) {
-                ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
-                KotlinType classObjectType = DescriptorUtilsKt.getClassValueType(enumEntry);
-                if (classObjectType != null) {
-                    if ("java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName())) {
-                        return RetentionPolicy.valueOf(enumEntry.getName().asString());
-                    }
+            ConstantValue<?> value = CollectionsKt.firstOrNull(retentionAnnotation.getAllValueArguments().values());
+            if (value instanceof EnumValue) {
+                FqName enumClassFqName = ((EnumValue) value).getEnumClassId().asSingleFqName();
+                if (RetentionPolicy.class.getName().equals(enumClassFqName.asString())) {
+                    return RetentionPolicy.valueOf(((EnumValue) value).getEnumEntryName().asString());
                 }
             }
         }

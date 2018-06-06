@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlockOrParenthesis
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.inspections.SimplifyNegatedBinaryExpressionInspection
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 
 class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with 'assert' statement") {
@@ -37,7 +37,7 @@ class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependentIntent
 
         if (thrownExpr.valueArguments.size > 1) return false
 
-        val resolvedCall = thrownExpr.getResolvedCall(thrownExpr.analyze()) ?: return false
+        val resolvedCall = thrownExpr.resolveToCall() ?: return false
         val targetFqName = DescriptorUtils.getFqName(resolvedCall.resultingDescriptor).asString()
         return targetFqName in constant { setOf("kotlin.AssertionError.<init>", "java.lang.AssertionError.<init>") }
     }
@@ -52,9 +52,9 @@ class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependentIntent
         condition.replace(psiFactory.createExpressionByPattern("!$0", condition))
 
         var newCondition = element.condition!!
-        val simplifier = SimplifyNegatedBinaryExpressionIntention()
-        if (simplifier.isApplicableTo(newCondition as KtPrefixExpression)) {
-            simplifier.applyTo(newCondition, editor)
+        val simplifier = SimplifyNegatedBinaryExpressionInspection()
+        if (simplifier.isApplicable(newCondition as KtPrefixExpression)) {
+            simplifier.applyTo(newCondition.operationReference, editor = editor)
             newCondition = element.condition!!
         }
 

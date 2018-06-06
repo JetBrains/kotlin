@@ -1,4 +1,4 @@
-public static class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
+public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
     public final java.lang.Object createFromParcel(android.os.Parcel p0) {
@@ -6,34 +6,75 @@ public static class User$Creator : java/lang/Object, android/os/Parcelable$Creat
           ALOAD (1)
           LDC (in)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
           NEW
           DUP
           ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readStrongBinder, ()Landroid/os/IBinder;)
           ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, createBinderArray, ()[Landroid/os/IBinder;)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, createBinderArrayList, ()Ljava/util/ArrayList;)
+          CHECKCAST
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          ISTORE (2)
+          NEW
+          DUP
+          ILOAD (2)
+          INVOKESPECIAL (java/util/ArrayList, <init>, (I)V)
+          ILOAD (2)
+        LABEL (L2)
+          DUP_X1
+          IFEQ (L3)
+          DUP
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readStrongBinder, ()Landroid/os/IBinder;)
+          INVOKEVIRTUAL (java/util/ArrayList, add, (Ljava/lang/Object;)Z)
+          POP
+          SWAP
+          LDC (-1)
+          IADD
+          GOTO (L2)
+        LABEL (L3)
+          SWAP
+          POP
+          ALOAD (1)
           INVOKEVIRTUAL (android/os/Parcel, readStrongInterface, ()Landroid/os/IInterface;)
-          INVOKESPECIAL (User, <init>, (Landroid/os/IBinder;Landroid/os/IInterface;)V)
+          INVOKESPECIAL (User, <init>, (Landroid/os/IBinder;[Landroid/os/IBinder;Ljava/util/List;Ljava/util/ArrayList;Landroid/os/IInterface;)V)
           ARETURN
-        LABEL (L1)
+        LABEL (L4)
     }
 
-    public final User[] newArray(int p0)
+    public final java.lang.Object[] newArray(int p0)
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
-    public final static User$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     private final android.os.IBinder binder
+
+    private final android.os.IBinder[] binderArray
+
+    private final java.util.ArrayList binderArrayList
+
+    private final java.util.List binderList
 
     private final android.os.IInterface intf
 
     static void <clinit>()
 
-    public void <init>(android.os.IBinder p0, android.os.IInterface p1)
+    public void <init>(android.os.IBinder p0, android.os.IBinder[] p1, java.util.List p2, java.util.ArrayList p3, android.os.IInterface p4)
 
     public final int describeContents()
 
     public final android.os.IBinder getBinder()
+
+    public final android.os.IBinder[] getBinderArray()
+
+    public final java.util.ArrayList getBinderArrayList()
+
+    public final java.util.List getBinderList()
 
     public final android.os.IInterface getIntf()
 
@@ -48,9 +89,37 @@ public final class User : java/lang/Object, android/os/Parcelable {
           INVOKEVIRTUAL (android/os/Parcel, writeStrongBinder, (Landroid/os/IBinder;)V)
           ALOAD (1)
           ALOAD (0)
+          GETFIELD (binderArray, [Landroid/os/IBinder;)
+          INVOKEVIRTUAL (android/os/Parcel, writeBinderArray, ([Landroid/os/IBinder;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (binderList, Ljava/util/List;)
+          INVOKEVIRTUAL (android/os/Parcel, writeBinderList, (Ljava/util/List;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (binderArrayList, Ljava/util/ArrayList;)
+          DUP_X1
+          INVOKEINTERFACE (java/util/Collection, size, ()I)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          INVOKEINTERFACE (java/util/Collection, iterator, ()Ljava/util/Iterator;)
+        LABEL (L1)
+          DUP
+          INVOKEINTERFACE (java/util/Iterator, hasNext, ()Z)
+          IFEQ (L2)
+          DUP
+          ALOAD (1)
+          SWAP
+          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
+          CHECKCAST
+          INVOKEVIRTUAL (android/os/Parcel, writeStrongBinder, (Landroid/os/IBinder;)V)
+          GOTO (L1)
+        LABEL (L2)
+          POP
+          ALOAD (1)
+          ALOAD (0)
           GETFIELD (intf, Landroid/os/IInterface;)
           INVOKEVIRTUAL (android/os/Parcel, writeStrongInterface, (Landroid/os/IInterface;)V)
           RETURN
-        LABEL (L1)
+        LABEL (L3)
     }
 }

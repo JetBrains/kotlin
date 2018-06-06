@@ -1,18 +1,21 @@
 package soSuspendableCallInEndOfFun
 
-import forTests.builder
 import forTests.WaitFinish
+import forTests.builder
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.suspendCoroutine
 
 private fun foo(a: Any) {}
 
 val waiter = WaitFinish()
+val suspendWaiter = WaitFinish()
 
 fun main(args: Array<String>) {
     builder {
         inFun()
     }
+
+    suspendWaiter.finish()
 
     foo("Main end")
     waiter.waitEnd()
@@ -27,7 +30,7 @@ suspend fun inFun() {
 suspend fun run() {
     suspendCoroutine { cont: Continuation<Unit> ->
         Thread {
-            Thread.sleep(10)
+            suspendWaiter.waitEnd()
             cont.resume(Unit)
             waiter.finish()
         }.start()

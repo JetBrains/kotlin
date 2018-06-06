@@ -29,9 +29,9 @@ import baz.*
     /*p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm p:kotlin(String)*/I./*c:foo.I*/isfield
     /*p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm c:foo.I(IS)*/I./*c:foo.I*/IS()
 
-    /*p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm*/E./*c:baz.E*/F
-    /*p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm p:kotlin(Int)*/E./*c:baz.E*/F./*c:baz.E*/field
-    /*p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm*/E./*c:baz.E*/S./*c:baz.E*/func()
+    /*p:baz p:foo p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm*/E./*c:baz.E*/F
+    /*p:baz p:foo p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm p:kotlin(Int)*/E./*c:baz.E*/F./*c:baz.E*/field
+    /*p:baz p:foo p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm*/E./*c:baz.E*/S./*c:baz.E*/func()
 }
 
 /*p:foo*/fun classifiers(

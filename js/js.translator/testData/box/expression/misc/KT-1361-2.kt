@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1005
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1122
 package foo
 
 class Data(val rawData: Array<Int>, val width: Int, val height: Int) {

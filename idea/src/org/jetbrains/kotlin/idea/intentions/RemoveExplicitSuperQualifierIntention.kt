@@ -48,10 +48,13 @@ class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention<KtSupe
         val qualifiedExpression = element.getQualifiedExpressionForReceiver() ?: return null
         val selector = qualifiedExpression.selectorExpression ?: return null
 
-        val bindingContext = selector.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = selector.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         if (selector.getResolvedCall(bindingContext) == null) return null
 
-        val newQualifiedExpression = KtPsiFactory(element).createExpressionByPattern("$0.$1", toNonQualified(element), selector) as KtQualifiedExpression
+        val newQualifiedExpression = KtPsiFactory(element).createExpressionByPattern(
+                "$0.$1", toNonQualified(element, reformat = false), selector,
+                reformat = false
+        ) as KtQualifiedExpression
         val newBindingContext = newQualifiedExpression.analyzeAsReplacement(qualifiedExpression, bindingContext)
         val newResolvedCall = newQualifiedExpression.selectorExpression.getResolvedCall(newBindingContext) ?: return null
         if (ErrorUtils.isError(newResolvedCall.resultingDescriptor)) return null
@@ -60,14 +63,14 @@ class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention<KtSupe
     }
 
     override fun applyTo(element: KtSuperExpression, editor: Editor?) {
-        element.replace(toNonQualified(element))
+        element.replace(toNonQualified(element, reformat = true))
     }
 
-    private fun toNonQualified(superExpression: KtSuperExpression): KtSuperExpression {
+    private fun toNonQualified(superExpression: KtSuperExpression, reformat: Boolean): KtSuperExpression {
         val factory = KtPsiFactory(superExpression)
         val labelName = superExpression.getLabelNameAsName()
         return (if (labelName != null)
-            factory.createExpressionByPattern("super@$0", labelName)
+            factory.createExpressionByPattern("super@$0", labelName, reformat = reformat)
         else
             factory.createExpression("super")) as KtSuperExpression
     }

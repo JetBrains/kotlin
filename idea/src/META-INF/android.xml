@@ -12,11 +12,17 @@
 
         <localInspection implementationClass="org.jetbrains.kotlin.android.inspection.IllegalIdentifierInspection"
                          displayName="Illegal Android Identifier"
-                         groupName="Kotlin"
+                         groupName="Kotlin Android"
                          enabledByDefault="true"
                          level="ERROR"/>
 
-        <editorNotificationProvider implementation="org.jetbrains.kotlin.android.actions.KotlinNewActivityNotification"/>
+        <localInspection implementationClass="org.jetbrains.kotlin.android.inspection.TypeParameterFindViewByIdInspection"
+                         displayName="Cast can be converted to findViewById with type parameter"
+                         groupName="Kotlin Android"
+                         enabledByDefault="true"
+                         cleanupTool="true"
+                         level="WEAK WARNING"
+                         language="kotlin" />
 
         <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.android.KotlinAndroidLineMarkerProvider"/>
 
@@ -72,7 +78,6 @@
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.IDEAndroidExtensionsExpressionCodegenExtension"/>
-        <defaultErrorMessages implementation="org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid"/>
         <storageComponentContainerContributor implementation="org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor"/>
         <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.IDEAndroidOnDestroyClassBuilderInterceptorExtension"/>
         <packageFragmentProviderExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.res.IDEAndroidPackageFragmentProviderExtension"/>
@@ -82,26 +87,24 @@
 
         <quickFixContributor implementation="org.jetbrains.kotlin.android.quickfix.AndroidQuickFixRegistrar"/>
         <projectConfigurator implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidGradleModuleConfigurator"/>
-        <platformGradleDetector implementation="org.jetbrains.kotlin.android.configure.PlatformAndroidGradleDetector"/>
+        <gradleModelFacade implementation="org.jetbrains.kotlin.android.configure.AndroidGradleModelFacade"/>
         <completionInformationProvider implementation="org.jetbrains.kotlin.AndroidExtensionsCompletionInformationProvider" />
 
         <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.parcel.IDEParcelableCodegenExtension"/>
         <syntheticResolveExtension implementation="org.jetbrains.kotlin.android.parcel.IDEParcelableResolveExtension"/>
         <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.android.synthetic.codegen.ParcelableClinitClassBuilderInterceptorExtension"/>
+        <quickFixContributor implementation="org.jetbrains.kotlin.android.parcel.quickfixes.ParcelableQuickFixContributor"/>
 
         <androidDexer implementation="org.jetbrains.kotlin.android.debugger.AndroidDexerImpl"/>
+
+        <highlighterExtension implementation="org.jetbrains.kotlin.android.AndroidHighlighterExtension"/>
     </extensions>
 
-    <project-components>
-        <component>
-            <interface-class>org.jetbrains.kotlin.android.facet.KotlinAndroidStartupManager</interface-class>
-            <implementation-class>org.jetbrains.kotlin.android.facet.KotlinAndroidStartupManager</implementation-class>
-        </component>
-    </project-components>
+    <extensions defaultExtensionNs="org.jetbrains.android">
+        <androidLintQuickFixProvider implementation="org.jetbrains.kotlin.android.quickfix.KotlinAndroidQuickFixProvider" />
+    </extensions>
 
-    <actions>
-        <action id="Kotlin.new.activity" class="org.jetbrains.kotlin.android.actions.NewKotlinActivityAction">
-            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="Kotlin.NewFile"/>
-        </action>
-    </actions>
+    <extensions defaultExtensionNs="org.jetbrains.kotlin.android.model">
+        <androidModuleInfoProvider implementation="org.jetbrains.kotlin.android.model.impl.AndroidModuleInfoProviderImpl"/>
+    </extensions>
 </idea-plugin>

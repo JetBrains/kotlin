@@ -265,6 +265,12 @@ class RangeExpression(val start: Expression, val end: Expression): Expression() 
     }
 }
 
+class UntilExpression(val start: Expression, val end: Expression): Expression() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.appendOperand(this, start).append(" until ").appendOperand(this, end)
+    }
+}
+
 class DownToExpression(val start: Expression, val end: Expression): Expression() {
     override fun generateCode(builder: CodeBuilder) {
         builder.appendOperand(this, start).append(" downTo ").appendOperand(this, end)

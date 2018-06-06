@@ -1,15 +1,19 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package templates
 
 import templates.Family.*
 import templates.SequenceClass.*
 
-fun guards(): List<GenericFunction> {
-    val THIS = "\$this"
+object Guards : TemplateGroupBase() {
+    private val THIS = "\$this"
 
-    val templates = arrayListOf<GenericFunction>()
-
-    templates add f("requireNoNulls()") {
-        only(Iterables, Sequences, InvariantArraysOfObjects, Lists)
+    val f_requireNoNulls = fn("requireNoNulls()") {
+        include(Iterables, Sequences, InvariantArraysOfObjects, Lists)
+    } builder {
         doc { "Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements." }
         sequenceClassification(intermediate, stateless)
         typeParam("T : Any")
@@ -32,6 +36,4 @@ fun guards(): List<GenericFunction> {
             """
         }
     }
-
-    return templates
 }

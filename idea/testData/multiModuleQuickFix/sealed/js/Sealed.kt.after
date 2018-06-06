@@ -1,6 +1,6 @@
 // Sealed: to be implemented
-impl sealed class Sealed {
-    object Obj : Sealed()
+actual sealed class Sealed {
+    actual object Obj : Sealed()
+    actual class Klass actual constructor(x: Int) : Sealed()
 
-    class Klass(val x: Int) : Sealed()
 }

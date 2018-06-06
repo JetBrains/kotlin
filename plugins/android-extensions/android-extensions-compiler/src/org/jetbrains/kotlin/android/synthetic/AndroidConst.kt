@@ -28,12 +28,12 @@ object AndroidConst {
         list
     }
 
-    val ANDROID_NAMESPACE: String = "android"
+    val ANDROID_NAMESPACE: String = "http://schemas.android.com/apk/res/android"
     val ID_ATTRIBUTE_NO_NAMESPACE: String = "id"
-    val ID_ATTRIBUTE: String = "$ANDROID_NAMESPACE:$ID_ATTRIBUTE_NO_NAMESPACE"
     val CLASS_ATTRIBUTE_NO_NAMESPACE: String = "class"
 
-    val IDENTIFIER_REGEX = "^@(\\+)?(([A-Za-z0-9_\\.]+)\\:)?id\\/([A-Za-z0-9_]+)$".toRegex()
+    private val IDENTIFIER_WORD_REGEX = "[(?:\\p{L}\\p{M}*)0-9_\\.\\:\\-]+"
+    val IDENTIFIER_REGEX = "^@(\\+)?(($IDENTIFIER_WORD_REGEX)\\:)?id\\/($IDENTIFIER_WORD_REGEX)$".toRegex()
 
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
 
@@ -49,6 +49,8 @@ object AndroidConst {
     val SUPPORT_V4_PACKAGE = "android.support.v4"
     val SUPPORT_FRAGMENT_FQNAME = "$SUPPORT_V4_PACKAGE.app.Fragment"
     val SUPPORT_FRAGMENT_ACTIVITY_FQNAME = "$SUPPORT_V4_PACKAGE.app.FragmentActivity"
+    val ANDROIDX_SUPPORT_FRAGMENT_FQNAME = "androidx.fragment.app.Fragment"
+    val ANDROIDX_SUPPORT_FRAGMENT_ACTIVITY_FQNAME = "androidx.fragment.app.FragmentActivity"
 
     val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check", "blink")
 
@@ -58,7 +60,21 @@ object AndroidConst {
 fun androidIdToName(id: String): ResourceIdentifier? {
     val values = AndroidConst.IDENTIFIER_REGEX.matchEntire(id)?.groupValues ?: return null
     val packageName = values[3]
-    return ResourceIdentifier(values[4], if (packageName.isEmpty()) null else packageName)
+
+    return ResourceIdentifier(
+        getJavaIdentifierNameForResourceName(values[4]),
+        if (packageName.isEmpty()) null else packageName
+    )
+}
+
+// See also AndroidResourceUtil#getFieldNameByResourceName()
+fun getJavaIdentifierNameForResourceName(styleName: String) = buildString {
+    for (char in styleName) {
+        when (char) {
+            '.', '-', ':' -> append('_')
+            else -> append(char)
+        }
+    }
 }
 
 fun isWidgetTypeIgnored(xmlType: String): Boolean {

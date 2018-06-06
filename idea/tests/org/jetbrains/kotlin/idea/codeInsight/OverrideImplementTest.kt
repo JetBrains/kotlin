@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.configureLanguageAndApiVersion
 
 class OverrideImplementTest : AbstractOverrideImplementTest() {
     override fun setUp() {
@@ -204,6 +205,10 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
         doOverrideFileTest()
     }
 
+    fun testSuspendFun() {
+        doOverrideFileTest()
+    }
+
     fun testDoNotOverrideFinal() {
         doMultiOverrideFileTest()
     }
@@ -274,5 +279,10 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
 
     fun testDataClassEquals() {
         doOverrideFileTest("equals")
+    }
+
+    fun testCopyExperimental() {
+        configureLanguageAndApiVersion(project, module, "1.3", "1.3")
+        doOverrideFileTest("targetFun")
     }
 }

@@ -64,7 +64,7 @@ internal class A {
         s.toUpperCase()
         s.toUpperCase(Locale.FRENCH)
 
-        s.toString()
+        s
         s.toCharArray()
     }
 
@@ -93,7 +93,7 @@ internal class A {
         val limit = 5
         useSplit(s.split("\\s+".toRegex(), limit.coerceAtLeast(0)).toTypedArray())
         s.trim { it <= ' ' }
-        s + " another"
+        "$s another"
 
         s.toByteArray()
         s.toByteArray(Charset.forName("utf-8"))

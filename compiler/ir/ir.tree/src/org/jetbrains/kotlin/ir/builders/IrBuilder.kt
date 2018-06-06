@@ -29,23 +29,23 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 abstract class IrBuilder(
-        override val context: IrGeneratorContext,
-        var startOffset: Int,
-        var endOffset: Int
+    override val context: IrGeneratorContext,
+    var startOffset: Int,
+    var endOffset: Int
 ) : IrGenerator
 
 abstract class IrBuilderWithScope(
-        context: IrGeneratorContext,
-        override val scope: Scope,
-        startOffset: Int,
-        endOffset: Int
+    context: IrGeneratorContext,
+    override val scope: Scope,
+    startOffset: Int,
+    endOffset: Int
 ) : IrBuilder(context, startOffset, endOffset), IrGeneratorWithScope
 
 abstract class IrStatementsBuilder<out T : IrElement>(
-        context: IrGeneratorContext,
-        scope: Scope,
-        startOffset: Int,
-        endOffset: Int
+    context: IrGeneratorContext,
+    scope: Scope,
+    startOffset: Int,
+    endOffset: Int
 ) : IrBuilderWithScope(context, scope, startOffset, endOffset), IrGeneratorWithScope {
     operator fun IrStatement.unaryPlus() {
         addStatement(this)
@@ -56,10 +56,10 @@ abstract class IrStatementsBuilder<out T : IrElement>(
 }
 
 open class IrBlockBodyBuilder(
-        context: IrGeneratorContext,
-        scope: Scope,
-        startOffset: Int,
-        endOffset: Int
+    context: IrGeneratorContext,
+    scope: Scope,
+    startOffset: Int,
+    endOffset: Int
 ) : IrStatementsBuilder<IrBlockBody>(context, scope, startOffset, endOffset) {
     private val irBlockBody = IrBlockBodyImpl(startOffset, endOffset)
 
@@ -78,10 +78,10 @@ open class IrBlockBodyBuilder(
 }
 
 class IrBlockBuilder(
-        context: IrGeneratorContext, scope: Scope,
-        startOffset: Int, endOffset: Int,
-        val origin: IrStatementOrigin? = null,
-        var resultType: KotlinType? = null
+    context: IrGeneratorContext, scope: Scope,
+    startOffset: Int, endOffset: Int,
+    val origin: IrStatementOrigin? = null,
+    var resultType: KotlinType? = null
 ) : IrStatementsBuilder<IrBlock>(context, scope, startOffset, endOffset) {
     private val statements = ArrayList<IrStatement>()
 
@@ -95,9 +95,7 @@ class IrBlockBuilder(
     }
 
     override fun doBuild(): IrBlock {
-        val resultType = this.resultType ?:
-                         (statements.lastOrNull() as? IrExpression)?.type ?:
-                         context.builtIns.unitType
+        val resultType = this.resultType ?: (statements.lastOrNull() as? IrExpression)?.type ?: context.builtIns.unitType
         val irBlock = IrBlockImpl(startOffset, endOffset, resultType, origin)
         irBlock.statements.addAll(statements)
         return irBlock
@@ -110,20 +108,24 @@ fun <T : IrBuilder> T.at(startOffset: Int, endOffset: Int): T {
     return this
 }
 
-inline fun IrGeneratorWithScope.irBlock(startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET,
-                                        origin: IrStatementOrigin? = null, resultType: KotlinType? = null,
-                                        body: IrBlockBuilder.() -> Unit
+inline fun IrGeneratorWithScope.irBlock(
+    startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET,
+    origin: IrStatementOrigin? = null, resultType: KotlinType? = null,
+    body: IrBlockBuilder.() -> Unit
 ): IrExpression =
-        IrBlockBuilder(context, scope,
-                       startOffset,
-                       endOffset,
-                       origin, resultType
-        ).block(body)
+    IrBlockBuilder(
+        context, scope,
+        startOffset,
+        endOffset,
+        origin, resultType
+    ).block(body)
 
-inline fun IrGeneratorWithScope.irBlockBody(startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET,
-                                            body: IrBlockBodyBuilder.() -> Unit
-) : IrBlockBody =
-        IrBlockBodyBuilder(context, scope,
-                           startOffset,
-                           endOffset
-        ).blockBody(body)
+inline fun IrGeneratorWithScope.irBlockBody(
+    startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET,
+    body: IrBlockBodyBuilder.() -> Unit
+): IrBlockBody =
+    IrBlockBodyBuilder(
+        context, scope,
+        startOffset,
+        endOffset
+    ).blockBody(body)

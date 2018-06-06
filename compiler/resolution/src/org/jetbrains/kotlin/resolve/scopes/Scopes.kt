@@ -40,8 +40,8 @@ interface LexicalScope : HierarchicalScope {
     val kind: LexicalScopeKind
 
     class Base(
-            parent: HierarchicalScope,
-            override val ownerDescriptor: DeclarationDescriptor
+        parent: HierarchicalScope,
+        override val ownerDescriptor: DeclarationDescriptor
     ) : BaseHierarchicalScope(parent), LexicalScope {
         override val parent: HierarchicalScope
             get() = super.parent!!
@@ -54,6 +54,8 @@ interface LexicalScope : HierarchicalScope {
 
         override val kind: LexicalScopeKind
             get() = LexicalScopeKind.EMPTY
+
+        override fun definitelyDoesNotContainName(name: Name) = true
 
         override fun printStructure(p: Printer) {
             p.println("Base lexical scope with owner = $ownerDescriptor and parent = $parent")
@@ -110,24 +112,36 @@ interface ImportingScope : HierarchicalScope {
     fun getContributedPackage(name: Name): PackageViewDescriptor?
 
     fun getContributedDescriptors(
-            kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
-            nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER,
-            changeNamesForAliased: Boolean
+        kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
+        nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER,
+        changeNamesForAliased: Boolean
     ): Collection<DeclarationDescriptor>
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> {
         return getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased = false)
     }
+
+    fun computeImportedNames(): Set<Name>?
 
     object Empty : BaseImportingScope(null) {
         override fun printStructure(p: Printer) {
             p.println("ImportingScope.Empty")
         }
+
+        override fun computeImportedNames() = emptySet<Name>()
+
+        override fun definitelyDoesNotContainName(name: Name) = true
     }
 }
 
 abstract class BaseHierarchicalScope(override val parent: HierarchicalScope?) : HierarchicalScope {
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = emptyList()
+    override fun getContributedDescriptors(
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> = emptyList()
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
@@ -142,10 +156,16 @@ abstract class BaseImportingScope(parent: ImportingScope?) : BaseHierarchicalSco
 
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = null
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> {
         return getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased = false)
     }
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean, changeNamesForAliased: Boolean): Collection<DeclarationDescriptor>
-            = emptyList()
+    override fun getContributedDescriptors(
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean,
+        changeNamesForAliased: Boolean
+    ): Collection<DeclarationDescriptor> = emptyList()
 }

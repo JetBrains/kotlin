@@ -1,5 +1,4 @@
 fun main(args: Array<String>) {
     var a: String? = "A"
-    val a1 = a
-    if (a1 != null) a1 else "bar"
+    if (a != null) a else "bar"
 }

@@ -17,14 +17,30 @@ package org.jetbrains.uast
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.uast.kotlin.KotlinAbstractUExpression
+import org.jetbrains.uast.kotlin.doConvertParent
 
-class KotlinUDeclarationsExpression(
+open class KotlinUDeclarationsExpression(
         override val psi: PsiElement?,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UDeclarationsExpression {
+        givenParent: UElement?,
+        val psiAnchor: PsiElement? = null
+) : KotlinAbstractUExpression(givenParent), UDeclarationsExpression {
+
+    override val sourcePsi: PsiElement?
+        get() = psiAnchor
+
+    override fun convertParent(): UElement? =
+            psiAnchor?.let { doConvertParent(this, it.parent) } ?: super.convertParent()
 
     constructor(uastParent: UElement?) : this(null, uastParent)
 
     override lateinit var declarations: List<UDeclaration>
         internal set
+}
+
+class KotlinUDestructuringDeclarationExpression(
+    givenParent: UElement?,
+    psiAnchor: PsiElement
+) : KotlinUDeclarationsExpression(null, givenParent, psiAnchor) {
+
+    val tempVarAssignment get() = declarations.first()
 }

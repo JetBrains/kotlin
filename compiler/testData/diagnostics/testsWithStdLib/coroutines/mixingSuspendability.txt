@@ -10,7 +10,7 @@ public interface AsyncVal {
 public final class MixSuspend : AsyncVal, SyncVal {
     public constructor MixSuspend()
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open suspend override /*1*/ /*fake_override*/ fun getVal(): kotlin.Int
+    public open override /*1*/ suspend /*fake_override*/ fun getVal(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }

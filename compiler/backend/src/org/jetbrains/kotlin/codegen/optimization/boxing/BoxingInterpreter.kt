@@ -36,12 +36,16 @@ import java.util.*
 open class BoxingInterpreter(private val insnList: InsnList) : OptimizationBasicInterpreter() {
     private val boxingPlaces = HashMap<Int, BoxedBasicValue>()
 
-    protected open fun createNewBoxing(insn: AbstractInsnNode, type: Type, progressionIterator: ProgressionIteratorBasicValue?): BasicValue =
-            boxingPlaces.getOrPut(insnList.indexOf(insn)) {
-                val boxedBasicValue = CleanBoxedValue(type, insn, progressionIterator)
-                onNewBoxedValue(boxedBasicValue)
-                boxedBasicValue
-            }
+    protected open fun createNewBoxing(
+        insn: AbstractInsnNode,
+        type: Type,
+        progressionIterator: ProgressionIteratorBasicValue?
+    ): BasicValue =
+        boxingPlaces.getOrPut(insnList.indexOf(insn)) {
+            val boxedBasicValue = CleanBoxedValue(type, insn, progressionIterator)
+            onNewBoxedValue(boxedBasicValue)
+            boxedBasicValue
+        }
 
     protected fun checkUsedValue(value: BasicValue) {
         if (value is TaintedBoxedValue) {
@@ -69,7 +73,7 @@ open class BoxingInterpreter(private val insnList: InsnList) : OptimizationBasic
                 ProgressionIteratorBasicValue.byProgressionClassType(firstArg.type)
             insn.isNextMethodCallOfProgressionIterator(values) -> {
                 val progressionIterator = firstArg as? ProgressionIteratorBasicValue
-                                          ?: throw AssertionError("firstArg should be progression iterator")
+                        ?: throw AssertionError("firstArg should be progression iterator")
                 createNewBoxing(insn, AsmUtil.boxType(progressionIterator.valuesPrimitiveType), progressionIterator)
             }
             insn.isAreEqualIntrinsicForSameTypedBoxedValues(values) && canValuesBeUnboxedForAreEqual(values) -> {
@@ -104,30 +108,30 @@ open class BoxingInterpreter(private val insnList: InsnList) : OptimizationBasic
     }
 
     protected open fun isExactValue(value: BasicValue) =
-            value is ProgressionIteratorBasicValue ||
-            value is CleanBoxedValue ||
-            value.type != null && isProgressionClass(value.type)
+        value is ProgressionIteratorBasicValue ||
+                value is CleanBoxedValue ||
+                value.type != null && isProgressionClass(value.type)
 
     override fun merge(v: BasicValue, w: BasicValue) =
-            when {
-                v == StrictBasicValue.UNINITIALIZED_VALUE || w == StrictBasicValue.UNINITIALIZED_VALUE ->
-                    StrictBasicValue.UNINITIALIZED_VALUE
-                v is BoxedBasicValue && w is BoxedBasicValue -> {
-                    onMergeSuccess(v, w)
-                    when {
-                        v is TaintedBoxedValue -> v
-                        w is TaintedBoxedValue -> w
-                        v.type != w.type -> v.taint()
-                        else -> v
-                    }
+        when {
+            v == StrictBasicValue.UNINITIALIZED_VALUE || w == StrictBasicValue.UNINITIALIZED_VALUE ->
+                StrictBasicValue.UNINITIALIZED_VALUE
+            v is BoxedBasicValue && w is BoxedBasicValue -> {
+                onMergeSuccess(v, w)
+                when {
+                    v is TaintedBoxedValue -> v
+                    w is TaintedBoxedValue -> w
+                    v.type != w.type -> v.taint()
+                    else -> v
                 }
-                v is BoxedBasicValue ->
-                    v.taint()
-                w is BoxedBasicValue ->
-                    w.taint()
-                else ->
-                    super.merge(v, w)
             }
+            v is BoxedBasicValue ->
+                v.taint()
+            w is BoxedBasicValue ->
+                w.taint()
+            else ->
+                super.merge(v, w)
+        }
 
     protected open fun onNewBoxedValue(value: BoxedBasicValue) {}
     protected open fun onUnboxing(insn: AbstractInsnNode, value: BoxedBasicValue, resultType: Type) {}
@@ -140,51 +144,51 @@ open class BoxingInterpreter(private val insnList: InsnList) : OptimizationBasic
 }
 
 private val UNBOXING_METHOD_NAMES =
-        ImmutableSet.of("booleanValue", "charValue", "byteValue", "shortValue", "intValue", "floatValue", "longValue", "doubleValue")
+    ImmutableSet.of("booleanValue", "charValue", "byteValue", "shortValue", "intValue", "floatValue", "longValue", "doubleValue")
 
 private val KCLASS_TO_JLCLASS = Type.getMethodDescriptor(AsmTypes.JAVA_CLASS_TYPE, AsmTypes.K_CLASS_TYPE)
 private val JLCLASS_TO_KCLASS = Type.getMethodDescriptor(AsmTypes.K_CLASS_TYPE, AsmTypes.JAVA_CLASS_TYPE)
 
 fun AbstractInsnNode.isUnboxing() =
-        isPrimitiveUnboxing() || isJavaLangClassUnboxing()
+    isPrimitiveUnboxing() || isJavaLangClassUnboxing()
 
 fun AbstractInsnNode.isBoxing() =
-        isPrimitiveBoxing() || isJavaLangClassBoxing()
+    isPrimitiveBoxing() || isJavaLangClassBoxing()
 
 fun AbstractInsnNode.isPrimitiveUnboxing() =
-        isMethodInsnWith(Opcodes.INVOKEVIRTUAL) {
-            isWrapperClassNameOrNumber(owner) && isUnboxingMethodName(name)
-        }
+    isMethodInsnWith(Opcodes.INVOKEVIRTUAL) {
+        isWrapperClassNameOrNumber(owner) && isUnboxingMethodName(name)
+    }
 
 fun AbstractInsnNode.isJavaLangClassUnboxing() =
-        isMethodInsnWith(Opcodes.INVOKESTATIC) {
-            owner == "kotlin/jvm/JvmClassMappingKt" &&
-            name == "getJavaClass" &&
-            desc == KCLASS_TO_JLCLASS
-        }
+    isMethodInsnWith(Opcodes.INVOKESTATIC) {
+        owner == "kotlin/jvm/JvmClassMappingKt" &&
+                name == "getJavaClass" &&
+                desc == KCLASS_TO_JLCLASS
+    }
 
 inline fun AbstractInsnNode.isMethodInsnWith(opcode: Int, condition: MethodInsnNode.() -> Boolean): Boolean =
-        this.opcode == opcode && this is MethodInsnNode && this.condition()
+    this.opcode == opcode && this is MethodInsnNode && this.condition()
 
 private fun isWrapperClassNameOrNumber(internalClassName: String) =
-        isWrapperClassName(internalClassName) || internalClassName == Type.getInternalName(Number::class.java)
+    isWrapperClassName(internalClassName) || internalClassName == Type.getInternalName(Number::class.java)
 
 private fun isWrapperClassName(internalClassName: String) =
-        JvmPrimitiveType.isWrapperClassName(buildFqNameByInternal(internalClassName))
+    JvmPrimitiveType.isWrapperClassName(buildFqNameByInternal(internalClassName))
 
 
 private fun buildFqNameByInternal(internalClassName: String) =
-        FqName(Type.getObjectType(internalClassName).className)
+    FqName(Type.getObjectType(internalClassName).className)
 
 private fun isUnboxingMethodName(name: String) =
-        UNBOXING_METHOD_NAMES.contains(name)
+    UNBOXING_METHOD_NAMES.contains(name)
 
 fun AbstractInsnNode.isPrimitiveBoxing() =
-        isMethodInsnWith(Opcodes.INVOKESTATIC) {
-            isWrapperClassName(owner) &&
-            name == "valueOf" &&
-            isBoxingMethodDescriptor()
-        }
+    isMethodInsnWith(Opcodes.INVOKESTATIC) {
+        isWrapperClassName(owner) &&
+                name == "valueOf" &&
+                isBoxingMethodDescriptor()
+    }
 
 private fun MethodInsnNode.isBoxingMethodDescriptor(): Boolean {
     val ownerType = Type.getObjectType(owner)
@@ -192,59 +196,58 @@ private fun MethodInsnNode.isBoxingMethodDescriptor(): Boolean {
 }
 
 fun AbstractInsnNode.isJavaLangClassBoxing() =
-        isMethodInsnWith(Opcodes.INVOKESTATIC) {
-            owner == AsmTypes.REFLECTION &&
-            name == "getOrCreateKotlinClass" &&
-            desc == JLCLASS_TO_KCLASS
-        }
+    isMethodInsnWith(Opcodes.INVOKESTATIC) {
+        owner == AsmTypes.REFLECTION &&
+                name == "getOrCreateKotlinClass" &&
+                desc == JLCLASS_TO_KCLASS
+    }
 
 fun AbstractInsnNode.isNextMethodCallOfProgressionIterator(values: List<BasicValue>) =
-        values.firstOrNull() is ProgressionIteratorBasicValue &&
-        isMethodInsnWith(Opcodes.INVOKEINTERFACE) {
-            name == "next"
-        }
+    values.firstOrNull() is ProgressionIteratorBasicValue &&
+            isMethodInsnWith(Opcodes.INVOKEINTERFACE) {
+                name == "next"
+            }
 
 fun AbstractInsnNode.isIteratorMethodCallOfProgression(values: List<BasicValue>) =
-        isMethodInsnWith(Opcodes.INVOKEINTERFACE) {
-            val firstArgType = values.firstOrNull()?.type
-            firstArgType != null &&
-            isProgressionClass(firstArgType) &&
-            name == "iterator"
-        }
+    isMethodInsnWith(Opcodes.INVOKEINTERFACE) {
+        val firstArgType = values.firstOrNull()?.type
+        firstArgType != null &&
+                isProgressionClass(firstArgType) &&
+                name == "iterator"
+    }
 
 fun isProgressionClass(type: Type) =
-        isRangeOrProgression(buildFqNameByInternal(type.internalName))
+    isRangeOrProgression(buildFqNameByInternal(type.internalName))
 
 fun AbstractInsnNode.isAreEqualIntrinsicForSameTypedBoxedValues(values: List<BasicValue>) =
-        isAreEqualIntrinsic() && areSameTypedBoxedValues(values)
+    isAreEqualIntrinsic() && areSameTypedBoxedValues(values)
 
 fun areSameTypedBoxedValues(values: List<BasicValue>): Boolean {
     if (values.size != 2) return false
     val (v1, v2) = values
     return v1 is BoxedBasicValue &&
-           v2 is BoxedBasicValue &&
-           v1.descriptor.unboxedType == v2.descriptor.unboxedType
+            v2 is BoxedBasicValue &&
+            v1.descriptor.unboxedType == v2.descriptor.unboxedType
 }
 
 fun AbstractInsnNode.isAreEqualIntrinsic() =
-        isMethodInsnWith(Opcodes.INVOKESTATIC) {
-            name == "areEqual" &&
-            owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
-            desc == "(Ljava/lang/Object;Ljava/lang/Object;)Z"
-        }
+    isMethodInsnWith(Opcodes.INVOKESTATIC) {
+        name == "areEqual" &&
+                owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
+                desc == "(Ljava/lang/Object;Ljava/lang/Object;)Z"
+    }
+
+private val shouldUseEqualsForWrappers = setOf(Type.DOUBLE_TYPE, Type.FLOAT_TYPE, AsmTypes.JAVA_CLASS_TYPE)
 
 fun canValuesBeUnboxedForAreEqual(values: List<BasicValue>): Boolean =
-        !values.any {
-            val unboxedType = getUnboxedType(it.type)
-            unboxedType == Type.DOUBLE_TYPE || unboxedType == Type.FLOAT_TYPE
-        }
+    values.none { getUnboxedType(it.type) in shouldUseEqualsForWrappers }
 
 fun AbstractInsnNode.isJavaLangComparableCompareToForSameTypedBoxedValues(values: List<BasicValue>) =
-        isJavaLangComparableCompareTo() && areSameTypedBoxedValues(values)
+    isJavaLangComparableCompareTo() && areSameTypedBoxedValues(values)
 
 fun AbstractInsnNode.isJavaLangComparableCompareTo() =
-        isMethodInsnWith(Opcodes.INVOKEINTERFACE) {
-            name == "compareTo" &&
-            owner == "java/lang/Comparable" &&
-            desc == "(Ljava/lang/Object;)I"
-        }
+    isMethodInsnWith(Opcodes.INVOKEINTERFACE) {
+        name == "compareTo" &&
+                owner == "java/lang/Comparable" &&
+                desc == "(Ljava/lang/Object;)I"
+    }

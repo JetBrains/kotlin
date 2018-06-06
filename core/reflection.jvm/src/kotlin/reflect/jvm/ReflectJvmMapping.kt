@@ -18,7 +18,6 @@
 package kotlin.reflect.jvm
 
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import java.lang.reflect.*
 import java.util.*
 import kotlin.reflect.*
@@ -29,6 +28,7 @@ import kotlin.reflect.jvm.internal.KPackageImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
 import kotlin.reflect.jvm.internal.asKCallableImpl
 import kotlin.reflect.jvm.internal.asKPropertyImpl
+import kotlin.reflect.jvm.internal.components.ReflectKotlinClass
 
 // Kotlin reflection -> Java reflection
 

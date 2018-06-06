@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 999
+// EXPECTED_REACHABLE_NODES: 1116
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/simple/severalClosures.1.kt

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.config
@@ -39,8 +28,16 @@ class AnalysisFlag<out T> internal constructor(
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, false)
         }
 
-        object Jsr305StateIgnoreByDefault {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, Jsr305State.IGNORE)
+        object Jsr305StateWarnByDefault {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, Jsr305State.DEFAULT)
+        }
+
+        object JvmDefaultModeDisabledByDefaul {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, org.jetbrains.kotlin.config.JvmDefaultMode.DISABLE)
+        }
+
+        object ListOfStrings {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Flag(property.name, emptyList<String>())
         }
     }
 
@@ -49,9 +46,27 @@ class AnalysisFlag<out T> internal constructor(
         val skipMetadataVersionCheck by Flag.Boolean
 
         @JvmStatic
-        val multiPlatformDoNotCheckImpl by Flag.Boolean
+        val multiPlatformDoNotCheckActual by Flag.Boolean
 
         @JvmStatic
-        val jsr305GlobalState by Flag.Jsr305StateIgnoreByDefault
+        val jsr305 by Flag.Jsr305StateWarnByDefault
+
+        @JvmStatic
+        val allowKotlinPackage by Flag.Boolean
+
+        @JvmStatic
+        val experimental by Flag.ListOfStrings
+
+        @JvmStatic
+        val useExperimental by Flag.ListOfStrings
+
+        @JvmStatic
+        val explicitApiVersion by Flag.Boolean
+
+        @JvmStatic
+        val ignoreDataFlowInAssert by Flag.Boolean
+
+        @JvmStatic
+        val jvmDefaultMode by Flag.JvmDefaultModeDisabledByDefaul
     }
 }

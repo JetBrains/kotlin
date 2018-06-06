@@ -1,0 +1,97 @@
+description = 'Kotlin Standard Library JDK 8 extension'
+
+apply plugin: 'kotlin'
+
+configureJvm6Project(project)
+configureDist(project)
+configurePublishing(project)
+ext.javaHome = JDK_18
+ext.jvmTarget = "1.8"
+
+dependencies {
+    compile project(':kotlin-stdlib')
+    compile project(':kotlin-stdlib-jdk7')
+    testCompile project(':kotlin-test:kotlin-test-junit')
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir 'src'
+        }
+    }
+    test {
+        kotlin {
+            srcDir 'test'
+            if(!System.properties.'idea.active') {
+                srcDir '../jvm/test'
+                srcDir '../common/test'
+                srcDir '../test'
+                srcDir '../jdk7/test'
+            }
+        }
+    }
+    java9 {
+        java {
+            srcDir 'java9'
+        }
+    }
+}
+
+jar {
+    manifestAttributes(manifest, project, 'Main', true)
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+dist {
+    from (jar, sourcesJar)
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    kotlinOptions.jdkHome = JDK_18
+    kotlinOptions.jvmTarget = 1.8
+}
+
+compileKotlin {
+    kotlinOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+            "-Xmultifile-parts-inherit",
+            "-Xnormalize-constructor-calls=enable",
+            "-module-name", project.name
+    ]
+}
+
+compileTestKotlin {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform"]
+}
+
+compileJava9Sources(project, 'kotlin.stdlib.jdk8')
+
+kotlin.experimental.coroutines 'enable'
+
+test {
+    executable = "$JDK_18/bin/java"
+}
+
+task testJdk6Tests(type: Test) {
+    dependsOn(':kotlin-stdlib:testClasses')
+    group = "verification"
+
+    executable = "$JDK_18/bin/java"
+
+    doFirst {
+        testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
+        classpath = files(
+                testClassesDirs,
+                configurations.testCompile
+        )
+    }
+}
+
+check.dependsOn testJdk6Tests

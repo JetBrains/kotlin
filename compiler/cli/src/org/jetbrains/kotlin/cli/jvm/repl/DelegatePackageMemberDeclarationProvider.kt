@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.repl
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
@@ -27,6 +28,8 @@ open class DelegatePackageMemberDeclarationProvider(var delegate: PackageMemberD
     override fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean) = delegate.getAllDeclaredSubPackages(nameFilter)
 
     override fun getPackageFiles() = delegate.getPackageFiles()
+
+    override fun containsFile(file: KtFile) = delegate.containsFile(file)
 
     override fun getDeclarations(kindFilter: DescriptorKindFilter,
                                  nameFilter: (Name) -> Boolean) = delegate.getDeclarations(kindFilter, nameFilter)
@@ -41,4 +44,6 @@ open class DelegatePackageMemberDeclarationProvider(var delegate: PackageMemberD
     override fun getClassOrObjectDeclarations(name: Name) = delegate.getClassOrObjectDeclarations(name)
 
     override fun getTypeAliasDeclarations(name: Name) = delegate.getTypeAliasDeclarations(name)
+
+    override fun getDeclarationNames() = delegate.getDeclarationNames()
 }

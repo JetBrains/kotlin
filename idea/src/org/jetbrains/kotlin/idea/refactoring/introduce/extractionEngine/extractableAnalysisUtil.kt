@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstruction
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -66,7 +66,6 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.DFS.*
@@ -76,7 +75,7 @@ internal val KotlinBuiltIns.defaultReturnType: KotlinType get() = unitType
 internal val KotlinBuiltIns.defaultParameterType: KotlinType get() = nullableAnyType
 
 private fun DeclarationDescriptor.renderForMessage(): String =
-        IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(this)
+        IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(this)
 
 private val TYPE_RENDERER = DescriptorRenderer.FQ_NAMES_IN_TYPES.withOptions {
     typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
@@ -514,7 +513,7 @@ internal class MutableParameter(
     private val defaultType: KotlinType by lazy {
         writable = false
         if (defaultTypes.isNotEmpty()) {
-            TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, defaultTypes)!!
+            TypeIntersector.intersectTypes(defaultTypes)!!
         }
         else originalType
     }
@@ -609,7 +608,9 @@ private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<In
 
 fun ExtractionData.isVisibilityApplicable(): Boolean {
     val parent = targetSibling.parent
-    return parent is KtClassBody || (parent is KtFile && !parent.isScript)
+    if (parent !is KtClassBody && (parent !is KtFile || parent.isScript())) return false
+    if (commonParent.parentsWithSelf.any { it is KtNamedFunction && it.hasModifier(KtTokens.INLINE_KEYWORD) && it.isPublic }) return false
+    return true
 }
 
 fun ExtractionData.getDefaultVisibility(): String {
@@ -712,12 +713,12 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             emptyList()
     )
 
-    val body = ExtractionGeneratorConfiguration(
+    val generatedDeclaration = ExtractionGeneratorConfiguration(
             descriptor,
             ExtractionGeneratorOptions(inTempFile = true, allowExpressionBody = false)
-    ).generateDeclaration().declaration.getGeneratedBody()
-    val virtualContext = body.analyzeFully()
-    if (virtualContext.diagnostics.all().any { it.factory == Errors.ILLEGAL_SUSPEND_FUNCTION_CALL }) {
+    ).generateDeclaration().declaration
+    val virtualContext = generatedDeclaration.analyzeWithContent()
+    if (virtualContext.diagnostics.all().any { it.factory == Errors.ILLEGAL_SUSPEND_FUNCTION_CALL || it.factory == Errors.ILLEGAL_SUSPEND_PROPERTY_ACCESS }) {
         descriptor = descriptor.copy(modifiers = listOf(KtTokens.SUSPEND_KEYWORD))
     }
 
@@ -785,8 +786,8 @@ fun ExtractableCodeDescriptor.validate(target: ExtractionTarget = ExtractionTarg
 
     val valueParameterList = (result.declaration as? KtNamedFunction)?.valueParameterList
     val typeParameterList = (result.declaration as? KtNamedFunction)?.typeParameterList
-    val body = result.declaration.getGeneratedBody()
-    val bindingContext = body.analyzeFully()
+    val generatedDeclaration = result.declaration
+    val bindingContext = generatedDeclaration.analyzeWithContent()
 
     fun processReference(currentRefExpr: KtSimpleNameExpression) {
         val resolveResult = currentRefExpr.resolveResult ?: return

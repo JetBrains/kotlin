@@ -1,0 +1,3 @@
+// "Replace with 'actual'" "true"
+
+public actual tailrec fun foo(n: Int): Int = if (n < 2) n else foo(n - 1)

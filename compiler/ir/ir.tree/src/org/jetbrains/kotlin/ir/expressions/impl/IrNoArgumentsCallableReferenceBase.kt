@@ -16,21 +16,20 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class IrNoArgumentsCallableReferenceBase(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-        override val origin: IrStatementOrigin? = null
-) : IrCallableReference,
-        IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArguments)
-{
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    typeArgumentsCount: Int,
+    origin: IrStatementOrigin? = null
+) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, 0, origin),
+    IrCallableReference {
+
     private fun throwNoValueArguments(): Nothing {
         throw UnsupportedOperationException("Property reference $descriptor has no value arguments")
     }

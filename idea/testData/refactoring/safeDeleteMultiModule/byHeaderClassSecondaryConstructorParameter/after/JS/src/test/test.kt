@@ -1,6 +1,6 @@
 package test
 
-impl class Foo() {
+actual class Foo() {
     val x = n + 1
     constructor(s: String): this(0)
 }

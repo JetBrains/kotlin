@@ -34,16 +34,14 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
+import org.jetbrains.kotlin.js.translate.utils.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtIsExpression;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collections;
@@ -81,10 +79,8 @@ public final class PatternTranslator extends AbstractTranslator {
         KtTypeReference typeReference = expression.getRight();
         assert typeReference != null: "Cast expression must have type reference";
 
-        KotlinType leftType = context().bindingContext().getType(left);
-        if (leftType != null && KotlinBuiltIns.isChar(leftType)) {
-            expressionToCast = JsAstUtils.charToBoxedChar(expressionToCast);
-        }
+        KotlinType anyType = context().getCurrentModule().getBuiltIns().getAnyType();
+        expressionToCast = TranslationUtils.coerce(context(), expressionToCast, anyType);
 
         TemporaryVariable temporary = context().declareTemporary(expressionToCast, expression);
         JsExpression isCheck = translateIsCheck(temporary.assignmentExpression(), typeReference);
@@ -96,18 +92,17 @@ public final class PatternTranslator extends AbstractTranslator {
             onFail = new JsNullLiteral();
         }
         else {
-            JsExpression throwCCEFunRef = Namer.throwClassCastExceptionFunRef();
+            JsExpression throwCCEFunRef = context().getReferenceToIntrinsic(Namer.THROW_CLASS_CAST_EXCEPTION_FUN_NAME);
             onFail = new JsInvocation(throwCCEFunRef);
         }
 
         JsExpression result = new JsConditional(isCheck, temporary.reference(), onFail);
 
-        KotlinType expressionType = context().bindingContext().getType(expression);
-        if (expressionType != null && KotlinBuiltIns.isCharOrNullableChar(expressionType)) {
-            result = JsAstUtils.boxedCharToChar(result);
+        KotlinType targetType = getTypeByReference(bindingContext(), typeReference);
+        if (isSafeCast(expression)) {
+            targetType = targetType.unwrap().makeNullableAsSpecified(true);
         }
-
-        return result;
+        return TranslationUtils.coerce(context(), result, targetType);
     }
 
     @NotNull
@@ -115,10 +110,8 @@ public final class PatternTranslator extends AbstractTranslator {
         KtExpression left = expression.getLeftHandSide();
         JsExpression expressionToCheck = Translation.translateAsExpression(left, context());
 
-        KotlinType leftType = context().bindingContext().getType(left);
-        if (leftType != null && KotlinBuiltIns.isChar(leftType)) {
-            expressionToCheck = JsAstUtils.charToBoxedChar(expressionToCheck);
-        }
+        KotlinType anyType = context().getCurrentModule().getBuiltIns().getAnyType();
+        expressionToCheck = TranslationUtils.coerce(context(), expressionToCheck, anyType);
 
         KtTypeReference typeReference = expression.getTypeReference();
         assert typeReference != null;
@@ -277,21 +270,31 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
     public JsExpression translateExpressionPattern(
-            @NotNull KotlinType type,
+            @NotNull KtExpression subjectExpression,
             @NotNull JsExpression expressionToMatch,
             @NotNull KtExpression patternExpression
     ) {
-        JsExpression expressionToMatchAgainst = translateExpressionForExpressionPattern(patternExpression);
-        KotlinType patternType = BindingUtils.getTypeForExpression(bindingContext(), patternExpression);
+        PrimitiveNumericComparisonInfo ieeeInfo = UtilsKt.getPrimitiveNumericComparisonInfo(context(), patternExpression);
 
-        EqualityType matchEquality = equalityType(type);
+        KotlinType subjectType, patternType;
+        if (ieeeInfo != null) {
+            subjectType = ieeeInfo.getLeftType();
+            patternType = ieeeInfo.getRightType();
+        } else {
+            subjectType = UtilsKt.getPrecisePrimitiveTypeNotNull(context(), subjectExpression);
+            patternType = UtilsKt.getPrecisePrimitiveTypeNotNull(context(), patternExpression);
+        }
+
+        EqualityType matchEquality = equalityType(subjectType);
         EqualityType patternEquality = equalityType(patternType);
+
+        JsExpression expressionToMatchAgainst = TranslationUtils.coerce(context(), translateExpressionForExpressionPattern(patternExpression), subjectType);
 
         if (matchEquality == EqualityType.PRIMITIVE && patternEquality == EqualityType.PRIMITIVE) {
             return equality(expressionToMatch, expressionToMatchAgainst);
         }
         else if (expressionToMatchAgainst instanceof JsNullLiteral) {
-            return TranslationUtils.nullCheck(expressionToMatch, false);
+            return TranslationUtils.nullCheck(subjectExpression, expressionToMatch, context(), false);
         }
         else {
             return TopLevelFIF.KOTLIN_EQUALS.apply(expressionToMatch, Collections.singletonList(expressionToMatchAgainst), context());

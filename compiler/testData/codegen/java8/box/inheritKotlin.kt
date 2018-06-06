@@ -7,7 +7,7 @@ interface Simple extends KInterface {
 }
 
 // FILE: main.kt
-
+// JVM_TARGET: 1.8
 interface KInterface {
     fun test(): String {
         return "base";

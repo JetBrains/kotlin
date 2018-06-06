@@ -19,5 +19,5 @@ fun baz(f: (Int, Boolean) -> String) {
     val f1 = lambda()
     foo { i -> f1(i, this) }
 
-    foo { i -> "${i + 1} ${this}" }
+    foo { i -> "${i + 1} $this" }
 }

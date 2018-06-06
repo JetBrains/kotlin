@@ -1,6 +1,6 @@
 package test
 
-impl open class Foo {
+actual open class Foo {
 }
 
 fun test() = Foo(1)

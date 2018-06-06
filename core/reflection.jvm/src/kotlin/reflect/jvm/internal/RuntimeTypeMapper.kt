@@ -27,40 +27,47 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
-import org.jetbrains.kotlin.load.java.structure.reflect.*
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Member
 import java.lang.reflect.Method
+import kotlin.reflect.jvm.internal.structure.*
 
 internal sealed class JvmFunctionSignature {
     abstract fun asString(): String
 
-    class KotlinFunction(val signature: String) : JvmFunctionSignature() {
-        val methodName: String get() = signature.substringBefore('(')
-        val methodDesc: String get() = signature.substring(signature.indexOf('('))
+    class KotlinFunction(val signature: JvmMemberSignature.Method) : JvmFunctionSignature() {
+        private val _signature = signature.asString()
 
-        override fun asString(): String = signature
+        val methodName: String get() = signature.name
+        val methodDesc: String get() = signature.desc
+
+        override fun asString(): String = _signature
     }
 
-    class KotlinConstructor(val signature: String) : JvmFunctionSignature() {
-        val constructorDesc: String get() = signature.substring(signature.indexOf('('))
+    class KotlinConstructor(val signature: JvmMemberSignature.Method) : JvmFunctionSignature() {
+        private val _signature = signature.asString()
 
-        override fun asString(): String = signature
+        val constructorDesc: String get() = signature.desc
+
+        override fun asString(): String = _signature
     }
 
     class JavaMethod(val method: Method) : JvmFunctionSignature() {
@@ -119,10 +126,8 @@ internal sealed class JvmPropertySignature {
             val containingDeclaration = descriptor.containingDeclaration
             if (descriptor.visibility == Visibilities.INTERNAL && containingDeclaration is DeserializedClassDescriptor) {
                 val classProto = containingDeclaration.classProto
-                val moduleName =
-                        if (classProto.hasExtension(JvmProtoBuf.classModuleName))
-                            nameResolver.getString(classProto.getExtension(JvmProtoBuf.classModuleName))
-                        else JvmAbi.DEFAULT_MODULE_NAME
+                val moduleName = classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(nameResolver::getString)
+                        ?: JvmAbi.DEFAULT_MODULE_NAME
                 return "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
             }
             if (descriptor.visibility == Visibilities.PRIVATE && containingDeclaration is PackageFragmentDescriptor) {
@@ -156,6 +161,8 @@ private val Method.signature: String
             returnType.desc
 
 internal object RuntimeTypeMapper {
+    private val JAVA_LANG_VOID = ClassId.topLevel(FqName("java.lang.Void"))
+
     fun mapSignature(possiblySubstitutedFunction: FunctionDescriptor): JvmFunctionSignature {
         // Fake overrides don't have a source element, so we need to take a declaration.
         // TODO: support the case when a fake override overrides several declarations with different signatures
@@ -207,14 +214,12 @@ internal object RuntimeTypeMapper {
         return when (property) {
             is DeserializedPropertyDescriptor -> {
                 val proto = property.proto
-                if (!proto.hasExtension(JvmProtoBuf.propertySignature)) {
-                    // If this property has no JVM signature, it must be from built-ins
-                    throw KotlinReflectionInternalError("Reflection on built-in Kotlin types is not yet fully supported. " +
-                                                        "No metadata found for $property")
-                }
-                JvmPropertySignature.KotlinProperty(
-                        property, proto, proto.getExtension(JvmProtoBuf.propertySignature), property.nameResolver, property.typeTable
-                )
+                val signature = proto.getExtensionOrNull(JvmProtoBuf.propertySignature)
+                        ?: // If this property has no JVM signature, it must be from built-ins
+                        throw KotlinReflectionInternalError(
+                            "Reflection on built-in Kotlin types is not yet fully supported. No metadata found for $property"
+                        )
+                JvmPropertySignature.KotlinProperty(property, proto, signature, property.nameResolver, property.typeTable)
             }
             is JavaPropertyDescriptor -> {
                 val element = (property.source as? JavaSourceElement)?.javaElement
@@ -262,6 +267,8 @@ internal object RuntimeTypeMapper {
             }
             return ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.array.toSafe())
         }
+
+        if (klass == Void.TYPE) return JAVA_LANG_VOID
 
         klass.primitiveType?.let {
             return ClassId(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, it.typeName)

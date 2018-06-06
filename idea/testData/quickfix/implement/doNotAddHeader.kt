@@ -1,7 +1,10 @@
 // "Implement members" "true"
-// WITH_RUNTIME
-// ERROR: Header declaration 'InterfaceWithFuns' has no implementation in module light_idea_test_case for JVM
-header interface InterfaceWithFuns {
+// ENABLE_MULTIPLATFORM
+// ERROR: Expected interface 'InterfaceWithFuns' has no actual declaration in module light_idea_test_case for JVM
+
+fun TODO(s: String): Nothing = null!!
+
+expect interface InterfaceWithFuns {
     fun funInInterface()
 }
 

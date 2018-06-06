@@ -1,0 +1,11 @@
+package
+
+public fun callsAndInverts(/*0*/ b: kotlin.Boolean, /*1*/ block: () -> kotlin.Unit): kotlin.Boolean
+    CallsInPlace(block, EXACTLY_ONCE)
+    Returns(TRUE) -> !b
+    Returns(FALSE) -> b
+
+public fun inPresenceOfLazy(/*0*/ x: kotlin.Any?, /*1*/ unknownBoolean: kotlin.Boolean): kotlin.Unit
+public fun isPresenceOfLazy2(/*0*/ x: kotlin.Any?, /*1*/ unknownBoolean: kotlin.Boolean): kotlin.Unit
+public fun isPresenceOfLazy3(/*0*/ x: kotlin.Any?, /*1*/ unknownBoolean: kotlin.Boolean): kotlin.Unit
+public fun smartcastAndInitialization(/*0*/ x: kotlin.Any?): kotlin.Unit

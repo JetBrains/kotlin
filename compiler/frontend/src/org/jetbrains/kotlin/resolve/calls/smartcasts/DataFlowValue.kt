@@ -28,9 +28,11 @@ private val KotlinType.immanentNullability: Nullability
  * This class describes an arbitrary object which has some value in data flow analysis.
  * In general case it's some r-value.
  */
-class DataFlowValue(val identifierInfo: IdentifierInfo,
-                    val type: KotlinType,
-                    val immanentNullability: Nullability = type.immanentNullability) {
+class DataFlowValue(
+    val identifierInfo: IdentifierInfo,
+    val type: KotlinType,
+    val immanentNullability: Nullability = type.immanentNullability
+) {
 
     val kind: Kind get() = identifierInfo.kind
 

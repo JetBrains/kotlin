@@ -1,3 +1,3 @@
 package test
 
-impl class ChildOfFoo : Foo()
+actual class ChildOfFoo : Foo()

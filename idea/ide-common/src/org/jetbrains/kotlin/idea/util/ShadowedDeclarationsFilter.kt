@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.util
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -24,12 +25,12 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -102,14 +103,13 @@ class ShadowedDeclarationsFilter(
         }
     }
 
-    private fun signature(descriptor: DeclarationDescriptor): Any {
-        return when (descriptor) {
-            is SimpleFunctionDescriptor -> FunctionSignature(descriptor)
-            is VariableDescriptor -> descriptor.name
-            is ClassDescriptor -> descriptor.importableFqName ?: descriptor
-            else -> descriptor
-        }
-    }
+    private fun signature(descriptor: DeclarationDescriptor): Any =
+            when (descriptor) {
+                is SimpleFunctionDescriptor -> FunctionSignature(descriptor)
+                is VariableDescriptor -> descriptor.name
+                is ClassDescriptor -> descriptor.importableFqName ?: descriptor
+                else -> descriptor
+            }
 
     private fun packageName(descriptor: DeclarationDescriptor) = descriptor.importableFqName?.parent()
 
@@ -119,14 +119,19 @@ class ShadowedDeclarationsFilter(
     ): Collection<TDescriptor> {
         if (descriptors.size == 1) return descriptors
 
-        val first = descriptors.first()
+        val first = descriptors.firstOrNull {
+            it is ClassDescriptor || it is ConstructorDescriptor || it is CallableDescriptor && !it.name.isSpecial
+        } ?: return descriptors
 
         if (first is ClassDescriptor) { // for classes with the same FQ-name we simply take the first one
-            return listOf<TDescriptor>(first)
+            return listOf(first)
         }
 
         val isFunction = first is FunctionDescriptor
-        val name = first.name
+        val name = when (first) {
+            is ConstructorDescriptor -> first.constructedClass.name
+            else -> first.name
+        }
         val parameters = (first as CallableDescriptor).valueParameters
 
         val dummyArgumentExpressions = dummyExpressionFactory.createDummyExpressions(parameters.size)
@@ -203,7 +208,8 @@ class ShadowedDeclarationsFilter(
         val dataFlowInfo = bindingContext.getDataFlowInfoBefore(context)
         val context = BasicCallResolutionContext.create(bindingTrace, scope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                                                        false)
+                                                        false, /* languageVersionSettings */ resolutionFacade.frontendService(),
+                                                        resolutionFacade.frontendService<DataFlowValueFactory>())
         val callResolver = resolutionFacade.frontendService<CallResolver>()
         val results = if (isFunction) callResolver.resolveFunctionCall(context) else callResolver.resolveSimpleProperty(context)
         val resultingDescriptors = results.resultingCalls.map { it.resultingDescriptor }

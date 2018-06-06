@@ -1,7 +1,7 @@
 // !CHECK_TYPE
 
 // FILE: Collections.java
-import java.util.List
+import java.util.List;
 
 public class Collections {
     public static final <T> List<T> emptyList() {

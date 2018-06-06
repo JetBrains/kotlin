@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -40,22 +40,24 @@ import org.jetbrains.kotlin.storage.getValue
  */
 
 class AnnotationSplitter(
-        val storageManager: StorageManager,
-        allAnnotations: Annotations,
-        applicableTargetsLazy: () -> Set<AnnotationUseSiteTarget>
+    val storageManager: StorageManager,
+    allAnnotations: Annotations,
+    applicableTargetsLazy: () -> Set<AnnotationUseSiteTarget>
 ) {
     companion object {
         private val TARGET_PRIORITIES = setOf(CONSTRUCTOR_PARAMETER, PROPERTY, FIELD)
 
-        @JvmStatic fun create(
-                storageManager: StorageManager,
-                annotations: Annotations,
-                targets: Set<AnnotationUseSiteTarget>
+        @JvmStatic
+        fun create(
+            storageManager: StorageManager,
+            annotations: Annotations,
+            targets: Set<AnnotationUseSiteTarget>
         ): AnnotationSplitter {
             return AnnotationSplitter(storageManager, annotations, { targets })
         }
 
-        @JvmStatic fun getTargetSet(parameter: Boolean, context: BindingContext, wrapper: PropertyWrapper): Set<AnnotationUseSiteTarget> {
+        @JvmStatic
+        fun getTargetSet(parameter: Boolean, context: BindingContext, wrapper: PropertyWrapper): Set<AnnotationUseSiteTarget> {
             val descriptor = wrapper.descriptor
             assert(descriptor != null)
             val hasBackingField = context[BindingContext.BACKING_FIELD_REQUIRED, descriptor] ?: false
@@ -63,8 +65,9 @@ class AnnotationSplitter(
             return getTargetSet(parameter, descriptor!!.isVar, hasBackingField, hasDelegate)
         }
 
-        @JvmStatic fun getTargetSet(
-                parameter: Boolean, isVar: Boolean, hasBackingField: Boolean, hasDelegate: Boolean
+        @JvmStatic
+        fun getTargetSet(
+            parameter: Boolean, isVar: Boolean, hasBackingField: Boolean, hasDelegate: Boolean
         ): Set<AnnotationUseSiteTarget> = hashSetOf(PROPERTY, PROPERTY_GETTER).apply {
             if (parameter) add(CONSTRUCTOR_PARAMETER)
             if (hasBackingField) add(FIELD)
@@ -132,7 +135,6 @@ class AnnotationSplitter(
         override fun findAnnotation(fqName: FqName) = annotations.findAnnotation(fqName)
         override fun getUseSiteTargetedAnnotations() = annotations.getUseSiteTargetedAnnotations()
         override fun getAllAnnotations() = annotations.getAllAnnotations()
-        override fun findExternalAnnotation(fqName: FqName) = annotations.findExternalAnnotation(fqName)
         override fun iterator() = annotations.iterator()
         override fun toString() = annotations.toString()
     }

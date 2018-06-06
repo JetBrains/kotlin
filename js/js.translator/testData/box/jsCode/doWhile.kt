@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 995
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1113
 package foo
 
 fun factorial(n: Int): Int = js("""

@@ -1,11 +1,15 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.text
 
+import test.*
 import kotlin.test.*
-import org.junit.Test
 
 class StringNumberConversionTest {
 
-    @kotlin.jvm.JvmVersion
     @Test fun toBoolean() {
         assertEquals(true, "true".toBoolean())
         assertEquals(true, "True".toBoolean())
@@ -89,12 +93,6 @@ class StringNumberConversionTest {
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { "37".toIntOrNull(radix = 37) }
     }
 
-    @JvmVersion
-    @Test fun toIntArabicDigits() {
-        compareConversion({ it.toInt() }, { it.toIntOrNull() }) {
-            assertProduces("٢٣١٩٦٠", 231960)
-        }
-    }
 
     @Test fun toLong() {
         compareConversion({it.toLong()}, {it.toLongOrNull()}) {
@@ -134,24 +132,6 @@ class StringNumberConversionTest {
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { "1".toLongOrNull(radix = 1) }
     }
 
-    @JvmVersion
-    @Test fun toLongArabicDigits() {
-        compareConversion({ it.toLong() }, { it.toLongOrNull() }) {
-            assertProduces("٢٣١٩٦٠٧٧٨٤٥٩", 231960778459)
-        }
-    }
-
-    @kotlin.jvm.JvmVersion
-    @Test fun toFloat() {
-        compareConversion(String::toFloat, String::toFloatOrNull) {
-            assertProduces("77.0", 77.0f)
-            assertProduces("-1e39", Float.NEGATIVE_INFINITY)
-            assertProduces("1000000000000000000000000000000000000000", Float.POSITIVE_INFINITY)
-            assertFailsOrNull("dark side")
-            assertFailsOrNull("")
-            assertFailsOrNull("   ")
-        }
-    }
 
     @Test fun toDouble() {
         compareConversion(String::toDouble, String::toDoubleOrNull, ::doubleTotalOrderEquals) {
@@ -174,17 +154,6 @@ class StringNumberConversionTest {
         }
     }
 
-    @kotlin.jvm.JvmVersion
-    @Test fun toHexDouble() {
-        compareConversion(String::toDouble, String::toDoubleOrNull, ::doubleTotalOrderEquals) {
-            assertProduces("0x77p1", (0x77 shl 1).toDouble())
-            assertProduces("0x.77P8", 0x77.toDouble())
-
-            assertFailsOrNull("0x77e1")
-        }
-    }
-
-    @kotlin.jvm.JvmVersion
     @Test fun byteToStringWithRadix() {
         assertEquals("7a", 0x7a.toByte().toString(16))
         assertEquals("-80", Byte.MIN_VALUE.toString(radix = 16))
@@ -195,7 +164,6 @@ class StringNumberConversionTest {
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1.toByte().toString(radix = 1) }
     }
 
-    @kotlin.jvm.JvmVersion
     @Test fun shortToStringWithRadix() {
         assertEquals("7FFF", 0x7FFF.toShort().toString(radix = 16).toUpperCase())
         assertEquals("-8000", (-0x8000).toShort().toString(radix = 16))
@@ -205,7 +173,6 @@ class StringNumberConversionTest {
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1.toShort().toString(radix = 1) }
     }
 
-    @kotlin.jvm.JvmVersion
     @Test fun intToStringWithRadix() {
         assertEquals("-ff", (-255).toString(radix = 16))
         assertEquals("1100110", 102.toString(radix = 2))
@@ -215,7 +182,6 @@ class StringNumberConversionTest {
 
     }
 
-    @kotlin.jvm.JvmVersion
     @Test fun longToStringWithRadix() {
         assertEquals("7f11223344556677", 0x7F11223344556677.toString(radix = 16))
         assertEquals("hazelnut", 1356099454469L.toString(radix = 36))
@@ -226,25 +192,32 @@ class StringNumberConversionTest {
     }
 }
 
+internal fun doubleTotalOrderEquals(a: Double?, b: Double?): Boolean = (a as Any?) == b
 
-private fun <T : Any> compareConversion(convertOrFail: (String) -> T,
-                                        convertOrNull: (String) -> T?,
-                                        equality: (T, T?) -> Boolean = { a, b -> a == b },
-                                        assertions: ConversionContext<T>.() -> Unit) {
+internal fun <T : Any> compareConversion(
+    convertOrFail: (String) -> T,
+    convertOrNull: (String) -> T?,
+    equality: (T, T?) -> Boolean = { a, b -> a == b },
+    assertions: ConversionContext<T>.() -> Unit
+) {
     ConversionContext(convertOrFail, convertOrNull, equality).assertions()
 }
 
 
-private fun <T : Any> compareConversionWithRadix(convertOrFail: String.(Int) -> T,
-                                                 convertOrNull: String.(Int) -> T?,
-                                                 assertions: ConversionWithRadixContext<T>.() -> Unit) {
+internal fun <T : Any> compareConversionWithRadix(
+    convertOrFail: String.(Int) -> T,
+    convertOrNull: String.(Int) -> T?,
+    assertions: ConversionWithRadixContext<T>.() -> Unit
+) {
     ConversionWithRadixContext(convertOrFail, convertOrNull).assertions()
 }
 
 
-private class ConversionContext<T: Any>(val convertOrFail: (String) -> T,
-                                        val convertOrNull: (String) -> T?,
-                                        val equality: (T, T?) -> Boolean) {
+internal class ConversionContext<T : Any>(
+    val convertOrFail: (String) -> T,
+    val convertOrNull: (String) -> T?,
+    val equality: (T, T?) -> Boolean
+) {
 
     private fun assertEquals(expected: T, actual: T?, input: String, operation: String) {
         assertTrue(equality(expected, actual), "Expected $operation('$input') to produce $expected but was $actual")
@@ -261,8 +234,10 @@ private class ConversionContext<T: Any>(val convertOrFail: (String) -> T,
     }
 }
 
-private class ConversionWithRadixContext<T: Any>(val convertOrFail: (String, Int) -> T,
-                                                 val convertOrNull: (String, Int) -> T?) {
+internal class ConversionWithRadixContext<T : Any>(
+    val convertOrFail: (String, Int) -> T,
+    val convertOrNull: (String, Int) -> T?
+) {
     fun assertProduces(radix: Int, input: String, output: T) {
         assertEquals(output, convertOrFail(input.removeLeadingPlusOnJava6(), radix))
         assertEquals(output, convertOrNull(input, radix))
@@ -275,13 +250,3 @@ private class ConversionWithRadixContext<T: Any>(val convertOrFail: (String, Int
         assertNull(convertOrNull(input, radix), message = "On input \"$input\" with radix $radix")
     }
 }
-
-@kotlin.jvm.JvmVersion
-private val isJava6 = System.getProperty("java.version").startsWith("1.6.")
-
-@kotlin.jvm.JvmVersion
-private fun String.removeLeadingPlusOnJava6(): String =
-        if (isJava6) removePrefix("+") else this
-
-@kotlin.jvm.JvmVersion
-private fun doubleTotalOrderEquals(a: Any?, b: Any?) = a == b

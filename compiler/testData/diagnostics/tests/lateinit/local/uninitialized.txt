@@ -1,0 +1,6 @@
+package
+
+public fun almostAlwaysTrue(): kotlin.Boolean
+public fun test1(): kotlin.Unit
+public fun test2(): kotlin.Unit
+public fun test3(): kotlin.Unit

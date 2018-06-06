@@ -1,7 +1,11 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.collections.js
 
 import kotlin.test.*
-import org.junit.Test
 import test.collections.*
 import test.collections.behaviors.*
 
@@ -25,6 +29,7 @@ class ComplexMapJsTest : MapJsTest() {
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.sorted()
     // hashMapOf returns ComlpexHashMap because it is Generic
     override fun emptyMutableMap(): MutableMap<String, Int> = genericHashMapOf()
+
     override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = genericHashMapOf()
 }
 
@@ -103,24 +108,33 @@ abstract class MapJsTest {
     val KEYS = listOf("zero", "one", "two", "three")
     val VALUES = arrayOf(0, 1, 2, 3).toList()
 
-    val SPECIAL_NAMES = arrayOf("__proto__", "constructor", "toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable")
+    val SPECIAL_NAMES = arrayOf(
+        "__proto__",
+        "constructor",
+        "toString",
+        "toLocaleString",
+        "valueOf",
+        "hasOwnProperty",
+        "isPrototypeOf",
+        "propertyIsEnumerable"
+    )
 
     @Test fun getOrElse() {
         val data = emptyMap()
-        val a = data.getOrElse("foo"){2}
+        val a = data.getOrElse("foo") { 2 }
         assertEquals(2, a)
 
-        val b = data.getOrElse("foo"){3}
+        val b = data.getOrElse("foo") { 3 }
         assertEquals(3, b)
         assertEquals(0, data.size)
     }
 
     @Test fun getOrPut() {
         val data = emptyMutableMap()
-        val a = data.getOrPut("foo"){2}
+        val a = data.getOrPut("foo") { 2 }
         assertEquals(2, a)
 
-        val b = data.getOrPut("foo"){3}
+        val b = data.getOrPut("foo") { 3 }
         assertEquals(2, b)
 
         assertEquals(1, data.size)

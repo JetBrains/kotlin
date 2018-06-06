@@ -21,16 +21,15 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 
-class CoroutinesIT: BaseGradleIT() {
+class CoroutinesIT : BaseGradleIT() {
     companion object {
-        private const val GRADLE_VERSION = "2.14.1"
         private const val LOCAL_PROPERTIES = "local.properties"
         private const val GRADLE_PROPERTIES = "gradle.properties"
     }
 
     @Test
     fun testCoroutinesProjectDSL() {
-        val project = Project("coroutinesProjectDSL", GRADLE_VERSION)
+        val project = Project("coroutinesProjectDSL")
         project.build("assemble") {
             assertSuccessful()
             assertContains("-Xcoroutines=enable")
@@ -98,10 +97,10 @@ class CoroutinesIT: BaseGradleIT() {
 
     // todo: replace with project that actually uses coroutines after their syntax is finalized
     private val jvmProject: Project
-            get() = Project("kotlinProject", GRADLE_VERSION)
+        get() = Project("kotlinProject")
 
     private val jsProject: Project
-            get() = Project("kotlin2JsProject", GRADLE_VERSION)
+        get() = Project("kotlin2JsProject")
 
     private fun Project.doTest(coroutineSupport: String, propertyFileName: String?) {
         if (propertyFileName != null) {

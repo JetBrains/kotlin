@@ -1,0 +1,12 @@
+package
+
+public val asList: kotlin.collections.List<kotlin.String>
+public val asStarList: kotlin.collections.List<*>
+public val asString: kotlin.String
+public val fromIs: kotlin.Boolean
+public val fromNoIs: kotlin.Boolean
+public val insideId: kotlin.String
+public val safeAs: kotlin.String?
+public val viaId: kotlin.String
+public fun </*0*/ T> foo(): T
+public fun </*0*/ V> id(/*0*/ value: V): V

@@ -1,4 +1,4 @@
 package headers.funs
 
 class NonHeaderClass
-header class HeaderClass
+expect class HeaderClass

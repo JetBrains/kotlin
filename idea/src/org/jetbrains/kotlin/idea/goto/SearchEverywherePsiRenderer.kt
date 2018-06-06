@@ -20,8 +20,7 @@ import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.presentation.java.SymbolPresentationUtil
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
@@ -29,7 +28,7 @@ import java.util.*
 import javax.swing.JList
 
 class KotlinSearchEverywherePsiRenderer(private val list: JList<*>) : DefaultPsiElementCellRenderer() {
-    private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+    private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
         parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
         modifiers = emptySet()
         startFromName = false
@@ -37,11 +36,13 @@ class KotlinSearchEverywherePsiRenderer(private val list: JList<*>) : DefaultPsi
 
     override fun getElementText(element: PsiElement?): String {
         if (element is KtNamedFunction) {
-            val descriptor = element.resolveToDescriptor() as FunctionDescriptor
-            return buildString {
-                descriptor.extensionReceiverParameter?.let { append(RENDERER.renderType(it.type)).append('.') }
-                append(element.name)
-                descriptor.valueParameters.joinTo(this, prefix = "(", postfix = ")") { RENDERER.renderType(it.type) }
+            val descriptor = element.resolveToDescriptorIfAny()
+            if (descriptor != null) {
+                return buildString {
+                    descriptor.extensionReceiverParameter?.let { append(RENDERER.renderType(it.type)).append('.') }
+                    append(element.name)
+                    descriptor.valueParameters.joinTo(this, prefix = "(", postfix = ")") { RENDERER.renderType(it.type) }
+                }
             }
         }
         return super.getElementText(element)

@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.config
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
@@ -73,6 +70,48 @@ object CoroutineSupport {
     }
 }
 
+sealed class VersionView : DescriptionAware {
+    abstract val version: LanguageVersion
+
+    object LatestStable : VersionView() {
+        override val version: LanguageVersion = LanguageVersion.LATEST_STABLE
+
+        override val description: String
+            get() = "Latest stable (${version.versionString})"
+    }
+
+    class Specific(override val version: LanguageVersion) : VersionView() {
+        override val description: String
+            get() = version.description
+
+        override fun equals(other: Any?) = other is Specific && version == other.version
+
+        override fun hashCode() = version.hashCode()
+    }
+
+    companion object {
+        fun deserialize(value: String?, isAutoAdvance: Boolean): VersionView {
+            if (isAutoAdvance) return VersionView.LatestStable
+            val languageVersion = LanguageVersion.fromVersionString(value)
+            return if (languageVersion != null) VersionView.Specific(languageVersion) else VersionView.LatestStable
+        }
+    }
+}
+
+var CommonCompilerArguments.languageVersionView: VersionView
+    get() = VersionView.deserialize(languageVersion, autoAdvanceLanguageVersion)
+    set(value) {
+        languageVersion = value.version.versionString
+        autoAdvanceLanguageVersion = value == VersionView.LatestStable
+    }
+
+var CommonCompilerArguments.apiVersionView: VersionView
+    get() = VersionView.deserialize(apiVersion, autoAdvanceApiVersion)
+    set(value) {
+        apiVersion = value.version.versionString
+        autoAdvanceApiVersion = value == VersionView.LatestStable
+    }
+
 class KotlinFacetSettings {
     companion object {
         // Increment this when making serialization-incompatible changes to configuration data
@@ -83,13 +122,35 @@ class KotlinFacetSettings {
     var version = CURRENT_VERSION
     var useProjectSettings: Boolean = true
 
+    var mergedCompilerArguments: CommonCompilerArguments? = null
+        private set
+
+    // TODO: Workaround for unwanted facet settings modification on code analysis
+    // To be replaced with proper API for settings update (see BaseKotlinCompilerSettings as an example)
+    fun updateMergedArguments() {
+        val compilerArguments = compilerArguments
+        val compilerSettings = compilerSettings
+
+        mergedCompilerArguments = if (compilerArguments != null) {
+            copyBean(compilerArguments).apply {
+                if (compilerSettings != null) {
+                    parseCommandLineArguments(compilerSettings.additionalArgumentsAsList, this)
+                }
+            }
+        }
+        else null
+    }
+
     var compilerArguments: CommonCompilerArguments? = null
         set(value) {
             field = value?.unfrozen() as CommonCompilerArguments?
+            updateMergedArguments()
         }
+
     var compilerSettings: CompilerSettings? = null
         set(value) {
             field = value?.unfrozen() as CompilerSettings?
+            updateMergedArguments()
         }
 
     var languageLevel: LanguageVersion?
@@ -130,6 +191,11 @@ class KotlinFacetSettings {
                 LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> CommonCompilerArguments.ERROR
             }
         }
+
+    var implementedModuleNames: List<String> = emptyList()
+
+    var productionOutputPath: String? = null
+    var testOutputPath: String? = null
 }
 
 fun TargetPlatformKind<*>.createCompilerArguments(init: CommonCompilerArguments.() -> Unit = {}): CommonCompilerArguments {

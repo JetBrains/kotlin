@@ -1,0 +1,7 @@
+open class Foo {
+    open fun simple() {
+    }
+}
+
+class Bar : Foo() {
+}

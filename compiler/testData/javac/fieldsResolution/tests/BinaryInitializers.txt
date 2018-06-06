@@ -1,0 +1,24 @@
+package
+
+package a {
+
+    public interface x {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public const final val B: kotlin.Byte = 127.toByte()
+        public const final val B2: kotlin.Byte = 124.toByte()
+        public const final val D: kotlin.Double = 1.7976931348623157E308.toDouble()
+        public const final val D2: kotlin.Double = 1.7976931348623157E308.toDouble()
+        public const final val F: kotlin.Float = 3.4028235E38.toFloat()
+        public const final val F2: kotlin.Float = 3.4028235E38.toFloat()
+        public const final val I: kotlin.Int = 2147483647
+        public const final val I2: kotlin.Int = 2147483605
+        public const final val L: kotlin.Long = 9223372036854775807.toLong()
+        public const final val L2: kotlin.Long = 9223372036849230465.toLong()
+        public const final val S: kotlin.Short = 32767.toShort()
+        public const final val S2: kotlin.Short = 32762.toShort()
+    }
+}

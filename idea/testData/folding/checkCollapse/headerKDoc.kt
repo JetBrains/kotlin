@@ -3,8 +3,8 @@
  */</fold>
 package some
 
-<fold text='/** Other ...*/' expand='true'>/**
- * Other
+<fold text='/** Other 1 * 2 ...*/' expand='true'>/**
+ * Other 1 * 2
  */</fold>
 
 // SET_TRUE: setCollapseFileHeader

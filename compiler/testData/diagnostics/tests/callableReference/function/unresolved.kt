@@ -1,4 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION, -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
+
 class A
 
 fun test1() {
@@ -17,6 +19,6 @@ fun test2() {
 
     <!UNRESOLVED_REFERENCE!>Unresolved<!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
     foo(<!UNRESOLVED_REFERENCE!>Unresolved<!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>)
-    foo(<!UNRESOLVED_REFERENCE!>Unresolved<!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved<!>)
+    foo(<!UNRESOLVED_REFERENCE!>Unresolved<!>::<!NI;UNRESOLVED_REFERENCE, OI;DEBUG_INFO_MISSING_UNRESOLVED!>unresolved<!>)
     ::<!UNRESOLVED_REFERENCE!>unresolved<!>
 }

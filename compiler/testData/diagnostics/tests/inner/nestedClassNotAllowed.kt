@@ -20,6 +20,6 @@ fun foo() {
 enum class E {
     E1 {
         // Not allowed in Java, but no reason to disallow in Kotlin
-        class D
+        <!NESTED_CLASS_DEPRECATED!>class D<!>
     }
 }

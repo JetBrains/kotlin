@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget;
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory;
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter;
@@ -79,6 +77,7 @@ public abstract class KotlinBuiltIns {
     private final NotNullLazyValue<PackageFragments> packageFragments;
 
     private final MemoizedFunctionToNotNull<Integer, ClassDescriptor> suspendFunctionClasses;
+    private final MemoizedFunctionToNotNull<Name, ClassDescriptor> builtInClassesByName;
 
     private final StorageManager storageManager;
 
@@ -133,6 +132,13 @@ public abstract class KotlinBuiltIns {
                         FunctionClassDescriptor.Kind.SuspendFunction,
                         arity
                 );
+            }
+        });
+
+        this.builtInClassesByName = storageManager.createMemoizedFunction(new Function1<Name, ClassDescriptor>() {
+            @Override
+            public ClassDescriptor invoke(Name name) {
+                return getBuiltInClassByName(name, getBuiltInsPackageFragment());
             }
         });
     }
@@ -277,8 +283,6 @@ public abstract class KotlinBuiltIns {
 
         public final FqNameUnsafe functionSupertype = fqNameUnsafe("Function");
 
-
-
         public final FqName throwable = fqName("Throwable");
         public final FqName comparable = fqName("Comparable");
 
@@ -327,6 +331,15 @@ public abstract class KotlinBuiltIns {
         public final FqNameUnsafe kMutableProperty1 = reflect("KMutableProperty1");
         public final FqNameUnsafe kMutableProperty2 = reflect("KMutableProperty2");
         public final ClassId kProperty = ClassId.topLevel(reflect("KProperty").toSafe());
+
+        public final FqName uByteFqName = fqName("UByte");
+        public final FqName uShortFqName = fqName("UShort");
+        public final FqName uIntFqName = fqName("UInt");
+        public final FqName uLongFqName = fqName("ULong");
+        public final ClassId uByte = ClassId.topLevel(uByteFqName);
+        public final ClassId uShort = ClassId.topLevel(uShortFqName);
+        public final ClassId uInt = ClassId.topLevel(uIntFqName);
+        public final ClassId uLong = ClassId.topLevel(uLongFqName);
 
         public final Set<Name> primitiveTypeShortNames = newHashSetWithExpectedSize(PrimitiveType.values().length);
         public final Set<Name> primitiveArrayTypeShortNames = newHashSetWithExpectedSize(PrimitiveType.values().length);
@@ -387,6 +400,15 @@ public abstract class KotlinBuiltIns {
         return packageFragments.invoke().builtInsPackageFragment;
     }
 
+    /**
+     * Checks if the given descriptor is declared in the deserialized built-in package fragment, i.e. if it was loaded as a part of
+     * loading .kotlin_builtins definition files.
+     *
+     * NOTE: this method returns false for descriptors loaded from .class files or other binaries, even if they are "built-in" in some
+     * other sense! For example, it returns false for the class descriptor of `kotlin.IntRange` loaded from `kotlin/IntRange.class`.
+     * In case you need to check if the class is "built-in" in another sense, you should probably do it by inspecting its FQ name,
+     * or the FQ name of its containing package.
+     */
     public static boolean isBuiltIn(@NotNull DeclarationDescriptor descriptor) {
         return DescriptorUtils.getParentOfType(descriptor, BuiltInsPackageFragment.class, false) != null;
     }
@@ -417,7 +439,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
-        return getBuiltInClassByName(simpleName, getBuiltInsPackageFragment());
+        return builtInClassesByName.invoke(simpleName);
     }
 
     @NotNull
@@ -566,29 +588,6 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getThrowable() {
         return getBuiltInClassByName("Throwable");
-    }
-
-    @Nullable
-    private static ClassDescriptor getEnumEntry(@NotNull ClassDescriptor enumDescriptor, @NotNull String entryName) {
-        ClassifierDescriptor result = enumDescriptor.getUnsubstitutedInnerClassesScope().getContributedClassifier(
-                Name.identifier(entryName), NoLookupLocation.FROM_BUILTINS
-        );
-        return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
-    }
-
-    @Nullable
-    public ClassDescriptor getDeprecationLevelEnumEntry(@NotNull String level) {
-        return getEnumEntry(getBuiltInClassByName(FQ_NAMES.deprecationLevel.shortName()), level);
-    }
-
-    @Nullable
-    public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull KotlinTarget target) {
-        return getEnumEntry(getAnnotationClassByName(FQ_NAMES.annotationTarget.shortName()), target.name());
-    }
-
-    @Nullable
-    public ClassDescriptor getAnnotationRetentionEnumEntry(@NotNull KotlinRetention retention) {
-        return getEnumEntry(getAnnotationClassByName(FQ_NAMES.annotationRetention.shortName()), retention.name());
     }
 
     @NotNull
@@ -868,6 +867,10 @@ public abstract class KotlinBuiltIns {
         return classFqNameEquals(descriptor, FQ_NAMES.array) || getPrimitiveArrayType(descriptor) != null;
     }
 
+    public static boolean isArrayOrPrimitiveArray(@NotNull KotlinType type) {
+        return isArray(type) || isPrimitiveArray(type);
+    }
+
     public static boolean isPrimitiveArray(@NotNull KotlinType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         return descriptor != null && getPrimitiveArrayType(descriptor) != null;
@@ -961,6 +964,10 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._long);
     }
 
+    public static boolean isLongOrNullableLong(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._long);
+    }
+
     public static boolean isShort(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._short);
     }
@@ -977,6 +984,22 @@ public abstract class KotlinBuiltIns {
         return isDoubleOrNullableDouble(type) && !type.isMarkedNullable();
     }
 
+    public static boolean isUByte(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.uByteFqName.toUnsafe());
+    }
+
+    public static boolean isUShort(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.uShortFqName.toUnsafe());
+    }
+
+    public static boolean isUInt(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.uIntFqName.toUnsafe());
+    }
+
+    public static boolean isULong(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.uLongFqName.toUnsafe());
+    }
+
     public static boolean isDoubleOrNullableDouble(@NotNull KotlinType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES._double);
     }
@@ -987,12 +1010,12 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isNothing(@NotNull KotlinType type) {
         return isNothingOrNullableNothing(type)
-               && !type.isMarkedNullable();
+               && !TypeUtils.isNullableType(type);
     }
 
     public static boolean isNullableNothing(@NotNull KotlinType type) {
         return isNothingOrNullableNothing(type)
-               && type.isMarkedNullable();
+               && TypeUtils.isNullableType(type);
     }
 
     public static boolean isNothingOrNullableNothing(@NotNull KotlinType type) {

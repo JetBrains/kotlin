@@ -1,0 +1,8 @@
+package test
+
+public abstract class ClassWithTypePExtendsIterableP</*0*/ P : kotlin.Any!> : kotlin.collections.MutableIterable<P!> {
+    public constructor ClassWithTypePExtendsIterableP</*0*/ P : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.Consumer<in P!>!): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.MutableIterator<P!>
+    public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<P!>
+}

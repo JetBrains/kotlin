@@ -36,11 +36,9 @@ open class SymbolBasedAnnotation(
             SymbolBasedAnnotationArgument.create(value.value, Name.identifier(key.simpleName.toString()), javac)
         }
 
-    override val classId: ClassId?
-        get() = (annotationMirror.annotationType.asElement() as? TypeElement)?.computeClassId()
+    override val classId: ClassId
+        get() = (annotationMirror.annotationType.asElement() as TypeElement).computeClassId()!!
 
-    override fun resolve() = with(annotationMirror.annotationType.asElement() as Symbol.ClassSymbol) {
-        SymbolBasedClass(this, javac, classfile)
-    }
+    override fun resolve() = with(annotationMirror.annotationType.asElement() as Symbol.ClassSymbol) { javac.findClass(classId) }
 
 }

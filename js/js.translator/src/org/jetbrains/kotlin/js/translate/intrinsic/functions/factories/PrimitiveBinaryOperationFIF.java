@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntri
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.RangeToIntrinsic;
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
@@ -109,8 +110,11 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     private static final DescriptorPredicate PRIMITIVE_NUMBERS_BINARY_OPERATIONS =
             pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, BINARY_OPERATIONS);
 
+    private static final DescriptorPredicate PRIMITIVE_INTEGRAL_NUMBERS_COMPARE_TO_INTEGRAL_OPERATIONS =
+            pattern("Byte|Short|Int.compareTo(Byte|Short|Int)");
     private static final DescriptorPredicate PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS =
             pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, "compareTo");
+
     private static final Predicate<FunctionDescriptor> INT_WITH_BIT_OPERATIONS = pattern("Int.or|and|xor|shl|shr|ushr")
             .or(pattern("Short|Byte.or|and|xor"));
     private static final DescriptorPredicate BOOLEAN_OPERATIONS = pattern("Boolean.or|and|xor");
@@ -134,15 +138,17 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
 
     @Nullable
     @Override
-    public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
+    public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
         if (CHAR_RANGE_TO.test(descriptor)) {
             return new RangeToIntrinsic(descriptor);
         }
 
-        if (PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS.test(descriptor)) {
+        if (PRIMITIVE_INTEGRAL_NUMBERS_COMPARE_TO_INTEGRAL_OPERATIONS.test(descriptor)) {
             return PRIMITIVE_NUMBER_COMPARE_TO_INTRINSIC;
         }
-
+        if (PRIMITIVE_NUMBERS_COMPARE_TO_OPERATIONS.test(descriptor)) {
+            return BUILTINS_COMPARE_TO_INTRINSIC;
+        }
 
         if (KotlinBuiltIns.isBuiltIn(descriptor) && descriptor.getName().equals(OperatorNameConventions.COMPARE_TO)) {
             return BUILTINS_COMPARE_TO_INTRINSIC;
@@ -190,14 +196,18 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         // Temporary hack to get '%' for deprecated 'mod' operator
         Name descriptorName = descriptor.getName().equals(OperatorNameConventions.MOD) ? OperatorNameConventions.REM : descriptor.getName();
 
+        switch (descriptorName.asString()) {
+            case "or":
+                return JsBinaryOperator.BIT_OR;
+            case "and":
+                return JsBinaryOperator.BIT_AND;
+            case "xor":
+                return JsBinaryOperator.BIT_XOR;
+            default:
+                break;
+        }
+
         KtToken token = OperatorConventions.BINARY_OPERATION_NAMES.inverse().get(descriptorName);
-        if (token == null) {
-            token = OperatorConventions.BOOLEAN_OPERATIONS.inverse().get(descriptorName);
-        }
-        if (token == null) {
-            assert descriptorName.asString().equals("xor");
-            return JsBinaryOperator.BIT_XOR;
-        }
         return OperatorTable.getBinaryOperator(token);
     }
 
@@ -283,7 +293,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         @NotNull
         @Override
         public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            return JsAstUtils.toChar(functionIntrinsic.doApply(left, right, context));
+            return AstUtilsKt.toChar(context, functionIntrinsic.doApply(left, right, context));
         }
     }
 

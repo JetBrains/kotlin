@@ -26,9 +26,9 @@ public interface MemberDescriptor extends DeclarationDescriptorNonRoot, Declarat
     @NotNull
     Visibility getVisibility();
 
-    boolean isHeader();
+    boolean isExpect();
 
-    boolean isImpl();
+    boolean isActual();
 
     boolean isExternal();
 }

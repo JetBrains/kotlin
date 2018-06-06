@@ -21,7 +21,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.intellij.openapi.util.Key;
 import com.intellij.util.keyFMap.KeyFMap;
-import gnu.trove.THashMap;
 import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +31,7 @@ import java.util.Map;
 public class SlicedMapImpl implements MutableSlicedMap {
 
     private final boolean alwaysAllowRewrite;
-    private final Map<Object, KeyFMap> map = new THashMap<>(0);
+    private final Map<Object, KeyFMap> map = new OpenAddressLinearProbingHashTable<>();
     private Multimap<WritableSlice<?, ?>, Object> collectiveSliceKeys = null;
 
     public SlicedMapImpl(boolean alwaysAllowRewrite) {
@@ -101,18 +100,15 @@ public class SlicedMapImpl implements MutableSlicedMap {
 
     @Override
     public void forEach(@NotNull Function3<WritableSlice, Object, Object, Void> f) {
-        for (Map.Entry<Object, KeyFMap> entry : map.entrySet()) {
-            Object key = entry.getKey();
-            KeyFMap holder = entry.getValue();
-
-            if (holder == null) continue;
+        map.forEach((key, holder) -> {
+            if (holder == null) return;
 
             for (Key<?> sliceKey : holder.getKeys()) {
                 Object value = holder.get(sliceKey);
 
                 f.invoke(((AbstractWritableSlice) sliceKey).getSlice(), key, value);
             }
-        }
+        });
     }
 
     @NotNull
@@ -120,17 +116,15 @@ public class SlicedMapImpl implements MutableSlicedMap {
     public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
         ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
 
-        for (Map.Entry<Object, KeyFMap> entry : map.entrySet()) {
-
-            KeyFMap holder = entry.getValue();
-
+        map.forEach((key, holder) -> {
             V value = holder.get(slice.getKey());
 
             if (value != null) {
                 //noinspection unchecked
-                builder.put((K) entry.getKey(), value);
+                builder.put((K) key, value);
             }
-        }
+        });
+
         return builder.build();
     }
 }

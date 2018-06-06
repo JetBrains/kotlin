@@ -28,8 +28,7 @@ val SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE: Key<Boolean> = Key.create<Boolean>("SUPP
 fun KtElement.suppressDiagnosticsInDebugMode(): Boolean {
     return if (this is KtFile) {
         this.suppressDiagnosticsInDebugMode
-    }
-    else {
+    } else {
         val file = this.containingFile
         file is KtFile && file.suppressDiagnosticsInDebugMode
     }
@@ -38,8 +37,7 @@ fun KtElement.suppressDiagnosticsInDebugMode(): Boolean {
 var KtFile.suppressDiagnosticsInDebugMode: Boolean
     get() = when (this) {
         is KtCodeFragment -> true
-        is KtFile -> getUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE) ?: false
-        else -> false
+        else -> getUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE) ?: false
     }
     set(skip) {
         putUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE, skip)

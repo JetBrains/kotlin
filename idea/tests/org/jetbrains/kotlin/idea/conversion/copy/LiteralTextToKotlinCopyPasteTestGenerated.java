@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.conversion.copy;
@@ -32,67 +21,61 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class LiteralTextToKotlinCopyPasteTestGenerated extends AbstractLiteralTextToKotlinCopyPasteTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInPlainTextLiteral() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/plainTextLiteral"), Pattern.compile("^([^\\.]+)\\.txt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("BrokenEntries.txt")
     public void testBrokenEntries() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/BrokenEntries.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextLiteral/BrokenEntries.txt");
     }
 
     @TestMetadata("MultiLine.txt")
     public void testMultiLine() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/MultiLine.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextLiteral/MultiLine.txt");
     }
 
     @TestMetadata("MultiLineToTripleQuotes.txt")
     public void testMultiLineToTripleQuotes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/MultiLineToTripleQuotes.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextLiteral/MultiLineToTripleQuotes.txt");
     }
 
     @TestMetadata("MultiQuotesToTripleQuotes.txt")
     public void testMultiQuotesToTripleQuotes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/MultiQuotesToTripleQuotes.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextLiteral/MultiQuotesToTripleQuotes.txt");
     }
 
     @TestMetadata("NoSpecialCharsToSingleQuote.txt")
     public void testNoSpecialCharsToSingleQuote() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/NoSpecialCharsToSingleQuote.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextLiteral/NoSpecialCharsToSingleQuote.txt");
     }
 
     @TestMetadata("TrailingLines.txt")
     public void testTrailingLines() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/TrailingLines.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextLiteral/TrailingLines.txt");
     }
 
     @TestMetadata("WithBackslashes.txt")
     public void testWithBackslashes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/WithBackslashes.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextLiteral/WithBackslashes.txt");
     }
 
     @TestMetadata("WithDollarSignToTripleQuotes.txt")
     public void testWithDollarSignToTripleQuotes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/WithDollarSignToTripleQuotes.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextLiteral/WithDollarSignToTripleQuotes.txt");
     }
 
     @TestMetadata("WithEntries.txt")
     public void testWithEntries() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/WithEntries.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextLiteral/WithEntries.txt");
     }
 
     @TestMetadata("WithQuotes.txt")
     public void testWithQuotes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextLiteral/WithQuotes.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextLiteral/WithQuotes.txt");
     }
 }

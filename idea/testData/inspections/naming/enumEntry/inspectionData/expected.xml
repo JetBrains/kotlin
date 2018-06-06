@@ -11,6 +11,6 @@
         <line>12</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-        <description>Enum entry name &lt;code&gt;quuxDoo&lt;/code&gt; doesn't match regex '[A-Z]([A-Za-z\d]*|[A-Z_\d]*)' #loc</description>
+        <description>Enum entry name &lt;code&gt;quuxDoo&lt;/code&gt; should start with an uppercase letter #loc</description>
     </problem>
 </problems>

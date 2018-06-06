@@ -34,7 +34,14 @@ fun createTestingCompilerEnvironment(
     val paths = PathUtil.kotlinPathsForDistDirectory
 
     val wrappedMessageCollector = MessageCollectorToOutputItemsCollectorAdapter(messageCollector, outputItemsCollector)
-    return JpsCompilerEnvironment(paths, services, KotlinBuilder.classesToLoadByParent, wrappedMessageCollector, outputItemsCollector)
+    return JpsCompilerEnvironment(
+        paths,
+        services,
+        KotlinBuilder.classesToLoadByParent,
+        wrappedMessageCollector,
+        outputItemsCollector,
+        MockProgressReporter
+    )
 }
 
 fun runJSCompiler(args: K2JSCompilerArguments, env: JpsCompilerEnvironment): ExitCode? {
@@ -46,4 +53,15 @@ fun runJSCompiler(args: K2JSCompilerArguments, env: JpsCompilerEnvironment): Exi
     val reader = BufferedReader(StringReader(stream.toString()))
     CompilerOutputParser.parseCompilerMessagesFromReader(env.messageCollector, reader, env.outputItemsCollector)
     return exitCode as? ExitCode
+}
+
+private object MockProgressReporter : ProgressReporter {
+    override fun progress(message: String) {
+    }
+
+    override fun compilationStarted() {
+    }
+
+    override fun clearProgress() {
+    }
 }

@@ -18,41 +18,85 @@ package org.jetbrains.kotlin.idea.compiler
 
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.util.Key
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.cli.common.arguments.Jsr305Parser
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.idea.caches.resolve.LibraryInfo
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.TargetPlatformVersion
+import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.targetPlatform
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.utils.Jsr305State
 
 object IDELanguageSettingsProvider : LanguageSettingsProvider {
     override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings =
-            when (moduleInfo) {
-                is ModuleSourceInfo -> moduleInfo.module.languageVersionSettings
-                is LibraryInfo -> project.getLanguageVersionSettings(extraAnalysisFlags = getExtraAnalysisFlags(project))
-                else -> project.getLanguageVersionSettings()
-            }
+        when (moduleInfo) {
+            is ModuleSourceInfo -> moduleInfo.module.languageVersionSettings
+            is LibraryInfo -> project.getLanguageVersionSettings(jsr305State = computeJsr305State(project))
+            is ScriptModuleInfo -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
+            is ScriptDependenciesInfo.ForFile -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
+            is PlatformModuleInfo -> moduleInfo.platformModule.module.languageVersionSettings
+            else -> project.getLanguageVersionSettings()
+        }
 
-    private fun getExtraAnalysisFlags(project: Project): Map<AnalysisFlag<*>, Any?> {
-        val map = mutableMapOf<AnalysisFlag<*>, Any>()
+    private fun computeJsr305State(project: Project): Jsr305State? {
+        var result: Jsr305State? = null
         for (module in ModuleManager.getInstance(project).modules) {
             val settings = KotlinFacetSettingsProvider.getInstance(project).getSettings(module) ?: continue
-            val compilerArguments = settings.compilerArguments as? K2JVMCompilerArguments ?: continue
+            val compilerArguments = settings.mergedCompilerArguments as? K2JVMCompilerArguments ?: continue
 
-            val jsr305state = Jsr305State.findByDescription(compilerArguments.jsr305GlobalState)
-            if (jsr305state != null && jsr305state != Jsr305State.IGNORE) {
-                map.put(AnalysisFlag.jsr305GlobalState, jsr305state)
-                break
-            }
+            result = Jsr305Parser(MessageCollector.NONE).parse(
+                compilerArguments.jsr305,
+                compilerArguments.supportCompatqualCheckerFrameworkAnnotations
+            )
+
         }
-        return map
+        return result
     }
 
     override fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion {
         return (moduleInfo as? ModuleSourceInfo)?.module?.targetPlatform?.version ?: TargetPlatformVersion.NoVersion
     }
+}
+
+private val LANGUAGE_VERSION_SETTINGS = Key.create<CachedValue<LanguageVersionSettings>>("LANGUAGE_VERSION_SETTINGS")
+
+private fun getVersionLanguageSettingsForScripts(project: Project, scriptDefinition: KotlinScriptDefinition): LanguageVersionSettings {
+    val args = scriptDefinition.additionalCompilerArguments
+    return if (args == null || args.none()) {
+        project.getLanguageVersionSettings()
+    } else {
+        val settings = scriptDefinition.getUserData(LANGUAGE_VERSION_SETTINGS) ?: createCachedValue(project) {
+            val compilerArguments = K2JVMCompilerArguments()
+            parseCommandLineArguments(args.toList(), compilerArguments)
+            // TODO: reporting
+            compilerArguments.configureLanguageVersionSettings(MessageCollector.NONE)
+        }.also { scriptDefinition.putUserData(LANGUAGE_VERSION_SETTINGS, it) }
+        settings.value
+    }
+}
+
+private fun createCachedValue(project: Project, body: () -> LanguageVersionSettings): CachedValue<LanguageVersionSettings> {
+    return CachedValuesManager
+        .getManager(project)
+        .createCachedValue(
+            {
+                CachedValueProvider.Result(
+                    body(),
+                    ProjectRootModificationTracker.getInstance(project)
+                )
+            }, false
+        )
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.ir;
@@ -32,106 +21,132 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IrOnlyBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+    }
+
     public void testAllFilesPresentInBox() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/box"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
     }
 
     @TestMetadata("classInitializers.kt")
     public void testClassInitializers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/classInitializers.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/box/classInitializers.kt");
     }
 
     @TestMetadata("enumClass.kt")
     public void testEnumClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/enumClass.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/box/enumClass.kt");
     }
 
     @TestMetadata("enumClass2.kt")
     public void testEnumClass2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/enumClass2.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/box/enumClass2.kt");
     }
 
     @TestMetadata("enumClass3.kt")
     public void testEnumClass3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/enumClass3.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/box/enumClass3.kt");
     }
 
     @TestMetadata("fileClassInitializers.kt")
     public void testFileClassInitializers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/fileClassInitializers.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/box/fileClassInitializers.kt");
     }
 
     @TestMetadata("objectClass.kt")
     public void testObjectClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/objectClass.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/box/objectClass.kt");
     }
 
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/simple.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/box/simple.kt");
     }
 
     @TestMetadata("compiler/testData/ir/box/closureConversion")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClosureConversion extends AbstractIrBlackBoxCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
         public void testAllFilesPresentInClosureConversion() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/box/closureConversion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
         @TestMetadata("closureConversion1.kt")
         public void testClosureConversion1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/closureConversion1.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/box/closureConversion/closureConversion1.kt");
         }
 
         @TestMetadata("closureConversion2.kt")
         public void testClosureConversion2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/closureConversion2.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/box/closureConversion/closureConversion2.kt");
         }
 
         @TestMetadata("closureConversion3.kt")
         public void testClosureConversion3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/closureConversion3.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/box/closureConversion/closureConversion3.kt");
         }
 
         @TestMetadata("closureConversion4.kt")
         public void testClosureConversion4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/closureConversion4.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/box/closureConversion/closureConversion4.kt");
         }
 
         @TestMetadata("innerClass1.kt")
         public void testInnerClass1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/innerClass1.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/box/closureConversion/innerClass1.kt");
         }
 
         @TestMetadata("innerClass2.kt")
         public void testInnerClass2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/innerClass2.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/box/closureConversion/innerClass2.kt");
         }
 
         @TestMetadata("mutable1.kt")
         public void testMutable1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/mutable1.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/box/closureConversion/mutable1.kt");
         }
 
         @TestMetadata("mutablePrimitives.kt")
         public void testMutablePrimitives() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/box/closureConversion/mutablePrimitives.kt");
-            doTest(fileName);
+            runTest("compiler/testData/ir/box/closureConversion/mutablePrimitives.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/ir/box/primitiveNumberComparisons")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PrimitiveNumberComparisons extends AbstractIrBlackBoxCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInPrimitiveNumberComparisons() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/box/primitiveNumberComparisons"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("comparableToDouble.kt")
+        public void testComparableToDouble() throws Exception {
+            runTest("compiler/testData/ir/box/primitiveNumberComparisons/comparableToDouble.kt");
+        }
+
+        @TestMetadata("doubleEqeq.kt")
+        public void testDoubleEqeq() throws Exception {
+            runTest("compiler/testData/ir/box/primitiveNumberComparisons/doubleEqeq.kt");
+        }
+
+        @TestMetadata("floatEqeq.kt")
+        public void testFloatEqeq() throws Exception {
+            runTest("compiler/testData/ir/box/primitiveNumberComparisons/floatEqeq.kt");
+        }
+
+        @TestMetadata("mixedNumberTypes.kt")
+        public void testMixedNumberTypes() throws Exception {
+            runTest("compiler/testData/ir/box/primitiveNumberComparisons/mixedNumberTypes.kt");
         }
     }
 }

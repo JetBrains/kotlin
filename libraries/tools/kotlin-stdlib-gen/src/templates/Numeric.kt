@@ -1,14 +1,26 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package templates
 
-import templates.Family.*
+object Numeric : TemplateGroupBase() {
 
-fun numeric(): List<GenericFunction> {
-    val templates = arrayListOf<GenericFunction>()
+    init {
+        defaultBuilder {
+            sequenceClassification(SequenceClass.terminal)
+        }
+    }
 
-    templates add f("sum()") {
-        exclude(Strings)
-        buildFamilies.default!!.forEach { family -> onlyPrimitives(family, numericPrimitives) }
-        doc { f -> "Returns the sum of all elements in the ${f.collection}." }
+    // TODO: use just numericPrimitives
+    private val numericPrimitivesDefaultOrder = PrimitiveType.defaultPrimitives intersect PrimitiveType.numericPrimitives
+
+    val f_sum = fn("sum()") {
+        Family.defaultFamilies.forEach { family -> include(family, numericPrimitivesDefaultOrder) }
+    } builder {
+
+        doc { "Returns the sum of all elements in the ${f.collection}." }
         returns("SUM")
         platformName("sumOf<T>")
         body {
@@ -22,10 +34,10 @@ fun numeric(): List<GenericFunction> {
         }
     }
 
-    templates add f("average()") {
-        exclude(Strings)
-        buildFamilies.default!!.forEach { family -> onlyPrimitives(family, numericPrimitives) }
-        doc { f -> "Returns an average value of elements in the ${f.collection}."}
+    val f_average = fn("average()") {
+        Family.defaultFamilies.forEach { family -> include(family, numericPrimitivesDefaultOrder) }
+    } builder {
+        doc { "Returns an average value of elements in the ${f.collection}."}
         returns("Double")
         platformName("averageOf<T>")
         body {
@@ -41,7 +53,4 @@ fun numeric(): List<GenericFunction> {
         }
     }
 
-    templates.forEach { it.sequenceClassification(SequenceClass.terminal) }
-
-    return templates
 }

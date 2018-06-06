@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.idea.completion.test
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
+import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import java.io.File
 
@@ -38,6 +39,8 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
 
         try {
             val fileText = FileUtil.loadFile(File(testPath), true)
+            configureCompilerOptions(fileText, project, module)
+
             assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"));
 
             if (ExpectedCompletionUtils.shouldRunHighlightingBeforeCompletion(fileText)) {

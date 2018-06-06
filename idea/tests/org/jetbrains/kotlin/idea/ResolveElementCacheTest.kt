@@ -21,9 +21,9 @@ import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
@@ -355,7 +355,7 @@ class C(param1: String = "", param2: Int = 0) {
 
         val function = file.declarations[0] as KtNamedFunction
         val functionType = function.valueParameters.first().typeReference!!.typeElement as KtFunctionType
-        val descriptorsForParameters = functionType.parameters.map { it.resolveToDescriptor() }
+        val descriptorsForParameters = functionType.parameters.map { it.unsafeResolveToDescriptor() }
 
         assert(
                 listOf("key", "next", SpecialNames.NO_NAME_PROVIDED.asString()) ==
@@ -389,7 +389,10 @@ class C(param1: String = "", param2: Int = 0) {
         """) as KtFile
 
         val defaultValue = ((file.declarations[0]) as KtClass).getPrimaryConstructor()!!.valueParameters[0].defaultValue!!
-        defaultValue.analyzeFullyAndGetResult()
+        // Kept to preserve correct behaviour of analyzeFully() on class internal elements
+
+        @Suppress("DEPRECATION")
+        defaultValue.analyzeWithAllCompilerChecks()
     }
 
     fun testPrimaryConstructorAnnotationFullAnalysis() {
@@ -398,7 +401,9 @@ class C(param1: String = "", param2: Int = 0) {
         """) as KtFile
 
         val annotationArguments = ((file.declarations[0]) as KtClass).getPrimaryConstructor()!!.annotationEntries[0].valueArgumentList!!
-        annotationArguments.analyzeFullyAndGetResult()
+
+        @Suppress("DEPRECATION")
+        annotationArguments.analyzeWithAllCompilerChecks()
     }
 
     fun testFunctionParameterAnnotation() {

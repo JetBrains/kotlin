@@ -8,16 +8,17 @@
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>idl2k</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
 
     <properties>
         <kotlin.version>${project.version}</kotlin.version>
         <antlr.version>4.5.3</antlr.version>
+        <idl2k.deploy.skip>true</idl2k.deploy.skip>
     </properties>
 
     <dependencies>
@@ -118,7 +119,7 @@
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <configuration>
-                    <skip>true</skip>
+                    <skip>${idl2k.deploy.skip}</skip>
                 </configuration>
             </plugin>
         </plugins>

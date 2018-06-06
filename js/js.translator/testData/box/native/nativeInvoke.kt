@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 998
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1116
 package foo
 
 external class Function(vararg argsAndCode: String) {

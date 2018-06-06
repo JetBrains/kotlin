@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 
 class DependenciesCollector {
     private val modulesForDependencyDescriptors = LinkedHashSet<ModuleDescriptor>()
@@ -31,15 +29,20 @@ class DependenciesCollector {
     val dependencyModules: Collection<ModuleDescriptor> get() = modulesForDependencyDescriptors
 
     fun getPackageFragments(moduleDescriptor: ModuleDescriptor): Collection<PackageFragmentDescriptor> =
-            packageFragmentsForDependencyDescriptors[moduleDescriptor] ?: emptyList()
+        packageFragmentsForDependencyDescriptors[moduleDescriptor] ?: emptyList()
 
     fun getTopLevelDescriptors(packageFragmentDescriptor: PackageFragmentDescriptor): Collection<DeclarationDescriptor> =
-            topLevelDescriptors[packageFragmentDescriptor] ?: emptyList()
+        topLevelDescriptors[packageFragmentDescriptor] ?: emptyList()
+
+    val isEmpty get() = topLevelDescriptors.isEmpty()
 
     fun collectTopLevelDescriptorsForUnboundSymbols(symbolTable: SymbolTable) {
         assert(symbolTable.unboundTypeParameters.isEmpty()) { "Unbound type parameters: ${symbolTable.unboundTypeParameters}" }
         assert(symbolTable.unboundValueParameters.isEmpty()) { "Unbound value parameters: ${symbolTable.unboundValueParameters}" }
         assert(symbolTable.unboundVariables.isEmpty()) { "Unbound variables: ${symbolTable.unboundVariables}" }
+
+        symbolTable.markOverriddenFunctionsForUnboundFunctionsReferenced()
+        symbolTable.markSuperClassesForUnboundClassesReferenced()
 
         symbolTable.unboundClasses.addTopLevelDeclarations()
         symbolTable.unboundConstructors.addTopLevelDeclarations()
@@ -48,22 +51,56 @@ class DependenciesCollector {
         symbolTable.unboundSimpleFunctions.addTopLevelDeclarations()
     }
 
+    private fun SymbolTable.markOverriddenFunctionsForUnboundFunctionsReferenced() {
+        for (unboundFunction in unboundSimpleFunctions.toTypedArray()) {
+            markOverriddenFunctionsReferenced(unboundFunction.descriptor, HashSet())
+        }
+    }
+
+    private fun SymbolTable.markOverriddenFunctionsReferenced(
+        function: FunctionDescriptor,
+        visitedFunctions: MutableSet<FunctionDescriptor>
+    ) {
+        for (overridden in function.overriddenDescriptors) {
+            if (overridden !in visitedFunctions) {
+                visitedFunctions.add(overridden)
+                referenceFunction(overridden.original)
+                markOverriddenFunctionsReferenced(overridden, visitedFunctions)
+            }
+        }
+    }
+
+    private fun SymbolTable.markSuperClassesForUnboundClassesReferenced() {
+        for (unboundClass in unboundClasses.toTypedArray()) {
+            for (superClassifier in unboundClass.descriptor.getAllSuperClassifiers()) {
+                if (superClassifier is ClassDescriptor) {
+                    referenceClass(superClassifier)
+                }
+            }
+        }
+    }
+
     private fun Collection<IrSymbol>.addTopLevelDeclarations() {
-        forEach { addTopLevelDeclaration(it) }
+        forEach {
+            getTopLevelDeclaration(it.descriptor)?.let { addTopLevelDescriptor(it) }
+        }
     }
 
-    fun addTopLevelDeclaration(symbol: IrSymbol) {
-        val descriptor = symbol.descriptor
-        val topLevelDeclaration = getTopLevelDeclaration(descriptor)
-        addTopLevelDescriptor(topLevelDeclaration)
-    }
-
-    private fun getTopLevelDeclaration(descriptor: DeclarationDescriptor): DeclarationDescriptor {
+    private fun getTopLevelDeclaration(descriptor: DeclarationDescriptor): DeclarationDescriptor? {
         val containingDeclaration = descriptor.containingDeclaration
         return when (containingDeclaration) {
             is PackageFragmentDescriptor -> descriptor
             is ClassDescriptor -> getTopLevelDeclaration(containingDeclaration)
-            else -> throw AssertionError("Package or class expected: $containingDeclaration")
+            else ->
+                if (descriptor is PropertyAccessorDescriptor &&
+                    descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
+                    containingDeclaration is ModuleDescriptor
+                ) {
+                    //skip synthetic java properties
+                    null
+                } else {
+                    throw AssertionError("Package or class expected: $containingDeclaration; for $descriptor")
+                }
         }
     }
 

@@ -1,50 +1,63 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.tools
 
+import kotlinx.metadata.jvm.JvmFieldSignature
+import kotlinx.metadata.jvm.JvmMethodSignature
 import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
-import java.io.File
 import java.io.InputStream
 import java.util.jar.JarFile
 
 fun main(args: Array<String>) {
-    var src = args[0]
+    val src = args[0]
     println(src)
     println("------------------\n");
-    val visibilities = readKotlinVisibilities(File("""stdlib/target/stdlib-declarations.json"""))
-    getBinaryAPI(JarFile(src), visibilities).filterOutNonPublic().dump()
+    getBinaryAPI(JarFile(src)).filterOutNonPublic().dump()
 }
 
 
-fun JarFile.classEntries() = entries().asSequence().filter { !it.isDirectory && it.name.endsWith(".class") }
+fun JarFile.classEntries() = Sequence { entries().iterator() }.filter {
+    !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
+}
 
+fun getBinaryAPI(jar: JarFile, visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> =
+    getBinaryAPI(jar.classEntries().map { entry -> jar.getInputStream(entry) }, visibilityFilter)
 
-fun getBinaryAPI(jar: JarFile, visibilityMap: Map<String, ClassVisibility>): List<ClassBinarySignature> =
-        getBinaryAPI(jar.classEntries().map { entry -> jar.getInputStream(entry) }, visibilityMap)
+fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> {
+    val classNodes = classStreams.map { it.use { stream ->
+            val classNode = ClassNode()
+            ClassReader(stream).accept(classNode, ClassReader.SKIP_CODE)
+            classNode
+    }}
 
-fun getBinaryAPI(classStreams: Sequence<InputStream>, visibilityMap: Map<String, ClassVisibility>): List<ClassBinarySignature> =
-        classStreams.map { it.use { stream ->
-                val classNode = ClassNode()
-                ClassReader(stream).accept(classNode, ClassReader.SKIP_CODE)
-                classNode
-            }
-        }
+    val visibilityMapNew = classNodes.readKotlinVisibilities().filterKeys(visibilityFilter)
+
+    return classNodes
         .map { with(it) {
-            val classVisibility = visibilityMap[name]
-            val classAccess = AccessFlags(effectiveAccess and Opcodes.ACC_STATIC.inv())
+                val metadata = kotlinMetadata
+                val mVisibility = visibilityMapNew[name]
+                val classAccess = AccessFlags(effectiveAccess and Opcodes.ACC_STATIC.inv())
 
-            val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
+                val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
 
-            val memberSignatures = (
-                    fields.map { with(it) { FieldBinarySignature(name, desc, isPublishedApi(), AccessFlags(access)) } } +
-                    methods.map { with(it) { MethodBinarySignature(name, desc, isPublishedApi(), AccessFlags(access)) } }
-            ).filter {
-                it.isEffectivelyPublic(classAccess, classVisibility)
-            }
+                val memberSignatures = (
+                        fields.map { with(it) { FieldBinarySignature(JvmFieldSignature(name, desc), isPublishedApi(), AccessFlags(access)) } } +
+                        methods.map { with(it) { MethodBinarySignature(JvmMethodSignature(name, desc), isPublishedApi(), AccessFlags(access)) } }
+                ).filter {
+                    it.isEffectivelyPublic(classAccess, mVisibility)
+                }
 
-            ClassBinarySignature(name, superName, outerClassName, supertypes, memberSignatures, classAccess, isEffectivelyPublic(classVisibility), isFileOrMultipartFacade() || isDefaultImpls())
+                ClassBinarySignature(name, superName, outerClassName, supertypes, memberSignatures, classAccess,
+                                     isEffectivelyPublic(mVisibility), metadata.isFileOrMultipartFacade() || isDefaultImpls(metadata)
+                )
         }}
         .asIterable()
         .sortedBy { it.name }
+}
 
 
 
@@ -53,14 +66,14 @@ fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: List<String
     val classByName = associateBy { it.name }
 
     fun ClassBinarySignature.isInNonPublicPackage() =
-            nonPublicPaths.any { name.startsWith(it) }
+        nonPublicPaths.any { name.startsWith(it) }
 
     fun ClassBinarySignature.isPublicAndAccessible(): Boolean =
-            isEffectivelyPublic &&
-                    (outerName == null || classByName[outerName]?.let { outerClass ->
-                        !(this.access.isProtected && outerClass.access.isFinal)
-                                && outerClass.isPublicAndAccessible()
-                    } ?: true)
+        isEffectivelyPublic &&
+                (outerName == null || classByName[outerName]?.let { outerClass ->
+                    !(this.access.isProtected && outerClass.access.isFinal)
+                            && outerClass.isPublicAndAccessible()
+                } ?: true)
 
     fun supertypes(superName: String) = generateSequence({ classByName[superName] }, { classByName[it.superName] })
 
@@ -77,15 +90,15 @@ fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: List<String
     }
 
     return filter { !it.isInNonPublicPackage() && it.isPublicAndAccessible() }
-            .map { it.flattenNonPublicBases() }
-            .filterNot { it.isNotUsedWhenEmpty && it.memberSignatures.isEmpty()}
+        .map { it.flattenNonPublicBases() }
+        .filterNot { it.isNotUsedWhenEmpty && it.memberSignatures.isEmpty()}
 }
 
 fun List<ClassBinarySignature>.dump() = dump(to = System.out)
 
-fun <T: Appendable> List<ClassBinarySignature>.dump(to: T): T = to.apply { this@dump.forEach {
-    append(it.signature).appendln(" {")
-    it.memberSignatures.sortedWith(MEMBER_SORT_ORDER).forEach { append("\t").appendln(it.signature) }
-    appendln("}\n")
+fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T = to.apply { this@dump.forEach {
+        append(it.signature).appendln(" {")
+        it.memberSignatures.sortedWith(MEMBER_SORT_ORDER).forEach { append("\t").appendln(it.signature) }
+        appendln("}\n")
 }}
 

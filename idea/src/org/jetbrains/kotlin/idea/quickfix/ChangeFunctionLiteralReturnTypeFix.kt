@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -42,8 +41,8 @@ class ChangeFunctionLiteralReturnTypeFix(
         type: KotlinType
 ) : KotlinQuickFixAction<KtLambdaExpression>(functionLiteralExpression) {
 
-    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_TYPES_WITH_SHORT_NAMES.renderType(type)
+    private val typeSourceCode = IdeDescriptorRenderers.SOURCE_CODE_TYPES.renderType(type)
     private val functionLiteralReturnTypeRef: KtTypeReference?
         get() = element?.functionLiteral?.typeReference
     private val appropriateQuickFix = createAppropriateQuickFix(functionLiteralExpression, type)
@@ -107,9 +106,8 @@ class ChangeFunctionLiteralReturnTypeFix(
 
     override fun getFamilyName() = KotlinBundle.message("change.type.family")
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        return super.isAvailable(project, editor, file)
-               && (functionLiteralReturnTypeRef != null || appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor!!, file))
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
+        return functionLiteralReturnTypeRef != null || appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor!!, file)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

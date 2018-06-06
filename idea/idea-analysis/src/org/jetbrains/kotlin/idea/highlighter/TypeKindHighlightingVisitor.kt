@@ -57,6 +57,9 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
             else if (referenceTarget is TypeParameterDescriptor) {
                 highlightName(expression, TYPE_PARAMETER)
             }
+            else if (referenceTarget is TypeAliasDescriptor) {
+                highlightName(expression, TYPE_ALIAS)
+            }
         }
     }
 
@@ -86,9 +89,20 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
         val identifier = classOrObject.nameIdentifier
         val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject)
         if (identifier != null && classDescriptor != null) {
+            if (applyHighlighterExtensions(identifier, classDescriptor)) return
             highlightName(identifier, textAttributesKeyForClass(classDescriptor))
         }
         super.visitClassOrObject(classOrObject)
+    }
+
+    override fun visitTypeAlias(typeAlias: KtTypeAlias) {
+        val identifier = typeAlias.nameIdentifier
+        val descriptor = bindingContext.get(BindingContext.TYPE_ALIAS, typeAlias)
+        if (identifier != null && descriptor != null) {
+            if (applyHighlighterExtensions(identifier, descriptor)) return
+            highlightName(identifier, TYPE_ALIAS)
+        }
+        super.visitTypeAlias(typeAlias)
     }
 
     override fun visitDynamicType(type: KtDynamicType) {

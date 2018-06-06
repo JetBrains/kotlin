@@ -1,6 +1,6 @@
 package test
 
-header class C {
+expect class C {
     fun /*rename*/foo()
     fun foo(n: Int)
     fun bar(n: Int)

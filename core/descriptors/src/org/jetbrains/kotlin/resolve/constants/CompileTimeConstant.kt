@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.types.*
 
 interface CompileTimeConstant<out T> {
@@ -38,22 +40,31 @@ interface CompileTimeConstant<out T> {
 
     val isPure: Boolean get() = parameters.isPure
 
+    val isUnsignedNumberLiteral: Boolean get() = parameters.isUnsignedNumberLiteral
+
     class Parameters(
-            val canBeUsedInAnnotation: Boolean,
-            val isPure: Boolean,
-            val usesVariableAsConstant: Boolean,
-            val usesNonConstValAsConstant: Boolean
+        val canBeUsedInAnnotation: Boolean,
+        val isPure: Boolean,
+        // `isUnsignedNumberLiteral` means that this constant represents simple number literal with `u` suffix (123u, 0xFEu)
+        val isUnsignedNumberLiteral: Boolean,
+        val usesVariableAsConstant: Boolean,
+        val usesNonConstValAsConstant: Boolean
     )
+
+    override fun equals(other: Any?): Boolean
+
+    override fun hashCode(): Int
 }
 
 class TypedCompileTimeConstant<out T>(
         val constantValue: ConstantValue<T>,
+        module: ModuleDescriptor,
         override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<T> {
     override val isError: Boolean
         get() = constantValue is ErrorValue
 
-    val type: KotlinType = constantValue.type
+    val type: KotlinType = constantValue.getType(module)
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<T> = constantValue
 
@@ -73,34 +84,66 @@ class TypedCompileTimeConstant<out T>(
     }
 }
 
+fun createIntegerValueTypeConstant(
+    value: Number,
+    module: ModuleDescriptor,
+    parameters: CompileTimeConstant.Parameters
+): CompileTimeConstant<*> {
+    return if (parameters.isUnsignedNumberLiteral && !hasUnsignedTypesInModuleDependencies(module)) {
+        UnsignedErrorValueTypeConstant(value, parameters)
+    } else {
+        IntegerValueTypeConstant(value, module, parameters)
+    }
+}
+
+fun hasUnsignedTypesInModuleDependencies(module: ModuleDescriptor): Boolean {
+    return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt) != null
+}
+
+class UnsignedErrorValueTypeConstant(
+    private val value: Number,
+    override val parameters: CompileTimeConstant.Parameters
+) : CompileTimeConstant<Unit> {
+    val errorValue = ErrorValue.ErrorValueWithMessage(
+        "Type cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath"
+    )
+
+    override fun toConstantValue(expectedType: KotlinType): ConstantValue<Unit> {
+        return errorValue
+    }
+
+    override fun equals(other: Any?) = other is UnsignedErrorValueTypeConstant && value == other.value
+
+    override fun hashCode() = value.hashCode()
+}
+
 class IntegerValueTypeConstant(
         private val value: Number,
-        private val builtIns: KotlinBuiltIns,
+        module: ModuleDescriptor,
         override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<Number> {
-    private val typeConstructor = IntegerValueTypeConstructor(value.toLong(), builtIns)
+    private val typeConstructor = IntegerValueTypeConstructor(value.toLong(), module, parameters)
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<Number> {
-        val factory = ConstantValueFactory(builtIns)
         val type = getType(expectedType)
         return when {
-            KotlinBuiltIns.isInt(type) -> {
-                factory.createIntValue(value.toInt())
-            }
-            KotlinBuiltIns.isByte(type) -> {
-                factory.createByteValue(value.toByte())
-            }
-            KotlinBuiltIns.isShort(type) -> {
-                factory.createShortValue(value.toShort())
-            }
-            else -> {
-                factory.createLongValue(value.toLong())
-            }
+            KotlinBuiltIns.isInt(type) -> IntValue(value.toInt())
+            KotlinBuiltIns.isByte(type) -> ByteValue(value.toByte())
+            KotlinBuiltIns.isShort(type) -> ShortValue(value.toShort())
+            KotlinBuiltIns.isLong(type) -> LongValue(value.toLong())
+
+            KotlinBuiltIns.isUInt(type) -> UIntValue(value.toInt())
+            KotlinBuiltIns.isUByte(type) -> UByteValue(value.toByte())
+            KotlinBuiltIns.isUShort(type) -> UShortValue(value.toShort())
+            KotlinBuiltIns.isULong(type) -> ULongValue(value.toLong())
+
+            else -> LongValue(value.toLong())
         }
     }
 
-    val unknownIntegerType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeConstructor, emptyList<TypeProjection>(),
-                                                          false, ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
+    val unknownIntegerType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+            Annotations.EMPTY, typeConstructor, emptyList(), false,
+            ErrorUtils.createErrorScope("Scope for number value type ($typeConstructor)", true)
     )
 
     fun getType(expectedType: KotlinType): KotlinType = TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)

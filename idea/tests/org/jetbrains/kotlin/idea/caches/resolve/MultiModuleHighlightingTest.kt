@@ -30,10 +30,9 @@ import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForModuleComputationTracker
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
@@ -44,6 +43,9 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.ANNOTATION_OPTION
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.PLUGIN_ID
+import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK
 
 open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
@@ -193,6 +195,48 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInAllFiles()
     }
 
+    fun testSamWithReceiverExtension() {
+        val module1 = module("m1").setupKotlinFacet {
+            settings.compilerArguments!!.pluginOptions =
+                    arrayOf("plugin:${PLUGIN_ID}:${ANNOTATION_OPTION.name}=anno.A")
+        }
+
+        val module2 = module("m2").setupKotlinFacet {
+            settings.compilerArguments!!.pluginOptions =
+                    arrayOf("plugin:${PLUGIN_ID}:${ANNOTATION_OPTION.name}=anno.B")
+        }
+
+
+        module1.addDependency(module2)
+        module2.addDependency(module1)
+
+        checkHighlightingInAllFiles()
+    }
+
+    fun testJvmExperimentalLibrary() {
+        val lib = MockLibraryUtil.compileJvmLibraryToJar(
+            testDataPath + "${getTestName(true)}/lib", "lib",
+            extraOptions = listOf(
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xexperimental=lib.ExperimentalAPI"
+            )
+        )
+        module("usage").addLibrary(lib)
+        checkHighlightingInAllFiles()
+    }
+
+    fun testJsExperimentalLibrary() {
+        val lib = MockLibraryUtil.compileJsLibraryToJar(
+            testDataPath + "${getTestName(true)}/lib", "lib", false,
+            extraOptions = listOf(
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xexperimental=lib.ExperimentalAPI"
+            )
+        )
+        module("usage").addLibrary(lib, kind = JSLibraryKind)
+        checkHighlightingInAllFiles()
+    }
+
     private fun Module.setupKotlinFacet(configure: KotlinFacetConfiguration.() -> Unit) = apply {
         runWriteAction {
             val facet = FacetManager.getInstance(this).addFacet(KotlinFacetType.INSTANCE, KotlinFacetType.NAME, null)
@@ -204,64 +248,6 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             configuration.settings.useProjectSettings = false
 
             configuration.configure()
-        }
-    }
-
-    class MultiPlatform : AbstractMultiModuleHighlightingTest() {
-        override fun getTestDataPath() = "${PluginTestCaseBase.getTestDataPathBase()}/multiModuleHighlighting/multiplatform/"
-
-        fun testBasic() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testHeaderClass() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testHeaderWithoutImplForBoth() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], TargetPlatformKind.JavaScript)
-        }
-
-        fun testHeaderPartiallyImplemented() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testHeaderFunctionProperty() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testSuppressHeaderWithoutImpl() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testCatchHeaderExceptionInPlatformModule() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], withStdlibCommon = true)
-        }
-
-        fun testWithOverrides() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testUseCorrectBuiltInsForCommonModule() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], TargetPlatformKind.JavaScript,
-                                withStdlibCommon = true, jdk = FULL_JDK, configureModule = { module, platform ->
-                if (platform == TargetPlatformKind.JavaScript) {
-                    module.addLibrary(ForTestCompileRuntime.stdlibJsForTests(), kind = JSLibraryKind)
-                    module.addLibrary(ForTestCompileRuntime.stdlibCommonForTests())
-                }
-            })
-        }
-
-        fun testHeaderClassImplTypealias() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testHeaderFunUsesStdlibInSignature() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], withStdlibCommon = true, configureModule = { module, platform ->
-                if (platform is TargetPlatformKind.Jvm) {
-                    module.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
-                }
-            })
         }
     }
 }

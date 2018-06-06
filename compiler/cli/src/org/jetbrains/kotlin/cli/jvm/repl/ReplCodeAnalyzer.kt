@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.cli.common.repl.CompiledReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplHistory
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
+import org.jetbrains.kotlin.resolve.TopDownAnalysisContext
+import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.lazy.*
@@ -53,7 +56,7 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
 
     val module: ModuleDescriptorImpl
 
-    val trace: BindingTraceContext = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
+    val trace: BindingTraceContext = NoScopeRecordCliBindingTrace()
 
     init {
         // Module source scope is empty because all binary classes are in the dependency module, and all source classes are guaranteed
@@ -107,10 +110,6 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
 
         val context = topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, listOf(linePsi))
 
-        if (trace.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, linePsi) == null) {
-            trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, linePsi, resolveSession.getPackageFragment(FqName.ROOT))
-        }
-
         val diagnostics = trace.bindingContext.diagnostics
         val hasErrors = diagnostics.any { it.severity == Severity.ERROR }
         return if (hasErrors) {
@@ -153,8 +152,8 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
             return delegateFactory.getPackageMemberDeclarationProvider(packageFqName)
         }
 
-        override fun diagnoseMissingPackageFragment(file: KtFile) {
-            delegateFactory.diagnoseMissingPackageFragment(file)
+        override fun diagnoseMissingPackageFragment(fqName: FqName, file: KtFile?) {
+            delegateFactory.diagnoseMissingPackageFragment(fqName, file)
         }
 
         class AdaptablePackageMemberDeclarationProvider(

@@ -23,22 +23,27 @@ import com.intellij.psi.util.PsiFormatUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTrackerImpl
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 
-class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector) {
+class AnalyzerWithCompilerReport(
+    private val messageCollector: MessageCollector,
+    private val languageVersionSettings: LanguageVersionSettings
+) {
     lateinit var analysisResult: AnalysisResult
 
     private fun reportIncompleteHierarchies() {
@@ -94,6 +99,11 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
 
     fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult) {
         analysisResult = analyze()
+        ExperimentalUsageChecker.checkCompilerArguments(
+            analysisResult.moduleDescriptor, languageVersionSettings,
+            reportError = { message -> messageCollector.report(ERROR, message) },
+            reportWarning = { message -> messageCollector.report(WARNING, message) }
+        )
         reportSyntaxErrors(files)
         reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector)
         reportIncompleteHierarchies()

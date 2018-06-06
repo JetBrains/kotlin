@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -PARAMETER_NAME_CHANGED_ON_OVERRIDE
+// JAVAC_EXPECTED_FILE
 // FILE: A.java
 import java.util.*;
 
@@ -16,7 +17,7 @@ abstract public class B implements java.util.Collection<String> {
 // FILE: IC.java
 import java.util.*;
 
-public interface IC implements java.util.Collection<String> {
+public interface IC extends java.util.Collection<String> {
     public boolean containsAll(Collection<?> x);
 }
 

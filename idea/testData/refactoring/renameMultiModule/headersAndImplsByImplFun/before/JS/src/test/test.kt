@@ -1,8 +1,8 @@
 package test
 
-impl fun /*rename*/foo() { }
-impl fun foo(n: Int) { }
-impl fun bar(n: Int) { }
+actual fun /*rename*/foo() { }
+actual fun foo(n: Int) { }
+actual fun bar(n: Int) { }
 
 fun test() {
     foo()

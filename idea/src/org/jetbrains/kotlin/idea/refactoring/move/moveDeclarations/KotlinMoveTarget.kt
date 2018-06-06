@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
+import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtClass
@@ -38,10 +40,16 @@ interface KotlinMoveTarget {
 
     // Check possible errors and return corresponding message, or null if no errors are detected
     fun verify(file: PsiFile): String?
+
+    val targetScope: VirtualFile?
+        get() = targetFile
 }
 
 interface KotlinDirectoryBasedMoveTarget : KotlinMoveTarget {
     val directory: PsiDirectory?
+
+    override val targetScope: VirtualFile?
+        get() = super.targetScope ?: directory?.virtualFile
 }
 
 object EmptyKotlinMoveTarget: KotlinMoveTarget {
@@ -111,3 +119,5 @@ class KotlinDirectoryMoveTarget(
 
     override fun verify(file: PsiFile) = null
 }
+
+fun KotlinMoveTarget.getTargetModule(project: Project) = targetScope?.getModule(project)

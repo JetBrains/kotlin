@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 
 import java.util.Random;
 
-import static org.jetbrains.kotlin.serialization.jvm.BitEncoding.decodeBytes;
-import static org.jetbrains.kotlin.serialization.jvm.BitEncoding.encodeBytes;
+import static org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding.decodeBytes;
+import static org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding.encodeBytes;
 import static org.junit.Assert.assertArrayEquals;
 
 public class BitEncodingTest extends KtUsefulTestCase {

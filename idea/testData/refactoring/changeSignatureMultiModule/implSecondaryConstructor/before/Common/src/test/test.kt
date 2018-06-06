@@ -1,6 +1,6 @@
 package test
 
-header class C(s: String) {
+expect class C(s: String) {
     constructor(n: Int): this("")
 }
 

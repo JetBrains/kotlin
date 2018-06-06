@@ -37,7 +37,8 @@ import com.intellij.spring.model.SpringModelSearchParameters
 import com.intellij.spring.model.actions.generate.GenerateSpringBeanDependenciesUtil
 import com.intellij.spring.model.actions.generate.GenerateSpringBeanDependenciesUtil.*
 import com.intellij.spring.model.actions.generate.SpringBeanClassMember
-import com.intellij.spring.model.highlighting.SpringConstructorArgResolveUtil
+import com.intellij.spring.model.highlighting.xml.SpringConstructorArgResolveUtil
+
 import com.intellij.spring.model.utils.SpringBeanCoreUtils
 import com.intellij.spring.model.utils.SpringBeanUtils
 import com.intellij.spring.model.utils.SpringModelSearchers
@@ -54,7 +55,11 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.moduleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaOrKotlinMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.getParameterDescriptor
 import org.jetbrains.kotlin.idea.completion.BasicLookupElementFactory
 import org.jetbrains.kotlin.idea.completion.InsertHandlerProvider
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -69,6 +74,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil
 import org.jetbrains.kotlin.utils.SmartList
@@ -157,7 +163,7 @@ private fun createSettable(
     val beanName = candidateBean.name
     try {
         val candidateClass = candidateBeanClasses.first()
-        val propertyName = if (beanName != null && KotlinNameSuggester.isIdentifier(beanName)) beanName else candidateClass.name!!
+        val propertyName = if (beanName != null && beanName.isIdentifier()) beanName else candidateClass.name!!
 
         val prototype: KtNamedDeclaration = when (injectionKind) {
             SpringDependencyInjectionKind.SETTER -> {
@@ -180,19 +186,20 @@ private fun createSettable(
 internal fun getSuggestedNames(
         beanPointer: SpringBeanPointer<CommonSpringBean>,
         declaration: KtCallableDeclaration,
+        excludedInValidator: List<KtDeclaration> = listOf(declaration),
         existingNames: Collection<String> = emptyList(),
         getType: CallableDescriptor.() -> KotlinType?
 ): Collection<String> {
     val names = LinkedHashSet<String>()
 
     val newDeclarationNameValidator =
-            NewDeclarationNameValidator(declaration.parent, null, NewDeclarationNameValidator.Target.VARIABLES, listOf(declaration))
+            NewDeclarationNameValidator(declaration.parent, null, NewDeclarationNameValidator.Target.VARIABLES, excludedInValidator)
     fun validate(name: String) = name !in existingNames && newDeclarationNameValidator(name)
 
     SpringBeanUtils.getInstance()
             .findBeanNames(beanPointer.springBean)
             .asSequence()
-            .filter { KotlinNameSuggester.isIdentifier(it) }
+            .filter { it.isIdentifier() }
             .mapTo(names) { KotlinNameSuggester.suggestNameByName(it, ::validate) }
 
     (declaration.resolveToDescriptor() as CallableDescriptor).getType()?.let {
@@ -252,7 +259,9 @@ private fun BatchTemplateRunner.addCreateFunctionTemplate(
     addTemplateFactory(parameterList) {
         for ((paramIndex, candidateBeanClassesForParam) in candidateBeanClasses) {
             builder.appendVariableTemplate(function.valueParameters[paramIndex], candidateBeanClassesForParam) {
-                getSuggestedNames(dependency, function) { valueParameters[paramIndex].type }
+                getSuggestedNames(dependency, function, listOf(function.valueParameters[paramIndex], function)) {
+                    valueParameters[paramIndex].type
+                }
             }
         }
 

@@ -83,7 +83,7 @@ class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModifi
 
             val projectFileIndex = ProjectRootManager.getInstance(xmlFile.project).fileIndex
             val module = projectFileIndex.getModuleForFile(xmlFile.virtualFile)
-                         ?: (element.parent as? PsiDirectory)?.let { projectFileIndex.getModuleForFile(it.virtualFile) }
+                         ?: element.getContainingDirectorySafe()?.let { projectFileIndex.getModuleForFile(it.virtualFile) }
 
             if (module != null && !module.isDisposed) {
                 val resourceManager = AndroidLayoutXmlFileManager.getInstance(module) ?: return false
@@ -96,6 +96,12 @@ class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModifi
             }
 
             return false
+        }
+
+        private fun PsiFile.getContainingDirectorySafe(): PsiDirectory? {
+            val virtualFile = this.viewProvider.virtualFile.takeIf { it.isValid } ?: return null
+            val parentDirectory = virtualFile.parent?.takeIf { it.isValid } ?: return null
+            return this.manager.findDirectory(parentDirectory)
         }
 
         private fun findXmlAttribute(element: PsiElement?): XmlAttribute? {

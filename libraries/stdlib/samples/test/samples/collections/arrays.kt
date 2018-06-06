@@ -17,11 +17,42 @@
 package samples.collections
 
 import samples.*
-import kotlin.test.*
 
 
 @RunWith(Enclosed::class)
 class Arrays {
+
+    class Usage {
+
+        @Sample
+        fun arrayOrEmpty() {
+            val nullArray: Array<Any>? = null
+            assertPrints(nullArray.orEmpty().contentToString(), "[]")
+
+            val array: Array<Char>? = arrayOf('a', 'b', 'c')
+            assertPrints(array.orEmpty().contentToString(), "[a, b, c]")
+        }
+    }
+
+    class Transformations {
+
+        @Sample
+        fun flattenArray() {
+            val deepArray = arrayOf(
+                arrayOf(1),
+                arrayOf(2, 3),
+                arrayOf(4, 5, 6)
+            )
+
+            assertPrints(deepArray.flatten(), "[1, 2, 3, 4, 5, 6]")
+        }
+
+        @Sample
+        fun unzipArray() {
+            val array = arrayOf(1 to 'a', 2 to 'b', 3 to 'c')
+            assertPrints(array.unzip(), "([1, 2, 3], [a, b, c])")
+        }
+    }
 
     class ContentOperations {
 
@@ -35,14 +66,41 @@ class Arrays {
         @Sample
         fun contentDeepToString() {
             val matrix = arrayOf(
-                    intArrayOf(3, 7, 9),
-                    intArrayOf(0, 1, 0),
-                    intArrayOf(2, 4, 8)
+                intArrayOf(3, 7, 9),
+                intArrayOf(0, 1, 0),
+                intArrayOf(2, 4, 8)
             )
 
             assertPrints(matrix.contentDeepToString(), "[[3, 7, 9], [0, 1, 0], [2, 4, 8]]")
         }
+    }
 
+    class CopyOfOperations {
+
+        @Sample
+        fun copyOf() {
+            val array = arrayOf("apples", "oranges", "limes")
+            val arrayCopy = array.copyOf()
+            assertPrints(arrayCopy.contentToString(), "[apples, oranges, limes]")
+        }
+
+        @Sample
+        fun resizingCopyOf() {
+            val array = arrayOf("apples", "oranges", "limes")
+            val arrayCopyPadded = array.copyOf(5)
+            assertPrints(arrayCopyPadded.contentToString(), "[apples, oranges, limes, null, null]")
+            val arrayCopyTruncated = array.copyOf(2)
+            assertPrints(arrayCopyTruncated.contentToString(), "[apples, oranges]")
+        }
+
+        @Sample
+        fun resizedPrimitiveCopyOf() {
+            val array = intArrayOf(1, 2, 3)
+            val arrayCopyPadded = array.copyOf(5)
+            assertPrints(arrayCopyPadded.contentToString(), "[1, 2, 3, 0, 0]")
+            val arrayCopyTruncated = array.copyOf(2)
+            assertPrints(arrayCopyTruncated.contentToString(), "[1, 2]")
+        }
     }
 
 }

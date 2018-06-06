@@ -5,6 +5,8 @@ Cleaning output files:
   out/production/module/foo/AKt.class
   out/production/module/foo/Foo.class
 End of files
+Marked as dirty by Kotlin:
+  src/useClass.kt
 Cleaning output files:
   out/production/module/baz/UseClassKt.class
   out/production/module/baz/UseFunKt.class

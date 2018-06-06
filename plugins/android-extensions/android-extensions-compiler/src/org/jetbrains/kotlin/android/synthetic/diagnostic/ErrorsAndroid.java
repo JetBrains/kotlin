@@ -19,8 +19,13 @@ package org.jetbrains.kotlin.android.synthetic.diagnostic;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.psi.KtAnnotationEntry;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;
 import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
@@ -45,6 +50,11 @@ public interface ErrorsAndroid {
     DiagnosticFactory0<PsiElement> OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> CREATOR_DEFINITION_IS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PARCELABLE_TYPE_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> PARCELER_SHOULD_BE_OBJECT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> PARCELER_TYPE_INCOMPATIBLE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory0<PsiElement> DUPLICATING_TYPE_PARCELERS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, KtClassOrObject> REDUNDANT_TYPE_PARCELER = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<PsiElement, KtClassOrObject> CLASS_SHOULD_BE_PARCELIZE = DiagnosticFactory1.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

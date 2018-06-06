@@ -100,8 +100,6 @@ fun extractClassMembers(
                 .mapTo(result) { KotlinMemberInfo(it as KtNamedDeclaration, isCompanionMember = isCompanion) }
     }
 
-    if (aClass !is KtClassOrObject) return emptyList()
-
     val result = ArrayList<KotlinMemberInfo>()
 
     if (collectSuperTypeEntries) {

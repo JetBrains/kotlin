@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.parameterInfo;
 import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
@@ -84,6 +85,26 @@ public class MockUpdateParameterInfoContext implements UpdateParameterInfoContex
     @Override
     public Object[] getObjectsToView() {
         return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    }
+
+    @Override
+    public boolean isPreservedOnHintHidden() {
+        return false;
+    }
+
+    @Override
+    public void setPreservedOnHintHidden(boolean value) {
+
+    }
+
+    @Override
+    public boolean isInnermostContext() {
+        return false;
+    }
+
+    @Override
+    public UserDataHolderEx getCustomContext() {
+        return null;
     }
 
     @Override

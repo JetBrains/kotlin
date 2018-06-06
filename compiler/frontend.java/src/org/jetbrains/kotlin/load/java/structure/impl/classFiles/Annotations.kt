@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor
-import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.*
 import java.lang.reflect.Array
 
 internal class AnnotationsCollectorMethodVisitor(
@@ -54,6 +52,27 @@ internal class AnnotationsCollectorMethodVisitor(
                 ?: return null
 
         return BinaryJavaAnnotation.addAnnotation(annotations, desc, context, signatureParser)
+    }
+
+    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, desc: String, visible: Boolean): AnnotationVisitor? {
+        // TODO: support annotations on type arguments
+        if (typePath != null) return null
+
+        val typeReference = TypeReference(typeRef)
+
+        return when (typeReference.sort) {
+            TypeReference.METHOD_RETURN -> member.safeAs<BinaryJavaMethod>()?.returnType?.let {
+                BinaryJavaAnnotation.addTypeAnnotation(it, desc, context, signatureParser)
+            }
+
+            TypeReference.METHOD_FORMAL_PARAMETER ->
+                    BinaryJavaAnnotation.addTypeAnnotation(
+                            member.valueParameters[typeReference.formalParameterIndex].type,
+                            desc, context, signatureParser
+                    )
+
+            else -> null
+        }
     }
 }
 
@@ -87,6 +106,20 @@ class BinaryJavaAnnotation private constructor(
 
             return annotationVisitor
         }
+
+        fun addTypeAnnotation(
+                type: JavaType,
+                desc: String,
+                context: ClassifierResolutionContext,
+                signatureParser: BinaryClassSignatureParser
+        ): AnnotationVisitor? {
+            type as? PlainJavaClassifierType ?: return null
+
+            val (javaAnnotation, annotationVisitor) = createAnnotationAndVisitor(desc, context, signatureParser)
+            type.addAnnotation(javaAnnotation)
+
+            return annotationVisitor
+        }
     }
 
     private val classifierResolutionResult by lazy(LazyThreadSafetyMode.NONE) {
@@ -94,7 +127,7 @@ class BinaryJavaAnnotation private constructor(
     }
 
     override val classId: ClassId?
-        get() = classifierResolutionResult.classifier.safeAs<JavaClass>()?.classId()
+        get() = classifierResolutionResult.classifier.safeAs<JavaClass>()?.classId
                 ?: ClassId.topLevel(FqName(classifierResolutionResult.qualifiedName))
 
     override fun resolve() = classifierResolutionResult.classifier as? JavaClass
@@ -119,7 +152,7 @@ class BinaryJavaAnnotationVisitor(
     }
 
     override fun visitEnum(name: String?, desc: String, value: String) {
-         addArgument(PlainJavaEnumValueAnnotationArgument(name, desc, value, context))
+        addArgument(PlainJavaEnumValueAnnotationArgument(name, context.mapDescToClassId(desc), value))
     }
 
     override fun visit(name: String?, value: Any?) {
@@ -183,23 +216,8 @@ class PlainJavaAnnotationAsAnnotationArgument(
 
 class PlainJavaEnumValueAnnotationArgument(
         name: String?,
-        private val desc: String,
-        entryName: String,
-        private val context: ClassifierResolutionContext
+        override val enumClassId: ClassId,
+        entryName: String
 ) : PlainJavaAnnotationArgument(name), JavaEnumValueAnnotationArgument {
     override val entryName = Name.identifier(entryName)
-
-    override fun resolve(): JavaField? {
-        val javaClass = context.resolveByInternalName(Type.getType(desc).internalName).classifier as? JavaClass ?: return null
-        return javaClass.fields.singleOrNull { it.name == entryName }
-    }
-}
-
-private fun JavaClass.classId(): ClassId? {
-    val fqName = fqName ?: return null
-    if (outerClass == null) return ClassId.topLevel(fqName)
-
-    val outerClassId = outerClass!!.classId() ?: return null
-
-    return ClassId(outerClassId.packageFqName, outerClassId.relativeClassName.child(name), false)
 }

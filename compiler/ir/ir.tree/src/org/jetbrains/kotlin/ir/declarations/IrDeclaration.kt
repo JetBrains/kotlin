@@ -26,36 +26,16 @@ interface IrSymbolOwner : IrElement {
     val symbol: IrSymbol
 }
 
-interface IrDeclaration : IrStatement {
+interface IrDeclaration : IrStatement, IrAnnotationContainer {
     val descriptor: DeclarationDescriptor
-    val declarationKind: IrDeclarationKind
     val origin: IrDeclarationOrigin
 
+    var parent: IrDeclarationParent
+
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrStatement =
-            accept(transformer, data) as IrStatement
+        accept(transformer, data) as IrStatement
 }
 
 interface IrSymbolDeclaration<out S : IrSymbol> : IrDeclaration, IrSymbolOwner {
     override val symbol: S
 }
-
-enum class IrDeclarationKind {
-    MODULE,
-    FILE,
-    CLASS,
-    ENUM_ENTRY,
-    FUNCTION,
-    CONSTRUCTOR,
-    PROPERTY,
-    FIELD,
-    PROPERTY_ACCESSOR,
-    VARIABLE,
-    LOCAL_PROPERTY,
-    LOCAL_PROPERTY_ACCESSOR,
-    TYPEALIAS,
-    ANONYMOUS_INITIALIZER,
-    TYPE_PARAMETER,
-    VALUE_PARAMETER,
-    ERROR;
-}
-

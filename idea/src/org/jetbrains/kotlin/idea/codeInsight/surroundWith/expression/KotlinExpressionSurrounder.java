@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.KtCallExpression;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnit;
+import static org.jetbrains.kotlin.idea.codeInsight.surroundWith.KotlinSurrounderUtils.isUsedAsStatement;
 
 public abstract class KotlinExpressionSurrounder implements Surrounder {
 
@@ -44,14 +46,27 @@ public abstract class KotlinExpressionSurrounder implements Surrounder {
         if (expression instanceof KtCallExpression && expression.getParent() instanceof KtQualifiedExpression) {
             return false;
         }
-        KotlinType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
-        if (type == null || isUnit(type)) {
-            return false;
-        }
+
         return isApplicable(expression);
     }
 
-    protected abstract boolean isApplicable(@NotNull KtExpression expression);
+    protected boolean isApplicable(@NotNull KtExpression expression) {
+        BindingContext context = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL);
+        KotlinType type = context.getType(expression);
+        if (type == null || (isUnit(type) && isApplicableToStatements())) {
+            return false;
+        }
+
+        if (!isApplicableToStatements() && isUsedAsStatement(expression)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected boolean isApplicableToStatements() {
+        return true;
+    }
 
     @Nullable
     @Override

@@ -1,0 +1,14 @@
+package
+
+public fun branchingFlow(/*0*/ a: kotlin.Any?): kotlin.Unit
+public fun branchingFlowWithMissingBranches(/*0*/ a: kotlin.Any?): kotlin.Unit
+public fun repeatingFlow(/*0*/ n: kotlin.Int): kotlin.Unit
+public fun repeatingFlow2(/*0*/ n: kotlin.Int): kotlin.Unit
+public fun </*0*/ T> runOnce(/*0*/ block: () -> T): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun </*0*/ T> runTwice(/*0*/ block: () -> T): T
+    CallsInPlace(block, AT_LEAST_ONCE)
+
+public fun shadowing(): kotlin.Unit
+public fun valueReassignment(): kotlin.Unit

@@ -1,0 +1,54 @@
+package
+
+package test {
+    public fun f1(/*0*/ e: kotlin.Experimental): kotlin.Unit
+    public fun f10(/*0*/ m: test.Marker.NestedClass): kotlin.Unit
+    public fun f2(/*0*/ u: kotlin.UseExperimental?): kotlin.Unit
+    public fun f3(/*0*/ e: test.Experimental0 /* = kotlin.Experimental */): kotlin.Unit
+    public fun f4(/*0*/ u: test.UseExperimental0 /* = kotlin.UseExperimental */): kotlin.Unit
+    @test.VarargKClasses(k = {kotlin.Experimental::class, kotlin.UseExperimental::class, kotlin.Experimental::class, kotlin.UseExperimental::class}) public fun f5(): kotlin.Unit
+    public fun f6(/*0*/ m: test.Marker): kotlin.Unit
+    public fun f7(): kotlin.collections.List<test.Marker>?
+    public fun f8(): test.Marker?
+    public fun f9(/*0*/ m: test.Marker0 /* = test.Marker */): kotlin.Unit
+
+    @kotlin.Experimental(level = Level.ERROR) public final annotation class M : kotlin.Annotation {
+        public constructor M()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.Experimental public final annotation class Marker : kotlin.Annotation {
+        public constructor Marker()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion {
+            private constructor Companion()
+            public const final val value: kotlin.Int = 42
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final class NestedClass {
+            public constructor NestedClass()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public final annotation class VarargKClasses : kotlin.Annotation {
+        public constructor VarargKClasses(/*0*/ vararg k: kotlin.reflect.KClass<*> /*kotlin.Array<out kotlin.reflect.KClass<*>>*/)
+        public final val k: kotlin.Array<out kotlin.reflect.KClass<*>>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+    public typealias Experimental0 = kotlin.Experimental
+    public typealias Marker0 = test.Marker
+    public typealias UseExperimental0 = kotlin.UseExperimental
+}

@@ -1,3 +1,3 @@
-// "Create header property implementation for platform JVM" "true"
+// "Create actual property for module testModule_JVM (JVM)" "true"
 
-header var <caret>x: Int
+expect var <caret>x: Int

@@ -1,5 +1,6 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND_WITHOUT_CHECK: JS
+// DONT_RUN_GENERATED_CODE: JS
+// IGNORE_BACKEND: JS
 
 class A {
     tailrec fun f1(c : Int) {

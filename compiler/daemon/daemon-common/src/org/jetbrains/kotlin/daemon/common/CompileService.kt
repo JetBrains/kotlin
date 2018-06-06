@@ -141,6 +141,12 @@ interface CompileService : Remote {
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
+    fun classesFqNamesByFiles(
+        sessionId: Int,
+        sourceFiles: Set<File>
+    ): CallResult<Set<String>>
+
+    @Throws(RemoteException::class)
     fun clearJarCache()
 
     @Deprecated("The usages should be replaced with other `leaseReplSession` method", ReplaceWith("leaseReplSession"))

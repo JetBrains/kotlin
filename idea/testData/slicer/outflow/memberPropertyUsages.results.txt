@@ -1,4 +1,8 @@
 4 val <bold>x = 1</bold>
-6 	val <bold>y = x</bold>
-8 	val <bold>z: Int</bold>
-16 	fun bar(<bold>m: Int</bold>) {
+3 	int x = new A().<bold>getX</bold>();
+6 	val y = <bold>x</bold>
+6 		val <bold>y = x</bold>
+11 	z = <bold>x</bold>
+8 		val <bold>z: Int</bold>
+13 	bar(<bold>x</bold>)
+16 		fun bar(<bold>m: Int</bold>) {

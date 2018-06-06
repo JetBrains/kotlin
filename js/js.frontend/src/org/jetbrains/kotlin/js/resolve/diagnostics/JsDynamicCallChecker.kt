@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -62,12 +63,28 @@ object JsDynamicCallChecker : CallChecker {
                     context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(element.parent, "destructuring declaration"))
                 }
             }
+
+            is KtSimpleNameExpression -> checkIdentifier(element.getReferencedName(), element, context)
+
+            is KtCallExpression -> {
+                val calleePsi = element.calleeExpression
+                if (calleePsi is KtSimpleNameExpression) {
+                    checkIdentifier(calleePsi.getReferencedName(), calleePsi, context)
+                }
+            }
         }
 
         for (argument in resolvedCall.call.valueArguments) {
             argument.getSpreadElement()?.let {
                 context.trace.report(ErrorsJs.SPREAD_OPERATOR_IN_DYNAMIC_CALL.on(it))
             }
+        }
+    }
+
+    private fun checkIdentifier(name: String?, reportOn: PsiElement, context: CallCheckerContext) {
+        if (name == null) return
+        if (NameSuggestion.sanitizeName(name) != name) {
+            context.trace.report(ErrorsJs.NAME_CONTAINS_ILLEGAL_CHARS.on(reportOn))
         }
     }
 

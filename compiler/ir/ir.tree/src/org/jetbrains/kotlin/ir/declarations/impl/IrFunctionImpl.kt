@@ -17,30 +17,58 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.SmartList
 
 class IrFunctionImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrSimpleFunctionSymbol,
+    name: Name = symbol.descriptor.name,
+    visibility: Visibility = symbol.descriptor.visibility,
+    override val modality: Modality = symbol.descriptor.modality,
+    returnType: KotlinType = symbol.descriptor.returnType!!,
+    isInline: Boolean = symbol.descriptor.isInline,
+    isExternal: Boolean = symbol.descriptor.isExternal,
+    override val isTailrec: Boolean = symbol.descriptor.isTailrec,
+    override val isSuspend: Boolean = symbol.descriptor.isSuspend
+) :
+    IrFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, returnType),
+    IrSimpleFunction {
+
+    override val descriptor: FunctionDescriptor = symbol.descriptor
+
+    override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
+
+    override var correspondingProperty: IrProperty? = null
+
+    constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val symbol: IrSimpleFunctionSymbol
-) : IrFunctionBase(startOffset, endOffset, origin), IrSimpleFunction {
-    override val descriptor: FunctionDescriptor = symbol.descriptor
-
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: FunctionDescriptor) :
-            this(startOffset, endOffset, origin, IrSimpleFunctionSymbolImpl(descriptor))
+        descriptor: FunctionDescriptor
+    ) : this(
+        startOffset, endOffset, origin,
+        IrSimpleFunctionSymbolImpl(descriptor)
+    )
 
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            origin: IrDeclarationOrigin,
-            descriptor: FunctionDescriptor,
-            body: IrBody?
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: FunctionDescriptor,
+        body: IrBody?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.body = body
     }
@@ -50,5 +78,5 @@ class IrFunctionImpl(
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitSimpleFunction(this, data)
+        visitor.visitSimpleFunction(this, data)
 }

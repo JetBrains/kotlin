@@ -13,14 +13,10 @@ import java.util.List;
  * Represents a JavaScript block in the global scope.
  */
 public class JsGlobalBlock extends JsBlock {
-
-  public JsGlobalBlock() {
-  }
-
-  @Override
-  public boolean isGlobalBlock() {
-    return true;
-  }
+    @Override
+    public boolean isGlobalBlock() {
+        return true;
+    }
 
     @NotNull
     @Override

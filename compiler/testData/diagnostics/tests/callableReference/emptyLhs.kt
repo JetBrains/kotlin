@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION, -EXTENSION_SHADOWED_BY_MEMBER
+// !LANGUAGE: +CallableReferencesToClassMembersWithEmptyLHS
 
 val topLevelVal = 1
 fun topLevelFun() = 2
@@ -14,13 +15,13 @@ class A {
     val ok2 = ::topLevelFun
 
     fun fail1() {
-        ::<!CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS!>extensionVal<!>
-        ::<!CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS!>extensionFun<!>
+        ::extensionVal
+        ::extensionFun
     }
 
     fun fail2() {
-        ::<!CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS!>memberVal<!>
-        ::<!CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS!>memberFun<!>
+        ::memberVal
+        ::memberFun
     }
 }
 
@@ -30,11 +31,11 @@ val ok1 = ::topLevelVal
 val ok2 = ::topLevelFun
 
 fun A.fail1() {
-    ::<!CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS!>extensionVal<!>
-    ::<!CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS!>extensionFun<!>
+    ::extensionVal
+    ::extensionFun
 }
 
 fun A.fail2() {
-    ::<!CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS!>memberVal<!>
-    ::<!CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS!>memberFun<!>
+    ::memberVal
+    ::memberFun
 }

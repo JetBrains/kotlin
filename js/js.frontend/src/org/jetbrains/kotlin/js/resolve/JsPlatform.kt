@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 object JsPlatform : TargetPlatform("JS") {
     private val defaultImports = LockBasedStorageManager().createMemoizedFunction<Boolean, List<ImportPath>> { includeKotlinComparisons ->
-            Default.getDefaultImports(includeKotlinComparisons) + ImportPath.fromString("kotlin.js.*")
+        Common.getDefaultImports(includeKotlinComparisons) + ImportPath.fromString("kotlin.js.*")
     }
 
     override fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath> = defaultImports(includeKotlinComparisons)

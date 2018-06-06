@@ -27,25 +27,25 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class IrSetVariableImpl(
-        startOffset: Int, endOffset: Int,
-        override val symbol: IrVariableSymbol,
-        override val origin: IrStatementOrigin?
+    startOffset: Int, endOffset: Int,
+    override val symbol: IrVariableSymbol,
+    override val origin: IrStatementOrigin?
 ) : IrExpressionBase(startOffset, endOffset, symbol.descriptor.builtIns.unitType), IrSetVariable {
     constructor(
-            startOffset: Int, endOffset: Int,
-            symbol: IrVariableSymbol,
-            value: IrExpression,
-            origin: IrStatementOrigin?
+        startOffset: Int, endOffset: Int,
+        symbol: IrVariableSymbol,
+        value: IrExpression,
+        origin: IrStatementOrigin?
     ) : this(startOffset, endOffset, symbol, origin) {
         this.value = value
     }
 
     @Deprecated("Creates unbound symbol")
     constructor(
-            startOffset: Int, endOffset: Int,
-            descriptor: VariableDescriptor,
-            value: IrExpression,
-            origin: IrStatementOrigin?
+        startOffset: Int, endOffset: Int,
+        descriptor: VariableDescriptor,
+        value: IrExpression,
+        origin: IrStatementOrigin?
     ) : this(startOffset, endOffset, IrVariableSymbolImpl(descriptor), value, origin)
 
     override val descriptor: VariableDescriptor get() = symbol.descriptor

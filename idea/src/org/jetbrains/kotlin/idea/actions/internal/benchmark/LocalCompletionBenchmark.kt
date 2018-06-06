@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.idea.actions.internal.benchmark
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogBuilder
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBTextField
-import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import org.jetbrains.kotlin.idea.actions.internal.benchmark.AbstractCompletionBenchmarkAction.Companion.randomElement
 import org.jetbrains.kotlin.idea.completion.CompletionBenchmarkSink
@@ -76,22 +74,12 @@ class LocalCompletionBenchmarkAction : AbstractCompletionBenchmarkAction() {
 
 
         val jPanel = JBPanel<JBPanel<*>>(GridLayoutManager(4, 2)).apply {
-
             var i = 0
-            fun addBoxWithLabel(tooltip: String, label: String = tooltip + ":", default: String): JBTextField {
-                this.add(JBLabel(label), GridConstraints().apply { row = i; column = 0 })
-                val textField = JBTextField().apply {
-                    text = default
-                    toolTipText = tooltip
-                }
-                this.add(textField, GridConstraints().apply { row = i++; column = 1; fill = GridConstraints.FILL_HORIZONTAL })
-                return textField
-            }
-            cSeed = addBoxWithLabel("Random seed", default = "0")
-            cFiles = addBoxWithLabel("Files to visit", default = "20")
-            cFunctions = addBoxWithLabel("Max functions to visit", default = "20")
-            cLines = addBoxWithLabel("File lines", default = "100")
 
+            cSeed = addBoxWithLabel("Random seed", default = "0", i = i++)
+            cFiles = addBoxWithLabel("Files to visit", default = "20", i = i++)
+            cFunctions = addBoxWithLabel("Max functions to visit", default = "20", i = i++)
+            cLines = addBoxWithLabel("File lines", default = "100", i = i)
         }
         dialogBuilder.centerPanel(jPanel)
         if (!dialogBuilder.showAndGet()) return null

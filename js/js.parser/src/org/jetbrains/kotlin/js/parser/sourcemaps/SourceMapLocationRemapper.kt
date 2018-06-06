@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.parser.sourcemaps
 
 import org.jetbrains.kotlin.js.backend.ast.*
 
-class SourceMapLocationRemapper(private val sourceMap: SourceMap) {
+class SourceMapLocationRemapper(private val sourceMap: SourceMap, private val sourceMapPathMapper: (String) -> String = { it }) {
     fun remap(node: JsNode) {
         val listCollector = JsNodeFlatListCollector()
         node.accept(listCollector)
@@ -61,12 +61,12 @@ class SourceMapLocationRemapper(private val sourceMap: SourceMap) {
         }
 
 
-           for (node in nodes.asSequence().filterIsInstance<SourceInfoAwareJsNode>()) {
+        for (node in nodes.asSequence().filterIsInstance<SourceInfoAwareJsNode>()) {
             val segment = findCorrespondingSegment(node)
             val sourceFileName = segment?.sourceFileName
             node.source = if (sourceFileName != null) {
-                val location = JsLocation(segment.sourceFileName, segment.sourceLineNumber, segment.sourceColumnNumber)
-                JsLocationWithEmbeddedSource(location, sourceMap) { sourceMap.sourceContentResolver(segment.sourceFileName) }
+                val location = JsLocation(sourceMapPathMapper(sourceFileName), segment.sourceLineNumber, segment.sourceColumnNumber)
+                JsLocationWithEmbeddedSource(location, null) { sourceMap.sourceContentResolver(segment.sourceFileName) }
             }
             else {
                 null

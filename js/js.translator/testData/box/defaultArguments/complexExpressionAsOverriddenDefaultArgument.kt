@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1012
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1130
 // http://youtrack.jetbrains.com/issue/KT-4879
 // JS: extra side effect when use when in default arguments
 

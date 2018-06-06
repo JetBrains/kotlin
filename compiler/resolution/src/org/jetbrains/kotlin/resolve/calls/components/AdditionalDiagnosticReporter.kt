@@ -16,70 +16,98 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 // very initial state of component
 // todo: handle all diagnostic inside DiagnosticReporterByTrackingStrategy
-class AdditionalDiagnosticReporter {
+// move it to frontend module
+class AdditionalDiagnosticReporter(private val languageVersionSettings: LanguageVersionSettings) {
 
-    fun createAdditionalDiagnostics(
-            candidate: SimpleKotlinResolutionCandidate,
-            resultingDescriptor: CallableDescriptor
-    ): List<KotlinCallDiagnostic> = reportSmartCasts(candidate, resultingDescriptor)
+    fun reportAdditionalDiagnostics(
+        candidate: ResolvedCallAtom,
+        resultingDescriptor: CallableDescriptor,
+        kotlinDiagnosticsHolder: KotlinDiagnosticsHolder,
+        diagnostics: Collection<KotlinCallDiagnostic>
+    ) {
+        reportSmartCasts(candidate, resultingDescriptor, kotlinDiagnosticsHolder, diagnostics)
+    }
 
-    private fun createSmartCastDiagnostic(argument: KotlinCallArgument, expectedResultType: UnwrappedType): SmartCastDiagnostic? {
+    private fun createSmartCastDiagnostic(
+        candidate: ResolvedCallAtom,
+        argument: KotlinCallArgument,
+        expectedResultType: UnwrappedType
+    ): SmartCastDiagnostic? {
         if (argument !is ExpressionKotlinCallArgument) return null
         if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(argument.receiver.receiverValue.type, expectedResultType)) {
-            return SmartCastDiagnostic(argument, expectedResultType.unwrap())
+            return SmartCastDiagnostic(argument, expectedResultType.unwrap(), candidate.atom)
         }
         return null
     }
 
     private fun reportSmartCastOnReceiver(
-            candidate: KotlinResolutionCandidate,
-            receiver: SimpleKotlinCallArgument?,
-            parameter: ReceiverParameterDescriptor?
+        candidate: ResolvedCallAtom,
+        receiver: SimpleKotlinCallArgument?,
+        parameter: ReceiverParameterDescriptor?,
+        diagnostics: Collection<KotlinCallDiagnostic>
     ): SmartCastDiagnostic? {
         if (receiver == null || parameter == null) return null
         val expectedType = parameter.type.unwrap().let { if (receiver.isSafeCall) it.makeNullableAsSpecified(true) else it }
 
-        val smartCastDiagnostic = createSmartCastDiagnostic(receiver, expectedType) ?: return null
+        val smartCastDiagnostic = createSmartCastDiagnostic(candidate, receiver, expectedType) ?: return null
 
         // todo may be we have smart cast to Int?
         return smartCastDiagnostic.takeIf {
-            candidate.status.diagnostics.filterIsInstance<UnsafeCallError>().none {
+            diagnostics.filterIsInstance<UnsafeCallError>().none {
                 it.receiver == receiver
             }
-            &&
-            candidate.status.diagnostics.filterIsInstance<UnstableSmartCast>().none {
-                it.argument == receiver
-            }
+                    &&
+                    diagnostics.filterIsInstance<UnstableSmartCast>().none {
+                        it.argument == receiver
+                    }
         }
     }
 
-    private fun reportSmartCasts(candidate: SimpleKotlinResolutionCandidate, resultingDescriptor: CallableDescriptor) =
-            SmartList<KotlinCallDiagnostic>().apply {
-                addIfNotNull(reportSmartCastOnReceiver(candidate, candidate.extensionReceiver, resultingDescriptor.extensionReceiverParameter))
-                addIfNotNull(reportSmartCastOnReceiver(candidate, candidate.dispatchReceiverArgument, resultingDescriptor.dispatchReceiverParameter))
+    private fun reportSmartCasts(
+        candidate: ResolvedCallAtom,
+        resultingDescriptor: CallableDescriptor,
+        kotlinDiagnosticsHolder: KotlinDiagnosticsHolder,
+        diagnostics: Collection<KotlinCallDiagnostic>
+    ) {
+        kotlinDiagnosticsHolder.addDiagnosticIfNotNull(
+            reportSmartCastOnReceiver(
+                candidate,
+                candidate.extensionReceiverArgument,
+                resultingDescriptor.extensionReceiverParameter,
+                diagnostics
+            )
+        )
+        kotlinDiagnosticsHolder.addDiagnosticIfNotNull(
+            reportSmartCastOnReceiver(
+                candidate,
+                candidate.dispatchReceiverArgument,
+                resultingDescriptor.dispatchReceiverParameter,
+                diagnostics
+            )
+        )
 
-                for (parameter in resultingDescriptor.valueParameters) {
-                    for (argument in candidate.argumentMappingByOriginal[parameter.original]?.arguments ?: continue) {
-                        val smartCastDiagnostic = createSmartCastDiagnostic(argument, argument.getExpectedType(parameter)) ?: continue
+        for (parameter in resultingDescriptor.valueParameters) {
+            for (argument in candidate.argumentMappingByOriginal[parameter.original]?.arguments ?: continue) {
+                val effectiveExpectedType = argument.getExpectedType(parameter, languageVersionSettings)
+                val smartCastDiagnostic = createSmartCastDiagnostic(candidate, argument, effectiveExpectedType) ?: continue
 
-                        val thereIsUnstableSmartCastError = candidate.status.diagnostics.filterIsInstance<UnstableSmartCast>().any {
-                            it.argument == argument
-                        }
+                val thereIsUnstableSmartCastError = diagnostics.filterIsInstance<UnstableSmartCast>().any {
+                    it.argument == argument
+                }
 
-                        if (!thereIsUnstableSmartCastError) {
-                            add(smartCastDiagnostic)
-                        }
-                    }
+                if (!thereIsUnstableSmartCastError) {
+                    kotlinDiagnosticsHolder.addDiagnostic(smartCastDiagnostic)
                 }
             }
+        }
+    }
 }

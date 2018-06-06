@@ -1,3 +1,4 @@
+// JAVAC_EXPECTED_FILE
 // FILE: A.java
 abstract public class A<F> extends B<F> {
     public F remove(int x) { }

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 
 abstract class FunctionIntrinsicWithReceiverComputed : FunctionIntrinsic() {
     override fun apply(callInfo: CallInfo, arguments: List<JsExpression>, context: TranslationContext): JsExpression {
-        return apply(getThisOrReceiverOrNull(callInfo), arguments, context)
+        return apply(callInfo.dispatchReceiver ?: callInfo.extensionReceiver, arguments, context)
     }
 
     abstract fun apply(receiver: JsExpression?, arguments: List<JsExpression>, context: TranslationContext): JsExpression

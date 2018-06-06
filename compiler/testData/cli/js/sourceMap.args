@@ -1,5 +1,7 @@
 $TESTDATA_DIR$/sourceMap.kt
 -no-stdlib
 -source-map
+-source-map-prefix
+./
 -output
 $TEMP_DIR$/out.js

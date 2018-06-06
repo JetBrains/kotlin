@@ -2,11 +2,11 @@ UFile (package = ) [public final class InKt {...]
     UClass (name = InKt) [public final class InKt {...}]
         UAnnotationMethod (name = foo) [public static final fun foo() : boolean {...}]
             UBlockExpression [{...}] = Nothing
-                UDeclarationsExpression [var x: <ErrorType> = 1] = Undetermined
-                    ULocalVariable (name = x) [var x: <ErrorType> = 1]
+                UDeclarationsExpression [var x: int = 1] = Undetermined
+                    ULocalVariable (name = x) [var x: int = 1]
                         ULiteralExpression (value = 1) [1] = 1
-                UDeclarationsExpression [var y: <ErrorType> = 10] = Undetermined
-                    ULocalVariable (name = y) [var y: <ErrorType> = 10]
+                UDeclarationsExpression [var y: int = 10] = Undetermined
+                    ULocalVariable (name = y) [var y: int = 10]
                         ULiteralExpression (value = 10) [10] = 10
                 UReturnExpression [return x in 0 .. 5 && y !in 4 .. 9] = Nothing
                     UBinaryExpression (operator = &&) [x in 0 .. 5 && y !in 4 .. 9] = true (depending on: (var x = 1), (var y = 10))

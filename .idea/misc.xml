@@ -40,8 +40,7 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/confluence-highlighting/pom.xml" />
-        <option value="$PROJECT_DIR$/confluence/pom.xml" />
+        <option value="$PROJECT_DIR$/libraries/pom.xml" />
       </list>
     </option>
   </component>
@@ -52,7 +51,14 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="SuppressABINotification">
-    <option name="isSuppressed" value="true" />
+    <option name="modulesWithSuppressedNotConfigured">
+      <set>
+        <option value="backend.src" />
+        <option value="kotlin-stdlib-common" />
+        <option value="kotlin-stdlib-js" />
+        <option value="kotlin-test-common" />
+      </set>
+    </option>
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="com.sixrr.metrics.MetricsReloaded">

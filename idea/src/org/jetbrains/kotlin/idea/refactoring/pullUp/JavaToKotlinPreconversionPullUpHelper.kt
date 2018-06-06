@@ -63,7 +63,7 @@ class JavaToKotlinPreconversionPullUpHelper(
     private val jvmStaticAnnotation = KtPsiFactory(data.sourceClass.project).createAnnotationEntry("@kotlin.jvm.JvmStatic")
 
     companion object {
-        private var PsiMember.originalMember: PsiMember? by CopyableUserDataProperty(Key.create("ORIGINAL_MEMBER"))
+        private var PsiMember.originalMember: PsiMember? by CopyablePsiUserDataProperty(Key.create("ORIGINAL_MEMBER"))
     }
 
     private fun collectFieldReferencesToEncapsulate(member: PsiField) {

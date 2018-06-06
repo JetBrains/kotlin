@@ -1,0 +1,18 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/jvm.kt:3:18: error: actual class 'Writer' has no corresponding members for expected class members:
+
+    protected constructor Writer()
+
+    The following declaration is incompatible because visibility is different:
+        protected/*protected and package*/ constructor Writer()
+    The following declaration is incompatible because number of value parameters is different:
+        protected/*protected and package*/ constructor Writer(p0: Any!)
+
+actual typealias Writer = java.io.Writer
+                 ^

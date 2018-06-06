@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
@@ -23,6 +12,8 @@ import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
@@ -32,8 +23,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.computeSealedSubclasses
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
@@ -51,9 +40,9 @@ class DeserializedClassDescriptor(
 ) {
     private val classId = nameResolver.getClassId(classProto.fqName)
 
-    private val modality = Deserialization.modality(Flags.MODALITY.get(classProto.flags))
-    private val visibility = Deserialization.visibility(Flags.VISIBILITY.get(classProto.flags))
-    private val kind = Deserialization.classKind(Flags.CLASS_KIND.get(classProto.flags))
+    private val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(classProto.flags))
+    private val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(classProto.flags))
+    private val kind = ProtoEnumFlags.classKind(Flags.CLASS_KIND.get(classProto.flags))
 
     val c = outerContext.childContext(this, classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable))
 
@@ -73,8 +62,8 @@ class DeserializedClassDescriptor(
             (containingDeclaration as? DeserializedClassDescriptor)?.thisAsProtoContainer
     )
 
-    val sinceKotlinInfo: SinceKotlinInfo?
-        get() = SinceKotlinInfo.create(classProto, c.nameResolver, c.sinceKotlinInfoTable)
+    val versionRequirement: VersionRequirement?
+        get() = VersionRequirement.create(classProto, c.nameResolver, c.versionRequirementTable)
 
     override val annotations =
             if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
@@ -98,9 +87,11 @@ class DeserializedClassDescriptor(
 
     override fun isData() = Flags.IS_DATA.get(classProto.flags)
 
-    override fun isHeader() = Flags.IS_HEADER_CLASS.get(classProto.flags)
+    override fun isInline() = Flags.IS_INLINE_CLASS.get(classProto.flags)
 
-    override fun isImpl() = false
+    override fun isExpect() = Flags.IS_EXPECT_CLASS.get(classProto.flags)
+
+    override fun isActual() = false
 
     override fun isExternal() = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
 
@@ -194,8 +185,6 @@ class DeserializedClassDescriptor(
         }
 
         override fun getParameters() = parameters()
-
-        override fun isFinal(): Boolean = isFinalClass
 
         override fun isDenotable() = true
 
@@ -294,8 +283,8 @@ class DeserializedClassDescriptor(
             result.addAll(classDescriptor.enumEntries?.all().orEmpty())
         }
 
-        private fun recordLookup(name: Name, from: LookupLocation) {
-            c.components.lookupTracker.record(from, classDescriptor, name)
+        override fun recordLookup(name: Name, location: LookupLocation) {
+            c.components.lookupTracker.record(location, classDescriptor, name)
         }
     }
 

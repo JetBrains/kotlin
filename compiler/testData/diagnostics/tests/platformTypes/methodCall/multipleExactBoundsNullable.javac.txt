@@ -1,0 +1,50 @@
+package
+
+public fun </*0*/ M2 : WithFoo> foo(/*0*/ delegateResolver: ResolverForProject<M2?>): ResolverForProject<M2?>
+
+public/*package*/ open class MyMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> : java.util.AbstractMap<K!, V!> {
+    public/*package*/ constructor MyMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!>()
+    public open override /*1*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K!, V!>>
+    invisible_fake final override /*1*/ /*fake_override*/ var keySet: kotlin.collections.(Mutable)Set<K!>!
+    public open override /*1*/ /*fake_override*/ val keys: kotlin.collections.MutableSet<K!>
+    public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var values: kotlin.collections.(Mutable)Collection<V!>!
+    public open override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<V!>
+    public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: K!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: V!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: K!): V?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: K!, /*1*/ value: V!): V?
+    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out K!, V!>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: K!): V?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    invisible_fake open override /*1*/ /*fake_override*/ fun eq(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Boolean
+}
+
+public interface ResolverForProject</*0*/ M1> {
+    public open val exposeM: M1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ResolverForProjectImpl</*0*/ M> : ResolverForProject<M> {
+    public constructor ResolverForProjectImpl</*0*/ M>(/*0*/ descriptorByModule: kotlin.collections.Map<M, kotlin.String>, /*1*/ delegateResolver: ResolverForProject<M>)
+    public open override /*1*/ /*fake_override*/ val exposeM: M
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface WithFoo {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

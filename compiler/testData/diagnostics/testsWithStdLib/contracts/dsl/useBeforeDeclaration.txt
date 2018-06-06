@@ -1,0 +1,6 @@
+package
+
+public fun isString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> x is String
+
+public fun test(/*0*/ x: kotlin.Any?): kotlin.Unit

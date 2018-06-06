@@ -1,6 +1,6 @@
-// "Create header class implementation for platform JS" "true"
+// "Create actual class for module testModule_JS (JS)" "true"
 
-header abstract class <caret>Abstract {
+expect abstract class <caret>Abstract {
     fun foo(param: String): Int
 
     abstract fun String.bar(y: Double): Boolean

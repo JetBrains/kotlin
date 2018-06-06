@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
+        jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -12,6 +13,7 @@ apply plugin: "kotlin-kapt"
 
 repositories {
     mavenLocal()
+    jcenter()
 }
 
 dependencies {
@@ -28,6 +30,8 @@ kapt {
         arg("containsColon", "a:b")
         arg("containsEquals", "a=b")
         arg("startsWithColon", ":a")
+    }
+    arguments {
         arg("startsWithEquals", "=a")
         arg("endsWithColon", "a:")
         arg("endsWithEquals", "a:")
@@ -36,6 +40,10 @@ kapt {
 
     javacOptions {
         option("-Xmaxerrs", 500)
+    }
+    javacOptions {
         option("-Xlint:all")
     }
+
+    annotationProcessor("example.ExampleAnnotationProcessor")
 }

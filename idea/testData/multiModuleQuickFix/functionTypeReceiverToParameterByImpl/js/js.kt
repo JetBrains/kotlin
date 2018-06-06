@@ -1,7 +1,7 @@
 // "Convert 'Int.() -> Int' to '(Int) -> Int'" "true"
 
-impl fun foo(n: Int, action: <caret>Int.() -> Int) = n.action()
+actual fun foo(n: Int, action: <caret>Int.() -> Int) = n.action()
 
-fun test() {
+fun test1() {
     foo(1) { this + 1 }
 }

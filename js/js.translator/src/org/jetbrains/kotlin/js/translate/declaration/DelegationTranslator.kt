@@ -27,15 +27,15 @@ import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateFunctionAsEcma5PropertyDescriptor
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
+import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
 import org.jetbrains.kotlin.resolve.DelegationResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 
 class DelegationTranslator(
-        classDeclaration: KtClassOrObject,
+        classDeclaration: KtPureClassOrObject,
         context: TranslationContext
 ) : AbstractTranslator(context) {
 
@@ -207,7 +207,7 @@ class DelegationTranslator(
             delegateName: JsName
     ) {
         val delegateRef = JsNameRef(delegateName, JsThisRef())
-        val statement = generateDelegateCall(classDescriptor, descriptor, overriddenDescriptor, delegateRef, context(), true, specifier)
+        val statement = generateDelegateCall(classDescriptor, descriptor, overriddenDescriptor, delegateRef, context().newDeclaration(overriddenDescriptor), true, specifier)
         context().addDeclarationStatement(statement)
     }
 }

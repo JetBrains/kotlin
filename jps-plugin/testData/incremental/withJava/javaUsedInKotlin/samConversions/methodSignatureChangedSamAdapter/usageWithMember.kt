@@ -1,0 +1,3 @@
+fun usageWithMember() {
+    JavaClass().foo { "" }
+}

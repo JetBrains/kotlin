@@ -17,55 +17,55 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
-import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.components.SimpleConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature.Companion.argumentValueType
 import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class NewOverloadingConflictResolver(
-        builtIns: KotlinBuiltIns,
-        specificityComparator: TypeSpecificityComparator,
-        externalPredicates: KotlinResolutionExternalPredicates,
-        constraintInjector: ConstraintInjector,
-        typeResolver: ResultTypeResolver
+    builtIns: KotlinBuiltIns,
+    module: ModuleDescriptor,
+    specificityComparator: TypeSpecificityComparator,
+    statelessCallbacks: KotlinResolutionStatelessCallbacks,
+    constraintInjector: ConstraintInjector
 ) : OverloadingConflictResolver<KotlinResolutionCandidate>(
-        builtIns,
-        specificityComparator,
-        {
-            // todo investigate
-            (it as? VariableAsFunctionKotlinResolutionCandidate)?.invokeCandidate?.candidateDescriptor ?:
-            (it as SimpleKotlinResolutionCandidate).candidateDescriptor
-        },
-        { SimpleConstraintSystemImpl(constraintInjector, typeResolver) },
-        Companion::createFlatSignature,
-        { (it as? VariableAsFunctionKotlinResolutionCandidate)?.resolvedVariable },
-        { externalPredicates.isDescriptorFromSource(it) }
+    builtIns,
+    module,
+    specificityComparator,
+    {
+        // todo investigate
+        it.resolvedCall.candidateDescriptor
+    },
+    { SimpleConstraintSystemImpl(constraintInjector, builtIns) },
+    Companion::createFlatSignature,
+    { it.variableCandidateIfInvoke },
+    { statelessCallbacks.isDescriptorFromSource(it) }
 ) {
 
     companion object {
         private fun createFlatSignature(candidate: KotlinResolutionCandidate): FlatSignature<KotlinResolutionCandidate> {
-            val simpleCandidate = (candidate as? VariableAsFunctionKotlinResolutionCandidate)?.invokeCandidate ?: (candidate as SimpleKotlinResolutionCandidate)
 
-            val originalDescriptor = simpleCandidate.descriptorWithFreshTypes.original
+            val resolvedCall = candidate.resolvedCall
+            val originalDescriptor = resolvedCall.candidateDescriptor.original
             val originalValueParameters = originalDescriptor.valueParameters
 
             var numDefaults = 0
             val valueArgumentToParameterType = HashMap<KotlinCallArgument, KotlinType>()
-            for ((valueParameter, resolvedValueArgument) in simpleCandidate.argumentMappingByOriginal) {
+            for ((valueParameter, resolvedValueArgument) in resolvedCall.argumentMappingByOriginal) {
                 if (resolvedValueArgument is ResolvedCallArgument.DefaultArgument) {
                     numDefaults++
-                }
-                else {
+                } else {
                     val originalValueParameter = originalValueParameters[valueParameter.index]
-                    val parameterType = originalValueParameter.argumentValueType
                     for (valueArgument in resolvedValueArgument.arguments) {
-                        valueArgumentToParameterType[valueArgument] = parameterType
+                        valueArgumentToParameterType[valueArgument] = candidate.resolvedCall.argumentsWithConversion[valueArgument]?.convertedTypeByOriginParameter ?:
+                                valueArgument.getExpectedType(originalValueParameter, candidate.callComponents.languageVersionSettings)
                     }
                 }
             }
@@ -73,8 +73,8 @@ class NewOverloadingConflictResolver(
             return FlatSignature.create(candidate,
                                         originalDescriptor,
                                         numDefaults,
-                                        simpleCandidate.kotlinCall.argumentsInParenthesis.map { valueArgumentToParameterType[it] } +
-                                        listOfNotNull(simpleCandidate.kotlinCall.externalArgument?.let { valueArgumentToParameterType[it] })
+                                        resolvedCall.atom.argumentsInParenthesis.map { valueArgumentToParameterType[it] } +
+                                                listOfNotNull(resolvedCall.atom.externalArgument?.let { valueArgumentToParameterType[it] })
             )
 
         }

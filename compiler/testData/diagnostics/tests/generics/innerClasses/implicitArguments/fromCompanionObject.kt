@@ -14,7 +14,7 @@ class A {
 
     // Does not work, could be Outer<String>.Inner<Int>
     // TODO: Should work?
-    fun foo(x: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!><Int>) {
+    fun foo(x: <!DEPRECATED_ACCESS_BY_SHORT_NAME, OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!><Int>) {
         // Inner<Char>() call use companion as implicit receiver
         val y: Outer<String>.Inner<Char> = Inner<Char>()
     }

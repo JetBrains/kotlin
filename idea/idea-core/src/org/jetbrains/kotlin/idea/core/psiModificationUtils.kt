@@ -21,27 +21,30 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getLambdaArgumentName
-import org.jetbrains.kotlin.psi.psiUtil.hasBody
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.psi.addRemoveModifier.MODIFIERS_ORDER
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
+import org.jetbrains.kotlin.utils.SmartList
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified T : PsiElement> PsiElement.replaced(newElement: T): T {
@@ -56,13 +59,23 @@ inline fun <reified T : PsiElement> PsiElement.replaced(newElement: T): T {
 fun <T : PsiElement> T.copied(): T = copy() as T
 
 fun KtLambdaArgument.moveInsideParentheses(bindingContext: BindingContext): KtCallExpression {
-    return moveInsideParenthesesAndReplaceWith(this.getArgumentExpression(), bindingContext)
+    val ktExpression = this.getArgumentExpression()
+            ?: throw KotlinExceptionWithAttachments("no argument expression for $this")
+                .withAttachment("lambdaExpression", this.text)
+    return moveInsideParenthesesAndReplaceWith(ktExpression, bindingContext)
 }
 
 fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
         replacement: KtExpression,
         bindingContext: BindingContext
 ): KtCallExpression = moveInsideParenthesesAndReplaceWith(replacement, getLambdaArgumentName(bindingContext))
+
+
+fun KtLambdaArgument.getLambdaArgumentName(bindingContext: BindingContext): Name? {
+    val callExpression = parent as KtCallExpression
+    val resolvedCall = callExpression.getResolvedCall(bindingContext)
+    return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.name
+}
 
 fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
         replacement: KtExpression,
@@ -95,12 +108,45 @@ fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
     return oldCallExpression.replace(newCallExpression) as KtCallExpression
 }
 
+fun KtLambdaExpression.moveFunctionLiteralOutsideParenthesesIfPossible() {
+    val call = ((parent as? KtValueArgument)?.parent as? KtValueArgumentList)?.parent as? KtCallExpression ?: return
+    if (call.canMoveLambdaOutsideParentheses()) {
+        call.moveFunctionLiteralOutsideParentheses()
+    }
+}
+
 private fun shouldLambdaParameterBeNamed(args: List<ValueArgument>, callExpr: KtCallExpression): Boolean {
     if (args.any { it.isNamed() }) return true
     val calee = (callExpr.calleeExpression?.mainReference?.resolve() as? KtFunction) ?: return true
     return if (calee.valueParameters.any { it.isVarArg }) true else calee.valueParameters.size - 1 > args.size
 }
 
+fun KtCallExpression.getLastLambdaExpression(): KtLambdaExpression? {
+    if (lambdaArguments.isNotEmpty()) return null
+    return valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral()
+}
+
+fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
+    if (getLastLambdaExpression() == null) return false
+
+    val callee = calleeExpression
+    if (callee is KtNameReferenceExpression) {
+        val bindingContext = analyze(BodyResolveMode.PARTIAL)
+        val targets = bindingContext[BindingContext.REFERENCE_TARGET, callee]?.let { listOf(it) }
+                ?: bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, callee]
+                ?: listOf()
+        val candidates = targets.filterIsInstance<FunctionDescriptor>()
+        // if there are functions among candidates but none of them have last function parameter then not show the intention
+        if (candidates.isNotEmpty() && candidates.none {
+            val lastParameter = it.valueParameters.lastOrNull()
+            lastParameter != null && lastParameter.type.isFunctionType
+        }) {
+            return false
+        }
+    }
+
+    return true
+}
 
 fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
     assert(lambdaArguments.isEmpty())
@@ -188,7 +234,7 @@ fun KtDeclaration.toDescriptor(): DeclarationDescriptor? {
     val bindingContext = analyze()
     // TODO: temporary code
     if (this is KtPrimaryConstructor) {
-        return (this.getContainingClassOrObject().resolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor
+        return this.getContainingClassOrObject().resolveToDescriptorIfAny()?.unsubstitutedPrimaryConstructor
     }
 
     val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
@@ -220,7 +266,7 @@ fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? =
                 else KtTokens.DEFAULT_VISIBILITY_KEYWORD
             }
             hasModifier(KtTokens.OVERRIDE_KEYWORD) -> {
-                (resolveToDescriptor(BodyResolveMode.PARTIAL) as? CallableMemberDescriptor)
+                (resolveToDescriptorIfAny() as? CallableMemberDescriptor)
                         ?.overriddenDescriptors
                         ?.let { OverridingUtil.findMaxVisibility(it) }
                         ?.toKeywordToken()
@@ -233,7 +279,10 @@ fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? =
 fun KtModifierListOwner.canBePrivate() = modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) != true
 
 fun KtModifierListOwner.canBeProtected(): Boolean {
-    val parent = this.parent
+    val parent = when (this) {
+        is KtPropertyAccessor -> this.property.parent
+        else -> this.parent
+    }
     return when (parent) {
         is KtClassBody -> parent.parent is KtClass
         is KtParameterList -> parent.parent is KtPrimaryConstructor
@@ -271,7 +320,7 @@ fun KtDeclaration.isOverridable(): Boolean {
 }
 
 fun KtDeclaration.getModalityFromDescriptor(): KtModifierKeywordToken? {
-    val descriptor = this.resolveToDescriptor(BodyResolveMode.PARTIAL)
+    val descriptor = this.resolveToDescriptorIfAny()
     if (descriptor is MemberDescriptor) {
         return mapModality(descriptor.modality)
     }
@@ -405,4 +454,37 @@ fun KtParameter.setDefaultValue(newDefaultValue: KtExpression): PsiElement? {
     val psiFactory = KtPsiFactory(this)
     val eq = equalsToken ?: add(psiFactory.createEQ())
     return addAfter(newDefaultValue, eq) as KtExpression
+}
+
+fun KtModifierList.appendModifier(modifier: KtModifierKeywordToken) {
+    add(KtPsiFactory(this).createModifier(modifier))
+}
+
+fun KtModifierList.normalize(): KtModifierList {
+    val psiFactory = KtPsiFactory(this)
+    return psiFactory.createEmptyModifierList().also { newList ->
+        val modifiers = SmartList<PsiElement>()
+        allChildren.forEach {
+            val elementType = it.node.elementType
+            when {
+                it is KtAnnotation || it is KtAnnotationEntry -> newList.add(it)
+                elementType is KtModifierKeywordToken -> {
+                    if (elementType == KtTokens.DEFAULT_VISIBILITY_KEYWORD) return@forEach
+                    if (elementType == KtTokens.FINALLY_KEYWORD && !hasModifier(KtTokens.OVERRIDE_KEYWORD)) return@forEach
+                    modifiers.add(it)
+                }
+            }
+        }
+        modifiers.sortBy { MODIFIERS_ORDER.indexOf(it.node.elementType) }
+        modifiers.forEach { newList.add(it) }
+    }
+}
+
+fun KtBlockStringTemplateEntry.canDropBraces() =
+    expression is KtNameReferenceExpression && canPlaceAfterSimpleNameEntry(nextSibling)
+
+fun KtBlockStringTemplateEntry.dropBraces(): KtSimpleNameStringTemplateEntry {
+    val name = (expression as KtNameReferenceExpression).getReferencedName()
+    val newEntry = KtPsiFactory(this).createSimpleNameStringTemplateEntry(name)
+    return replaced(newEntry)
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -20,6 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ArrayUtil;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,29 +19,29 @@ import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.intrinsics.HashCode;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.kotlin.codegen.serialization.JvmStringTable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmTarget;
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil;
+import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.protobuf.MessageLite;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.DeprecationUtilKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.*;
@@ -70,6 +60,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAn
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -140,6 +131,12 @@ public class AsmUtil {
         return primitiveTypeByBoxedType.get(boxedType);
     }
 
+    @NotNull
+    public static Type unboxUnlessPrimitive(@NotNull Type boxedOrPrimitiveType) {
+        if (isPrimitive(boxedOrPrimitiveType)) return boxedOrPrimitiveType;
+        return unboxType(boxedOrPrimitiveType);
+    }
+
     public static boolean isBoxedTypeOf(@NotNull Type boxedType, @NotNull Type unboxedType) {
         return unboxPrimitiveTypeOrNull(boxedType) == unboxedType;
     }
@@ -186,24 +183,24 @@ public class AsmUtil {
         return new Method(name, Type.getMethodDescriptor(returnType, parameterTypes));
     }
 
-    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {
+    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT ||
-                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !state.isJvm8TargetWithDefaults()))
+                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !hasJvmDefaultAnnotation(functionDescriptor)))
                && !isStaticMethod(kind, functionDescriptor);
     }
 
     public static boolean isStaticMethod(OwnerKind kind, CallableMemberDescriptor functionDescriptor) {
         return isStaticKind(kind) ||
                KotlinTypeMapper.isStaticAccessor(functionDescriptor) ||
-               CodegenUtilKt.isJvmStaticInObjectOrClass(functionDescriptor);
+               CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor);
     }
 
     public static boolean isStaticKind(OwnerKind kind) {
-        return kind == OwnerKind.PACKAGE || kind == OwnerKind.DEFAULT_IMPLS;
+        return kind == OwnerKind.PACKAGE || kind == OwnerKind.DEFAULT_IMPLS || kind == OwnerKind.ERASED_INLINE_CLASS;
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {
-        int flags = getCommonCallableFlags(functionDescriptor);
+        int flags = getCommonCallableFlags(functionDescriptor, state);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.METHOD_FLAGS) {
             if (flagAnnotation.hasAnnotation(functionDescriptor.getOriginal())) {
@@ -232,7 +229,7 @@ public class AsmUtil {
             flags |= ACC_STATIC;
         }
 
-        if (isAbstractMethod(functionDescriptor, kind, state)) {
+        if (isAbstractMethod(functionDescriptor, kind)) {
             flags |= ACC_ABSTRACT;
         }
 
@@ -244,17 +241,12 @@ public class AsmUtil {
         return flags;
     }
 
-    public static int getCommonCallableFlags(FunctionDescriptor functionDescriptor) {
+    public static int getCommonCallableFlags(FunctionDescriptor functionDescriptor, @NotNull GenerationState state) {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (DeprecationUtilKt.isDeprecatedHidden(functionDescriptor, LanguageVersionSettingsImpl.DEFAULT)
-            || functionDescriptor instanceof PropertyAccessorDescriptor
-               && DeprecationUtilKt.isDeprecatedHidden(
-                       ((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty(),
-                       LanguageVersionSettingsImpl.DEFAULT
-               )
-        ) {
+        if (state.getDeprecationProvider().isDeprecatedHidden(functionDescriptor) ||
+            (functionDescriptor.isSuspend()) && functionDescriptor.getVisibility().equals(Visibilities.PRIVATE)) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;
@@ -266,11 +258,16 @@ public class AsmUtil {
             return specialCase;
         }
         Visibility visibility = descriptor.getVisibility();
-        Integer defaultMapping = visibilityToAccessFlag.get(visibility);
+        Integer defaultMapping = getVisibilityAccessFlag(visibility);
         if (defaultMapping == null) {
             throw new IllegalStateException(visibility + " is not a valid visibility in backend for " + DescriptorRenderer.DEBUG_TEXT.render(descriptor));
         }
         return defaultMapping;
+    }
+
+    @Nullable
+    public static Integer getVisibilityAccessFlag(Visibility visibility) {
+        return visibilityToAccessFlag.get(visibility);
     }
 
     /*
@@ -517,7 +514,7 @@ public class AsmUtil {
         });
     }
 
-    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
+    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget, boolean isInterface) {
         if (type.getSort() == Type.ARRAY) {
             Type elementType = correctElementType(type);
             if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
@@ -528,7 +525,7 @@ public class AsmUtil {
             }
         }
         else if (type.getSort() == Type.OBJECT) {
-            iv.invokevirtual("java/lang/Object", "hashCode", "()I", false);
+            iv.invokevirtual((isInterface ? AsmTypes.OBJECT_TYPE : type).getInternalName(), "hashCode", "()I", false);
         }
         else if (type.getSort() == Type.BOOLEAN) {
             Label end = new Label();
@@ -660,8 +657,23 @@ public class AsmUtil {
         // currently when resuming a suspend function we pass default values instead of real arguments (i.e. nulls for references)
         if (descriptor.isSuspend()) return;
 
-        // Private method is not accessible from other classes, no assertions needed
-        if (getVisibilityAccessFlag(descriptor) == ACC_PRIVATE) return;
+        if (getVisibilityAccessFlag(descriptor) == ACC_PRIVATE) {
+            // Private method is not accessible from other classes, no assertions needed,
+            // unless we have a private operator function, in which we should generate a parameter assertion for an extension receiver.
+
+            // HACK: this provides "fail fast" behavior for operator functions.
+            // Such functions can be invoked in operator conventions desugaring,
+            // which is currently done on ad hoc basis in ExpressionCodegen.
+
+            if (state.isReceiverAssertionsDisabled()) return;
+            if (descriptor.isOperator()) {
+                ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
+                if (receiverParameter != null) {
+                    genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, "$receiver");
+                }
+            }
+            return;
+        }
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
@@ -677,18 +689,19 @@ public class AsmUtil {
             @NotNull InstructionAdapter v,
             @NotNull KotlinTypeMapper typeMapper,
             @NotNull FrameMap frameMap,
-            @NotNull CallableDescriptor parameter,
+            @NotNull ParameterDescriptor parameter,
             @NotNull String name
     ) {
-        KotlinType type = parameter.getReturnType();
-        if (type == null || isNullableType(type)) return;
+        KotlinType type = parameter.getType();
+        if (isNullableType(type) || InlineClassesUtilsKt.isNullableUnderlyingType(type)) return;
 
         int index = frameMap.getIndex(parameter);
         Type asmType = typeMapper.mapType(type);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
             v.load(index, asmType);
             v.visitLdcInsn(name);
-            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkParameterIsNotNull",
+            String checkMethod = "checkParameterIsNotNull";
+            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, checkMethod,
                            "(Ljava/lang/Object;Ljava/lang/String;)V", false);
         }
     }
@@ -705,7 +718,7 @@ public class AsmUtil {
         return new StackValue(stackValue.type) {
 
             @Override
-            public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
+            public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
                 Type innerType = stackValue.type;
                 stackValue.put(innerType, v);
                 if (innerType.getSort() == Type.OBJECT || innerType.getSort() == Type.ARRAY) {
@@ -772,7 +785,7 @@ public class AsmUtil {
     public static boolean isPropertyWithBackingFieldCopyInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
         DeclarationDescriptor propertyContainer = propertyDescriptor.getContainingDeclaration();
         return propertyDescriptor.isConst()
-               && isCompanionObject(propertyContainer) && isInterface(propertyContainer.getContainingDeclaration())
+               && isCompanionObject(propertyContainer) && isJvmInterface(propertyContainer.getContainingDeclaration())
                && getVisibilityForBackingField(propertyDescriptor, false) == ACC_PUBLIC;
     }
 
@@ -878,19 +891,29 @@ public class AsmUtil {
             @NotNull DescriptorSerializer serializer,
             @NotNull MessageLite message
     ) {
-        byte[] bytes = serializer.serialize(message);
+        writeAnnotationData(av, message, (JvmStringTable) serializer.getStringTable());
+    }
 
-        AnnotationVisitor data = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME);
-        for (String string : BitEncoding.encodeBytes(bytes)) {
-            data.visit(null, string);
-        }
-        data.visitEnd();
+    public static void writeAnnotationData(
+            @NotNull AnnotationVisitor av, @NotNull MessageLite message, @NotNull JvmStringTable stringTable
+    ) {
+        writeAnnotationData(av, JvmProtoBufUtil.writeData(message, stringTable), ArrayUtil.toStringArray(stringTable.getStrings()));
+    }
 
-        AnnotationVisitor strings = av.visitArray(JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME);
-        for (String string : ((JvmStringTable) serializer.getStringTable()).getStrings()) {
-            strings.visit(null, string);
+    public static void writeAnnotationData(
+            @NotNull AnnotationVisitor av, @NotNull String[] data, @NotNull String[] strings
+    ) {
+        AnnotationVisitor dataVisitor = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME);
+        for (String string : data) {
+            dataVisitor.visit(null, string);
         }
-        strings.visitEnd();
+        dataVisitor.visitEnd();
+
+        AnnotationVisitor stringsVisitor = av.visitArray(JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME);
+        for (String string : strings) {
+            stringsVisitor.visit(null, string);
+        }
+        stringsVisitor.visitEnd();
     }
 
     @NotNull

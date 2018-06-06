@@ -144,7 +144,7 @@ public class JsFor extends SourceInfoAwareJsNode implements JsStatement {
         if (initVars != null) {
             result = new JsFor(initVars.deepCopy(), conditionCopy, incrementalExprCopy, bodyCopy);
         } else {
-            result = new JsFor(initExpression.deepCopy(), conditionCopy, incrementalExprCopy, bodyCopy);
+            result = new JsFor(initExpression != null ? initExpression.deepCopy() : null, conditionCopy, incrementalExprCopy, bodyCopy);
         }
 
         return result.withMetadataFrom(this);

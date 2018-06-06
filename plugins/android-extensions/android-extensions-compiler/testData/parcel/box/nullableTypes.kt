@@ -8,16 +8,20 @@ import android.os.Parcel
 import android.os.Parcelable
 
 @Parcelize
+data class Foo(val a: String) : Parcelable
+
+@Parcelize
 data class Test(
     val str1: String,
     val str2: String?,
     val int1: Int,
-    val int2: Int?
+    val int2: Int?,
+    val foo: Foo?
 ) : Parcelable
 
 fun box() = parcelTest { parcel ->
-    val first = Test("John", "Smith", 20, 30)
-    val second = Test("A", null, 20, null)
+    val first = Test("John", "Smith", 20, 30, Foo("a"))
+    val second = Test("A", null, 20, null, null)
 
     first.writeToParcel(parcel, 0)
     second.writeToParcel(parcel, 0)

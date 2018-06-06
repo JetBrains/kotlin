@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.conversion.copy;
@@ -32,109 +21,96 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class TextJavaToKotlinCopyPasteConversionTestGenerated extends AbstractTextJavaToKotlinCopyPasteConversionTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInPlainTextConversion() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/plainTextConversion"), Pattern.compile("^([^\\.]+)\\.txt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("AsExpression.txt")
     public void testAsExpression() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/AsExpression.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/AsExpression.txt");
     }
 
     @TestMetadata("AsExpressionBody.txt")
     public void testAsExpressionBody() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/AsExpressionBody.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/AsExpressionBody.txt");
     }
 
     @TestMetadata("ImportFromTarget.txt")
     public void testImportFromTarget() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/ImportFromTarget.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/ImportFromTarget.txt");
     }
 
     @TestMetadata("ImportResolve.txt")
     public void testImportResolve() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/ImportResolve.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/ImportResolve.txt");
     }
 
     @TestMetadata("InsideIdentifier.txt")
     public void testInsideIdentifier() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/InsideIdentifier.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/InsideIdentifier.txt");
     }
 
     @TestMetadata("IntoComment.txt")
     public void testIntoComment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/IntoComment.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/IntoComment.txt");
     }
 
     @TestMetadata("IntoRawStringLiteral.txt")
     public void testIntoRawStringLiteral() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/IntoRawStringLiteral.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/IntoRawStringLiteral.txt");
     }
 
     @TestMetadata("IntoStringLiteral.txt")
     public void testIntoStringLiteral() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/IntoStringLiteral.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/IntoStringLiteral.txt");
     }
 
     @TestMetadata("KT13529.txt")
     public void testKT13529() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/KT13529.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/KT13529.txt");
     }
 
     @TestMetadata("KT13529_1.txt")
     public void testKT13529_1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/KT13529_1.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/KT13529_1.txt");
     }
 
     @TestMetadata("MembersIntoClass.txt")
     public void testMembersIntoClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/MembersIntoClass.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/MembersIntoClass.txt");
     }
 
     @TestMetadata("MembersToTopLevel.txt")
     public void testMembersToTopLevel() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/MembersToTopLevel.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/MembersToTopLevel.txt");
     }
 
     @TestMetadata("Override.txt")
     public void testOverride() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/Override.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/Override.txt");
     }
 
     @TestMetadata("OverrideInterface.txt")
     public void testOverrideInterface() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/OverrideInterface.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/OverrideInterface.txt");
     }
 
     @TestMetadata("PostProcessing.txt")
     public void testPostProcessing() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/PostProcessing.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/PostProcessing.txt");
     }
 
     @TestMetadata("StatementsIntoFunction.txt")
     public void testStatementsIntoFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/StatementsIntoFunction.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/StatementsIntoFunction.txt");
     }
 
     @TestMetadata("WholeFile.txt")
     public void testWholeFile() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/plainTextConversion/WholeFile.txt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/plainTextConversion/WholeFile.txt");
     }
 }

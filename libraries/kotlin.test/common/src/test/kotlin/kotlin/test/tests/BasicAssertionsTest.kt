@@ -1,12 +1,22 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package kotlin.test.tests
 
 import kotlin.test.*
-import org.junit.Test
 
 class BasicAssertionsTest {
     @Test
     fun testAssertEquals() {
         assertEquals(1, 1)
+    }
+
+    @Test
+    fun testAssertSame() {
+        val instance: Any = object {}
+        assertSame(instance, instance)
     }
 
     @Test
@@ -20,24 +30,23 @@ class BasicAssertionsTest {
         assertFailsWith<AssertionError> { throw AssertionError() }
     }
 
-    @Test fun testAssertFailsWithFails() {
+    @Test
+    fun testAssertFailsWithFails() {
         assertTrue(true) // at least one assertion required for qunit
 
-        withDefaultAsserter run@ {
+        withDefaultAsserter run@{
             try {
                 assertFailsWith<IllegalStateException> { throw IllegalArgumentException() }
-            }
-            catch (e: AssertionError) {
+            } catch (e: AssertionError) {
                 return@run
             }
             throw AssertionError("Expected to fail")
         }
 
-        withDefaultAsserter run@ {
+        withDefaultAsserter run@{
             try {
-                assertFailsWith<IllegalStateException> {  }
-            }
-            catch (e: AssertionError) {
+                assertFailsWith<IllegalStateException> { }
+            } catch (e: AssertionError) {
                 return@run
             }
             throw AssertionError("Expected to fail")
@@ -68,6 +77,13 @@ class BasicAssertionsTest {
     }
 
     @Test
+    fun testAssertSameFails() {
+        val instance1: Any = object {}
+        val instance2: Any = object {}
+        checkFailedAssertion { assertSame(instance1, instance2) }
+    }
+
+    @Test
     fun testAssertTrue() {
         assertTrue(true)
         assertTrue { true }
@@ -88,7 +104,7 @@ class BasicAssertionsTest {
     @Test
     fun testAssertFalseFails() {
         checkFailedAssertion { assertFalse(true) }
-        checkFailedAssertion{ assertFalse { true } }
+        checkFailedAssertion { assertFalse { true } }
     }
 
     @Test
@@ -98,7 +114,7 @@ class BasicAssertionsTest {
 
     @Test()
     fun testAssertFailsFails() {
-        checkFailedAssertion { assertFails {  } }
+        checkFailedAssertion { assertFails { } }
     }
 
 
@@ -107,9 +123,22 @@ class BasicAssertionsTest {
         assertNotEquals(1, 2)
     }
 
+    @Test
+    fun testAssertNotSame() {
+        val instance1: Any = object {}
+        val instance2: Any = object {}
+        assertNotSame(instance1, instance2)
+    }
+
     @Test()
     fun testAssertNotEqualsFails() {
         checkFailedAssertion { assertNotEquals(1, 1) }
+    }
+
+    @Test
+    fun testAssertNotSameFails() {
+        val instance: Any = object {}
+        checkFailedAssertion { assertNotSame(instance, instance) }
     }
 
     @Test
@@ -173,8 +202,7 @@ private fun withDefaultAsserter(block: () -> Unit) {
     val current = overrideAsserter(DefaultAsserter())
     try {
         block()
-    }
-    finally {
+    } finally {
         overrideAsserter(current)
     }
 }

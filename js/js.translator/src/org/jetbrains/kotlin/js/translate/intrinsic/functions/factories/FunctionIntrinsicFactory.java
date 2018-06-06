@@ -19,9 +19,10 @@ package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 
 public interface FunctionIntrinsicFactory {
     @Nullable
-    FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor);
+    FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context);
 }

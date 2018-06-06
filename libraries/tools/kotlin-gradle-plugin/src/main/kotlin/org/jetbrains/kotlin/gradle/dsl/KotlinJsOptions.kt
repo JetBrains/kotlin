@@ -51,9 +51,9 @@ interface KotlinJsOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
     /**
      * Embed source files into source map
      * Possible values: "never", "always", "inlining"
-     * Default value: "inlining"
+     * Default value: null
      */
-     var sourceMapEmbedSources: kotlin.String
+     var sourceMapEmbedSources: kotlin.String?
 
     /**
      * Prefix for paths in a source map
@@ -70,7 +70,7 @@ interface KotlinJsOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 
     /**
      * Translate primitive arrays to JS typed arrays
-     * Default value: false
+     * Default value: true
      */
      var typedArrays: kotlin.Boolean
 }

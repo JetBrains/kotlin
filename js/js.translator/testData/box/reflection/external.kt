@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 997
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1099
 external class A
 
 external object O

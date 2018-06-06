@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.intermediate.TransientReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -38,15 +37,18 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val resultType = getInferredTypeWithImplicitCastsOrFail(ktClassLiteral)
 
         return if (lhs is DoubleColonLHS.Expression && !lhs.isObjectQualifier) {
-            IrGetClassImpl(ktClassLiteral.startOffset, ktClassLiteral.endOffset, resultType,
-                           statementGenerator.generateExpression(ktArgument))
-        }
-        else {
+            IrGetClassImpl(
+                ktClassLiteral.startOffset, ktClassLiteral.endOffset, resultType,
+                ktArgument.genExpr()
+            )
+        } else {
             val typeConstructorDeclaration = lhs.type.constructor.declarationDescriptor
-            val typeClass = typeConstructorDeclaration ?:
-                            throw AssertionError("Unexpected type constructor for ${lhs.type}: $typeConstructorDeclaration")
-            IrClassReferenceImpl(ktClassLiteral.startOffset, ktClassLiteral.endOffset, resultType,
-                                 context.symbolTable.referenceClassifier(typeClass))
+            val typeClass = typeConstructorDeclaration
+                    ?: throw AssertionError("Unexpected type constructor for ${lhs.type}: $typeConstructorDeclaration")
+            IrClassReferenceImpl(
+                ktClassLiteral.startOffset, ktClassLiteral.endOffset, resultType,
+                context.symbolTable.referenceClassifier(typeClass), lhs.type
+            )
         }
     }
 
@@ -61,16 +63,16 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val endOffset = ktCallableReference.endOffset
 
         return statementGenerator.generateCallReceiver(
-                ktCallableReference,
-                resultingDescriptor,
-                resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
-                isSafe = false
+            ktCallableReference,
+            resultingDescriptor,
+            resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
+            isSafe = false
         ).call { dispatchReceiverValue, extensionReceiverValue ->
             generateCallableReference(
-                    startOffset, endOffset,
-                    getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
-                    referencedDescriptor,
-                    typeArguments = null
+                startOffset, endOffset,
+                getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
+                referencedDescriptor,
+                typeArguments = null
             ).also { irCallableReference ->
                 irCallableReference.dispatchReceiver = dispatchReceiverValue?.loadIfExists()
                 irCallableReference.extensionReceiver = extensionReceiverValue?.loadIfExists()
@@ -79,58 +81,58 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     }
 
     fun generateCallableReference(
-            startOffset: Int,
-            endOffset: Int,
-            type: KotlinType,
-            callableDescriptor: CallableDescriptor,
-            typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-            origin: IrStatementOrigin? = null
+        startOffset: Int,
+        endOffset: Int,
+        type: KotlinType,
+        callableDescriptor: CallableDescriptor,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+        origin: IrStatementOrigin? = null
     ): IrCallableReference =
-            when (callableDescriptor) {
-                is FunctionDescriptor ->
-                    generateFunctionReference(
-                            startOffset, endOffset, type,
-                            context.symbolTable.referenceFunction(callableDescriptor.original),
-                            callableDescriptor,
-                            typeArguments,
-                            origin
-                    )
-                is PropertyDescriptor ->
-                    generatePropertyReference(startOffset, endOffset, type, callableDescriptor, typeArguments, origin)
-                else ->
-                    throw AssertionError("Unexpected callable reference: $callableDescriptor")
-            }
+        when (callableDescriptor) {
+            is FunctionDescriptor ->
+                generateFunctionReference(
+                    startOffset, endOffset, type,
+                    context.symbolTable.referenceFunction(callableDescriptor.original),
+                    callableDescriptor,
+                    typeArguments,
+                    origin
+                )
+            is PropertyDescriptor ->
+                generatePropertyReference(startOffset, endOffset, type, callableDescriptor, typeArguments, origin)
+            else ->
+                throw AssertionError("Unexpected callable reference: $callableDescriptor")
+        }
 
     fun generateLocalDelegatedPropertyReference(
-            startOffset: Int,
-            endOffset: Int,
-            type: KotlinType,
-            variableDescriptor: VariableDescriptorWithAccessors,
-            irDelegateSymbol: IrVariableSymbol,
-            origin: IrStatementOrigin?
+        startOffset: Int,
+        endOffset: Int,
+        type: KotlinType,
+        variableDescriptor: VariableDescriptorWithAccessors,
+        irDelegateSymbol: IrVariableSymbol,
+        origin: IrStatementOrigin?
     ): IrLocalDelegatedPropertyReference {
-        val getterDescriptor = variableDescriptor.getter ?:
-                               throw AssertionError("Local delegated property should have a getter: $variableDescriptor")
+        val getterDescriptor =
+            variableDescriptor.getter ?: throw AssertionError("Local delegated property should have a getter: $variableDescriptor")
         val setterDescriptor = variableDescriptor.setter
 
         val getterSymbol = context.symbolTable.referenceFunction(getterDescriptor)
         val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceFunction(it) }
 
         return IrLocalDelegatedPropertyReferenceImpl(
-                startOffset, endOffset, type,
-                variableDescriptor,
-                irDelegateSymbol, getterSymbol, setterSymbol,
-                origin
+            startOffset, endOffset, type,
+            variableDescriptor,
+            irDelegateSymbol, getterSymbol, setterSymbol,
+            origin
         )
     }
 
     private fun generatePropertyReference(
-            startOffset: Int,
-            endOffset: Int,
-            type: KotlinType,
-            propertyDescriptor: PropertyDescriptor,
-            typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-            origin: IrStatementOrigin?
+        startOffset: Int,
+        endOffset: Int,
+        type: KotlinType,
+        propertyDescriptor: PropertyDescriptor,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+        origin: IrStatementOrigin?
     ): IrPropertyReference {
         val getterDescriptor = propertyDescriptor.getter
         val setterDescriptor = propertyDescriptor.setter
@@ -140,27 +142,27 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
 
         return IrPropertyReferenceImpl(
-                startOffset, endOffset, type,
-                propertyDescriptor,
-                fieldSymbol, getterSymbol, setterSymbol,
-                typeArguments,
-                origin
+            startOffset, endOffset, type,
+            propertyDescriptor,
+            fieldSymbol, getterSymbol, setterSymbol,
+            typeArguments,
+            origin
         )
     }
 
     fun generateFunctionReference(
-            startOffset: Int,
-            endOffset: Int,
-            type: KotlinType,
-            symbol: IrFunctionSymbol,
-            descriptor: FunctionDescriptor,
-            typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-            origin: IrStatementOrigin?
+        startOffset: Int,
+        endOffset: Int,
+        type: KotlinType,
+        symbol: IrFunctionSymbol,
+        descriptor: FunctionDescriptor,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+        origin: IrStatementOrigin?
     ): IrFunctionReference =
-            IrFunctionReferenceImpl(
-                    startOffset, endOffset, type,
-                    symbol, descriptor,
-                    typeArguments,
-                    origin
-            )
+        IrFunctionReferenceImpl(
+            startOffset, endOffset, type,
+            symbol, descriptor,
+            typeArguments,
+            origin
+        )
 }

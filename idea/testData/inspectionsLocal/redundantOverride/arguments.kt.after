@@ -1,0 +1,7 @@
+open class Foo {
+    open fun arguments(arg1: Int, arg2: Long) {
+    }
+}
+
+class Bar : Foo() {
+}

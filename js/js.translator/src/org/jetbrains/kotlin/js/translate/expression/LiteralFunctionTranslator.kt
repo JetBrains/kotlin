@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.descriptorUtils.isCoroutineLambda
+import org.jetbrains.kotlin.js.inline.util.FunctionWithWrapper
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
 import org.jetbrains.kotlin.js.inline.util.rewriters.NameReplacingVisitor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -33,8 +34,10 @@ import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.setDefault
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
+import org.jetbrains.kotlin.js.translate.utils.addFunctionButNotExport
 import org.jetbrains.kotlin.js.translate.utils.fillCoroutineMetadata
 import org.jetbrains.kotlin.js.translate.utils.finalElement
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -65,20 +68,19 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         val tracker = functionContext.usageTracker()!!
 
+        val name = invokingContext.getInnerNameForDescriptor(descriptor)
         if (tracker.hasCapturedExceptContaining()) {
             val lambdaCreator = simpleReturnFunction(invokingContext.scope(), lambda.source(declaration))
-            lambdaCreator.name = invokingContext.getInnerNameForDescriptor(descriptor)
             lambdaCreator.isLocal = true
             if (descriptor in tracker.capturedDescriptors && !descriptor.isCoroutineLambda) {
                 lambda.name = tracker.getNameForCapturedDescriptor(descriptor)
             }
-            lambdaCreator.name.staticRef = lambdaCreator
+            name.staticRef = lambdaCreator
             lambdaCreator.fillCoroutineMetadata(invokingContext, descriptor)
             lambdaCreator.source = declaration
-            return lambdaCreator.withCapturedParameters(descriptor, functionContext, invokingContext)
+            return lambdaCreator.withCapturedParameters(functionContext, name, invokingContext, declaration)
         }
 
-        lambda.name = invokingContext.getInnerNameForDescriptor(descriptor)
         if (descriptor in tracker.capturedDescriptors) {
             val capturedName = tracker.getNameForCapturedDescriptor(descriptor)!!
             val globalName = invokingContext.getInnerNameForDescriptor(descriptor)
@@ -88,16 +90,17 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         lambda.isLocal = true
 
-        invokingContext.addDeclarationStatement(lambda.makeStmt())
+        invokingContext.addFunctionDeclaration(name, lambda, declaration)
         lambda.fillCoroutineMetadata(invokingContext, descriptor)
-        lambda.name.staticRef = lambda
-        return getReferenceToLambda(invokingContext, descriptor, lambda.name)
+        name.staticRef = lambda
+        return JsAstUtils.pureFqn(name, null)
     }
 
     fun JsFunction.fillCoroutineMetadata(context: TranslationContext, descriptor: FunctionDescriptor) {
         if (!descriptor.isSuspend) return
 
         fillCoroutineMetadata(context, descriptor, hasController = descriptor.extensionReceiverParameter != null)
+        forceStateMachine = true
     }
 
     fun ValueParameterDescriptorImpl.WithDestructuringDeclaration.translate(context: TranslationContext): JsVars {
@@ -110,13 +113,23 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
     }
 }
 
+private fun TranslationContext.addFunctionDeclaration(name: JsName, function: JsFunction, source: Any?) {
+    addFunctionButNotExport(name, if (isPublicInlineFunction) {
+        InlineMetadata.wrapFunction(this, FunctionWithWrapper(function, null), source)
+    }
+    else {
+        function
+    })
+}
+
 fun JsFunction.withCapturedParameters(
-        descriptor: CallableMemberDescriptor,
         context: TranslationContext,
-        invokingContext: TranslationContext
+        functionName: JsName,
+        invokingContext: TranslationContext,
+        source: KtDeclaration
 ): JsExpression {
-    context.addDeclarationStatement(makeStmt())
-    val ref = getReferenceToLambda(invokingContext, descriptor, name)
+    invokingContext.addFunctionDeclaration(functionName, this, source)
+    val ref = JsAstUtils.pureFqn(functionName, null)
     val invocation = JsInvocation(ref).apply { sideEffects = SideEffectKind.PURE }
 
     val invocationArguments = invocation.arguments
@@ -133,8 +146,8 @@ fun JsFunction.withCapturedParameters(
 
         if (capturedDescriptor is TypeParameterDescriptor && capturedDescriptor.isReified) {
             // Preserve the usual order
-            additionalArgs = listOf(invokingContext.getNameForDescriptor(capturedDescriptor).makeRef()) + additionalArgs
-            additionalParams = listOf(JsParameter(context.getNameForDescriptor(capturedDescriptor))) + additionalParams
+            additionalArgs = listOf(invokingContext.getCapturedTypeName(capturedDescriptor).makeRef()) + additionalArgs
+            additionalParams = listOf(JsParameter(context.getCapturedTypeName(capturedDescriptor))) + additionalParams
         }
 
         if (capturedDescriptor is CallableDescriptor && isLocalInlineDeclaration(capturedDescriptor)) {
@@ -153,19 +166,6 @@ fun JsFunction.withCapturedParameters(
     }
 
     return invocation
-}
-
-private fun getReferenceToLambda(context: TranslationContext, descriptor: CallableMemberDescriptor, name: JsName): JsExpression {
-    return if (context.isPublicInlineFunction) {
-        val fqn = context.getQualifiedReference(descriptor)
-        if (fqn is JsNameRef) {
-            fqn.name?.let { it.staticRef = name.staticRef }
-        }
-        fqn
-    }
-    else {
-        JsAstUtils.pureFqn(name, null)
-    }
 }
 
 private data class CapturedArgsParams(val arguments: List<JsExpression> = listOf(), val parameters: List<JsParameter> = listOf())

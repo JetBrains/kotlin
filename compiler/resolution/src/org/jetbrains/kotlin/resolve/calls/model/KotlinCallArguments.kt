@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.model
@@ -26,12 +15,19 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.UnwrappedType
 
 
-interface ReceiverKotlinCallArgument {
+interface ReceiverKotlinCallArgument : KotlinCallArgument {
     val receiver: DetailedReceiver
+    val isSafeCall: Boolean
 }
 
 class QualifierReceiverKotlinCallArgument(override val receiver: QualifierReceiver) : ReceiverKotlinCallArgument {
+    override val isSafeCall: Boolean
+        get() = false // TODO: add warning
+
     override fun toString() = "$receiver"
+
+    override val isSpread get() = false
+    override val argumentName: Name? get() = null
 }
 
 interface KotlinCallArgument {
@@ -39,18 +35,16 @@ interface KotlinCallArgument {
     val argumentName: Name?
 }
 
-interface PostponableKotlinCallArgument : KotlinCallArgument
+interface PostponableKotlinCallArgument : KotlinCallArgument, ResolutionAtom
 
 interface SimpleKotlinCallArgument : KotlinCallArgument, ReceiverKotlinCallArgument {
     override val receiver: ReceiverValueWithSmartCastInfo
-
-    val isSafeCall: Boolean
 }
 
-interface ExpressionKotlinCallArgument : SimpleKotlinCallArgument
+interface ExpressionKotlinCallArgument : SimpleKotlinCallArgument, ResolutionAtom
 
 interface SubKotlinCallArgument : SimpleKotlinCallArgument {
-    val resolvedCall: ResolvedKotlinCall.OnlyResolvedKotlinCall
+    val callResult: PartialCallResolutionResult
 }
 
 interface LambdaKotlinCallArgument : PostponableKotlinCallArgument {
@@ -83,7 +77,7 @@ interface FunctionExpression : LambdaKotlinCallArgument {
  * D.E::foo <-> Expression
  */
 sealed class LHSResult {
-    class Type(val qualifier: QualifierReceiver, resolvedType: UnwrappedType): LHSResult() {
+    class Type(val qualifier: QualifierReceiver, resolvedType: UnwrappedType) : LHSResult() {
         val unboundDetailedReceiver: ReceiverValueWithSmartCastInfo
 
         init {
@@ -96,7 +90,7 @@ sealed class LHSResult {
         }
     }
 
-    class Object(val qualifier: QualifierReceiver): LHSResult() {
+    class Object(val qualifier: QualifierReceiver) : LHSResult() {
         val objectValueReceiver: ReceiverValueWithSmartCastInfo
 
         init {
@@ -106,10 +100,13 @@ sealed class LHSResult {
             objectValueReceiver = qualifier.classValueReceiverWithSmartCastInfo ?: error("class value should be not null for $qualifier")
         }
     }
-    class Expression(val lshCallArgument: SimpleKotlinCallArgument): LHSResult()
+
+    class Expression(val lshCallArgument: SimpleKotlinCallArgument) : LHSResult()
 
     // todo this case is forbid for now
-    object Empty: LHSResult()
+    object Empty : LHSResult()
+
+    object Error : LHSResult()
 }
 
 interface CallableReferenceKotlinCallArgument : PostponableKotlinCallArgument {
@@ -128,6 +125,6 @@ interface TypeArgument
 // todo allow '_' in frontend
 object TypeArgumentPlaceholder : TypeArgument
 
-interface SimpleTypeArgument: TypeArgument {
+interface SimpleTypeArgument : TypeArgument {
     val type: UnwrappedType
 }

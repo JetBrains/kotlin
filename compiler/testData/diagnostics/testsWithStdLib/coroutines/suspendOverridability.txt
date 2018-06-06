@@ -19,7 +19,7 @@ public interface B : A {
 public interface C : A {
     public open override /*1*/ fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open suspend override /*1*/ fun foo(): kotlin.Unit
+    public open override /*1*/ suspend fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -28,7 +28,7 @@ public final class D : J {
     public constructor D()
     public abstract override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open suspend override /*1*/ fun foo(): kotlin.Unit
+    public open override /*1*/ suspend fun foo(): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ y: kotlin.coroutines.experimental.Continuation<kotlin.Unit!>!): kotlin.Any!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -37,7 +37,7 @@ public final class D : J {
 public interface J : A {
     public abstract override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract suspend override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+    public abstract override /*1*/ suspend /*fake_override*/ fun foo(): kotlin.Unit
     public abstract fun foo(/*0*/ y: kotlin.coroutines.experimental.Continuation<kotlin.Unit!>!): kotlin.Any!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

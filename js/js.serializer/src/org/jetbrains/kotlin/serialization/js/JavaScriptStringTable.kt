@@ -16,30 +16,32 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.StringTableImpl
 
 class JavaScriptStringTable : StringTableImpl() {
-    override fun getFqNameIndexOfLocalAnonymousClass(descriptor: ClassifierDescriptorWithTypeParameters): Int {
+    override fun getLocalClassIdReplacement(descriptor: ClassifierDescriptorWithTypeParameters): ClassId? {
         return if (descriptor.containingDeclaration is CallableMemberDescriptor) {
             val superClassifiers = descriptor.getAllSuperClassifiers()
                     .mapNotNull { it as ClassifierDescriptorWithTypeParameters }
                     .filter { it != descriptor }
                     .toList()
             if (superClassifiers.size == 1) {
-                getFqNameIndex(superClassifiers[0])
+                superClassifiers[0].classId
             }
             else {
                 val superClass = superClassifiers.find { !DescriptorUtils.isInterface(it) }
-                getFqNameIndex(superClass ?: descriptor.module.builtIns.any)
+                superClass?.classId ?: ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.any.toSafe())
             }
         }
         else {
-            super.getFqNameIndexOfLocalAnonymousClass(descriptor)
+            super.getLocalClassIdReplacement(descriptor)
         }
     }
 }

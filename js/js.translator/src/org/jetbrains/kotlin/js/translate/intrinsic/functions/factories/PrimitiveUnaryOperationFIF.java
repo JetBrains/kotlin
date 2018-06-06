@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntri
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
@@ -60,6 +61,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
     private static final DescriptorPredicate DEC_OPERATION_FOR_BYTE = pattern("Byte.dec");
     private static final DescriptorPredicate INC_OPERATION_FOR_SHORT = pattern("Short.inc");
     private static final DescriptorPredicate DEC_OPERATION_FOR_SHORT = pattern("Short.dec");
+    private static final DescriptorPredicate NEG_OPERATION_FOR_INT = pattern("Int.unaryMinus");
 
     @NotNull
     private static final DescriptorPredicate INC_OPERATION_FOR_PRIMITIVE_NUMBER = pattern("Float|Double.inc()");
@@ -99,7 +101,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
                 @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
-            return JsAstUtils.toShort(underlyingIntrinsic.apply(receiver, arguments, context));
+            return AstUtilsKt.toShort(context, underlyingIntrinsic.apply(receiver, arguments, context));
         }
     }
 
@@ -117,7 +119,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
                 @NotNull List<? extends JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
-            return JsAstUtils.toByte(underlyingIntrinsic.apply(receiver, arguments, context));
+            return AstUtilsKt.toByte(context, underlyingIntrinsic.apply(receiver, arguments, context));
         }
     }
 
@@ -148,6 +150,20 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
             assert receiver != null;
             assert arguments.size() == 0;
             return new JsBinaryOperation(JsBinaryOperator.SUB, receiver, new JsIntLiteral(1));
+        }
+    };
+
+    private static final FunctionIntrinsicWithReceiverComputed NUMBER_NEG_INTRINSIC = new FunctionIntrinsicWithReceiverComputed() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver,
+                @NotNull List<? extends JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            assert receiver != null;
+            assert arguments.size() == 0;
+            return new JsPrefixOperation(JsUnaryOperator.NEG, receiver);
         }
     };
 
@@ -214,7 +230,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
 
     @Nullable
     @Override
-    public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
+    public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
         if (!PATTERN.test(descriptor)) {
             return null;
         }
@@ -264,6 +280,9 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
             return NUMBER_DEC_INTRINSIC;
         }
 
+        if (NEG_OPERATION_FOR_INT.test(descriptor)) {
+            return new IntOverflowIntrinsic(NUMBER_NEG_INTRINSIC);
+        }
 
         Name name = descriptor.getName();
 

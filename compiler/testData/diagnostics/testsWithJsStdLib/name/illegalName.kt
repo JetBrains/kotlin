@@ -18,3 +18,8 @@ private class <!NAME_CONTAINS_ILLEGAL_CHARS!>` .private class `<!> {
 val x: Int
     <!NAME_CONTAINS_ILLEGAL_CHARS!>@JsName(".")
     get()<!> = TODO("")
+
+fun box(x: dynamic) {
+    x.<!NAME_CONTAINS_ILLEGAL_CHARS!>`foo-bar`<!>()
+    x.<!NAME_CONTAINS_ILLEGAL_CHARS!>`ba-z`<!>
+}

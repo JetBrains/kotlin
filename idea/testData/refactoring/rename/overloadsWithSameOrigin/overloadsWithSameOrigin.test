@@ -1,0 +1,7 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "foo/overload.kt",
+  "newName": "overloadNew",
+  "withRuntime": "true",
+  "overloadRenamer.onlyPrimaryElement": "true"
+}

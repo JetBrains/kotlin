@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.repl;
@@ -32,49 +21,46 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IdeReplCompletionTestGenerated extends AbstractIdeReplCompletionTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInCompletion() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/repl/completion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("builtInMember.kt")
     public void testBuiltInMember() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/repl/completion/builtInMember.kt");
-        doTest(fileName);
+        runTest("idea/testData/repl/completion/builtInMember.kt");
     }
 
     @TestMetadata("definedClass.kt")
     public void testDefinedClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/repl/completion/definedClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/repl/completion/definedClass.kt");
     }
 
     @TestMetadata("definedClassMember.kt")
     public void testDefinedClassMember() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/repl/completion/definedClassMember.kt");
-        doTest(fileName);
+        runTest("idea/testData/repl/completion/definedClassMember.kt");
     }
 
     @TestMetadata("definedExtension.kt")
     public void testDefinedExtension() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/repl/completion/definedExtension.kt");
-        doTest(fileName);
+        runTest("idea/testData/repl/completion/definedExtension.kt");
     }
 
     @TestMetadata("functions.kt")
     public void testFunctions() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/repl/completion/functions.kt");
-        doTest(fileName);
+        runTest("idea/testData/repl/completion/functions.kt");
     }
 
     @TestMetadata("stdlib.kt")
     public void testStdlib() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/repl/completion/stdlib.kt");
-        doTest(fileName);
+        runTest("idea/testData/repl/completion/stdlib.kt");
     }
 
     @TestMetadata("variables.kt")
     public void testVariables() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/repl/completion/variables.kt");
-        doTest(fileName);
+        runTest("idea/testData/repl/completion/variables.kt");
     }
 }

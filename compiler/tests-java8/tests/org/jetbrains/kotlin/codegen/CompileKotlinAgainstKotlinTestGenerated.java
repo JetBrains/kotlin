@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -32,6 +21,10 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotlinAgainstKotlinTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInCompileKotlinAgainstKotlin() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
@@ -40,14 +33,63 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Jvm6 extends AbstractCompileKotlinAgainstKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInJvm6() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm6"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("jdk8Against6.kt")
         public void testJdk8Against6() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm6/jdk8Against6.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm6/jdk8Against6.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Jvm8 extends AbstractCompileKotlinAgainstKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJvm8() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8/defaults")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Defaults extends AbstractCompileKotlinAgainstKotlinTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDefaults() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("superCall.kt")
+            public void testSuperCall() throws Exception {
+                runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8/defaults/superCall.kt");
+            }
+
+            @TestMetadata("superCallFromInterface.kt")
+            public void testSuperCallFromInterface() throws Exception {
+                runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8/defaults/superCallFromInterface.kt");
+            }
+
+            @TestMetadata("superPropAccess.kt")
+            public void testSuperPropAccess() throws Exception {
+                runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccess.kt");
+            }
+
+            @TestMetadata("superPropAccessFromInterface.kt")
+            public void testSuperPropAccessFromInterface() throws Exception {
+                runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface.kt");
+            }
         }
     }
 
@@ -55,70 +97,64 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Jvm8against6 extends AbstractCompileKotlinAgainstKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInJvm8against6() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("simpleCall.kt")
         public void testSimpleCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/simpleCall.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/simpleCall.kt");
+        }
+
+        @TestMetadata("simpleCallWithBigHierarchy.kt")
+        public void testSimpleCallWithBigHierarchy() throws Exception {
+            runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/simpleCallWithBigHierarchy.kt");
         }
 
         @TestMetadata("simpleCallWithHierarchy.kt")
         public void testSimpleCallWithHierarchy() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/simpleCallWithHierarchy.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/simpleCallWithHierarchy.kt");
         }
 
         @TestMetadata("simpleProp.kt")
         public void testSimpleProp() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/simpleProp.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/simpleProp.kt");
+        }
+
+        @TestMetadata("simplePropWithHierarchy.kt")
+        public void testSimplePropWithHierarchy() throws Exception {
+            runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/simplePropWithHierarchy.kt");
         }
 
         @TestMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Delegation extends AbstractCompileKotlinAgainstKotlinTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInDelegation() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("delegationToDefaultMethodInClass.kt")
-            public void testDelegationToDefaultMethodInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/delegationToDefaultMethodInClass.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("delegationToDefaultMethodInInterface.kt")
-            public void testDelegationToDefaultMethodInInterface() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/delegationToDefaultMethodInInterface.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("delegationToDefaultMethodInInterface2.kt")
-            public void testDelegationToDefaultMethodInInterface2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/delegationToDefaultMethodInInterface2.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("diamond.kt")
             public void testDiamond() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/diamond.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/diamond.kt");
             }
 
             @TestMetadata("diamond2.kt")
             public void testDiamond2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/diamond2.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/diamond2.kt");
             }
 
             @TestMetadata("diamond3.kt")
             public void testDiamond3() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/diamond3.kt");
-                doTest(fileName);
+                runTest("compiler/testData/codegen/java8/compileKotlinAgainstKotlin/jvm8against6/delegation/diamond3.kt");
             }
         }
     }

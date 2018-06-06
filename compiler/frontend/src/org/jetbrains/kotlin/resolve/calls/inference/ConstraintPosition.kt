@@ -64,7 +64,7 @@ class CompoundConstraintPosition(vararg positions: ConstraintPosition) : Constra
         get() = COMPOUND_CONSTRAINT_POSITION
 
     val positions: Collection<ConstraintPosition> =
-            positions.flatMap { (it as? CompoundConstraintPosition)?.positions ?: listOf(it) }.toSet()
+        positions.flatMap { (it as? CompoundConstraintPosition)?.positions ?: listOf(it) }.toSet()
 
     override fun isStrong() = positions.any { it.isStrong() }
 
@@ -76,19 +76,19 @@ fun ConstraintPosition.derivedFrom(kind: ConstraintPositionKind): Boolean {
 }
 
 class ValidityConstraintForConstituentType(
-        val typeArgument: KotlinType,
-        val typeParameter: TypeParameterDescriptor,
-        val bound: KotlinType
+    val typeArgument: KotlinType,
+    val typeParameter: TypeParameterDescriptor,
+    val bound: KotlinType
 ) : ConstraintPosition {
     override val kind: ConstraintPositionKind get() = TYPE_BOUND_POSITION
 }
 
 fun ConstraintPosition.getValidityConstraintForConstituentType(): ValidityConstraintForConstituentType? =
-        when (this) {
-            is ValidityConstraintForConstituentType ->
-                this
-            is CompoundConstraintPosition ->
-                positions.asSequence().map { it.getValidityConstraintForConstituentType() }.firstOrNull { it != null }
-            else ->
-                null
-        }
+    when (this) {
+        is ValidityConstraintForConstituentType ->
+            this
+        is CompoundConstraintPosition ->
+            positions.asSequence().map { it.getValidityConstraintForConstituentType() }.firstOrNull { it != null }
+        else ->
+            null
+    }

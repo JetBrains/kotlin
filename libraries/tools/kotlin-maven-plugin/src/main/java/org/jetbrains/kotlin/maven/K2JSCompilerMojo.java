@@ -131,7 +131,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
             }
         }
 
-        arguments.setSourceMapSourceRoots(sourceMapSourceRoots.toString());
+        arguments.setSourceMapBaseDirs(sourceMapSourceRoots.toString());
     }
 
     protected List<String> getClassPathElements() throws DependencyResolutionRequiredException {

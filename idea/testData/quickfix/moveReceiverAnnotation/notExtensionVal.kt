@@ -1,8 +1,9 @@
 // "Move annotation to receiver type" "false"
-// ERROR: '@receiver:' annotations can only be applied to the receiver type of extension function or extension property declarations
+// ERROR: This annotation is not applicable to target 'declaration' and use site target '@receiver'
 // ACTION: Make internal
 // ACTION: Make private
 // ACTION: Specify type explicitly
+// ACTION: Add annotation target
 
 annotation class Ann
 

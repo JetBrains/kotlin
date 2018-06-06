@@ -57,4 +57,5 @@ abstract class MarkerFile(private val fileName: String, private val paths: Build
 }
 
 class HasKotlinMarker(dataManager: BuildDataManager) : MarkerFile(HAS_KOTLIN_MARKER_FILE_NAME, dataManager.dataPaths)
-class RebuildAfterCacheVersionChangeMarker(dataManager: BuildDataManager) : MarkerFile(REBUILD_AFTER_CACHE_VERSION_CHANGE_MARKER, dataManager.dataPaths)
+class RebuildAfterCacheVersionChangeMarker(dataManager: BuildDataManager) :
+    MarkerFile(REBUILD_AFTER_CACHE_VERSION_CHANGE_MARKER, dataManager.dataPaths)

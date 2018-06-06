@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 interface OverridesBackwardCompatibilityHelper {
     fun overrideCanBeOmitted(overridingDescriptor: CallableMemberDescriptor): Boolean
 
-    object DEFAULT : OverridesBackwardCompatibilityHelper {
+    object Default : OverridesBackwardCompatibilityHelper {
         override fun overrideCanBeOmitted(overridingDescriptor: CallableMemberDescriptor): Boolean =
-                false
+            false
     }
 }

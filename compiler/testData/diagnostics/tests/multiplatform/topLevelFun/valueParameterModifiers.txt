@@ -1,0 +1,24 @@
+// -- Module: <m1-common> --
+package
+
+public expect fun f1(/*0*/ s: () -> kotlin.String): kotlin.Unit
+public expect inline fun f2(/*0*/ s: () -> kotlin.String): kotlin.Unit
+public expect inline fun f3(/*0*/ noinline s: () -> kotlin.String): kotlin.Unit
+public expect fun f4(/*0*/ s: () -> kotlin.String): kotlin.Unit
+public expect inline fun f5(/*0*/ s: () -> kotlin.String): kotlin.Unit
+public expect inline fun f6(/*0*/ crossinline s: () -> kotlin.String): kotlin.Unit
+public expect fun f7(/*0*/ x: kotlin.Any): kotlin.Unit
+public expect fun f8(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Unit
+
+
+// -- Module: <m2-jvm> --
+package
+
+public actual inline fun f1(/*0*/ noinline s: () -> kotlin.String): kotlin.Unit
+public actual inline fun f2(/*0*/ noinline s: () -> kotlin.String): kotlin.Unit
+public actual inline fun f3(/*0*/ s: () -> kotlin.String): kotlin.Unit
+public actual inline fun f4(/*0*/ crossinline s: () -> kotlin.String): kotlin.Unit
+public actual inline fun f5(/*0*/ crossinline s: () -> kotlin.String): kotlin.Unit
+public actual inline fun f6(/*0*/ s: () -> kotlin.String): kotlin.Unit
+public actual fun f7(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Unit
+public actual fun f8(/*0*/ x: kotlin.Any): kotlin.Unit

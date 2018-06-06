@@ -58,15 +58,15 @@ public final class Out</*0*/ out T> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias In1</*0*/ T>  = In<T>
-public typealias In2</*0*/ T>  = In<in T>
-public typealias In3</*0*/ T>  = In<out T>
-public typealias In4</*0*/ T>  = In<*>
-public typealias Inv1</*0*/ T>  = Inv<T>
-public typealias Inv2</*0*/ T>  = Inv<in T>
-public typealias Inv3</*0*/ T>  = Inv<out T>
-public typealias Inv4</*0*/ T>  = Inv<*>
-public typealias Out1</*0*/ T>  = Out<T>
-public typealias Out2</*0*/ T>  = Out<in T>
-public typealias Out3</*0*/ T>  = Out<out T>
-public typealias Out4</*0*/ T>  = Out<*>
+public typealias In1</*0*/ T> = In<T>
+public typealias In2</*0*/ T> = In<in T>
+public typealias In3</*0*/ T> = In<out T>
+public typealias In4</*0*/ T> = In<*>
+public typealias Inv1</*0*/ T> = Inv<T>
+public typealias Inv2</*0*/ T> = Inv<in T>
+public typealias Inv3</*0*/ T> = Inv<out T>
+public typealias Inv4</*0*/ T> = Inv<*>
+public typealias Out1</*0*/ T> = Out<T>
+public typealias Out2</*0*/ T> = Out<in T>
+public typealias Out3</*0*/ T> = Out<out T>
+public typealias Out4</*0*/ T> = Out<*>

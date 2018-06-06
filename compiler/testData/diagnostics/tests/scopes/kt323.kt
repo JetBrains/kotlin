@@ -10,9 +10,9 @@ class B : A() {
 
     var b : Int
         <!REDUNDANT_MODIFIER_IN_GETTER!>public<!> get() = 23
-        set(i: Int) {}
+        set(<!UNUSED_PARAMETER!>i<!>: Int) {}
 
     protected var c : Int
         get() = 23
-        private set(i: Int) {}
+        private set(<!UNUSED_PARAMETER!>i<!>: Int) {}
 }

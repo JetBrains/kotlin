@@ -62,7 +62,7 @@ public class QuickFixUtil {
     public static KotlinType getDeclarationReturnType(KtNamedDeclaration declaration) {
         PsiFile file = declaration.getContainingFile();
         if (!(file instanceof KtFile)) return null;
-        DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(declaration, BodyResolveMode.FULL);
+        DeclarationDescriptor descriptor = ResolutionUtils.unsafeResolveToDescriptor(declaration, BodyResolveMode.FULL);
         if (!(descriptor instanceof CallableDescriptor)) return null;
         KotlinType type = ((CallableDescriptor) descriptor).getReturnType();
         if (type instanceof DeferredType) {
@@ -168,7 +168,7 @@ public class QuickFixUtil {
         FqName typeFqName = typeClassifierDescriptor != null ? DescriptorUtils.getFqNameSafe(typeClassifierDescriptor) : fqNameToCheckAgainst;
         DescriptorRenderer renderer = typeFqName.shortName().equals(fqNameToCheckAgainst.shortName())
                ? IdeDescriptorRenderers.SOURCE_CODE
-               : IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES;
+               : IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS;
         return renderer.renderType(type);
     }
 }

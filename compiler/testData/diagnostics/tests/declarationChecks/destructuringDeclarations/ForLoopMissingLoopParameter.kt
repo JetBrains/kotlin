@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun useDeclaredVariables() {
     for ((a, b)<!SYNTAX!><!>) {
         <!UNUSED_EXPRESSION, DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>

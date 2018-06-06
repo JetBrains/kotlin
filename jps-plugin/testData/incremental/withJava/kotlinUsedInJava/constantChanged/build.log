@@ -11,13 +11,8 @@ Exit code: OK
 ------------------------------------------
 Cleaning output files:
   out/production/module/Usage.class
-  out/production/module/test/Klass$Companion.class
-  out/production/module/test/Klass.class
 End of files
-Compiling files:
-  src/const.kt
-End of files
-Exit code: OK
+Exit code: NOTHING_DONE
 ------------------------------------------
 Compiling files:
   src/Usage.java

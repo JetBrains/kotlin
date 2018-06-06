@@ -23,9 +23,10 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.idea.core.script.dependencies.SyncScriptDependenciesLoader
+import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
-import org.jetbrains.kotlin.script.makeScriptDefsFromTemplatesProviderExtensions
+import org.jetbrains.kotlin.script.findScriptDefinition
 import java.io.File
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
@@ -33,7 +34,7 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 // NOTE: this service exists exclusively because ScriptDependencyManager
 // cannot be registered as implementing two services (state would be duplicated)
 class IdeScriptDependenciesProvider(
-        private val scriptDependenciesManager: ScriptDependenciesManager
+    private val scriptDependenciesManager: ScriptDependenciesManager
 ) : ScriptDependenciesProvider {
     override fun getScriptDependencies(file: VirtualFile): ScriptDependencies? {
         return scriptDependenciesManager.getScriptDependencies(file)
@@ -41,32 +42,21 @@ class IdeScriptDependenciesProvider(
 }
 
 class ScriptDependenciesManager internal constructor(
-        private val project: Project,
-        private val scriptDefinitionProvider: KotlinScriptDefinitionProvider,
-        private val cacheUpdater: ScriptDependenciesUpdater,
-        private val cache: ScriptDependenciesCache
+    private val cacheUpdater: ScriptDependenciesUpdater,
+    private val cache: ScriptDependenciesCache
 ) {
-    init {
-        reloadScriptDefinitions()
-    }
-
     fun getScriptClasspath(file: VirtualFile): List<VirtualFile> = toVfsRoots(cacheUpdater.getCurrentDependencies(file).classpath)
-    fun getScriptDependencies(file: VirtualFile) = cacheUpdater.getCurrentDependencies(file)
+    fun getScriptDependencies(file: VirtualFile): ScriptDependencies = cacheUpdater.getCurrentDependencies(file)
 
-    private fun reloadScriptDefinitions() {
-        val def = makeScriptDefsFromTemplatesProviderExtensions(project, { ep, ex -> log.warn("[kts] Error loading definition from ${ep.id}", ex) })
-        scriptDefinitionProvider.setScriptDefinitions(def)
-    }
-
-    fun getAllScriptsClasspathScope() = cache.allScriptsClasspathScope.get()
-    fun getAllLibrarySourcesScope() = cache.allLibrarySourcesScope.get()
-    fun getAllLibrarySources() = cache.allLibrarySourcesCache.get()
-    fun getAllScriptsClasspath() = cache.allScriptsClasspathCache.get()
+    fun getAllScriptsClasspathScope() = cache.allScriptsClasspathScope
+    fun getAllLibrarySourcesScope() = cache.allLibrarySourcesScope
+    fun getAllLibrarySources() = cache.allLibrarySources
+    fun getAllScriptsClasspath() = cache.allScriptsClasspath
 
     companion object {
         @JvmStatic
         fun getInstance(project: Project): ScriptDependenciesManager =
-                ServiceManager.getService(project, ScriptDependenciesManager::class.java)
+            ServiceManager.getService(project, ScriptDependenciesManager::class.java)
 
         fun toVfsRoots(roots: Iterable<File>): List<VirtualFile> {
             return roots.mapNotNull { it.classpathEntryToVfs() }
@@ -88,17 +78,8 @@ class ScriptDependenciesManager internal constructor(
         @TestOnly
         fun updateScriptDependenciesSynchronously(virtualFile: VirtualFile, project: Project) {
             with(getInstance(project)) {
-                val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(project)!!.findScriptDefinition(virtualFile)!!
-                cacheUpdater.updateSync(virtualFile, scriptDefinition)
-                cacheUpdater.notifyRootsChanged()
-            }
-        }
-
-        @TestOnly
-        fun reloadScriptDefinitions(project: Project) {
-            with(getInstance(project)) {
-                reloadScriptDefinitions()
-                cacheUpdater.clear()
+                val scriptDefinition = ScriptDefinitionProvider.getInstance(project).findScriptDefinition(virtualFile)!!
+                SyncScriptDependenciesLoader(virtualFile, scriptDefinition, project, shouldNotifyRootsChanged = true).updateDependencies()
             }
         }
     }

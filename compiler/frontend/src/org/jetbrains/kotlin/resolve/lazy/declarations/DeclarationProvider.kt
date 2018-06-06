@@ -33,4 +33,6 @@ interface DeclarationProvider {
     fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo>
 
     fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias>
+
+    fun getDeclarationNames(): Set<Name>
 }

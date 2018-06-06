@@ -75,11 +75,9 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
 
     override fun getFamilyName() = QuickFixBundle.message("rename.wrong.reference.family")
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
-        return super.isAvailable(project, editor, file)
-               && editor != null
-               && element.getStrictParentOfType<KtTypeReference>() == null
+        return editor != null && element.getStrictParentOfType<KtTypeReference>() == null
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
@@ -98,7 +96,7 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
                 }
 
         val resolutionFacade = element.getResolutionFacade()
-        val context = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
+        val context = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL_WITH_CFA)
         val moduleDescriptor = resolutionFacade.moduleDescriptor
         val variantsHelper = ReferenceVariantsHelper(context, resolutionFacade, moduleDescriptor, {
             it !is DeclarationDescriptorWithVisibility || it.isVisible(element, null, context, resolutionFacade)

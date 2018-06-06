@@ -52,7 +52,7 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean, val allowe
         supertypesLocked = true
 
         if (supertypesDeque == null) {
-            supertypesDeque = ArrayDeque()
+            supertypesDeque = ArrayDeque(4)
         }
         if (supertypesSet == null) {
             supertypesSet = SmartSet.create()
@@ -65,11 +65,13 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean, val allowe
         supertypesLocked = false
     }
 
-    internal fun anySupertype(
+    internal inline fun anySupertype(
             start: SimpleType,
             predicate: (SimpleType) -> Boolean,
             supertypesPolicy: (SimpleType) -> SupertypesPolicy
     ): Boolean {
+        if (predicate(start)) return true
+
         initialize()
 
         val deque = supertypesDeque!!
@@ -81,18 +83,17 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean, val allowe
                 error("Too many supertypes for type: $start. Supertypes = ${visitedSupertypes.joinToString()}")
             }
             val current = deque.pop()
-
-            if (!visitedSupertypes.add(current)) {
-                continue
-            }
-
-            if (predicate(current)) {
-                clear()
-                return true
-            }
+            if (!visitedSupertypes.add(current)) continue
 
             val policy = supertypesPolicy(current).takeIf { it != SupertypesPolicy.None } ?: continue
-            for (supertype in current.constructor.supertypes) deque.add(policy.transformType(supertype))
+            for (supertype in current.constructor.supertypes) {
+                val newType = policy.transformType(supertype)
+                if (predicate(newType)) {
+                    clear()
+                    return true
+                }
+                deque.add(newType)
+            }
         }
 
         clear()

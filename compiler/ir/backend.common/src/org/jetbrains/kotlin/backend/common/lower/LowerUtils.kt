@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -48,20 +45,36 @@ import org.jetbrains.kotlin.utils.Printer
 class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContext(backendContext.irBuiltIns)
 
 class DeclarationIrBuilder(
-        backendContext: BackendContext,
-        symbol: IrSymbol,
-        startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
+    backendContext: BackendContext,
+    symbol: IrSymbol,
+    startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
 ) : IrBuilderWithScope(
-        IrLoweringContext(backendContext),
-        Scope(symbol),
-        startOffset,
-        endOffset
+    IrLoweringContext(backendContext),
+    Scope(symbol),
+    startOffset,
+    endOffset
 )
 
-fun BackendContext.createIrBuilder(symbol: IrSymbol,
-                                   startOffset: Int = UNDEFINED_OFFSET,
-                                   endOffset: Int = UNDEFINED_OFFSET) =
-        DeclarationIrBuilder(this, symbol, startOffset, endOffset)
+abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
+    protected abstract fun remapVariable(value: ValueDescriptor): IrValueParameter?
+
+    override fun visitGetValue(expression: IrGetValue): IrExpression =
+        remapVariable(expression.descriptor)?.let {
+            IrGetValueImpl(expression.startOffset, expression.endOffset, it.symbol, expression.origin)
+        } ?: expression
+}
+
+class VariableRemapper(val mapping: Map<ValueDescriptor, IrValueParameter>) : AbstractVariableRemapper() {
+    override fun remapVariable(value: ValueDescriptor): IrValueParameter? =
+        mapping[value]
+}
+
+fun BackendContext.createIrBuilder(
+    symbol: IrSymbol,
+    startOffset: Int = UNDEFINED_OFFSET,
+    endOffset: Int = UNDEFINED_OFFSET
+) =
+    DeclarationIrBuilder(this, symbol, startOffset, endOffset)
 
 
 fun <T : IrBuilder> T.at(element: IrElement) = this.at(element.startOffset, element.endOffset)
@@ -69,41 +82,45 @@ fun <T : IrBuilder> T.at(element: IrElement) = this.at(element.startOffset, elem
 /**
  * Builds [IrBlock] to be used instead of given expression.
  */
-inline fun IrGeneratorWithScope.irBlock(expression: IrExpression, origin: IrStatementOrigin? = null,
-                                        resultType: KotlinType? = expression.type,
-                                        body: IrBlockBuilder.() -> Unit) =
-        this.irBlock(expression.startOffset, expression.endOffset, origin, resultType, body)
+inline fun IrGeneratorWithScope.irBlock(
+    expression: IrExpression, origin: IrStatementOrigin? = null,
+    resultType: KotlinType? = expression.type,
+    body: IrBlockBuilder.() -> Unit
+) =
+    this.irBlock(expression.startOffset, expression.endOffset, origin, resultType, body)
 
 inline fun IrGeneratorWithScope.irBlockBody(irElement: IrElement, body: IrBlockBodyBuilder.() -> Unit) =
-        this.irBlockBody(irElement.startOffset, irElement.endOffset, body)
+    this.irBlockBody(irElement.startOffset, irElement.endOffset, body)
 
 fun IrBuilderWithScope.irIfThen(condition: IrExpression, thenPart: IrExpression) =
-        IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, thenPart, null)
+    IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, thenPart, null)
 
 fun IrBuilderWithScope.irNot(arg: IrExpression) =
-        primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCL, arg)
+    primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCL, arg)
 
 fun IrBuilderWithScope.irThrow(arg: IrExpression) =
-        IrThrowImpl(startOffset, endOffset, context.builtIns.nothingType, arg)
+    IrThrowImpl(startOffset, endOffset, context.builtIns.nothingType, arg)
 
 fun IrBuilderWithScope.irCatch(catchParameter: IrVariable) =
-        IrCatchImpl(
-                startOffset, endOffset,
-                catchParameter
-        )
+    IrCatchImpl(
+        startOffset, endOffset,
+        catchParameter
+    )
 
 fun IrBuilderWithScope.irCast(arg: IrExpression, type: KotlinType, typeOperand: KotlinType) =
-        IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, typeOperand, arg)
+    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, typeOperand, arg)
 
 fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
-        IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.unitType,
-                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.builtIns.unitType, arg)
+    IrTypeOperatorCallImpl(
+        startOffset, endOffset, context.builtIns.unitType,
+        IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.builtIns.unitType, arg
+    )
 
 fun IrBuilderWithScope.irGetField(receiver: IrExpression, symbol: IrFieldSymbol) =
-        IrGetFieldImpl(startOffset, endOffset, symbol, receiver)
+    IrGetFieldImpl(startOffset, endOffset, symbol, receiver)
 
 fun IrBuilderWithScope.irSetField(receiver: IrExpression, symbol: IrFieldSymbol, value: IrExpression) =
-        IrSetFieldImpl(startOffset, endOffset, symbol, receiver, value)
+    IrSetFieldImpl(startOffset, endOffset, symbol, receiver, value)
 
 open class IrBuildingTransformer(private val context: BackendContext) : IrElementTransformerVoid() {
     private var currentBuilder: IrBuilderWithScope? = null
@@ -146,24 +163,24 @@ fun computeOverrides(current: ClassDescriptor, functionsFromCurrent: List<Callab
     val result = mutableListOf<DeclarationDescriptor>()
 
     val allSuperDescriptors = current.typeConstructor.supertypes
-            .flatMap { it.memberScope.getContributedDescriptors() }
-            .filterIsInstance<CallableMemberDescriptor>()
+        .flatMap { it.memberScope.getContributedDescriptors() }
+        .filterIsInstance<CallableMemberDescriptor>()
 
     for ((name, group) in allSuperDescriptors.groupBy { it.name }) {
         OverridingUtil.generateOverridesInFunctionGroup(
-                name,
-                /* membersFromSupertypes = */ group,
-                /* membersFromCurrent = */ functionsFromCurrent.filter { it.name == name },
-                current,
-                object : NonReportingOverrideStrategy() {
-                    override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
-                        result.add(fakeOverride)
-                    }
-
-                    override fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor) {
-                        error("Conflict in scope of $current: $fromSuper vs $fromCurrent")
-                    }
+            name,
+            /* membersFromSupertypes = */ group,
+            /* membersFromCurrent = */ functionsFromCurrent.filter { it.name == name },
+            current,
+            object : NonReportingOverrideStrategy() {
+                override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
+                    result.add(fakeOverride)
                 }
+
+                override fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor) {
+                    error("Conflict in scope of $current: $fromSuper vs $fromCurrent")
+                }
+            }
         )
     }
 
@@ -173,20 +190,22 @@ fun computeOverrides(current: ClassDescriptor, functionsFromCurrent: List<Callab
 class SimpleMemberScope(val members: List<DeclarationDescriptor>) : MemberScopeImpl() {
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
-            members.filterIsInstance<ClassifierDescriptor>()
-                    .atMostOne { it.name == name }
+        members.filterIsInstance<ClassifierDescriptor>()
+            .atMostOne { it.name == name }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> =
-            members.filterIsInstance<PropertyDescriptor>()
-                    .filter { it.name == name }
+        members.filterIsInstance<PropertyDescriptor>()
+            .filter { it.name == name }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> =
-            members.filterIsInstance<SimpleFunctionDescriptor>()
-                    .filter { it.name == name }
+        members.filterIsInstance<SimpleFunctionDescriptor>()
+            .filter { it.name == name }
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
-                                           nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> =
-            members.filter { kindFilter.accepts(it) && nameFilter(it.name) }
+    override fun getContributedDescriptors(
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> =
+        members.filter { kindFilter.accepts(it) && nameFilter(it.name) }
 
     override fun printScopeStructure(p: Printer) = TODO("not implemented")
 
@@ -211,29 +230,30 @@ fun IrConstructor.callsSuper(): Boolean {
             if (expression.descriptor.constructedClass == superClass)
                 callsSuper = true
             else if (expression.descriptor.constructedClass != constructedClass)
-                throw AssertionError("Expected either call to another constructor of the class being constructed or" +
-                        " call to super class constructor. But was: ${expression.descriptor.constructedClass}")
+                throw AssertionError(
+                    "Expected either call to another constructor of the class being constructed or" +
+                            " call to super class constructor. But was: ${expression.descriptor.constructedClass}"
+                )
         }
     })
     assert(numberOfCalls == 1, { "Expected exactly one delegating constructor call but none encountered: $descriptor" })
     return callsSuper
 }
 
-fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index: Int)
-        = when (this) {
+fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index: Int) = when (this) {
     is ValueParameterDescriptor -> this.copy(newOwner, name, index)
     is ReceiverParameterDescriptor -> ValueParameterDescriptorImpl(
-            containingDeclaration = newOwner,
-            original              = null,
-            index                 = index,
-            annotations           = annotations,
-            name                  = name,
-            outType               = type,
-            declaresDefaultValue  = false,
-            isCrossinline         = false,
-            isNoinline            = false,
-            varargElementType     = null,
-            source                = source
+        containingDeclaration = newOwner,
+        original = null,
+        index = index,
+        annotations = annotations,
+        name = name,
+        outType = type,
+        declaresDefaultValue = false,
+        isCrossinline = false,
+        isNoinline = false,
+        varargElementType = null,
+        source = source
     )
     else -> throw Error("Unexpected parameter descriptor: $this")
 }

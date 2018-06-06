@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
+        mavenCentral()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -31,7 +32,11 @@ task runRhino(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     workingDir = "${buildDir}"
     main = 'org.mozilla.javascript.tools.shell.Main'
-    args = ["-opt", "-1", "-f", "min/kotlin.js", "-f", "min/examplelib.js", "-f", "min/exampleapp.js", "-f", "../check.js"]
+    args = ["-opt", "-1",
+            "-f", "kotlin-js-min/main/kotlin.js",
+            "-f", "kotlin-js-min/main/examplelib.js",
+            "-f", "kotlin-js-min/main/exampleapp.js",
+            "-f", "../check.js"]
 }
 
 runRhino.dependsOn(runDceKotlinJs)

@@ -1,22 +1,33 @@
-
 description = 'Kotlin Test'
 
 apply plugin: 'kotlin-platform-jvm'
+apply plugin: 'pill-configurable'
 
-configureJvmProject(project)
+configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
 
-dependencies {
-    implement project(':kotlin-test:kotlin-test-common')
-    compile project(':kotlin-stdlib')
-    testCompile('junit:junit:4.12')
+pill {
+    importAsLibrary = true
 }
 
+sourceSets {
+    java9
+}
+
+dependencies {
+    expectedBy project(':kotlin-test:kotlin-test-common')
+    compile project(':kotlin-stdlib')
+    testCompile project(":kotlin-test:kotlin-test-junit")
+    testCompile('junit:junit:4.12')
+}
 
 archivesBaseName = 'kotlin-test'
 
 jar {
-    manifestAttributes(manifest, project, 'Test')
+    manifestAttributes(manifest, project, 'Test', true)
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
 }
 
 artifacts {
@@ -29,10 +40,12 @@ dist {
 }
 
 compileKotlin {
-    // TODO: Why "-Xmulti-platfrom" ?
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-module-name", project.archivesBaseName]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable",
+                                      "-module-name", project.archivesBaseName]
 }
 
 compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
+
+compileJava9Sources(project, 'kotlin.test')

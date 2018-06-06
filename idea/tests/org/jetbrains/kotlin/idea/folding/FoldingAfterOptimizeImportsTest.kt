@@ -43,8 +43,10 @@ class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
         doTest()
     }
 
+    override fun fileName(): String = getTestName(true) + ".kt"
+
     private fun doTest() {
-        fixture.configureByFile(getTestName(true) + ".kt")
+        fixture.configureByFile(fileName())
 
         doTestWithSettings(fileText) {
             CodeFoldingManager.getInstance(fixture.project)!!.buildInitialFoldings(editor)

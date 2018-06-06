@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
 
@@ -12,8 +17,8 @@ package kotlin.collections
  * @return `true` if the element has been successfully removed; `false` if it was not present in the collection.
  */
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.remove(element: T): Boolean
-        = @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).remove(element)
+public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.remove(element: T): Boolean =
+    @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).remove(element)
 
 /**
  * Removes all of this collection's elements that are also contained in the specified collection.
@@ -23,8 +28,8 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
  * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
  */
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.removeAll(elements: Collection<T>): Boolean
-        = @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).removeAll(elements)
+public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.removeAll(elements: Collection<T>): Boolean =
+    @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).removeAll(elements)
 
 /**
  * Retains only the elements in this collection that are contained in the specified collection.
@@ -34,8 +39,8 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
  * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
  */
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.retainAll(elements: Collection<T>): Boolean
-        = @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).retainAll(elements)
+public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.retainAll(elements: Collection<T>): Boolean =
+    @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).retainAll(elements)
 
 /**
  * Removes the element at the specified [index] from this list.
@@ -44,18 +49,6 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
 @Deprecated("Use removeAt(index) instead.", ReplaceWith("removeAt(index)"), level = DeprecationLevel.ERROR)
 @kotlin.internal.InlineOnly
 public inline fun <T> MutableList<T>.remove(index: Int): T = removeAt(index)
-
-@Deprecated("Use sortWith(comparator) instead.", ReplaceWith("this.sortWith(comparator)"), level = DeprecationLevel.ERROR)
-@JvmVersion
-@kotlin.internal.InlineOnly
-@Suppress("UNUSED_PARAMETER")
-public inline fun <T> MutableList<T>.sort(comparator: Comparator<in T>): Unit = throw NotImplementedError()
-
-@Deprecated("Use sortWith(Comparator(comparison)) instead.", ReplaceWith("this.sortWith(Comparator(comparison))"), level = DeprecationLevel.ERROR)
-@JvmVersion
-@kotlin.internal.InlineOnly
-@Suppress("UNUSED_PARAMETER")
-public inline fun <T> MutableList<T>.sort(comparison: (T, T) -> Int): Unit = throw NotImplementedError()
 
 /**
  * Adds the specified [element] to this mutable collection.
@@ -166,7 +159,7 @@ public fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean 
 
 private fun <T> MutableIterable<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
     var result = false
-    with (iterator()) {
+    with(iterator()) {
         while (hasNext())
             if (predicate(next()) == predicateResultToRemove) {
                 remove()
@@ -206,8 +199,7 @@ private fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicat
             removeAt(removeIndex)
 
         return true
-    }
-    else {
+    } else {
         return false
     }
 }
@@ -266,20 +258,4 @@ private fun MutableCollection<*>.retainNothing(): Boolean {
     val result = isNotEmpty()
     clear()
     return result
-}
-
-/**
- * Sorts elements in the list in-place according to their natural sort order.
- */
-@kotlin.jvm.JvmVersion
-public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
-    if (size > 1) java.util.Collections.sort(this)
-}
-
-/**
- * Sorts elements in the list in-place according to the order specified with [comparator].
- */
-@kotlin.jvm.JvmVersion
-public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
-    if (size > 1) java.util.Collections.sort(this, comparator)
 }

@@ -26,7 +26,7 @@ import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.AbstractPullPushMembersHandler
@@ -71,7 +71,7 @@ class KotlinPullUpHandler : AbstractPullPushMembersHandler(
             return
         }
 
-        val classDescriptor = classOrObject.resolveToDescriptor() as ClassDescriptor
+        val classDescriptor = classOrObject.unsafeResolveToDescriptor() as ClassDescriptor
         val superClasses = classDescriptor.defaultType
                 .supertypes()
                 .mapNotNull {

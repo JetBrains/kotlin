@@ -28,8 +28,6 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
-import org.jetbrains.kotlin.idea.core.UtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.IntroduceTypeAliasDescriptor;
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.IntroduceTypeAliasImplKt;
@@ -38,12 +36,13 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.TypePa
 import org.jetbrains.kotlin.idea.refactoring.introduce.ui.KotlinSignatureComponent;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.*;
+import java.util.Collections;
 import java.util.List;
 
 public class KotlinIntroduceTypeAliasDialog extends DialogWrapper {
@@ -94,7 +93,7 @@ public class KotlinIntroduceTypeAliasDialog extends DialogWrapper {
     }
 
     private String getAliasName() {
-        return UtilsKt.quoteIfNeeded(aliasNameField.getEnteredName());
+        return KtPsiUtilKt.quoteIfNeeded(aliasNameField.getEnteredName());
     }
 
     @Nullable
@@ -104,10 +103,10 @@ public class KotlinIntroduceTypeAliasDialog extends DialogWrapper {
     }
 
     private boolean checkNames() {
-        if (!KotlinNameSuggester.INSTANCE.isIdentifier(getAliasName())) return false;
+        if (!KtPsiUtilKt.isIdentifier(getAliasName())) return false;
         if (parameterTablePanel != null) {
             for (IntroduceTypeAliasParameterTablePanel.TypeParameterInfo parameterInfo : parameterTablePanel.getSelectedTypeParameterInfos()) {
-                if (!KotlinNameSuggester.INSTANCE.isIdentifier(parameterInfo.getName())) return false;
+                if (!KtPsiUtilKt.isIdentifier(parameterInfo.getName())) return false;
             }
         }
         return true;

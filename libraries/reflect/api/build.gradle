@@ -1,0 +1,49 @@
+description = ''
+
+apply plugin: 'kotlin'
+
+configureJvm6Project(project)
+
+sourceSets {
+    main {
+        java {
+            srcDir "${rootDir}/core/reflection.jvm/src"
+        }
+    }
+    java9
+}
+
+dependencies {
+    compile project(path: ':kotlin-stdlib', configuration: 'distJar')
+    compileOnly project(':core:descriptors')
+    compileOnly project(':core:descriptors.jvm')
+    compileOnly project(':core:deserialization')
+    compileOnly project(':core:descriptors.runtime')
+    compileOnly project(':core:util.runtime')
+}
+
+compileJava9Sources(project, 'kotlin.reflect', [sourceSets.main.output, configurations.compileOnly])
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-version",
+                            "-Xallow-kotlin-package",
+                            "-Xnormalize-constructor-calls=enable",
+                            "-module-name", "kotlin-reflection"]
+    }
+}
+
+jar {
+    manifestAttributes(manifest, project, "internal")
+}
+
+task java9Jar(type: Jar) {
+    classifier = "java9"
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
+}
+
+artifacts {
+    archives java9Jar
+    runtime java9Jar
+}

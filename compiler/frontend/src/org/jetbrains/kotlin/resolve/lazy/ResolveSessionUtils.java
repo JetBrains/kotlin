@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.lazy;
 
+import kotlin.Deprecated;
+import kotlin.ReplaceWith;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -26,9 +28,8 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNamesUtilKt;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
-import org.jetbrains.kotlin.psi.KtNamedDeclarationUtil;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 
 import java.util.ArrayList;
@@ -90,22 +91,5 @@ public class ResolveSessionUtils {
         }
 
         return (ClassDescriptor) classifier;
-    }
-
-    @NotNull
-    public static Name safeNameForLazyResolve(@NotNull KtNamedDeclaration declaration) {
-        return safeNameForLazyResolve(declaration.getNameAsName());
-    }
-
-    @NotNull
-    public static Name safeNameForLazyResolve(@Nullable Name name) {
-        return SpecialNames.safeIdentifier(name);
-    }
-
-    @Nullable
-    public static FqName safeFqNameForLazyResolve(@NotNull KtNamedDeclaration declaration) {
-        //NOTE: should only create special names for package level declarations, so we can safely rely on real fq name for parent
-        FqName parentFqName = KtNamedDeclarationUtil.getParentFqName(declaration);
-        return parentFqName != null ? parentFqName.child(safeNameForLazyResolve(declaration)) : null;
     }
 }

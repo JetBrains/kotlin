@@ -86,7 +86,7 @@ internal fun willBeUsedInSourceClass(
             .all { it.element.parentsWithSelf.any { it in membersToMove } }
 }
 
-private val CALLABLE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+private val CALLABLE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
     parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
     modifiers = emptySet()
     startFromName = false

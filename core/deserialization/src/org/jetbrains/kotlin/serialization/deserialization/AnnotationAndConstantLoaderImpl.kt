@@ -20,9 +20,11 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -90,8 +92,7 @@ class AnnotationAndConstantLoaderImpl(
             proto: ProtoBuf.Property,
             expectedType: KotlinType
     ): ConstantValue<*>? {
-        if (!proto.hasExtension(protocol.compileTimeValue)) return null
-        val value = proto.getExtension(protocol.compileTimeValue)
+        val value = proto.getExtensionOrNull(protocol.compileTimeValue) ?: return null
         return deserializer.resolveValue(expectedType, value, container.nameResolver)
     }
 }

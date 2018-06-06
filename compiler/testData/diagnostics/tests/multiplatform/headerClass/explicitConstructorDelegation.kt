@@ -1,14 +1,14 @@
 // !LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
-header open class A {
+expect open class A {
     constructor(s: String)
 
-    constructor(n: Number) : <!HEADER_CLASS_CONSTRUCTOR_DELEGATION_CALL!>this<!>("A")
+    constructor(n: Number) : <!EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL!>this<!>("A")
 }
 
-header class B : A {
+expect class B : A {
     constructor(i: Int)
 
-    constructor() : <!HEADER_CLASS_CONSTRUCTOR_DELEGATION_CALL!>super<!>("B")
+    constructor() : <!EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL!>super<!>("B")
 }

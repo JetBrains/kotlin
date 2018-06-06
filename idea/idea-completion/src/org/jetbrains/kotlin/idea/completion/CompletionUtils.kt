@@ -79,6 +79,7 @@ enum class ItemPriority {
 }
 
 val ITEM_PRIORITY_KEY = Key<ItemPriority>("ITEM_PRIORITY_KEY")
+var LookupElement.isDslMember: Boolean? by UserDataProperty(Key.create("DSL_LOOKUP_ITEM"))
 
 fun LookupElement.assignPriority(priority: ItemPriority): LookupElement {
     putUserData(ITEM_PRIORITY_KEY, priority)
@@ -299,7 +300,7 @@ fun BasicLookupElementFactory.createLookupElementForType(type: KotlinType): Look
     if (type.isError) return null
 
     return if (type.isFunctionType) {
-        val text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+        val text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type)
         val baseLookupElement = LookupElementBuilder.create(text).withIcon(KotlinIcons.LAMBDA)
         BaseTypeLookupElement(type, baseLookupElement)
     }
@@ -307,7 +308,7 @@ fun BasicLookupElementFactory.createLookupElementForType(type: KotlinType): Look
         val classifier = type.constructor.declarationDescriptor ?: return null
         val baseLookupElement = createLookupElement(classifier, qualifyNestedClasses = true, includeClassTypeArguments = false)
 
-        val itemText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+        val itemText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type)
 
         val typeLookupElement = object : BaseTypeLookupElement(type, baseLookupElement) {
             override fun renderElement(presentation: LookupElementPresentation) {
@@ -421,7 +422,7 @@ fun OffsetMap.tryGetOffset(key: OffsetKey): Int? {
     }
 }
 
-var KtCodeFragment.extraCompletionFilter: ((LookupElement) -> Boolean)? by CopyableUserDataProperty(Key.create("EXTRA_COMPLETION_FILTER"))
+var KtCodeFragment.extraCompletionFilter: ((LookupElement) -> Boolean)? by CopyablePsiUserDataProperty(Key.create("EXTRA_COMPLETION_FILTER"))
 
 val DeclarationDescriptor.isArtificialImportAliasedDescriptor: Boolean
     get() = original.name != name

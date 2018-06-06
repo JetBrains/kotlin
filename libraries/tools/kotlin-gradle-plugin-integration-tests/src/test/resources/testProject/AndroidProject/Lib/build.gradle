@@ -28,4 +28,5 @@ android {
     }
 
     publishNonDefault true
+    lintOptions.abortOnError = false
 }

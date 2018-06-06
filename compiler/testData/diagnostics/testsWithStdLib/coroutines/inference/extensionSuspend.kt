@@ -4,7 +4,7 @@ class GenericController<T> {
     suspend fun yield(t: T) {}
 }
 
-suspend fun <S> GenericController<S>.yieldAll(s: Collection<S>) {}
+suspend fun <K> GenericController<K>.yieldAll(s: Collection<K>) {}
 
 fun <S> generate(g: suspend GenericController<S>.() -> Unit): S = TODO()
 

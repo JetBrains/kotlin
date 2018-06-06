@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 998
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1116
 //TODO: reuse same tests from JVM backend
 package foo
 

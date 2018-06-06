@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 /*
  * Based on GWT AbstractMap
@@ -27,7 +16,7 @@ package kotlin.collections
  *
  * @param K the type of map keys. The map is invariant on its key type.
  * @param V the type of map values. The map is covariant on its value type.
-*/
+ */
 @SinceKotlin("1.1")
 public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> {
 
@@ -89,25 +78,29 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
      * Accessing this property first time creates a keys view from [entries].
      * All subsequent accesses just return the created instance.
      */
-    private @Volatile var _keys: Set<K>? = null
-    override val keys: Set<K> get() {
-        if (_keys == null) {
-            _keys = object : AbstractSet<K>() {
-                override operator fun contains(element: K): Boolean = containsKey(element)
+    override val keys: Set<K>
+        get() {
+            if (_keys == null) {
+                _keys = object : AbstractSet<K>() {
+                    override operator fun contains(element: K): Boolean = containsKey(element)
 
-                override operator fun iterator(): Iterator<K> {
-                    val entryIterator = entries.iterator()
-                    return object : Iterator<K> {
-                        override fun hasNext(): Boolean = entryIterator.hasNext()
-                        override fun next(): K = entryIterator.next().key
+                    override operator fun iterator(): Iterator<K> {
+                        val entryIterator = entries.iterator()
+                        return object : Iterator<K> {
+                            override fun hasNext(): Boolean = entryIterator.hasNext()
+                            override fun next(): K = entryIterator.next().key
+                        }
                     }
-                }
 
-                override val size: Int get() = this@AbstractMap.size
+                    override val size: Int get() = this@AbstractMap.size
+                }
             }
+            return _keys!!
         }
-        return _keys!!
-    }
+
+    @kotlin.jvm.Volatile
+    private var _keys: Set<K>? = null
+
 
     override fun toString(): String = entries.joinToString(", ", "{", "}") { toString(it) }
 
@@ -121,25 +114,28 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
      * Accessing this property first time creates a values view from [entries].
      * All subsequent accesses just return the created instance.
      */
-    private @Volatile var _values: Collection<V>? = null
-    override val values: Collection<V> get() {
-        if (_values == null) {
-            _values = object : AbstractCollection<V>() {
-                override operator fun contains(element: @UnsafeVariance V): Boolean = containsValue(element)
+    override val values: Collection<V>
+        get() {
+            if (_values == null) {
+                _values = object : AbstractCollection<V>() {
+                    override operator fun contains(element: @UnsafeVariance V): Boolean = containsValue(element)
 
-                override operator fun iterator(): Iterator<V> {
-                    val entryIterator = entries.iterator()
-                    return object : Iterator<V> {
-                        override fun hasNext(): Boolean = entryIterator.hasNext()
-                        override fun next(): V = entryIterator.next().value
+                    override operator fun iterator(): Iterator<V> {
+                        val entryIterator = entries.iterator()
+                        return object : Iterator<V> {
+                            override fun hasNext(): Boolean = entryIterator.hasNext()
+                            override fun next(): V = entryIterator.next().value
+                        }
                     }
-                }
 
-                override val size: Int get() = this@AbstractMap.size
+                    override val size: Int get() = this@AbstractMap.size
+                }
             }
+            return _values!!
         }
-        return _values!!
-    }
+
+    @kotlin.jvm.Volatile
+    private var _values: Collection<V>? = null
 
     private fun implFindEntry(key: K): Map.Entry<K, V>? = entries.firstOrNull { it.key == key }
 

@@ -1,0 +1,11 @@
+package
+
+@kotlin.UseExperimental(markerClass = {}) public fun f1(): kotlin.Unit
+@kotlin.UseExperimental(markerClass = {NotAMarker::class}) public fun f2(): kotlin.Unit
+
+public final annotation class NotAMarker : kotlin.Annotation {
+    public constructor NotAMarker()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

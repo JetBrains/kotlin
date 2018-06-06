@@ -1,6 +1,6 @@
-impl class Foo {
+actual class Foo {
 }
 
-impl fun Foo.foo(n: Int) {
+actual fun Foo.foo(n: Int) {
 
 }

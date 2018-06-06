@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.search;
@@ -32,67 +21,61 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class AnnotatedMembersSearchTestGenerated extends AbstractAnnotatedMembersSearchTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInAnnotations() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/search/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("annotationAliased.kt")
     public void testAnnotationAliased() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/annotations/annotationAliased.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/annotations/annotationAliased.kt");
     }
 
     @TestMetadata("testAmbiguousNestedNonAnnotationClass.kt")
     public void testTestAmbiguousNestedNonAnnotationClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/annotations/testAmbiguousNestedNonAnnotationClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/annotations/testAmbiguousNestedNonAnnotationClass.kt");
     }
 
     @TestMetadata("testAmbiguousNestedPrivateAnnotationClass.kt")
     public void testTestAmbiguousNestedPrivateAnnotationClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/annotations/testAmbiguousNestedPrivateAnnotationClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/annotations/testAmbiguousNestedPrivateAnnotationClass.kt");
     }
 
     @TestMetadata("testAnnotationsOnClass.kt")
     public void testTestAnnotationsOnClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/annotations/testAnnotationsOnClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/annotations/testAnnotationsOnClass.kt");
     }
 
     @TestMetadata("testAnnotationsOnFunction.kt")
     public void testTestAnnotationsOnFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/annotations/testAnnotationsOnFunction.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/annotations/testAnnotationsOnFunction.kt");
     }
 
     @TestMetadata("testAnnotationsWithParameters.kt")
     public void testTestAnnotationsWithParameters() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/annotations/testAnnotationsWithParameters.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/annotations/testAnnotationsWithParameters.kt");
     }
 
     @TestMetadata("testDefaultImport.kt")
     public void testTestDefaultImport() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/annotations/testDefaultImport.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/annotations/testDefaultImport.kt");
     }
 
     @TestMetadata("testNestedClassAsAnnotation.kt")
     public void testTestNestedClassAsAnnotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/annotations/testNestedClassAsAnnotation.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/annotations/testNestedClassAsAnnotation.kt");
     }
 
     @TestMetadata("testNestedPrivateAnnotationClass.kt")
     public void testTestNestedPrivateAnnotationClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/annotations/testNestedPrivateAnnotationClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/annotations/testNestedPrivateAnnotationClass.kt");
     }
 
     @TestMetadata("testTypeAlias.kt")
     public void testTestTypeAlias() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/search/annotations/testTypeAlias.kt");
-        doTest(fileName);
+        runTest("idea/testData/search/annotations/testTypeAlias.kt");
     }
 }

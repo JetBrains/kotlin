@@ -18,60 +18,67 @@ package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.operation.OperatorTable
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.js.translate.utils.getPrecisePrimitiveType
+import org.jetbrains.kotlin.js.translate.utils.getPrimitiveNumericComparisonInfo
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.types.KotlinType
-
-interface BinaryOperationIntrinsic {
-
-    fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression
-
-    fun exists(): Boolean
-}
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class BinaryOperationIntrinsics {
 
-    private val intrinsicCache = mutableMapOf<IntrinsicKey, BinaryOperationIntrinsic>()
+    private data class IntrinsicKey(
+        val token: KtToken,
+        val function: FunctionDescriptor,
+        val leftType: KotlinType?,
+        val rightType: KotlinType?
+    )
 
-    private val factories = listOf(LongCompareToBOIF, EqualsBOIF, CompareToBOIF, AssignmentBOIF)
+    private val intrinsicCache = mutableMapOf<IntrinsicKey, BinaryOperationIntrinsic?>()
 
-    fun getIntrinsic(expression: KtBinaryExpression, context: TranslationContext): BinaryOperationIntrinsic {
+    fun getIntrinsic(expression: KtBinaryExpression, context: TranslationContext): BinaryOperationIntrinsic? {
+        val descriptor =
+            getCallableDescriptorForOperationExpression(context.bindingContext(), expression) as? FunctionDescriptor ?: return null
+
+        val (leftType, rightType) = binaryOperationTypes(expression, context)
+
         val token = getOperationToken(expression)
-        val descriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression)
-        if (descriptor == null || descriptor !is FunctionDescriptor) {
-            return NO_INTRINSIC
-        }
 
-        val leftType = expression.left?.let { context.bindingContext().getType(it) }
-        val rightType = expression.right?.let { context.bindingContext().getType(it) }
-
-        val key = IntrinsicKey(token, descriptor, leftType, rightType)
-        return intrinsicCache.getOrPut(key) { computeIntrinsic(token, descriptor, leftType, rightType) }
+        return computeAndCache(IntrinsicKey(token, descriptor, leftType, rightType))
     }
 
-    private fun computeIntrinsic(
-            token: KtToken, descriptor: FunctionDescriptor,
-            leftType: KotlinType?, rightType: KotlinType?
-    ): BinaryOperationIntrinsic {
-        for (factory in factories) {
-            if (factory.getSupportTokens().contains(token)) {
-                val intrinsic = factory.getIntrinsic(descriptor, leftType, rightType)
-                if (intrinsic != null) {
-                    return intrinsic
-                }
-            }
+    private val factories = listOf(CompareToBOIF, EqualsBOIF)
+
+    private fun computeAndCache(key: IntrinsicKey): BinaryOperationIntrinsic? {
+        if (key in intrinsicCache) return intrinsicCache[key]
+
+        val result = factories.firstNotNullResult { factory ->
+            if (factory.getSupportTokens().contains(key.token)) {
+                factory.getIntrinsic(key.function, key.leftType, key.rightType)
+            } else null
         }
-        return NO_INTRINSIC
+
+        intrinsicCache[key] = result
+
+        return result
     }
 }
 
-private data class IntrinsicKey(
-        val token: KtToken, val function: FunctionDescriptor,
-        val leftType: KotlinType?, val rightType: KotlinType?
-)
+// Takes into account smart-casts (needed for IEEE 754 comparisons)
+fun binaryOperationTypes(expression: KtBinaryExpression, context: TranslationContext): Pair<KotlinType?, KotlinType?> {
+    val info = context.getPrimitiveNumericComparisonInfo(expression)
+    if (info != null) {
+        return info.leftType to info.rightType
+    }
+    return expression.left?.let { context.getPrecisePrimitiveType(it) } to expression.right?.let { context.getPrecisePrimitiveType(it) }
+}
 
 interface BinaryOperationIntrinsicFactory {
 
@@ -80,16 +87,28 @@ interface BinaryOperationIntrinsicFactory {
     fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic?
 }
 
-abstract class AbstractBinaryOperationIntrinsic : BinaryOperationIntrinsic {
+typealias OperatorSelector = (KtBinaryExpression) -> JsBinaryOperator
 
-    override abstract fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression
+val defaultOperatorSelector: OperatorSelector = { OperatorTable.getBinaryOperator(getOperationToken(it)) }
 
-    override fun exists(): Boolean = true
+// toLeft(L, R) OP toRight(L, R)
+fun complexBinaryIntrinsic(
+    toLeft: (JsExpression, JsExpression, TranslationContext) -> JsExpression,
+    toRight: (JsExpression, JsExpression, TranslationContext) -> JsExpression,
+    operator: (KtBinaryExpression) -> JsBinaryOperator = defaultOperatorSelector
+) = BinaryOperationIntrinsic { expression, left, right, context ->
+    JsBinaryOperation(operator(expression), toLeft(left, right, context), toRight(left, right, context))
 }
 
-object NO_INTRINSIC : AbstractBinaryOperationIntrinsic() {
-    override fun exists(): Boolean = false
+// toLeft(L, C) OP toRight(R, C)
+fun binaryIntrinsic(
+    toLeft: (JsExpression, TranslationContext) -> JsExpression = { l, _ -> l },
+    toRight: (JsExpression, TranslationContext) -> JsExpression = { r, _ -> r },
+    operator: OperatorSelector = defaultOperatorSelector
+) = complexBinaryIntrinsic({ l, _, c -> toLeft(l, c) }, { _, r, c -> toRight(r, c) }, operator)
 
-    override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression =
-            throw UnsupportedOperationException("BinaryOperationIntrinsic#NO_INTRINSIC_#apply")
-}
+
+fun coerceTo(type: KotlinType): (JsExpression, TranslationContext) -> JsExpression =
+    { e, c ->
+        TranslationUtils.coerce(c, e, type)
+    }

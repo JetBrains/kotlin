@@ -1,0 +1,4 @@
+// "Remove variable 'a'" "true"
+fun test() {
+    fun(s: String) { s + s }
+}

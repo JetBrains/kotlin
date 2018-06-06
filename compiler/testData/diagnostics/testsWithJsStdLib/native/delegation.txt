@@ -2,7 +2,7 @@ package
 
 public external val topLevelProp: kotlin.String
 
-public external final class A : I {
+public final external class A : I {
     public constructor A()
     public final var mutableProp: kotlin.String
     public final val prop: kotlin.String

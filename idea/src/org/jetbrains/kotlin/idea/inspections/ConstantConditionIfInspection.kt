@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
@@ -23,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlockOrParenthesis
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -36,35 +26,33 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class ConstantConditionIfInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitIfExpression(expression: KtIfExpression) {
-                super.visitIfExpression(expression)
+        return ifExpressionVisitor(fun(expression) {
+            val condition = expression.condition ?: return
 
-                val condition = expression.condition ?: return
+            val context = condition.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
+            val constantValue = condition.constantBooleanValue(context) ?: return
 
-                val context = condition.analyze(BodyResolveMode.PARTIAL)
-                val constantValue = condition.constantBooleanValue(context) ?: return
+            val fixes = mutableListOf<LocalQuickFix>()
 
-                val fixes = mutableListOf<LocalQuickFix>()
-
-                if (expression.branch(constantValue) != null) {
-                    fixes += SimplifyFix(constantValue, expression.isUsedAsExpression(context))
-                }
-
-                if (!constantValue && expression.`else` == null) {
-                    fixes += RemoveFix()
-                }
-
-                holder.registerProblem(condition,
-                                       "Condition is always '$constantValue'",
-                                       *fixes.toTypedArray())
+            if (expression.branch(constantValue) != null) {
+                val keepBraces = expression.isElseIf() && expression.branch(constantValue) is KtBlockExpression
+                fixes += SimplifyFix(constantValue, expression.isUsedAsExpression(context), keepBraces)
             }
-        }
+
+            if (!constantValue && expression.`else` == null) {
+                fixes += RemoveFix()
+            }
+
+            holder.registerProblem(condition,
+                                   "Condition is always '$constantValue'",
+                                   *fixes.toTypedArray())
+        })
     }
 
     private class SimplifyFix(
             private val conditionValue: Boolean,
-            private val isUsedAsExpression: Boolean
+            private val isUsedAsExpression: Boolean,
+            private val keepBraces: Boolean
     ) : LocalQuickFix {
         override fun getFamilyName() = name
 
@@ -73,9 +61,11 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val ifExpression = descriptor.psiElement.getParentOfType<KtIfExpression>(strict = true) ?: return
 
-            val branch = ifExpression.branch(conditionValue)?.unwrapBlockOrParenthesis() ?: return
+            val branch = ifExpression.branch(conditionValue)?.let {
+                if (keepBraces) it else it.unwrapBlockOrParenthesis()
+            } ?: return
 
-            ifExpression.replaceWithBranch(branch, isUsedAsExpression)
+            ifExpression.replaceWithBranch(branch, isUsedAsExpression, keepBraces)
         }
     }
 
@@ -100,7 +90,7 @@ private fun KtExpression.constantBooleanValue(context: BindingContext): Boolean?
     return constantValue?.value as? Boolean
 }
 
-fun KtExpression.replaceWithBranch(branch: KtExpression, isUsedAsExpression: Boolean) {
+fun KtExpression.replaceWithBranch(branch: KtExpression, isUsedAsExpression: Boolean, keepBraces: Boolean = false) {
     val lastExpression = when {
         branch !is KtBlockExpression -> replaced(branch)
         isUsedAsExpression -> {
@@ -108,18 +98,17 @@ fun KtExpression.replaceWithBranch(branch: KtExpression, isUsedAsExpression: Boo
             replaced(factory.createExpressionByPattern("run $0", branch.text))
         }
         else -> {
-            val firstChild = branch.firstChild.nextSibling
-
-            if (firstChild == branch.lastChild) {
-                delete()
+            val firstChildSibling = branch.firstChild.nextSibling
+            val lastChild = branch.lastChild
+            if (firstChildSibling != lastChild) {
+                if (keepBraces) {
+                    parent.addAfter(branch, this)
+                }
+                else {
+                    parent.addRangeAfter(firstChildSibling, lastChild.prevSibling, this)
+                }
             }
-            else {
-                val lastChild = branch.lastChild.prevSibling
-                val parent = parent
-                parent.addRangeAfter(firstChild, lastChild, this)
-                delete()
-            }
-
+            delete()
             null
         }
     }

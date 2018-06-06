@@ -16,31 +16,20 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import com.intellij.lang.java.JavaLanguage
-import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
 import java.util.*
 
-internal class ChangedJavaFilesProcessor(private val reporter: ICReporter) {
+internal class ChangedJavaFilesProcessor(
+        private val reporter: ICReporter,
+        private val psiFileFactory: (File) -> PsiFile?
+) {
     private val allSymbols = HashSet<LookupSymbol>()
-    private val javaLang = JavaLanguage.INSTANCE
-    private val psiFileFactory: PsiFileFactory by lazy {
-        val rootDisposable = Disposer.newDisposable()
-        val configuration = CompilerConfiguration()
-        val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-        val project = environment.project
-        PsiFileFactory.getInstance(project)
-    }
 
     val allChangedSymbols: Collection<LookupSymbol>
-            get() = allSymbols
+        get() = allSymbols
 
     fun process(filesDiff: ChangedFiles.Known): ChangesEither {
         val modifiedJava = filesDiff.modified.filter(File::isJavaFile)
@@ -55,7 +44,7 @@ internal class ChangedJavaFilesProcessor(private val reporter: ICReporter) {
         for (javaFile in modifiedJava) {
             assert(javaFile.extension.equals("java", ignoreCase = true))
 
-            val psiFile = javaFile.psiFile()
+            val psiFile = psiFileFactory(javaFile)
             if (psiFile !is PsiJavaFile) {
                 reporter.report { "Expected PsiJavaFile, got ${psiFile?.javaClass}" }
                 return ChangesEither.Unknown()
@@ -75,7 +64,4 @@ internal class ChangedJavaFilesProcessor(private val reporter: ICReporter) {
         fields.forEach { symbols.add(LookupSymbol(it.name.orEmpty(), fqn)) }
         innerClasses.forEach { it.addLookupSymbols(symbols) }
     }
-
-    private fun File.psiFile(): PsiFile? =
-            psiFileFactory.createFileFromText(nameWithoutExtension, javaLang, readText())
 }

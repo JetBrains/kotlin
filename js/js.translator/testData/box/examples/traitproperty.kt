@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1006
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1124
 interface M {
     var backingB: Int
     var b: Int

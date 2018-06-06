@@ -1,0 +1,101 @@
+FILE fqName:<root> fileName:/localClassWithOverrides.kt
+  FUN name:outer visibility:public modality:FINAL <> () returnType:Unit flags:
+    BLOCK_BODY
+      CLASS CLASS name:ALocal modality:ABSTRACT visibility:local flags:
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:outer.ALocal flags:
+        superClasses:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+        CONSTRUCTOR visibility:public <> () returnType:outer.ALocal flags:primary
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+            INSTANCE_INITIALIZER_CALL classDescriptor='ALocal'
+        FUN name:afun visibility:public modality:ABSTRACT <> ($this:outer.ALocal) returnType:Unit flags:
+          $this: VALUE_PARAMETER name:<this> type:outer.ALocal flags:
+        PROPERTY name:aval type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aval> visibility:public modality:ABSTRACT <> ($this:outer.ALocal) returnType:Int flags:
+            correspondingProperty: PROPERTY name:aval type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+            $this: VALUE_PARAMETER name:<this> type:outer.ALocal flags:
+        PROPERTY name:avar type:kotlin.Int visibility:public modality:ABSTRACT flags:var
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-avar> visibility:public modality:ABSTRACT <> ($this:outer.ALocal) returnType:Int flags:
+            correspondingProperty: PROPERTY name:avar type:kotlin.Int visibility:public modality:ABSTRACT flags:var
+            $this: VALUE_PARAMETER name:<this> type:outer.ALocal flags:
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-avar> visibility:public modality:ABSTRACT <> ($this:outer.ALocal, <set-?>:kotlin.Int) returnType:Unit flags:
+            correspondingProperty: PROPERTY name:avar type:kotlin.Int visibility:public modality:ABSTRACT flags:var
+            $this: VALUE_PARAMETER name:<this> type:outer.ALocal flags:
+            VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+          VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      CLASS CLASS name:Local modality:FINAL visibility:local flags:
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:outer.Local flags:
+        superClasses:
+          CLASS CLASS name:ALocal modality:ABSTRACT visibility:local flags:
+        CONSTRUCTOR visibility:public <> () returnType:outer.Local flags:primary
+          BLOCK_BODY
+            DELEGATING_CONSTRUCTOR_CALL 'constructor ALocal()'
+            INSTANCE_INITIALIZER_CALL classDescriptor='Local'
+        FUN name:afun visibility:public modality:OPEN <> ($this:outer.Local) returnType:Unit flags:
+          overridden:
+            FUN name:afun visibility:public modality:ABSTRACT <> ($this:outer.ALocal) returnType:Unit flags:
+          $this: VALUE_PARAMETER name:<this> type:outer.Local flags:
+          BLOCK_BODY
+        PROPERTY name:aval type:kotlin.Int visibility:public modality:OPEN flags:val
+          FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:public flags:final
+            EXPRESSION_BODY
+              CONST Int type=kotlin.Int value=1
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aval> visibility:public modality:OPEN <> ($this:outer.Local) returnType:Int flags:
+            correspondingProperty: PROPERTY name:aval type:kotlin.Int visibility:public modality:OPEN flags:val
+            overridden:
+              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aval> visibility:public modality:ABSTRACT <> ($this:outer.ALocal) returnType:Int flags:
+            $this: VALUE_PARAMETER name:<this> type:outer.Local flags:
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='<get-aval>(): Int'
+                GET_FIELD 'aval: Int' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'this@Local: Local' type=outer.Local origin=null
+        PROPERTY name:avar type:kotlin.Int visibility:public modality:OPEN flags:var
+          FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:public flags:
+            EXPRESSION_BODY
+              CONST Int type=kotlin.Int value=2
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-avar> visibility:public modality:OPEN <> ($this:outer.Local) returnType:Int flags:
+            correspondingProperty: PROPERTY name:avar type:kotlin.Int visibility:public modality:OPEN flags:var
+            overridden:
+              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-avar> visibility:public modality:ABSTRACT <> ($this:outer.ALocal) returnType:Int flags:
+            $this: VALUE_PARAMETER name:<this> type:outer.Local flags:
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='<get-avar>(): Int'
+                GET_FIELD 'avar: Int' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'this@Local: Local' type=outer.Local origin=null
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<set-avar> visibility:public modality:OPEN <> ($this:outer.Local, <set-?>:kotlin.Int) returnType:Unit flags:
+            correspondingProperty: PROPERTY name:avar type:kotlin.Int visibility:public modality:OPEN flags:var
+            overridden:
+              FUN DEFAULT_PROPERTY_ACCESSOR name:<set-avar> visibility:public modality:ABSTRACT <> ($this:outer.ALocal, <set-?>:kotlin.Int) returnType:Unit flags:
+            $this: VALUE_PARAMETER name:<this> type:outer.Local flags:
+            VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
+            BLOCK_BODY
+              SET_FIELD 'avar: Int' type=kotlin.Unit origin=null
+                receiver: GET_VAR 'this@Local: Local' type=outer.Local origin=null
+                value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          overridden:
+            FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+          VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          overridden:
+            FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          overridden:
+            FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+

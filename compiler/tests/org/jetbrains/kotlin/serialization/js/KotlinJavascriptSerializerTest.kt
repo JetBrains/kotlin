@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
@@ -78,7 +79,10 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
                     imported = listOf(),
                     data = analysisResult.moduleDescriptor
             )
-            FileUtil.writeToFile(metaFile, KotlinJavascriptSerializationUtil.metadataAsString(analysisResult.bindingContext, description))
+            val serializedMetadata = KotlinJavascriptSerializationUtil.serializeMetadata(
+                    analysisResult.bindingContext, description, configuration.languageVersionSettings
+            )
+            FileUtil.writeToFile(metaFile, serializedMetadata.asString())
         }
         finally {
             Disposer.dispose(rootDisposable)

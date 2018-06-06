@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.structureView;
@@ -32,115 +21,101 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructureTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInFileStructure() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/structureView/fileStructure"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("AnonymousObjectMembers.kt")
     public void testAnonymousObjectMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/AnonymousObjectMembers.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/AnonymousObjectMembers.kt");
     }
 
     @TestMetadata("CheckLocationForKotlin.kt")
     public void testCheckLocationForKotlin() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/CheckLocationForKotlin.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/CheckLocationForKotlin.kt");
     }
 
     @TestMetadata("CheckMemberLocationForJava.kt")
     public void testCheckMemberLocationForJava() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/CheckMemberLocationForJava.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/CheckMemberLocationForJava.kt");
     }
 
     @TestMetadata("DoNotShowParentsInLocationJava.kt")
     public void testDoNotShowParentsInLocationJava() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/DoNotShowParentsInLocationJava.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/DoNotShowParentsInLocationJava.kt");
     }
 
     @TestMetadata("EmptyFile.kt")
     public void testEmptyFile() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/EmptyFile.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/EmptyFile.kt");
     }
 
     @TestMetadata("InheritedDelegationMethods.kt")
     public void testInheritedDelegationMethods() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/InheritedDelegationMethods.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/InheritedDelegationMethods.kt");
     }
 
     @TestMetadata("InheritedInnerClasses.kt")
     public void testInheritedInnerClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/InheritedInnerClasses.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/InheritedInnerClasses.kt");
     }
 
     @TestMetadata("InheritedJavaMembers.kt")
     public void testInheritedJavaMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/InheritedJavaMembers.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/InheritedJavaMembers.kt");
     }
 
     @TestMetadata("InheritedLocalKotlin.kt")
     public void testInheritedLocalKotlin() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/InheritedLocalKotlin.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/InheritedLocalKotlin.kt");
     }
 
     @TestMetadata("InheritedMembers.kt")
     public void testInheritedMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/InheritedMembers.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/InheritedMembers.kt");
     }
 
     @TestMetadata("InheritedMembersOfEnum.kt")
     public void testInheritedMembersOfEnum() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/InheritedMembersOfEnum.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/InheritedMembersOfEnum.kt");
     }
 
     @TestMetadata("InheritedMembersWithSubstitutedTypes.kt")
     public void testInheritedMembersWithSubstitutedTypes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/InheritedMembersWithSubstitutedTypes.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/InheritedMembersWithSubstitutedTypes.kt");
     }
 
     @TestMetadata("InheritedSAMConversion.kt")
     public void testInheritedSAMConversion() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/InheritedSAMConversion.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/InheritedSAMConversion.kt");
     }
 
     @TestMetadata("InheritedSynthesizedFromDataClass.kt")
     public void testInheritedSynthesizedFromDataClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/InheritedSynthesizedFromDataClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/InheritedSynthesizedFromDataClass.kt");
     }
 
     @TestMetadata("LocalElements.kt")
     public void testLocalElements() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/LocalElements.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/LocalElements.kt");
     }
 
     @TestMetadata("Render.kt")
     public void testRender() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/Render.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/Render.kt");
     }
 
     @TestMetadata("SeveralClasses.kt")
     public void testSeveralClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/SeveralClasses.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/SeveralClasses.kt");
     }
 
     @TestMetadata("Simple.kt")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/structureView/fileStructure/Simple.kt");
-        doTest(fileName);
+        runTest("idea/testData/structureView/fileStructure/Simple.kt");
     }
 }

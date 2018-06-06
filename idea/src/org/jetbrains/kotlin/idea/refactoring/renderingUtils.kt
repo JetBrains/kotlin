@@ -24,7 +24,7 @@ import com.intellij.psi.util.PsiFormatUtilBase
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 fun wrapOrSkip(s: String, inCode: Boolean) = if (inCode) "<code>$s</code>" else s
 
-fun formatClassDescriptor(classDescriptor: DeclarationDescriptor) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(classDescriptor)
+fun formatClassDescriptor(classDescriptor: DeclarationDescriptor) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(classDescriptor)
 
 fun formatPsiClass(
         psiClass: PsiClass,
@@ -94,11 +94,11 @@ fun formatPsiMethod(
 fun formatJavaOrLightMethod(method: PsiMethod): String {
     val originalDeclaration = method.unwrapped
     return if (originalDeclaration is KtDeclaration) {
-        formatFunctionDescriptor(originalDeclaration.resolveToDescriptor())
+        formatFunctionDescriptor(originalDeclaration.unsafeResolveToDescriptor())
     }
     else {
         formatPsiMethod(method, false, false)
     }
 }
 
-fun formatClass(classOrObject: KtClassOrObject) = formatClassDescriptor(classOrObject.resolveToDescriptor() as ClassDescriptor)
+fun formatClass(classOrObject: KtClassOrObject) = formatClassDescriptor(classOrObject.unsafeResolveToDescriptor() as ClassDescriptor)

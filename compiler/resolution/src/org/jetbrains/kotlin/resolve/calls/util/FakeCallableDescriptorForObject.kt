@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.*
 
 open class FakeCallableDescriptorForObject(
-        val classDescriptor: ClassDescriptor
+    val classDescriptor: ClassDescriptor
 ) : DeclarationDescriptorWithVisibility by classDescriptor.getClassObjectReferenceTarget(), VariableDescriptor {
 
     init {
@@ -66,6 +66,8 @@ open class FakeCallableDescriptorForObject(
     override fun getSource(): SourceElement = classDescriptor.source
 
     override fun isConst(): Boolean = false
+
+    override fun isLateInit(): Boolean = false
 
     override fun equals(other: Any?) = other is FakeCallableDescriptorForObject && classDescriptor == other.classDescriptor
 

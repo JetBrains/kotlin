@@ -1,0 +1,5 @@
+{
+  "mainFile": "source/test.kts",
+  "type": "MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS",
+  "targetFile": "source/testNew.kt"
+}

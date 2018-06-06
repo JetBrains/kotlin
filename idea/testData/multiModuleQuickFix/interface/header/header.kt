@@ -1,6 +1,6 @@
-// "Create header interface implementation for platform JVM" "true"
+// "Create actual interface for module testModule_JVM (JVM)" "true"
 
-header interface <caret>Interface {
+expect interface <caret>Interface {
     fun foo(param: String): Int
 
     fun String.bar(y: Double): Boolean
@@ -8,4 +8,8 @@ header interface <caret>Interface {
     val isGood: Boolean
 
     var status: Int
+
+    class Nested {
+        fun bar()
+    }
 }

@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 992
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1110
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/defaultValues/simpleDefaultMethod.1.kt

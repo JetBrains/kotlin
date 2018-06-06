@@ -17,6 +17,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
@@ -25,8 +26,8 @@ import org.jetbrains.uast.ULiteralExpression
 
 class KotlinULiteralExpression(
         override val psi: KtConstantExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), ULiteralExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), ULiteralExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val isNull: Boolean
         get() = psi.unwrapBlockOrParenthesis().node?.elementType == KtNodeTypes.NULL
 
@@ -35,9 +36,9 @@ class KotlinULiteralExpression(
 
 class KotlinStringULiteralExpression(
         override val psi: PsiElement,
-        override val uastParent: UElement?,
+        givenParent: UElement?,
         val text: String
-) : KotlinAbstractUExpression(), ULiteralExpression, KotlinUElementWithType{
+) : KotlinAbstractUExpression(givenParent), ULiteralExpression, KotlinUElementWithType{
     constructor(psi: PsiElement, uastParent: UElement?)
             : this(psi, uastParent, if (psi is KtEscapeStringTemplateEntry) psi.unescapedValue else psi.text)
 
@@ -45,4 +46,6 @@ class KotlinStringULiteralExpression(
         get() = text
 
     override fun evaluate() = value
+
+    override fun getExpressionType(): PsiType? = PsiType.getJavaLangString(psi.manager, psi.resolveScope)
 }

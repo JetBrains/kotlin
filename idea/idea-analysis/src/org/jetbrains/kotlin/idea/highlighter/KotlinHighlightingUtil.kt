@@ -17,22 +17,57 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.caches.resolve.NotUnderContentRootModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
+import org.jetbrains.kotlin.idea.core.script.scriptDependencies
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.script.getScriptDefinition
+import kotlin.script.experimental.dependencies.ScriptReport
 
 object KotlinHighlightingUtil {
     fun shouldHighlight(psiElement: PsiElement): Boolean {
         val ktFile = psiElement.containingFile as? KtFile ?: return false
-        return ktFile is KtCodeFragment && ktFile.context != null ||
-               ktFile.isScript ||
-               ProjectRootsUtil.isInProjectOrLibraryContent(ktFile) && ktFile.getModuleInfo() !is NotUnderContentRootModuleInfo
+
+        if (ktFile is KtCodeFragment && ktFile.context != null) {
+            return true
+        }
+
+        if (ktFile.isScript()) {
+            return shouldHighlightScript(ktFile)
+        }
+
+        return ProjectRootsUtil.isInProjectOrLibraryContent(ktFile) && ktFile.getModuleInfo() !is NotUnderContentRootModuleInfo
     }
 
     fun shouldHighlightErrors(psiElement: PsiElement): Boolean {
         val ktFile = psiElement.containingFile as? KtFile ?: return false
-        return (ktFile is KtCodeFragment && ktFile.context != null) || ktFile.isScript || ProjectRootsUtil.isInProjectSource(ktFile)
+        if (ktFile.isCompiled) {
+            return false
+        }
+        if (ktFile is KtCodeFragment && ktFile.context != null) {
+            return true
+        }
+
+        if (ktFile.isScript()) {
+            return shouldHighlightScript(ktFile)
+        }
+
+        return ProjectRootsUtil.isInProjectSource(ktFile)
+    }
+
+
+    @Suppress("DEPRECATION")
+    private fun shouldHighlightScript(ktFile: KtFile): Boolean {
+        if (ktFile.virtualFile.scriptDependencies == null) return false
+        if (ktFile.virtualFile.getUserData(IdeScriptReportSink.Reports)?.any { it.severity == ScriptReport.Severity.FATAL } == true) {
+            return false
+        }
+
+        val scriptDefinition = getScriptDefinition(ktFile) ?: return false
+        return ScriptDefinitionsManager.getInstance(ktFile.project).isInExpectedLocation(ktFile, scriptDefinition)
     }
 }

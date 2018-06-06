@@ -37,10 +37,13 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
                     val foldableReturns = BranchedFoldingUtils.getFoldableReturns(expression)
                     if (foldableReturns?.isNotEmpty() == true) {
                         val hasOtherReturns = expression.anyDescendantOfType<KtReturnExpression> { it !in foldableReturns }
-                        holder.registerProblem(
+                        val isSerious = !hasOtherReturns && foldableReturns.size > 1
+                        val verb = if (isSerious) "should" else "can"
+                        holder.registerProblemWithoutOfflineInformation(
                                 keyword,
-                                "Return can be lifted out of '${keyword.text}'",
-                                if (!hasOtherReturns && foldableReturns.size > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                                "Return $verb be lifted out of '${keyword.text}'",
+                                isOnTheFly,
+                                if (isSerious) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                 else ProblemHighlightType.INFORMATION,
                                 LiftReturnOutFix(keyword.text)
                         )
@@ -48,9 +51,11 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
                     }
                     val assignmentNumber = BranchedFoldingUtils.getFoldableAssignmentNumber(expression)
                     if (assignmentNumber > 0) {
-                        holder.registerProblem(
+                        val verb = if (assignmentNumber > 1) "should" else "can"
+                        holder.registerProblemWithoutOfflineInformation(
                                 keyword,
-                                "Assignment can be lifted out of '${keyword.text}'",
+                                "Assignment $verb be lifted out of '${keyword.text}'",
+                                isOnTheFly,
                                 if (assignmentNumber > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                 else ProblemHighlightType.INFORMATION,
                                 LiftAssignmentOutFix(keyword.text)

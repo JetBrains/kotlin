@@ -20,11 +20,10 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
 object PackagePartClassUtils {
@@ -52,15 +51,7 @@ object PackagePartClassUtils {
     }
 
     @JvmStatic fun getFilesWithCallables(files: Collection<KtFile>): List<KtFile> =
-            files.filter { fileHasTopLevelCallables(it) }
-
-    @JvmStatic fun fileHasTopLevelCallables(file: KtFile): Boolean =
-            file.declarations.any {
-                (it is KtProperty ||
-                it is KtNamedFunction ||
-                it is KtScript ||
-                it is KtTypeAlias) && !it.hasModifier(KtTokens.HEADER_KEYWORD)
-            }
+            files.filter { it.hasTopLevelCallables() }
 
     @JvmStatic fun getFilePartShortName(fileName: String): String =
             NameUtils.getPackagePartClassNamePrefix(FileUtil.getNameWithoutExtension(fileName)) + PART_CLASS_NAME_SUFFIX

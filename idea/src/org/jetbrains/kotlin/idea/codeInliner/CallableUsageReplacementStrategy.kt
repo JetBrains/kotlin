@@ -24,9 +24,12 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class CallableUsageReplacementStrategy(private val replacement: CodeToInline) : UsageReplacementStrategy {
+class CallableUsageReplacementStrategy(
+    private val replacement: CodeToInline,
+    private val inlineSetter: Boolean = false
+) : UsageReplacementStrategy {
     override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement?)? {
-        val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = usage.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         val resolvedCall = usage.getResolvedCall(bindingContext) ?: return null
         if (!resolvedCall.status.isSuccess) return null
 
@@ -46,9 +49,8 @@ class CallableUsageReplacementStrategy(private val replacement: CodeToInline) : 
             if (usage is KtOperationReferenceExpression && usage.getReferencedNameElementType() != KtTokens.IDENTIFIER) {
                 val nameExpression = OperatorToFunctionIntention.convert(usage.parent as KtExpression).second
                 createReplacer(nameExpression)?.invoke()
-            }
-            else {
-                CodeInliner(usage, bindingContext, resolvedCall, callElement, replacement).doInline()
+            } else {
+                CodeInliner(usage, bindingContext, resolvedCall, callElement, inlineSetter, replacement).doInline()
             }
         }
     }

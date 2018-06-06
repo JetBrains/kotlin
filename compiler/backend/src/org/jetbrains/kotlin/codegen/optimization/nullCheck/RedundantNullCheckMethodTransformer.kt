@@ -19,73 +19,44 @@ package org.jetbrains.kotlin.codegen.optimization.nullCheck
 import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
-import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.debugText
 import org.jetbrains.kotlin.codegen.optimization.common.isInsn
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
+import org.jetbrains.kotlin.codegen.pseudoInsns.asNotNull
+import org.jetbrains.kotlin.codegen.pseudoInsns.isPseudo
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 
 class RedundantNullCheckMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        while (TransformerPass(internalClassName, methodNode).run()) {}
+        while (TransformerPass(internalClassName, methodNode).run()) {
+        }
     }
 
     private class TransformerPass(val internalClassName: String, val methodNode: MethodNode) {
         private var changes = false
 
         fun run(): Boolean {
-            val checkedReferenceTypes = analyzeTypesAndRemoveDeadCode()
-            eliminateRedundantChecks(checkedReferenceTypes)
+            if (methodNode.instructions.toArray().none { it.isOptimizable() }) return false
 
-            return changes
-        }
-
-        private fun analyzeTypesAndRemoveDeadCode(): Map<AbstractInsnNode, Type> {
-            val insns = methodNode.instructions.toArray()
-            val frames = analyze(internalClassName, methodNode, OptimizationBasicInterpreter())
-
-            val checkedReferenceTypes = HashMap<AbstractInsnNode, Type>()
-            for (i in insns.indices) {
-                val insn = insns[i]
-                val frame = frames[i]
-                if (insn.isInstanceOfOrNullCheck()) {
-                    checkedReferenceTypes[insn] = frame?.top()?.type ?: continue
-                }
-                else if (insn.isCheckParameterIsNotNull() || insn.isCheckExpressionValueIsNotNull()) {
-                    checkedReferenceTypes[insn] = frame?.peek(1)?.type ?: continue
-                }
-            }
-
-            val dceResult = DeadCodeEliminationMethodTransformer().removeDeadCodeByFrames(methodNode, frames)
-            if (dceResult.hasRemovedAnything()) {
-                changes = true
-            }
-
-            return checkedReferenceTypes
-        }
-
-        private fun eliminateRedundantChecks(checkedReferenceTypes: Map<AbstractInsnNode, Type>) {
-            val nullabilityAssumptions = injectNullabilityAssumptions(checkedReferenceTypes)
+            val nullabilityAssumptions = NullabilityAssumptionsBuilder().injectNullabilityAssumptions()
 
             val nullabilityMap = analyzeNullabilities()
 
             nullabilityAssumptions.revert()
 
             transformTrivialChecks(nullabilityMap)
-        }
 
-        private fun injectNullabilityAssumptions(checkedReferenceTypes: Map<AbstractInsnNode, Type>) =
-                NullabilityAssumptionsBuilder(checkedReferenceTypes).injectNullabilityAssumptions()
+            return changes
+        }
 
         private fun analyzeNullabilities(): Map<AbstractInsnNode, StrictBasicValue> {
             val frames = analyze(internalClassName, methodNode, NullabilityInterpreter())
@@ -107,6 +78,12 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
             }
             return nullabilityMap
         }
+
+        private fun AbstractInsnNode.isOptimizable() =
+            opcode == Opcodes.IFNULL ||
+                    opcode == Opcodes.IFNONNULL ||
+                    opcode == Opcodes.INSTANCEOF ||
+                    isCheckExpressionValueIsNotNull()
 
         private fun transformTrivialChecks(nullabilityMap: Map<AbstractInsnNode, StrictBasicValue>) {
             for ((insn, value) in nullabilityMap) {
@@ -132,8 +109,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                 popReferenceValueBefore(insn)
                 if (alwaysTrue) {
                     set(insn, JumpInsnNode(Opcodes.GOTO, insn.label))
-                }
-                else {
+                } else {
                     remove(insn)
                 }
             }
@@ -144,8 +120,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
             if (nullability == Nullability.NULL) {
                 changes = true
                 transformTrivialInstanceOf(insn, false)
-            }
-            else if (nullability == Nullability.NOT_NULL && value.type.internalName == insn.desc) {
+            } else if (nullability == Nullability.NOT_NULL && value.type.internalName == insn.desc) {
                 changes = true
                 transformTrivialInstanceOf(insn, true)
             }
@@ -168,7 +143,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
             }
         }
 
-        private inner class NullabilityAssumptionsBuilder(val checkedReferenceTypes: Map<AbstractInsnNode, Type>) {
+        private inner class NullabilityAssumptionsBuilder {
 
             private val checksDependingOnVariable = HashMap<Int, MutableList<AbstractInsnNode>>()
 
@@ -184,8 +159,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                             val previous = insn.previous ?: continue@insnLoop
                             if (previous.opcode == Opcodes.ALOAD) {
                                 addDependentCheck(insn, previous as VarInsnNode)
-                            }
-                            else if (previous.opcode == Opcodes.DUP) {
+                            } else if (previous.opcode == Opcodes.DUP) {
                                 val previous2 = previous.previous ?: continue@insnLoop
                                 if (previous2.opcode == Opcodes.ALOAD) {
                                     addDependentCheck(insn, previous2 as VarInsnNode)
@@ -208,8 +182,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                             val insn1 = ldcInsn.previous ?: continue@insnLoop
                             if (insn1.opcode == Opcodes.ALOAD) {
                                 aLoadInsn = insn1 as VarInsnNode
-                            }
-                            else if (insn1.opcode == Opcodes.DUP) {
+                            } else if (insn1.opcode == Opcodes.DUP) {
                                 val insn2 = insn1.previous ?: continue@insnLoop
                                 if (insn2.opcode == Opcodes.ALOAD) {
                                     aLoadInsn = insn2 as VarInsnNode
@@ -218,7 +191,6 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                             if (aLoadInsn == null) continue@insnLoop
                             addDependentCheck(insn, aLoadInsn)
                         }
-
                     }
                 }
             }
@@ -233,36 +205,39 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                 val nullabilityAssumptions = NullabilityAssumptions()
                 for ((varIndex, dependentChecks) in checksDependingOnVariable) {
                     for (checkInsn in dependentChecks) {
-                        val varType = checkedReferenceTypes[checkInsn]
-                                      ?: AsmTypes.OBJECT_TYPE
-                        nullabilityAssumptions.injectAssumptionsForCheck(varIndex, checkInsn, varType)
+                        nullabilityAssumptions.injectAssumptionsForInsn(varIndex, checkInsn)
                     }
                 }
                 for (insn in methodNode.instructions) {
-                    if (insn.isThrowNpeIntrinsic()) {
-                        nullabilityAssumptions.injectCodeForThrowNpe(insn)
+                    if (insn.isThrowIntrinsic()) {
+                        nullabilityAssumptions.injectCodeForThrowIntrinsic(insn)
                     }
                 }
                 return nullabilityAssumptions
             }
 
-            private fun NullabilityAssumptions.injectAssumptionsForCheck(varIndex: Int, insn: AbstractInsnNode, varType: Type) {
+            private fun NullabilityAssumptions.injectAssumptionsForInsn(varIndex: Int, insn: AbstractInsnNode) {
                 when (insn.opcode) {
                     Opcodes.IFNULL,
                     Opcodes.IFNONNULL ->
-                        injectAssumptionsForNullCheck(varIndex, insn as JumpInsnNode, varType)
+                        injectAssumptionsForNullCheck(varIndex, insn as JumpInsnNode)
                     Opcodes.INVOKESTATIC -> {
-                        assert(insn.isCheckParameterIsNotNull() || insn.isCheckExpressionValueIsNotNull()) {
-                            "Expected non-null assertion: ${insn.debugText}"
+                        when {
+                            insn.isCheckParameterIsNotNull() ||
+                                    insn.isCheckExpressionValueIsNotNull() ->
+                                injectAssumptionsForNotNullAssertion(varIndex, insn)
+                            insn.isPseudo(PseudoInsn.STORE_NOT_NULL) ->
+                                injectCodeForStoreNotNull(insn)
+                            else ->
+                                throw AssertionError("Expected non-null assertion: ${insn.debugText}")
                         }
-                        injectAssumptionsForNotNullAssertion(varIndex, insn, varType)
                     }
                     Opcodes.INSTANCEOF ->
-                        injectAssumptionsForInstanceOfCheck(varIndex, insn, varType)
+                        injectAssumptionsForInstanceOfCheck(varIndex, insn)
                 }
             }
 
-            private fun NullabilityAssumptions.injectAssumptionsForNullCheck(varIndex: Int, insn: JumpInsnNode, varType: Type) {
+            private fun NullabilityAssumptions.injectAssumptionsForNullCheck(varIndex: Int, insn: JumpInsnNode) {
                 //  ALOAD v
                 //  IFNULL L
                 //  <...>   -- v is not null here
@@ -282,15 +257,16 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
 
                     insert(insertAfterNull, listOfSynthetics {
                         aconst(null)
-                        store(varIndex, varType)
+                        store(varIndex, AsmTypes.OBJECT_TYPE)
                         if (jumpsIfNull) {
                             goTo(originalLabel.label)
                         }
                     })
 
                     insert(insertAfterNonNull, listOfSynthetics {
-                        anew(varType)
-                        store(varIndex, varType)
+                        load(varIndex, AsmTypes.OBJECT_TYPE)
+                        asNotNull()
+                        store(varIndex, AsmTypes.OBJECT_TYPE)
                         if (!jumpsIfNull) {
                             goTo(originalLabel.label)
                         }
@@ -298,7 +274,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                 }
             }
 
-            private fun NullabilityAssumptions.injectAssumptionsForNotNullAssertion(varIndex: Int, insn: AbstractInsnNode, varType: Type) {
+            private fun NullabilityAssumptions.injectAssumptionsForNotNullAssertion(varIndex: Int, insn: AbstractInsnNode) {
                 //  ALOAD v
                 //  LDC *
                 //  INVOKESTATIC checkParameterIsNotNull
@@ -311,12 +287,13 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                 //  <...>   -- v is not null here (otherwise an exception was thrown)
 
                 methodNode.instructions.insert(insn, listOfSynthetics {
-                    anew(varType)
-                    store(varIndex, varType)
+                    load(varIndex, AsmTypes.OBJECT_TYPE)
+                    asNotNull()
+                    store(varIndex, AsmTypes.OBJECT_TYPE)
                 })
             }
 
-            private fun NullabilityAssumptions.injectAssumptionsForInstanceOfCheck(varIndex: Int, insn: AbstractInsnNode, varType: Type) {
+            private fun NullabilityAssumptions.injectAssumptionsForInstanceOfCheck(varIndex: Int, insn: AbstractInsnNode) {
                 //  ALOAD v
                 //  INSTANCEOF T
                 //  IFEQ L
@@ -338,16 +315,16 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                     methodNode.instructions.add(newLabel)
                     next.label = newLabel
                     insertAfterNotNull = newLabel
-                }
-                else {
+                } else {
                     originalLabel = null
                     insertAfterNotNull = next
                 }
 
                 methodNode.instructions.run {
                     insert(insertAfterNotNull, listOfSynthetics {
-                        anew(varType)
-                        store(varIndex, varType)
+                        load(varIndex, AsmTypes.OBJECT_TYPE)
+                        asNotNull()
+                        store(varIndex, AsmTypes.OBJECT_TYPE)
                         if (originalLabel != null) {
                             goTo(originalLabel.label)
                         }
@@ -355,15 +332,33 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
                 }
             }
 
-            private fun NullabilityAssumptions.injectCodeForThrowNpe(insn: AbstractInsnNode) {
+            private fun NullabilityAssumptions.injectCodeForThrowIntrinsic(insn: AbstractInsnNode) {
                 methodNode.instructions.run {
                     insert(insn, listOfSynthetics {
                         aconst(null)
                         athrow()
                     })
                 }
+
+                methodNode.maxStack = methodNode.maxStack + 1 //will be recalculated in prepareForEmitting
             }
 
+            private fun NullabilityAssumptions.injectCodeForStoreNotNull(insn: AbstractInsnNode) {
+                // ASTORE v
+                // [STORE_NOT_NULL]
+                // <...>    -- v is not null here because codegen told us so
+                val previous = insn.previous
+                if (previous.opcode != Opcodes.ASTORE) return
+
+                methodNode.instructions.run {
+                    insert(insn, listOfSynthetics {
+                        val varIndex = (previous as VarInsnNode).`var`
+                        load(varIndex, AsmTypes.OBJECT_TYPE)
+                        asNotNull()
+                        store(varIndex, AsmTypes.OBJECT_TYPE)
+                    })
+                }
+            }
         }
 
         inner class NullabilityAssumptions {
@@ -396,30 +391,41 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
 }
 
 internal fun AbstractInsnNode.isInstanceOfOrNullCheck() =
-        opcode == Opcodes.INSTANCEOF ||
-        opcode == Opcodes.IFNULL ||
-        opcode == Opcodes.IFNONNULL
+    opcode == Opcodes.INSTANCEOF ||
+            opcode == Opcodes.IFNULL ||
+            opcode == Opcodes.IFNONNULL
 
 internal fun AbstractInsnNode.isCheckParameterIsNotNull() =
-        isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
-            owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
-            name == "checkParameterIsNotNull" &&
-            desc == "(Ljava/lang/Object;Ljava/lang/String;)V"
-        }
+    isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
+        owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
+                name == "checkParameterIsNotNull" &&
+                desc == "(Ljava/lang/Object;Ljava/lang/String;)V"
+    }
 
 internal fun AbstractInsnNode.isCheckExpressionValueIsNotNull() =
-        isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
-            owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
-            name == "checkExpressionValueIsNotNull" &&
-            desc == "(Ljava/lang/Object;Ljava/lang/String;)V"
-        }
+    isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
+        owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
+                name == "checkExpressionValueIsNotNull" &&
+                desc == "(Ljava/lang/Object;Ljava/lang/String;)V"
+    }
 
-internal fun AbstractInsnNode.isThrowNpeIntrinsic() =
-        isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
-            owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
-            name == "throwNpe" &&
-            desc == "()V"
-        }
+internal fun AbstractInsnNode.isThrowIntrinsic() =
+    isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
+        owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
+                name in THROW_INTRINSIC_METHOD_NAMES
+    }
+
+internal val THROW_INTRINSIC_METHOD_NAMES =
+    setOf(
+        "throwNpe",
+        "throwUninitializedProperty",
+        "throwUninitializedPropertyAccessException",
+        "throwAssert",
+        "throwIllegalArgument",
+        "throwIllegalState",
+        "throwParameterIsNullException",
+        "throwUndefinedForReified"
+    )
 
 internal fun InsnList.popReferenceValueBefore(insn: AbstractInsnNode) {
     val prev = insn.previous

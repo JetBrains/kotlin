@@ -5,7 +5,7 @@
 
 public class B<T> {
     public String gav() {
-        return ""
+        return "";
     }
 
     public static <T> B<T> create() {

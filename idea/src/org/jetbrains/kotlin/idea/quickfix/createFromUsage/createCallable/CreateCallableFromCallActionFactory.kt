@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
@@ -129,30 +129,40 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 if (javaClass == null || !javaClass.canRefactor()) return null
                 TypeInfo.StaticContextRequired(TypeInfo(javaClassifier.defaultType, Variance.IN_VARIANCE))
             }
-            is ReceiverValue -> TypeInfo(receiver.type, Variance.IN_VARIANCE)
+            is ReceiverValue -> {
+                val originalType = receiver.type
+                val finalType = if (receiver is ExpressionReceiver) {
+                    getDataFlowAwareTypes(receiver.expression, context, originalType).firstOrNull() ?: originalType
+                } else originalType
+                TypeInfo(finalType, Variance.IN_VARIANCE)
+            }
             else -> throw AssertionError("Unexpected receiver: $receiver")
         }
     }
 
     protected fun getAbstractCallableInfo(mainCallable: CallableInfo, originalExpression: KtExpression): CallableInfo? {
-        val containingClass: KtClass
+        val receiverTypeInfo: TypeInfo
         val receiverType: KotlinType
 
-        val receiverTypeInfo = mainCallable.receiverTypeInfo
-        if (receiverTypeInfo != TypeInfo.Empty) {
-            if (receiverTypeInfo !is TypeInfo.ByType) return null
+        val originalReceiverTypeInfo = mainCallable.receiverTypeInfo
+        if (originalReceiverTypeInfo != TypeInfo.Empty) {
+            if (originalReceiverTypeInfo !is TypeInfo.ByType) return null
+            receiverTypeInfo = originalReceiverTypeInfo
             receiverType = receiverTypeInfo.theType
-            containingClass = receiverType.constructor.declarationDescriptor?.source?.getPsi() as? KtClass ?: return null
         }
         else {
-            containingClass = originalExpression.getStrictParentOfType<KtClassOrObject>() as? KtClass ?: return null
+            val containingClass = originalExpression.getStrictParentOfType<KtClassOrObject>() as? KtClass ?: return null
             if (containingClass is KtEnumEntry) return null
-            receiverType = (containingClass.resolveToDescriptor() as ClassDescriptor).defaultType
+            receiverType = (containingClass.unsafeResolveToDescriptor() as ClassDescriptor).defaultType
+            receiverTypeInfo = TypeInfo(receiverType, Variance.IN_VARIANCE).ofThis()
         }
 
         if (!receiverType.isAbstract() && TypeUtils.getAllSupertypes(receiverType).all { !it.isAbstract() }) return null
 
-        return mainCallable.copy(receiverTypeInfo = receiverTypeInfo, possibleContainers = listOf(containingClass), isAbstract = true)
+        return mainCallable.copy(
+                receiverTypeInfo = receiverTypeInfo,
+                possibleContainers = emptyList(),
+                modifierList = KtPsiFactory(originalExpression).createModifierList(KtTokens.ABSTRACT_KEYWORD))
     }
 
     protected fun getCallableWithReceiverInsideExtension(
@@ -321,7 +331,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
 
             val parameters = expression.getParameterInfos()
 
-            return SecondaryConstructorInfo(parameters, klass)
+            return ConstructorInfo(parameters, klass)
         }
     }
 

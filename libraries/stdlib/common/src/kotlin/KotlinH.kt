@@ -1,118 +1,103 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin
 
-import kotlin.annotation.AnnotationTarget.*
-
-open header class Error : Throwable {
-    constructor()
-    constructor(message: String)
-}
-
-open header class Exception : Throwable {
-    constructor()
-    constructor(message: String)
-}
-
-open header class IllegalArgumentException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-open header class IllegalStateException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-open header class IndexOutOfBoundsException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-open header class NoSuchElementException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-open header class RuntimeException : Exception {
-    constructor()
-    constructor(message: String)
-}
-
-open header class UnsupportedOperationException : RuntimeException {
-    constructor()
-    constructor(message: String)
-}
-
-// TODO: Provide typealias impl in stdlib-jvm
-open header class AssertionError : Error {
-    constructor()
-    constructor(message: String)
-}
+import kotlin.annotation.AnnotationTarget.FIELD
+import kotlin.annotation.AnnotationTarget.PROPERTY
 
 
-header interface Comparator<T> {
+
+expect interface Comparator<T> {
     fun compare(a: T, b: T): Int
 }
 
-header inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T>
+// TODO: Satisfied with SAM-constructor for Comparator interface in JVM
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+expect inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T>
 
 // From kotlin.kt
 
-internal header fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T>
-internal inline header fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V>
-internal inline header fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
-internal inline header fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?>
 
-internal header interface Serializable
 
 // From numbers.kt
 
-header fun Double.isNaN(): Boolean
-header fun Float.isNaN(): Boolean
-header fun Double.isInfinite(): Boolean
-header fun Float.isInfinite(): Boolean
-header fun Double.isFinite(): Boolean
-header fun Float.isFinite(): Boolean
+expect fun Double.isNaN(): Boolean
+expect fun Float.isNaN(): Boolean
+expect fun Double.isInfinite(): Boolean
+expect fun Float.isInfinite(): Boolean
+expect fun Double.isFinite(): Boolean
+expect fun Float.isFinite(): Boolean
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Long]
+ * according to the IEEE 754 floating-point "double format" bit layout.
+ */
+@SinceKotlin("1.2")
+public expect fun Double.toBits(): Long
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Long]
+ * according to the IEEE 754 floating-point "double format" bit layout,
+ * preserving `NaN` values exact layout.
+ */
+@SinceKotlin("1.2")
+public expect fun Double.toRawBits(): Long
+
+/**
+ * Returns the [Double] value corresponding to a given bit representation.
+ */
+@SinceKotlin("1.2")
+public expect fun Double.Companion.fromBits(bits: Long): Double
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Int]
+ * according to the IEEE 754 floating-point "single format" bit layout.
+ */
+@SinceKotlin("1.2")
+public expect fun Float.toBits(): Int
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Int]
+ * according to the IEEE 754 floating-point "single format" bit layout,
+ * preserving `NaN` values exact layout.
+ */
+@SinceKotlin("1.2")
+public expect fun Float.toRawBits(): Int
+
+/**
+ * Returns the [Float] value corresponding to a given bit representation.
+ */
+@SinceKotlin("1.2")
+public expect fun Float.Companion.fromBits(bits: Int): Float
 
 
 // From concurrent.kt
 
-@Target(PROPERTY, FIELD)
-header annotation class Volatile
+// TODO: promote to error? Otherwise it gets to JVM part
+//@Deprecated("Use Volatile annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Volatile"), level = DeprecationLevel.WARNING)
+//public typealias Volatile = kotlin.jvm.Volatile
 
-inline header fun <R> synchronized(lock: Any, crossinline block: () -> R): R
+public expect inline fun <R> synchronized(lock: Any, block: () -> R): R
 
 
 
 
 // from lazy.kt
 
-public header fun <T> lazy(initializer: () -> T): Lazy<T>
+public expect fun <T> lazy(initializer: () -> T): Lazy<T>
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  *
  * The [mode] parameter is ignored. */
-public header fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T>
+public expect fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T>
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  *
  * The [lock] parameter is ignored.
  */
-public header fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T>
+public expect fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T>

@@ -26,7 +26,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.resolve.ideService
@@ -74,7 +74,7 @@ class SuggestVariableNameMacro : KotlinMacro() {
             suggestIterationVariableName(parent, nameValidator)?.let { return it }
         }
 
-        val descriptor = declaration.resolveToDescriptor(BodyResolveMode.PARTIAL) as? VariableDescriptor ?: return emptyList()
+        val descriptor = declaration.resolveToDescriptorIfAny() as? VariableDescriptor ?: return emptyList()
         return KotlinNameSuggester.suggestNamesByType(descriptor.type, nameValidator, null)
     }
 

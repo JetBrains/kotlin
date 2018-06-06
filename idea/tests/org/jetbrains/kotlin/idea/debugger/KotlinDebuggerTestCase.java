@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.debugger;
 
 import com.google.common.collect.Lists;
 import com.intellij.compiler.impl.CompilerUtil;
+import com.intellij.debugger.DebuggerManagerEx;
 import com.intellij.debugger.impl.DescriptorTestCase;
 import com.intellij.debugger.impl.OutputChecker;
 import com.intellij.execution.ExecutionTestCase;
@@ -172,10 +173,14 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             ourOutputRootField.setAccessible(true);
 
             if (!LOCAL_CACHE_DIR.exists()) {
+
+                LOCAL_CACHE_JAR_DIR.mkdirs();
+                LOCAL_CACHE_APP_DIR.mkdirs();
+
                 boolean result =
-                        LOCAL_CACHE_DIR.mkdir() &&
-                        LOCAL_CACHE_JAR_DIR.mkdir() &&
-                        LOCAL_CACHE_APP_DIR.mkdir();
+                        LOCAL_CACHE_DIR.exists() &&
+                        LOCAL_CACHE_JAR_DIR.exists() &&
+                        LOCAL_CACHE_APP_DIR.exists();
 
                 Assert.assertTrue("Failure on local cache directories creation", result);
 

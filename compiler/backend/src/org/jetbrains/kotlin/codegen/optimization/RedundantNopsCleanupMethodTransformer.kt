@@ -46,8 +46,7 @@ class RedundantNopsCleanupMethodTransformer : MethodTransformer() {
                 val toRemove = current
                 current = current.next
                 methodNode.instructions.remove(toRemove)
-            }
-            else {
+            } else {
                 current = current.next
             }
         }
@@ -84,7 +83,7 @@ class RedundantNopsCleanupMethodTransformer : MethodTransformer() {
         }
 
 
-        for (i in 0 .. localVariableLabels.size - 2) {
+        for (i in 0..localVariableLabels.size - 2) {
             val begin = localVariableLabels[i]
             val end = localVariableLabels[i + 1]
             if (InsnSequence(begin, end).any { it in requiredNops }) continue
@@ -109,8 +108,7 @@ internal fun getRequiredNopInRange(firstInclusive: AbstractInsnNode, lastExclusi
     while (current != null && current != lastExclusive) {
         if (current.isMeaningful && current.opcode != Opcodes.NOP) {
             return null
-        }
-        else if (current.opcode == Opcodes.NOP) {
+        } else if (current.opcode == Opcodes.NOP) {
             lastNop = current
         }
         current = current.next

@@ -4,6 +4,16 @@ Compiling files:
   src/constraints.kt
   src/foo.kt
   src/usages.kt
+Exit code: OK
+
+==== STEP 1 ====
+Compiling files:
+  src/usages.kt
+Exit code: OK
+
+==== STEP 2 ====
+Compiling files:
+  src/usages.kt
 Exit code: COMPILATION_ERROR
   Unresolved reference: vala
   Unresolved reference: vara

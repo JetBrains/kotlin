@@ -36,4 +36,6 @@ public interface VariableDescriptor extends ValueDescriptor {
      * It completely does not means that if isConst then `getCompileTimeInitializer` is not null
      */
     boolean isConst();
+
+    boolean isLateInit();
 }

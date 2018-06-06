@@ -1,21 +1,11 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
@@ -23,6 +13,7 @@ import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 import com.intellij.codeInspection.ProblemHighlightType.INFORMATION
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -42,7 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : AbstractKotlinInspection() {
 
-    constructor(): this(convertEmptyToUnit = true)
+    constructor() : this(convertEmptyToUnit = true)
 
     private data class Status(val toHighlight: PsiElement?, val subject: String, val highlightType: ProblemHighlightType)
 
@@ -55,36 +46,52 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
         val value = valueStatement.getValue()
         if (value.anyDescendantOfType<KtReturnExpression>(
                 canGoInside = { it !is KtFunctionLiteral && it !is KtNamedFunction && it !is KtPropertyAccessor }
-        )) return null
+            )
+        ) return null
 
         val toHighlight = valueStatement.toHighlight()
         return when {
             valueStatement !is KtReturnExpression -> Status(toHighlight, "block body", INFORMATION)
-            valueStatement.returnedExpression is KtWhenExpression -> Status(toHighlight, "'return when'", GENERIC_ERROR_OR_WARNING)
+            valueStatement.returnedExpression is KtWhenExpression -> Status(toHighlight, "'return when'", INFORMATION)
             valueStatement.isOneLiner() -> Status(toHighlight, "one-line return", GENERIC_ERROR_OR_WARNING)
             else -> Status(toHighlight, "return", INFORMATION)
         }
     }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
-            object : KtVisitorVoid() {
-                override fun visitDeclaration(declaration: KtDeclaration) {
-                    super.visitDeclaration(declaration)
+        declarationVisitor(fun(declaration) {
+            declaration as? KtDeclarationWithBody ?: return
+            val (toHighlightElement, suffix, highlightType) = statusFor(declaration) ?: return
+            // Change range to start with left brace
+            val hasHighlighting = highlightType != INFORMATION
 
-                    declaration as? KtDeclarationWithBody ?: return
-                    val (toHighlight, suffix, highlightType) = statusFor(declaration) ?: return
+            fun defaultLevel(): HighlightDisplayLevel {
+                val project = declaration.project
+                val inspectionProfileManager = ProjectInspectionProfileManager.getInstance(project)
+                val inspectionProfile = inspectionProfileManager.currentProfile
+                val state = inspectionProfile.getToolDefaultState("UseExpressionBody", project)
+                return state.level
+            }
 
-                    val problemDescriptor = holder.manager.createProblemDescriptor(
-                            declaration,
-                            toHighlight?.textRange?.shiftRight(-declaration.startOffset),
-                            "Use expression body instead of $suffix",
-                            highlightType,
-                            isOnTheFly,
-                            ConvertToExpressionBodyFix()
-                    )
-                    holder.registerProblem(problemDescriptor)
+            val toHighlightRange = toHighlightElement?.textRange?.let {
+                if (hasHighlighting && defaultLevel() != HighlightDisplayLevel.DO_NOT_SHOW) {
+                    it
+                } else {
+                    // Extend range to [left brace..end of highlight element]
+                    val offset = (declaration.blockExpression()?.lBrace?.startOffset ?: it.startOffset) - it.startOffset
+                    it.shiftRight(offset).grown(-offset)
                 }
             }
+
+            holder.registerProblemWithoutOfflineInformation(
+                declaration,
+                "Use expression body instead of $suffix",
+                isOnTheFly,
+                highlightType,
+                toHighlightRange?.shiftRight(-declaration.startOffset),
+                ConvertToExpressionBodyFix()
+            )
+        })
 
     private fun KtDeclarationWithBody.findValueStatement(): KtExpression? {
         val body = blockExpression() ?: return null

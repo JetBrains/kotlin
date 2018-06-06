@@ -3,7 +3,7 @@
 
 // WITH_REFLECT
 
-import kotlin.reflect.*
+import kotlin.reflect.full.*
 
 class A {
     var String.id: String
@@ -14,10 +14,10 @@ class A {
 }
 
 fun box(): String {
-    val p = A::class.java.kotlin.memberExtensionProperties.single()
+    val p = A::class.memberExtensionProperties.single()
     return if ("$p" == "var A.(kotlin.String.)id: kotlin.String") "OK" else "Fail $p"
 
-    val q = A::class.java.kotlin.declaredFunctions.single()
+    val q = A::class.declaredFunctions.single()
     if ("$q" != "fun A.(kotlin.Int.)foo(): kotlin.Double") return "Fail q $q"
 
     return "OK"

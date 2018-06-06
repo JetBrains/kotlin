@@ -1,6 +1,6 @@
 package
 
-public external open class A {
+public open external class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun f(/*0*/ x: kotlin.Int = ...): kotlin.Unit
@@ -24,7 +24,7 @@ public final class BB : A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external final class C : A {
+public final external class C : A {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun f(/*0*/ x: kotlin.Int = ...): kotlin.Unit
@@ -32,7 +32,7 @@ public external final class C : A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external open class D {
+public open external class D {
     public constructor D()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun f(/*0*/ x: kotlin.Int): kotlin.Unit
@@ -56,7 +56,7 @@ public final class F : D, I {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external final class G : D, I {
+public final external class G : D, I {
     public constructor G()
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ fun f(/*0*/ x: kotlin.Int = ...): kotlin.Unit
@@ -100,7 +100,7 @@ public open class X {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external open class XE {
+public open external class XE {
     public constructor XE()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun f(/*0*/ x: kotlin.Int): kotlin.Unit
@@ -116,7 +116,7 @@ public final class Y : X, I {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public external final class YE : XE, I {
+public final external class YE : XE, I {
     public constructor YE()
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*2*/ /*fake_override*/ fun f(/*0*/ x: kotlin.Int = ...): kotlin.Unit

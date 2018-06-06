@@ -30,22 +30,21 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
-import org.jetbrains.kotlin.idea.core.UtilsKt;
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.refactoring.introduce.ui.KotlinSignatureComponent;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.*;
 import java.util.List;
+import java.util.Map;
 
 public class KotlinExtractFunctionDialog extends DialogWrapper {
     private JPanel contentPane;
@@ -92,7 +91,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     private String getFunctionName() {
-        return UtilsKt.quoteIfNeeded(functionNameField.getEnteredName());
+        return KtPsiUtilKt.quoteIfNeeded(functionNameField.getEnteredName());
     }
 
     private String getVisibility() {
@@ -103,9 +102,9 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     private boolean checkNames() {
-        if (!KotlinNameSuggester.INSTANCE.isIdentifier(getFunctionName())) return false;
+        if (!KtPsiUtilKt.isIdentifier(getFunctionName())) return false;
         for (ExtractFunctionParameterTablePanel.ParameterInfo parameterInfo : parameterTablePanel.getSelectedParameterInfos()) {
-            if (!KotlinNameSuggester.INSTANCE.isIdentifier(parameterInfo.getName())) return false;
+            if (!KtPsiUtilKt.isIdentifier(parameterInfo.getName())) return false;
         }
         return true;
     }
@@ -115,7 +114,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
         setOKActionEnabled(checkNames());
         signaturePreviewField.setText(
-                ExtractorUtilKt.getSignaturePreview(getCurrentConfiguration(), IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
+                ExtractorUtilKt.getSignaturePreview(getCurrentConfiguration(), IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS)
         );
     }
 
@@ -157,7 +156,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                                 boolean cellHasFocus
                         ) {
                             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                            setText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((KotlinType) value));
+                            setText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType((KotlinType) value));
                             return this;
                         }
                     }
@@ -214,6 +213,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         inputParametersPanel.setText("&Parameters");
         inputParametersPanel.setLabelFor(parameterTablePanel.getTable());
         inputParametersPanel.add(parameterTablePanel);
+
+        functionNameField.requestFocus();
     }
 
     @SuppressWarnings("SuspiciousMethodCalls")

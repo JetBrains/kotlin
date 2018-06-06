@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.resolve
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.junit.Assert
@@ -41,7 +41,7 @@ abstract class AbstractReferenceToCompiledKotlinResolveInJavaTest : AbstractRefe
         performChecks()
     }
 
-    override fun getProjectDescriptor() = JdkAndMockLibraryProjectDescriptor(FILE_WITH_KOTLIN_CODE, true)
+    override fun getProjectDescriptor() = SdkAndMockLibraryProjectDescriptor(FILE_WITH_KOTLIN_CODE, true)
 
     override val refMarkerText: String
         get() = "CLS_REF"

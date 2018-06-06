@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.conversion.copy;
@@ -32,37 +21,41 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class LiteralKotlinToKotlinCopyPasteTestGenerated extends AbstractLiteralKotlinToKotlinCopyPasteTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInLiteral() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/copyPaste/literal"), Pattern.compile("^([^\\.]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("CollectionLiteralReference.kt")
     public void testCollectionLiteralReference() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/literal/CollectionLiteralReference.kt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/literal/CollectionLiteralReference.kt");
     }
 
     @TestMetadata("DontEscapeEntries.kt")
     public void testDontEscapeEntries() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/literal/DontEscapeEntries.kt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/literal/DontEscapeEntries.kt");
     }
 
     @TestMetadata("DontEscapeEntries2.kt")
     public void testDontEscapeEntries2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/literal/DontEscapeEntries2.kt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/literal/DontEscapeEntries2.kt");
+    }
+
+    @TestMetadata("DontEscapeThis.kt")
+    public void testDontEscapeThis() throws Exception {
+        runTest("idea/testData/copyPaste/literal/DontEscapeThis.kt");
     }
 
     @TestMetadata("DontUnescapeLiteralWIthCode.kt")
     public void testDontUnescapeLiteralWIthCode() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/literal/DontUnescapeLiteralWIthCode.kt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/literal/DontUnescapeLiteralWIthCode.kt");
     }
 
     @TestMetadata("UnescapeFullSelection.kt")
     public void testUnescapeFullSelection() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/literal/UnescapeFullSelection.kt");
-        doTest(fileName);
+        runTest("idea/testData/copyPaste/literal/UnescapeFullSelection.kt");
     }
 }

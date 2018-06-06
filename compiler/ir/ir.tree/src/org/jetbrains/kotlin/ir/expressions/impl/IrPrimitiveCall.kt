@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrCallWithShallowCopy
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -30,14 +31,26 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.lang.UnsupportedOperationException
 
 abstract class IrPrimitiveCallBase(
-        startOffset: Int,
-        endOffset: Int,
-        override val origin: IrStatementOrigin?,
-        override val symbol: IrFunctionSymbol
-) : IrExpressionBase(startOffset, endOffset, symbol.descriptor.returnType!!), IrCall {
+    startOffset: Int,
+    endOffset: Int,
+    override val origin: IrStatementOrigin?,
+    override val symbol: IrFunctionSymbol,
+    override val valueArgumentsCount: Int
+) : IrExpressionBase(startOffset, endOffset, symbol.descriptor.returnType!!),
+    IrCall {
+
     override val descriptor: FunctionDescriptor get() = symbol.descriptor
     override val superQualifier: ClassDescriptor? get() = null
     override val superQualifierSymbol: IrClassSymbol? get() = null
+
+    override val typeArgumentsCount: Int = 0
+
+    override fun getTypeArgument(index: Int): KotlinType? =
+        throw AssertionError("Primitive $descriptor has no type arguments")
+
+    override fun putTypeArgument(index: Int, type: KotlinType?) {
+        throw AssertionError("Primitive $descriptor has no type arguments")
+    }
 
     override var dispatchReceiver: IrExpression?
         get() = null
@@ -53,9 +66,6 @@ abstract class IrPrimitiveCallBase(
                 throw UnsupportedOperationException("Operator call expression can't have a receiver")
         }
 
-    override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType? =
-            null // IR primitives have no type parameters
-
     override fun removeValueArgument(index: Int) {
         throw AssertionError("Operator call expression can't have a default argument")
     }
@@ -70,8 +80,14 @@ abstract class IrPrimitiveCallBase(
     }
 }
 
-class IrNullaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatementOrigin?, symbol: IrFunctionSymbol) :
-        IrPrimitiveCallBase(startOffset, endOffset, origin, symbol), IrCallWithShallowCopy {
+class IrNullaryPrimitiveImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrStatementOrigin?,
+    symbol: IrFunctionSymbol
+) : IrPrimitiveCallBase(startOffset, endOffset, origin, symbol, 0),
+    IrCallWithShallowCopy {
+
     override fun getValueArgument(index: Int): IrExpression? = null
 
     override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
@@ -87,42 +103,48 @@ class IrNullaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStateme
     }
 
     override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: IrFunctionSymbol, newSuperQualifier: IrClassSymbol?): IrCall =
-            IrNullaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
+        IrNullaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
 
     override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: FunctionDescriptor, newSuperQualifier: ClassDescriptor?): IrCall =
-            IrNullaryPrimitiveImpl(startOffset, endOffset, newOrigin, createFunctionSymbol(newCallee))
+        IrNullaryPrimitiveImpl(startOffset, endOffset, newOrigin, createFunctionSymbol(newCallee))
 }
 
-class IrUnaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatementOrigin?, symbol: IrFunctionSymbol) :
-        IrPrimitiveCallBase(startOffset, endOffset, origin, symbol), IrCallWithShallowCopy {
+class IrUnaryPrimitiveImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrStatementOrigin?,
+    symbol: IrFunctionSymbol
+) : IrPrimitiveCallBase(startOffset, endOffset, origin, symbol, 1),
+    IrCallWithShallowCopy {
+
     @Deprecated("Creates unbound symbol")
     constructor(
-            startOffset: Int, endOffset: Int,
-            origin: IrStatementOrigin?,
-            functionDescriptor: FunctionDescriptor
+        startOffset: Int, endOffset: Int,
+        origin: IrStatementOrigin?,
+        functionDescriptor: FunctionDescriptor
     ) : this(
-            startOffset, endOffset, origin,
-            createFunctionSymbol(functionDescriptor)
+        startOffset, endOffset, origin,
+        createFunctionSymbol(functionDescriptor)
     )
 
 
     @Deprecated("Creates unbound symbol")
     constructor(
-            startOffset: Int, endOffset: Int,
-            origin: IrStatementOrigin?,
-            functionDescriptor: FunctionDescriptor,
-            argument: IrExpression
+        startOffset: Int, endOffset: Int,
+        origin: IrStatementOrigin?,
+        functionDescriptor: FunctionDescriptor,
+        argument: IrExpression
     ) : this(
-            startOffset, endOffset, origin,
-            createFunctionSymbol(functionDescriptor),
-            argument
+        startOffset, endOffset, origin,
+        createFunctionSymbol(functionDescriptor),
+        argument
     )
 
     constructor(
-            startOffset: Int, endOffset: Int,
-            origin: IrStatementOrigin?,
-            symbol: IrFunctionSymbol,
-            argument: IrExpression
+        startOffset: Int, endOffset: Int,
+        origin: IrStatementOrigin?,
+        symbol: IrFunctionSymbol,
+        argument: IrExpression
     ) : this(startOffset, endOffset, origin, symbol) {
         this.argument = argument
     }
@@ -152,36 +174,44 @@ class IrUnaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatement
     }
 
     override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: IrFunctionSymbol, newSuperQualifier: IrClassSymbol?): IrCall =
-            IrUnaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
+        IrUnaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
 
     override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: FunctionDescriptor, newSuperQualifier: ClassDescriptor?): IrCall =
-            IrUnaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
+        IrUnaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
 }
 
-class IrBinaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatementOrigin?, symbol: IrFunctionSymbol) :
-        IrPrimitiveCallBase(startOffset, endOffset, origin, symbol), IrCallWithShallowCopy {
-    @Deprecated("Creates unbound symbol")
-    constructor(
-            startOffset: Int, endOffset: Int, origin: IrStatementOrigin?,
-            descriptor: FunctionDescriptor
-    ) : this(startOffset, endOffset, origin,
-             createFunctionSymbol(descriptor))
+class IrBinaryPrimitiveImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrStatementOrigin?,
+    symbol: IrFunctionSymbol
+) : IrPrimitiveCallBase(startOffset, endOffset, origin, symbol, 2),
+    IrCallWithShallowCopy {
 
     @Deprecated("Creates unbound symbol")
     constructor(
-            startOffset: Int, endOffset: Int, origin: IrStatementOrigin?,
-            descriptor: FunctionDescriptor,
-            argument0: IrExpression, argument1: IrExpression
+        startOffset: Int, endOffset: Int, origin: IrStatementOrigin?,
+        descriptor: FunctionDescriptor
     ) : this(
-            startOffset, endOffset, origin,
-            createFunctionSymbol(descriptor),
-            argument0, argument1
+        startOffset, endOffset, origin,
+        createFunctionSymbol(descriptor)
+    )
+
+    @Deprecated("Creates unbound symbol")
+    constructor(
+        startOffset: Int, endOffset: Int, origin: IrStatementOrigin?,
+        descriptor: FunctionDescriptor,
+        argument0: IrExpression, argument1: IrExpression
+    ) : this(
+        startOffset, endOffset, origin,
+        createFunctionSymbol(descriptor),
+        argument0, argument1
     )
 
     constructor(
-            startOffset: Int, endOffset: Int, origin: IrStatementOrigin?,
-            symbol: IrFunctionSymbol,
-            argument0: IrExpression, argument1: IrExpression
+        startOffset: Int, endOffset: Int, origin: IrStatementOrigin?,
+        symbol: IrFunctionSymbol,
+        argument0: IrExpression, argument1: IrExpression
     ) : this(startOffset, endOffset, origin, symbol) {
         this.argument0 = argument0
         this.argument1 = argument1
@@ -218,8 +248,8 @@ class IrBinaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatemen
     }
 
     override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: IrFunctionSymbol, newSuperQualifier: IrClassSymbol?): IrCall =
-            IrBinaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
+        IrBinaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
 
     override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: FunctionDescriptor, newSuperQualifier: ClassDescriptor?): IrCall =
-            IrBinaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
+        IrBinaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
 }

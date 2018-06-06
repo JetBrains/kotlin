@@ -20,9 +20,9 @@ class MyActivity(): Activity() {
         val loginWidget = Button(this@MyActivity)
     }
 
-    override fun findViewById(id: Int): View? {
+    override fun <T : View> findViewById(id: Int): T? {
         return when (id) {
-            R.id.container -> containerWidget
+            R.id.container -> containerWidget as T
             else -> null
         }
     }

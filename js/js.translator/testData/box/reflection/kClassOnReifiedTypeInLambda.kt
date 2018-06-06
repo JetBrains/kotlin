@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1050
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1167
 package foo
 
 import kotlin.reflect.KClass
