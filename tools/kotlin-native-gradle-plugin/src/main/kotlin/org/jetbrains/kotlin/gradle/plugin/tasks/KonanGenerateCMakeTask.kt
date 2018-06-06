@@ -123,7 +123,7 @@ open class KonanGenerateCMakeTask : DefaultTask() {
         }.joinToString(" ")
 
     private val KonanCompileTask.cMakeLinkerOpts: String
-        get() = linkerOpts.joinToString(" ")
+        get() = linkerOpts.joinToString(" ").replace('\\', '/')
 }
 
 private class Call(val name: String) {
