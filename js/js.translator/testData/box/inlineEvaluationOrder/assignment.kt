@@ -11,25 +11,38 @@ inline fun run(block: () -> Unit) {
     block()
 }
 
-fun box(): String {
-
-    var x = 2
-
-    var s = ""
-
-//    foo {
-//        while (true) {
-//            s = "$s$x"
-//            x = x - 1
-//            if (x <= 0) return@foo
-//        }
+//fun bar(x: Int) = x
+//
+//var s = foo { "1" }
+//
+//inline var b
+//    get() = a * 10
+//    set(c) {
+//        a = c * 20
 //    }
 
-    s = foo {
-        "${x}1"
+fun box(): String {
+
+//    val q = b
+//    b = 1
+//
+    var x = 2
+//
+    var s = ""
+//
+    run {
+        while (true) {
+            s = "$s$x"
+            x = x - 1
+            if (x <= 0) return@run
+        }
     }
 
-    if (s != "210") return "fail"
+//    s = foo {
+//        "${x}1"
+//    }
+
+    if (s != "21") return "fail: $s"
 
 //    loop@ do {
 //        if (x-- == 5) {

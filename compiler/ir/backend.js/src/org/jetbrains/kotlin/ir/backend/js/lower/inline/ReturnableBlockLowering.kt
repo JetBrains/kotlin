@@ -55,16 +55,12 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
 
     private var tmpVarCounter = 0;
 
-
     data class ReturnInfo(
         val resultVariable: IrVariableSymbol,
         val loop: IrLoop
     )
 
     private val returnMap = mutableMapOf<IrReturnableBlockSymbol, ReturnInfo>()
-
-    private val unitValue =
-        JsIrBuilder.buildGetObjectValue(context.builtIns.unitType, context.symbolTable.referenceClass(context.builtIns.unit))
 
     val visitor = object : IrElementTransformerVoid() {
         override fun visitReturn(expression: IrReturn): IrExpression {
@@ -86,6 +82,12 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
             if (expression is IrReturnableBlock) {
+
+//                expression.statements.singleOrNull()?.let {
+//                    if (it is IrReturn && it.returnTargetSymbol == expression.symbol) {
+//                        return it.value.transform(this, null)
+//                    }
+//                }
 
                 val replacementBlock = IrBlockImpl(
                     expression.startOffset,
@@ -122,15 +124,15 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
 
                 block.statements += expression.statements
 
-                block.statements.lastOrNull()?.let {
-                    if (it is IrExpression) {
-                        if (it.type == context.builtIns.unitType) {
-                            block.statements += JsIrBuilder.buildSetVariable(variable, unitValue)
-                        } else {
-                            block.statements[block.statements.size - 1] = JsIrBuilder.buildSetVariable(variable, it)
-                        }
-                    }
-                }
+//                block.statements.lastOrNull()?.let {
+//                    if (it is IrExpression) {
+//                        if (it.type == context.builtIns.unitType) {
+//                            block.statements += JsIrBuilder.buildSetVariable(variable, unitValue)
+//                        } else {
+//                            block.statements[block.statements.size - 1] = JsIrBuilder.buildSetVariable(variable, it)
+//                        }
+//                    }
+//                }
 
                 replacementBlock.statements += loop
                 replacementBlock.statements += JsIrBuilder.buildGetValue(variable)
