@@ -219,3 +219,11 @@ actual class Actual {
     actual fun foo() {}
     actual val bar = 42
 }
+
+annotation class Ann
+
+@Ann
+val annotated = 3.14
+
+@Ann
+fun annotatedFun() {}

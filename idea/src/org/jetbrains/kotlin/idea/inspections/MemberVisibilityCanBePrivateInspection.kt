@@ -75,6 +75,7 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
 
     private fun canBePrivate(declaration: KtNamedDeclaration): Boolean {
         if (declaration.hasModifier(KtTokens.PRIVATE_KEYWORD) || declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
+        if (declaration.annotationEntries.isNotEmpty()) return false
         if (declaration.hasActualModifier() || declaration.isExpectDeclaration()) return false
 
         val descriptor = (declaration.toDescriptor() as? DeclarationDescriptorWithVisibility) ?: return false
@@ -89,7 +90,6 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
         if (!inheritable && declaration.hasModifier(KtTokens.PROTECTED_KEYWORD)) return false //reported by ProtectedInFinalInspection
         if (declaration.isOverridable()) return false
 
-        if (descriptor.hasJvmFieldAnnotation()) return false
         val entryPointsManager = EntryPointsManager.getInstance(declaration.project) as EntryPointsManagerBase
         if (UnusedSymbolInspection.checkAnnotatedUsingPatterns(
                 declaration,
