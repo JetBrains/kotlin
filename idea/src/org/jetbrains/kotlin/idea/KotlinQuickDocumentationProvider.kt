@@ -139,8 +139,10 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         val navElement = context?.navigationElement as? KtElement ?: return null
         val bindingContext = navElement.analyze(BodyResolveMode.PARTIAL)
         val contextDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, navElement] ?: return null
-        val descriptors = resolveKDocLink(bindingContext, navElement.getResolutionFacade(),
-                                          contextDescriptor, null, link.split('.'))
+        val descriptors = resolveKDocLink(
+            bindingContext, navElement.getResolutionFacade(),
+            contextDescriptor, null, link.split('.')
+        )
         val target = descriptors.firstOrNull() ?: return null
         return DescriptorToSourceUtilsIde.getAnyDeclaration(psiManager.project, target)
     }
@@ -173,7 +175,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             val enumDescriptor = declarationDescriptor?.getSuperClassNotAny() ?: return renderedDecl
 
             val enumDeclaration =
-                    DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, enumDescriptor) as? KtDeclaration ?: return renderedDecl
+                DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, enumDescriptor) as? KtDeclaration ?: return renderedDecl
 
             val enumSource = SourceNavigationHelper.getNavigationElement(enumDeclaration)
             val functionName = functionDescriptor.fqNameSafe.shortName().asString()
@@ -185,8 +187,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 val renderedComment = KDocRenderer.renderKDoc(kdoc.getDefaultSection())
                 if (renderedComment.startsWith("<p>")) {
                     renderedDecl += renderedComment
-                }
-                else {
+                } else {
                     renderedDecl = "$renderedDecl<br/>$renderedComment"
                 }
             }
@@ -201,8 +202,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 // element is not an KtReferenceExpression, but KtClass of enum
                 // so reference extracted from originalElement
                 val context = referenceExpression.analyze(BodyResolveMode.PARTIAL)
-                (context[BindingContext.REFERENCE_TARGET, referenceExpression] ?:
-                 context[BindingContext.REFERENCE_TARGET, referenceExpression.getChildOfType<KtReferenceExpression>()])?.let {
+                (context[BindingContext.REFERENCE_TARGET, referenceExpression]
+                        ?: context[BindingContext.REFERENCE_TARGET, referenceExpression.getChildOfType<KtReferenceExpression>()])?.let {
                     if (it is FunctionDescriptor) // To protect from Some<caret>Enum.values()
                         return renderEnumSpecialFunction(element, it, quickNavigation)
                 }
@@ -233,8 +234,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 // When caret on special enum function (e.g SomeEnum.values<caret>())
                 // element is not an KtReferenceExpression, but KtClass of enum
                 return renderEnum(element, originalElement, quickNavigation)
-            }
-            else if (element is KtEnumEntry && !quickNavigation) {
+            } else if (element is KtEnumEntry && !quickNavigation) {
                 val ordinal = element.containingClassOrObject?.getBody()?.run { getChildrenOfType<KtEnumEntry>().indexOf(element) }
 
                 return buildString {
@@ -245,14 +245,11 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                         }
                     }
                 }
-            }
-            else if (element is KtDeclaration) {
+            } else if (element is KtDeclaration) {
                 return renderKotlinDeclaration(element, quickNavigation)
-            }
-            else if (element is KtNameReferenceExpression && element.getReferencedName() == "it") {
+            } else if (element is KtNameReferenceExpression && element.getReferencedName() == "it") {
                 return renderKotlinImplicitLambdaParameter(element, quickNavigation)
-            }
-            else if (element is KtLightDeclaration<*, *>) {
+            } else if (element is KtLightDeclaration<*, *>) {
                 val origin = element.kotlinOrigin ?: return null
                 return renderKotlinDeclaration(origin, quickNavigation)
             }
@@ -266,8 +263,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                         return mixKotlinToJava(declarationDescriptor, element, originalElement)
                     }
                 }
-            }
-            else {
+            } else {
                 // This element was resolved to non-kotlin element, it will be rendered with own provider
             }
 
@@ -293,10 +289,10 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         }
 
         private fun renderKotlin(
-                context: BindingContext,
-                declarationDescriptor: DeclarationDescriptor,
-                quickNavigation: Boolean,
-                ktElement: KtElement
+            context: BindingContext,
+            declarationDescriptor: DeclarationDescriptor,
+            quickNavigation: Boolean,
+            ktElement: KtElement
         ): String {
             @Suppress("NAME_SHADOWING")
             var declarationDescriptor = declarationDescriptor
@@ -333,8 +329,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 //                    else {
 //                        renderedHtml = "$renderedHtml<br/>$renderedComment"
 //                    }
-                }
-                else {
+                } else {
                     if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
                         val psi = declarationDescriptor.findPsi() as? KtFunction
                         if (psi != null) {
@@ -352,8 +347,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         }
 
         private fun renderDeprecationInfo(
-                declarationDescriptor: DeclarationDescriptor,
-                deprecationResolver: DeprecationResolver
+            declarationDescriptor: DeclarationDescriptor,
+            deprecationResolver: DeprecationResolver
         ): String {
             val deprecation = deprecationResolver.getDeprecations(declarationDescriptor).firstOrNull() ?: return ""
 
@@ -387,7 +382,11 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             wrap("<$tag>", "</$tag>", body)
         }
 
-        private fun mixKotlinToJava(declarationDescriptor: DeclarationDescriptor, element: PsiElement, originalElement: PsiElement?): String? {
+        private fun mixKotlinToJava(
+            declarationDescriptor: DeclarationDescriptor,
+            element: PsiElement,
+            originalElement: PsiElement?
+        ): String? {
             val originalInfo = JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement)
             if (originalInfo != null) {
                 val renderedDecl = constant { DESCRIPTOR_RENDERER.withOptions { withDefinedIn = false } }.render(declarationDescriptor)
