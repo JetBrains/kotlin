@@ -133,8 +133,7 @@ object KDocRenderer {
                 val subjectName = tag.getSubjectName()
                 if (subjectName != null) {
                     DocumentationManagerUtil.createHyperlink(this, subjectName, subjectName, false)
-                }
-                else {
+                } else {
                     append(tag.getContent())
                 }
                 if (index < seeTags.size - 1) {
@@ -173,8 +172,7 @@ object KDocRenderer {
             maybeSingleParagraph.children.joinToString("") {
                 if (it.text == "\n") " " else it.toHtml()
             }
-        }
-        else {
+        } else {
             markdownNode.toHtml()
         }
     }
@@ -247,14 +245,13 @@ object KDocRenderer {
                 MarkdownElementTypes.FULL_REFERENCE_LINK -> {
                     val linkLabelNode = node.child(MarkdownElementTypes.LINK_LABEL)
                     val linkLabelContent = linkLabelNode?.children
-                            ?.dropWhile { it.type == MarkdownTokenTypes.LBRACKET }
-                            ?.dropLastWhile { it.type == MarkdownTokenTypes.RBRACKET }
+                        ?.dropWhile { it.type == MarkdownTokenTypes.LBRACKET }
+                        ?.dropLastWhile { it.type == MarkdownTokenTypes.RBRACKET }
                     if (linkLabelContent != null) {
                         val label = linkLabelContent.joinToString(separator = "") { it.text }
                         val linkText = node.child(MarkdownElementTypes.LINK_TEXT)?.toHtml() ?: label
                         DocumentationManagerUtil.createHyperlink(sb, label, linkText, true)
-                    }
-                    else {
+                    } else {
                         sb.append(node.text)
                     }
                 }
@@ -263,8 +260,7 @@ object KDocRenderer {
                     val destination = node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
                     if (label != null && destination != null) {
                         sb.append("<a href=\"$destination\">$label</a>")
-                    }
-                    else {
+                    } else {
                         sb.append(node.text)
                     }
                 }
@@ -290,8 +286,7 @@ object KDocRenderer {
                     val parentType = node.parent?.type
                     if (parentType == MarkdownElementTypes.CODE_BLOCK || parentType == MarkdownElementTypes.CODE_FENCE) {
                         sb.append("\n")
-                    }
-                    else {
+                    } else {
                         sb.append(" ")
                     }
                 }
