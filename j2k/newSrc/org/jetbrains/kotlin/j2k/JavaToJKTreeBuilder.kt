@@ -62,6 +62,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                     operands.map { it.toJK() },
                     Array(operands.lastIndex) { getTokenBeforeOperand(operands[it + 1]) }.map { it?.toJK() ?: TODO() }
                 )
+                is PsiArrayInitializerExpression -> toJK()
                 else -> {
                     throw RuntimeException("Not supported: ${this::class}")
                 }
@@ -135,13 +136,14 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             }
         }
 
+        fun PsiArrayInitializerExpression.toJK(): JKExpression {
+            return JKJavaNewArrayImpl(initializers.map { it.toJK() })
+        }
+
         fun PsiNewExpression.toJK(): JKExpression {
             assert(this is PsiNewExpressionImpl)
             if ((this as PsiNewExpressionImpl).findChildByRole(ChildRole.LBRACKET) != null) {
-                val arrayInitializer = arrayInitializer
-                if (arrayInitializer != null) {
-                    return JKJavaNewArrayImpl(arrayInitializer.initializers.map { it.toJK() })
-                } else {
+                return arrayInitializer?.toJK() ?: run {
                     val dimensions = mutableListOf<PsiLiteralExpression?>()
                     var child = firstChild
                     while (child != null) {
@@ -155,7 +157,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                         }
                         child = child.nextSibling
                     }
-                    return JKJavaNewEmptyArrayImpl(dimensions.map { it?.toJK() })
+                    JKJavaNewEmptyArrayImpl(dimensions.map { it?.toJK() })
                 }
             }
             val constructedClass = classOrAnonymousClassReference?.resolve()
