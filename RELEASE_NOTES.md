@@ -40,7 +40,7 @@ To run _Kotlin/Native_ JDK 8 or Java 9 (JDK) for the host platform has to be ins
 
 On macOS it also requires Xcode 9.3 or newer to be installed.
 
-The language and library version supported by this EAP release mostly match Kotlin 1.2.40.
+The language and library version supported by this EAP release mostly match Kotlin 1.2.60.
 However, there are certain limitations, see section [Known Limitations](#limitations).
 
  Currently _Kotlin/Native_ uses reference counting based memory management scheme with a cycle
@@ -94,10 +94,10 @@ Notice that property delegation (including lazy properties) *does* work.
 
  _Kotlin/Native_ supports preliminary source-level debugging on produced executables with `lldb` debugger.
  Produce your binary with debugging information by specifying `-g` _Kotlin/Native_ compiler switch.
- Konan plugin accepts `enableDebug` project's property, allowing two options for producing binaries with debug
+ Konan plugin accepts `enableDebug` project's property, allowing two ways of producing binaries with the debug
  information:
-   - gradle DSL.
-   - argument `-PenableDebug=true` in gradle command line.
+   - Gradle DSL
+   - argument `-PenableDebug=true` in Gradle command line
 
  Start your application with
     
@@ -105,6 +105,7 @@ Notice that property delegation (including lazy properties) *does* work.
  
  and then 
     
+    command script import tools/konan_lldb.py
     b kfun:main(kotlin.Array<kotlin.String>)
 
 to set breakpoint in main function of your application. Single stepping and step into shall work, 

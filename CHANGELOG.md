@@ -1,3 +1,13 @@
+## v0.7.1 (Jun 2018)
+  * Bugfixes in the runtime (indexOf, GC for kotlin.Array, enum equality) and the compiler
+  * Fix NSBlock problem, preventing upload of binaries to the AppStore
+  * Create primitive type boxes and kotlin.String as frozen by default
+  * Support Gradle 4.7, provide separate run task for each executable
+  * Support XCode 9.4 and CoreML and ClassKit frameworks on Apple platforms
+  * Improved runtime Kotlin variable examination
+  * Minor performance optimizations in compiled code and runtime
+  * Add `disableDesignatedInitializerChecks` definition file support
+
 ## v0.7 (May 2018)
   * Interop with Objective-C/Swift changes:
      * Uniform direct and reverse interops (values could be passed in both directions now)
