@@ -8,7 +8,7 @@ Compiler plugins are uploaded on bintray: https://bintray.com/kotlin/kotlinx/kot
 ## Building and usage
 
 ### Prerequisites:
-Before all, follow the instructions from root README.md to download dependencies and build Kotlin compiler. (`ant -f update_dependencies.xml && ./gradlew dist`)
+Before all, follow the instructions from root README.md to download dependencies and build Kotlin compiler. (`./gradlew dist`)
 
 **Plugin works only with IntelliJIDEA 2017.2 and higher.**
 
@@ -29,5 +29,5 @@ Run `./gradlew :kotlinx-gradle-serialization-plugin:install`
 
 ## Building maven plugin
 
-Go to `$kotlin_root/libraries/tools/kotlin-maven-serialization`. Run `mvn install`
+Make all prerequisites from libraries' README.md for Maven projects. Go to `$kotlin_root/libraries/tools/kotlin-maven-serialization`. Run `mvn install`
 

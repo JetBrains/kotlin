@@ -18,6 +18,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.js
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.js.translate.declaration.DefaultPropertyTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -67,6 +67,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         // adding elements via serialDesc.addElement(...)
         val addFunc = serialDescImplClass.getFuncDesc("addElement").single()
         val pushFunc = serialDescImplClass.getFuncDesc("pushAnnotation").single()
+        val pushClassFunc = serialDescImplClass.getFuncDesc("pushClassAnnotation").single()
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(serialDescPropertyDescriptor), JsThisRef())
 
         for (prop in orderedProperties) {
@@ -74,14 +75,21 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
             val call = JsInvocation(JsNameRef(context.getNameForDescriptor(addFunc), serialClassDescRef), JsStringLiteral(prop.name))
             translator.addInitializerStatement(call.makeStmt())
             // serialDesc.pushAnnotation(...)
-            for ((annotationClass , args, _) in prop.annotationsWithArguments) {
-                val argExprs = args.map { arg ->
-                    Translation.translateAsExpression(arg.getArgumentExpression()!!, context)
-                }
-                val classRef = context.translateQualifiedReference(annotationClass)
-                val invok = JsInvocation(JsNameRef(context.getNameForDescriptor(pushFunc), serialClassDescRef), JsNew(classRef, argExprs))
-                translator.addInitializerStatement(invok.makeStmt())
+            pushAnnotationsInto(prop.descriptor, pushFunc, serialClassDescRef)
+        }
+
+        // push class annotations
+        pushAnnotationsInto(serializableDescriptor, pushClassFunc, serialClassDescRef)
+    }
+
+    private fun pushAnnotationsInto(annotated: Annotated, pushFunction: DeclarationDescriptor, intoRef: JsNameRef) {
+        for ((annotationClass , args, _) in annotated.annotationsWithArguments()) {
+            val argExprs = args.map { arg ->
+                Translation.translateAsExpression(arg.getArgumentExpression()!!, context)
             }
+            val classRef = context.translateQualifiedReference(annotationClass)
+            val invok = JsInvocation(JsNameRef(context.getNameForDescriptor(pushFunction), intoRef), JsNew(classRef, argExprs))
+            translator.addInitializerStatement(invok.makeStmt())
         }
     }
 

@@ -17,15 +17,14 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.typeArgPrefix
+import org.jetbrains.kotlinx.serialization.compiler.resolve.annotationsWithArguments
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorBySerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
 import org.jetbrains.org.objectweb.asm.Label
@@ -91,26 +90,42 @@ class SerializerCodegenImpl(
                 for ((annotationClass, args, consParams) in property.annotationsWithArguments) {
                     if (args.size != consParams.size) throw IllegalArgumentException("Can't use arguments with defaults for serializable annotations yet")
                     load(classDescVar, descImplType)
-                    val implType = codegen.typeMapper.mapType(annotationClass).internalName + "\$" + KSerializerDescriptorResolver.IMPL_NAME.identifier
-                    // new Annotation$Impl(...)
-                    anew(Type.getObjectType(implType))
-                    dup()
-                    val sb = StringBuilder("(")
-                    for (i in consParams.indices) {
-                        val decl = args[i]
-                        val desc = consParams[i]
-                        val valAsmType = codegen.typeMapper.mapType(desc.type)
-                        expr.gen(decl.getArgumentExpression(), valAsmType)
-                        sb.append(valAsmType.descriptor)
-                    }
-                    sb.append(")V")
-                    invokespecial(implType, "<init>", sb.toString(), false)
-                    // serialDesc.pushAnnotation(..)
+                    expr.generateSyntheticAnnotationOnStack(annotationClass, args, consParams)
                     invokevirtual(descImplType.internalName, "pushAnnotation", "(Ljava/lang/annotation/Annotation;)V", false)
                 }
             }
+            // add annotations on class itself
+            for ((annotationClass, args, consParams) in serializableDescriptor.annotationsWithArguments()) {
+                if (args.size != consParams.size) throw IllegalArgumentException("Can't use arguments with defaults for serializable annotations yet")
+                load(classDescVar, descImplType)
+                expr.generateSyntheticAnnotationOnStack(annotationClass, args, consParams)
+                invokevirtual(descImplType.internalName, "pushClassAnnotation", "(Ljava/lang/annotation/Annotation;)V", false)
+            }
             load(classDescVar, descImplType)
             putstatic(serializerAsmType.internalName, serialDescField, descType.descriptor)
+        }
+    }
+
+    private fun ExpressionCodegen.generateSyntheticAnnotationOnStack(
+        annotationClass: ClassDescriptor,
+        args: List<ValueArgument>,
+        ctorParams: List<ValueParameterDescriptor>
+    ) {
+        val implType = codegen.typeMapper.mapType(annotationClass).internalName + "\$" + KSerializerDescriptorResolver.IMPL_NAME.identifier
+        with(v) {
+            // new Annotation$Impl(...)
+            anew(Type.getObjectType(implType))
+            dup()
+            val sb = StringBuilder("(")
+            for (i in ctorParams.indices) {
+                val decl = args[i]
+                val desc = ctorParams[i]
+                val valAsmType = codegen.typeMapper.mapType(desc.type)
+                this@generateSyntheticAnnotationOnStack.gen(decl.getArgumentExpression(), valAsmType)
+                sb.append(valAsmType.descriptor)
+            }
+            sb.append(")V")
+            invokespecial(implType, "<init>", sb.toString(), false)
         }
     }
 

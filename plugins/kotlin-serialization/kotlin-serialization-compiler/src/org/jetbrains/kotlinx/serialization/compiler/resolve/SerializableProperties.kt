@@ -19,7 +19,6 @@ package org.jetbrains.kotlinx.serialization.compiler.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasOwnParametersWithDefaultValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 class SerializableProperties(private val serializableClass: ClassDescriptor, val bindingContext: BindingContext) {
@@ -71,5 +70,6 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
     operator fun get(index: Int) = serializableProperties[index]
     operator fun iterator() = serializableProperties.iterator()
 
-    val primaryConstructorWithDefaults = serializableClass.unsubstitutedPrimaryConstructor?.hasOwnParametersWithDefaultValue() ?: false
+    val primaryConstructorWithDefaults = serializableClass.unsubstitutedPrimaryConstructor
+        ?.original?.valueParameters?.any { it.declaresDefaultValue() } ?: false
 }
