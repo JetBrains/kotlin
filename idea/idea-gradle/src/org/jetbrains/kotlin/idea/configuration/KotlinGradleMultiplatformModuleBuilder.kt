@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
 import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
-import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import javax.swing.Icon
 
 class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
@@ -82,9 +81,7 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
             updateSettingsScript(module) {
                 val includedModules = listOfNotNull(commonModuleName, jvmModuleName, jsModuleName).filter { it.isNotEmpty() }
                 if (includedModules.isNotEmpty()) {
-                    val includeCall = GroovyPsiElementFactory.getInstance(module.project)
-                        .createExpressionFromText(includedModules.joinToString(prefix = "include ") { "'$it'" })
-                    it.add(includeCall)
+                    it.addIncludedModules(includedModules)
                 }
             }
         } finally {
