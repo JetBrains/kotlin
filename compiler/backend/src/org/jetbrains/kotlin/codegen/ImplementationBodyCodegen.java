@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -578,13 +577,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     if (isPrimitive(asmType)) {
                         StackValue value = StackValue.cmp(KtTokens.EQEQ, asmType, StackValue.onStack(asmType), StackValue.onStack(asmType));
                         value.put(Type.BOOLEAN_TYPE, iv);
-                    }
-                    else if (TypeUtils.isNullableType(propertyDescriptor.getType())) {
-                        StackValue value =
-                                genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
-                        value.put(Type.BOOLEAN_TYPE, iv);
-                    }
-                    else {
+                    } else {
                         Type owner =
                                 DescriptorUtils.isInterface(propertyDescriptor.getType().getConstructor().getDeclarationDescriptor())
                                 ? AsmTypes.OBJECT_TYPE
