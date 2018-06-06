@@ -65,6 +65,7 @@ interface JKVisitor<out R, in D> {
     fun visitJavaAssertStatement(javaAssertStatement: JKJavaAssertStatement, data: D): R = visitStatement(javaAssertStatement, data)
     fun visitJavaForLoopStatement(javaForLoopStatement: JKJavaForLoopStatement, data: D): R = visitLoopStatement(javaForLoopStatement, data)
     fun visitJavaInstanceOfExpression(javaInstanceOfExpression: JKJavaInstanceOfExpression, data: D): R = visitExpression(javaInstanceOfExpression, data)
+    fun visitJavaPolyadicExpression(javaPolyadicExpression: JKJavaPolyadicExpression, data: D): R = visitExpression(javaPolyadicExpression, data)
     fun visitKtProperty(ktProperty: JKKtProperty, data: D): R = visitField(ktProperty, data)
     fun visitKtFunction(ktFunction: JKKtFunction, data: D): R = visitMethod(ktFunction, data)
     fun visitKtConstructor(ktConstructor: JKKtConstructor, data: D): R = visitDeclaration(ktConstructor, data)

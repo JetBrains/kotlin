@@ -88,3 +88,10 @@ interface JKJavaInstanceOfExpression : JKExpression {
     var expression: JKExpression
     var type: JKTypeElement
 }
+
+interface JKJavaPolyadicExpression : JKExpression {
+    var operands: List<JKExpression>
+    var tokens: List<JKOperator>
+
+    fun getTokenBeforeOperand(operand: JKExpression): JKOperator?
+}
