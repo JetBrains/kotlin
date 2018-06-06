@@ -476,15 +476,15 @@ abstract class BasicBoxTest(
             incrementalData.header = incrementalService.headerMetadata
         }
 
-        processJsProgram(translationResult.program, units.filterIsInstance<TranslationUnit.SourceFile>().map { it.file })
+        processDirectives(translationResult.program, units.filterIsInstance<TranslationUnit.SourceFile>().map { it.file })
+        translationResult.program.verifyAst()
         checkSourceMap(outputFile, translationResult.program, remap)
     }
 
-    private fun processJsProgram(program: JsProgram, psiFiles: List<KtFile>) {
+    protected fun processDirectives(program: JsNode, psiFiles: List<KtFile>) {
         psiFiles.asSequence()
                 .map { it.text }
                 .forEach { DirectiveTestUtils.processDirectives(program, it) }
-        program.verifyAst()
     }
 
     private fun checkSourceMap(outputFile: File, program: JsProgram, remap: Boolean) {

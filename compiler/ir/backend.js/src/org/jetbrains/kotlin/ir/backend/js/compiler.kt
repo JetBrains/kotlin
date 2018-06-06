@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransf
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -27,7 +28,7 @@ fun compile(
     files: List<KtFile>,
     configuration: CompilerConfiguration,
     export: FqName
-): String {
+): JsNode {
     val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, project, configuration, emptyList(), emptyList())
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -51,9 +52,7 @@ fun compile(
     val transformer = SecondaryCtorLowering.CallsiteRedirectionTransformer(context)
     moduleFragment.files.forEach { it.accept(transformer, null) }
 
-    val program = moduleFragment.accept(IrModuleToJsTransformer(context), null)
-
-    return program.toString()
+    return moduleFragment.accept(IrModuleToJsTransformer(context), null)
 }
 
 fun JsIrBackendContext.lower(file: IrFile) {

@@ -59,14 +59,18 @@ abstract class BasicIrBoxTest(
             .map { (it as TranslationUnit.SourceFile).file }
             .filter { file -> filesToIgnore.none { file.virtualFilePath.endsWith(it) } }
 
-        val code = compile(
+        val jsAst = compile(
             config.project,
             runtime + filesToCompile,
             config.configuration,
             FqName((testPackage?.let { "$it." } ?: "") + testFunction))
 
+        val code = jsAst.toString()
+
         outputFile.parentFile.mkdirs()
         outputFile.writeText(code)
+
+        processDirectives(jsAst, filesToCompile)
     }
 
     override fun runGeneratedCode(
