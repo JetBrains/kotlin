@@ -50,6 +50,8 @@ void RUNTIME_NORETURN ThrowOutOfMemoryError();
 void RUNTIME_NORETURN ThrowNotImplementedError();
 // Throws illegal character conversion exception (used in UTF8/UTF16 conversions).
 void RUNTIME_NORETURN ThrowIllegalCharacterConversionException();
+void RUNTIME_NORETURN ThrowIllegalArgumentException();
+void RUNTIME_NORETURN ThrowInvalidMutabilityException();
 // Prints out mesage of Throwable.
 void PrintThrowable(KRef);
 

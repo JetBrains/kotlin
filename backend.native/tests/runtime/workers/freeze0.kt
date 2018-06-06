@@ -38,6 +38,6 @@ data class SharedData(val string: String, val int: Int, val member: SharedDataMe
     future.consume {
         result -> println("Main: $result")
     }
-    worker.requestTermination().consume { _ -> }
+    worker.requestTermination().result()
     println("OK")
 }

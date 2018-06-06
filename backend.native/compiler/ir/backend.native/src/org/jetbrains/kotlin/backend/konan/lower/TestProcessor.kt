@@ -199,7 +199,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
             element.acceptChildrenVoid(this)
         }
 
-        fun IrFunctionSymbol.hasAnnotatoin(fqName: FqName) = descriptor.annotations.any { it.fqName == fqName }
+        fun IrFunctionSymbol.hasAnnotation(fqName: FqName) = descriptor.annotations.any { it.fqName == fqName }
 
         fun registerClassFunction(classDescriptor: ClassDescriptor,
                                   function: IrFunctionSymbol,
@@ -263,7 +263,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
             val symbol = declaration.symbol
             val owner = declaration.descriptor.containingDeclaration
 
-            val kinds = FunctionKind.values().filter { symbol.hasAnnotatoin(it.annotationFqName)  }
+            val kinds = FunctionKind.values().filter { symbol.hasAnnotation(it.annotationFqName)  }
             if (kinds.isEmpty()) {
                 return
             }

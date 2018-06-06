@@ -29,6 +29,13 @@ import org.jetbrains.kotlin.resolve.constants.StringValue
 
 internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
+    private fun flagsFromClass(classDescriptor: ClassDescriptor): Int {
+        var result = 0
+        if (classDescriptor.isImmutable)
+           result = result or 1 /* TF_IMMUTABLE */
+        return result
+    }
+
     private inner class FieldTableRecord(val nameSignature: LocalHash, val fieldOffset: Int) :
             Struct(runtime.fieldTableRecordType, nameSignature, Int32(fieldOffset))
 
@@ -50,6 +57,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             fieldsCount: Int,
             packageName: String?,
             relativeName: String?,
+            flags: Int,
             extendedInfo: ConstPointer,
             writableTypeInfo: ConstPointer?) :
 
@@ -77,6 +85,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
                     kotlinStringLiteral(packageName),
                     kotlinStringLiteral(relativeName),
+
+                    Int32(flags),
 
                     extendedInfo,
 
@@ -203,6 +213,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 fieldsPtr, if (classDesc.isInterface) -1 else fields.size,
                 reflectionInfo.packageName,
                 reflectionInfo.relativeName,
+                flagsFromClass(classDesc),
                 makeExtendedInfo(classDesc),
                 llvmDeclarations.writableTypeInfoGlobal?.pointer
         )
@@ -345,6 +356,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 fields = fieldsPtr, fieldsCount = fieldsCount,
                 packageName = reflectionInfo.packageName,
                 relativeName = reflectionInfo.relativeName,
+                flags = flagsFromClass(descriptor),
                 extendedInfo = NullPointer(runtime.extendedTypeInfoType),
                 writableTypeInfo = writableTypeInfo
               ), vtable)

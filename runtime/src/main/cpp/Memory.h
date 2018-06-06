@@ -264,6 +264,9 @@ class Container {
   void SetHeader(ObjHeader* obj, const TypeInfo* type_info) {
     obj->container_ = header_;
     obj->typeInfoOrMeta_ = const_cast<TypeInfo*>(type_info);
+    // Take into account typeInfo's immutability for ARC strategy.
+    if ((type_info->flags_ & TF_IMMUTABLE) != 0)
+      header_->refCount_ |= CONTAINER_TAG_FROZEN;
   }
 };
 
@@ -341,6 +344,7 @@ class ArenaContainer {
   void setHeader(ObjHeader* obj, const TypeInfo* typeInfo) {
     obj->container_ = currentChunk_->asHeader();
     obj->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
+    // Here we do not take into account typeInfo's immutability for ARC strategy, as there's no ARC.
   }
 
   ContainerChunk* currentChunk_;

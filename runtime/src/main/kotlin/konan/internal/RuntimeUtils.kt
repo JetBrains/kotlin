@@ -66,6 +66,11 @@ fun ThrowUninitializedPropertyAccessException(): Nothing {
 }
 
 @ExportForCppRuntime
+internal fun ThrowIllegalArgumentException() : Nothing {
+    throw IllegalArgumentException()
+}
+
+@ExportForCppRuntime
 internal fun ThrowNotImplementedError(): Nothing {
     throw NotImplementedError("An operation is not implemented.")
 }

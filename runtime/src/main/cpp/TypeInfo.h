@@ -57,6 +57,10 @@ enum Konan_RuntimeType {
   RT_BOOLEAN = 9
 };
 
+enum Konan_TypeFlags {
+  TF_IMMUTABLE = 1 << 0
+};
+
 // Extended information about a type.
 struct ExtendedTypeInfo {
   // Number of fields (negated Konan_RuntimeType for array types).
@@ -103,6 +107,9 @@ struct TypeInfo {
     // (e.g. TopLevel.Nested1.Nested2), or simple class name if it is local,
     // or `null` if the class is anonymous.
     ObjHeader* relativeName_;
+
+    // Various flags.
+    int32_t flags_;
 
     // Extended RTTI.
     const ExtendedTypeInfo* extendedInfo_;

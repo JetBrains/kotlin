@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -1397,8 +1398,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val thisPtr = evaluateExpression(value.receiver!!)
             return functionGenerationContext.loadSlot(
                     fieldPtrOfClass(thisPtr, value.symbol.owner), value.descriptor.isVar())
-        }
-        else {
+        } else {
             assert (value.receiver == null)
             val ptr = context.llvmDeclarations.forStaticField(value.symbol.owner).storage
             return functionGenerationContext.loadSlot(ptr, value.descriptor.isVar())
@@ -1406,18 +1406,25 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     //-------------------------------------------------------------------------//
+    // TODO: rewrite in IR!
+    private fun needMutationCheck(descriptor: org.jetbrains.kotlin.descriptors.DeclarationDescriptor): Boolean {
+        // For now we omit mutation checks on immutable types, as this allows initialization in constructor
+        // and it is assumed that API doesn't allow to change them.
+        return !descriptor.isImmutable
+    }
 
     private fun evaluateSetField(value: IrSetField): LLVMValueRef {
         context.log{"evaluateSetField               : ${ir2string(value)}"}
         val valueToAssign = evaluateExpression(value.value)
         if (value.descriptor.dispatchReceiverParameter != null) {
             val thisPtr = evaluateExpression(value.receiver!!)
-            functionGenerationContext.call(context.llvm.mutationCheck,
-                    listOf(functionGenerationContext.bitcast(codegen.kObjHeaderPtr, thisPtr)),
-                    Lifetime.IRRELEVANT, ExceptionHandler.Caller)
+            if (needMutationCheck(value.descriptor.containingDeclaration)) {
+                functionGenerationContext.call(context.llvm.mutationCheck,
+                        listOf(functionGenerationContext.bitcast(codegen.kObjHeaderPtr, thisPtr)),
+                        Lifetime.IRRELEVANT, ExceptionHandler.Caller)
+            }
             functionGenerationContext.storeAny(valueToAssign, fieldPtrOfClass(thisPtr, value.symbol.owner))
-        }
-        else {
+        } else {
             assert (value.receiver == null)
             val globalValue = context.llvmDeclarations.forStaticField(value.symbol.owner).storage
             functionGenerationContext.storeAny(valueToAssign, globalValue)
