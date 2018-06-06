@@ -95,8 +95,8 @@ public class KotlinTestUtils {
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
     private static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
-    private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
-            Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
+    private static final boolean RUN_IGNORED_TESTS_AS_REGULAR = true;
+            //Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
 
     private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = true;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;

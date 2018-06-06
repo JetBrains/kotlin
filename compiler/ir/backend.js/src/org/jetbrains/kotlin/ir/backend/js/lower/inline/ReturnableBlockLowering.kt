@@ -83,12 +83,6 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
             if (expression is IrReturnableBlock) {
 
-//                expression.statements.singleOrNull()?.let {
-//                    if (it is IrReturn && it.returnTargetSymbol == expression.symbol) {
-//                        return it.value.transform(this, null)
-//                    }
-//                }
-
                 val replacementBlock = IrBlockImpl(
                     expression.startOffset,
                     expression.endOffset,
@@ -123,16 +117,6 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
                 expression.transformChildren(this, null)
 
                 block.statements += expression.statements
-
-//                block.statements.lastOrNull()?.let {
-//                    if (it is IrExpression) {
-//                        if (it.type == context.builtIns.unitType) {
-//                            block.statements += JsIrBuilder.buildSetVariable(variable, unitValue)
-//                        } else {
-//                            block.statements[block.statements.size - 1] = JsIrBuilder.buildSetVariable(variable, it)
-//                        }
-//                    }
-//                }
 
                 replacementBlock.statements += loop
                 replacementBlock.statements += JsIrBuilder.buildGetValue(variable)
