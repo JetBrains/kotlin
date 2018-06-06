@@ -29,9 +29,9 @@ object LabeledBlockToDoWhileTransformation {
     }
 
     fun JsStatement.isLoop(): Boolean = when (this) {
-        is JsWhile -> true
-        is JsDoWhile -> true
-        is JsFor -> true
+        is JsWhile,
+        is JsDoWhile,
+        is JsFor,
         is JsForIn -> true
         else -> false
     }

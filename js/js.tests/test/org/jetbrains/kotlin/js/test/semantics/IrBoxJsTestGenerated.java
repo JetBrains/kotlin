@@ -3724,6 +3724,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/inline/classObject.kt");
         }
 
+        @TestMetadata("continueInLoopWithInlinableCondition.kt")
+        public void testContinueInLoopWithInlinableCondition() throws Exception {
+            runTest("js/js.translator/testData/box/inline/continueInLoopWithInlinableCondition.kt");
+        }
+
         @TestMetadata("dontInlineFunctionCall.kt")
         public void testDontInlineFunctionCall() throws Exception {
             runTest("js/js.translator/testData/box/inline/dontInlineFunctionCall.kt");
