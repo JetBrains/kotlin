@@ -24,7 +24,7 @@ object EmptyModulesApiHistory : ModulesApiHistory {
 
 open class ModulesApiHistoryJvm(protected val modulesInfo: IncrementalModuleInfo) : ModulesApiHistory {
     protected val projectRootPath: Path = Paths.get(modulesInfo.projectRoot.absolutePath)
-    protected val dirToHistoryFileCache = HashMap<File, Set<File>>()
+    private val dirToHistoryFileCache = HashMap<File, Set<File>>()
 
     override fun historyFilesForChangedFiles(changedFiles: Set<File>): Either<Set<File>> {
         val result = HashSet<File>()
