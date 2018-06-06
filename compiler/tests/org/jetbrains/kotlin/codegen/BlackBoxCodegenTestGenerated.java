@@ -7788,11 +7788,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/dataClasses/equals/intarray.kt");
             }
 
-            @TestMetadata("null.kt")
-            public void testNull() throws Exception {
-                runTest("compiler/testData/codegen/box/dataClasses/equals/null.kt");
-            }
-
             @TestMetadata("nullother.kt")
             public void testNullother() throws Exception {
                 runTest("compiler/testData/codegen/box/dataClasses/equals/nullother.kt");
