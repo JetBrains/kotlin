@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.jps.build
 import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.DirtyFilesHolder
-import org.jetbrains.jps.builders.FileProcessor
-import org.jetbrains.jps.builders.impl.DirtyFilesHolderBase
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
@@ -30,59 +28,44 @@ import java.io.File
  * Holding kotlin dirty files list for particular build round.
  * Dirty and removed files set are initialized from [delegate].
  *
- * Probably should be merged with [FSOperationsHelper]
+ * Additional dirty files should be added only through [FSOperationsHelper.markFilesForCurrentRound]
  */
 class KotlinDirtySourceFilesHolder(
     val chunk: ModuleChunk,
     val context: CompileContext,
-    val fsOperations: FSOperationsHelper,
     delegate: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>
-) : DirtyFilesHolderBase<JavaSourceRootDescriptor, ModuleBuildTarget>(context) {
+) {
     val byTarget: Map<ModuleBuildTarget, TargetFiles>
 
-    inner class TargetFiles(val target: ModuleBuildTarget, val removed: Collection<String>) {
-        val dirty: MutableSet<DirtyFile> = mutableSetOf()
+    inner class TargetFiles(val target: ModuleBuildTarget, val removed: Collection<File>) {
+        private val _dirty: MutableSet<File> = mutableSetOf()
 
-        val dirtyOrRemovedFiles: Set<File>
-            get() {
-                val result = mutableSetOf<File>()
-                dirty.forEach { result.add(it.file) }
-                removed.forEach { result.add(File(it)) }
-                return result
-            }
+        val dirty: Set<File>
+            get() = _dirty
 
-        fun markDirtyForCurrentRound(files: Collection<File>) {
-            fsOperations.markFilesBeforeInitialRound(files)
-            files.forEach {
-                dirty.add(DirtyFile(it, null))
-            }
+        /**
+         * Should be called only from [FSOperationsHelper.markFilesForCurrentRound]
+         * and during KotlinDirtySourceFilesHolder initialization.
+         */
+        internal fun _markDirty(file: File) {
+            _dirty.add(file)
         }
     }
 
-    data class DirtyFile(val file: File, val root: JavaSourceRootDescriptor?)
-
     val hasRemovedFiles: Boolean
-
-    override fun hasRemovedFiles(): Boolean = hasRemovedFiles
+        get() = byTarget.any { it.value.removed.isNotEmpty() }
 
     val hasDirtyFiles: Boolean
-
-    override fun hasDirtyFiles(): Boolean = hasDirtyFiles
+        get() = byTarget.any { it.value.dirty.isNotEmpty() }
 
     val hasDirtyOrRemovedFiles: Boolean
         get() = hasRemovedFiles || hasDirtyFiles
 
     init {
         val byTarget = mutableMapOf<ModuleBuildTarget, TargetFiles>()
-        var hasDirtyFiles = false
-        var hasRemovedFiles = false
 
         chunk.targets.forEach { target ->
-            val removedFiles = delegate.getRemovedFiles(target)
-            if (removedFiles.isNotEmpty()) {
-                hasRemovedFiles = true
-            }
-
+            val removedFiles = delegate.getRemovedFiles(target).map { File(it) }
             byTarget[target] = TargetFiles(target, removedFiles)
         }
 
@@ -91,50 +74,26 @@ class KotlinDirtySourceFilesHolder(
                     ?: error("processDirtyFiles should callback only on chunk `$chunk` targets (`$target` is not)")
 
             if (file.isKotlinSourceFile) {
-                targetInfo.dirty.add(DirtyFile(file, root))
-                hasDirtyFiles = true
+                targetInfo._markDirty(file)
             }
 
             true
         }
 
         this.byTarget = byTarget
-        this.hasRemovedFiles = hasRemovedFiles
-        this.hasDirtyFiles = hasDirtyFiles
-    }
-
-    override fun processDirtyFiles(processor: FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>) {
-        for ((target, info) in byTarget) {
-            info.dirty.forEach {
-                if (!processor.apply(target, it.file, it.root)) return
-            }
-        }
     }
 
     fun getDirtyFiles(target: ModuleBuildTarget): Set<File> =
-        byTarget[target]?.dirty?.mapTo(mutableSetOf()) { it.file } ?: setOf()
+        byTarget[target]?.dirty ?: setOf()
 
-    fun getRemovedFilesSet(target: ModuleBuildTarget): Set<File> =
-        byTarget[target]?.removed?.mapTo(mutableSetOf()) { File(it) } ?: setOf()
+    fun getRemovedFiles(target: ModuleBuildTarget): Collection<File> =
+        byTarget[target]?.removed ?: listOf()
 
-    override fun getRemovedFiles(target: ModuleBuildTarget): Collection<String> =
-        byTarget.flatMap { it.value.removed }
+    val allDirtyFiles: Set<File>
+        get() = byTarget.flatMapTo(mutableSetOf()) { it.value.dirty }
 
-    val removedFilesCount
-        get() = byTarget.values.flatMapTo(mutableSetOf()) { it.removed }.size
-
-    val dirtyFiles: Set<File>
-        get() = byTarget.flatMapTo(mutableSetOf()) { it.value.dirty.map { it.file } }
-
-    val dirtyOrRemovedFilesSet: Set<File>
-        get() {
-            val result = mutableSetOf<File>()
-            byTarget.forEach {
-                it.value.dirty.forEach { result.add(it.file) }
-                it.value.removed.forEach { result.add(File(it)) }
-            }
-            return result
-        }
+    val allRemovedFilesFiles
+        get() = byTarget.flatMapTo(mutableSetOf()) { it.value.removed }
 }
 
 val File.isKotlinSourceFile: Boolean

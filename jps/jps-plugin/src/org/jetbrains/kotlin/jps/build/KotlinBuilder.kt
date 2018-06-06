@@ -118,7 +118,16 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         if (targets.none { hasKotlin[it] == true }) return
 
-        val fsOperations = FSOperationsHelper(context, chunk, LOG)
+        val roundDirtyFiles = KotlinDirtySourceFilesHolder(
+            chunk,
+            context,
+            object : DirtyFilesHolderBase<JavaSourceRootDescriptor, ModuleBuildTarget>(context) {
+                override fun processDirtyFiles(processor: FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>) {
+                    FSOperations.processFilesToRecompile(context, chunk, processor)
+                }
+            }
+        )
+        val fsOperations = FSOperationsHelper(context, chunk, roundDirtyFiles, LOG)
 
         if (System.getProperty(SKIP_CACHE_VERSION_CHECK_PROPERTY) == null) {
             val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
@@ -142,25 +151,16 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return
         }
 
-        markAdditionalFilesForInitialRound(chunk, context, fsOperations)
+        markAdditionalFilesForInitialRound(chunk, context, fsOperations, roundDirtyFiles)
         buildLogger?.afterBuildStarted(context, chunk)
     }
 
     private fun markAdditionalFilesForInitialRound(
         chunk: ModuleChunk,
         context: CompileContext,
-        fsOperations: FSOperationsHelper
+        fsOperations: FSOperationsHelper,
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder
     ) {
-        val roundDirtyFiles = KotlinDirtySourceFilesHolder(
-            chunk,
-            context,
-            fsOperations,
-            object : DirtyFilesHolderBase<JavaSourceRootDescriptor, ModuleBuildTarget>(context) {
-                override fun processDirtyFiles(processor: FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>) {
-                    FSOperations.processFilesToRecompile(context, chunk, processor)
-                }
-            }
-        )
         val representativeTarget = context.kotlinBuildTargets[chunk.representativeTarget()] ?: return
 
         val incrementalCaches = getIncrementalCaches(chunk, context)
@@ -177,8 +177,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val removedClasses = HashSet<String>()
         for (target in chunk.targets) {
             val cache = incrementalCaches[target] ?: continue
-            val dirtyFiles = roundDirtyFiles.getDirtyFiles(target)
-            val removedFiles = roundDirtyFiles.getRemovedFilesSet(target)
+            val dirtyFiles = dirtyFilesHolder.getDirtyFiles(target)
+            val removedFiles = dirtyFilesHolder.getRemovedFiles(target)
 
             val existingClasses = JpsKotlinCompilerRunner().classesFqNamesByFiles(environment, dirtyFiles)
             val previousClasses = cache.classesFqNamesBySources(dirtyFiles + removedFiles)
@@ -194,7 +194,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         removedClasses.forEach { changesCollector.collectSignature(FqName(it), areSubclassesAffected = true) }
         val affectedByRemovedClasses = changesCollector.getDirtyFiles(incrementalCaches.values, context.projectDescriptor.dataManager)
 
-        fsOperations.markFilesBeforeInitialRound(affectedByRemovedClasses)
+        fsOperations.markFilesForCurrentRound(affectedByRemovedClasses)
     }
 
     private fun checkCachesVersions(
@@ -234,10 +234,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val kotlinTarget = context.kotlinBuildTargets[chunk.representativeTarget()] ?: return OK
 
         val messageCollector = MessageCollectorAdapter(context, kotlinTarget)
-        val fsOperations = FSOperationsHelper(context, chunk, LOG)
+        val kotlinDirtyFilesHolder = KotlinDirtySourceFilesHolder(chunk, context, dirtyFilesHolder)
+        val fsOperations = FSOperationsHelper(context, chunk, kotlinDirtyFilesHolder, LOG)
 
         try {
-            val proposedExitCode = doBuild(chunk, kotlinTarget, context, dirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
+            val proposedExitCode = doBuild(chunk, kotlinTarget, context, kotlinDirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
 
             val actualExitCode = if (proposedExitCode == OK && fsOperations.hasMarkedDirty) ADDITIONAL_PASS_REQUIRED else proposedExitCode
 
@@ -260,7 +261,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         chunk: ModuleChunk,
         representativeTarget: KotlinModuleBuildTarget,
         context: CompileContext,
-        dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
+        kotlinDirtyFilesHolder: KotlinDirtySourceFilesHolder,
         messageCollector: MessageCollectorAdapter,
         outputConsumer: OutputConsumer,
         fsOperations: FSOperationsHelper
@@ -271,7 +272,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return NOTHING_DONE
         }
 
-        val roundDirtyFilesHolder = KotlinDirtySourceFilesHolder(chunk, context, fsOperations, dirtyFilesHolder)
         val projectDescriptor = context.projectDescriptor
         val dataManager = projectDescriptor.dataManager
         val targets = chunk.targets
@@ -280,7 +280,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val isChunkRebuilding = JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)
                 || targets.any { rebuildAfterCacheVersionChanged[it] == true }
 
-        if (roundDirtyFilesHolder.hasDirtyOrRemovedFiles) {
+        if (kotlinDirtyFilesHolder.hasDirtyOrRemovedFiles) {
             if (!isChunkRebuilding && !IncrementalCompilation.isEnabled()) {
                 targets.forEach { rebuildAfterCacheVersionChanged[it] = true }
                 return CHUNK_REBUILD_REQUIRED
@@ -319,13 +319,13 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         if (LOG.isDebugEnabled) {
-            LOG.debug("Compiling files: ${roundDirtyFilesHolder.dirtyFiles}")
+            LOG.debug("Compiling files: ${kotlinDirtyFilesHolder.allDirtyFiles}")
         }
 
         val start = System.nanoTime()
         val outputItemCollector = doCompileModuleChunk(
-            chunk, representativeTarget, commonArguments, context, roundDirtyFilesHolder, environment,
-            incrementalCaches
+            chunk, representativeTarget, commonArguments, context, kotlinDirtyFilesHolder, fsOperations,
+            environment, incrementalCaches
         )
 
         statisticsLogger.registerStatistic(chunk, System.nanoTime() - start)
@@ -348,7 +348,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         saveVersions(context, chunk, commonArguments)
 
         if (targets.any { hasKotlin[it] == null }) {
-            fsOperations.markChunk(recursively = false, kotlinOnly = true, excludeFiles = roundDirtyFilesHolder.dirtyFiles)
+            fsOperations.markChunk(recursively = false, kotlinOnly = true, excludeFiles = kotlinDirtyFilesHolder.allDirtyFiles)
         }
 
         for (target in targets) {
@@ -362,7 +362,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         representativeTarget.updateChunkMappings(
             chunk,
-            roundDirtyFilesHolder,
+            kotlinDirtyFilesHolder,
             generatedFiles,
             incrementalCaches
         )
@@ -383,11 +383,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 kotlinModuleBuilderTarget.updateCaches(incrementalCaches[target]!!, files, changesCollector, environment)
             }
 
-            updateLookupStorage(lookupTracker, dataManager, roundDirtyFilesHolder)
+            updateLookupStorage(lookupTracker, dataManager, kotlinDirtyFilesHolder)
 
             if (!isChunkRebuilding) {
                 changesCollector.processChangesUsingLookups(
-                    roundDirtyFilesHolder.dirtyFiles,
+                    kotlinDirtyFilesHolder.allDirtyFiles,
                     dataManager,
                     fsOperations,
                     incrementalCaches.values
@@ -499,6 +499,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         commonArguments: CommonCompilerArguments,
         context: CompileContext,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
+        fsOperations: FSOperationsHelper,
         environment: JpsCompilerEnvironment,
         incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCache>
     ): OutputItemsCollector? {
@@ -528,15 +529,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 val targetDirtyFiles = dirtyFilesHolder.byTarget[target]
 
                 if (cache != null && targetDirtyFiles != null) {
-                    val removedAndDirtyFiles: MutableSet<File> = mutableSetOf()
+                    val complementaryFiles = cache.clearComplementaryFilesMapping(targetDirtyFiles.dirty + targetDirtyFiles.removed)
+                    fsOperations.markFilesForCurrentRound(target, complementaryFiles)
 
-                    removedAndDirtyFiles.addAll(dirtyFilesHolder.getDirtyFiles(target))
-                    removedAndDirtyFiles.addAll(dirtyFilesHolder.getRemovedFilesSet(target))
-
-                    val complementaryFiles = cache.clearComplementaryFilesMapping(targetDirtyFiles.dirtyOrRemovedFiles)
-                    targetDirtyFiles.markDirtyForCurrentRound(complementaryFiles)
-
-                    cache.markDirty(targetDirtyFiles.dirtyOrRemovedFiles)
+                    cache.markDirty(targetDirtyFiles.dirty + targetDirtyFiles.removed)
                 }
             }
         }
@@ -644,7 +640,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker::class.java}")
 
         dataManager.withLookupStorage { lookupStorage ->
-            lookupStorage.removeLookupsFrom(dirtyFilesHolder.dirtyOrRemovedFilesSet.asSequence())
+            lookupStorage.removeLookupsFrom(dirtyFilesHolder.allDirtyFiles.asSequence() + dirtyFilesHolder.allRemovedFilesFiles.asSequence())
             lookupStorage.addAll(lookupTracker.lookups.entrySet(), lookupTracker.pathInterner.values)
         }
     }
