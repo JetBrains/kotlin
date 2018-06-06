@@ -22,9 +22,11 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
+import kotlin.math.max
 
 object InlayScratchOutputHandler : ScratchOutputHandler {
     private const val maxLineLength = 120
+    private const val minInlayLength = 10
     private const val maxInsertOffset = 60
     private const val minSpaceCount = 4
 
@@ -69,7 +71,8 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
 
             fun addInlay(text: String) {
                 val textBeforeNewLine = if (StringUtil.containsLineBreak(text)) text.substringBefore("\n") + "..." else text
-                val shortText = StringUtil.shortenTextWithEllipsis(textBeforeNewLine, maxLineLength - spaceCount - lineLength, 0)
+                val maxInlayLength = max(maxLineLength - spaceCount - lineLength, minInlayLength)
+                val shortText = StringUtil.shortenTextWithEllipsis(textBeforeNewLine, maxInlayLength, 0)
                 if (shortText != text) {
                     printToToolWindow(file, expression, output)
                 }
