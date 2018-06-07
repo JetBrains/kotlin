@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
@@ -128,14 +129,8 @@ open class CompilerCallbackServicesFacadeServer(
         incrementalResultsConsumer!!.processPackagePart(File(sourceFilePath), packagePartMetadata, binaryAst)
     }
 
-    override fun incrementalResultsConsumer_processInlineFunction(
-        sourceFilePath: String,
-        fqName: String,
-        inlineFunction: Any,
-        line: Int,
-        column: Int
-    ) {
-        incrementalResultsConsumer!!.processInlineFunction(File(sourceFilePath), fqName, inlineFunction, line, column)
+    override fun incrementalResultsConsumer_processInlineFunctions(functions: Collection<JsInlineFunctionHash>) {
+        incrementalResultsConsumer!!.processInlineFunctions(functions)
     }
 
     override fun incrementalDataProvider_getHeaderMetadata(): ByteArray = incrementalDataProvider!!.headerMetadata

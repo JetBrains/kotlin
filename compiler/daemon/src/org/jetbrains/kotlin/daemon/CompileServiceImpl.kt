@@ -951,7 +951,7 @@ class CompileServiceImpl(
             builder.register(ExpectActualTracker::class.java, RemoteExpectActualTracker(facade, rpcProfiler))
         }
         if (facade.hasIncrementalResultsConsumer()) {
-            builder.register(IncrementalResultsConsumer::class.java, RemoteIncrementalResultsConsumer(facade, rpcProfiler))
+            builder.register(IncrementalResultsConsumer::class.java, RemoteIncrementalResultsConsumer(facade, eventManager, rpcProfiler))
         }
         if (facade.hasIncrementalDataProvider()) {
             builder.register(IncrementalDataProvider::class.java, RemoteIncrementalDataProvider(facade, rpcProfiler))
