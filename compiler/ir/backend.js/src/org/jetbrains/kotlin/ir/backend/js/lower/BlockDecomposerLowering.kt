@@ -139,7 +139,9 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
         private fun processStatement(statement: IrStatement, data: VisitData): List<IrStatement>? {
             val result = statement.accept(this, data)
 
-            if (result == KeptResult) return null
+            if (result == KeptResult) {
+                return if (statement is IrComposite) statement.statements else null
+            }
             return result.statements
         }
 
@@ -422,7 +424,11 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
                     resultValue
                 }
                 collectingList += JsIrBuilder.buildSetVariable(variable, result)
-                DecomposedResult(mutableListOf(varDeclaration, body), JsIrBuilder.buildGetValue(variable))
+                if (body is IrComposite) {
+                    DecomposedResult(mutableListOf(varDeclaration, *collectingList.toTypedArray()) , JsIrBuilder.buildGetValue(variable))
+                } else {
+                    DecomposedResult(mutableListOf(varDeclaration, body as IrStatement), JsIrBuilder.buildGetValue(variable))
+                }
             } else {
                 // do not allow variable to be uninitialized
                 DecomposedResult(mutableListOf(), unitValue)

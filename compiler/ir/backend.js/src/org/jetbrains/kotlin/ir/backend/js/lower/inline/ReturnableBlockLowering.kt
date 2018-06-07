@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.symbols.JsSymbolBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -69,8 +70,7 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
         private fun IrReturn.patchReturnTo(info: ReturnInfo): IrExpression {
             info.cnt++
 
-            // TODO IrComposite maybe?
-            val compoundBlock = IrBlockImpl(
+            val compoundBlock = IrCompositeImpl(
                 startOffset,
                 endOffset,
                 context.builtIns.unitType
@@ -92,18 +92,18 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
             if (expression is IrReturnableBlock) {
 
-                val replacementBlock = IrBlockImpl(
+                val replacementBlock = IrCompositeImpl(
                     expression.startOffset,
                     expression.endOffset,
                     expression.type,
                     expression.origin
                 )
 
-                val variable = JsSymbolBuilder.buildTempVar(containingDeclaration!!.symbol, expression.type, "tmp\$slfk\$${tmpVarCounter++}", true)
+                val variable = JsSymbolBuilder.buildTempVar(containingDeclaration!!.symbol, expression.type, "tmp\$ret\$${tmpVarCounter++}", true)
                 val varDeclaration = JsIrBuilder.buildVar(variable)
                 replacementBlock.statements += varDeclaration
 
-                val block = IrBlockImpl(
+                val block = IrCompositeImpl(
                     expression.startOffset,
                     expression.endOffset,
                     context.builtIns.unitType,
@@ -131,7 +131,9 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
                         list[i] =
                                 if (i == list.lastIndex && returnInfo.cnt == 0 && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
                                     s.transformChildren(this, null)
-                                    if (returnInfo.cnt == 0) s.value else s.patchReturnTo(returnInfo)
+                                    if (returnInfo.cnt == 0) s.value else {
+                                        JsIrBuilder.buildSetVariable(variable, s.value)
+                                    }
                                 } else {
                                     s.transform(this, null)
                                 }
