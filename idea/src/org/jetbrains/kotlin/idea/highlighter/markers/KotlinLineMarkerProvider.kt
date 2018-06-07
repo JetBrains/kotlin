@@ -307,7 +307,7 @@ private fun collectOverriddenPropertyAccessors(
     val mappingToJava = HashMap<PsiElement, KtNamedDeclaration>()
     for (property in properties) {
         if (property.isOverridable()) {
-            property.toPossiblyFakeLightMethods().forEach { mappingToJava.put(it, property) }
+            property.toPossiblyFakeLightMethods().forEach { mappingToJava[it] = property }
             mappingToJava[property] = property
         }
     }
@@ -410,9 +410,9 @@ private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, r
         if (function.isOverridable()) {
             val method = LightClassUtil.getLightClassMethod(function) ?: KtFakeLightMethod.get(function)
             if (method != null) {
-                mappingToJava.put(method, function)
+                mappingToJava[method] = function
             }
-            mappingToJava.put(function, function)
+            mappingToJava[function] = function
         }
     }
 
