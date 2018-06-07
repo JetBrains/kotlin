@@ -25,10 +25,6 @@
 
 namespace {
 
-const ArrayHeader anEmptyArray = {
-  const_cast<TypeInfo*>(theArrayTypeInfo), /* permanent object */ 0, /* element count */ 0
-};
-
 ALWAYS_INLINE inline void mutabilityCheck(KConstRef thiz) {
   // TODO: optimize it!
   if (thiz->container()->frozen()) {
@@ -55,6 +51,9 @@ inline void copyImpl(KConstRef thiz, KInt fromIndex,
 }  // namespace
 
 extern "C" {
+
+// Generated as part of Kotlin standard library.
+extern const ObjHeader theEmptyArray;
 
 // TODO: those must be compiler intrinsics afterwards.
 
@@ -117,7 +116,7 @@ void Kotlin_Array_copyImpl(KConstRef thiz, KInt fromIndex,
 
 // Arrays.kt
 OBJ_GETTER0(Kotlin_emptyArray) {
-  RETURN_OBJ(const_cast<ObjHeader*>(anEmptyArray.obj()));
+  RETURN_OBJ(const_cast<ObjHeader*>(&theEmptyArray));
 }
 
 KByte Kotlin_ByteArray_get(KConstRef thiz, KInt index) {

@@ -200,10 +200,8 @@ struct ObjHeader {
         reinterpret_cast<MetaObjHeader*>(typeInfoOrMeta_) : createMetaObject(&typeInfoOrMeta_);
   }
 
-  static ContainerHeader theStaticObjectsContainer;
-
   ContainerHeader* container() const {
-    return container_ == nullptr ? &theStaticObjectsContainer : container_;
+    return container_;
   }
 
   // Unsafe cast to ArrayHeader. Use carefully!

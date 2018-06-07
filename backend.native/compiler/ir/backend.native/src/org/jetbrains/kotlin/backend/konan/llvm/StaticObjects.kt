@@ -31,14 +31,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.replace
 
+
 private fun StaticData.objHeader(typeInfo: ConstPointer): Struct {
-    val container = NullPointer(runtime.containerHeaderType) // Static object mark.
+    val container = constValue(context.llvm.staticContainer)
     return Struct(runtime.objHeaderType, typeInfo, container)
 }
 
 private fun StaticData.arrayHeader(typeInfo: ConstPointer, length: Int): Struct {
     assert (length >= 0)
-    val container = NullPointer(runtime.containerHeaderType) // Static object mark.
+    val container = constValue(context.llvm.staticContainer)
     return Struct(runtime.arrayHeaderType, typeInfo, container, Int32(length))
 }
 
@@ -134,26 +135,27 @@ internal fun StaticData.createArrayList(array: ConstPointer, length: Int): Const
     return createKotlinObject(arrayListClass, body)
 }
 
-
-internal fun StaticData.createUnitInstance(bodyType: LLVMTypeRef,
-                                           typeInfo: ConstPointer
-): ConstPointer {
+internal fun StaticData.createUniqueInstance(
+        kind: UniqueKind, bodyType: LLVMTypeRef, typeInfo: ConstPointer): ConstPointer {
     assert (getStructElements(bodyType).isEmpty())
     val objHeader = objHeader(typeInfo)
-    val global = this.placeGlobal(theUnitInstanceName, objHeader, isExported = true)
+    val global = this.placeGlobal(kind.llvmName, objHeader, isExported = true)
     return global.pointer
 }
 
-internal val ContextUtils.theUnitInstanceRef: ConstPointer
-    get() {
-        val unitDescriptor = context.ir.symbols.unit.owner
-        return if (isExternal(unitDescriptor)) {
-            constPointer(importGlobal(
-                    theUnitInstanceName,
-                    context.llvm.runtime.objHeaderType,
-                    origin = unitDescriptor.llvmSymbolOrigin
-            ))
-        } else {
-            context.llvmDeclarations.getUnitInstanceRef()
-        }
+internal fun ContextUtils.unique(kind: UniqueKind): ConstPointer {
+    val descriptor = when (kind) {
+        UniqueKind.UNIT -> context.ir.symbols.unit.owner
+        UniqueKind.EMPTY_ARRAY -> context.ir.symbols.array.owner
     }
+    return if (isExternal(descriptor)) {
+        constPointer(importGlobal(
+                kind.llvmName, context.llvm.runtime.objHeaderType, origin = descriptor.llvmSymbolOrigin
+        ))
+    } else {
+        context.llvmDeclarations.forUnique(kind).pointer
+    }
+}
+
+internal val ContextUtils.theUnitInstanceRef: ConstPointer
+    get() = this.unique(UniqueKind.UNIT)

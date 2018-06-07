@@ -272,6 +272,18 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         return function
     }
 
+    private fun importGlobal(name: String, otherModule: LLVMModuleRef): LLVMValueRef {
+        if (LLVMGetNamedGlobal(llvmModule, name) != null) {
+            throw IllegalArgumentException("global $name already exists")
+        }
+
+        val externalGlobal = LLVMGetNamedGlobal(otherModule, name)!!
+        val globalType = getGlobalType(externalGlobal)
+        val global = LLVMAddGlobal(llvmModule, globalType, name)!!
+
+        return global
+    }
+
     private fun copyFunctionAttributes(source: LLVMValueRef, destination: LLVMValueRef) {
         // TODO: consider parameter attributes
         val attributeIndex = LLVMAttributeFunctionIndex
@@ -386,6 +398,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
 
+    private fun importRtGlobal(name: String) = importGlobal(name, runtime.llvmModule)
+
     val allocInstanceFunction = importRtFunction("AllocInstance")
     val allocArrayFunction = importRtFunction("AllocArrayInstance")
     val initInstanceFunction = importRtFunction("InitInstance")
@@ -456,6 +470,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
             functionType(voidType, false),
             origin = context.standardLlvmSymbolsOrigin
     )
+
+    val staticContainer = importRtGlobal("theStaticObjectsContainer")
 
     val memsetFunction = importMemset()
 

@@ -36,8 +36,8 @@
 #include "Porting.h"
 
 #if KONAN_WASM || KONAN_ZEPHYR
-extern "C" void Konan_abort(const char*);
-extern "C" void Konan_exit(int32_t status);
+extern "C" RUNTIME_NORETURN void Konan_abort(const char*);
+extern "C" RUNTIME_NORETURN void Konan_exit(int32_t status);
 #endif
 #ifdef KONAN_ZEPHYR
 // In Zephyr's Newlib strnlen(3) is not included from string.h by default.

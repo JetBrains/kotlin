@@ -19,12 +19,27 @@
 
 #include "Common.h"
 
-RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* message);
+// To avoid cluttering optimized code with asserts, they could be turned off.
+#define KONAN_ENABLE_ASSERT 1
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
+RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* message);
+
+#if KONAN_ENABLE_ASSERT
+// Use RuntimeAssert() in internal state checks, which could be ignored in production.
 #define RuntimeAssert(condition, message) \
+  if (!(condition)) {                        \
+    RuntimeAssertFailed( __FILE__ ":" TOSTRING(__LINE__), message); \
+  }
+#else
+#define RuntimeAssert(condition, message)
+#endif
+
+// Use RuntimeCheck() in runtime checks that could fail due to external condition and shall lead
+// to program termination. Never compiled out.
+#define RuntimeCheck(condition, message) \
   if (!(condition)) {                        \
     RuntimeAssertFailed( __FILE__ ":" TOSTRING(__LINE__), message); \
   }

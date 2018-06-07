@@ -33,10 +33,15 @@ internal fun createLlvmDeclarations(context: Context): LlvmDeclarations {
     context.ir.irModule.acceptChildrenVoid(generator)
     return with(generator) {
         LlvmDeclarations(
-                functions, classes, fields, staticFields, theUnitInstanceRef
+                functions, classes, fields, staticFields, uniques
         )
     }
+}
 
+// Please note, that llvmName is part of the ABI, and cannot be liberally changed.
+enum class UniqueKind(val llvmName: String) {
+    UNIT("theUnitInstance"),
+    EMPTY_ARRAY("theEmptyArray")
 }
 
 internal class LlvmDeclarations(
@@ -44,8 +49,7 @@ internal class LlvmDeclarations(
         private val classes: Map<ClassDescriptor, ClassLlvmDeclarations>,
         private val fields: Map<IrField, FieldLlvmDeclarations>,
         private val staticFields: Map<IrField, StaticFieldLlvmDeclarations>,
-        private val theUnitInstanceRef: ConstPointer?
-) {
+        private val unique: Map<UniqueKind, UniqueLlvmDeclarations>) {
     fun forFunction(descriptor: FunctionDescriptor) = functions[descriptor] ?:
             error(descriptor.toString())
 
@@ -61,7 +65,7 @@ internal class LlvmDeclarations(
     fun forSingleton(descriptor: ClassDescriptor) = forClass(descriptor).singletonDeclarations ?:
             error(descriptor.toString())
 
-    fun getUnitInstanceRef() = theUnitInstanceRef ?: error("")
+    fun forUnique(kind: UniqueKind) = unique[kind] ?: error("No unique $kind")
 
 }
 
@@ -87,6 +91,8 @@ internal class FunctionLlvmDeclarations(val llvmFunction: LLVMValueRef)
 internal class FieldLlvmDeclarations(val index: Int, val classBodyType: LLVMTypeRef)
 
 internal class StaticFieldLlvmDeclarations(val storage: LLVMValueRef)
+
+internal class UniqueLlvmDeclarations(val pointer: ConstPointer)
 
 // TODO: rework getFields and getDeclaredFields.
 
@@ -151,7 +157,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
     val classes = mutableMapOf<ClassDescriptor, ClassLlvmDeclarations>()
     val fields = mutableMapOf<IrField, FieldLlvmDeclarations>()
     val staticFields = mutableMapOf<IrField, StaticFieldLlvmDeclarations>()
-    var theUnitInstanceRef: ConstPointer? = null
+    val uniques = mutableMapOf<UniqueKind, UniqueLlvmDeclarations>()
 
     private class Namer(val prefix: String) {
         private val names = mutableMapOf<DeclarationDescriptor, Name>()
@@ -266,8 +272,11 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             typeInfoPtr = typeInfoGlobal.pointer
         }
 
+        if (descriptor.isUnit() || descriptor.isKotlinArray())
+            createUniqueDeclarations(descriptor, typeInfoPtr, bodyType)
+
         val singletonDeclarations = if (descriptor.kind.isSingleton) {
-            createSingletonDeclarations(descriptor, typeInfoPtr, bodyType)
+            createSingletonDeclarations(descriptor)
         } else {
             null
         }
@@ -296,14 +305,24 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                 singletonDeclarations, objCDeclarations)
     }
 
-    private fun createSingletonDeclarations(
-            descriptor: ClassDescriptor,
-            typeInfoPtr: ConstPointer,
-            bodyType: LLVMTypeRef
-    ): SingletonLlvmDeclarations? {
+    private fun createUniqueDeclarations(
+            descriptor: ClassDescriptor, typeInfoPtr: ConstPointer, bodyType: LLVMTypeRef) {
+        when {
+                descriptor.isUnit() -> {
+                    uniques[UniqueKind.UNIT] =
+                            UniqueLlvmDeclarations(staticData.createUniqueInstance(UniqueKind.UNIT, bodyType, typeInfoPtr))
+                }
+                descriptor.isKotlinArray() -> {
+                    uniques[UniqueKind.EMPTY_ARRAY] =
+                            UniqueLlvmDeclarations(staticData.createUniqueInstance(UniqueKind.EMPTY_ARRAY, bodyType, typeInfoPtr))
+                }
+                else -> TODO("Unsupported unique $descriptor")
+        }
+    }
+
+    private fun createSingletonDeclarations(descriptor: ClassDescriptor): SingletonLlvmDeclarations? {
 
         if (descriptor.isUnit()) {
-            this.theUnitInstanceRef = staticData.createUnitInstance(bodyType, typeInfoPtr)
             return null
         }
 

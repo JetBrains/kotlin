@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "Porting.h"
 #include "Types.h"
 
 typedef KInt Arena;
@@ -27,14 +28,17 @@ extern "C" {
 // These functions are implemented in JS file for WASM and are not available on other platforms.
 RUNTIME_NORETURN Arena Konan_js_allocateArena() {
   RuntimeAssert(false, "JavaScript interop is disabled");
+  konan::abort();
 }
 
 RUNTIME_NORETURN void Konan_js_freeArena(Arena arena) {
   RuntimeAssert(false, "JavaScript interop is disabled");
+  konan::abort();
 }
 
 RUNTIME_NORETURN void Konan_js_pushIntToArena(Arena arena, KInt value) {
   RuntimeAssert(false, "JavaScript interop is disabled");
+  konan::abort();
 }
 
 RUNTIME_NORETURN KInt Konan_js_getInt(Arena arena,
@@ -42,6 +46,7 @@ RUNTIME_NORETURN KInt Konan_js_getInt(Arena arena,
                                       Pointer propertyPtr,
                                       KInt propertyLen) {
   RuntimeAssert(false, "JavaScript interop is disabled");
+  konan::abort();
 }
 
 RUNTIME_NORETURN KInt Konan_js_getProperty(Arena arena,
@@ -49,6 +54,7 @@ RUNTIME_NORETURN KInt Konan_js_getProperty(Arena arena,
                                            Pointer propertyPtr,
                                            KInt propertyLen) {
   RuntimeAssert(false, "JavaScript interop is disabled");
+  konan::abort();
 }
 
 RUNTIME_NORETURN void Konan_js_setFunction(Arena arena,
@@ -57,6 +63,7 @@ RUNTIME_NORETURN void Konan_js_setFunction(Arena arena,
                                            KInt propertyLength,
                                            KInt function) {
   RuntimeAssert(false, "JavaScript interop is disabled");
+  konan::abort();
 }
 
 RUNTIME_NORETURN void Konan_js_setString(Arena arena,
@@ -66,6 +73,7 @@ RUNTIME_NORETURN void Konan_js_setString(Arena arena,
                                          Pointer stringPtr,
                                          KInt stringLength) {
   RuntimeAssert(false, "JavaScript interop is disabled");
+  konan::abort();
 }
 
 }; // extern "C"
