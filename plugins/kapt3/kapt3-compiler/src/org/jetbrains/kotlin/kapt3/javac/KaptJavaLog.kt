@@ -238,7 +238,7 @@ class KaptJavaLog(
 
                 val errWriter = makeWriter(ERROR)
                 val warnWriter = makeWriter(STRONG_WARNING)
-                val noticeWriter = makeWriter(WARNING)
+                val noticeWriter = makeWriter(INFO)
 
                 KaptJavaLog(
                     kaptContext.project.basePath, newContext, errWriter, warnWriter, noticeWriter,
