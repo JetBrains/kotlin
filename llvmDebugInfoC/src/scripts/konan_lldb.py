@@ -47,6 +47,13 @@ def is_string(value):
 def is_array(value):
     return int(evaluate("(int)Konan_DebugIsArray({})".format(lldb_val_to_ptr(value))).GetValue()) == 1
 
+
+def check_type_info(addr):
+    """This method checks self-referencing of pointer of first member of TypeInfo including case when object has an
+    meta-object pointed by TypeInfo. """
+    result = evaluate("**(void ***){0} == ***(void****){0}".format(addr))
+    return result.IsValid() and result.GetValue() == "true"
+
 #
 # Some kind of forward declaration.
 
@@ -60,7 +67,7 @@ def kotlin_object_type_summary(lldb_val, internal_dict):
     if str(lldb_val.type) != "struct ObjHeader *":
         return fallback
 
-    if int(fallback, 0) == 0:
+    if not check_type_info(fallback):
         return NULL
 
     ptr = lldb_val_to_ptr(lldb_val)
@@ -190,7 +197,6 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
     def update(self):
         super(KonanArraySyntheticProvider, self).update()
         self._children = [x for x in range(0, self.num_children())]
-        pass
 
     def num_children(self):
         return self._children_count
@@ -213,6 +219,9 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
 
 class KonanProxyTypeProvider:
     def __init__(self, valobj, _):
+        fallback = int(valobj.GetValue(), 0)
+        if not check_type_info(fallback):
+            return
         self._proxy = select_provider(valobj)
         self.update()
 
