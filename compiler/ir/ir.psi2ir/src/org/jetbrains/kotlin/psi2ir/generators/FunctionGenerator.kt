@@ -105,7 +105,8 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             if (ktAccessor != null) IrDeclarationOrigin.DEFINED else IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
         ).buildWithScope { irAccessor ->
             declarationGenerator.generateScopedTypeParameterDeclarations(irAccessor, descriptor.correspondingProperty.typeParameters)
-            generateFunctionParameterDeclarationsAndReturnType(irAccessor, ktAccessor ?: ktProperty, ktProperty.receiverTypeReference)
+            irAccessor.returnType = irAccessor.descriptor.returnType!!.toIrType()
+            generateValueParameterDeclarations(irAccessor, ktAccessor ?: ktProperty, ktProperty.receiverTypeReference)
             val ktBodyExpression = ktAccessor?.bodyExpression
             irAccessor.body =
                     if (ktBodyExpression != null)
