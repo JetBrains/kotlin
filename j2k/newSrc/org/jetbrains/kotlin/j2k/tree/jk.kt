@@ -23,7 +23,11 @@ import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 interface JKTreeElement : JKElement {
     fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R
 
+    fun <R> accept(visitor: JKVisitor<R, Nothing?>): R = accept(visitor, null)
+
     fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
+
+    fun acceptChildren(visitor: JKVisitor<Unit, Nothing?>) = acceptChildren(visitor, null)
 }
 
 interface JKDeclaration : JKTreeElement
