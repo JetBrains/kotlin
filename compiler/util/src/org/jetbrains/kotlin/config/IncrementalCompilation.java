@@ -48,6 +48,6 @@ public class IncrementalCompilation {
     }
 
     private static void addJvmSystemFlag(List<String> jvmArgs, String name) {
-        jvmArgs.add("-D" + name + "=true");
+        jvmArgs.add("D" + name + "=true");
     }
 }
