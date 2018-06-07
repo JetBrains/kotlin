@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 
 fun box() : String {
     if (!testIteratingOverMap1()) return "fail 1"

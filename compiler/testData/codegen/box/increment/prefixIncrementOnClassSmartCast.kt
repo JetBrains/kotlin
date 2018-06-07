@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 open class Base
 class Derived: Base()
 operator fun Derived.inc(): Derived { return Derived() }

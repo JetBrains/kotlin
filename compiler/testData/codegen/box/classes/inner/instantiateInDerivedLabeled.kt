@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 open class A(val value: String) {
     inner class B(val s: String) {
         val result = value + "_" + s

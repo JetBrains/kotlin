@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 
 package test.regressions.kt1149

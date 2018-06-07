@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND: JS_IR
 
 fun less(x: Comparable<Float>, y: Float) = x is Float && x < y
 fun less(x: Comparable<Double>, y: Double) = x is Double && x < y

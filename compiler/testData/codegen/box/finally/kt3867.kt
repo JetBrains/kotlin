@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun fail() = if (true) throw RuntimeException() else 1
 
 fun test1(): String {

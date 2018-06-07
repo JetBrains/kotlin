@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 package test
 
 class C(val s : String) {

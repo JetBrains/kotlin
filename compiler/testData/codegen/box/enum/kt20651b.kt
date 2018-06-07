@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface Callback {
     fun invoke(): String
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 sealed class A {
     object B : A()
 

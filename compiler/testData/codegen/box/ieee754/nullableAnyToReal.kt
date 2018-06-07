@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val plusZero: Any? = 0.0
     val minusZero: Any? = -0.0

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun for_int_range(): Int {
     var c = 0
     for (i in 1..10) {

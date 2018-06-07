@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // CHECK_CASES_COUNT: function=box count=0
 // CHECK_IF_COUNT: function=box count=1
 

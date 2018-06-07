@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 class ArrayWrapper<T>() {
     val contents = ArrayList<T>()

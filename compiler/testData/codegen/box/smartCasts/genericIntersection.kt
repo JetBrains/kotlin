@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // See also KT-7801
 class A
 

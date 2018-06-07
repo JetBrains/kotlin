@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // KT-4145
 
 interface A {

@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JS_IR
 
 inline class Result<T>(val a: Any?) {
     fun typed(): T = a as T

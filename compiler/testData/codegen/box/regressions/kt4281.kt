@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 abstract class C {
     fun test(x: Int) {
         if (x == 0) return

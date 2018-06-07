@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun test1(str: String): String {
     data class A(val x: Int) {
         fun foo() = str

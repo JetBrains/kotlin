@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class Outer {
     enum class Nested {
         O,

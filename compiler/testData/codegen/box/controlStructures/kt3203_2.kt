@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun check1() {
     val result = if (true) {
         if (true) 1 else 2

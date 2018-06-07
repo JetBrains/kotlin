@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun test(str: String): String {
     var s = ""
     for (i in 1..3) {

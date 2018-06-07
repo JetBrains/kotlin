@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface Z {
 
     fun testFun() : String {
