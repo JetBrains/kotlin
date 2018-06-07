@@ -39,8 +39,9 @@ internal class DataClassOperatorsLowering(val context: Context): FunctionLowerin
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                if (expression.symbol != irBuiltins.dataClassArrayMemberToStringSymbol
-                        && expression.symbol != irBuiltins.dataClassArrayMemberHashCodeSymbol)
+                val descriptor = expression.descriptor.original
+                if (descriptor != irBuiltins.dataClassArrayMemberToString
+                        && descriptor != irBuiltins.dataClassArrayMemberHashCode)
                     return expression
 
                 val argument = expression.getValueArgument(0)!!
@@ -50,7 +51,7 @@ internal class DataClassOperatorsLowering(val context: Context): FunctionLowerin
                             argumentType
                         else
                             (argumentType.constructor.declarationDescriptor as ClassDescriptor).defaultType
-                val isToString = expression.symbol == irBuiltins.dataClassArrayMemberToStringSymbol
+                val isToString = descriptor == irBuiltins.dataClassArrayMemberToString
                 val newSymbol = if (isToString)
                                     context.ir.symbols.arrayContentToString[genericType]!!
                                 else
