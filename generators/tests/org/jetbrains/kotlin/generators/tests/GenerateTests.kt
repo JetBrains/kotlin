@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPas
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
+import org.jetbrains.kotlin.idea.debugger.sequence.exec.AbstractSequenceTraceTestCase
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.AbstractClsStubBuilderTest
@@ -643,6 +644,17 @@ fun main(args: Array<String>) {
 
         testClass<AbstractFileRankingTest> {
             model("debugger/fileRanking")
+        }
+
+        testClass<AbstractSequenceTraceTestCase> {
+            model("debugger/tinyApp/src/sequence/append", testMethod = "doTest")
+            model("debugger/tinyApp/src/sequence/distinct", testMethod = "doTest")
+            model("debugger/tinyApp/src/sequence/filter", testMethod = "doTest")
+            model("debugger/tinyApp/src/sequence/flatMap", testMethod = "doTest")
+            model("debugger/tinyApp/src/sequence/map", testMethod = "doTest")
+            model("debugger/tinyApp/src/sequence/misc", testMethod = "doTest")
+            model("debugger/tinyApp/src/sequence/sort", testMethod = "doTest")
+//          model("debugger/tinyApp/src/sequence/terminal", testMethod = "doTest") We need to implement mapping logic
         }
 
         testClass<AbstractStubBuilderTest> {
