@@ -16,16 +16,17 @@
 
 package org.jetbrains.kotlin.android;
 
-
+import com.android.ide.common.rendering.api.ResourceNamespace;
 import com.android.ide.common.rendering.api.ResourceValue;
-import com.android.ide.common.resources.ResourceItem;
-import com.android.ide.common.resources.ResourceRepository;
 import com.android.ide.common.resources.ResourceResolver;
+import com.android.ide.common.resources.AbstractResourceRepository;
+import com.android.ide.common.resources.ResourceItem;
 import com.android.resources.ResourceType;
 import com.android.tools.idea.configurations.Configuration;
 import com.android.tools.idea.configurations.ConfigurationManager;
-import com.android.tools.idea.res.AppResourceRepository;
+import com.android.tools.idea.res.LocalResourceRepository;
 import com.android.tools.idea.res.ResourceHelper;
+import com.android.tools.idea.res.ResourceRepositoryManager;
 import com.android.tools.idea.ui.resourcechooser.ColorPicker;
 import com.android.utils.XmlUtils;
 import com.google.common.base.Charsets;
@@ -59,6 +60,7 @@ import org.w3c.dom.NodeList;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.List;
 
 import static com.android.SdkConstants.*;
 
@@ -67,7 +69,7 @@ import static com.android.SdkConstants.*;
  */
 public class ResourceReferenceAnnotatorUtil {
 
-    public static final int ICON_SIZE = 8;
+    private static final int ICON_SIZE = 8;
 
     @Nullable
     public static File pickBitmapFromXml(@NotNull File file, @NotNull ResourceResolver resourceResolver, @NotNull Project project) {
@@ -135,18 +137,21 @@ public class ResourceReferenceAnnotatorUtil {
             Module module,
             Configuration configuration) {
         if (isFramework) {
-            ResourceRepository frameworkResources = configuration.getFrameworkResources();
+            AbstractResourceRepository frameworkResources = configuration.getFrameworkResources();
             if (frameworkResources == null) {
                 return null;
             }
-            if (!frameworkResources.hasResourceItem(type, name)) {
+            List<ResourceItem> items = frameworkResources.getResourceItems(ResourceNamespace.ANDROID, type, name);
+            if (items.isEmpty()) {
                 return null;
             }
-            ResourceItem item = frameworkResources.getResourceItem(type, name);
-            return item.getResourceValue(type, configuration.getFullConfig(), false);
+            return items.get(0).getResourceValue();
         } else {
-            AppResourceRepository appResources = AppResourceRepository.getOrCreateInstance(module);
-            if (appResources == null) {
+            ResourceRepositoryManager repoManager = ResourceRepositoryManager.getOrCreateInstance(module);
+            if (repoManager == null) {
+                return null;
+            }
+            LocalResourceRepository appResources = repoManager.getAppResources(true);            if (appResources == null) {
                 return null;
             }
             if (!appResources.hasResourceItem(type, name)) {

@@ -223,13 +223,13 @@ private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArgum
         allSdks.firstOrNull { it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0 } ?: return
     } else {
         allSdks.firstOrNull { it.sdkType is KotlinSdkType }
-                ?: modelsProvider
-                    .modifiableModuleModel
-                    .modules
-                    .asSequence()
-                    .mapNotNull { modelsProvider.getModifiableRootModel(it).sdk }
-                    .firstOrNull { it.sdkType is KotlinSdkType }
-                ?: KotlinSdkType.INSTANCE.createSdkWithUniqueName(allSdks.toList())
+                                ?: modelsProvider
+                                    .modifiableModuleModel
+                                    .modules
+                                    .asSequence()
+                                    .mapNotNull { modelsProvider.getModifiableRootModel(it).sdk }
+                                    .firstOrNull { it.sdkType is KotlinSdkType }
+                                ?: KotlinSdkType.INSTANCE.createSdkWithUniqueName(allSdks.toList())
     }
 
     modelsProvider.getModifiableRootModel(this).sdk = sdk
@@ -239,7 +239,7 @@ fun parseCompilerArgumentsToFacet(
         arguments: List<String>,
         defaultArguments: List<String>,
         kotlinFacet: KotlinFacet,
-        modelsProvider: IdeModifiableModelsProvider
+        modelsProvider: IdeModifiableModelsProvider?
 ) {
     with(kotlinFacet.configuration.settings) {
         val compilerArguments = this.compilerArguments ?: return
@@ -255,7 +255,8 @@ fun parseCompilerArgumentsToFacet(
         // Retain only fields exposed (and not explicitly ignored) in facet configuration editor.
         // The rest is combined into string and stored in CompilerSettings.additionalArguments
 
-        kotlinFacet.module.configureSdkIfPossible(compilerArguments, modelsProvider)
+        if (modelsProvider != null)
+            kotlinFacet.module.configureSdkIfPossible(compilerArguments, modelsProvider)
 
         val primaryFields = compilerArguments.primaryFields
         val ignoredFields = compilerArguments.ignoredFields
