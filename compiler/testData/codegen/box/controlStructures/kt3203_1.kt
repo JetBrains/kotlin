@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun testIf() {
     val condition = true
     val result = if (condition) {

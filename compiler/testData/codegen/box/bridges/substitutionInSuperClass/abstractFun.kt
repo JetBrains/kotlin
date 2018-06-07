@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 abstract class A<T> {
     abstract fun foo(t: T): String
 }

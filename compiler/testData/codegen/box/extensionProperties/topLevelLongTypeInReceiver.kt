@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 var fooStorage = "Fail"
 var barStorage = "Fail"
 

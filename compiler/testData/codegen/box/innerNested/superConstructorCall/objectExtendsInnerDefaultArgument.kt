@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class A {
     open inner class Inner(val result: String = "OK", val int: Int)
 

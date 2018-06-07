@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 package test
 
 fun box() = E.E1.f() + E.E2.f()

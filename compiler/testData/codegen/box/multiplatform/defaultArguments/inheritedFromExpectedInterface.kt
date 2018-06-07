@@ -1,4 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
+// IGNORE_BACKEND: JS_IR
 
 // FILE: lib.kt
 expect interface I {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun cleanup() {}
 
 inline fun concat(x: String, y: String): String = x + y

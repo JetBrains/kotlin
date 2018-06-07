@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun equals1(a: Double, b: Double) = a.equals(b)
 
 fun equals2(a: Double?, b: Double?) = a!!.equals(b!!)

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface Expr {
     public fun ttFun() : Int = 12
 }

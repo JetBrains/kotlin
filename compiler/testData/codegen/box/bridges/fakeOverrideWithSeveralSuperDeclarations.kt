@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface D1 {
     fun foo(): Any
 }

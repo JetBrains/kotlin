@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 object A {
     operator fun get(i: Int) = 1
     operator fun set(i: Int, j: Int) {}

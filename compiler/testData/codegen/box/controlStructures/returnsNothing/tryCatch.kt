@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun exit(): Nothing = null!!
 
 fun box(): String {

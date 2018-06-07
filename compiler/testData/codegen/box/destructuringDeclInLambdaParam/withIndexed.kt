@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 data class Station(
         val id: String?,

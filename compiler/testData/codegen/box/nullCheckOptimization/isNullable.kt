@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 inline fun <reified T> isNullable() = null is T
 
 fun box(): String =

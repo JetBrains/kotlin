@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // TODO: Enable when JS backend supports Java class library
 // IGNORE_BACKEND: JS, NATIVE
 public open class Test(): java.util.RandomAccess, Cloneable, java.io.Serializable

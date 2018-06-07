@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 open class C
 
 object O : C()

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // FILE: 1.kt
 
 inline fun <R> test(s: () -> R): R {

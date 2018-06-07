@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun <T, R> T.letNoInline(fn: (T) -> R) =
         fn(this)
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class A(
         private val x: String,
         private var y: Double

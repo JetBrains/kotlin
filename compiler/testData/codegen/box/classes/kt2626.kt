@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 package example2
 
 fun box() = Context.OsType.OK.toString()

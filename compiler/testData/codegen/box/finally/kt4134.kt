@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun <T, R> io(s: R, a: (R) -> T): T {
     try {
         return a(s)

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 data class Z(val p: String, val k: String)
 
 

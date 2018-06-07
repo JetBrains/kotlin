@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 data class A(var string: String)
 
 fun box(): String {

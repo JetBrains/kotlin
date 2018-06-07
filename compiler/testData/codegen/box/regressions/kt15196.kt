@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 fun foo() {
     val array = Array(0, { IntArray(0) } )

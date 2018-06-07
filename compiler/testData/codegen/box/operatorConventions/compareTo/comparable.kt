@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface A : Comparable<A>
 
 class B(val x: Int) : A {

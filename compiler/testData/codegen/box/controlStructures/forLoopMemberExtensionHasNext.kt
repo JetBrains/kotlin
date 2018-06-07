@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class It {
     operator fun next() = 5
 }

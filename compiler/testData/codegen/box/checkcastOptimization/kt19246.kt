@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 
 enum class ResultType constructor(val reason: String) {

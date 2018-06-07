@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface T {
     fun foo(): String
 }
