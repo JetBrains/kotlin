@@ -370,7 +370,7 @@ private fun collectActualMarkers(
     NavigateAction.setNavigateAction(
         lineMarkerInfo,
         "Go to actual declarations",
-        null
+        IdeActions.ACTION_GOTO_IMPLEMENTATION
     )
     result.add(lineMarkerInfo)
 }
