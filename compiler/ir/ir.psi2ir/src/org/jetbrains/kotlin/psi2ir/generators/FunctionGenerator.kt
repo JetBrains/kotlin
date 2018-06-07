@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 
 class FunctionGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
 
@@ -89,7 +90,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktParameterOwner: KtElement?,
         ktReceiverParameterElement: KtElement?
     ) {
-        declarationGenerator.generateScopedTypeParameterDeclarations(irFunction, irFunction.descriptor.typeParameters)
+        declarationGenerator.generateScopedTypeParameterDeclarations(irFunction, irFunction.descriptor.propertyIfAccessor.typeParameters)
         irFunction.returnType = irFunction.descriptor.returnType!!.toIrType()
         generateValueParameterDeclarations(irFunction, ktParameterOwner, ktReceiverParameterElement)
     }
