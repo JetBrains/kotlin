@@ -159,7 +159,7 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
 
                 is PluginUpdateStatus.Unverified -> {
                     val version = pluginUpdateStatus.updateStatus.pluginDescriptor.version
-                    form.setUpdateStatus("A new version $version is found. ${pluginUpdateStatus.message}", false)
+                    form.setUpdateStatus("A new version $version is found, but not yet verified by Android Studio: ${pluginUpdateStatus.message}", false)
                 }
             }
 
