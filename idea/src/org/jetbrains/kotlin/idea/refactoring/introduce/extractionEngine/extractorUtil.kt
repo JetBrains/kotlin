@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
+import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.openapi.util.Key
+import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.LocalSearchScope
@@ -24,7 +26,9 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.inspections.PublicApiImplicitTypeInspection
 import org.jetbrains.kotlin.idea.inspections.UseExpressionBodyInspection
 import org.jetbrains.kotlin.idea.intentions.InfixCallToOrdinaryIntention
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
@@ -38,6 +42,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.StronglyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.WeaklyMatched
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
 import org.jetbrains.kotlin.psi.codeFragmentUtil.DEBUG_TYPE_REFERENCE_STRING
@@ -456,6 +461,29 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
     }
 
+    fun getPublicApiInspectionIfEnabled(): PublicApiImplicitTypeInspection? {
+        val project = descriptor.extractionData.project
+        val inspectionProfileManager = ProjectInspectionProfileManager.getInstance(project)
+        val inspectionProfile = inspectionProfileManager.currentProfile
+        val state = inspectionProfile.getToolsOrNull("PublicApiImplicitType", project)?.defaultState ?: return null
+        if (!state.isEnabled || state.level == HighlightDisplayLevel.DO_NOT_SHOW) return null
+        return state.tool.tool as? PublicApiImplicitTypeInspection
+    }
+
+    fun useExplicitReturnType(): Boolean {
+        if (descriptor.returnType.isFlexible()) return true
+        val inspection = getPublicApiInspectionIfEnabled() ?: return false
+        val targetClass = (descriptor.extractionData.targetSibling.parent as? KtClassBody)?.parent as? KtClassOrObject
+        if ((targetClass != null && targetClass.isLocal) || descriptor.extractionData.isLocal()) return false
+        val visibility = (descriptor.visibility ?: KtTokens.DEFAULT_VISIBILITY_KEYWORD).toVisibility()
+        return when {
+            visibility.isPublicAPI -> true
+            inspection.reportInternal && visibility == Visibilities.INTERNAL -> true
+            inspection.reportPrivate && visibility == Visibilities.PRIVATE -> true
+            else -> false
+        }
+    }
+
     fun adjustDeclarationBody(declaration: KtNamedDeclaration) {
         val body = declaration.getGeneratedBody()
 
@@ -554,7 +582,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
             val bodyOwner = body.parent as KtDeclarationWithBody
             val useExpressionBodyInspection = UseExpressionBodyInspection()
             if (bodyExpression != null && !bodyExpression.isMultiLine() && useExpressionBodyInspection.isActiveFor(bodyOwner)) {
-                useExpressionBodyInspection.simplify(bodyOwner, !descriptor.returnType.isFlexible())
+                useExpressionBodyInspection.simplify(bodyOwner, !useExplicitReturnType())
             }
         }
     }

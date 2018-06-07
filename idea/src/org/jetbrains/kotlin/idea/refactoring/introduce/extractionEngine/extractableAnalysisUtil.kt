@@ -607,9 +607,13 @@ private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<In
     return instructions
 }
 
-fun ExtractionData.isVisibilityApplicable(): Boolean {
+fun ExtractionData.isLocal(): Boolean {
     val parent = targetSibling.parent
-    if (parent !is KtClassBody && (parent !is KtFile || parent.isScript())) return false
+    return parent !is KtClassBody && (parent !is KtFile || parent.isScript())
+}
+
+fun ExtractionData.isVisibilityApplicable(): Boolean {
+    if (isLocal()) return false
     if (commonParent.parentsWithSelf.any { it is KtNamedFunction && it.hasModifier(KtTokens.INLINE_KEYWORD) && it.isPublic }) return false
     return true
 }
