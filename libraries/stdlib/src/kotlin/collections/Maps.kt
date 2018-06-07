@@ -263,8 +263,8 @@ internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () 
 public fun <K, V> Map<K, V>.getValue(key: K): V = getOrImplicitDefault(key)
 
 /**
- * Returns the value for the given key. If the key is not found in the map, calls the [defaultValue] function,
- * puts its result into the map under the given key and returns it.
+ * Returns the value for the given key. If the key is not found in the map or the value associated with the key is
+ * `null`, calls the [defaultValue] function, puts its result into the map under the given key and returns it.
  *
  * @sample samples.collections.Maps.Usage.getOrPut
  */
