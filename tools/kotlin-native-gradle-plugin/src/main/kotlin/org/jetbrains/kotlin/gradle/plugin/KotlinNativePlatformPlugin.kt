@@ -37,7 +37,7 @@ open class KotlinNativePlatformPlugin: KotlinPlatformImplementationPluginBase("n
                     .forEach { task: KonanCompileTask ->
                         task.commonSourceSets.forEach { commonSourceSetName ->
                             val commonSourceSet = commonProject.sourceSets.findByName(commonSourceSetName) ?:
-                            throw GradleException("Cannot find a source set with name '${commonSourceSetName}' " +
+                            throw GradleException("Cannot find a source set with name '$commonSourceSetName' " +
                                     "in a common project '${commonProject.path}' " +
                                     "for an artifact '${task.artifactName}' " +
                                     "in a platform project '${platformProject.path}'")

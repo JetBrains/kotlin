@@ -376,7 +376,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                         for (v in konanSoftwareComponent.variants) {
                             publishing.publications.create(v.name, MavenPublication::class.java) {
                                 val coordinates = (v as NativeVariantIdentity).coordinates
-                                project.logger.info("variant with coordiants(${coordinates}) and module: ${coordinates.module}")
+                                project.logger.info("variant with coordinates($coordinates) and module: ${coordinates.module}")
                                 it.artifactId = coordinates.module.name
                                 it.groupId = coordinates.group
                                 it.version = coordinates.version
