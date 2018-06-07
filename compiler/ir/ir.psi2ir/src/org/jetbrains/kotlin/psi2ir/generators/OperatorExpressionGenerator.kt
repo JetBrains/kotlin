@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -308,8 +309,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             operandType == targetType || operandNNType == targetType ->
                 this
 
-        // TODO operandType may have inaccurate nullability
-            operandType.containsNull() ->
+            // TODO: don't rely on originalKotlinType.
+            type.originalKotlinType!!.containsNull() ->
                 safeCallOnDispatchReceiver(this@OperatorExpressionGenerator, startOffset, endOffset) { dispatchReceiver ->
                     invokeConversionFunction(
                         startOffset, endOffset,
