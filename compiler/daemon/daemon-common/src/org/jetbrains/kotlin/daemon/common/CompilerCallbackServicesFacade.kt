@@ -128,7 +128,7 @@ class CompiledPackagePart(
 
 class RmiFriendlyCompilationCanceledException : Exception(), Serializable {
     companion object {
-        private val serialVersionUID: Long =
-            8228357578L // just a random number, but should never be changed to avoid deserialization problems
+        // just a random number, but should never be changed to avoid deserialization problems
+        private val serialVersionUID: Long = 8228357578L
     }
 }
