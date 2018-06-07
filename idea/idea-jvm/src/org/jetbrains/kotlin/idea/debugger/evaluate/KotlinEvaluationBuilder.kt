@@ -26,6 +26,7 @@ import com.intellij.diagnostic.LogMessageEx
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiDocumentManager
@@ -214,8 +215,11 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
             val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.file, sourcePosition.line)
                                    ?: throw IllegalStateException("Code fragment cannot be extracted to function: ${codeFragment.text}")
-            val parametersDescriptor = extractionResult.getParametersForDebugger(codeFragment)
-            val extractedFunction = extractionResult.declaration as KtNamedFunction
+            val (parametersDescriptor, extractedFunction) = try {
+                extractionResult.getParametersForDebugger(codeFragment) to extractionResult.declaration as KtNamedFunction
+            } finally {
+                Disposer.dispose(extractionResult)
+            }
 
             if (LOG.isDebugEnabled) {
                 LOG.debug("Extracted function:\n" + runReadAction { extractedFunction.text })
