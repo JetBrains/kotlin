@@ -28,7 +28,6 @@ dependencies {
     testCompile(projectTests(":kotlin-build-common"))
     testCompileOnly(intellijDep("jps-standalone")) { includeJars("jps-builders", "jps-builders-6") }
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "log4j") }
-    testCompile(intellijDep("devkit"))
     testCompile(intellijDep("jps-build-test"))
     compilerModules.forEach {
         testRuntime(project(it))
