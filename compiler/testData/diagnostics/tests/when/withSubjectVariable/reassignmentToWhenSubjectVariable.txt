@@ -1,4 +1,4 @@
 package
 
 public fun foo(): kotlin.Any
-public fun test(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun test1(/*0*/ x: kotlin.Any): kotlin.Unit

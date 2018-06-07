@@ -3,7 +3,7 @@
 
 fun foo(): Any = 42
 
-fun test(x: Any) {
+fun test1(x: Any) {
     when (val y = foo()) {
         is String -> <!VAL_REASSIGNMENT!>y<!> = ""
     }
