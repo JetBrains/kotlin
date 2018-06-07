@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKBodyStub
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
-import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
 
@@ -38,35 +38,35 @@ class NewCodeBuilder {
     }
 
 
-    inner class Visitor : JKVisitor<Unit, Unit> {
-        override fun visitTreeElement(treeElement: JKTreeElement, data: Unit) {
+    inner class Visitor : JKVisitorVoid {
+        override fun visitTreeElement(treeElement: JKTreeElement) {
             printer.print("/* !!! Hit visitElement for element type: ${treeElement::class} !!! */")
         }
 
-        override fun visitClass(klass: JKClass, data: Unit) {
+        override fun visitClass(klass: JKClass) {
             printer.print(classKindString(klass.classKind))
             builder.append(" ")
             printer.print(klass.name.value)
             if (klass.declarationList.isNotEmpty()) {
                 printer.println("{")
                 printer.pushIndent()
-                klass.declarationList.forEach { it.accept(this, data) }
+                klass.declarationList.forEach { it.accept(this) }
                 printer.popIndent()
                 printer.println("}")
             }
         }
 
-        override fun visitBinaryExpression(binaryExpression: JKBinaryExpression, data: Unit) {
-            binaryExpression.left.accept(this, data)
+        override fun visitBinaryExpression(binaryExpression: JKBinaryExpression) {
+            binaryExpression.left.accept(this)
             printer.printWithNoIndent(binaryExpression.operator)
-            binaryExpression.right.accept(this, data)
+            binaryExpression.right.accept(this)
         }
 
-        override fun visitKtLiteralExpression(ktLiteralExpression: JKKtLiteralExpression, data: Unit) {
+        override fun visitKtLiteralExpression(ktLiteralExpression: JKKtLiteralExpression) {
             printer.printWithNoIndent(ktLiteralExpression.literal)
         }
 
-        override fun visitTypeElement(typeElement: JKTypeElement, data: Unit) {
+        override fun visitTypeElement(typeElement: JKTypeElement) {
             val type = typeElement.type
             when (type) {
                 is JKClassType -> (type.classReference as JKClassSymbol).fqName?.let { printer.printWithNoIndent(FqName(it).shortName().asString()) }
@@ -80,35 +80,35 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitKtFunction(ktFunction: JKKtFunction, data: Unit) {
+        override fun visitKtFunction(ktFunction: JKKtFunction) {
             printer.print("fun ", ktFunction.name.value, "(", "): ")
-            ktFunction.returnType.accept(this, data)
+            ktFunction.returnType.accept(this)
             if (ktFunction.block !== JKBodyStub) {
                 printer.printlnWithNoIndent("{")
                 printer.pushIndent()
-                ktFunction.block.accept(this, data)
+                ktFunction.block.accept(this)
                 printer.popIndent()
                 printer.printWithNoIndent("}")
             }
         }
 
-        override fun visitBlock(block: JKBlock, data: Unit) {
-            block.acceptChildren(this, data)
+        override fun visitBlock(block: JKBlock) {
+            block.acceptChildren(this)
         }
 
-        override fun visitExpressionStatement(expressionStatement: JKExpressionStatement, data: Unit) {
+        override fun visitExpressionStatement(expressionStatement: JKExpressionStatement) {
             printer.printIndent()
-            expressionStatement.expression.accept(this, data)
+            expressionStatement.expression.accept(this)
             printer.printlnWithNoIndent()
         }
 
-        override fun visitReturnStatement(returnStatement: JKReturnStatement, data: Unit) {
+        override fun visitReturnStatement(returnStatement: JKReturnStatement) {
             printer.print("return ")
-            returnStatement.expression.accept(this, data)
+            returnStatement.expression.accept(this)
             printer.printlnWithNoIndent()
         }
 
-        override fun visitKtProperty(ktProperty: JKKtProperty, data: Unit) {
+        override fun visitKtProperty(ktProperty: JKKtProperty) {
             // TODO: Fix this
             if (ktProperty.modifierList.modifiers.any { (it as? JKJavaModifier)?.type == JKJavaModifier.JavaModifierType.FINAL }) {
                 printer.print("val")
@@ -117,18 +117,17 @@ class NewCodeBuilder {
             }
 
             printer.printWithNoIndent(" ", ktProperty.name.value, ": ")
-            ktProperty.type.accept(this, data)
+            ktProperty.type.accept(this)
             if (ktProperty.initializer !is JKStubExpression) {
                 printer.printWithNoIndent(" = ")
-                ktProperty.initializer.accept(this, data)
+                ktProperty.initializer.accept(this)
             }
             printer.printlnWithNoIndent()
         }
     }
 
-
     fun printCodeOut(root: JKTreeElement): String {
-        Visitor().also { root.accept(it, Unit) }
+        Visitor().also { root.accept(it) }
         return builder.toString()
     }
 }
