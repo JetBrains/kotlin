@@ -23,6 +23,8 @@ import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import java.lang.IllegalArgumentException
 import java.util.*
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
@@ -592,5 +595,15 @@ fun isTopLevelInFileOrScript(element: PsiElement): Boolean {
         is KtFile -> true
         is KtBlockExpression -> parent.parent is KtScript
         else -> false
+    }
+}
+
+fun KtModifierKeywordToken.toVisibility(): Visibility {
+    return when (this) {
+        KtTokens.PUBLIC_KEYWORD -> Visibilities.PUBLIC
+        KtTokens.PRIVATE_KEYWORD -> Visibilities.PRIVATE
+        KtTokens.PROTECTED_KEYWORD -> Visibilities.PROTECTED
+        KtTokens.INTERNAL_KEYWORD -> Visibilities.INTERNAL
+        else -> throw IllegalArgumentException("Unknown visibility modifier:$this")
     }
 }
