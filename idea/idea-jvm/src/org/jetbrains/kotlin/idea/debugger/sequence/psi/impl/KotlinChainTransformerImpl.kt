@@ -1,10 +1,6 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.kotlin.idea.debugger.sequence.psi.impl
 
-import org.jetbrains.kotlin.idea.debugger.sequence.psi.CallTypeExtractor
-import org.jetbrains.kotlin.idea.debugger.sequence.psi.KotlinPsiUtil
-import org.jetbrains.kotlin.idea.debugger.sequence.psi.callName
-import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import com.intellij.debugger.streams.psi.ChainTransformer
 import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.debugger.streams.wrapper.CallArgument
@@ -14,7 +10,11 @@ import com.intellij.debugger.streams.wrapper.StreamChain
 import com.intellij.debugger.streams.wrapper.impl.*
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.CallTypeExtractor
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.KotlinPsiUtil
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.callName
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
@@ -53,7 +53,7 @@ class KotlinChainTransformerImpl(private val typeExtractor: CallTypeExtractor) :
       return CallArgumentImpl(KotlinPsiUtil.getTypeName(argExpression.resolveType()), this.text)
     }
 
-    val bindingContext = callExpression.analyzeFully()
+    val bindingContext = callExpression.getResolutionFacade().analyzeWithAllCompilerChecks(listOf(callExpression)).bindingContext
     val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return arg.toCallArgument()
     val parameter = resolvedCall.getParameterForArgument(arg) ?: return arg.toCallArgument()
     return CallArgumentImpl(KotlinPsiUtil.getTypeName(parameter.type), arg.text)
