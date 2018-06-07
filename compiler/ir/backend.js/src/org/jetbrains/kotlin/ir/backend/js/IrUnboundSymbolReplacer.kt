@@ -53,7 +53,7 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: JsIrBackendContext)
         override fun visitModuleFragment(declaration: IrModuleFragment) {
             declaration.dependencyModules.forEach { it.acceptVoid(this) }
 
-            val dependencyModules = declaration.dependencyModules.groupBy { it.descriptor }.map { (_, fragments) ->
+            val dependencyModules = declaration.dependencyModules.toSet().groupBy { it.descriptor }.map { (_, fragments) ->
                 fragments.reduce { firstModule, nextModule ->
                     firstModule.apply {
                         mergeFrom(nextModule)
@@ -74,7 +74,11 @@ private fun IrModuleFragment.mergeFrom(other: IrModuleFragment): Unit {
 
     val thisPackages = this.externalPackageFragments.groupBy { it.packageFragmentDescriptor }
     other.externalPackageFragments.forEach {
-        val thisPackage = thisPackages[it.packageFragmentDescriptor]?.single()
+        val thisPackage = try {
+            thisPackages[it.packageFragmentDescriptor]?.toSet()?.single()
+        } catch (t: Throwable) {
+            throw t
+        }
         if (thisPackage == null) {
             this.externalPackageFragments.add(it)
         } else {
