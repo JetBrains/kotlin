@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.parameterInfo
 
 import com.intellij.codeInsight.hints.InlayInfo
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -18,12 +19,11 @@ fun provideLambdaReturnValueHints(expression: KtExpression): List<InlayInfo> {
         return emptyList()
     }
 
-    val parent = expression.parent
-    if (parent is KtDotQualifiedExpression ||
-        parent is KtSafeQualifiedExpression ||
-        parent is KtBinaryExpression ||
-        parent is KtUnaryExpression
-    ) {
+    if (!KtPsiUtil.isStatement(expression)) {
+        if (!allowLabelOnExpressionPart(expression)) {
+            return emptyList()
+        }
+    } else if (forceLabelOnExpressionPart(expression)) {
         return emptyList()
     }
 
@@ -52,4 +52,19 @@ private fun getNameOfFunctionThatTakesLambda(expression: KtExpression): String? 
         return (callExpression.calleeExpression as? KtNameReferenceExpression)?.getReferencedName()
     }
     return null
+}
+
+private fun allowLabelOnExpressionPart(expression: KtExpression): Boolean {
+    val parent = expression.parent
+    return parent is KtAnnotatedExpression && parent.baseExpression == expression && parent.lineSeparatorBeforeBase()
+}
+
+private fun forceLabelOnExpressionPart(expression: KtExpression): Boolean {
+    return expression is KtAnnotatedExpression && expression.lineSeparatorBeforeBase()
+}
+
+private fun KtAnnotatedExpression.lineSeparatorBeforeBase(): Boolean {
+    val base = baseExpression ?: return false
+    val whiteSpace = base.node.treePrev?.psi as? PsiWhiteSpace ?: return false
+    return whiteSpace.text.contains("\n")
 }

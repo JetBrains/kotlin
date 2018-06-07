@@ -136,4 +136,26 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
         )
     }
+
+    fun testAnnotatedStatement() {
+        check(
+            """
+            @Target(AnnotationTarget.EXPRESSION)
+            annotation class Some
+
+            fun test() {
+                run {
+                    val files: Any? = null
+                    @Some
+                    <hint text="^run"/>12
+                }
+
+                run {
+                    val files: Any? = null
+                    <hint text="^run"/>@Some 12
+                }
+            }
+            """
+        )
+    }
 }
