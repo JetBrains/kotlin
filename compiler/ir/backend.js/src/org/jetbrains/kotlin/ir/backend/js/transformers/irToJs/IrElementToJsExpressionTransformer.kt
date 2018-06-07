@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import kotlin.math.exp
 
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
 
@@ -84,14 +83,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitFunctionReference(expression: IrFunctionReference, context: JsGenerationContext): JsExpression {
         val irFunction = expression.symbol.owner as IrFunction
         return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
-    }
-
-    override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsExpression {
-        return JsBinaryOperation(JsBinaryOperator.COMMA, JsStringLiteral("<return>"), expression.value.accept(IrElementToJsExpressionTransformer(), context))
-    }
-
-    override fun visitTypeOperator(expression: IrTypeOperatorCall, context: JsGenerationContext): JsExpression {
-        return expression.argument.accept(IrElementToJsExpressionTransformer(), context)
     }
 
     override fun <T> visitConst(expression: IrConst<T>, context: JsGenerationContext): JsExpression {

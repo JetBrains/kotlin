@@ -48,15 +48,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
-        val returnValue = expression.value.let {
-            if (it is IrBlock) {
-                JsInvocation(JsFunction(context.currentScope, IrElementToJsStatementTransformer().visitBlock(it, context), ""))
-            } else {
-                it.accept(IrElementToJsExpressionTransformer(), context)
-            }
-        }
-
-        return JsReturn(returnValue)
+        return JsReturn(expression.value.accept(IrElementToJsExpressionTransformer(), context))
     }
 
     override fun visitThrow(expression: IrThrow, context: JsGenerationContext): JsStatement {
