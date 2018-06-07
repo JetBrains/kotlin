@@ -158,4 +158,23 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
         )
     }
+
+    fun testLabeledStatement() {
+        check(
+            """
+            fun test() {
+                run {
+                    val files: Any? = null
+                    run@
+                    <hint text="^run"/>12
+                }
+
+                run {
+                    val files: Any? = null
+                    <hint text="^run"/>run@12
+                }
+            }
+            """
+        )
+    }
 }
