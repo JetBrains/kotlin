@@ -9565,6 +9565,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/equalityConstraintOnNullableType.kt");
                 }
 
+                @TestMetadata("errorUpperBoundConstraint.kt")
+                public void testErrorUpperBoundConstraint() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/constraints/errorUpperBoundConstraint.kt");
+                }
+
                 @TestMetadata("ignoreConstraintFromImplicitInNothing.kt")
                 public void testIgnoreConstraintFromImplicitInNothing() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/ignoreConstraintFromImplicitInNothing.kt");
