@@ -55,17 +55,21 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
 
     private var tmpVarCounter = 0;
 
-    data class ReturnInfo(
+    class ReturnInfo(
         val resultVariable: IrVariableSymbol,
         val loop: IrLoop
-    )
+    ) {
+        var cnt = 0
+    }
 
     private val returnMap = mutableMapOf<IrReturnableBlockSymbol, ReturnInfo>()
 
     val visitor = object : IrElementTransformerVoid() {
         override fun visitReturn(expression: IrReturn): IrExpression {
             expression.transformChildren(this, null)
-            return returnMap[expression.returnTargetSymbol]?.let { (v, loop) ->
+            return returnMap[expression.returnTargetSymbol]?.let { info ->
+                info.cnt++
+
                 // TODO IrComposite maybe?
                 val compoundBlock = IrBlockImpl(
                     expression.startOffset,
@@ -73,8 +77,8 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
                     context.builtIns.unitType
                 )
 
-                compoundBlock.statements += JsIrBuilder.buildSetVariable(v, expression.value)
-                compoundBlock.statements += JsIrBuilder.buildBreak(context.builtIns.unitType, loop)
+                compoundBlock.statements += JsIrBuilder.buildSetVariable(info.resultVariable, expression.value)
+                compoundBlock.statements += JsIrBuilder.buildBreak(context.builtIns.unitType, info.loop)
 
                 compoundBlock
             } ?: expression
@@ -112,11 +116,27 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
                     body = block
                 }
 
-                returnMap[expression.symbol] = ReturnInfo(variable, loop)
+                val returnInfo = ReturnInfo(variable, loop)
+                returnMap[expression.symbol] = returnInfo
 
-                expression.transformChildren(this, null)
+
+                expression.statements.let { list ->
+                    for (i in list.indices) {
+                        val s = list[i]
+                        list[i] =
+                                if (i == list.lastIndex && returnInfo.cnt == 0 && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
+                                    s.value.transform(this, null)
+                                } else {
+                                    s.transform(this, null)
+                                }
+                    }
+                }
 
                 block.statements += expression.statements
+
+                if (returnInfo.cnt == 0) {
+                    return block
+                }
 
                 replacementBlock.statements += loop
                 replacementBlock.statements += JsIrBuilder.buildGetValue(variable)
