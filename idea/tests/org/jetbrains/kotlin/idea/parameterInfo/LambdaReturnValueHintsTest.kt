@@ -13,77 +13,84 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     fun check(text: String) {
-        myFixture.configureByText("A.kt", text)
+        myFixture.configureByText("A.kt", text.trimIndent())
         myFixture.testInlays()
     }
 
     fun testSimple() {
         check(
-            """val x = run {
+            """
+            val x = run {
                 println("foo")
                 <hint text="^run" />1
-             }
-             """
+            }
+            """
         )
     }
 
     fun testQualified() {
         check(
-            """val x = run {
+            """
+            val x = run {
                 var s = "abc"
                 <hint text="^run" />s.length
-             }
-             """
+            }
+            """
         )
     }
 
     fun testIf() {
         check(
-            """val x = run {
+            """
+            val x = run {
                 if (true) {
                     <hint text="^run" />1
                 } else {
                     <hint text="^run" />0
                 }
-             }
-             """
+            }
+            """
         )
     }
 
     fun testWhen() {
         check(
-            """val x = run {
+            """
+            val x = run {
                 when (true) {
-                     true -> <hint text="^run" />1
-                     false -><hint text="^run" />0
+                    true -> <hint text="^run" />1
+                    false -><hint text="^run" />0
                 }
-             }
-             """
+            }
+            """
         )
     }
 
     fun testNoHintForSingleExpression() {
         check(
-            """val x = run {
+            """
+            val x = run {
                 1
-             }
-             """
+            }
+            """
         )
     }
 
     fun testLabel() {
         check(
-            """val x = run foo@{
+            """
+            val x = run foo@{
                 println("foo")
                 <hint text="^foo" />1
-             }
-             """
+            }
+            """
         )
     }
 
     fun testNested() {
         check(
-            """val x = run hello@{
+            """
+            val x = run hello@{
                 if (true) {
                 }
 
@@ -93,39 +100,40 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                         false -> <hint text="^run" />0
                     }
                 }
-            }"""
+            }
+            """
         )
     }
 
     fun testElvisOperator() {
         check(
             """
-                fun foo() {
-                    run {
-                        val length: Int? = null
-                        <hint text="^run" />length ?: 0
-                    }
+            fun foo() {
+                run {
+                    val length: Int? = null
+                    <hint text="^run" />length ?: 0
                 }
-            """.trimIndent()
+            }
+            """
         )
     }
 
     fun testPostfixPrefixExpressions() {
         check(
             """
-                fun bar() {
-                    var test = 0
-                    run {
-                        test
-                        <hint text="^run"/>test++
-                    }
-
-                    run {
-                        test
-                        <hint text="^run"/>++test
-                    }
+            fun bar() {
+                var test = 0
+                run {
+                    test
+                    <hint text="^run"/>test++
                 }
-            """.trimIndent()
+
+                run {
+                    test
+                    <hint text="^run"/>++test
+                }
+            }
+            """
         )
     }
 }
