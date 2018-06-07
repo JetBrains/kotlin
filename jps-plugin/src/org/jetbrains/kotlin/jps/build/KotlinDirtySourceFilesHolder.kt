@@ -92,7 +92,7 @@ class KotlinDirtySourceFilesHolder(
     val allDirtyFiles: Set<File>
         get() = byTarget.flatMapTo(mutableSetOf()) { it.value.dirty }
 
-    val allRemovedFilesFiles
+    val allRemovedFilesFiles: Set<File>
         get() = byTarget.flatMapTo(mutableSetOf()) { it.value.removed }
 }
 

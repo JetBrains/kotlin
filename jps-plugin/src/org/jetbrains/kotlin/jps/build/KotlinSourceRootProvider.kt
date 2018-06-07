@@ -14,6 +14,7 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.config.KotlinResourceRootType
@@ -85,6 +86,21 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
                 )
             }
         }
+
+        // At the moment, incremental compilation is not supported by K2Metadata compiler.
+        // To avoid long running compilation of common modules, we do not run K2Metadata at all:
+        // instead all the common source roots are transitively added to the final platform modules.
+        JpsJavaExtensionService.dependencies(commonModule)
+            .also {
+                if (!target.isTests) it.productionOnly()
+            }
+            .processModules {
+                addCommonModuleSourceRoots(
+                    result,
+                    it,
+                    ModuleBuildTarget(it, target.targetType as JavaModuleBuildTargetType)
+                )
+            }
     }
 }
 
