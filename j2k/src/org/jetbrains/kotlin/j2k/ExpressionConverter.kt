@@ -522,15 +522,17 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                     result = if (argument is PsiLiteralExpression) {
                         codeConverter.convertExpression(argument)
                     } else {
-                        val argumentList = ArgumentList.withNoPrototype(listOf(codeConverter.convertExpression(argument)))
-                        val methodCall =
-                            MethodCallExpression.buildNonNull(null, CommonClassNames.JAVA_LANG_STRING, argumentList).assignNoPrototype()
+                        val methodCall = MethodCallExpression.buildNonNull(
+                            null,
+                            CommonClassNames.JAVA_LANG_STRING,
+                            ArgumentList.withNoPrototype(listOf(codeConverter.convertExpression(argument)))
+                        ).assignPrototype(expression)
                         val classType = ClassType(
                             ReferenceElement(Identifier.withNoPrototype("String"), listOf()).assignNoPrototype(),
                             Nullability.NotNull,
                             converter.settings
                         ).assignNoPrototype()
-                        TypeCastExpression(classType, methodCall).assignPrototype(expression)
+                        TypeCastExpression(classType, methodCall)
                     }
                     return
                 }
