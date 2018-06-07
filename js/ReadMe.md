@@ -2,7 +2,7 @@
 
 This module performs the translation of Kotlin source code to JavaScript.
 
-There are various Kotlin APIs to JavaScript environments and libraries in the [js.libraries](https://github.com/JetBrains/kotlin/tree/master/js/js.libraries/src) project.
+There are various Kotlin APIs to JavaScript environments in the [standard library](../libraries/stdlib/js).
 
 ## Compiling the Kotlin Standard Library for JavaScript
 
