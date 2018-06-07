@@ -38,16 +38,26 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 object KDocRenderer {
     fun renderKDoc(docComment: KDocTag): String {
         return if (docComment is KDocSection) {
-            renderKDocSection(docComment)
+            renderKDocContent(docComment) + renderKDocSection(docComment)
         } else {
-            markdownToHtml(docComment.getContent(), allowSingleParagraph = true)
+            renderKDocContent(docComment)
         }
     }
 
+    fun renderKDocContent(docComment: KDocTag): String {
+        return markdownToHtml(docComment.getContent(), allowSingleParagraph = true)
+    }
+
+    fun StringBuilder.appendKDocContent(docComment: KDocTag) {
+        append(renderKDocContent(docComment))
+    }
+
+
     fun renderKDocSection(section: KDocSection): String = buildString {
-        append(markdownToHtml(section.getContent(), allowSingleParagraph = true))
-        append(CONTENT_END)
-        append(SECTIONS_START)
+        appendKDocSection(section)
+    }
+
+    fun StringBuilder.appendKDocSection(section: KDocSection) {
         renderTag(section.findTagByName("receiver"), "Receiver", this)
         val paramTags = section.findTagsByName("param").filter { it.getSubjectName() != null }
         renderTagList(paramTags, "Parameters", this)
@@ -65,7 +75,6 @@ object KDocRenderer {
 
         val sampleTags = section.findTagsByName("sample").filter { it.getSubjectLink() != null }
         renderSamplesList(sampleTags, this)
-        append(SECTIONS_END)
     }
 
     private fun KDocLink.createHyperlink(to: StringBuilder) {

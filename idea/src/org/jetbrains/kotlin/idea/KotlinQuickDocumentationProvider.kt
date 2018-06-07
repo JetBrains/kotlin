@@ -20,7 +20,8 @@ import com.google.common.html.HtmlEscapers
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.codeInsight.javadoc.JavaDocInfoGeneratorFactory
 import com.intellij.lang.documentation.AbstractDocumentationProvider
-import com.intellij.lang.documentation.DocumentationMarkup
+import com.intellij.lang.documentation.DocumentationMarkup.DEFINITION_END
+import com.intellij.lang.documentation.DocumentationMarkup.DEFINITION_START
 import com.intellij.lang.java.JavaDocumentationProvider
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
@@ -35,10 +36,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
-import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
-import org.jetbrains.kotlin.idea.kdoc.findKDoc
-import org.jetbrains.kotlin.idea.kdoc.isBoringBuiltinClass
-import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
+import org.jetbrains.kotlin.idea.kdoc.*
+import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocContent
+import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocSection
+import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.renderKDocContent
+import org.jetbrains.kotlin.idea.kdoc.KDocTemplate.DescriptionBodyTemplate
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -164,36 +166,51 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             classifierNamePolicy = HtmlClassifierNamePolicy(ClassifierNamePolicy.SHORT)
             valueParametersHandler = WrapValueParameterHandler(valueParametersHandler)
             renderCompanionObjectName = true
+            withDefinedIn = false
         }
 
         private fun renderEnumSpecialFunction(element: KtClass, functionDescriptor: FunctionDescriptor, quickNavigation: Boolean): String {
-            var renderedDecl = DESCRIPTOR_RENDERER.render(functionDescriptor)
+            val renderedDeclaration = DESCRIPTOR_RENDERER.render(functionDescriptor)
 
-            if (quickNavigation) return renderedDecl
+            if (quickNavigation) return renderedDeclaration
 
-            val declarationDescriptor = element.resolveToDescriptorIfAny()
-            val enumDescriptor = declarationDescriptor?.getSuperClassNotAny() ?: return renderedDecl
+            val kdoc = run {
+                val declarationDescriptor = element.resolveToDescriptorIfAny()
+                val enumDescriptor = declarationDescriptor?.getSuperClassNotAny() ?: return@run null
 
-            val enumDeclaration =
-                DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, enumDescriptor) as? KtDeclaration ?: return renderedDecl
+                val enumDeclaration =
+                    DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, enumDescriptor) as? KtDeclaration ?: return@run null
 
-            val enumSource = SourceNavigationHelper.getNavigationElement(enumDeclaration)
-            val functionName = functionDescriptor.fqNameSafe.shortName().asString()
-            val kdoc = enumSource.findDescendantOfType<KDoc> {
-                it.getChildrenOfType<KDocSection>().any { it.findTagByName(functionName) != null }
-            }
-
-            if (kdoc != null) {
-                val renderedComment = KDocRenderer.renderKDoc(kdoc.getDefaultSection())
-                if (renderedComment.startsWith("<p>")) {
-                    renderedDecl += renderedComment
-                } else {
-                    renderedDecl = "$renderedDecl<br/>$renderedComment"
+                val enumSource = SourceNavigationHelper.getNavigationElement(enumDeclaration)
+                val functionName = functionDescriptor.fqNameSafe.shortName().asString()
+                return@run enumSource.findDescendantOfType<KDoc> {
+                    it.getChildrenOfType<KDocSection>().any { it.findTagByName(functionName) != null }
                 }
             }
 
-            return renderedDecl
+            val section = kdoc?.getDefaultSection()
+
+            return buildString {
+                insert(KDocTemplate()) {
+                    definition {
+                        renderDefinition(functionDescriptor, DESCRIPTOR_RENDERER)
+                    }
+                    if (section != null) {
+                        description {
+                            insert(DescriptionBodyTemplate.Kotlin()) {
+                                content {
+                                    appendKDocContent(section)
+                                }
+                                sections {
+                                    appendKDocSection(section)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
+
 
         private fun renderEnum(element: KtClass, originalElement: PsiElement?, quickNavigation: Boolean): String? {
             val referenceExpression = originalElement?.getNonStrictParentOfType<KtReferenceExpression>()
@@ -238,10 +255,12 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 val ordinal = element.containingClassOrObject?.getBody()?.run { getChildrenOfType<KtEnumEntry>().indexOf(element) }
 
                 return buildString {
-                    append(renderKotlinDeclaration(element, quickNavigation))
-                    ordinal?.let {
-                        wrapTag("b") {
-                            append("Enum constant ordinal: $ordinal")
+                    insert(buildKotlinDeclaration(element, quickNavigation)) {
+                        definition {
+                            it.inherit()
+                            ordinal?.let {
+                                append("Enum constant ordinal: $ordinal")
+                            }
                         }
                     }
                 }
@@ -270,16 +289,24 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             return null
         }
 
-        private fun renderKotlinDeclaration(declaration: KtExpression, quickNavigation: Boolean): String {
+        private fun renderKotlinDeclaration(declaration: KtExpression, quickNavigation: Boolean) = buildString {
+            insert(buildKotlinDeclaration(declaration, quickNavigation)) {}
+        }
+
+        private fun buildKotlinDeclaration(declaration: KtExpression, quickNavigation: Boolean): KDocTemplate {
             val context = declaration.analyze(BodyResolveMode.PARTIAL)
             val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
 
             if (declarationDescriptor == null) {
                 LOG.info("Failed to find descriptor for declaration " + declaration.getElementTextWithContext())
-                return "No documentation available"
+                return KDocTemplate.NoDocTemplate().apply {
+                    error {
+                        append("No documentation available")
+                    }
+                }
             }
 
-            return renderKotlin(context, declarationDescriptor, quickNavigation, declaration)
+            return buildKotlin(context, declarationDescriptor, quickNavigation, declaration)
         }
 
         private fun renderKotlinImplicitLambdaParameter(element: KtReferenceExpression, quickNavigation: Boolean): String? {
@@ -293,7 +320,16 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             declarationDescriptor: DeclarationDescriptor,
             quickNavigation: Boolean,
             ktElement: KtElement
-        ): String {
+        ) = buildString {
+            insert(buildKotlin(context, declarationDescriptor, quickNavigation, ktElement)) {}
+        }
+
+        private fun buildKotlin(
+            context: BindingContext,
+            declarationDescriptor: DeclarationDescriptor,
+            quickNavigation: Boolean,
+            ktElement: KtElement
+        ): KDocTemplate {
             @Suppress("NAME_SHADOWING")
             var declarationDescriptor = declarationDescriptor
             if (declarationDescriptor is ValueParameterDescriptor) {
@@ -303,65 +339,82 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 }
             }
 
-            var declaration = DESCRIPTOR_RENDERER.withOptions {
-                withDefinedIn = !DescriptorUtils.isLocal(declarationDescriptor)
-            }.render(declarationDescriptor)
-
-
-            var renderedHtml: String
-
-
-            renderedHtml = "${DocumentationMarkup.DEFINITION_START}$declaration${DocumentationMarkup.DEFINITION_END}"
-
             val deprecationProvider = ktElement.getResolutionFacade().frontendService<DeprecationResolver>()
-            renderedHtml += renderDeprecationInfo(declarationDescriptor, deprecationProvider)
 
-            if (!quickNavigation) {
-                val comment = declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }
-                if (comment != null) {
-                    val renderedComment = KDocRenderer.renderKDoc(comment)
-                    renderedHtml += "${DocumentationMarkup.CONTENT_START}$renderedComment"
-                } else {
-                    if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
-                        val psi = declarationDescriptor.findPsi() as? KtFunction
-                        if (psi != null) {
-                            val lightElement = LightClassUtil.getLightClassMethod(psi) // Light method for super's scan in javadoc info gen
-                            val javaDocInfoGenerator = JavaDocInfoGeneratorFactory.create(psi.project, lightElement)
-                            val builder = StringBuilder()
-                            if (javaDocInfoGenerator.generateDocInfoCore(builder, false)) {
-                                val renderedJava = builder.toString()
-                                renderedHtml += renderedJava.removeRange(
-                                    renderedJava.indexOf(DocumentationMarkup.DEFINITION_START),
-                                    renderedJava.indexOf(DocumentationMarkup.DEFINITION_END)
-                                ) // Cut off light method signature
+            return KDocTemplate().apply {
+                definition {
+                    renderDefinition(declarationDescriptor, DESCRIPTOR_RENDERER)
+                    renderDeprecationInfo(declarationDescriptor, deprecationProvider)
+                }
+                if (!quickNavigation) {
+                    description {
+                        val comment = declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }
+                        if (comment != null) {
+                            insert(DescriptionBodyTemplate.Kotlin()) {
+                                content {
+                                    appendKDocContent(comment)
+                                }
+                                sections {
+                                    if (comment is KDocSection) appendKDocSection(comment)
+                                }
+                            }
+                        } else if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
+                            insert(DescriptionBodyTemplate.FromJava()) {
+                                body = extractJavaDescription(declarationDescriptor)
                             }
                         }
                     }
                 }
             }
-
-            return renderedHtml
         }
 
-        private fun renderDeprecationInfo(
+
+        private fun StringBuilder.renderDefinition(descriptor: DeclarationDescriptor, renderer: DescriptorRenderer) {
+            val containingDeclaration = descriptor.containingDeclaration
+            if (containingDeclaration != null) {
+                val fqName = containingDeclaration.fqNameSafe
+                if (!fqName.isRoot) {
+                    DocumentationManagerUtil.createHyperlink(this, fqName.asString(), fqName.asString(), false)
+                }
+            }
+
+            append(renderer.render(descriptor))
+        }
+
+        private fun extractJavaDescription(declarationDescriptor: DeclarationDescriptor): String {
+            val psi = declarationDescriptor.findPsi() as? KtFunction ?: return ""
+            val lightElement =
+                LightClassUtil.getLightClassMethod(psi) // Light method for super's scan in javadoc info gen
+            val javaDocInfoGenerator = JavaDocInfoGeneratorFactory.create(psi.project, lightElement)
+            val builder = StringBuilder()
+            if (javaDocInfoGenerator.generateDocInfoCore(builder, false)) {
+                val renderedJava = builder.toString()
+                return renderedJava.removeRange(
+                    renderedJava.indexOf(DEFINITION_START),
+                    renderedJava.indexOf(DEFINITION_END)
+                ) // Cut off light method signature
+            }
+            return ""
+        }
+
+        private fun StringBuilder.renderDeprecationInfo(
             declarationDescriptor: DeclarationDescriptor,
             deprecationResolver: DeprecationResolver
-        ): String {
-            val deprecation = deprecationResolver.getDeprecations(declarationDescriptor).firstOrNull() ?: return ""
+        ) {
+            val deprecation = deprecationResolver.getDeprecations(declarationDescriptor).firstOrNull() ?: return
 
-            return buildString {
-                wrapTag("DL") {
-                    deprecation.message?.let { message ->
-                        wrapTag("DT") { wrapTag("b") { append("Deprecated:") } }
-                        wrapTag("DD") {
-                            append(message.htmlEscape())
-                        }
+
+            wrapTag("DL") {
+                deprecation.message?.let { message ->
+                    wrapTag("DT") { wrapTag("b") { append("Deprecated:") } }
+                    wrapTag("DD") {
+                        append(message.htmlEscape())
                     }
-                    deprecation.deprecatedByAnnotationReplaceWithExpression()?.let { replaceWith ->
-                        wrapTag("DT") { wrapTag("b") { append("Replace with:") } }
-                        wrapTag("DD") {
-                            wrapTag("code") { append(replaceWith.htmlEscape()) }
-                        }
+                }
+                deprecation.deprecatedByAnnotationReplaceWithExpression()?.let { replaceWith ->
+                    wrapTag("DT") { wrapTag("b") { append("Replace with:") } }
+                    wrapTag("DD") {
+                        wrapTag("code") { append(replaceWith.htmlEscape()) }
                     }
                 }
             }
