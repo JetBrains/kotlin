@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.additionalArgumentsAsList
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
@@ -318,13 +319,16 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             val toolsJarPath = CompilerRunnerUtil.jdkToolsJar
             val compilerId = CompilerId.makeCompilerId(listOfNotNull(compilerPath, toolsJarPath))
             val daemonOptions = configureDaemonOptions()
+            val additionalJvmParams = mutableListOf<String>()
+
+            IncrementalCompilation.toJvmArgs(additionalJvmParams)
 
             val clientFlagFile = KotlinCompilerClient.getOrCreateClientFlagFile(daemonOptions)
             val sessionFlagFile = makeAutodeletingFlagFile("compiler-jps-session-", File(daemonOptions.runFilesPathOrDefault))
 
             environment.withProgressReporter { progress ->
                 progress.progress("connecting to daemon")
-                newDaemonConnection(compilerId, clientFlagFile, sessionFlagFile, environment, daemonOptions)
+                newDaemonConnection(compilerId, clientFlagFile, sessionFlagFile, environment, daemonOptions, additionalJvmParams.toTypedArray())
             }
         }
 }

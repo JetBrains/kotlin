@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.config;
 
 import org.jetbrains.annotations.TestOnly;
 
+import java.util.List;
+
 public class IncrementalCompilation {
     private static final String INCREMENTAL_COMPILATION_PROPERTY = "kotlin.incremental.compilation";
     private static final String INCREMENTAL_COMPILATION_JS_PROPERTY = "kotlin.incremental.compilation.js";
@@ -38,5 +40,14 @@ public class IncrementalCompilation {
     @TestOnly
     public static void setIsEnabledForJs(boolean value) {
         System.setProperty(INCREMENTAL_COMPILATION_JS_PROPERTY, String.valueOf(value));
+    }
+
+    public static void toJvmArgs(List<String> jvmArgs) {
+        if (isEnabled()) addJvmSystemFlag(jvmArgs, INCREMENTAL_COMPILATION_PROPERTY);
+        if (isEnabledForJs()) addJvmSystemFlag(jvmArgs, INCREMENTAL_COMPILATION_JS_PROPERTY);
+    }
+
+    private static void addJvmSystemFlag(List<String> jvmArgs, String name) {
+        jvmArgs.add("-D" + name + "=true");
     }
 }
