@@ -28,14 +28,6 @@ object LabeledBlockToDoWhileTransformation {
         }
     }
 
-    fun JsStatement.isLoop(): Boolean = when (this) {
-        is JsWhile,
-        is JsDoWhile,
-        is JsFor,
-        is JsForIn -> true
-        else -> false
-    }
-
     fun apply(root: JsNode) {
         object : JsVisitorWithContextImpl() {
             val loopStack = Stack<JsStatement>()
@@ -58,28 +50,18 @@ object LabeledBlockToDoWhileTransformation {
             }
 
             override fun visit(x: JsLabel, ctx: JsContext<JsNode>): Boolean {
-                if (x.statement.isLoop()) {
+                if (x.statement is JsLoop) {
                     loopLabels[x.statement] = x
                 }
                 return true
             }
 
-            override fun visit(x: JsWhile, ctx: JsContext<JsNode>) = visitLoop(x)
-            override fun visit(x: JsDoWhile, ctx: JsContext<JsNode>) = visitLoop(x)
-            override fun visit(x: JsFor, ctx: JsContext<JsNode>) = visitLoop(x)
-            override fun visit(x: JsForIn, ctx: JsContext<JsNode>) = visitLoop(x)
-
-            override fun endVisit(x: JsWhile, ctx: JsContext<JsNode>) = endVisitLoop(x, ctx)
-            override fun endVisit(x: JsDoWhile, ctx: JsContext<JsNode>) = endVisitLoop(x, ctx)
-            override fun endVisit(x: JsFor, ctx: JsContext<JsNode>) = endVisitLoop(x, ctx)
-            override fun endVisit(x: JsForIn, ctx: JsContext<JsNode>) = endVisitLoop(x, ctx)
-
-            private fun visitLoop(x: JsStatement): Boolean {
+            override fun visit(x: JsLoop, ctx: JsContext<JsNode>): Boolean {
                 loopStack.push(x)
                 return true
             }
 
-            private fun endVisitLoop(x: JsStatement, ctx: JsContext<JsNode>) {
+            override fun endVisit(x: JsLoop, ctx: JsContext<JsNode>) {
                 loopStack.pop()
                 if (loopsToLabel.contains(x)) {
                     // Reuse loop label if present. Otherwise create new label.
@@ -102,11 +84,8 @@ object LabeledBlockToDoWhileTransformation {
      */
     private fun labelLoopBreaksAndContinues(loop: JsStatement, fakeLoops: Set<JsDoWhile>, label: JsNameRef) {
         object : JsVisitorWithContextImpl() {
-            override fun visit(x: JsWhile, ctx: JsContext<JsNode>): Boolean = visitLoop(x)
-            override fun visit(x: JsDoWhile, ctx: JsContext<JsNode>): Boolean = visitLoop(x)
-            override fun visit(x: JsFor, ctx: JsContext<JsNode>): Boolean = visitLoop(x)
-            override fun visit(x: JsForIn, ctx: JsContext<JsNode>): Boolean = visitLoop(x)
-            private fun visitLoop(x: JsStatement): Boolean = fakeLoops.contains(x) || x === loop
+            override fun visit(x: JsLoop, ctx: JsContext<JsNode>): Boolean =
+                fakeLoops.contains(x) || x === loop
 
             override fun endVisit(x: JsBreak, ctx: JsContext<JsNode>) {
                 if (x.label == null)
