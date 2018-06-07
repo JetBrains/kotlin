@@ -156,6 +156,11 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
 
                 is PluginUpdateStatus.CheckFailed ->
                     form.setUpdateStatus("Update check failed: ${pluginUpdateStatus.message}", false)
+
+                is PluginUpdateStatus.Unverified -> {
+                    val version = pluginUpdateStatus.updateStatus.pluginDescriptor.version
+                    form.setUpdateStatus("A new version $version is found. ${pluginUpdateStatus.message}", false)
+                }
             }
 
             false  // do not auto-retry update check

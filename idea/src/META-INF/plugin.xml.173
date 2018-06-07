@@ -2944,6 +2944,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
   <extensionPoints>
     <xi:include href="extensions/compiler.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
+
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.pluginUpdateVerifier"
+                    interface="org.jetbrains.kotlin.idea.update.PluginUpdateVerifier"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
