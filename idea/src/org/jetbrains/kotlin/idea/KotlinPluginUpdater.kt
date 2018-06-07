@@ -27,6 +27,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.text.VersionComparatorUtil
+import org.jetbrains.kotlin.idea.update.PluginUpdateVerifier
+import org.jetbrains.kotlin.idea.update.verify
 import java.io.File
 import java.io.IOException
 import java.io.PrintWriter
@@ -46,6 +48,8 @@ sealed class PluginUpdateStatus {
 
     class CheckFailed(val message: String, val detail: String? = null) : PluginUpdateStatus()
 
+    class Unverified(val message: String, val updateStatus: Update) : PluginUpdateStatus()
+
     fun mergeWith(other: PluginUpdateStatus): PluginUpdateStatus {
         if (other is Update) {
             when (this) {
@@ -57,7 +61,7 @@ sealed class PluginUpdateStatus {
                         return other
                     }
                 }
-                is PluginUpdateStatus.CheckFailed -> {
+                is CheckFailed, is Unverified -> {
                     // proceed to return this
                 }
             }
@@ -150,9 +154,14 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         lastUpdateStatus = updateStatus
         checkQueued = false
 
+        if (updateStatus is PluginUpdateStatus.Update) {
+            updateStatus = verify(updateStatus)
+        }
+
         if (updateStatus !is PluginUpdateStatus.CheckFailed) {
             recordSuccessfulUpdateCheck()
         }
+
         ApplicationManager.getApplication().invokeLater({
                                                             callback(updateStatus)
                                                         }, ModalityState.any())
