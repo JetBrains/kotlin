@@ -65,7 +65,7 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
         else -> CallableBuilder.Target.READ_ONLY_PROPERTY
     }
     return CallableBuilder(builderTarget).apply {
-        val visibility = config.descriptor.visibility
+        val visibility = config.descriptor.visibility?.value ?: ""
         val extraModifiers = config.descriptor.modifiers.map { it.value }
         val modifiers = if (visibility.isNotEmpty()) listOf(visibility) + extraModifiers else extraModifiers
         modifier(modifiers.joinToString(separator = " "))

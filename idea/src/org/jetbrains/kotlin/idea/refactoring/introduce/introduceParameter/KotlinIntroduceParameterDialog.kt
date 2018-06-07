@@ -269,7 +269,7 @@ class KotlinIntroduceParameterDialog private constructor(
                             val newDescriptor = KotlinExtractFunctionDialog.createNewDescriptor(
                                     oldDescriptor,
                                     chosenName,
-                                    "",
+                                    null,
                                     parameterTablePanel?.selectedReceiverInfo,
                                     parameterTablePanel?.selectedParameterInfos ?: listOf(),
                                     null
