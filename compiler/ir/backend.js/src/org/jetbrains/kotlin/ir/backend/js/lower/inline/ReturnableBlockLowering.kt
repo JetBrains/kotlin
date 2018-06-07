@@ -65,22 +65,27 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
     private val returnMap = mutableMapOf<IrReturnableBlockSymbol, ReturnInfo>()
 
     val visitor = object : IrElementTransformerVoid() {
+
+        private fun IrReturn.patchReturnTo(info: ReturnInfo): IrExpression {
+            info.cnt++
+
+            // TODO IrComposite maybe?
+            val compoundBlock = IrBlockImpl(
+                startOffset,
+                endOffset,
+                context.builtIns.unitType
+            )
+
+            compoundBlock.statements += JsIrBuilder.buildSetVariable(info.resultVariable, value)
+            compoundBlock.statements += JsIrBuilder.buildBreak(context.builtIns.unitType, info.loop)
+
+            return compoundBlock
+        }
+
         override fun visitReturn(expression: IrReturn): IrExpression {
             expression.transformChildren(this, null)
             return returnMap[expression.returnTargetSymbol]?.let { info ->
-                info.cnt++
-
-                // TODO IrComposite maybe?
-                val compoundBlock = IrBlockImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    context.builtIns.unitType
-                )
-
-                compoundBlock.statements += JsIrBuilder.buildSetVariable(info.resultVariable, expression.value)
-                compoundBlock.statements += JsIrBuilder.buildBreak(context.builtIns.unitType, info.loop)
-
-                compoundBlock
+                expression.patchReturnTo(info)
             } ?: expression
         }
 
@@ -125,7 +130,8 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
                         val s = list[i]
                         list[i] =
                                 if (i == list.lastIndex && returnInfo.cnt == 0 && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
-                                    s.value.transform(this, null)
+                                    s.transformChildren(this, null)
+                                    if (returnInfo.cnt == 0) s.value else s.patchReturnTo(returnInfo)
                                 } else {
                                     s.transform(this, null)
                                 }
