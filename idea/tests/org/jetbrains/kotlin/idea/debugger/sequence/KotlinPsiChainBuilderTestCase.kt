@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.file.impl.FileManagerImpl
@@ -17,9 +16,11 @@ import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import java.io.File
 import java.nio.file.Paths
 import java.util.*
@@ -28,10 +29,11 @@ import java.util.*
  * @author Vitaliy.Bibaev
  */
 abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) : StreamChainBuilderTestCase() {
-  override fun getTestDataPath(): String = Paths.get(File("").absolutePath, "/testData/psi/$relativeTestPath/").toString()
+  override fun getTestDataPath(): String =
+    Paths.get(File("").absolutePath, "idea/testData/debugger/sequence/psi/$relativeTestPath/").toString()
   override fun getFileExtension(): String = ".kt"
   abstract val kotlinChainBuilder: StreamChainBuilder
-  override final fun getChainBuilder(): StreamChainBuilder = kotlinChainBuilder
+  override fun getChainBuilder(): StreamChainBuilder = kotlinChainBuilder
   private val stdLibName = "kotlin-stdlib"
 
   protected abstract fun doTest()
@@ -46,10 +48,8 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
     super.setUp()
     ApplicationManager.getApplication().runWriteAction {
       if (ProjectLibraryTable.getInstance(LightPlatformTestCase.getProject()).getLibraryByName(stdLibName) == null) {
-        VfsRootAccess.allowRootAccess(LibraryUtil.LIBRARIES_DIRECTORY)
-        PsiTestUtil.addLibrary(testRootDisposable, LightPlatformTestCase.getModule(), stdLibName,
-                               LibraryUtil.LIBRARIES_DIRECTORY, LibraryUtil.KOTLIN_STD_LIBRARY_JAR_NAME
-        )
+        val stdLibPath = ForTestCompileRuntime.runtimeJarForTests()
+        PsiTestUtil.addLibrary(testRootDisposable, LightPlatformTestCase.getModule(), stdLibName, stdLibPath.parent, stdLibPath.name)
       }
     }
     LibraryModificationTracker.getInstance(LightPlatformTestCase.getProject()).incModificationCount()
@@ -57,7 +57,7 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
 
 
   override fun getProjectJDK(): Sdk {
-    return JdkManager.mockJdk18
+    return PluginTestCaseBase.mockJdk9()
   }
 
   private fun doKotlinTearDown(project: Project, runnable: () -> Unit) {
