@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.psi.JavaTokenType
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKBodyStub
@@ -35,6 +37,13 @@ class NewCodeBuilder {
         JKClass.ClassKind.CLASS -> "class"
         JKClass.ClassKind.ENUM -> "enum class"
         JKClass.ClassKind.INTERFACE -> "interface"
+    }
+
+    private fun operatorString(operator: IElementType): String {
+        return when (operator) {
+            JavaTokenType.DIV -> "/"
+            else -> "TODO: $operator"
+        }
     }
 
     inner class Visitor : JKVisitorVoid {
@@ -111,7 +120,7 @@ class NewCodeBuilder {
         override fun visitBinaryExpression(binaryExpression: JKBinaryExpression) {
             binaryExpression.left.accept(this)
             printer.printWithNoIndent(" ")
-            printer.printWithNoIndent(binaryExpression.operator)
+            printer.printWithNoIndent(operatorString(binaryExpression.operator.token))
             printer.printWithNoIndent(" ")
             binaryExpression.right.accept(this)
         }
@@ -121,13 +130,13 @@ class NewCodeBuilder {
         }
 
         override fun visitPrefixExpression(prefixExpression: JKPrefixExpression) {
-            printer.printWithNoIndent(prefixExpression.operator)
+            printer.printWithNoIndent(operatorString(prefixExpression.operator.token))
             prefixExpression.expression.accept(this)
         }
 
         override fun visitPostfixExpression(postfixExpression: JKPostfixExpression) {
             postfixExpression.expression.accept(this)
-            printer.printWithNoIndent(postfixExpression.operator)
+            printer.printWithNoIndent(operatorString(postfixExpression.operator.token))
         }
 
         override fun visitQualifiedExpression(qualifiedExpression: JKQualifiedExpression) {

@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.impl.JKSymbol
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
-interface JKOperator
+interface JKOperator {
+    val token: IElementType
+}
 
 interface JKQualifier
 
