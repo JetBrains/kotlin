@@ -80,7 +80,7 @@ class NewCodeBuilder {
             builder.append(" ")
             printer.print(klass.name.value)
             if (klass.declarationList.isNotEmpty()) {
-                printer.println("{")
+                printer.println(" {")
                 printer.pushIndent()
                 klass.declarationList.forEach { it.accept(this) }
                 printer.popIndent()
@@ -109,7 +109,7 @@ class NewCodeBuilder {
             printer.print("fun ", ktFunction.name.value, "(", ")")
             ktFunction.returnType.accept(this)
             if (ktFunction.block !== JKBodyStub) {
-                printer.printlnWithNoIndent("{")
+                printer.printlnWithNoIndent(" {")
                 printer.pushIndent()
                 ktFunction.block.accept(this)
                 printer.popIndent()
