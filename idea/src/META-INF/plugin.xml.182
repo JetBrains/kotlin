@@ -2809,7 +2809,7 @@
                      displayName="Refactor Sealed Sub-class to Object"
                      groupPath="Kotlin"
                      groupName="Style issues"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="INFO"
                      language="kotlin"
     />
