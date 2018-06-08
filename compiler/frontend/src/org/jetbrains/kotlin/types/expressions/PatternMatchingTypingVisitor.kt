@@ -95,7 +95,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         protected abstract fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns): DataFlowValue
         abstract fun makeValueArgument(): ValueArgument?
         abstract val valueExpression: KtExpression?
-        open fun makeCalleeExpressionForSpecialCall(): KtExpression? = null
+        open fun getCalleeExpressionForSpecialCall(): KtExpression? = null
 
         lateinit var dataFlowValue: DataFlowValue; private set
 
@@ -146,8 +146,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                     )
                 }
 
-            override fun makeCalleeExpressionForSpecialCall(): KtExpression? =
-                KtPsiFactory(variable.project, true).createExpression(variable.name!!)
+            override fun getCalleeExpressionForSpecialCall(): KtExpression? =
+                variable
 
             override val valueExpression: KtExpression?
                 get() = variable.initializer
@@ -208,11 +208,6 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val contextWithExpectedTypeAndSubjectVariable =
             subject.scopeWithSubject?.let { contextWithExpectedType.replaceScope(it) } ?: contextWithExpectedType
 
-//        val subjectType = subjectTypeInfo?.type ?: ErrorUtils.createErrorType("Unknown type")
-//        val jumpOutPossibleInSubject: Boolean = subjectTypeInfo?.jumpOutPossible ?: false
-//        val subjectDataFlowValue = subjectExpression?.let {
-//            facade.components.dataFlowValueFactory.createDataFlowValue(it, subjectType, contextAfterSubject)
-//        } ?: DataFlowValue.nullValue(components.builtIns)
         subject.initDataFlowValue(contextAfterSubject, components.builtIns)
 
         val possibleTypesForSubject =
@@ -283,11 +278,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val scopeWithSubjectVariable =
             ExpressionTypingUtils.newWritableScopeImpl(contextBeforeSubject, LexicalScopeKind.WHEN, components.overloadChecker)
 
-        // Destructuring causes SOE in UAST :(
-        val resolveResult =
-            components.localVariableResolver.process(subjectVariable, contextBeforeSubject, contextBeforeSubject.scope, facade)
-        val typeInfo = resolveResult.first
-        val descriptor = resolveResult.second
+        val (typeInfo, descriptor) =
+                components.localVariableResolver.process(subjectVariable, contextBeforeSubject, contextBeforeSubject.scope, facade)
 
         scopeWithSubjectVariable.addVariableDescriptor(descriptor)
 
@@ -313,7 +305,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val wrappedArgumentExpressions = wrapWhenEntryExpressionsAsSpecialCallArguments(expression)
         val callForWhen = createCallForSpecialConstruction(
             expression,
-            subject.makeCalleeExpressionForSpecialCall() ?: expression,
+            subject.getCalleeExpressionForSpecialCall() ?: expression,
             wrappedArgumentExpressions
         )
         val dataFlowInfoForArguments = createDataFlowInfoForArgumentsOfWhenCall(

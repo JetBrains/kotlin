@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.checkers
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import junit.framework.TestCase
 import org.jetbrains.kotlin.analyzer.AnalysisResult
@@ -570,17 +571,26 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         if (ktFiles.any { file -> AnalyzingUtils.getSyntaxErrorRanges(file).isNotEmpty() }) return
 
         val resolvedCallsEntries = bindingContext.getSliceContents(BindingContext.RESOLVED_CALL)
+        val unresolvedCallsOnElements = ArrayList<PsiElement>()
+
         for ((call, resolvedCall) in resolvedCallsEntries) {
             val element = call.callElement
 
-            val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.containingFile, element.textRange)
-
             if (!configuredLanguageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
-                assertTrue(
-                    "Resolved call for '${element.text}'$lineAndColumn is not completed",
-                    (resolvedCall as MutableResolvedCall<*>).isCompleted
-                )
+                if (!(resolvedCall as MutableResolvedCall<*>).isCompleted) {
+                    unresolvedCallsOnElements.add(element)
+                }
             }
+        }
+
+        if (unresolvedCallsOnElements.isNotEmpty()) {
+            TestCase.fail(
+                "There are uncompleted resolved calls for the following elements:\n" +
+                        unresolvedCallsOnElements.joinToString(separator = "\n") { element ->
+                            val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.containingFile, element.textRange)
+                            "'${element.text}'$lineAndColumn"
+                        }
+            )
         }
 
         checkResolvedCallsInDiagnostics(bindingContext, configuredLanguageVersionSettings)

@@ -22475,6 +22475,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/invisibleOutsideOfWhen.kt");
                 }
 
+                @TestMetadata("nestedWhenWithSubject.kt")
+                public void testNestedWhenWithSubject() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/nestedWhenWithSubject.kt");
+                }
+
                 @TestMetadata("reassignmentToWhenSubjectVariable.kt")
                 public void testReassignmentToWhenSubjectVariable() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/reassignmentToWhenSubjectVariable.kt");
