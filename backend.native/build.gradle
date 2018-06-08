@@ -88,7 +88,7 @@ kotlinNativeInterop {
     llvm {
         dependsOn ":llvmDebugInfoC:debugInfoStaticLibrary"
         defFile 'llvm.def'
-	if (!project.parent.convention.plugins.platformInfo.isWindows())
+        if (!project.parent.convention.plugins.platformInfo.isWindows())
             compilerOpts "-fPIC"
         compilerOpts "-I$llvmDir/include", "-I${project(':llvmDebugInfoC').projectDir}/src/main/include"
         linkerOpts "-L$llvmDir/lib", "-L${project(':llvmDebugInfoC').buildDir}/libs/debugInfo/static"
@@ -98,7 +98,7 @@ kotlinNativeInterop {
         if (!project.parent.convention.plugins.platformInfo.isWindows()) {
             compilerOpts '-fPIC'
             linkerOpts '-fPIC'
-	}
+        }
         linker 'clang++'
         linkOutputs ":common:${hostName}Hash"
 
@@ -160,9 +160,14 @@ classes.dependsOn 'compilerClasses','cli_bcClasses','bc_frontendClasses'
 task stdlib(dependsOn: "${hostName}Stdlib")
 task start(dependsOn: "${hostName}Start")
 
-def commonSrc = zipTree(configurations.kotlin_common_stdlib_src.singleFile).matching {
-    include 'generated/**/*.kt'
-    include 'kotlin/**/*.kt'
+def commonSrc = file('build/stdlib')
+
+task unzipStdlibSources(type: Copy) {
+    from (zipTree(configurations.kotlin_common_stdlib_src.singleFile)) {
+        include 'generated/**/*.kt'
+        include 'kotlin/**/*.kt'
+    }
+    destinationDir commonSrc
 }
 
 // These files are built before the 'dist' is complete,
@@ -190,8 +195,7 @@ targetList.each { target ->
                 '-output', project(':runtime').file("build/${target}Stdlib"),
                 '-produce', 'library', '-module_name', 'stdlib',
                 '-Xmulti-platform', '-Xuse-experimental=kotlin.Experimental',
-                '--disable', 'devirtualization',
-                *commonSrc.files.toList(),
+                commonSrc.absolutePath,
                 project(':Interop:Runtime').file('src/main/kotlin'),
                 project(':Interop:Runtime').file('src/native/kotlin'),
                 project(':Interop:JsRuntime').file('src/main/kotlin'),
@@ -200,9 +204,10 @@ targetList.each { target ->
         inputs.dir(project(':Interop:Runtime').file('src/main/kotlin'))
         inputs.dir(project(':Interop:Runtime').file('src/native/kotlin'))
         inputs.dir(project(':Interop:JsRuntime').file('src/main/kotlin'))
-        inputs.files(commonSrc)
+        inputs.dir(commonSrc)
         outputs.dir(project(':runtime').file("build/${target}Stdlib"))
 
+        dependsOn 'unzipStdlibSources'
         dependsOn ":runtime:${target}Runtime"
     }
 
