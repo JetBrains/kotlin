@@ -43,7 +43,7 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
         contextElement ?: return null
         val newTarget = resolveFqName(fqName, contextElement) as? KtClassOrObject ?: return null
 
-        return JKClassTypeImpl(context.symbolProvider.provideSymbol(newTarget) as JKClassSymbol, parameters, nullability)
+        return JKClassTypeImpl(context.symbolProvider.provideDirectSymbol(newTarget) as JKClassSymbol, parameters, nullability)
     }
 
     private fun mapClassType(type: JKClassType, typeElement: JKTypeElement): JKTypeElement {

@@ -20,7 +20,7 @@ class AssignmentAsExpressionToAlsoConversion(val context: ConversionContext) : R
         //if (element.parent)
 
         val alsoElement = resolveFqName(ClassId.fromString("kotlin/also"), element, context) ?: return recurse(element)
-        val alsoSymbol = context.symbolProvider.provideSymbol(alsoElement) as? JKMethodSymbol ?: return recurse(element)
+        val alsoSymbol = context.symbolProvider.provideDirectSymbol(alsoElement) as? JKMethodSymbol ?: return recurse(element)
         element.invalidate()
 
         return JKQualifiedExpressionImpl(

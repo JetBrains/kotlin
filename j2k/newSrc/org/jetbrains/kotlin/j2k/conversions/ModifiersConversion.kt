@@ -12,11 +12,10 @@ class ModifiersConversion : RecursiveApplicableConversionBase() {
 
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         return if (element is JKModifierList) element.also {
-            var modifiers = it.modifiers
-            if (element.parent !is JKLocalVariable && !modifiers.filter { it is JKJavaAccessModifier }.any()) {
-                modifiers += JKKtModifierImpl(JKKtModifier.KtModifierType.INTERNAL)
+            if (element.parent !is JKLocalVariable && !it.modifiers.filter { it is JKJavaAccessModifier }.any()) {
+                it.modifiers += JKKtModifierImpl(JKKtModifier.KtModifierType.INTERNAL)
             }
-            it.modifiers = mapModifiers(modifiers)
+            it.modifiers = mapModifiers(it.modifiers)
         } else recurse(element)
     }
 
