@@ -21673,6 +21673,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/when/whenSubjectVariable/equalityWithSubjectVariable.kt");
             }
 
+            @TestMetadata("ieee754Equality.kt")
+            public void testIeee754Equality() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/ieee754Equality.kt");
+            }
+
+            @TestMetadata("ieee754EqualityWithSmartCast.kt")
+            public void testIeee754EqualityWithSmartCast() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/ieee754EqualityWithSmartCast.kt");
+            }
+
             @TestMetadata("isCheckOnSubjectVariable.kt")
             public void testIsCheckOnSubjectVariable() throws Exception {
                 runTest("compiler/testData/codegen/box/when/whenSubjectVariable/isCheckOnSubjectVariable.kt");
