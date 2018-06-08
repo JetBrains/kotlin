@@ -87,7 +87,7 @@ class NewCodeBuilder {
                 printer.print("var")
             }
 
-            printer.printWithNoIndent(" ", ktProperty.name.value, ": ")
+            printer.printWithNoIndent(" ", ktProperty.name.value)
             ktProperty.type.accept(this)
             if (ktProperty.initializer !is JKStubExpression) {
                 printer.printWithNoIndent(" = ")
@@ -110,7 +110,9 @@ class NewCodeBuilder {
 
         override fun visitBinaryExpression(binaryExpression: JKBinaryExpression) {
             binaryExpression.left.accept(this)
+            printer.printWithNoIndent(" ")
             printer.printWithNoIndent(binaryExpression.operator)
+            printer.printWithNoIndent(" ")
             binaryExpression.right.accept(this)
         }
 
@@ -155,17 +157,39 @@ class NewCodeBuilder {
             printer.printWithNoIndent(")")
         }
 
+        override fun visitDeclarationStatement(declarationStatement: JKDeclarationStatement) {
+            declarationStatement.declaredStatements.forEach {
+                it.accept(this)
+            }
+        }
+
+        override fun visitLocalVariable(localVariable: JKLocalVariable) {
+            if (localVariable.modifierList.modifiers.any { (it as? JKJavaModifier)?.type == JKJavaModifier.JavaModifierType.FINAL }) {
+                printer.print("val")
+            } else {
+                printer.print("var")
+            }
+
+            printer.printWithNoIndent(" ", localVariable.name.value)
+            localVariable.type.accept(this)
+            if (localVariable.initializer !is JKStubExpression) {
+                printer.printWithNoIndent(" = ")
+                localVariable.initializer.accept(this)
+            }
+            printer.printlnWithNoIndent()
+        }
+
         override fun visitTypeElement(typeElement: JKTypeElement) {
             val type = typeElement.type
             when (type) {
                 is JKClassType -> if ((type.classReference as? JKClassSymbol)?.fqName != "kotlin.Unit") {
                     (type.classReference as JKClassSymbol).fqName?.let { printer.printWithNoIndent(": " + FqName(it).shortName().asString()) }
                 }
-                else -> printer.printWithNoIndent("Unit /* TODO: ${type::class} */")
+                else -> printer.printWithNoIndent(":Unit /* TODO: ${type::class} */")
             }
             when (type.nullability) {
                 Nullability.Nullable -> printer.printWithNoIndent("?")
-                Nullability.Default -> printer.printWithNoIndent("? /* TODO: Default */")
+                Nullability.Default -> printer.printWithNoIndent("?")// /* TODO: Default */")
                 else -> {
                 }
             }
