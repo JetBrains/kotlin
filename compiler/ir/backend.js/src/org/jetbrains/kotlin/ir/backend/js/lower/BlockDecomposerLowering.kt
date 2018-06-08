@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -47,30 +48,29 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat {
             when (it) {
-                is IrFunction -> {
-                    lower(it)
-                }
-                is IrProperty -> {
-                    it.backingField?.initializer?.apply {
-                        val visitResult = accept(expressionVisitor, null)
-                        val self = this
-                        visitResult.applyIfChanged {
-                            expression = IrBlockImpl(self.startOffset, self.endOffset, resultValue.type).also {
-                                it.statements += statements
-                                it.statements += resultValue
-                            }
-                        }
-                    }
-                }
+                is IrFunction -> it.lower()
+                is IrProperty -> it.backingField?.lower()
+                is IrField -> it.lower()
             }
             listOf(it)
         }
     }
 
-    fun lower(irFunction: IrFunction) {
-        function = irFunction
+    fun IrFunction.lower() {
+        function = this
         tmpVarCounter = 0
-        irFunction.body?.accept(statementVisitor, null)
+        body?.accept(statementVisitor, null)
+    }
+
+    fun IrField.lower() = initializer?.apply {
+        val visitResult = expression.accept(expressionVisitor, null)
+        val self = this
+        visitResult.applyIfChanged {
+            expression = IrBlockImpl(self.startOffset, self.endOffset, resultValue.type).also {
+                it.statements += statements
+                it.statements += resultValue
+            }
+        }
     }
 
     enum class VisitStatus {
