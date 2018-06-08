@@ -2373,6 +2373,11 @@ task inline_returnLocalClassFromBlock(type: RunKonanTest) {
     source = "codegen/inline/returnLocalClassFromBlock.kt"
 }
 
+task inline_changingCapturedLocal(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/inline/changingCapturedLocal.kt"
+}
+
 task deserialized_inline0(type: RunKonanTest) {
     source = "serialization/deserialized_inline0.kt"
 }

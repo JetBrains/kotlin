@@ -275,6 +275,11 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
                 if (irCallableReference !is IrCallableReference) return false               // Second statement of the block must be CallableReference.
                 return true                                                                 // The expression represents lambda.
             }
+
+        val isImmutableVariableLoad: Boolean
+            get() = argumentExpression.let {
+                it is IrGetValue && !it.descriptor.let { it is VariableDescriptor && it.isVar }
+            }
     }
 
     //-------------------------------------------------------------------------//
@@ -366,8 +371,13 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         parameterToArgumentOld.forEach {
             val parameterDescriptor = it.parameterDescriptor
 
-            if (it.isInlinableLambda || it.argumentExpression is IrGetValue) {              // If argument is inlinable lambda. IrGetValue is skipped because of recursive inline.
-                substituteMap[parameterDescriptor] = it.argumentExpression                  // Associate parameter with lambda argument.
+            /*
+             * We need to create temporary variable for each argument except inlinable lambdas.
+             * For simplicity and to produce simpler IR we don't create temporaries for every immutable variable,
+             * not only for those referring to inlinable lambdas.
+             */
+            if (it.isInlinableLambda || it.isImmutableVariableLoad) {
+                substituteMap[parameterDescriptor] = it.argumentExpression
                 return@forEach
             }
 
