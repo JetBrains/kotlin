@@ -17,21 +17,21 @@ property를 테스트할 수 있습니다.
 
 또한 공유된 "Binary compatibility tests"를 사용하여 실행할 수 있습니다. 이것은 다른 결과를 덮어씌웁니다.
 
-## What constitutes the public API
+## 공용 API를 구성하는 요소
 
-### Classes
+### 클래스
 
-A class is considered to be effectively public if all of the following conditions are met:
+클래스는 다음 조건이 모두 충족되면 충분히 효과가 있다고 간주됩니다 :
 
- - it has public or protected JVM access (`ACC_PUBLIC` or `ACC_PROTECTED`)
- - it has one of the following visibilities in Kotlin:
-    - no visibility (means no Kotlin declaration corresponds to this compiled class)
+ - 공용 또는 보호된 JVM 접근을 가지고 있는가 (`ACC_PUBLIC` 또는 `ACC_PROTECTED`)
+ - 다음 중 하나의 Kotlin visibility를 가지고 있는가:
+    - visibility 없음 (이 컴파일된 클래스에 해당하는 Kotlin 선언이 없음을 의미합니다.)
     - *public*
     - *protected*
     - *internal*, only in case if the class is annotated with `InlineExposed`
- - it isn't a local class
- - it isn't a synthetic class with mappings for `when` tableswitches (`$WhenMappings`)
- - it contains at least one effectively public member, in case if the class corresponds
+ - local 클래스가 아니여야함
+ - `when` 테이블스위치가 매핑된 synthetic 클래스가 아니여야함(`$WhenMappings`)
+ - 적어도 하나의 공용 member를 포함하는가, 클래스가 해당하는 경우에만
    to a kotlin *file* with top-level members or a *multifile facade*
  - in case if the class is a member in another class, it is contained in the *effectively public* class
  - in case if the class is a protected member in another class, it is contained in the *non-final* class
@@ -46,7 +46,7 @@ if all of the following conditions are met:
     - no visibility (means no Kotlin declaration corresponds to this class member)
     - *public*
     - *protected*
-    - *internal*, only in case if the class is annotated with `InlineExposed`
+    - *internal*, 클래스에 `InlineExposed` 주석이 달린 경우에만
 
     > Note that Kotlin visibility of a field exposed by `lateinit` property is the visibility of it's setter.
  - in case if the member is protected, it is contained in *non-final* class
