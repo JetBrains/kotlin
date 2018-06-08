@@ -19543,5 +19543,38 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/when/stringOptimization/statement.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/when/whenSubjectVariable")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WhenSubjectVariable extends AbstractJsCodegenBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWhenSubjectVariable() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/when/whenSubjectVariable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("captureSubjectVariable.kt")
+            public void testCaptureSubjectVariable() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/captureSubjectVariable.kt");
+            }
+
+            @TestMetadata("equalityWithSubjectVariable.kt")
+            public void testEqualityWithSubjectVariable() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/equalityWithSubjectVariable.kt");
+            }
+
+            @TestMetadata("isCheckOnSubjectVariable.kt")
+            public void testIsCheckOnSubjectVariable() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/isCheckOnSubjectVariable.kt");
+            }
+
+            @TestMetadata("rangeCheckOnSubjectVariable.kt")
+            public void testRangeCheckOnSubjectVariable() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/rangeCheckOnSubjectVariable.kt");
+            }
+        }
     }
 }
