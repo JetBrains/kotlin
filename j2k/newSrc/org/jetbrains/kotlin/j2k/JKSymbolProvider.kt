@@ -19,7 +19,7 @@ class JKSymbolProvider {
         files.forEach { it.accept(elementVisitor) }
     }
 
-    fun provideSymbol(psi: PsiElement): JKSymbol {
+    fun provideDirectSymbol(psi: PsiElement): JKSymbol {
         return symbols.getOrPut(psi) {
             when (psi) {
                 is PsiClass -> JKMultiverseClassSymbol(psi)
@@ -29,6 +29,12 @@ class JKSymbolProvider {
                 else -> TODO()
             }
         }
+    }
+
+    fun provideSymbol(reference: PsiReference): JKSymbol {
+        val target = reference.resolve()
+        if (target != null) return provideDirectSymbol(target)
+        TODO()
     }
 
     fun provideLocalVarSymbol(psi: PsiLocalVariable, variable: JKLocalVariable): JKSymbol {

@@ -17,7 +17,7 @@ abstract class MatchBasedConversion : BaseConversion() {
                 val child = iter.next()
 
                 if (child is List<*>) {
-                    applyRecursiveToList(element, child as List<JKTreeElement>, iter, func)
+                    iter.set(applyRecursiveToList(element, child as List<JKTreeElement>, iter, func))
                 } else if (child is JKTreeElement) {
                     val newChild = func(child)
                     if (child !== newChild) {
@@ -39,7 +39,7 @@ abstract class MatchBasedConversion : BaseConversion() {
         child: List<JKTreeElement>,
         iter: MutableListIterator<Any>,
         func: (JKTreeElement) -> JKTreeElement
-    ) {
+    ): List<JKTreeElement> {
 
         val newChild = child.map {
             func(it)
@@ -53,6 +53,7 @@ abstract class MatchBasedConversion : BaseConversion() {
                 onElementChanged(new, old)
             }
         }
+        return newChild
     }
 
 
