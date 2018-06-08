@@ -300,9 +300,9 @@ internal val ClassDescriptor.objectInstanceShadowFieldSymbolName: String
 internal val ClassDescriptor.typeInfoHasVtableAttached: Boolean
     get() = !this.isAbstract() && !this.isExternalObjCClass()
 
-internal fun ModuleDescriptor.privateFunctionSymbolName(index: Int) = "private_functions_${name.asString()}_$index"
+internal fun ModuleDescriptor.privateFunctionSymbolName(index: Int, functionName: String?) = "private_functions_${name.asString()}_${functionName}_$index"
 
-internal fun ModuleDescriptor.privateClassSymbolName(index: Int) = "private_classes_${name.asString()}_$index"
+internal fun ModuleDescriptor.privateClassSymbolName(index: Int, className: String?) = "private_classes_${name.asString()}_${className}_$index"
 
 internal val String.moduleConstructorName
     get() = "_Konan_init_${this}"

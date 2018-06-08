@@ -1191,7 +1191,8 @@ internal object Devirtualization {
                                         classType        = receiver.type,
                                         moduleDescriptor = actualReceiverType.module!!.descriptor,
                                         totalClasses     = actualReceiverType.module.numberOfClasses,
-                                        classIndex       = actualReceiverType.symbolTableIndex)
+                                        classIndex       = actualReceiverType.symbolTableIndex,
+                                        dfgSymbol        = actualReceiverType)
                                 val condition =
                                         if (optimize && index == possibleCallees.size - 1)
                                             irTrue() // Don't check last type in optimize mode.

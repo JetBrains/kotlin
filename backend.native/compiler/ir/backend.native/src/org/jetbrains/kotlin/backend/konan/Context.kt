@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -279,8 +280,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     var phase: KonanPhase? = null
     var depth: Int = 0
 
-    lateinit var privateFunctions: List<IrFunction>
-    lateinit var privateClasses: List<IrClass>
+    lateinit var privateFunctions: List<Pair<IrFunction, DataFlowIR.FunctionSymbol.Declared>>
+    lateinit var privateClasses: List<Pair<IrClass, DataFlowIR.Type.Declared>>
 
     // Cache used for source offset->(line,column) mapping.
     val fileEntryCache = mutableMapOf<String, SourceManager.FileEntry>()

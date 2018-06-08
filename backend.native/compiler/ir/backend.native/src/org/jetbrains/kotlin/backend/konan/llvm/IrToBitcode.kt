@@ -94,12 +94,12 @@ internal fun emitLLVM(context: Context) {
 
         val privateFunctions = moduleDFG!!.symbolTable.getPrivateFunctionsTableForExport()
         privateFunctions.forEachIndexed { index, it ->
-            val function = codegenVisitor.codegen.llvmFunction(it)
+            val function = codegenVisitor.codegen.llvmFunction(it.first)
             LLVMAddAlias(
                     context.llvmModule,
                     function.type,
                     function,
-                    irModule.descriptor.privateFunctionSymbolName(index)
+                    irModule.descriptor.privateFunctionSymbolName(index, it.second.name)
             )!!
         }
         context.privateFunctions = privateFunctions
@@ -107,12 +107,12 @@ internal fun emitLLVM(context: Context) {
         val privateClasses = moduleDFG!!.symbolTable.getPrivateClassesTableForExport()
 
         privateClasses.forEachIndexed { index, it ->
-            val typeInfoPtr = codegenVisitor.codegen.typeInfoValue(it)
+            val typeInfoPtr = codegenVisitor.codegen.typeInfoValue(it.first)
             LLVMAddAlias(
                     context.llvmModule,
                     typeInfoPtr.type,
                     typeInfoPtr,
-                    irModule.descriptor.privateClassSymbolName(index)
+                    irModule.descriptor.privateClassSymbolName(index, it.second.name)
             )!!
         }
         context.privateClasses = privateClasses
@@ -2019,10 +2019,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val dfgSymbol = callee.dfgSymbol
         val functionIndex = callee.functionIndex
         val function = if (callee.moduleDescriptor == context.irModule!!.descriptor) {
-            codegen.llvmFunction(context.privateFunctions[functionIndex])
+            codegen.llvmFunction(context.privateFunctions[functionIndex].first)
         } else {
             context.llvm.externalFunction(
-                    callee.moduleDescriptor.privateFunctionSymbolName(functionIndex),
+                    callee.moduleDescriptor.privateFunctionSymbolName(functionIndex, callee.dfgSymbol.name),
                     codegen.getLlvmFunctionType(dfgSymbol),
                     callee.moduleDescriptor.llvmSymbolOrigin
 
@@ -2036,10 +2036,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun evaluatePrivateClassReference(classReference: IrPrivateClassReference): LLVMValueRef {
         val classIndex = classReference.classIndex
         val typeInfoPtr = if (classReference.moduleDescriptor == context.irModule!!.descriptor) {
-            codegen.typeInfoValue(context.privateClasses[classIndex])
+            codegen.typeInfoValue(context.privateClasses[classIndex].first)
         } else {
             codegen.importGlobal(
-                    classReference.moduleDescriptor.privateClassSymbolName(classIndex),
+                    classReference.moduleDescriptor.privateClassSymbolName(classIndex, classReference.dfgSymbol.name),
                     codegen.kTypeInfo,
                     classReference.moduleDescriptor.llvmSymbolOrigin
             )

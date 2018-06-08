@@ -230,6 +230,7 @@ internal interface IrPrivateClassReference : IrClassReference {
     val moduleDescriptor: ModuleDescriptor
     val totalClasses: Int
     val classIndex: Int
+    val dfgSymbol: DataFlowIR.Type.Declared
 }
 
 internal class IrPrivateClassReferenceImpl(startOffset: Int,
@@ -239,7 +240,8 @@ internal class IrPrivateClassReferenceImpl(startOffset: Int,
                                            override val classType: KotlinType,
                                            override val moduleDescriptor: ModuleDescriptor,
                                            override val totalClasses: Int,
-                                           override val classIndex: Int
+                                           override val classIndex: Int,
+                                           override val dfgSymbol: DataFlowIR.Type.Declared
 ) : IrPrivateClassReference,
         IrTerminalDeclarationReferenceBase<IrClassifierSymbol, ClassifierDescriptor>(
                 startOffset, endOffset, type,
