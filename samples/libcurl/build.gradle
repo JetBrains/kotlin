@@ -19,6 +19,13 @@ konanArtifacts {
 apply plugin: 'maven-publish'
 def localMavenRepo="file://${new File(System.properties['user.home'] as String)}/.m2-kotlin-native"
 publishing {
+    publications{
+        libcurl(MavenPublication){
+            artifact sourceJar{
+                classifier "source"
+            }
+        }
+    }
     repositories {
         maven {
             url = localMavenRepo
@@ -26,3 +33,6 @@ publishing {
     }
 }
 
+task sourceJar(type: Jar) {
+    from project.files('src/main')
+}
