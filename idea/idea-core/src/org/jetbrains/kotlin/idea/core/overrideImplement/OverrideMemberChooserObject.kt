@@ -162,6 +162,7 @@ private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
     annotationFilter = {
         it.type.constructor.declarationDescriptor?.annotations?.hasAnnotation(ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAME) ?: false
     }
+    presentableUnresolvedTypes = true
 }
 
 private fun PropertyDescriptor.wrap(): PropertyDescriptor {

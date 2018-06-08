@@ -289,4 +289,8 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
         configureLanguageAndApiVersion(project, module, "1.3", "1.3")
         doOverrideFileTest("targetFun")
     }
+
+    fun testUnresolvedType() {
+        doOverrideFileTest()
+    }
 }
