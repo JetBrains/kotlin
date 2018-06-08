@@ -370,11 +370,23 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
 
         private fun StringBuilder.renderDefinition(descriptor: DeclarationDescriptor, renderer: DescriptorRenderer) {
-            val containingDeclaration = descriptor.containingDeclaration
-            if (containingDeclaration != null) {
-                val fqName = containingDeclaration.fqNameSafe
-                if (!fqName.isRoot) {
-                    DocumentationManagerUtil.createHyperlink(this, fqName.asString(), fqName.asString(), false)
+            if (!DescriptorUtils.isLocal(descriptor)) {
+                val containingDeclaration = descriptor.containingDeclaration
+                if (containingDeclaration != null) {
+                    val fqName = containingDeclaration.fqNameSafe
+                    if (!fqName.isRoot) {
+                        DocumentationManagerUtil.createHyperlink(this, fqName.asString(), fqName.asString(), false)
+                    }
+                    if (containingDeclaration is PackageFragmentDescriptor && descriptor is DeclarationDescriptorWithSource) {
+                        if (!fqName.isRoot) {
+                            append(" ")
+                        }
+                        append("(")
+                        append(descriptor.source.containingFile.name)
+                        append(")")
+                    }
+
+                    append("<br>")
                 }
             }
 
