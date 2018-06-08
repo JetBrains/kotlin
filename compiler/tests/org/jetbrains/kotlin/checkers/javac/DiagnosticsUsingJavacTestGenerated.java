@@ -22470,14 +22470,29 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/when/withSubjectVariable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("capturingInInitializer.kt")
+                public void testCapturingInInitializer() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/capturingInInitializer.kt");
+                }
+
                 @TestMetadata("invisibleOutsideOfWhen.kt")
                 public void testInvisibleOutsideOfWhen() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/invisibleOutsideOfWhen.kt");
                 }
 
+                @TestMetadata("jumpoutInInitializer.kt")
+                public void testJumpoutInInitializer() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/jumpoutInInitializer.kt");
+                }
+
                 @TestMetadata("nestedWhenWithSubject.kt")
                 public void testNestedWhenWithSubject() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/nestedWhenWithSubject.kt");
+                }
+
+                @TestMetadata("noSubjectVariableName.kt")
+                public void testNoSubjectVariableName() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/noSubjectVariableName.kt");
                 }
 
                 @TestMetadata("reassignmentToWhenSubjectVariable.kt")
@@ -22498,6 +22513,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("smartCastsOnSubjectVariable.kt")
                 public void testSmartCastsOnSubjectVariable() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/smartCastsOnSubjectVariable.kt");
+                }
+
+                @TestMetadata("smartcastToEnum.kt")
+                public void testSmartcastToEnum() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/when/withSubjectVariable/smartcastToEnum.kt");
                 }
 
                 @TestMetadata("subjectVariableInIsPattern.kt")
