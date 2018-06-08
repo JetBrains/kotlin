@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+import org.jetbrains.kotlin.lexer.KtTokens
 
 class JKKtPropertyImpl(
     modifierList: JKModifierList,
@@ -79,11 +81,11 @@ class JKKtLiteralExpressionImpl(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtLiteralExpression(this, data)
 }
 
-sealed class JKKtOperatorImpl : JKOperator, JKElementBase() {
-    object PLUS : JKKtOperatorImpl()
-    object MINUS : JKKtOperatorImpl()
-    object EQEQ : JKKtOperatorImpl()
-    object NE : JKKtOperatorImpl()
+sealed class JKKtOperatorImpl(override val token: IElementType) : JKOperator, JKElementBase() {
+    object PLUS : JKKtOperatorImpl(KtTokens.PLUS)
+    object MINUS : JKKtOperatorImpl(KtTokens.MINUS)
+    object EQEQ : JKKtOperatorImpl(KtTokens.EQEQ)
+    object NE : JKKtOperatorImpl(KtTokens.NOT_IS)
 }
 
 class JKKtModifierImpl(override val type: JKKtModifier.KtModifierType) : JKKtModifier, JKElementBase() {
