@@ -26,11 +26,9 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isPrimaryConstructorOfInlineClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility
@@ -137,9 +135,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             if (compatibility.allStrongIncompatibilities()) return
 
             if (Compatible in compatibility) {
-                // we suppress error, because annotation classes can only have one constructor and it's a 100% boilerplate
-                // to require every annotation constructor with additional parameters with default values be marked with the `actual` modifier
-                if (checkActual && !descriptor.isAnnotationConstructor()) {
+                if (checkActual && requireActualModifier(descriptor, trace)) {
                     trace.report(Errors.ACTUAL_MISSING.on(reportOn))
                 }
 
@@ -202,6 +198,22 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                 }
             }
         }
+    }
+
+    // we don't require `actual` modifier on
+    //  - annotation constructors, because annotation classes can only have one constructor
+    //  - inline class primary constructors, because inline class must have primary constructor
+    //  - value parameter inside primary constructor of inline class, because inline class must have one value parameter
+    private fun requireActualModifier(descriptor: MemberDescriptor, trace: BindingTrace): Boolean {
+        return !descriptor.isAnnotationConstructor() &&
+                !descriptor.isPrimaryConstructorOfInlineClass() &&
+                !isMainPropertyOfInlineClass(descriptor, trace)
+    }
+
+    private fun isMainPropertyOfInlineClass(descriptor: MemberDescriptor, trace: BindingTrace): Boolean {
+        if (descriptor !is PropertyDescriptor) return false
+        if (!descriptor.containingDeclaration.isInlineClass()) return false
+        return trace.bindingContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor] == true
     }
 
     // This should ideally be handled by CallableMemberDescriptor.Kind, but default constructors have kind DECLARATION and non-empty source.
