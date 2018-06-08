@@ -29,6 +29,7 @@ object ConversionsRunner {
             AssignmentAsExpressionToAlsoConversion(context).runConversion(it, context)
             JavaMethodToKotlinFunctionConversion().runConversion(it, context)
             LiteralConversion().runConversion(it, context)
+            ModifiersConversion().runConversion(it, context)
         }
     }
 
