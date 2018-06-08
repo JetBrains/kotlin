@@ -87,7 +87,7 @@ fun JsIrBackendContext.lower(file: IrFile) {
     DefaultArgumentStubGenerator(this).runOnFilePostfix(file)
     SharedVariablesLowering(this).runOnFilePostfix(file)
     // TODO: fails on SharedVariable lowering. Why?
-    ReturnableBlockLowering(this).runOnFilePostfix(file)
+    ReturnableBlockLowering(this).lower(file)
     LocalDeclarationsLowering(this).runOnFilePostfix(file)
     InnerClassesLowering(this).runOnFilePostfix(file)
     InnerClassConstructorCallsLowering(this).runOnFilePostfix(file)

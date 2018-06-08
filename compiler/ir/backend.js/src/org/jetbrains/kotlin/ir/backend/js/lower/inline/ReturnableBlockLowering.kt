@@ -5,48 +5,26 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
-import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.symbols.JsSymbolBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 // Gets rid of IrReturnableBlock
 // Returnable block -> loop
-class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationContainerLoweringPass {
-    override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-        irDeclarationContainer.declarations.transform { memberDeclaration ->
-            when (memberDeclaration) {
-                is IrFunction -> memberDeclaration.lower()
-                is IrProperty -> memberDeclaration.lower()
-                else -> memberDeclaration
-            }
-        }
-    }
+class ReturnableBlockLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
-    fun IrFunction.lower(): IrFunction {
-        containingDeclaration = this
-        body?.accept(visitor, null)
-        return this
+    override fun lower(irFile: IrFile) {
+        irFile.transform(visitor, null)
     }
-
-    fun IrProperty.lower(): IrProperty {
-        backingField?.let {
-            containingDeclaration = it
-            it.initializer?.accept(visitor, null)
-        }
-        return this
-    }
-
 
     private var containingDeclaration: IrSymbolOwner? = null
 
@@ -87,6 +65,15 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : DeclarationCont
             return returnMap[expression.returnTargetSymbol]?.let { info ->
                 expression.patchReturnTo(info)
             } ?: expression
+        }
+
+
+
+        override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+            if (declaration is IrSymbolOwner) {
+                containingDeclaration = declaration
+            }
+            return super.visitDeclaration(declaration)
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
