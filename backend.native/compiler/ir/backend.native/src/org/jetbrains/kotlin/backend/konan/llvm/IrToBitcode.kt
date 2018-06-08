@@ -706,7 +706,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     override fun visitClass(declaration: IrClass) {
         context.log{"visitClass                     : ${ir2string(declaration)}"}
         if (declaration.descriptor.kind == ClassKind.ANNOTATION_CLASS) {
-            // do not generate any code for annotation classes as a workaround for NotImplementedError
+            // For annotation classes generate only nested classes.
+            declaration.declarations
+                    .filterIsInstance<IrClass>()
+                    .forEach { it.acceptVoid(this) }
             return
         }
         using(ClassScope(declaration)) {
