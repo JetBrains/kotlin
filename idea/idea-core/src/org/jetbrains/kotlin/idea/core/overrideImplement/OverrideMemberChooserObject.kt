@@ -24,6 +24,7 @@ import com.intellij.psi.PsiDocCommentOwner
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.TemplateKind
 import org.jetbrains.kotlin.idea.core.getFunctionBodyTextFromTemplate
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.idea.j2k.IdeaDocCommentConverter
 import org.jetbrains.kotlin.idea.kdoc.KDocElementFactory
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
+import org.jetbrains.kotlin.idea.util.expectedDescriptors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
+import org.jetbrains.kotlin.util.findCallableMemberBySignature
 
 interface OverrideMemberChooserObject : ClassMember {
     sealed class BodyType {
@@ -118,7 +121,12 @@ fun OverrideMemberChooserObject.generateMember(targetClass: KtClassOrObject, cop
         else -> error("Unknown member to override: $descriptor")
     }
 
-    if (!targetClass.hasActualModifier()) {
+    if (targetClass.hasActualModifier()) {
+        val expectClassDescriptors = targetClass.resolveToDescriptorIfAny()?.expectedDescriptors() ?: emptyList()
+        if (expectClassDescriptors.any { (it as? ClassDescriptor)?.findCallableMemberBySignature(immediateSuper)?.isExpect == true }) {
+            newMember.addModifier(KtTokens.ACTUAL_KEYWORD)
+        }
+    } else {
         newMember.removeModifier(KtTokens.IMPL_KEYWORD)
         newMember.removeModifier(KtTokens.ACTUAL_KEYWORD)
     }
