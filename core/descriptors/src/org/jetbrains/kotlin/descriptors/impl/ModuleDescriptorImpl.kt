@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.utils.sure
 import java.lang.IllegalArgumentException
 
 class ModuleDescriptorImpl @JvmOverloads constructor(
-        moduleName: Name,
-        private val storageManager: StorageManager,
-        override val builtIns: KotlinBuiltIns,
-        // May be null in compiler context, should be not-null in IDE context
-        multiTargetPlatform: MultiTargetPlatform? = null,
-        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
+    moduleName: Name,
+    private val storageManager: StorageManager,
+    override val builtIns: KotlinBuiltIns,
+    // May be null in compiler context, should be not-null in IDE context
+    multiTargetPlatform: MultiTargetPlatform? = null,
+    capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
     init {
         if (!moduleName.isSpecial) {
@@ -56,12 +56,13 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         }
     }
 
-    private val packages = storageManager.createMemoizedFunction<FqName, PackageViewDescriptor> {
-        fqName: FqName -> LazyPackageViewDescriptorImpl(this, fqName, storageManager)
+    private val packages = storageManager.createMemoizedFunction<FqName, PackageViewDescriptor> { fqName: FqName ->
+        LazyPackageViewDescriptorImpl(this, fqName, storageManager)
     }
 
     @Deprecated("This method is not going to be supported. Please do not use it")
-    val testOnly_AllDependentModules: List<ModuleDescriptorImpl> get() = this.dependencies!!.allDependencies
+    val testOnly_AllDependentModules: List<ModuleDescriptorImpl>
+        get() = this.dependencies!!.allDependencies
 
     override val allDependencyModules: List<ModuleDescriptor>
         get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allDependencies.filter { it != this }
@@ -83,8 +84,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         val moduleDependencies = dependencies.sure { "Dependencies of module $id were not set before querying module content" }
         val dependenciesDescriptors = moduleDependencies.allDependencies
         assert(this in dependenciesDescriptors) { "Module $id is not contained in his own dependencies, this is probably a misconfiguration" }
-        dependenciesDescriptors.forEach {
-            dependency ->
+        dependenciesDescriptors.forEach { dependency ->
             assert(dependency.isInitialized) {
                 "Dependency module ${dependency.id} was not initialized by the time contents of dependent module ${this.id} were queried"
             }
