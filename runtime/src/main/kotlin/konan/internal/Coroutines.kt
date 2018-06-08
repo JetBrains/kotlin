@@ -19,6 +19,16 @@ package konan.internal
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
+@kotlin.internal.InlineOnly
+@PublishedApi
+internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+        returnIfSuspended<T>(block(getContinuation<T>()))
+
+@kotlin.internal.InlineOnly
+@PublishedApi
+internal inline fun <T> Continuation<T>.intercepted(): Continuation<T> =
+        normalizeContinuation<T>(this)
+
 @Intrinsic
 @PublishedApi
 internal external fun <T> getContinuation(): Continuation<T>

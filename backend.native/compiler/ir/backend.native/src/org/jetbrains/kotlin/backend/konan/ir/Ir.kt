@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
+import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
+import org.jetbrains.kotlin.backend.common.INTERCEPTED_NAME
+import org.jetbrains.kotlin.backend.common.SUSPEND_COROUTINE_UNINTERCEPTED_OR_RETURN_NAME
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
@@ -27,6 +30,8 @@ import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.*
@@ -277,11 +282,20 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val getContinuation = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("getContinuation").single())
 
+    val intercepted = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("intercepted").single())
+
+    val suspendCoroutineUninterceptedOrReturn = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("suspendCoroutineUninterceptedOrReturn").single())
+
+    private val coroutinesPackage = context.builtIns.builtInsModule.getPackage(
+        context.config.configuration.languageVersionSettings.coroutinesIntrinsicsPackageFqName()).memberScope
+
     override val coroutineImpl = symbolTable.referenceClass(context.getInternalClass("CoroutineImpl"))
 
     override val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
-            builtInsPackage("kotlin", "coroutines", "experimental", "intrinsics")
-                    .getContributedVariables(Name.identifier("COROUTINE_SUSPENDED"), NoLookupLocation.FROM_BACKEND)
+            coroutinesPackage
+                    .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND)
                     .single().getter!!
     )
 
