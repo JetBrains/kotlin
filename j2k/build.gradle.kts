@@ -72,7 +72,7 @@ val cleanTestForWebDemo by tasks
 val test: Test by tasks
 test.apply {
     exclude("**/*JavaToKotlinConverterForWebDemoTestGenerated*")
-    dependsOn(testForWebDemo)
+    //dependsOn(testForWebDemo)
 }
 val cleanTest by tasks
 cleanTest.dependsOn(cleanTestForWebDemo)
