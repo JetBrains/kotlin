@@ -171,7 +171,7 @@ open class KotlinOnlySourceSet(
 
     override val jarTaskName: String get() = composeName(suffix = "jar")
 
-    override val processResourcesTaskName: String get() = kotlinPlatformExtension.processResourcesTaskName
+    override val processResourcesTaskName: String get() = composeName(kotlinPlatformExtension.processResourcesTaskName)
 
     override val compileKotlinTaskName: String get() = composeName("compile", kotlinPlatformExtension.platformName)
 

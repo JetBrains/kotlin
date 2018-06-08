@@ -23,7 +23,6 @@ import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.ReportingBasePlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -31,6 +30,7 @@ import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinOnlyPlatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.PlatformConfigurationUsage
@@ -130,8 +130,7 @@ open class KotlinOnlyPlatformConfigurator(
     private fun createLifecycleTask(sourceSet: KotlinBaseSourceSet, target: Project) {
         sourceSet.compiledBy(sourceSet.classesTaskName)
 
-        //TODO replace maybeCreate with create
-        target.tasks.maybeCreate(sourceSet.classesTaskName).apply {
+        target.tasks.create(sourceSet.classesTaskName).apply {
             group = LifecycleBasePlugin.BUILD_GROUP
             description = "Assembles " + sourceSet.output + "."
             dependsOn(
@@ -256,14 +255,14 @@ open class KotlinOnlyPlatformConfigurator(
 
 
     private fun configureBuild(project: Project, platformExtension: KotlinOnlyPlatformExtension) {
-        project.tasks.maybeCreate(JavaBasePlugin.BUILD_NEEDED_TASK_NAME, DefaultTask::class.java).apply {
+        project.tasks.maybeCreate(buildNeededTaskName, DefaultTask::class.java).apply {
             description = "Assembles and tests this project and all projects it depends on."
             group = "build"
             dependsOn("build")
             addDependsOnTaskInOtherProjects(this@apply, true, name, platformExtension.testRuntimeConfigurationName)
         }
 
-        project.tasks.maybeCreate("buildDependents", DefaultTask::class.java).apply {
+        project.tasks.maybeCreate(buildDependentTaskName, DefaultTask::class.java).apply {
             setDescription("Assembles and tests this project and all projects that depend on it.")
             setGroup("build")
             dependsOn("build")
@@ -297,6 +296,9 @@ open class KotlinOnlyPlatformConfigurator(
         const val mainSourceSetName = "main"
         const val testSourceSetName = "test"
 
+        const val buildNeededTaskName = "buildAllNeeded"
+        const val buildDependentTaskName = "buildAllDependents"
+
         // We need both to be able to seamlessly use a single implementation for a certain platform as a dependency in a module which
         // has more than one implmentation for the same platform
         val kotlinPlatformTypeAttribute = Attribute.of("org.jetbrains.kotlin.platform.type", KotlinPlatformType::class.java)
@@ -304,9 +306,11 @@ open class KotlinOnlyPlatformConfigurator(
     }
 }
 
-internal fun Configuration.usesPlatformOf(extension: KotlinOnlyPlatformExtension): Configuration {
-    extension.userDefinedPlatformId?.let {
-        attributes.attribute(KotlinOnlyPlatformConfigurator.kotlinPlatformIdentifierAttribute, it)
+internal fun Configuration.usesPlatformOf(extension: KotlinPlatformExtension): Configuration {
+    if (extension is KotlinOnlyPlatformExtension) {
+        extension.userDefinedPlatformId?.let {
+            attributes.attribute(KotlinOnlyPlatformConfigurator.kotlinPlatformIdentifierAttribute, it)
+        }
     }
     attributes.attribute(KotlinOnlyPlatformConfigurator.kotlinPlatformTypeAttribute, extension.platformType)
     return this

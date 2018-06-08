@@ -28,7 +28,7 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension() {
         get() = getOrCreatePlatformExtension("common") { projectConfigurator.createCommonExtension() }
 
     fun common(configure: KotlinOnlyPlatformExtension.() -> Unit) {
-        common.apply { configure() }
+        common.apply(configure)
     }
 
     fun common(configure: Closure<*>) = common { executeClosure(configure) }
@@ -37,16 +37,25 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension() {
         get() = getOrCreatePlatformExtension("jvm") { projectConfigurator.createJvmExtension() }
 
     fun jvm(configure: KotlinMppPlatformExtension.() -> Unit) {
-        jvm.apply { configure() }
+        jvm.apply(configure)
     }
 
     fun jvm(configure: Closure<*>) = jvm { executeClosure(configure) }
+
+    val jvmWithJava: KotlinWithJavaPlatformExtension
+        get() = getOrCreatePlatformExtension("jvmWithJava") { projectConfigurator.createJvmWithJavaExtension() }
+
+    fun jvmWithJava(configure: KotlinWithJavaPlatformExtension.() -> Unit) {
+        jvmWithJava.apply(configure)
+    }
+
+    fun jvmWithJava(configure: Closure<*>) = jvmWithJava { executeClosure(configure) }
 
     val js: KotlinMppPlatformExtension
         get() = getOrCreatePlatformExtension("js") { projectConfigurator.createJsPlatformExtension() }
 
     fun js(configure: KotlinMppPlatformExtension.() -> Unit) {
-        js.apply { configure() }
+        js.apply(configure)
     }
 
     fun js(configure: Closure<*>) = js { executeClosure(configure) }

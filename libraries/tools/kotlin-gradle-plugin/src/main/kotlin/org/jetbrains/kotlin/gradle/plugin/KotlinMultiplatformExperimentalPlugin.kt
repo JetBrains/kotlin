@@ -8,21 +8,20 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Named
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.attributes.*
-import org.gradle.api.internal.attributes.CompatibilityRule
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.tasks.TaskResolver
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.base.*
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinOnlySourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinOnlySourceSetContainer
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetContainer
+import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCommonTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -100,6 +99,54 @@ internal class KotlinMultiplatformProjectConfigurator(
         }
 
         return extension
+    }
+
+    fun createJvmWithJavaExtension(): KotlinWithJavaPlatformExtension {
+        project.plugins.apply(JavaPlugin::class.java)
+        project.createKaptExtension()
+
+        val sourceSets = KotlinJavaSourceSetContainer(instantiator, project, fileResolver)
+        val platformClassifier = "jvmWithJava"
+
+        val extension = objectFactory.newInstance(KotlinWithJavaPlatformExtension::class.java).apply {
+            val multiplatformExtension = project.multiplatformExtension
+            (multiplatformExtension as ExtensionAware).extensions.add(platformClassifier, this@apply)
+            registerKotlinSourceSetsIfAbsent(sourceSets, this@apply)
+            platformName = "kotlin" + platformClassifier.capitalize()
+        }
+
+        project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.all { javaSourceSet ->
+            extension.sourceSets.maybeCreate(javaSourceSet.name)
+        }
+
+        val tasksProvider = KotlinTasksProvider()
+
+        configureSourceSetDefaults(extension) { sourceSet: KotlinJavaSourceSet ->
+            Kotlin2JvmSourceSetProcessor(
+                project, sourceSet, tasksProvider, sourceSets, kotlinPluginVersion, kotlinGradleBuildServices, extension
+            )
+        }
+
+        project.multiplatformExtension.common {
+            linkCommonAndPlatformExtensions(this@common, extension)
+        }
+
+        setupConfigurationsInProjectWithJava(project, extension)
+
+        return extension
+    }
+
+    fun setupConfigurationsInProjectWithJava(project: Project, extension: KotlinWithJavaPlatformExtension) {
+        project.afterEvaluate {
+            listOf(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME, JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME).forEach {
+                project.configurations.getByName(it).usesPlatformOf(extension)
+            }
+            extension.sourceSets.all { sourceSet ->
+                listOf(sourceSet.compileClasspathConfigurationName, sourceSet.runtimeClasspathConfigurationName).forEach {
+                    project.configurations.getByName(it).usesPlatformOf(extension)
+                }
+            }
+        }
     }
 
     fun createJsPlatformExtension(disambiguationSuffix: String? = null): KotlinMppPlatformExtension {

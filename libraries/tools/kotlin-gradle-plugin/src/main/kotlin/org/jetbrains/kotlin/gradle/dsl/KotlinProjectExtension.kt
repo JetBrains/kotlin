@@ -58,7 +58,9 @@ open class KotlinAndroidPlatformExtension : KotlinProjectExtension(), KotlinPlat
 }
 
 open class KotlinWithJavaPlatformExtension : KotlinProjectExtension(), KotlinPlatformExtension {
-    override val platformName: String = "kotlin"
+    override var platformName: String = "kotlin"
+        internal set
+
     override val platformType = KotlinPlatformType.JVM
     /**
      * With Gradle 4.0+, disables the separate output directory for Kotlin, falling back to sharing the deprecated
