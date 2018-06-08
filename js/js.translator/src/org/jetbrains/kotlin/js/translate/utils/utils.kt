@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.js.translate.utils
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
-import org.jetbrains.kotlin.backend.common.onlyIf
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
@@ -86,7 +85,9 @@ fun generateDelegateCall(
     val functionObject = simpleReturnFunction(context.scope(), invocation)
     functionObject.source = source?.finalElement
     functionObject.parameters.addAll(parameters)
-    functionObject.onlyIf(JsFunction::isSuspend) { it.fillCoroutineMetadata(context, fromDescriptor, false) }
+    if (functionObject.isSuspend) {
+        functionObject.fillCoroutineMetadata(context, fromDescriptor, false)
+    }
 
     val fromFunctionName = fromDescriptor.getNameForFunctionWithPossibleDefaultParam()
 
