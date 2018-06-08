@@ -647,14 +647,8 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractSequenceTraceTestCase> {
-            model("debugger/tinyApp/src/sequence/append", testMethod = "doTest")
-            model("debugger/tinyApp/src/sequence/distinct", testMethod = "doTest")
-            model("debugger/tinyApp/src/sequence/filter", testMethod = "doTest")
-            model("debugger/tinyApp/src/sequence/flatMap", testMethod = "doTest")
-            model("debugger/tinyApp/src/sequence/map", testMethod = "doTest")
-            model("debugger/tinyApp/src/sequence/misc", testMethod = "doTest")
-            model("debugger/tinyApp/src/sequence/sort", testMethod = "doTest")
-//          model("debugger/tinyApp/src/sequence/terminal", testMethod = "doTest") We need to implement mapping logic
+            // We need to implement mapping logic for terminal operations
+            model("debugger/tinyApp/src/streams/sequence", excludeDirs = listOf("terminal"))
         }
 
         testClass<AbstractStubBuilderTest> {
