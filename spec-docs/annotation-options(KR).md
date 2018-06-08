@@ -145,7 +145,7 @@ annotation class MyAnn
 * 더 많은 선택적 매개변수 때문에 varargs의 장점을 잃을 것입니다.
 * Java와 다른 형태가 될 것이므로, Kotlin 친화적으로 Java 어노테이션을 만드는 법을 이해하기 어려워 질 것입니다.
 
-## Retention
+## Retention (범위)
 
 > NOTE: Retention은 Java와 약간 차이가 있습니다. CLR과 JS는 런타임에 모든 attribute를 유지합니다.
 
@@ -172,26 +172,26 @@ enum class AnnotationRetention {
 annotation class MyAnn
 ```
 
-The following checks must be performed at compile time:
+다음 검사는 반드시 컴파일 타임에 수행되어야 합니다:
 * `EXPRESSION`-targeted annotations can only have retention `SOURCE`
 
-## Repeatable
+## Repeatable (반복 선언)
 
-> Java has `Repeatable` as an annotation, but we cannot map a Kotlin type to it, because it is only present since JDK 8, and cannot be written to class files with version lower than 8.
+> 자바는 어노테이션에 `Repeatable` 가 있지만 JDK 8부터 나오고 이전 버전의 클래스 파일에 쓰일 수 없기 때문에 Kotlin 타입을 이것에 매핑할 수 없습니다.
 
-We make `kotlin.annotation.Repeatable` a separate annotation which makes annotation repeatable if presents.
+`kotlin.annotation.Repeatable`를 별도의 어노테이션으로 만들어 어노테이션이 그러하다면 반복될 수 있게 만들었습니다.
 
-If a non-repeatable annotation is used multiple times on the same element, it is a compile-time error.
+만약 반복 불가능한 어노테이션이 같은 요소에서 여러번 사용된다면, 컴파일 에러를 일으킵니다.
 
-If a repeatable annotation with binary or runtime retention is used multiple times on the same element, but the target byte code version is lower than Java 8, it is a compile-time error.
+만약 Java 8 미만 버전에서  바이너리 및 런타임 retention의 반복가능한 어노테이션이 같은 요소에서 여러번 사용된다면, 컴파일 에러를 일으킵니다.
 
-A repeatable annotation with source retention may be used multiple times on any platform. A repeatable annotation with any retention may be used multiple times on a non-JVM platform.
+소스 retention의 반복가능한 어노테이션은 어떤 플랫폼에서라도 여러번 사용될 수 있습니다. 임의의 retention의 반복가능한 어노테이션은 non-JVM 플랫폼에서 여러번 사용될 수 있습니다.
 
-## Documented
+## Documented (문서화)
 
-We make `kotlin.annotation.MustBeDocumented` a separate annotation. This annotation is mapped to the same platform-specific annotation, if any (e.g. j.l.a.Documented).
+`kotlin.annotation.MustBeDocumented`를 별도의 어노테이션으로 만들었습니다. 이 어노테이션은 동일한 플랫폼 별 어노테이션으로 매핑됩니다 (e.g. j.l.a.Documented).
 
-## Inherited
+## Inherited (상속)
 
-This one is of rather unclear value, and we do not support it in Kotlin. One can use platform-specific annotation to express it.
+다소 불명확하며 Kotlin에서는 지원하지 않습니다. 특정 플랫폼 어노테이션을 사용해 이것을 표현할 수 있습니다.
 
