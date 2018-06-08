@@ -28,6 +28,7 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
+    testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(intellijPluginDep("properties"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
