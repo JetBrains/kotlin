@@ -1127,6 +1127,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/whenReturn.kt");
         }
 
+        @TestMetadata("whenWithSubjectVariable.kt")
+        public void testWhenWithSubjectVariable() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/whenWithSubjectVariable.kt");
+        }
+
         @TestMetadata("whileDoWhile.kt")
         public void testWhileDoWhile() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/whileDoWhile.kt");
