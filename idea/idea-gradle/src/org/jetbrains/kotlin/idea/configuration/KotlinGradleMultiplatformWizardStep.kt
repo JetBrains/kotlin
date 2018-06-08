@@ -42,8 +42,8 @@ class KotlinGradleMultiplatformWizardStep(
 
     private val hierarchyKindComponent = ComboBox(
         arrayOf(
-            "Root empty module with common & platform children",
-            "Root common module with children platform modules"
+            "Root with common & platform children",
+            "Root with common child & platform grand-children"
         ), 400
     )
     private val rootModuleNameComponent = JTextField()
@@ -104,9 +104,6 @@ class KotlinGradleMultiplatformWizardStep(
 
         jdkComboBox.selectedJdk = jdkModel.projectSdk
 
-        hierarchyKindComponent.addActionListener {
-            commonModuleNameComponent.isEnabled = !commonModuleIsRoot
-        }
         jvmCheckBox.addItemListener {
             jvmModuleNameComponent.isEnabled = jvmCheckBox.isSelected
             jdkComboBox.isEnabled = jvmCheckBox.isSelected
@@ -156,7 +153,7 @@ class KotlinGradleMultiplatformWizardStep(
     private fun getRootModuleError() = if (rootModuleName.isEmpty()) "Please specify the root module name" else null
 
     private fun getCommonModuleError() = when {
-        !commonModuleIsRoot && commonModuleName.isEmpty() ->
+        commonModuleName.isEmpty() ->
             "Please specify the common module name"
 
         commonModuleName.isNotEmpty() &&
@@ -208,6 +205,7 @@ class KotlinGradleMultiplatformWizardStep(
         wizardContext.projectName = rootModuleName
 
         builder.projectId = ProjectId("", rootModuleName, "")
+        builder.commonModuleIsParent = commonModuleIsParent
         builder.commonModuleName = commonModuleName
         builder.jvmModuleName = jvmModuleName
         builder.jdk = jdk
@@ -216,12 +214,12 @@ class KotlinGradleMultiplatformWizardStep(
 
     override fun getComponent() = panel
 
-    private val commonModuleIsRoot: Boolean
+    private val commonModuleIsParent: Boolean
         get() = hierarchyKindComponent.selectedIndex != 0
     private val rootModuleName: String
         get() = rootModuleNameComponent.text
     private val commonModuleName: String
-        get() = if (commonModuleIsRoot) "" else commonModuleNameComponent.text
+        get() = commonModuleNameComponent.text
     private val jvmModuleName: String
         get() = if (jvmCheckBox.isSelected) jvmModuleNameComponent.text else ""
     private val jdk: Sdk?
