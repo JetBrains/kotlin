@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JS_IR
+
 typealias S = String
 
 typealias SF<T> = (T) -> S

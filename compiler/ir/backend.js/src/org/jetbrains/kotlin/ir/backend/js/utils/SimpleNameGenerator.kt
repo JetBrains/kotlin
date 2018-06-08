@@ -77,7 +77,7 @@ class SimpleNameGenerator : NameGenerator {
                 is ConstructorDescriptor -> {
                     nameBuilder.append(getNameForDescriptor(descriptor.constructedClass, context))
                 }
-                is LocalVariableDescriptor -> {
+                is VariableDescriptor -> {
                     nameBuilder.append(descriptor.name.identifier)
                     nameDeclarator = context.currentScope::declareFreshName
                 }

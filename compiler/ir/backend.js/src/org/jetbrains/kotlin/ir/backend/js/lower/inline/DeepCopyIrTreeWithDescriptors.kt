@@ -125,7 +125,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
         private fun generateCopyName(name: Name): Name {
             val declarationName = name.toString()                                           // Name of declaration
             val indexStr        = (nameIndex++).toString()                                  // Unique for inline target index
-            return Name.identifier(declarationName + "_" + indexStr)
+            return Name.identifier(declarationName /*+ "_" + indexStr*/)
         }
 
         //---------------------------------------------------------------------//
@@ -280,7 +280,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
         private fun generateCopyName(name: Name): Name {
             val declarationName = name.toString()                                           // Name of declaration
             val indexStr        = (nameIndex++).toString()                                  // Unique for inline target index
-            return Name.identifier(declarationName + "_" + indexStr)
+            return Name.identifier(declarationName /*+ "_" + indexStr*/)
         }
 
         //---------------------------------------------------------------------//

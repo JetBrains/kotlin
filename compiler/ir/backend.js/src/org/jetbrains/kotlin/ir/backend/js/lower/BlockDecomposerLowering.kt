@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
-import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -18,11 +17,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.util.transformFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.types.KotlinType
 
 private typealias VisitData = Nothing?
@@ -655,6 +651,12 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
             return if (result.status == VisitStatus.KEPT) {
                 DecomposedResult(loop, unitValue)
             } else result
+        }
+
+        override fun visitSetField(expression: IrSetField, data: VisitData): VisitResult {
+            val result = expression.accept(statementVisitor, null)
+            val statements = result.runIfChangedOrDefault(mutableListOf<IrStatement>(expression)) { statements }
+            return DecomposedResult(statements, JsIrBuilder.buildGetField(expression.symbol, expression.receiver))
         }
     }
 
