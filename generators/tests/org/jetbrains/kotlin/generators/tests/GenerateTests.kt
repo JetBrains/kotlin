@@ -649,18 +649,17 @@ fun main(args: Array<String>) {
         }
 
         // Not supported yet
-        testClass<AbstractJavaStreamTraceTestCase> {
-            //            model("debugger/tinyApp/src/streams/java")
-        }
+//        testClass<AbstractJavaStreamTraceTestCase> {
+//                        model("debugger/tinyApp/src/streams/java")
+//        }
+
+//        testClass<AbstractCollectionTraceTestCase> {
+//                        model("debugger/tinyApp/src/streams/collection")
+//        }
 
         testClass<AbstractSequenceTraceTestCase> {
             // We need to implement mapping logic for terminal operations
             model("debugger/tinyApp/src/streams/sequence", excludeDirs = listOf("terminal"))
-        }
-
-        // Not supported yet
-        testClass<AbstractCollectionTraceTestCase> {
-            //            model("debugger/tinyApp/src/streams/collection")
         }
 
         testClass<AbstractStubBuilderTest> {
