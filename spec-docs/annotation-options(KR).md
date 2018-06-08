@@ -108,13 +108,13 @@ Option 2: 결합
 * PACKAGE_FACADE
 * PACKAGE_PART
 
-### Mapping onto Java
+### Java로 매핑
 
-Kotlin has more possible targets than Java, so there's an issue of mapping back and forth. The table above gives a correspondence.
+Kotlin은 Java보다 사용가능한 타겟이 많아서 매핑 문제가 발생합니다. 위의 표는 Kotlin과 Java의 대응관계를 보여줍니다.
 
-When we compile a Kotlin class to Java, we write a `@java.lang.annotation.Target` annotation that reflects the targets. For targets having no correspondent ones in Java (e.g. `EXPRESSION`) nothing is written to `j.l.a.Target`. If the set of Java targets is empty, `j.l.a.Target` is not written to the class file.
+Kotlin 클래스를 Java로 컴파일할때, 타겟을 반영하는 어노테이션 `@java.lang.annotation.Target` 을 씁니다. Java에 없는 타겟에는 (e.g. `EXPRESSION` ) `j.l.a.Target` 에 아무것도 쓰이지 않습니다. 만약 Java 타겟 집합이 비어있다면, `j.l.a.Target`는 클래스 파일로 작성되지 않습니다.
 
-In addition to `java.lang.annotation.Target`, a Kotlin-specific annotation `kotlin.annotation.Target` is written containing all the Kotlin targets listed:
+`java.lang.annotation.Target` 외에도 Kotlin 특유의 어노테이션 `kotlin.annotation.Target`은 나열된 모든 Kotlin 타겟을 포함하여 작성됩니다:
 
 ``` kotlin
 package kotlin.annotation
@@ -130,28 +130,29 @@ enum class AnnotationTarget {
 annotation class target(vararg allowedTargets: AnnotationTarget)
 ```
 
-When loading an annotation, we only read `kotlin.annotation.Target`. When `kotlin.annotation.Target` is missing, on the JVM, we read `j.l.a.Target` and map its values to Kotlin ones according to the table above. This implies that we can load pure Java annotations that know nothing about Kotlin, and that an annotation written in Java can be targeted, e.g. for Kotlin expressions, because one can simply manually specify `kotlin.annotation.Target` for it.
+어노테이션을 불러올 때, `kotlin.annotation.Target` 만 읽습니다. `kotlin.annotation.Target` 가 없으면 JVM에서 `j.l.a.Target`를 읽고 위의 테이블대로 Kotlin에 매핑합니다. 이는 Kotlin을 전혀 모르는 순수 Java 어노테이션을 불러올 수 있고 Java에서 작성된 어노테이션도 대상으로 할 수 있습니다. Kotlin 표현에 대해서는 `kotlin.annotation.Target`을 수동으로 지정할 수 있기 때문입니다. 
 
-### Syntax
+### 문법
 
-It makes sense to use `kotlin.annotation.Target` explicitly in Kotlin code:
+Kotlin 코드에서 `kotlin.annotation.Target`을 명시적으로 사용하는 것이 합리적입니다:
 
 ``` kotlin
 @Target(EXPRESSION, TYPE)
 annotation class MyAnn
 ```
 
-> An alternative would be to make target a property of `kotlin.annotation.annotation`, but then we'd
-* lose the advantage of varargs, because there are more optional parameters
-* be non-uniform with Java, thus making it harder to figure how to make a Java annotation Kotlin-friendly
+> 타겟을 `kotlin.annotation.annotation`의 속성으로 만드는 것은 하나의 대안이 될 수 있지만,
+* 더 많은 선택적 매개변수 때문에 varargs의 장점을 잃을 것입니다.
+* Java와 다른 형태가 될 것이므로, Kotlin 친화적으로 Java 어노테이션을 만드는 법을 이해하기 어려워 질 것입니다.
 
 ## Retention
 
-> NOTE: Retention is a Java-specific concern, more or less. CLR retains all attributes at runtime, and JS too
+> NOTE: Retention은 Java와 약간 차이가 있습니다. CLR과 JS는 런타임에 모든 attribute를 유지합니다.
 
-It makes a lot of sense to make `RUNTIME` the default retention.
+`RUNTIME`이 기본 retention인 것은 매우 합리적입니다.
 
-Since `RetentionPolicy.CLASS` is not a good fit for Kotlin that has functions outside any class, it's better to have `BINARY` instead. Also, we could not use `java.lang.annotation.RetentionPolicy` anyways, since it's platform-specific. Thus, we need to have our own enum:
+`RetentionPolicy.CLASS`는 어떤 클래스 외부의 함수를 갖고 있는 Kotlin에 잘 어울리지 않기 때문에, `BINARY`를 대신 쓰는게 더 좋습니다. 또한 플랫폼에 따라 다르므로 결국 `java.lang.annotation.RetentionPolicy` 는 사용할 수 없습니다. 따라서 우리만의 enum을 가져야 합니다.
+
 
 ``` kotlin
 package kotlin.annotation
@@ -163,7 +164,7 @@ enum class AnnotationRetention {
 }
 ```
 
-We map `java.lang.annotation.Retention` and `RetentionPolicy` to `kotlin.annotation.Retention` and `kotlin.annotation.AnnotationRetention`, and `CLASS` to `BINARY`.
+우리는  `java.lang.annotation.Retention` 과 `RetentionPolicy` 를 `kotlin.annotation.Retention` 과 `kotlin.annotation.AnnotationRetention`로, `CLASS` 을 `BINARY`로 매핑했습니다.
 
 ``` kotlin
 @Target(TYPE)
