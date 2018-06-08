@@ -199,8 +199,11 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                     variablesForEquals.forEach {
                         val propName = (DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) as PsiNameIdentifierOwner).nameIdentifier!!.text
                         val notEquals = when {
-                            KotlinBuiltIns.isArray(it.type) || KotlinBuiltIns.isPrimitiveArray(it.type) ->
-                                "!java.util.Arrays.equals($propName, $paramName.$propName)"
+                            KotlinBuiltIns.isArrayOrPrimitiveArray(it.type) -> {
+                                val isNestedArray = KotlinBuiltIns.isArrayOrPrimitiveArray(classDescriptor.builtIns.getArrayElementType(it.type))
+                                val methodName = if (isNestedArray) "deepEquals" else "equals"
+                                "!java.util.Arrays.$methodName($propName, $paramName.$propName)"
+                            }
                             else ->
                                 "$propName != $paramName.$propName"
                         }
@@ -230,8 +233,11 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             var text = when {
                 typeClass == builtIns.byte || typeClass == builtIns.short || typeClass == builtIns.int ->
                     ref
-                KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type) ->
-                    if (isNullable) "$ref?.let { java.util.Arrays.hashCode(it) }" else "java.util.Arrays.hashCode($ref)"
+                KotlinBuiltIns.isArrayOrPrimitiveArray(type) -> {
+                    val isNestedArray = KotlinBuiltIns.isArrayOrPrimitiveArray(builtIns.getArrayElementType(type))
+                    val methodName = if (isNestedArray) "deepHashCode" else "hashCode"
+                    if (isNullable) "$ref?.let { java.util.Arrays.$methodName(it) }" else "java.util.Arrays.$methodName($ref)"
+                }
                 else ->
                     if (isNullable) "$ref?.hashCode()" else "$ref.hashCode()"
             }
