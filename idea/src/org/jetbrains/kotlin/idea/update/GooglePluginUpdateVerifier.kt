@@ -12,8 +12,11 @@ import java.net.URL
 import java.util.*
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
-import kotlin.collections.HashSet
 import com.intellij.ide.plugins.PluginNode
+import com.intellij.openapi.diagnostic.Logger
+import java.io.IOException
+import java.net.MalformedURLException
+import javax.xml.bind.JAXBException
 
 class GooglePluginUpdateVerifier : PluginUpdateVerifier() {
 
@@ -24,6 +27,7 @@ class GooglePluginUpdateVerifier : PluginUpdateVerifier() {
             return null
         }
 
+        val version = pluginDescriptor.version
         try {
             val url = URL(METADATA_FILE_URL)
             val stream = url.openStream()
@@ -32,16 +36,16 @@ class GooglePluginUpdateVerifier : PluginUpdateVerifier() {
             val pluginCompatibility = unmarshaller.unmarshal(stream) as PluginCompatibility
 
             val release = getRelease(pluginCompatibility) ?: return PluginVerifyResult.decline("no verified versions for this build")
-            val version = pluginDescriptor.version
-            if (release.plugins().any { version == it.version }) {
-                return PluginVerifyResult.accept()
-            } else {
-                return PluginVerifyResult.decline("version to be verified")
-            }
+            return if (release.plugins().any { KOTLIN_PLUGIN_ID == it.id && version == it.version }) PluginVerifyResult.accept()
+                   else PluginVerifyResult.decline("version to be verified")
         } catch (e : Exception) {
-            val reason = String.format("Failed to verify plugin %s version %s due to exception %s",
-                    pluginDescriptor.name, pluginDescriptor.version, e.message)
-            return PluginVerifyResult.decline(reason)
+            LOG.error("Exception when verifying plugin ${pluginDescriptor.pluginId.idString} version $version", e)
+            return when (e) {
+                is MalformedURLException, is IOException ->
+                    PluginVerifyResult.decline("unable to connect to compatibility verification repository")
+                is JAXBException -> PluginVerifyResult.decline("unable to parse compatibility verification metadata")
+                else -> PluginVerifyResult.decline("exception during verification ${e.message}")
+            }
         }
     }
 
@@ -64,8 +68,9 @@ class GooglePluginUpdateVerifier : PluginUpdateVerifier() {
 
     companion object {
         private const val KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin"
-        private const val METADATA_FILE_URL =
-                "https://dl.google.com/android/studio/plugins/compatibility.xml"
+        private const val METADATA_FILE_URL = "https://dl.google.com/android/studio/plugins/compatibility.xml"
+
+        private val LOG = Logger.getInstance(GooglePluginUpdateVerifier::class.java)
 
         private fun PluginCompatibility.releases() = studioRelease ?: emptyArray()
         private fun StudioRelease.plugins() = ideaPlugin ?: emptyArray()
