@@ -1,4 +1,4 @@
-package zip
+package streams.collection.zip
 
 fun main(args: Array<String>) {
   // Breakpoint!

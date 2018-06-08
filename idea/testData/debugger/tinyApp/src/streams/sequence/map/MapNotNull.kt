@@ -1,4 +1,4 @@
-package map
+package streams.sequence.map
 
 fun main(args: Array<String>) {
   //Breakpoint!

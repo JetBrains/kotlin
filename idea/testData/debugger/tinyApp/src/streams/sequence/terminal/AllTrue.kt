@@ -1,4 +1,4 @@
-package terminal
+package streams.sequence.terminal
 
 fun main(args: Array<String>) {
   //Breakpoint!

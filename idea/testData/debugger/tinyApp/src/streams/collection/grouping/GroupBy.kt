@@ -1,4 +1,4 @@
-package grouping
+package streams.collection.grouping
 
 fun main(args: Array<String>) {
   // Breakpoint!

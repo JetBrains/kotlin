@@ -1,4 +1,4 @@
-package misc
+package streams.sequence.misc
 
 fun main(args: Array<String>) {
   //Breakpoint!

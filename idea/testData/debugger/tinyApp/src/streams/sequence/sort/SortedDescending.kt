@@ -1,4 +1,4 @@
-package sort
+package streams.sequence.sort
 
 fun main(args: Array<String>) {
   //Breakpoint!

@@ -1,4 +1,4 @@
-package map
+package streams.collection.map
 
 fun main(args: Array<String>) {
   val dst = mutableListOf(1, 2, 3)

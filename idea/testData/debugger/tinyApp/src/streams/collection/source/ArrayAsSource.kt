@@ -1,4 +1,4 @@
-package source
+package streams.collection.source
 
 fun main(args: Array<String>) {
   // Breakpoint!

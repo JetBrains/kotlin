@@ -1,4 +1,4 @@
-package append
+package streams.sequence.append
 
 fun main(args: Array<String>) {
   //Breakpoint!
