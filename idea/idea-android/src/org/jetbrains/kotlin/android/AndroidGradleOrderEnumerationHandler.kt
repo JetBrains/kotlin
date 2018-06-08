@@ -14,8 +14,9 @@ import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.android.facet.AndroidFacet
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.idea.run.isMultiplatformModule
 import org.jetbrains.plugins.gradle.execution.GradleOrderEnumeratorHandler
 import org.jetbrains.plugins.gradle.model.ExternalSourceDirectorySet
 import org.jetbrains.plugins.gradle.service.project.data.ExternalProjectDataCache
@@ -93,4 +94,9 @@ class AndroidGradleOrderEnumerationHandler(module: Module) : GradleOrderEnumerat
 
         override fun createHandler(module: Module) = AndroidGradleOrderEnumerationHandler(module)
     }
+}
+
+private fun Module.isMultiplatformModule(): Boolean {
+    val settings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
+    return settings.targetPlatformKind is TargetPlatformKind.Common || settings.implementedModuleNames.isNotEmpty()
 }
