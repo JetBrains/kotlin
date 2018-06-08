@@ -11,12 +11,11 @@ incremental 컴파일은 현재 모든 요구되는 출력을 만들어 내지 �
 `kotlin-stdlib-jdk7/8`, `kotlin-stdlib-jre7/8` 그리고 `kotlin-reflect` jar,
 는 사전에 반드시 gradle로 작성되어야 합니다. `clean assemble` task들을 사용하십시요.
 
-When substantial changes are made to the public API, it may be convenient to overwrite 
-the entire dump and compare changes later before committing: pass `-Doverwrite.output=true` 
-property to the test to do so. 
+공용 API를 크게 변경했을때, 이것은 덮어쓰기를 하는 것을 도와줍니다.
+전체 dump와 변경사항을 commit하기 전에 비교하십시요 : `-Doverwrite.output=true`를 pass하십시요 
+property를 테스트할 수 있습니다.
 
-Also you can use shared run configuration "Binary compatibility tests", which also 
-overwrites the results when they differ.
+또한 공유된 "Binary compatibility tests"를 사용하여 실행할 수 있습니다. 이것은 다른 결과를 덮어씌웁니다.
 
 ## What constitutes the public API
 
