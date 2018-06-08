@@ -1225,6 +1225,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/convertSealedSubClassToObject"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("baseState.kt")
+        public void testBaseState() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/baseState.kt");
+        }
+
         @TestMetadata("convertSubClassWithModifiers.kt")
         public void testConvertSubClassWithModifiers() throws Exception {
             runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/convertSubClassWithModifiers.kt");
@@ -1240,6 +1245,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/convertSubClassWithoutParentheses.kt");
         }
 
+        @TestMetadata("fakeState.kt")
+        public void testFakeState() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/fakeState.kt");
+        }
+
         @TestMetadata("generic.kt")
         public void testGeneric() throws Exception {
             runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/generic.kt");
@@ -1253,6 +1263,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("openSubclass.kt")
         public void testOpenSubclass() throws Exception {
             runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/openSubclass.kt");
+        }
+
+        @TestMetadata("ownState.kt")
+        public void testOwnState() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/ownState.kt");
+        }
+
+        @TestMetadata("sealedState.kt")
+        public void testSealedState() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/sealedState.kt");
         }
 
         @TestMetadata("withCompanion.kt")
