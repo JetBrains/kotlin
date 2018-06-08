@@ -26,6 +26,13 @@ buildscript {
 }
 import org.jetbrains.kotlin.konan.*
 
+// Allows generating wrappers for the root build and all the samples during execution of the default 'wrapper' task.
+// Run './gradlew wrapper --gradle-version <version>' to update all the wrappers.
+apply plugin: org.jetbrains.kotlin.GradleWrappers
+
+wrappers.projects = ['samples', 'samples/calculator', 'samples/androidNativeActivity']
+wrapper.distributionType = Wrapper.DistributionType.ALL
+
 defaultTasks 'clean', 'dist'
 
 convention.plugins.platformInfo = new PlatformInfo()
