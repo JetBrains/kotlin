@@ -1,4 +1,4 @@
-package flatMap
+package streams.collection.flatMap
 
 fun main(args: Array<String>) {
   // Breakpoint!

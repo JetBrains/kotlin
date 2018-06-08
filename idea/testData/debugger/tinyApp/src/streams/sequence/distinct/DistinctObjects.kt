@@ -1,4 +1,4 @@
-package distinct
+package streams.sequence.distinct
 
 fun main(args: Array<String>) {
   fun str(chr: Char): String = String(charArrayOf(chr))

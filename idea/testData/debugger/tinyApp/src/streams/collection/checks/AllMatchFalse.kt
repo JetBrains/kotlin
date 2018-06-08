@@ -1,4 +1,4 @@
-package checks
+package streams.collection.checks
 
 fun main(args: Array<String>) {
   // Breakpoint!

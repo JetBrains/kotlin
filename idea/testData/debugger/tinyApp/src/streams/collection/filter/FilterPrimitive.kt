@@ -1,4 +1,4 @@
-package filter
+package streams.collection.filter
 
 fun main(args: Array<String>) {
   // Breakpoint!

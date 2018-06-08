@@ -1,4 +1,4 @@
-package misc
+package streams.collection.misc
 
 fun main(args: Array<String>) {
   // Breakpoint!

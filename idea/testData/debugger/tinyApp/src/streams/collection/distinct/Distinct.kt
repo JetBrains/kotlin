@@ -1,4 +1,4 @@
-package distinct
+package streams.collection.distinct
 
 fun main(args: Array<String>) {
   // Breakpoint!
