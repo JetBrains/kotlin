@@ -76,12 +76,13 @@ Option 2: 결합
 
 지정된 대상에서 허용되지 않는 요소에 어노테이션을 넣는 것은 컴파일 타임 에러입니다. 지정된 대상이 없으면 Java6에 있는 모든 대상이 허용됩니다.(TYPE_PARAMETER, TYPE, EXPRESSION, FILE을 제외한).
 
-> NOTE: Java has the following [targets](https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html)
-By default, Java has everything but Java8-specific targets (`TYPE_USE`, `TYPE_PARAMETER`), which makes it unclear as of which target should we take by default.
+> NOTE: Java는 다음의 것을 타겟으로 사용합니다 [targets](https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html)
+기본적으로 Java는 무엇을 디폴트로 사용해야 하는지 불명확하게 만드는 Java8 특정 타겟을 제외한 모든 것을 가집니다.
 
-One option to work around the problem of adding more targets later: have an explicit `ALL` target. But there's the issue of matching it with Java's one.
 
-For `TYPE` it may make sense to add an extra `@typeTarget` annotation with the following options:
+나중에 타겟을 추가하는 문제를 해결하는 한 방법: 명시적인 `ALL` 타겟 사용. 그러나 Java와 매칭시키는 문제가 있습니다.
+
+`TYPE` 의 경우, 아래의 옵션과 함께 `@typetarget` 어노테이션을 추가하는게 좋습니다:
 * `ALL` - any usage of types
 * `RETURN_TYPE` (including that of function types?)
 * `VALUE_PARAMETER_TYPE`(including that of function types?, including receiver types?)
@@ -93,14 +94,13 @@ For `TYPE` it may make sense to add an extra `@typeTarget` annotation with the f
 * `CONSTRUCTOR_USAGE` (this one is an issue: use site is ambiguous with annotated expression)
 * <maybe more>
 
-Also there are some exotic type usages, such as ones on outer types: `@A (@B Outer).Inner`, here `@A` belongs to `Inner`, and `@B` belongs to `Outer`.
+또한 외부 타입에 사용되는 것과 같은 이색적인 용법이 있습니다: `@A (@B Outer).Inner`, `@A` 는 `Inner` 에 속하고, `@B` 는 `Outer` 에 속합니다.
 
-**TODO** Open question: what about traits/classes/objects?
-**TODO** local variables are just like properties, but local
+**TODO** Open question: traits/classes/objects 는 어떠한가?
+**TODO** 지역 변수들은 속성과 같습니다. 그러나
 
 
-
-> Possible platform-specific targets
+> 플랫폼 특정 타겟이 가능합니다
 * SINGLETON_FIELD for objects
 * PROPERTY_FIELD
 * (?) DEFAULT_FUNCTION
