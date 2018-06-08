@@ -18,12 +18,14 @@ import com.intellij.execution.ExecutionException
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.xdebugger.XDebugSessionListener
 import com.sun.jdi.Value
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerTestBase
+import java.io.File
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -49,8 +51,11 @@ abstract class KotlinTraceTestCase : KotlinDebuggerTestBase() {
     override fun createDebugProcess(path: String) {
         val filePath = Paths.get(path);
         FileBasedIndex.getInstance().requestReindex(VfsUtil.findFileByIoFile(filePath.toFile(), true)!!)
+        val packagePath = StringUtil.substringAfterLast(filePath.parent.toAbsolutePath().toString(), "src${File.separatorChar}")
+                ?: throw AssertionError("test data must be placed into test app project in 'src' directory")
+
         val fileName = filePath.getName(filePath.nameCount - 1).toString()
-        val packageName = filePath.getName(filePath.nameCount - 2).toString()
+        val packageName = packagePath.replace(File.separatorChar, '.')
         createLocalProcess("$packageName.${fileName.replace(".kt", "Kt")}")
     }
 
