@@ -165,7 +165,11 @@ open class KotlinOnlySourceSet(
 
     override val resources: SourceDirectorySet = createDefaultSourceDirectorySet("$name.resources", fileResolver)
 
-    override val allSource: SourceDirectorySet = createDefaultSourceDirectorySet("$name.allSource", fileResolver)
+    override val allSource: SourceDirectorySet =
+        createDefaultSourceDirectorySet("$name.allSource", fileResolver).apply {
+            source(kotlin)
+            source(resources)
+        }
 
     override val classesTaskName: String get() = composeName(kotlinPlatformExtension.classesTaskName)
 
