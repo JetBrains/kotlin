@@ -70,6 +70,8 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-noarg-compiler-plugin"))
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
+    testRuntime(project(":kotlin-scripting-idea")) { isTransitive = false }
+    testRuntime(project(":kotlin-scripting-compiler"))
     testRuntime(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
     testRuntime(project(":plugins:lint")) { isTransitive = false }

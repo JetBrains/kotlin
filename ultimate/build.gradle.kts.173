@@ -86,6 +86,8 @@ dependencies {
     testRuntime(project(":kotlin-noarg-compiler-plugin")) { isTransitive = false }
     testRuntime(project(":allopen-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
+    testRuntime(project(":kotlin-scripting-idea")) { isTransitive = false }
+    testRuntime(project(":kotlin-scripting-compiler")) { isTransitive = false }
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":plugins:uast-kotlin"))
     testRuntime(project(":plugins:uast-kotlin-idea"))
