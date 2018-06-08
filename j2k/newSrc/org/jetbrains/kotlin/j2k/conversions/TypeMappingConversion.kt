@@ -11,16 +11,12 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassTypeImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKJavaVoidType
 import org.jetbrains.kotlin.j2k.tree.impl.JKTypeElementImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.analysisContext
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
-import org.jetbrains.kotlin.resolve.ImportPath
 
 class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicableConversionBase() {
 
@@ -30,6 +26,9 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
             when (type) {
                 is JKJavaPrimitiveType -> mapPrimitiveType(type, element)
                 is JKClassType -> mapClassType(type, element)
+                is JKJavaVoidType -> classTypeByFqName(
+                    context.backAnnotator(element), ClassId.fromString("kotlin.Unit"), emptyList(), Nullability.NotNull
+                )?.let { JKTypeElementImpl(it) } ?: element
                 else -> applyRecursive(element, this::applyToElement)
             }
         } else applyRecursive(element, this::applyToElement)
@@ -43,7 +42,6 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
     ): JKType? {
         contextElement ?: return null
         val newTarget = resolveFqName(fqName, contextElement) as? KtClassOrObject ?: return null
-
 
         return JKClassTypeImpl(context.symbolProvider.provideSymbol(newTarget) as JKClassSymbol, parameters, nullability)
     }

@@ -85,3 +85,7 @@ sealed class JKKtOperatorImpl : JKOperator, JKElementBase() {
     object EQEQ : JKKtOperatorImpl()
     object NE : JKKtOperatorImpl()
 }
+
+class JKKtModifierImpl(override val type: JKKtModifier.KtModifierType) : JKKtModifier, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtModifier(this, data)
+}

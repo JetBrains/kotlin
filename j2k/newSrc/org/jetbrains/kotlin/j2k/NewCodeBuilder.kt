@@ -57,6 +57,8 @@ class NewCodeBuilder {
                     JKKtModifier.KtModifierType.ABSTRACT -> "abstract"
                     JKKtModifier.KtModifierType.INNER -> "inner"
                     JKKtModifier.KtModifierType.OPEN -> "open"
+                    JKKtModifier.KtModifierType.PRIVATE -> "private"
+                    JKKtModifier.KtModifierType.PROTECTED -> "protected"
                     else -> ktModifier.type.toString()
                 }
             )
@@ -95,7 +97,7 @@ class NewCodeBuilder {
         }
 
         override fun visitKtFunction(ktFunction: JKKtFunction) {
-            printer.print("fun ", ktFunction.name.value, "(", "): ")
+            printer.print("fun ", ktFunction.name.value, "(", ")")
             ktFunction.returnType.accept(this)
             if (ktFunction.block !== JKBodyStub) {
                 printer.printlnWithNoIndent("{")
@@ -156,7 +158,9 @@ class NewCodeBuilder {
         override fun visitTypeElement(typeElement: JKTypeElement) {
             val type = typeElement.type
             when (type) {
-                is JKClassType -> (type.classReference as JKClassSymbol).fqName?.let { printer.printWithNoIndent(FqName(it).shortName().asString()) }
+                is JKClassType -> if ((type.classReference as? JKClassSymbol)?.fqName != "kotlin.Unit") {
+                    (type.classReference as JKClassSymbol).fqName?.let { printer.printWithNoIndent(": " + FqName(it).shortName().asString()) }
+                }
                 else -> printer.printWithNoIndent("Unit /* TODO: ${type::class} */")
             }
             when (type.nullability) {
