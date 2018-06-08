@@ -72,8 +72,8 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
             }
 
             context.irBuiltIns.bool.let {
-                op(it, OperatorNames.AND, context.intrinsics.jsAnd)
-                op(it, OperatorNames.OR, context.intrinsics.jsOr)
+                op(it, OperatorNames.AND, context.intrinsics.jsBitAnd)
+                op(it, OperatorNames.OR, context.intrinsics.jsBitOr)
                 op(it, OperatorNames.NOT, context.intrinsics.jsNot)
                 op(it, OperatorNames.XOR, context.intrinsics.jsBitXor)
             }
