@@ -850,7 +850,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             advanceAt(LPAR);
 
             PsiBuilder.Marker atWhenStart = mark();
-            myKotlinParsing.parseModifierList(DEFAULT, TokenSet.create(EQ, RPAR));
+            myKotlinParsing.parseAnnotationsList(DEFAULT, TokenSet.create(EQ, RPAR));
             if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
                 IElementType declType = myKotlinParsing.parseProperty(KotlinParsing.PropertyParsingMode.LOCAL);
 
