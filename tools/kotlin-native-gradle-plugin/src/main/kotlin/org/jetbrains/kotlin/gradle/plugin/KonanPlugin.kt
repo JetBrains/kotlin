@@ -360,14 +360,14 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
             project.pluginManager.withPlugin("maven-publish") {
                 container.all {
                     val buildingConfig = it
-                    val artifactId = buildingConfig.name
                     val konanSoftwareComponent = buildingConfig.mainVariant
                     project.extensions.configure(PublishingExtension::class.java) {
-                        it.publications.create(artifactId, MavenPublication::class.java) {
-                            it.artifactId = artifactId
-                            it.groupId = project.group.toString()
-                            it.from(konanSoftwareComponent)
-                            (it as MavenPublicationInternal).publishWithOriginalFileName()
+                        val builtArtifact = buildingConfig.name
+                        val mavenPublication = it.publications.maybeCreate(builtArtifact) as MavenPublication
+                        mavenPublication.apply {
+                            artifactId = builtArtifact
+                            groupId = project.group.toString()
+                            from(konanSoftwareComponent)
                         }
                     }
 
