@@ -121,6 +121,10 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
         doOverrideFileTest()
     }
 
+    fun testOverrideExtensionFunction() {
+        doOverrideFileTest()
+    }
+
     fun testOverrideExtensionProperty() {
         doOverrideFileTest()
     }

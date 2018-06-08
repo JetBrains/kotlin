@@ -102,9 +102,14 @@ interface OverrideMemberChooserObject : ClassMember {
 fun OverrideMemberChooserObject.generateMember(targetClass: KtClassOrObject, copyDoc: Boolean): KtCallableDeclaration {
     val project = targetClass.project
 
-    val bodyType = if (targetClass.hasExpectModifier()) OverrideMemberChooserObject.BodyType.NO_BODY else bodyType
-
     val descriptor = immediateSuper
+
+    val bodyType = when {
+        targetClass.hasExpectModifier() -> OverrideMemberChooserObject.BodyType.NO_BODY
+        descriptor.extensionReceiverParameter != null -> OverrideMemberChooserObject.BodyType.EMPTY
+        else -> bodyType
+    }
+
     if (preferConstructorParameter && descriptor is PropertyDescriptor) return generateConstructorParameter(project, descriptor)
 
     val newMember: KtCallableDeclaration = when (descriptor) {
