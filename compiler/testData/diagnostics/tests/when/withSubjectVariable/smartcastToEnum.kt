@@ -3,21 +3,16 @@
 
 enum class E { FIRST, SECOND }
 
-fun testSmartcastToEnumInSubjectInitializer(e: E?) {
-    val x = <!NO_ELSE_IN_WHEN!>when<!> (val ne = e!!) { // TODO fix
+fun testSmartcastToEnumInSubjectInitializer1(e: E?) {
+    val x1 = when (val ne = e!!) {
         E.FIRST -> "f"
         E.SECOND -> "s"
     }
 }
 
-
-sealed class Either
-class Left : Either()
-class Right : Either()
-
-fun testSmartcastToSealedInSubjectInitializer(x: Any?) {
-    val y = <!NO_ELSE_IN_WHEN!>when<!> (val either = x as Either) { // TODO fix
-        is Left -> "L"
-        is Right -> "R"
+fun testSmartcastToEnumInSubjectInitializer2(e: E?) {
+    val x2 = <!NO_ELSE_IN_WHEN!>when<!> (val ne: Any = e!!) { // NB explicit type annotation
+        E.FIRST -> "f"
+        E.SECOND -> "s"
     }
 }

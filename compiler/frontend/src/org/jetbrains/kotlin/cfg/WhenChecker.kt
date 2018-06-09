@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
+import org.jetbrains.kotlin.resolve.BindingContext.VARIABLE
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -282,8 +283,15 @@ object WhenChecker {
 
 
     @JvmStatic
-    fun whenSubjectType(expression: KtWhenExpression, context: BindingContext) =
-        expression.subjectExpression?.let { context.get(SMARTCAST, it)?.defaultType ?: context.getType(it) }
+    fun whenSubjectType(expression: KtWhenExpression, context: BindingContext): KotlinType? {
+        val subjectVariable = expression.subjectVariable
+        val subjectExpression = expression.subjectExpression
+        return when {
+            subjectVariable != null -> context.get(VARIABLE, subjectVariable)?.type
+            subjectExpression != null -> context.get(SMARTCAST, subjectExpression)?.defaultType ?: context.getType(subjectExpression)
+            else -> null
+        }
+    }
 
     @JvmStatic
     fun getEnumMissingCases(

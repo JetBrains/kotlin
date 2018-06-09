@@ -1,7 +1,7 @@
 package
 
-public fun testSmartcastToEnumInSubjectInitializer(/*0*/ e: E?): kotlin.Unit
-public fun testSmartcastToSealedInSubjectInitializer(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun testSmartcastToEnumInSubjectInitializer1(/*0*/ e: E?): kotlin.Unit
+public fun testSmartcastToEnumInSubjectInitializer2(/*0*/ e: E?): kotlin.Unit
 
 public final enum class E : kotlin.Enum<E> {
     enum entry FIRST
@@ -22,25 +22,4 @@ public final enum class E : kotlin.Enum<E> {
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E
     public final /*synthesized*/ fun values(): kotlin.Array<E>
-}
-
-public sealed class Either {
-    private constructor Either()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
-public final class Left : Either {
-    public constructor Left()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
-public final class Right : Either {
-    public constructor Right()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
