@@ -3957,7 +3957,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         }
 
         public void testAllFilesPresentInExtractSuperclass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractSuperclass"), Pattern.compile("^(.+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractSuperclass"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("annotation.kt")
@@ -3973,6 +3973,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             runTest("idea/testData/refactoring/extractSuperclass/enum.kt");
+        }
+
+        @TestMetadata("extractToExistingFile.kt")
+        public void testExtractToExistingFile() throws Exception {
+            runTest("idea/testData/refactoring/extractSuperclass/extractToExistingFile.kt");
         }
 
         @TestMetadata("interface.kt")
@@ -4045,7 +4050,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         }
 
         public void testAllFilesPresentInExtractInterface() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractInterface"), Pattern.compile("^(.+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractInterface"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("annotation.kt")
@@ -4056,6 +4061,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("dropFinal.kt")
         public void testDropFinal() throws Exception {
             runTest("idea/testData/refactoring/extractInterface/dropFinal.kt");
+        }
+
+        @TestMetadata("extractToExistingFile.kt")
+        public void testExtractToExistingFile() throws Exception {
+            runTest("idea/testData/refactoring/extractInterface/extractToExistingFile.kt");
         }
 
         @TestMetadata("noWarningOnVisibilityInsideAbstractedMember.kt")
