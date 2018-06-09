@@ -192,7 +192,7 @@ class NewCodeBuilder {
             val type = typeElement.type
             when (type) {
                 is JKClassType -> if ((type.classReference as? JKClassSymbol)?.fqName != "kotlin.Unit") {
-                    (type.classReference as JKClassSymbol).fqName?.let { printer.printWithNoIndent(": " + FqName(it).shortName().asString()) }
+                    (type.classReference as JKClassSymbol).fqName?.let { printer.printWithNoIndent(":" + FqName(it).shortName().asString()) }
                 }
                 else -> printer.printWithNoIndent(":Unit /* TODO: ${type::class} */")
             }
