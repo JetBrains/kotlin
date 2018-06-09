@@ -29,11 +29,10 @@ class KotlinChainTransformerImpl(private val typeExtractor: CallTypeExtractor) :
         val intermediateCalls = mutableListOf<IntermediateStreamCall>()
         for (call in callChain.subList(0, callChain.size - 1)) {
             val (typeBefore, typeAfter) = typeExtractor.extractIntermediateCallTypes(call)
-            intermediateCalls += IntermediateStreamCallImpl(call.callName(),
-                                                            call.valueArguments.map { createCallArgument(call, it) },
-                                                            typeBefore,
-                                                            typeAfter,
-                                                            call.textRange
+            intermediateCalls += IntermediateStreamCallImpl(
+                call.callName(), call.valueArguments.map { createCallArgument(call, it) },
+                typeBefore, typeAfter,
+                call.textRange
             )
         }
 

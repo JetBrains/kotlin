@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
  */
 class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStreamCall, dsl: Dsl) : HandlerBase.Intermediate(dsl) {
     private companion object {
-        val KEY_EXTRACTOR_VARIABLE_PREFIX = "keyExtractor"
-        val TRANSITIONS_ARRAY_NAME = "transitionsArray"
+        const val KEY_EXTRACTOR_VARIABLE_PREFIX = "keyExtractor"
+        const val TRANSITIONS_ARRAY_NAME = "transitionsArray"
     }
 
     private val peekHandler = PeekTraceHandler(callNumber, "distinctBy", call.typeBefore, call.typeAfter, dsl)

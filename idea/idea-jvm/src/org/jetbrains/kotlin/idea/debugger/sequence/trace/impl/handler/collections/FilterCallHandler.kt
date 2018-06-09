@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.withArgs
  */
 class FilterCallHandler : BothSemanticsHandler {
     private companion object {
-        val VALUES_ARRAY_NAME = "objectsInPredicate"
-        val PREDICATE_RESULT_ARRAY_NAME = "filteringResults"
+        const val VALUES_ARRAY_NAME = "objectsInPredicate"
+        const val PREDICATE_RESULT_ARRAY_NAME = "filteringResults"
 
-        fun oldPredicateVariableName(order: Int): String = "filterPredicate" + order
+        fun oldPredicateVariableName(order: Int): String = "filterPredicate$order"
     }
 
     override fun variablesDeclaration(call: StreamCall, order: Int, dsl: Dsl): List<VariableDeclaration> {
