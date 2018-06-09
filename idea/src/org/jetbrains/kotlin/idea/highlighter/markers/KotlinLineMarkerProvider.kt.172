@@ -20,10 +20,7 @@ import com.intellij.openapi.editor.markup.SeparatorPlacement
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.NavigatablePsiElement
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiNameIdentifierOwner
+import com.intellij.psi.*
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
@@ -87,11 +84,14 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
         val first = elements.first()
         if (DumbService.getInstance(first.project).isDumb || !ProjectRootsUtil.isInProjectOrLibSource(first)) return
 
-        val functions = HashSet<KtNamedFunction>()
-        val properties = HashSet<KtNamedDeclaration>()
+        val functions = hashSetOf<KtNamedFunction>()
+        val properties = hashSetOf<KtNamedDeclaration>()
+        val declarations = hashSetOf<KtNamedDeclaration>()
 
-        for (element in elements) {
+        for (leaf in elements) {
             ProgressManager.checkCanceled()
+            val element = leaf.parent as? KtNamedDeclaration ?: continue
+            if (!declarations.add(element)) continue
 
             when (element) {
                 is KtClass -> {
@@ -113,20 +113,11 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
                     }
                 }
             }
+            collectMultiplatformMarkers(element, result)
         }
 
         collectOverriddenFunctions(functions, result)
         collectOverriddenPropertyAccessors(properties, result)
-
-        for (element in elements) {
-            if (element !is KtNamedDeclaration) continue
-
-            if (element.isExpectDeclaration()) {
-                collectActualMarkers(element, result)
-            } else if (element.isEffectivelyActual()) {
-                collectExpectedMarkers(element, result)
-            }
-        }
     }
 }
 
@@ -336,6 +327,16 @@ private val KtNamedDeclaration.expectOrActualAnchor
             is KtObjectDeclaration -> getObjectKeyword()
             else -> null
         } ?: this
+
+private fun collectMultiplatformMarkers(
+    declaration: KtNamedDeclaration,
+    result: MutableCollection<LineMarkerInfo<*>>
+) {
+    when {
+        declaration.isExpectDeclaration() -> collectActualMarkers(declaration, result)
+        declaration.isEffectivelyActual() -> collectExpectedMarkers(declaration, result)
+    }
+}
 
 private fun collectActualMarkers(
     declaration: KtNamedDeclaration,
