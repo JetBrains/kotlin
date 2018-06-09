@@ -144,7 +144,7 @@ interface TestableLineMarkerNavigator {
 
 private val SUBCLASSED_CLASS = MarkerType(
     "SUBCLASSED_CLASS",
-    { getPsiClass(it)?.let { MarkerType.getSubclassedClassTooltip(it) } },
+    { getPsiClass(it)?.let(::getSubclassedClassTooltip) },
     object : LineMarkerNavigator() {
         override fun browse(e: MouseEvent?, element: PsiElement?) {
             getPsiClass(element)?.let { MarkerType.navigateToSubclassedClass(e, it, DeclarationByModuleRenderer()) }

@@ -25,6 +25,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
+    @TestMetadata("actualDerived")
+    public void testActualDerived() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/actualDerived/");
+    }
+
     @TestMetadata("actualEnumEntries")
     public void testActualEnumEntries() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/actualEnumEntries/");
