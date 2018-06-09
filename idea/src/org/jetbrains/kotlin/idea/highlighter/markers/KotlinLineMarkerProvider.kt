@@ -333,11 +333,11 @@ private fun collectOverriddenPropertyAccessors(
 
 private val KtNamedDeclaration.expectOrActualAnchor
     get() =
-        nameIdentifier
-                ?: (this as? KtConstructor<*>)?.let {
-                    it.getConstructorKeyword() ?: it.getValueParameterList()?.leftParenthesis
-                }
-                ?: this
+        nameIdentifier ?: when (this) {
+            is KtConstructor<*> -> getConstructorKeyword() ?: getValueParameterList()?.leftParenthesis
+            is KtObjectDeclaration -> getObjectKeyword()
+            else -> null
+        } ?: this
 
 private fun collectActualMarkers(
     declaration: KtNamedDeclaration,

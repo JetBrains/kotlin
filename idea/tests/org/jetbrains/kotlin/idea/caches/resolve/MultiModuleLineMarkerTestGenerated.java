@@ -44,6 +44,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
         runTest("idea/testData/multiModuleLineMarker/fromActualAnnotation/");
     }
 
+    @TestMetadata("fromActualCompanion")
+    public void testFromActualCompanion() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/fromActualCompanion/");
+    }
+
     @TestMetadata("fromActualPrimaryConstructor")
     public void testFromActualPrimaryConstructor() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/fromActualPrimaryConstructor/");
@@ -82,6 +87,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
     @TestMetadata("fromCommonToJvmImpl")
     public void testFromCommonToJvmImpl() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/fromCommonToJvmImpl/");
+    }
+
+    @TestMetadata("fromExpectCompanion")
+    public void testFromExpectCompanion() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/fromExpectCompanion/");
     }
 
     @TestMetadata("fromExpectedAnnotation")
