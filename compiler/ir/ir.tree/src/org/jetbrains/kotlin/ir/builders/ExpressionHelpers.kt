@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -128,8 +131,13 @@ fun IrBuilderWithScope.irIfThenReturnFalse(condition: IrExpression) =
 fun IrBuilderWithScope.irGet(type: IrType, variable: IrValueSymbol) =
     IrGetValueImpl(startOffset, endOffset, type, variable)
 
+fun IrBuilderWithScope.irGet(variable: IrValueDeclaration) = irGet(variable.type, variable.symbol)
+
 fun IrBuilderWithScope.irSetVar(variable: IrVariableSymbol, value: IrExpression) =
     IrSetVariableImpl(startOffset, endOffset, context.irBuiltIns.unitType, variable, value, IrStatementOrigin.EQ)
+
+fun IrBuilderWithScope.irGetField(receiver: IrExpression?, field: IrField) =
+    IrGetFieldImpl(startOffset, endOffset, field.symbol, field.type, receiver)
 
 fun IrBuilderWithScope.irEqeqeq(arg1: IrExpression, arg2: IrExpression) =
     context.eqeqeq(startOffset, endOffset, arg1, arg2)
@@ -168,6 +176,9 @@ fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType): IrCall =
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDescriptor, type: IrType): IrCall =
     IrCallImpl(startOffset, endOffset, type, callee, descriptor)
+
+fun IrBuilderWithScope.irCall(callee: IrFunction): IrCall =
+    irCall(callee.symbol, callee.descriptor, callee.returnType)
 
 
 fun IrBuilderWithScope.irCallOp(
