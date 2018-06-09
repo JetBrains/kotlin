@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JS_IR
 // WITH_REFLECT
 
 inline class Foo(val x: String) {

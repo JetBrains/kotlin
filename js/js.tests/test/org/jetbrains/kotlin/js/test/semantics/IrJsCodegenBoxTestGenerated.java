@@ -10832,6 +10832,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/callComputablePropertyInsideInlineClass.kt");
         }
 
+        @TestMetadata("callableReferencesWithInlineClasses.kt")
+        public void testCallableReferencesWithInlineClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferencesWithInlineClasses.kt");
+        }
+
         @TestMetadata("checkBoxUnboxOfArgumentsOnInlinedFunctions.kt")
         public void testCheckBoxUnboxOfArgumentsOnInlinedFunctions() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxUnboxOfArgumentsOnInlinedFunctions.kt");
