@@ -5,5 +5,5 @@ package org.jetbrains.kotlin.idea.debugger.sequence.lib
  * @author Vitaliy.Bibaev
  */
 object LibraryUtil {
-  val KOTLIN_LANGUAGE_ID = "kotlin"
+    val KOTLIN_LANGUAGE_ID = "kotlin"
 }

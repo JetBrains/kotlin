@@ -9,6 +9,6 @@ import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
  * @author Vitaliy.Bibaev
  */
 class JavaPeekCallFactory : PeekCallFactory {
-  override fun createPeekCall(elementsType: GenericType, lambda: String): IntermediateStreamCall =
-      PeekCall(lambda, elementsType)
+    override fun createPeekCall(elementsType: GenericType, lambda: String): IntermediateStreamCall =
+        PeekCall(lambda, elementsType)
 }

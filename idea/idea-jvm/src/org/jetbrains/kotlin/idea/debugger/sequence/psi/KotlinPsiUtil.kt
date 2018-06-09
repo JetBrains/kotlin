@@ -18,20 +18,20 @@ import org.jetbrains.kotlin.types.KotlinType
  */
 
 object KotlinPsiUtil {
-  private val WITH_TYPES_RENDERER = DescriptorRenderer.FQ_NAMES_IN_TYPES
+    private val WITH_TYPES_RENDERER = DescriptorRenderer.FQ_NAMES_IN_TYPES
 
-  fun getTypeName(type: KotlinType): String {
-    if (type is FlexibleType) {
-      return WITH_TYPES_RENDERER.renderType(type.approximateFlexibleTypes())
+    fun getTypeName(type: KotlinType): String {
+        if (type is FlexibleType) {
+            return WITH_TYPES_RENDERER.renderType(type.approximateFlexibleTypes())
+        }
+
+        return WITH_TYPES_RENDERER.renderType(type)
     }
 
-    return WITH_TYPES_RENDERER.renderType(type)
-  }
-
-  fun getTypeWithoutTypeParameters(type: KotlinType): String {
-    val descriptor = type.constructor.declarationDescriptor ?: return getTypeName(type)
-    return descriptor.fqNameSafe.asString()
-  }
+    fun getTypeWithoutTypeParameters(type: KotlinType): String {
+        val descriptor = type.constructor.declarationDescriptor ?: return getTypeName(type)
+        return descriptor.fqNameSafe.asString()
+    }
 }
 
 fun KtExpression.resolveType(): KotlinType =
@@ -40,16 +40,16 @@ fun KtExpression.resolveType(): KotlinType =
 fun KtCallExpression.callName(): String = this.calleeExpression!!.text
 
 fun KtCallExpression.receiver(): ReceiverValue? {
-  val resolvedCall = getResolvedCall(analyze()) ?: return null
-  return resolvedCall.dispatchReceiver ?: resolvedCall.extensionReceiver
+    val resolvedCall = getResolvedCall(analyze()) ?: return null
+    return resolvedCall.dispatchReceiver ?: resolvedCall.extensionReceiver
 }
 
 fun KtCallExpression.previousCall(): KtCallExpression? {
-  val parent = this.parent as? KtDotQualifiedExpression ?: return null
-  val receiverExpression = parent.receiverExpression
-  if (receiverExpression is KtCallExpression) return receiverExpression
-  if (receiverExpression is KtDotQualifiedExpression) return receiverExpression.selectorExpression as? KtCallExpression
-  return null
+    val parent = this.parent as? KtDotQualifiedExpression ?: return null
+    val receiverExpression = parent.receiverExpression
+    if (receiverExpression is KtCallExpression) return receiverExpression
+    if (receiverExpression is KtDotQualifiedExpression) return receiverExpression.selectorExpression as? KtCallExpression
+    return null
 }
 
 fun KtCallExpression.receiverType(): KotlinType? = receiver()?.type

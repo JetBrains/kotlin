@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.debugger.sequence.lib.collections.KotlinCollect
 /**
  * @author Vitaliy.Bibaev
  */
+@Suppress("unused")
 abstract class AbstractCollectionTraceTestCase : KotlinTraceTestCase() {
     override val librarySupportProvider: LibrarySupportProvider = KotlinCollectionSupportProvider()
 }

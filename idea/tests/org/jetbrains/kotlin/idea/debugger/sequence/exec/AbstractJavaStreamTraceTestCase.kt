@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.debugger.sequence.lib.java.JavaStandardLibraryS
 /**
  * @author Vitaliy.Bibaev
  */
-abstract class AbstractJavaStreamTraceTestCase: KotlinTraceTestCase() {
+@Suppress("unused")
+abstract class AbstractJavaStreamTraceTestCase : KotlinTraceTestCase() {
     override val librarySupportProvider: LibrarySupportProvider = JavaStandardLibrarySupportProvider()
 }

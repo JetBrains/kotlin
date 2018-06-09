@@ -10,16 +10,15 @@ import com.intellij.debugger.streams.trace.impl.handler.type.ListType
 /**
  * @author Vitaliy.Bibaev
  */
-class KotlinListVariable(override val type: ListType, name: String)
-  : VariableImpl(type, name), ListVariable {
-  override fun get(index: Expression): Expression = call("get", index)
-  override fun set(index: Expression, newValue: Expression): Expression = call("set", index, newValue)
-  override fun add(element: Expression): Expression = call("add", element)
+class KotlinListVariable(override val type: ListType, name: String) : VariableImpl(type, name), ListVariable {
+    override fun get(index: Expression): Expression = call("get", index)
+    override fun set(index: Expression, newValue: Expression): Expression = call("set", index, newValue)
+    override fun add(element: Expression): Expression = call("add", element)
 
-  override fun contains(element: Expression): Expression = call("contains", element)
+    override fun contains(element: Expression): Expression = call("contains", element)
 
-  override fun size(): Expression = property("size")
+    override fun size(): Expression = property("size")
 
-  override fun defaultDeclaration(): VariableDeclaration =
-    KotlinVariableDeclaration(this, false, type.defaultValue)
+    override fun defaultDeclaration(): VariableDeclaration =
+        KotlinVariableDeclaration(this, false, type.defaultValue)
 }

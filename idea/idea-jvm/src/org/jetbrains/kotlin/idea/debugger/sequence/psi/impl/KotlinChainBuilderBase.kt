@@ -13,81 +13,81 @@ import org.jetbrains.kotlin.psi.*
  * @author Vitaliy.Bibaev
  */
 abstract class KotlinChainBuilderBase(private val transformer: ChainTransformer<KtCallExpression>) : StreamChainBuilder {
-  protected abstract val existenceChecker: ExistenceChecker
+    protected abstract val existenceChecker: ExistenceChecker
 
-  override fun isChainExists(startElement: PsiElement): Boolean {
-    val start = if (startElement is PsiWhiteSpace) PsiUtil.ignoreWhiteSpaces(startElement) else startElement
-    var element = getLatestElementInScope(start)
-    existenceChecker.reset()
-    while (element != null && !existenceChecker.isFound()) {
-      existenceChecker.reset()
-      element.accept(existenceChecker)
-      element = toUpperLevel(element)
+    override fun isChainExists(startElement: PsiElement): Boolean {
+        val start = if (startElement is PsiWhiteSpace) PsiUtil.ignoreWhiteSpaces(startElement) else startElement
+        var element = getLatestElementInScope(start)
+        existenceChecker.reset()
+        while (element != null && !existenceChecker.isFound()) {
+            existenceChecker.reset()
+            element.accept(existenceChecker)
+            element = toUpperLevel(element)
+        }
+
+        return existenceChecker.isFound()
     }
 
-    return existenceChecker.isFound()
-  }
+    override fun build(startElement: PsiElement): List<StreamChain> {
+        val visitor = createChainsBuilder()
+        val start = if (startElement is PsiWhiteSpace) PsiUtil.ignoreWhiteSpaces(startElement) else startElement
+        var element = getLatestElementInScope(start)
+        while (element != null) {
+            element.accept(visitor)
+            element = toUpperLevel(element)
+        }
 
-  override fun build(startElement: PsiElement): List<StreamChain> {
-    val visitor = createChainsBuilder()
-    val start = if (startElement is PsiWhiteSpace) PsiUtil.ignoreWhiteSpaces(startElement) else startElement
-    var element = getLatestElementInScope(start)
-    while (element != null) {
-      element.accept(visitor)
-      element = toUpperLevel(element)
+        return visitor.chains().map { transformer.transform(it, startElement) }
     }
 
-    return visitor.chains().map { transformer.transform(it, startElement) }
-  }
+    private fun toUpperLevel(element: PsiElement): PsiElement? {
+        var current = element.parent
 
-  private fun toUpperLevel(element: PsiElement): PsiElement? {
-    var current = element.parent
+        while (current != null && !(current is KtLambdaExpression || current is KtAnonymousInitializer || current is KtObjectDeclaration)) {
+            current = current.parent
+        }
 
-    while (current != null && !(current is KtLambdaExpression || current is KtAnonymousInitializer || current is KtObjectDeclaration)) {
-      current = current.parent
+        return getLatestElementInScope(current)
     }
 
-    return getLatestElementInScope(current)
-  }
+    protected abstract fun createChainsBuilder(): ChainBuilder
 
-  protected abstract fun createChainsBuilder(): ChainBuilder
+    private fun getLatestElementInScope(element: PsiElement?): PsiElement? {
+        var current = element
+        while (current != null) {
+            if (current is KtNamedFunction && current.hasInitializer()) {
+                break
+            }
 
-  private fun getLatestElementInScope(element: PsiElement?): PsiElement? {
-    var current = element
-    while (current != null) {
-      if (current is KtNamedFunction && current.hasInitializer()) {
-        break
-      }
-
-      val parent = current.parent
-      if (parent is KtBlockExpression || parent is KtLambdaExpression) {
-        break
-      }
+            val parent = current.parent
+            if (parent is KtBlockExpression || parent is KtLambdaExpression) {
+                break
+            }
 
 
-      current = parent
+            current = parent
+        }
+
+        return current
     }
 
-    return current
-  }
+    protected abstract class ExistenceChecker : MyTreeVisitor() {
+        private var myIsFound: Boolean = false
+        fun isFound(): Boolean = myIsFound
+        fun reset() = setFound(false)
+        protected fun fireElementFound() = setFound(true)
 
-  protected abstract class ExistenceChecker : MyTreeVisitor() {
-    private var myIsFound: Boolean = false
-    fun isFound(): Boolean = myIsFound
-    fun reset() = setFound(false)
-    protected fun fireElementFound() = setFound(true)
-
-    private fun setFound(value: Boolean) {
-      myIsFound = value
+        private fun setFound(value: Boolean) {
+            myIsFound = value
+        }
     }
-  }
 
-  protected abstract class ChainBuilder : MyTreeVisitor() {
-    abstract fun chains(): List<List<KtCallExpression>>
-  }
+    protected abstract class ChainBuilder : MyTreeVisitor() {
+        abstract fun chains(): List<List<KtCallExpression>>
+    }
 
-  protected abstract class MyTreeVisitor : KtTreeVisitorVoid() {
-    override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {}
-    override fun visitBlockExpression(expression: KtBlockExpression) {}
-  }
+    protected abstract class MyTreeVisitor : KtTreeVisitorVoid() {
+        override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {}
+        override fun visitBlockExpression(expression: KtBlockExpression) {}
+    }
 }

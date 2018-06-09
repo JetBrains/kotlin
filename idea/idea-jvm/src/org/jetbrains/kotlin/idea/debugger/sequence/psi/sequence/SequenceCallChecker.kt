@@ -13,19 +13,19 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
  * @author Vitaliy.Bibaev
  */
 class SequenceCallChecker : StreamCallChecker {
-  override fun isIntermediateCall(expression: KtCallExpression): Boolean {
-    val receiverType = expression.receiverType() ?: return false
-    return isSequenceInheritor(receiverType) && isSequenceInheritor(expression.resolveType())
-  }
+    override fun isIntermediateCall(expression: KtCallExpression): Boolean {
+        val receiverType = expression.receiverType() ?: return false
+        return isSequenceInheritor(receiverType) && isSequenceInheritor(expression.resolveType())
+    }
 
-  override fun isTerminationCall(expression: KtCallExpression): Boolean {
-    val receiverType = expression.receiverType() ?: return false
-    return isSequenceInheritor(receiverType) && !isSequenceInheritor(expression.resolveType())
-  }
+    override fun isTerminationCall(expression: KtCallExpression): Boolean {
+        val receiverType = expression.receiverType() ?: return false
+        return isSequenceInheritor(receiverType) && !isSequenceInheritor(expression.resolveType())
+    }
 
-  private fun isSequenceInheritor(type: KotlinType): Boolean =
-      isSequenceType(type) || type.supertypes().any(this::isSequenceType)
+    private fun isSequenceInheritor(type: KotlinType): Boolean =
+        isSequenceType(type) || type.supertypes().any(this::isSequenceType)
 
-  private fun isSequenceType(type: KotlinType): Boolean =
-      "kotlin.sequences.Sequence" == KotlinPsiUtil.getTypeWithoutTypeParameters(type)
+    private fun isSequenceType(type: KotlinType): Boolean =
+        "kotlin.sequences.Sequence" == KotlinPsiUtil.getTypeWithoutTypeParameters(type)
 }

@@ -11,23 +11,23 @@ import com.sun.jdi.Value
  */
 object InterpreterUtil {
 
-  fun extractMap(value: Value): MapRepresentation {
-    if (value !is ArrayReference || value.length() != 2) {
-      throw UnexpectedValueException("Map should be represented by array with two nested arrays: keys and values")
+    fun extractMap(value: Value): MapRepresentation {
+        if (value !is ArrayReference || value.length() != 2) {
+            throw UnexpectedValueException("Map should be represented by array with two nested arrays: keys and values")
+        }
+
+        val keys = value.getValue(0)
+        val values = value.getValue(1)
+
+        if (keys !is ArrayReference || values !is ArrayReference || keys.length() != values.length()) {
+            throw UnexpectedValueException("Keys and values should be arrays with equal counts of elements")
+        }
+
+        return MapRepresentation(keys, values)
     }
 
-    val keys = value.getValue(0)
-    val values = value.getValue(1)
+    fun createIndexByTime(elements: List<TraceElement>): Map<Int, TraceElement> =
+        elements.associate { elem -> elem.time to elem }
 
-    if (keys !is ArrayReference || values !is ArrayReference || keys.length() != values.length()) {
-      throw UnexpectedValueException("Keys and values should be arrays with equal counts of elements")
-    }
-
-    return MapRepresentation(keys, values)
-  }
-
-  fun createIndexByTime(elements: List<TraceElement>): Map<Int, TraceElement> =
-      elements.associate { elem -> elem.time to elem }
-
-  data class MapRepresentation(val keys: ArrayReference, val values: ArrayReference)
+    data class MapRepresentation(val keys: ArrayReference, val values: ArrayReference)
 }

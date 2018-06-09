@@ -11,19 +11,19 @@ import com.intellij.openapi.diagnostic.Logger
  * @author Vitaliy.Bibaev
  */
 class KotlinTraceExpressionBuilder(dsl: Dsl, handlerFactory: HandlerFactory) : TraceExpressionBuilderBase(dsl, handlerFactory) {
-  private companion object {
-    private val LOG = Logger.getInstance(KotlinTraceExpressionBuilder::class.java)
-  }
+    private companion object {
+        private val LOG = Logger.getInstance(KotlinTraceExpressionBuilder::class.java)
+    }
 
-  override fun createTraceExpression(chain: StreamChain): String {
-    val expression = super.createTraceExpression(chain)
-    val resultDeclaration = dsl.declaration(dsl.variable(dsl.types.nullable { ANY }, resultVariableName), dsl.nullExpression, true)
-    val result = "${resultDeclaration.toCode()}\n " +
-        "$expression\n" +
-        resultVariableName
+    override fun createTraceExpression(chain: StreamChain): String {
+        val expression = super.createTraceExpression(chain)
+        val resultDeclaration = dsl.declaration(dsl.variable(dsl.types.nullable { ANY }, resultVariableName), dsl.nullExpression, true)
+        val result = "${resultDeclaration.toCode()}\n " +
+                "$expression\n" +
+                resultVariableName
 
-    LOG.info("trace expression: \n$result")
+        LOG.info("trace expression: \n$result")
 
-    return result
-  }
+        return result
+    }
 }

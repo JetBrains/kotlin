@@ -9,19 +9,19 @@ import com.intellij.debugger.streams.trace.dsl.impl.common.IfBranchBase
 /**
  * @author Vitaliy.Bibaev
  */
-class KotlinIfBranch(condition: Expression, thenBlock: CodeBlock, statementFactory: StatementFactory)
-  : IfBranchBase(condition, thenBlock, statementFactory) {
-  override fun toCode(indent: Int): String {
-    val elseBlockVar = elseBlock
-    val ifThen = "if (${condition.toCode(0)}) {\n".withIndent(indent) +
-                 thenBlock.toCode(indent + 1) +
-                 "}".withIndent(indent)
-    if (elseBlockVar != null) {
-      return ifThen + " else { \n" +
-             elseBlockVar.toCode(indent + 1) +
-             "}".withIndent(indent)
-    }
+class KotlinIfBranch(condition: Expression, thenBlock: CodeBlock, statementFactory: StatementFactory) :
+    IfBranchBase(condition, thenBlock, statementFactory) {
+    override fun toCode(indent: Int): String {
+        val elseBlockVar = elseBlock
+        val ifThen = "if (${condition.toCode(0)}) {\n".withIndent(indent) +
+                thenBlock.toCode(indent + 1) +
+                "}".withIndent(indent)
+        if (elseBlockVar != null) {
+            return ifThen + " else { \n" +
+                    elseBlockVar.toCode(indent + 1) +
+                    "}".withIndent(indent)
+        }
 
-    return ifThen
-  }
+        return ifThen
+    }
 }

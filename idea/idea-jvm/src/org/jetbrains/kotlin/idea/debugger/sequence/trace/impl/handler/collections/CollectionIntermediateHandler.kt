@@ -2,7 +2,9 @@
 package org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.collections
 
 import com.intellij.debugger.streams.trace.IntermediateCallHandler
-import com.intellij.debugger.streams.trace.dsl.*
+import com.intellij.debugger.streams.trace.dsl.CodeBlock
+import com.intellij.debugger.streams.trace.dsl.Dsl
+import com.intellij.debugger.streams.trace.dsl.Expression
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 
 /**
@@ -13,26 +15,25 @@ class CollectionIntermediateHandler(
     private val call: IntermediateStreamCall,
     private val dsl: Dsl,
     private val internalHandler: BothSemanticsHandler
-)
-  : IntermediateCallHandler, CollectionHandlerBase(order, dsl, call, internalHandler) {
+) : IntermediateCallHandler, CollectionHandlerBase(order, dsl, call, internalHandler) {
 
-  override fun prepareResult(): CodeBlock {
-    return internalHandler.prepareResult(dsl, variables)
-  }
+    override fun prepareResult(): CodeBlock {
+        return internalHandler.prepareResult(dsl, variables)
+    }
 
-  override fun additionalCallsBefore(): List<IntermediateStreamCall> {
-    return internalHandler.additionalCallsBefore(call, dsl)
-  }
+    override fun additionalCallsBefore(): List<IntermediateStreamCall> {
+        return internalHandler.additionalCallsBefore(call, dsl)
+    }
 
-  override fun additionalCallsAfter(): List<IntermediateStreamCall> {
-    return internalHandler.additionalCallsAfter(call, dsl)
-  }
+    override fun additionalCallsAfter(): List<IntermediateStreamCall> {
+        return internalHandler.additionalCallsAfter(call, dsl)
+    }
 
-  override fun transformCall(call: IntermediateStreamCall): IntermediateStreamCall {
-    return internalHandler.transformAsIntermediateCall(call, variables, dsl)
-  }
+    override fun transformCall(call: IntermediateStreamCall): IntermediateStreamCall {
+        return internalHandler.transformAsIntermediateCall(call, variables, dsl)
+    }
 
-  override fun getResultExpression(): Expression {
-    return internalHandler.getResultExpression(call, dsl, variables)
-  }
+    override fun getResultExpression(): Expression {
+        return internalHandler.getResultExpression(call, dsl, variables)
+    }
 }

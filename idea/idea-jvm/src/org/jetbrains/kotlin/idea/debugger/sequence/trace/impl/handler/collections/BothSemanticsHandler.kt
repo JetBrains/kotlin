@@ -10,17 +10,17 @@ import com.intellij.debugger.streams.wrapper.TerminatorStreamCall
  * @author Vitaliy.Bibaev
  */
 interface BothSemanticsHandler {
-  fun variablesDeclaration(call: StreamCall, order: Int, dsl: Dsl): List<VariableDeclaration>
+    fun variablesDeclaration(call: StreamCall, order: Int, dsl: Dsl): List<VariableDeclaration>
 
-  fun prepareResult(dsl: Dsl, variables: List<Variable>): CodeBlock
+    fun prepareResult(dsl: Dsl, variables: List<Variable>): CodeBlock
 
-  fun additionalCallsBefore(call: StreamCall, dsl: Dsl): List<IntermediateStreamCall>
+    fun additionalCallsBefore(call: StreamCall, dsl: Dsl): List<IntermediateStreamCall>
 
-  fun additionalCallsAfter(call: StreamCall, dsl: Dsl): List<IntermediateStreamCall>
+    fun additionalCallsAfter(call: StreamCall, dsl: Dsl): List<IntermediateStreamCall>
 
-  fun transformAsIntermediateCall(call: IntermediateStreamCall, variables: List<Variable>, dsl: Dsl): IntermediateStreamCall
+    fun transformAsIntermediateCall(call: IntermediateStreamCall, variables: List<Variable>, dsl: Dsl): IntermediateStreamCall
 
-  fun transformAsTerminalCall(call: TerminatorStreamCall, variables: List<Variable>, dsl: Dsl): TerminatorStreamCall
+    fun transformAsTerminalCall(call: TerminatorStreamCall, variables: List<Variable>, dsl: Dsl): TerminatorStreamCall
 
-  fun getResultExpression(call: StreamCall, dsl: Dsl, variables: List<Variable>): Expression
+    fun getResultExpression(call: StreamCall, dsl: Dsl, variables: List<Variable>): Expression
 }
