@@ -1103,6 +1103,17 @@ void DeinitMemory(MemoryState* memoryState) {
   ::memoryState = nullptr;
 }
 
+MemoryState* SuspendMemory() {
+    auto result = ::memoryState;
+    ::memoryState = nullptr;
+    return result;
+}
+
+void ResumeMemory(MemoryState* state) {
+    RuntimeAssert(::memoryState == nullptr, "Cannot schedule on existing state");
+    ::memoryState = state;
+}
+
 OBJ_GETTER(AllocInstance, const TypeInfo* type_info) {
   RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
   if (isArenaSlot(OBJ_RESULT)) {

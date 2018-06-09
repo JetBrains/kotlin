@@ -379,6 +379,9 @@ struct MemoryState;
 MemoryState* InitMemory();
 void DeinitMemory(MemoryState*);
 
+MemoryState* SuspendMemory();
+void ResumeMemory(MemoryState* state);
+
 //
 // Object allocation.
 //
