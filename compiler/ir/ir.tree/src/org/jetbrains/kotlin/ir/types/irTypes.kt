@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.ir.types
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -53,3 +54,19 @@ fun IrType.makeNullable() =
         )
     else
         this
+
+fun IrType.toKotlinType(): KotlinType = when (this) {
+    is IrSimpleType -> {
+        val classifier = this.classifier.descriptor
+        val arguments = this.arguments.mapIndexed { index, it ->
+            when (it) {
+                is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toKotlinType())
+                is IrStarProjection -> StarProjectionImpl((classifier as ClassDescriptor).declaredTypeParameters[index])
+                else -> error(it)
+            }
+        }
+
+        classifier.defaultType.replace(newArguments = arguments).makeNullableAsSpecified(this.hasQuestionMark)
+    }
+    else -> TODO(this.toString())
+}

@@ -80,6 +80,36 @@ fun IrFunctionAccessExpression.getArgumentsWithSymbols(): List<Pair<IrValueParam
 }
 
 /**
+ * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
+ * The arguments are to be evaluated in the same order as they appear in the resulting list.
+ */
+fun IrMemberAccessExpression.getArgumentsWithIr(): List<Pair<IrValueParameter, IrExpression>> {
+    val res = mutableListOf<Pair<IrValueParameter, IrExpression>>()
+    val irFunction = when (this) {
+        is IrFunctionAccessExpression -> this.symbol.owner
+        is IrFunctionReference -> this.symbol.owner
+        else -> error(this)
+    }
+
+    dispatchReceiver?.let {
+        res += (irFunction.dispatchReceiverParameter!! to it)
+    }
+
+    extensionReceiver?.let {
+        res += (irFunction.extensionReceiverParameter!! to it)
+    }
+
+    irFunction.valueParameters.forEachIndexed { index, it ->
+        val arg = getValueArgument(index)
+        if (arg != null) {
+            res += (it to arg)
+        }
+    }
+
+    return res
+}
+
+/**
  * Sets arguments that are specified by given mapping of parameters.
  */
 fun IrMemberAccessExpression.addArguments(args: Map<ParameterDescriptor, IrExpression>) {
@@ -203,11 +233,17 @@ val DeclarationDescriptorWithSource.endOffsetOrUndefined: Int get() = endOffset 
 val IrClassSymbol.functions: Sequence<IrSimpleFunctionSymbol>
     get() = this.owner.declarations.asSequence().filterIsInstance<IrSimpleFunction>().map { it.symbol }
 
+val IrClass.functions: Sequence<IrSimpleFunction>
+    get() = this.declarations.asSequence().filterIsInstance<IrSimpleFunction>()
+
 val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
     get() = this.owner.declarations.asSequence().filterIsInstance<IrConstructor>().map { it.symbol }
 
-val IrFunction.explicitParameters: List<IrValueParameterSymbol>
-    get() = (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters).map { it.symbol }
+val IrClass.constructors: Sequence<IrConstructor>
+    get() = this.declarations.asSequence().filterIsInstance<IrConstructor>()
+
+val IrFunction.explicitParameters: List<IrValueParameter>
+    get() = (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters)
 
 val IrClass.defaultType: KotlinType
     get() = this.descriptor.defaultType
