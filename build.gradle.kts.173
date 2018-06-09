@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm")
 }
 
-val ideaProjectResources =  project(":idea").the<JavaPluginConvention>().sourceSets["main"].output.resourcesDir
+val ideaProjectResources =  project(":idea").javaPluginConvention().sourceSets["main"].output.resourcesDir
 
 evaluationDependsOn(":prepare:idea-plugin")
 
@@ -168,7 +168,7 @@ val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
     val communityPluginJar = project(communityPluginProject).configurations["runtimeJar"].artifacts.files.singleFile
     from(zipTree(communityPluginJar), { exclude("META-INF/plugin.xml") })
     from(preparedResources, { include("META-INF/plugin.xml") })
-    from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
+    from(javaPluginConvention().sourceSets.getByName("main").output)
     archiveName = "kotlin-plugin.jar"
 }
 
