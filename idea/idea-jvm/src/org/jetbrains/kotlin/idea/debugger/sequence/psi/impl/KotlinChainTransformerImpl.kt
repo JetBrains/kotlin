@@ -25,45 +25,51 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
  * @author Vitaliy.Bibaev
  */
 class KotlinChainTransformerImpl(private val typeExtractor: CallTypeExtractor) : ChainTransformer<KtCallExpression> {
-  override fun transform(callChain: List<KtCallExpression>, context: PsiElement): StreamChain {
-    val intermediateCalls = mutableListOf<IntermediateStreamCall>()
-    for (call in callChain.subList(0, callChain.size - 1)) {
-      val (typeBefore, typeAfter) = typeExtractor.extractIntermediateCallTypes(call)
-      intermediateCalls += IntermediateStreamCallImpl(call.callName(),
-          call.valueArguments.map { createCallArgument(call, it) }, typeBefore, typeAfter, call.textRange)
+    override fun transform(callChain: List<KtCallExpression>, context: PsiElement): StreamChain {
+        val intermediateCalls = mutableListOf<IntermediateStreamCall>()
+        for (call in callChain.subList(0, callChain.size - 1)) {
+            val (typeBefore, typeAfter) = typeExtractor.extractIntermediateCallTypes(call)
+            intermediateCalls += IntermediateStreamCallImpl(call.callName(),
+                                                            call.valueArguments.map { createCallArgument(call, it) },
+                                                            typeBefore,
+                                                            typeAfter,
+                                                            call.textRange
+            )
+        }
+
+        val terminationsPsiCall = callChain.last()
+        val (typeBeforeTerminator, resultType) = typeExtractor.extractTerminalCallTypes(terminationsPsiCall)
+        val terminationCall = TerminatorStreamCallImpl(
+            terminationsPsiCall.callName(),
+            terminationsPsiCall.valueArguments.map { createCallArgument(terminationsPsiCall, it) },
+            typeBeforeTerminator, resultType, terminationsPsiCall.textRange
+        )
+
+        val typeAfterQualifier =
+            if (intermediateCalls.isEmpty()) typeBeforeTerminator else intermediateCalls.first().typeBefore
+
+        val qualifier = createQualifier(callChain.first(), typeAfterQualifier)
+
+        return StreamChainImpl(qualifier, intermediateCalls, terminationCall, context)
     }
 
-    val terminationsPsiCall = callChain.last()
-    val (typeBeforeTerminator, resultType) = typeExtractor.extractTerminalCallTypes(terminationsPsiCall)
-    val terminationCall = TerminatorStreamCallImpl(terminationsPsiCall.callName(),
-        terminationsPsiCall.valueArguments.map { createCallArgument(terminationsPsiCall, it) },
-        typeBeforeTerminator, resultType, terminationsPsiCall.textRange)
+    private fun createCallArgument(callExpression: KtCallExpression, arg: KtValueArgument): CallArgument {
+        fun KtValueArgument.toCallArgument(): CallArgument {
+            val argExpression = getArgumentExpression()!!
+            return CallArgumentImpl(KotlinPsiUtil.getTypeName(argExpression.resolveType()), this.text)
+        }
 
-    val typeAfterQualifier =
-        if (intermediateCalls.isEmpty()) typeBeforeTerminator else intermediateCalls.first().typeBefore
-
-    val qualifier = createQualifier(callChain.first(), typeAfterQualifier)
-
-    return StreamChainImpl(qualifier, intermediateCalls, terminationCall, context)
-  }
-
-  private fun createCallArgument(callExpression: KtCallExpression, arg: KtValueArgument): CallArgument {
-    fun KtValueArgument.toCallArgument(): CallArgument {
-      val argExpression = getArgumentExpression()!!
-      return CallArgumentImpl(KotlinPsiUtil.getTypeName(argExpression.resolveType()), this.text)
+        val bindingContext = callExpression.getResolutionFacade().analyzeWithAllCompilerChecks(listOf(callExpression)).bindingContext
+        val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return arg.toCallArgument()
+        val parameter = resolvedCall.getParameterForArgument(arg) ?: return arg.toCallArgument()
+        return CallArgumentImpl(KotlinPsiUtil.getTypeName(parameter.type), arg.text)
     }
 
-    val bindingContext = callExpression.getResolutionFacade().analyzeWithAllCompilerChecks(listOf(callExpression)).bindingContext
-    val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return arg.toCallArgument()
-    val parameter = resolvedCall.getParameterForArgument(arg) ?: return arg.toCallArgument()
-    return CallArgumentImpl(KotlinPsiUtil.getTypeName(parameter.type), arg.text)
-  }
+    private fun createQualifier(expression: PsiElement, typeAfter: GenericType): QualifierExpression {
+        val parent = expression.parent as? KtDotQualifiedExpression
+                ?: return QualifierExpressionImpl("", TextRange.EMPTY_RANGE, typeAfter)
+        val receiver = parent.receiverExpression
 
-  private fun createQualifier(expression: PsiElement, typeAfter: GenericType): QualifierExpression {
-    val parent = expression.parent as? KtDotQualifiedExpression
-        ?: return QualifierExpressionImpl("", TextRange.EMPTY_RANGE, typeAfter)
-    val receiver = parent.receiverExpression
-
-    return QualifierExpressionImpl(receiver.text, receiver.textRange, typeAfter)
-  }
+        return QualifierExpressionImpl(receiver.text, receiver.textRange, typeAfter)
+    }
 }

@@ -14,9 +14,9 @@ import com.intellij.debugger.streams.wrapper.TerminatorStreamCall
  * @author Vitaliy.Bibaev
  */
 class BothSemanticHandlerWrapper(private val handler: BothSemanticsHandler) {
-  fun createIntermediateHandler(order: Int, call: IntermediateStreamCall, dsl: Dsl): IntermediateCallHandler =
-      CollectionIntermediateHandler(order, call, dsl, handler)
+    fun createIntermediateHandler(order: Int, call: IntermediateStreamCall, dsl: Dsl): IntermediateCallHandler =
+        CollectionIntermediateHandler(order, call, dsl, handler)
 
-  fun createTerminatorHandler(call: TerminatorStreamCall, resultExpression: String, dsl: Dsl): TerminatorCallHandler =
-      CollectionTerminatorHandler(call, resultExpression, dsl, handler)
+    fun createTerminatorHandler(call: TerminatorStreamCall, resultExpression: String, dsl: Dsl): TerminatorCallHandler =
+        CollectionTerminatorHandler(call, resultExpression, dsl, handler)
 }

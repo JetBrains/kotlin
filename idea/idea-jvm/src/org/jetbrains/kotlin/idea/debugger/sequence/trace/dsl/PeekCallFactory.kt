@@ -8,5 +8,5 @@ import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
  * @author Vitaliy.Bibaev
  */
 interface PeekCallFactory {
-  fun createPeekCall(elementsType: GenericType, lambda: String): IntermediateStreamCall
+    fun createPeekCall(elementsType: GenericType, lambda: String): IntermediateStreamCall
 }

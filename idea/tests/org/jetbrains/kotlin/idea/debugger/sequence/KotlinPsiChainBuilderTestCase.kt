@@ -29,85 +29,93 @@ import java.util.*
  * @author Vitaliy.Bibaev
  */
 abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) : StreamChainBuilderTestCase() {
-  override fun getTestDataPath(): String =
-    Paths.get(File("").absolutePath, "idea/testData/debugger/sequence/psi/$relativeTestPath/").toString()
-  override fun getFileExtension(): String = ".kt"
-  abstract val kotlinChainBuilder: StreamChainBuilder
-  override fun getChainBuilder(): StreamChainBuilder = kotlinChainBuilder
-  private val stdLibName = "kotlin-stdlib"
+    override fun getTestDataPath(): String =
+        Paths.get(File("").absolutePath, "idea/testData/debugger/sequence/psi/$relativeTestPath/").toString()
 
-  protected abstract fun doTest()
+    override fun getFileExtension(): String = ".kt"
+    abstract val kotlinChainBuilder: StreamChainBuilder
+    override fun getChainBuilder(): StreamChainBuilder = kotlinChainBuilder
+    private val stdLibName = "kotlin-stdlib"
 
-  override fun tearDown() {
-    doKotlinTearDown(LightPlatformTestCase.getProject(), { super.tearDown() })
-  }
+    protected abstract fun doTest()
 
-  override final fun getRelativeTestPath(): String = relativePath
-
-  override fun setUp() {
-    super.setUp()
-    ApplicationManager.getApplication().runWriteAction {
-      if (ProjectLibraryTable.getInstance(LightPlatformTestCase.getProject()).getLibraryByName(stdLibName) == null) {
-        val stdLibPath = ForTestCompileRuntime.runtimeJarForTests()
-        PsiTestUtil.addLibrary(testRootDisposable, LightPlatformTestCase.getModule(), stdLibName, stdLibPath.parent, stdLibPath.name)
-      }
-    }
-    LibraryModificationTracker.getInstance(LightPlatformTestCase.getProject()).incModificationCount()
-  }
-
-
-  override fun getProjectJDK(): Sdk {
-    return PluginTestCaseBase.mockJdk9()
-  }
-
-  private fun doKotlinTearDown(project: Project, runnable: () -> Unit) {
-    unInvalidateBuiltinsAndStdLib(project) {
-      runnable()
-    }
-  }
-
-  private fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: () -> Unit) {
-    val stdLibViewProviders = HashSet<KotlinDecompiledFileViewProvider>()
-    val vFileToViewProviderMap = ((PsiManager.getInstance(project) as PsiManagerEx).fileManager as FileManagerImpl).vFileToViewProviderMap
-    for ((file, viewProvider) in vFileToViewProviderMap) {
-      if (file.isStdLibFile && viewProvider is KotlinDecompiledFileViewProvider) {
-        stdLibViewProviders.add(viewProvider)
-      }
+    override fun tearDown() {
+        doKotlinTearDown(LightPlatformTestCase.getProject(), { super.tearDown() })
     }
 
-    runnable()
+    override final fun getRelativeTestPath(): String = relativePath
 
-    // Base tearDown() invalidates builtins and std-lib files. Restore them with brute force.
-    fun unInvalidateFile(file: PsiFileImpl) {
-      val field = PsiFileImpl::class.java.getDeclaredField("myInvalidated")!!
-      field.isAccessible = true
-      field.set(file, false)
+    override fun setUp() {
+        super.setUp()
+        ApplicationManager.getApplication().runWriteAction {
+            if (ProjectLibraryTable.getInstance(LightPlatformTestCase.getProject()).getLibraryByName(stdLibName) == null) {
+                val stdLibPath = ForTestCompileRuntime.runtimeJarForTests()
+                PsiTestUtil.addLibrary(
+                    testRootDisposable,
+                    LightPlatformTestCase.getModule(),
+                    stdLibName,
+                    stdLibPath.parent,
+                    stdLibPath.name
+                )
+            }
+        }
+        LibraryModificationTracker.getInstance(LightPlatformTestCase.getProject()).incModificationCount()
     }
 
-    stdLibViewProviders.forEach {
-      it.allFiles.forEach { unInvalidateFile(it as KtDecompiledFile) }
-      vFileToViewProviderMap[it.virtualFile] = it
-    }
-  }
 
-  private val VirtualFile.isStdLibFile: Boolean get() = presentableUrl.contains("kotlin-runtime.jar")
-
-  abstract class Positive(relativePath: String) : KotlinPsiChainBuilderTestCase(relativePath) {
-    override fun doTest() {
-      val chains = buildChains()
-      checkChains(chains)
+    override fun getProjectJDK(): Sdk {
+        return PluginTestCaseBase.mockJdk9()
     }
 
-    protected fun checkChains(chains: MutableList<StreamChain>) {
-      TestCase.assertFalse(chains.isEmpty())
+    private fun doKotlinTearDown(project: Project, runnable: () -> Unit) {
+        unInvalidateBuiltinsAndStdLib(project) {
+            runnable()
+        }
     }
-  }
 
-  abstract class Negative(relativePath: String) : KotlinPsiChainBuilderTestCase(relativePath) {
-    override fun doTest() {
-      val elementAtCaret = configureAndGetElementAtCaret()
-      TestCase.assertFalse(chainBuilder.isChainExists(elementAtCaret))
-      TestCase.assertTrue(chainBuilder.build(elementAtCaret).isEmpty())
+    private fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: () -> Unit) {
+        val stdLibViewProviders = HashSet<KotlinDecompiledFileViewProvider>()
+        val vFileToViewProviderMap =
+            ((PsiManager.getInstance(project) as PsiManagerEx).fileManager as FileManagerImpl).vFileToViewProviderMap
+        for ((file, viewProvider) in vFileToViewProviderMap) {
+            if (file.isStdLibFile && viewProvider is KotlinDecompiledFileViewProvider) {
+                stdLibViewProviders.add(viewProvider)
+            }
+        }
+
+        runnable()
+
+        // Base tearDown() invalidates builtins and std-lib files. Restore them with brute force.
+        fun unInvalidateFile(file: PsiFileImpl) {
+            val field = PsiFileImpl::class.java.getDeclaredField("myInvalidated")!!
+            field.isAccessible = true
+            field.set(file, false)
+        }
+
+        stdLibViewProviders.forEach {
+            it.allFiles.forEach { unInvalidateFile(it as KtDecompiledFile) }
+            vFileToViewProviderMap[it.virtualFile] = it
+        }
     }
-  }
+
+    private val VirtualFile.isStdLibFile: Boolean get() = presentableUrl.contains("kotlin-runtime.jar")
+
+    abstract class Positive(relativePath: String) : KotlinPsiChainBuilderTestCase(relativePath) {
+        override fun doTest() {
+            val chains = buildChains()
+            checkChains(chains)
+        }
+
+        protected fun checkChains(chains: MutableList<StreamChain>) {
+            TestCase.assertFalse(chains.isEmpty())
+        }
+    }
+
+    abstract class Negative(relativePath: String) : KotlinPsiChainBuilderTestCase(relativePath) {
+        override fun doTest() {
+            val elementAtCaret = configureAndGetElementAtCaret()
+            TestCase.assertFalse(chainBuilder.isChainExists(elementAtCaret))
+            TestCase.assertTrue(chainBuilder.build(elementAtCaret).isEmpty())
+        }
+    }
 }

@@ -9,23 +9,23 @@ import org.jetbrains.kotlin.types.KotlinType
  * @author Vitaliy.Bibaev
  */
 interface CallTypeExtractor {
-  fun extractIntermediateCallTypes(call: KtCallExpression): IntermediateCallTypes
-  fun extractTerminalCallTypes(call: KtCallExpression): TerminatorCallTypes
+    fun extractIntermediateCallTypes(call: KtCallExpression): IntermediateCallTypes
+    fun extractTerminalCallTypes(call: KtCallExpression): TerminatorCallTypes
 
-  data class IntermediateCallTypes(val typeBefore: GenericType, val typeAfter: GenericType)
-  data class TerminatorCallTypes(val typeBefore: GenericType, val resultType: GenericType)
+    data class IntermediateCallTypes(val typeBefore: GenericType, val typeAfter: GenericType)
+    data class TerminatorCallTypes(val typeBefore: GenericType, val resultType: GenericType)
 
-  abstract class Base : CallTypeExtractor {
-    override fun extractIntermediateCallTypes(call: KtCallExpression): IntermediateCallTypes =
-        IntermediateCallTypes(extractItemsType(call.receiverType()), extractItemsType(call.resolveType()))
-
-
-    override fun extractTerminalCallTypes(call: KtCallExpression): TerminatorCallTypes =
-        TerminatorCallTypes(extractItemsType(call.receiverType()), getResultType(call.resolveType()))
+    abstract class Base : CallTypeExtractor {
+        override fun extractIntermediateCallTypes(call: KtCallExpression): IntermediateCallTypes =
+            IntermediateCallTypes(extractItemsType(call.receiverType()), extractItemsType(call.resolveType()))
 
 
-    protected abstract fun extractItemsType(type: KotlinType?): GenericType
-    protected abstract fun getResultType(type: KotlinType): GenericType
+        override fun extractTerminalCallTypes(call: KtCallExpression): TerminatorCallTypes =
+            TerminatorCallTypes(extractItemsType(call.receiverType()), getResultType(call.resolveType()))
 
-  }
+
+        protected abstract fun extractItemsType(type: KotlinType?): GenericType
+        protected abstract fun getResultType(type: KotlinType): GenericType
+
+    }
 }

@@ -9,49 +9,49 @@ import com.intellij.debugger.streams.trace.TraceInfo
  * @author Vitaliy.Bibaev
  */
 class WindowedResolver : ValuesOrderResolver {
-  override fun resolve(info: TraceInfo): ValuesOrderResolver.Result {
-    val indexBefore = info.valuesOrderBefore
-    val indexAfter = info.valuesOrderAfter
+    override fun resolve(info: TraceInfo): ValuesOrderResolver.Result {
+        val indexBefore = info.valuesOrderBefore
+        val indexAfter = info.valuesOrderAfter
 
-    val timesBefore = indexBefore.keys.sorted().toIntArray()
-    val timesAfter = indexAfter.keys.sorted().toIntArray()
+        val timesBefore = indexBefore.keys.sorted().toIntArray()
+        val timesAfter = indexAfter.keys.sorted().toIntArray()
 
-    if (timesAfter.isEmpty()) return emptyTransitions(indexBefore)
+        if (timesAfter.isEmpty()) return emptyTransitions(indexBefore)
 
-    val direct = mutableMapOf<TraceElement, MutableList<TraceElement>>()
-    val reverse = mutableMapOf<TraceElement, List<TraceElement>>()
+        val direct = mutableMapOf<TraceElement, MutableList<TraceElement>>()
+        val reverse = mutableMapOf<TraceElement, List<TraceElement>>()
 
-    var windowStartIndex = 0
-    var windowEndIndex = calcWindowSize(timesBefore, timesAfter)
-    for (timeAfter in timesAfter) {
-      if (windowEndIndex == timesAfter.size) {
-        windowStartIndex += 1
-      } else {
-        while (windowEndIndex < timesBefore.size && timesBefore[windowEndIndex] < timeAfter) {
-          windowStartIndex += 1
-          windowEndIndex += 1
+        var windowStartIndex = 0
+        var windowEndIndex = calcWindowSize(timesBefore, timesAfter)
+        for (timeAfter in timesAfter) {
+            if (windowEndIndex == timesAfter.size) {
+                windowStartIndex += 1
+            } else {
+                while (windowEndIndex < timesBefore.size && timesBefore[windowEndIndex] < timeAfter) {
+                    windowStartIndex += 1
+                    windowEndIndex += 1
+                }
+            }
+
+            val window = (windowStartIndex until windowEndIndex).asSequence()
+                .map { indexBefore[timesBefore[it]]!! }
+                .toList()
+            val mappedElement = indexAfter[timeAfter]!!
+            window.forEach { direct.computeIfAbsent(it, { mutableListOf() }).add(mappedElement) }
+            reverse[mappedElement] = window
         }
-      }
 
-      val window = (windowStartIndex until windowEndIndex).asSequence()
-          .map { indexBefore[timesBefore[it]]!! }
-          .toList()
-      val mappedElement = indexAfter[timeAfter]!!
-      window.forEach { direct.computeIfAbsent(it, { mutableListOf() }).add(mappedElement) }
-      reverse[mappedElement] = window
+        return ValuesOrderResolver.Result.of(direct, reverse)
     }
 
-    return ValuesOrderResolver.Result.of(direct, reverse)
-  }
+    private fun calcWindowSize(before: IntArray, after: IntArray): Int {
+        var size = 0
+        while (size < before.size && before[size] < after[0]) size += 1
+        return size
+    }
 
-  private fun calcWindowSize(before: IntArray, after: IntArray): Int {
-    var size = 0
-    while (size < before.size && before[size] < after[0]) size += 1
-    return size
-  }
-
-  private fun emptyTransitions(indexBefore: MutableMap<Int, TraceElement>): ValuesOrderResolver.Result {
-    val direct = indexBefore.asSequence().sortedBy { it.key }.associate { it.value to emptyList<TraceElement>() }
-    return ValuesOrderResolver.Result.of(direct, emptyMap())
-  }
+    private fun emptyTransitions(indexBefore: MutableMap<Int, TraceElement>): ValuesOrderResolver.Result {
+        val direct = indexBefore.asSequence().sortedBy { it.key }.associate { it.value to emptyList<TraceElement>() }
+        return ValuesOrderResolver.Result.of(direct, emptyMap())
+    }
 }

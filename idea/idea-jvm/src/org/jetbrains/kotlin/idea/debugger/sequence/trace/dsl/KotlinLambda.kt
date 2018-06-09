@@ -10,10 +10,10 @@ import com.intellij.debugger.streams.trace.dsl.impl.TextExpression
  * @author Vitaliy.Bibaev
  */
 class KotlinLambda(override val variableName: String, override val body: CodeBlock) : Lambda {
-  override fun call(callName: String, vararg args: Expression): Expression = TextExpression("(${toCode()})").call(callName, *args)
+    override fun call(callName: String, vararg args: Expression): Expression = TextExpression("(${toCode()})").call(callName, *args)
 
-  override fun toCode(indent: Int): String =
-    "{ $variableName ->\n".withIndent(indent) +
-    body.toCode(indent + 1) +
-    "}"
+    override fun toCode(indent: Int): String =
+        "{ $variableName ->\n".withIndent(indent) +
+                body.toCode(indent + 1) +
+                "}"
 }

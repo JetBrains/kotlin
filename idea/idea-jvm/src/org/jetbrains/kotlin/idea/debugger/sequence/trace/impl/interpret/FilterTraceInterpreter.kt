@@ -16,52 +16,52 @@ import com.sun.jdi.Value
  * @author Vitaliy.Bibaev
  */
 class FilterTraceInterpreter(private val predicateValueToAccept: Boolean) : CallTraceInterpreter {
-  override fun resolve(call: StreamCall, value: Value): TraceInfo {
-    if (value !is ArrayReference) throw UnexpectedValueTypeException("array reference excepted, but actual: ${value.type().name()}")
-    val before = resolveValuesBefore(value.getValue(0))
-    val filteringMap = value.getValue(1)
-    val after = resolveValuesAfter(before, filteringMap)
+    override fun resolve(call: StreamCall, value: Value): TraceInfo {
+        if (value !is ArrayReference) throw UnexpectedValueTypeException("array reference excepted, but actual: ${value.type().name()}")
+        val before = resolveValuesBefore(value.getValue(0))
+        val filteringMap = value.getValue(1)
+        val after = resolveValuesAfter(before, filteringMap)
 
-    return ValuesOrder(call, before, after)
-  }
-
-  private fun resolveValuesBefore(map: Value): Map<Int, TraceElement> {
-    val (keys, objects) = InterpreterUtil.extractMap(map)
-    val result: MutableList<TraceElement> = mutableListOf()
-    for (i in 0.until(keys.length())) {
-      val time = keys.getValue(i)
-      val value = objects.getValue(i)
-      if (time !is IntegerValue) throw UnexpectedValueTypeException("time should be represented by integer value")
-      result.add(TraceElementImpl(time.value(), value))
+        return ValuesOrder(call, before, after)
     }
 
-    return InterpreterUtil.createIndexByTime(result)
-  }
+    private fun resolveValuesBefore(map: Value): Map<Int, TraceElement> {
+        val (keys, objects) = InterpreterUtil.extractMap(map)
+        val result: MutableList<TraceElement> = mutableListOf()
+        for (i in 0.until(keys.length())) {
+            val time = keys.getValue(i)
+            val value = objects.getValue(i)
+            if (time !is IntegerValue) throw UnexpectedValueTypeException("time should be represented by integer value")
+            result.add(TraceElementImpl(time.value(), value))
+        }
 
-  private fun resolveValuesAfter(before: Map<Int, TraceElement>, filteringMap: Value): Map<Int, TraceElement> {
-    val predicateValues = extractPredicateValues(filteringMap)
-    val result = linkedMapOf<Int, TraceElement>()
-    for ((beforeTime, element) in before) {
-      val predicateValue = predicateValues[beforeTime]
-      if (predicateValue == predicateValueToAccept) {
-        result[beforeTime + 1] = TraceElementImpl(beforeTime + 1, element.value)
-      }
+        return InterpreterUtil.createIndexByTime(result)
     }
 
-    return result
-  }
+    private fun resolveValuesAfter(before: Map<Int, TraceElement>, filteringMap: Value): Map<Int, TraceElement> {
+        val predicateValues = extractPredicateValues(filteringMap)
+        val result = linkedMapOf<Int, TraceElement>()
+        for ((beforeTime, element) in before) {
+            val predicateValue = predicateValues[beforeTime]
+            if (predicateValue == predicateValueToAccept) {
+                result[beforeTime + 1] = TraceElementImpl(beforeTime + 1, element.value)
+            }
+        }
 
-  private fun extractPredicateValues(filteringMap: Value): Map<Int, Boolean> {
-    val (keys, values) = InterpreterUtil.extractMap(filteringMap)
-    val result = mutableMapOf<Int, Boolean>()
-    for (i in 0.until(keys.length())) {
-      val time = keys.getValue(i)
-      val value = values.getValue(i)
-      if (time !is IntegerValue) throw UnexpectedValueTypeException("time should be represented by integer value")
-      if (value !is BooleanValue) throw UnexpectedValueTypeException("predicate value should be represented by boolean value")
-      result[time.value()] = value.value()
+        return result
     }
 
-    return result
-  }
+    private fun extractPredicateValues(filteringMap: Value): Map<Int, Boolean> {
+        val (keys, values) = InterpreterUtil.extractMap(filteringMap)
+        val result = mutableMapOf<Int, Boolean>()
+        for (i in 0.until(keys.length())) {
+            val time = keys.getValue(i)
+            val value = values.getValue(i)
+            if (time !is IntegerValue) throw UnexpectedValueTypeException("time should be represented by integer value")
+            if (value !is BooleanValue) throw UnexpectedValueTypeException("predicate value should be represented by boolean value")
+            result[time.value()] = value.value()
+        }
+
+        return result
+    }
 }

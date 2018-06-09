@@ -9,11 +9,13 @@ import com.intellij.debugger.streams.trace.dsl.Variable
 /**
  * @author Vitaliy.Bibaev
  */
-class KotlinForEachLoop(private val iterateVariable: Variable,
-                        private val collection: Expression,
-                        private val loopBody: ForLoopBody) : Convertable {
-  override fun toCode(indent: Int): String =
-    "for (${iterateVariable.name} in ${collection.toCode()}) {\n".withIndent(indent) +
-    loopBody.toCode(indent + 1) +
-    "}".withIndent(indent)
+class KotlinForEachLoop(
+    private val iterateVariable: Variable,
+    private val collection: Expression,
+    private val loopBody: ForLoopBody
+) : Convertable {
+    override fun toCode(indent: Int): String =
+        "for (${iterateVariable.name} in ${collection.toCode()}) {\n".withIndent(indent) +
+                loopBody.toCode(indent + 1) +
+                "}".withIndent(indent)
 }

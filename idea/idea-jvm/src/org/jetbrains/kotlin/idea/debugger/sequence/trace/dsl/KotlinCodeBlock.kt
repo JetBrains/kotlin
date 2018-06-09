@@ -9,5 +9,5 @@ import com.intellij.debugger.streams.trace.dsl.impl.LineSeparatedCodeBlock
  * @author Vitaliy.Bibaev
  */
 open class KotlinCodeBlock(statementFactory: StatementFactory) : LineSeparatedCodeBlock(statementFactory) {
-  override fun doReturn(expression: Expression) = addStatement(expression)
+    override fun doReturn(expression: Expression) = addStatement(expression)
 }
