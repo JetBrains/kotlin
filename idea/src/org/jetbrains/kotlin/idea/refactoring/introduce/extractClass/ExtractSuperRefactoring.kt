@@ -226,7 +226,7 @@ class ExtractSuperRefactoring(
                 .forEach { it.accept(visitor) }
     }
 
-    private fun createClass(superClassEntry: KtSuperTypeListEntry?): KtClass {
+    private fun createClass(superClassEntry: KtSuperTypeListEntry?): KtClass? {
         val targetParent = extractInfo.targetParent
         val newClassName = extractInfo.newClassName.quoteIfNeeded()
         val originalClass = extractInfo.originalClass
@@ -234,9 +234,11 @@ class ExtractSuperRefactoring(
         val kind = if (extractInfo.isInterface) "interface" else "class"
         val prototype = psiFactory.createClass("$kind $newClassName")
         val newClass = if (targetParent is PsiDirectory) {
-            val template = FileTemplateManager.getInstance(project).getInternalTemplate("Kotlin File")
-            val newFile = NewKotlinFileAction.createFileFromTemplate(extractInfo.targetFileName, template, targetParent) as KtFile
-            newFile.add(prototype) as KtClass
+            val file = targetParent.findFile(extractInfo.targetFileName) ?: run {
+                val template = FileTemplateManager.getInstance(project).getInternalTemplate("Kotlin File")
+                NewKotlinFileAction.createFileFromTemplate(extractInfo.targetFileName, template, targetParent) ?: return null
+            }
+            file.add(prototype) as KtClass
         }
         else {
             val targetSibling = originalClass.parentsWithSelf.first { it.parent == targetParent }
@@ -312,7 +314,7 @@ class ExtractSuperRefactoring(
         project.runSynchronouslyWithProgress(RefactoringBundle.message("progress.text"), true) { runReadAction { analyzeContext() } }
 
         project.executeWriteCommand(KotlinExtractSuperclassHandler.REFACTORING_NAME) {
-            val newClass = createClass(superClassEntry)
+            val newClass = createClass(superClassEntry) ?: return@executeWriteCommand
 
             val subClass = extractInfo.originalClass.toLightClass()
             val superClass = newClass.toLightClass()

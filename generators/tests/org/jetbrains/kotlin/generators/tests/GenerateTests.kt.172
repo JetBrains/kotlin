@@ -675,8 +675,8 @@ fun main(args: Array<String>) {
             model("refactoring/introduceJavaParameter", extension = "java", testMethod = "doIntroduceJavaParameterTest")
             model("refactoring/introduceTypeParameter", pattern = KT_OR_KTS, testMethod = "doIntroduceTypeParameterTest")
             model("refactoring/introduceTypeAlias", pattern = KT_OR_KTS, testMethod = "doIntroduceTypeAliasTest")
-            model("refactoring/extractSuperclass", pattern = KT_OR_KTS, testMethod = "doExtractSuperclassTest")
-            model("refactoring/extractInterface", pattern = KT_OR_KTS, testMethod = "doExtractInterfaceTest")
+            model("refactoring/extractSuperclass", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME, testMethod = "doExtractSuperclassTest")
+            model("refactoring/extractInterface", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME, testMethod = "doExtractInterfaceTest")
         }
 
         testClass<AbstractPullUpTest> {
