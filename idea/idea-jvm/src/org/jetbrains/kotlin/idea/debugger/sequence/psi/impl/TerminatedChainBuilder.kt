@@ -46,7 +46,7 @@ open class TerminatedChainBuilder(
 
             val parentCall = expression.previousCall()
             if (parentCall is KtCallExpression && callChecker.isStreamCall(parentCall)) {
-                myPreviousCalls.put(expression, parentCall)
+                myPreviousCalls[expression] = parentCall
                 updateCallTree(parentCall)
             }
         }
@@ -64,7 +64,7 @@ open class TerminatedChainBuilder(
                     current = myPreviousCalls[current]
                 }
 
-                Collections.reverse(chain)
+                chain.reverse()
                 chains.add(chain)
             }
 

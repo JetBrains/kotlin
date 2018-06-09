@@ -49,7 +49,7 @@ abstract class KotlinTraceTestCase : KotlinDebuggerTestBase() {
     fun doTest(filePath: String) = doTestImpl(filePath)
 
     override fun createDebugProcess(path: String) {
-        val filePath = Paths.get(path);
+        val filePath = Paths.get(path)
         FileBasedIndex.getInstance().requestReindex(VfsUtil.findFileByIoFile(filePath.toFile(), true)!!)
         val packagePath = StringUtil.substringAfterLast(filePath.parent.toAbsolutePath().toString(), "src${File.separatorChar}")
                 ?: throw AssertionError("test data must be placed into test app project in 'src' directory")
@@ -145,7 +145,7 @@ abstract class KotlinTraceTestCase : KotlinDebuggerTestBase() {
         }, testRootDisposable)
     }
 
-    protected fun getPositionResolver(): DebuggerPositionResolver {
+    private fun getPositionResolver(): DebuggerPositionResolver {
         return DebuggerPositionResolverImpl()
     }
 
@@ -169,7 +169,7 @@ abstract class KotlinTraceTestCase : KotlinDebuggerTestBase() {
         traceChecker.checkResolvedChain(resolvedTrace)
     }
 
-    protected fun handleResultValue(result: Value?) {
+    private fun handleResultValue(result: Value?) {
     }
 
     private fun getResultInterpreter(): TraceResultInterpreter {
@@ -196,7 +196,7 @@ abstract class KotlinTraceTestCase : KotlinDebuggerTestBase() {
 
             fun byIndex(index: Int): ChainSelector {
                 return object : ChainSelector {
-                    override fun select(chains: List<StreamChain>): StreamChain = chains.get(index)
+                    override fun select(chains: List<StreamChain>): StreamChain = chains[index]
                 }
             }
         }

@@ -43,7 +43,7 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
         doKotlinTearDown(LightPlatformTestCase.getProject(), { super.tearDown() })
     }
 
-    override final fun getRelativeTestPath(): String = relativePath
+    final override fun getRelativeTestPath(): String = relativePath
 
     override fun setUp() {
         super.setUp()
@@ -106,7 +106,7 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
             checkChains(chains)
         }
 
-        protected fun checkChains(chains: MutableList<StreamChain>) {
+        private fun checkChains(chains: MutableList<StreamChain>) {
             TestCase.assertFalse(chains.isEmpty())
         }
     }

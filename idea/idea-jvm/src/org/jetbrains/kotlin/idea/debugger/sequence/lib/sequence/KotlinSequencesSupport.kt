@@ -63,7 +63,7 @@ class KotlinSequencesSupport : LibrarySupportBase() {
     private fun sortedOperations(vararg names: String): Array<IntermediateOperation> =
         names.map { SortedOperation(it) }.toTypedArray()
 
-    private class FilterIsInstanceOperationHandler() : IntermediateOperationBase(
+    private class FilterIsInstanceOperationHandler : IntermediateOperationBase(
         "filterIsInstance", ::FilterIsInstanceHandler,
         SimplePeekCallTraceInterpreter(), FilteredMapResolver()
     )
