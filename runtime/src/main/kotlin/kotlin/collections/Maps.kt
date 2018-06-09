@@ -21,4 +21,4 @@ internal inline actual fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = 
 
 // creates a singleton copy of map
 internal actual fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
-        = this.toMutableMap() // TODO
+        = with(entries.iterator().next()) { mutableMapOf(key to value) }
