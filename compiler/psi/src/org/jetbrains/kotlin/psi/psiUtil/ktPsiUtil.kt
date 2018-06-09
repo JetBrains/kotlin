@@ -430,6 +430,8 @@ val KtModifierListOwner.isPublic: Boolean
 fun KtModifierListOwner.visibilityModifierType(): KtModifierKeywordToken? =
     visibilityModifier()?.node?.elementType as KtModifierKeywordToken?
 
+fun KtModifierListOwner.visibilityModifierTypeOrDefault(): KtModifierKeywordToken = visibilityModifierType() ?: KtTokens.DEFAULT_VISIBILITY_KEYWORD
+
 fun KtDeclaration.modalityModifier() = modifierFromTokenSet(MODALITY_MODIFIERS)
 
 fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }

@@ -65,10 +65,8 @@ class KotlinExtractInterfaceDialog(
 
                 val member = memberInfo.member
                 return !(member.hasModifier(KtTokens.INLINE_KEYWORD) ||
-                         member.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
-                         member.hasModifier(KtTokens.LATEINIT_KEYWORD) ||
-                         member.hasModifier(KtTokens.INTERNAL_KEYWORD) ||
-                         member.hasModifier(KtTokens.PROTECTED_KEYWORD))
+                        member.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
+                        member.hasModifier(KtTokens.LATEINIT_KEYWORD))
             }
 
             override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
