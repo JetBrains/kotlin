@@ -33,25 +33,25 @@ public actual inline fun Byte.toString(radix: Int): String = this.toInt().toStri
 public actual inline fun Short.toString(radix: Int): String = this.toInt().toString(checkRadix(radix))
 
 @SymbolName("Kotlin_Int_toStringRadix")
-external private fun intToString(value: Int, radix: Int): String
+@PublishedApi
+external internal fun intToString(value: Int, radix: Int): String
 
 /**
  * Returns a string representation of this [Int] value in the specified [radix].
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public actual inline fun Int.toString(radix: Int): String = intToString(this, checkRadix(radix))
 
 @SymbolName("Kotlin_Long_toStringRadix")
-external private fun longToString(value: Long, radix: Int): String
+@PublishedApi
+external internal fun longToString(value: Long, radix: Int): String
 
 /**
  * Returns a string representation of this [Long] value in the specified [radix].
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public actual inline fun Long.toString(radix: Int): String = longToString(this, checkRadix(radix))
 
 /**
@@ -125,7 +125,6 @@ public actual inline fun String.toLong(radix: Int): Long = toLongOrNull(radix) ?
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public actual inline fun String.toFloat(): Float = FloatingPointParser.parseFloat(this)
 
 
@@ -134,7 +133,6 @@ public actual inline fun String.toFloat(): Float = FloatingPointParser.parseFloa
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public actual inline fun String.toDouble(): Double = FloatingPointParser.parseDouble(this)
 
 /**
