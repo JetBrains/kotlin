@@ -152,6 +152,18 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
             "LocalClassContext for $descriptor"
     }
 
+    private class LocalClassMemberContext(val member: IrFunction, val classContext: LocalClassContext) : LocalContext() {
+        override fun irGet(startOffset: Int, endOffset: Int, descriptor: ValueDescriptor): IrExpression? {
+            val field = classContext.capturedValueToField[descriptor] ?: return null
+
+            return IrGetFieldImpl(
+                startOffset, endOffset, field.symbol,
+                receiver = IrGetValueImpl(startOffset, endOffset, member.dispatchReceiverParameter!!.symbol)
+            )
+        }
+
+    }
+
     private inner class LocalDeclarationsTransformer(val memberDeclaration: IrDeclaration) {
         val localFunctions: MutableMap<FunctionDescriptor, LocalFunctionContext> = LinkedHashMap()
         val localClasses: MutableMap<ClassDescriptor, LocalClassContext> = LinkedHashMap()
@@ -195,6 +207,7 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
                 }
 
                 localClasses.values.mapTo(this) {
+                    it.declaration.parent = memberDeclaration.parent
                     it.declaration
                 }
 
@@ -217,7 +230,14 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
                     // Replace local function definition with an empty composite.
                     return IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.builtIns.unitType)
                 } else {
-                    return super.visitFunction(declaration)
+                    if (localContext is LocalClassContext && declaration.parent == localContext.declaration) {
+                        return declaration.apply {
+                            val classMemberLocalContext = LocalClassMemberContext(declaration, localContext)
+                            transformChildrenVoid(FunctionBodiesRewriter(classMemberLocalContext))
+                        }
+                    } else {
+                        return super.visitFunction(declaration)
+                    }
                 }
             }
 
