@@ -20,7 +20,12 @@ apply plugin: 'maven-publish'
 def localMavenRepo="file://${new File(System.properties['user.home'] as String)}/.m2-kotlin-native"
 publishing {
     publications{
-        libcurl(MavenPublication){
+        libcurl(MavenPublication) {
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('name', 'libcurl interop library')
+                root.appendNode('description', 'A library providing interoperability with host libcurl')
+            }
             artifact sourceJar{
                 classifier "source"
             }
