@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
+import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.symbols.JsSymbolBuilder
 import org.jetbrains.kotlin.ir.backend.js.symbols.initialize
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.transformFlat
@@ -26,8 +24,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 private typealias VisitData = Nothing?
 
-class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLoweringPass {
-
+class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationContainerLoweringPass {
     private lateinit var function: IrFunction
     private var tmpVarCounter: Int = 0
 
@@ -44,10 +41,50 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
     private val unreachableFunction =
         JsSymbolBuilder.buildSimpleFunction(context.module, Namer.UNREACHABLE_NAME).initialize(type = nothingType)
 
-    override fun lower(irFunction: IrFunction) {
+    override fun lower(irDeclarationContainer: IrDeclarationContainer) {
+        irDeclarationContainer.declarations.transformFlat { declaration ->
+            when (declaration) {
+                is IrFunction -> {
+                    lower(declaration)
+                    listOf(declaration)
+                }
+                is IrField -> lower(declaration, irDeclarationContainer)
+                else -> listOf(declaration)
+            }
+        }
+    }
+
+    fun lower(irFunction: IrFunction) {
         function = irFunction
         tmpVarCounter = 0
         irFunction.body?.accept(statementVisitor, null)
+    }
+
+    fun lower(irField: IrField, container: IrDeclarationContainer): List<IrDeclaration> {
+        irField.initializer?.apply {
+            val initFnSymbol = JsSymbolBuilder.buildSimpleFunction(
+                (container as IrSymbolOwner).symbol.descriptor,
+                irField.name.asString() + "\$init\$"
+            ).initialize(type = expression.type)
+
+
+            val newBody = IrBlockBodyImpl(expression.startOffset, expression.endOffset).apply {
+                statements += JsIrBuilder.buildReturn(initFnSymbol, expression)
+            }
+
+            val initFn = JsIrBuilder.buildFunction(initFnSymbol).apply {
+                body = newBody
+            }
+
+            lower(initFn)
+
+            if (newBody.statements.size > 1) {
+                expression = JsIrBuilder.buildCall(initFnSymbol)
+                return listOf(initFn, irField)
+            }
+        }
+
+        return listOf(irField)
     }
 
     enum class VisitStatus {

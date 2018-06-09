@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun Any.with(operation :  Any.() -> Any) = operation().toString()
 
 val f = { a : Int -> }
