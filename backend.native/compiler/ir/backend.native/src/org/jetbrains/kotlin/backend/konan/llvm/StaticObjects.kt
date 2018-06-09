@@ -138,7 +138,10 @@ internal fun StaticData.createArrayList(array: ConstPointer, length: Int): Const
 internal fun StaticData.createUniqueInstance(
         kind: UniqueKind, bodyType: LLVMTypeRef, typeInfo: ConstPointer): ConstPointer {
     assert (getStructElements(bodyType).isEmpty())
-    val objHeader = objHeader(typeInfo)
+    val objHeader = when (kind) {
+        UniqueKind.UNIT -> objHeader(typeInfo)
+        UniqueKind.EMPTY_ARRAY -> arrayHeader(typeInfo, 0)
+    }
     val global = this.placeGlobal(kind.llvmName, objHeader, isExported = true)
     return global.pointer
 }
