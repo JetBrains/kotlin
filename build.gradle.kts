@@ -286,7 +286,7 @@ allprojects {
     // therefore it is disabled by default
     // buildDir = File(commonBuildDir, project.name)
 
-    val repos: List<String> by rootProject.extra
+    val repos = rootProject.extra["repos"] as List<String>
     repositories {
         intellijSdkRepo(project)
         androidDxJarRepo(project)
