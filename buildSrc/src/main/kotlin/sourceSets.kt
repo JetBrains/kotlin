@@ -13,7 +13,7 @@ class SourceSetsBuilder(val project: Project) {
 
     inline operator fun String.invoke(crossinline body: SourceSet.() -> Unit): SourceSet {
         val sourceSetName = this
-        return project.the<JavaPluginConvention>().sourceSets.maybeCreate(sourceSetName).apply {
+        return project.javaPluginConvention().sourceSets.maybeCreate(sourceSetName).apply {
             none()
             body()
         }
@@ -52,7 +52,7 @@ fun SourceSet.projectDefault() {
 
 fun Project.getSourceSetsFrom(projectPath: String): SourceSetContainer {
     evaluationDependsOn(projectPath)
-    return project(projectPath).the<JavaPluginConvention>().sourceSets
+    return project(projectPath).javaPluginConvention().sourceSets
 }
 
 

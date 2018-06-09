@@ -118,7 +118,7 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
     return task<JavaExec>(name) {
         val ideaSandboxConfigDir = File(ideaSandboxDir, "config")
 
-        classpath = the<JavaPluginConvention>().sourceSets["main"].runtimeClasspath
+        classpath = javaPluginConvention().sourceSets["main"].runtimeClasspath
 
         main = "com.intellij.idea.Main"
 

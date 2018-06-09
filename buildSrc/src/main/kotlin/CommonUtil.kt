@@ -31,15 +31,15 @@ inline fun<T: Any> Project.withJavaPlugin(crossinline body: () -> T?): T? {
 }
 
 fun Project.getCompiledClasses(): SourceSetOutput? = withJavaPlugin {
-    the<JavaPluginConvention>().sourceSets.getByName("main").output
+    javaPluginConvention().sourceSets.getByName("main").output
 }
 
 fun Project.getSources(): SourceDirectorySet? = withJavaPlugin {
-    the<JavaPluginConvention>().sourceSets.getByName("main").allSource
+    javaPluginConvention().sourceSets.getByName("main").allSource
 }
 
 fun Project.getResourceFiles(): SourceDirectorySet? = withJavaPlugin {
-    the<JavaPluginConvention>().sourceSets.getByName("main").resources
+    javaPluginConvention().sourceSets.getByName("main").resources
 }
 
 fun File(root: File, vararg children: String): File = children.fold(root, { f, c -> File(f, c) })
@@ -54,7 +54,7 @@ var Project.javaHome: String?
     set(v) { extra["javaHome"] = v }
 
 fun Project.generator(fqName: String, sourceSet: SourceSet? = null) = smartJavaExec {
-    classpath = (sourceSet ?: the<JavaPluginConvention>().sourceSets["test"]).runtimeClasspath
+    classpath = (sourceSet ?: javaPluginConvention().sourceSets["test"]).runtimeClasspath
     main = fqName
     workingDir = rootDir
 }
@@ -66,3 +66,5 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
 }
 
 inline fun CopySourceSpec.from(crossinline filesProvider: () -> Any?): CopySourceSpec = from(Callable { filesProvider() })
+
+fun Project.javaPluginConvention(): JavaPluginConvention = the()

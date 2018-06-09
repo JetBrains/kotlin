@@ -23,7 +23,7 @@ fun Project.classesDirsArtifact(): FileCollection {
 
     val classesDirsCfg = configurations.getOrCreate("classes-dirs")
 
-    val classesDirs = the<JavaPluginConvention>().sourceSets["main"].output.classesDirs
+    val classesDirs = javaPluginConvention().sourceSets["main"].output.classesDirs
 
     val classesTask = tasks["classes"]
 
@@ -44,7 +44,7 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
     return task<Jar>(MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME) {
         dependsOn("testClasses")
         pluginManager.withPlugin("java") {
-            from(project.the<JavaPluginConvention>().sourceSets.getByName("test").output)
+            from(project.javaPluginConvention().sourceSets.getByName("test").output)
         }
         classifier = "tests"
         body()
@@ -88,7 +88,7 @@ fun Project.sourcesJar(sourceSet: String? = "main", body: Jar.() -> Unit = {}): 
             try {
                 if (sourceSet != null) {
                     project.pluginManager.withPlugin("java-base") {
-                        from(project.the<JavaPluginConvention>().sourceSets[sourceSet].allSource)
+                        from(project.javaPluginConvention().sourceSets[sourceSet].allSource)
                     }
                 }
             } catch (e: UnknownDomainObjectException) {

@@ -131,11 +131,11 @@ val reflectShadowJar by task<ShadowJar> {
     version = null
     callGroovy("manifestAttributes", manifest, project, "Main", true)
 
-    from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
-    from(project(":core:descriptors.jvm").the<JavaPluginConvention>().sourceSets.getByName("main").resources) {
+    from(javaPluginConvention().sourceSets.getByName("main").output)
+    from(project(":core:descriptors.jvm").javaPluginConvention().sourceSets.getByName("main").resources) {
         include("META-INF/services/**")
     }
-    from(project(":core:deserialization").the<JavaPluginConvention>().sourceSets.getByName("main").resources) {
+    from(project(":core:deserialization").javaPluginConvention().sourceSets.getByName("main").resources) {
         include("META-INF/services/**")
     }
 
