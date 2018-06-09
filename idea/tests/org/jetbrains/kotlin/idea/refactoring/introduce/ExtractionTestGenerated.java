@@ -4068,6 +4068,21 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             runTest("idea/testData/refactoring/extractInterface/extractToExistingFile.kt");
         }
 
+        @TestMetadata("liftInternal.kt")
+        public void testLiftInternal() throws Exception {
+            runTest("idea/testData/refactoring/extractInterface/liftInternal.kt");
+        }
+
+        @TestMetadata("liftPrivate.kt")
+        public void testLiftPrivate() throws Exception {
+            runTest("idea/testData/refactoring/extractInterface/liftPrivate.kt");
+        }
+
+        @TestMetadata("liftProtected.kt")
+        public void testLiftProtected() throws Exception {
+            runTest("idea/testData/refactoring/extractInterface/liftProtected.kt");
+        }
+
         @TestMetadata("noWarningOnVisibilityInsideAbstractedMember.kt")
         public void testNoWarningOnVisibilityInsideAbstractedMember() throws Exception {
             runTest("idea/testData/refactoring/extractInterface/noWarningOnVisibilityInsideAbstractedMember.kt");
