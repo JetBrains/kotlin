@@ -403,7 +403,12 @@ internal class DescriptorRendererImpl(
         val annotationFilter = annotationFilter
         for ((annotation, target) in annotated.annotations.getAllAnnotations()) {
             if (annotation.fqName !in excluded && (annotationFilter == null || annotationFilter(annotation))) {
-                append(renderAnnotation(annotation, target)).append(" ")
+                append(renderAnnotation(annotation, target))
+                if (eachAnnotationOnNewLine) {
+                    appendln()
+                } else {
+                    append(" ")
+                }
             }
         }
     }

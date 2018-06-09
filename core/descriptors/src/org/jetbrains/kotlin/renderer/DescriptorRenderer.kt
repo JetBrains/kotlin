@@ -192,6 +192,7 @@ interface DescriptorRendererOptions {
     var excludedAnnotationClasses: Set<FqName>
     var excludedTypeAnnotationClasses: Set<FqName>
     var annotationFilter: ((AnnotationDescriptor) -> Boolean)?
+    var eachAnnotationOnNewLine: Boolean
 
     var annotationArgumentsRenderingPolicy: AnnotationArgumentsRenderingPolicy
     val includeAnnotationArguments: Boolean get() = annotationArgumentsRenderingPolicy.includeAnnotationArguments
