@@ -66,17 +66,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         } ?: JsArrayLiteral(arrayLiteralElements)
     }
 
-    override fun visitContainerExpression(expression: IrContainerExpression, context: JsGenerationContext): JsExpression {
-
-        val block = expression.accept(IrElementToJsStatementTransformer(), context) as JsBlock
-        block.statements.lastOrNull()?.let {
-            if (it is JsExpressionStatement) {
-                block.statements[block.statements.size - 1] = JsReturn(it.expression)
-            }
-        }
-        return JsInvocation(JsFunction(context.currentScope, block, ""), JsStringLiteral("fail"))
-    }
-
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =
         body.expression.accept(this, context)
 

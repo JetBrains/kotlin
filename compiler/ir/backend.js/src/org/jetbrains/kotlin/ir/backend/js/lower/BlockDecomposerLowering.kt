@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
+import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 private typealias VisitData = Nothing?
 
-class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationContainerLoweringPass {
+class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLoweringPass {
 
     private lateinit var function: IrFunction
     private var tmpVarCounter: Int = 0
@@ -41,32 +41,10 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
     private val unreachableFunction =
         JsSymbolBuilder.buildSimpleFunction(context.module, Namer.UNREACHABLE_NAME).initialize(type = nothingType)
 
-    override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-        irDeclarationContainer.declarations.transformFlat {
-            when (it) {
-                is IrFunction -> it.lower()
-                is IrProperty -> it.backingField?.lower()
-                is IrField -> it.lower()
-            }
-            listOf(it)
-        }
-    }
-
-    fun IrFunction.lower() {
-        function = this
+    override fun lower(irFunction: IrFunction) {
+        function = irFunction
         tmpVarCounter = 0
-        body?.accept(statementVisitor, null)
-    }
-
-    fun IrField.lower() = initializer?.apply {
-        val visitResult = expression.accept(expressionVisitor, null)
-        val self = this
-        visitResult.applyIfChanged {
-            expression = IrBlockImpl(self.startOffset, self.endOffset, resultValue.type).also {
-                it.statements += statements
-                it.statements += resultValue
-            }
-        }
+        irFunction.body?.accept(statementVisitor, null)
     }
 
     enum class VisitStatus {

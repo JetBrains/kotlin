@@ -9,10 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.lower.BlockDecomposerLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.IntrinsicifyCallsLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.SecondaryCtorLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.ReturnableBlockLowering
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -92,6 +89,7 @@ fun JsIrBackendContext.lower(file: IrFile) {
     InnerClassesLowering(this).runOnFilePostfix(file)
     InnerClassConstructorCallsLowering(this).runOnFilePostfix(file)
     PropertiesLowering().lower(file)
+    TopLevelPropertyInitializersLowering.lower(file)
     InitializersLowering(this, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).runOnFilePostfix(file)
     BlockDecomposerLowering(this).runOnFilePostfix(file)
     SecondaryCtorLowering(this).runOnFilePostfix(file)
