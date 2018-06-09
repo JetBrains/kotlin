@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
+import com.intellij.psi.JavaTokenType
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
@@ -81,11 +82,24 @@ class JKKtLiteralExpressionImpl(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtLiteralExpression(this, data)
 }
 
-sealed class JKKtOperatorImpl(override val token: IElementType) : JKOperator, JKElementBase() {
-    object PLUS : JKKtOperatorImpl(KtTokens.PLUS)
-    object MINUS : JKKtOperatorImpl(KtTokens.MINUS)
-    object EQEQ : JKKtOperatorImpl(KtTokens.EQEQ)
-    object NE : JKKtOperatorImpl(KtTokens.NOT_IS)
+class JKKtOperatorImpl private constructor(override val token: IElementType) : JKOperator, JKElementBase() {
+    companion object {
+        val tokenToOperator = KtTokens.OPERATIONS.types.associate {
+            it to JKKtOperatorImpl(it)
+        }
+
+        val javaToKotlinOperator = mutableMapOf<JKOperator, JKOperator>()
+
+        init {
+            javaToKotlinOperator.apply {
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.DIV]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.DIV]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.MINUS]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.MINUS]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.ANDAND]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.ANDAND]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.OROR]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.OROR]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.PLUS]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.PLUS]!!
+            }
+        }
+    }
 }
 
 class JKKtModifierImpl(override val type: JKKtModifier.KtModifierType) : JKKtModifier, JKElementBase() {
