@@ -42,7 +42,6 @@ dependencies {
 
     compileOnly(project(":kotlin-daemon-client"))
 
-
     compileOnly(intellijDep())
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     compileOnly(intellijPluginDep("IntelliLang"))
@@ -152,7 +151,7 @@ projectTest(taskName = "performanceTest") {
     classpath = performanceTest.runtimeClasspath
     workingDir = rootDir
 
-    jvmArgs.removeAll { it.startsWith("-Xmx") }
+    jvmArgs?.removeAll { it.startsWith("-Xmx") }
 
     maxHeapSize = "3g"
     jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")
