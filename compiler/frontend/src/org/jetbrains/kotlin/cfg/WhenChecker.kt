@@ -293,6 +293,16 @@ object WhenChecker {
         }
     }
 
+    fun whenSubjectTypeWithoutSmartCasts(expression: KtWhenExpression, context: BindingContext): KotlinType? {
+        val subjectVariable = expression.subjectVariable
+        val subjectExpression = expression.subjectExpression
+        return when {
+            subjectVariable != null -> context.get(VARIABLE, subjectVariable)?.type
+            subjectExpression != null -> context.getType(subjectExpression)
+            else -> null
+        }
+    }
+
     @JvmStatic
     fun getEnumMissingCases(
         expression: KtWhenExpression,

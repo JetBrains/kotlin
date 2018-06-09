@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.codegen.`when`
 
+import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
@@ -27,8 +29,16 @@ abstract class SwitchCodegen(
 ) {
     protected val bindingContext: BindingContext = codegen.bindingContext
 
+    protected val subjectVariable = expression.subjectVariable
+    protected val subjectExpression = expression.subjectExpression ?: throw AssertionError("No subject expression: ${expression.text}")
+
+    protected val subjectKotlinType = WhenChecker.whenSubjectTypeWithoutSmartCasts(expression, bindingContext)
+            ?: throw AssertionError("No subject type: ${expression}")
+
     @JvmField
-    protected val subjectType = subjectType ?: codegen.expressionType(expression.subjectExpression)
+    protected val subjectType = subjectType ?: codegen.asmType(subjectKotlinType)
+
+    protected var subjectLocal = -1
 
     protected val resultType: Type = if (isStatement) Type.VOID_TYPE else codegen.expressionType(expression)
 
@@ -56,7 +66,8 @@ abstract class SwitchCodegen(
         // if there is no else-entry and it's statement then default --- endLabel
         defaultLabel = if (hasElse || !isStatement || isExhaustive) elseLabel else endLabel
 
-        generateSubject()
+        generateSubjectValue()
+        generateSubjectValueToIndex()
 
         generateSwitchInstructionByTransitionsTable()
 
@@ -105,19 +116,29 @@ abstract class SwitchCodegen(
     }
 
     /**
-     * Should generate int subject on top of the stack
-     * Default implementation just run codegen for actual subject of expression
-     * May also gen nullability check if needed
+     * Generates subject value on top of the stack.
+     * If the subject is a variable, it's stored and loaded.
      */
-    protected open fun generateSubject() {
-        codegen.gen(expression.subjectExpression, subjectType)
+    private fun generateSubjectValue() {
+        if (subjectVariable != null) {
+            val variableDescriptor = bindingContext[BindingContext.VARIABLE, subjectVariable]
+                    ?: throw AssertionError("Unresolved subject variable: $expression")
+            subjectLocal = codegen.frameMap.enter(variableDescriptor, subjectType)
+            codegen.visitProperty(subjectVariable, null)
+            StackValue.local(subjectLocal, subjectType).put(subjectType, codegen.v)
+        } else {
+            codegen.gen(subjectExpression, subjectType)
+        }
     }
 
-    protected fun generateNullCheckIfNeeded() {
-        assert(expression.subjectExpression != null) { "subject expression can't be null" }
-        val subjectJetType = bindingContext.getType(expression.subjectExpression!!) ?: error("subject type can't be null (i.e. void)")
+    /**
+     * Given a subject value on stack (after [generateSubjectValue]),
+     * produces int value to be used in switch.
+     */
+    protected abstract fun generateSubjectValueToIndex()
 
-        if (TypeUtils.isNullableType(subjectJetType)) {
+    protected fun generateNullCheckIfNeeded() {
+        if (TypeUtils.isNullableType(subjectKotlinType)) {
             val nullEntryIndex = findNullEntryIndex(expression)
             val nullLabel = if (nullEntryIndex == -1) defaultLabel else entryLabels[nullEntryIndex]
             val notNullLabel = Label()

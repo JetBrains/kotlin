@@ -19542,6 +19542,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testStatement() throws Exception {
                 runTest("compiler/testData/codegen/box/when/stringOptimization/statement.kt");
             }
+
+            @TestMetadata("temporaryVarInWhenByStringIsDisposedProperly.kt")
+            public void testTemporaryVarInWhenByStringIsDisposedProperly() throws Exception {
+                runTest("compiler/testData/codegen/box/when/stringOptimization/temporaryVarInWhenByStringIsDisposedProperly.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/when/whenSubjectVariable")
@@ -19559,6 +19564,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("captureSubjectVariable.kt")
             public void testCaptureSubjectVariable() throws Exception {
                 runTest("compiler/testData/codegen/box/when/whenSubjectVariable/captureSubjectVariable.kt");
+            }
+
+            @TestMetadata("denseIntSwitchWithSubjectVariable.kt")
+            public void testDenseIntSwitchWithSubjectVariable() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/denseIntSwitchWithSubjectVariable.kt");
             }
 
             @TestMetadata("equalityWithSubjectVariable.kt")
@@ -19584,6 +19594,26 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("rangeCheckOnSubjectVariable.kt")
             public void testRangeCheckOnSubjectVariable() throws Exception {
                 runTest("compiler/testData/codegen/box/when/whenSubjectVariable/rangeCheckOnSubjectVariable.kt");
+            }
+
+            @TestMetadata("sparseIntSwitchWithSubjectVariable.kt")
+            public void testSparseIntSwitchWithSubjectVariable() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/sparseIntSwitchWithSubjectVariable.kt");
+            }
+
+            @TestMetadata("whenByEnum.kt")
+            public void testWhenByEnum() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/whenByEnum.kt");
+            }
+
+            @TestMetadata("whenByNullableEnum.kt")
+            public void testWhenByNullableEnum() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/whenByNullableEnum.kt");
+            }
+
+            @TestMetadata("whenByString.kt")
+            public void testWhenByString() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/whenByString.kt");
             }
         }
     }
