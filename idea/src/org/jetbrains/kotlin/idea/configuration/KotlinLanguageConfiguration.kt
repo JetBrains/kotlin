@@ -159,7 +159,9 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
 
                 is PluginUpdateStatus.Unverified -> {
                     val version = pluginUpdateStatus.updateStatus.pluginDescriptor.version
-                    val message = "<html>A new version $version is found, but unverified:<br/> ${pluginUpdateStatus.message}</html>"
+                    val generalLine = "A new version $version is found, but unverified by ${pluginUpdateStatus.verifierName}."
+                    val reasonLine = pluginUpdateStatus.reason ?: ""
+                    val message = "<html>$generalLine<br/>$reasonLine</html>"
                     form.setUpdateStatus(message, false)
                 }
             }

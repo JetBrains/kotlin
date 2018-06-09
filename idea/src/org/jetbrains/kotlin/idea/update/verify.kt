@@ -13,19 +13,15 @@ fun verify(updateStatus: PluginUpdateStatus.Update): PluginUpdateStatus {
     val pluginDescriptor: IdeaPluginDescriptor = updateStatus.pluginDescriptor
     val pluginVerifiers = PluginUpdateVerifier.EP_NAME.extensions
 
-    val declineMessage = pluginVerifiers.asSequence()
-        .map { verifier ->
-            val verifyResult = verifier.verify(pluginDescriptor)
-            if (verifyResult != null && !verifyResult.verified) {
-                verifyResult.declineMessage
-            } else {
-                null
-            }
+    for (pluginVerifier in pluginVerifiers) {
+        val verifyResult = pluginVerifier.verify(pluginDescriptor) ?: continue
+        if (!verifyResult.verified) {
+            return PluginUpdateStatus.Unverified(
+                pluginVerifier.verifierName,
+                verifyResult.declineMessage,
+                updateStatus
+            )
         }
-        .firstOrNull { reason -> reason != null }
-
-    if (declineMessage != null) {
-        return PluginUpdateStatus.Unverified(declineMessage, updateStatus)
     }
 
     return updateStatus

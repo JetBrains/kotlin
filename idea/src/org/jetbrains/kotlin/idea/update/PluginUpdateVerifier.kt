@@ -9,6 +9,8 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.openapi.extensions.ExtensionPointName
 
 abstract class PluginUpdateVerifier {
+    abstract val verifierName: String
+
     /**
      * @param pluginDescriptor
      * @return null means verifier is not responsible for the given plugin descriptor.
