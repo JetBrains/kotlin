@@ -54,14 +54,14 @@ internal fun KotlinPlatformExtension.disambiguateName(simpleName: String) =
 
 open class KotlinAndroidPlatformExtension : KotlinProjectExtension(), KotlinPlatformExtension {
     override val platformName: String = "kotlin"
-    override val platformType = KotlinPlatformType.JVM
+    override val platformType = KotlinPlatformType.jvm
 }
 
 open class KotlinWithJavaPlatformExtension : KotlinProjectExtension(), KotlinPlatformExtension {
     override var platformName: String = "kotlin"
         internal set
 
-    override val platformType = KotlinPlatformType.JVM
+    override val platformType = KotlinPlatformType.jvm
     /**
      * With Gradle 4.0+, disables the separate output directory for Kotlin, falling back to sharing the deprecated
      * single classes directory per source set. With Gradle < 4.0, has no effect.

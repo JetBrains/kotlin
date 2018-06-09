@@ -14,12 +14,16 @@ import org.gradle.api.internal.tasks.TaskResolver
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.base.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinPlatformSoftwareComponent
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsTasksProvider
@@ -28,7 +32,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.matchSymmetricallyByNames
 import java.io.Serializable
 
-private val Project.multiplatformExtension get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
+internal val Project.multiplatformExtension get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
 
 internal class KotlinMultiplatformProjectConfigurator(
     private val project: Project,
@@ -64,7 +68,7 @@ internal class KotlinMultiplatformProjectConfigurator(
     fun createCommonExtension(): KotlinOnlyPlatformExtension {
         val sourceSets = KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver)
         val extension = createAndSetupExtension<KotlinOnlyPlatformExtension>(
-            "kotlinCommon", KotlinPlatformType.COMMON, "common", sourceSets
+            "kotlinCommon", KotlinPlatformType.common, "common", sourceSets
         )
 
         val tasksProvider = KotlinCommonTasksProvider()
@@ -82,7 +86,7 @@ internal class KotlinMultiplatformProjectConfigurator(
         val platformClassifier = "jvm$platformSuffix"
 
         val extension = createAndSetupExtension<KotlinMppPlatformExtension>(
-            platformName, KotlinPlatformType.JVM, platformClassifier, sourceSets
+            platformName, KotlinPlatformType.jvm, platformClassifier, sourceSets
         ).apply {
             projectConfigurator = this@KotlinMultiplatformProjectConfigurator
         }
@@ -156,7 +160,7 @@ internal class KotlinMultiplatformProjectConfigurator(
         val platformClassifier = "js$platformSuffix"
 
         val extension = createAndSetupExtension<KotlinMppPlatformExtension>(
-            platformName, KotlinPlatformType.JS, platformClassifier, sourceSets
+            platformName, KotlinPlatformType.js, platformClassifier, sourceSets
         ).apply {
             projectConfigurator = this@KotlinMultiplatformProjectConfigurator
         }
@@ -265,6 +269,28 @@ internal class KotlinMultiplatformPlugin(
 
         configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
         kotlinMultiplatformExtension.common { } // make it configure by default
+
+        configurePublishingWithMavenPublish(project)
+    }
+
+    private fun configurePublishingWithMavenPublish(project: Project) = project.pluginManager.withPlugin("maven-publish") {
+        //FIXME find a better way to get all extensions
+        val extensions = (project.multiplatformExtension as ExtensionAware).extensions
+
+        val platformExtensions = extensions.schema.mapNotNull { (name, _) ->
+            extensions.getByName(name) as? KotlinPlatformExtension
+        }
+
+        val platformSoftwareComponent = KotlinPlatformSoftwareComponent(project, platformExtensions)
+
+        project.extensions.configure(PublishingExtension::class.java) { publishing ->
+            publishing.publications.create("kotlinCompositeLibrary", MavenPublication::class.java) { publication ->
+                publication.artifactId = project.name
+                publication.groupId = project.group.toString()
+                publication.from(platformSoftwareComponent)
+                (publication as MavenPublicationInternal).publishWithOriginalFileName()
+            }
+        }
     }
 }
 

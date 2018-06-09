@@ -69,9 +69,9 @@ open class KotlinMppPlatformExtension : KotlinOnlyPlatformExtension() {
     }
 }
 
-enum class KotlinPlatformType(val displayName: String): Named, Serializable {
-    COMMON("common"), JVM("jvm"), JS("js"), NATIVE("native");
+enum class KotlinPlatformType: Named, Serializable {
+    common, jvm, js, native;
 
-    override fun toString(): String = displayName
-    override fun getName(): String = displayName
+    override fun toString(): String = name
+    override fun getName(): String = name
 }
