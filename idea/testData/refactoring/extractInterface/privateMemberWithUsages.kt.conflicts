@@ -1,1 +1,0 @@
-Function 'fun privateFun(): Int' can't be moved to the interface because it's private and has usages in the original class
