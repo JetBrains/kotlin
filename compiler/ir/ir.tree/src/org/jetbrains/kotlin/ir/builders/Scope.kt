@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -61,7 +62,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         isMutable: Boolean = false,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
     ): IrVariable {
-        val originalKotlinType = irExpression.type.originalKotlinType ?: throw AssertionError("No originalKotlinType for $irExpression")
+        val originalKotlinType = irExpression.type.originalKotlinType ?: irExpression.type.toKotlinType()
         return IrVariableImpl(
             irExpression.startOffset, irExpression.endOffset, origin,
             createDescriptorForTemporaryVariable(

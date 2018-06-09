@@ -58,7 +58,7 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
 
         return lower.context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).run {
 
-            IrCompositeImpl(startOffset, endOffset, context.builtIns.stringType).apply {
+            IrCompositeImpl(startOffset, endOffset, context.irBuiltIns.stringType).apply {
                 receiver?.let {
                     //put receiver for bound callable reference
                     statements.add(it)
@@ -68,7 +68,7 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
                     IrConstImpl.string(
                         expression.startOffset,
                         expression.endOffset,
-                        context.builtIns.stringType,
+                        context.irBuiltIns.stringType,
                         callableReference.descriptor.name.asString()
                     )
                 )
