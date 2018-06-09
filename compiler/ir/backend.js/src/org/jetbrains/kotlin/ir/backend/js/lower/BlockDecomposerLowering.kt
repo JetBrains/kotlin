@@ -655,8 +655,9 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
 
         override fun visitSetField(expression: IrSetField, data: VisitData): VisitResult {
             val result = expression.accept(statementVisitor, null)
-            val statements = result.runIfChangedOrDefault(mutableListOf<IrStatement>(expression)) { statements }
-            return DecomposedResult(statements, JsIrBuilder.buildGetField(expression.symbol, expression.receiver))
+            return if (result.status == VisitStatus.KEPT) {
+                DecomposedResult(expression, unitValue)
+            } else result
         }
     }
 
