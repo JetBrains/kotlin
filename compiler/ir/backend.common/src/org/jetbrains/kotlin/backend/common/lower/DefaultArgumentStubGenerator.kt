@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
@@ -33,8 +32,8 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -42,18 +41,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 open class DefaultArgumentStubGenerator constructor(val context: CommonBackendContext, private val skipInlineMethods: Boolean = true) :
     DeclarationContainerLoweringPass {
@@ -82,34 +76,31 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
         log { "detected ${functionDescriptor.name.asString()} has got #${bodies.size} default expressions" }
         functionDescriptor.overriddenDescriptors.forEach { context.log { "DEFAULT-REPLACER: $it" } }
         if (bodies.isNotEmpty()) {
-            val newIrFunction = functionDescriptor.generateDefaultsFunction(context)
+            val newIrFunction = irFunction.generateDefaultsFunction(context)
             newIrFunction.parent = irFunction.parent
             val descriptor = newIrFunction.descriptor
             log { "$functionDescriptor -> $descriptor" }
             val builder = context.createIrBuilder(newIrFunction.symbol)
             newIrFunction.body = builder.irBlockBody(newIrFunction) {
-                val params = mutableListOf<IrVariableSymbol>()
-                val variables = mutableMapOf<ValueDescriptor, IrValueSymbol>()
+                val params = mutableListOf<IrVariable>()
+                val variables = mutableMapOf<ValueDescriptor, IrValueDeclaration>()
 
                 irFunction.dispatchReceiverParameter?.let {
-                    variables[it.descriptor] = newIrFunction.dispatchReceiverParameter!!.symbol
+                    variables[it.descriptor] = newIrFunction.dispatchReceiverParameter!!
                 }
 
                 if (descriptor.extensionReceiverParameter != null) {
                     variables[functionDescriptor.extensionReceiverParameter!!] =
-                            newIrFunction.extensionReceiverParameter!!.symbol
+                            newIrFunction.extensionReceiverParameter!!
                 }
 
                 for (valueParameter in functionDescriptor.valueParameters) {
-                    val parameterSymbol = newIrFunction.valueParameters[valueParameter.index].symbol
-                    val temporaryVariableSymbol =
-                        IrVariableSymbolImpl(scope.createTemporaryVariableDescriptor(parameterSymbol.descriptor))
-                    params.add(temporaryVariableSymbol)
-                    variables.put(valueParameter, temporaryVariableSymbol)
-                    if (valueParameter.hasDefaultValue()) {
-                        val kIntAnd = symbols.intAnd
+                    val parameter = newIrFunction.valueParameters[valueParameter.index]
+
+                    val argument = if (valueParameter.hasDefaultValue()) {
+                        val kIntAnd = symbols.intAnd.owner
                         val condition = irNotEquals(irCall(kIntAnd).apply {
-                            dispatchReceiver = irGet(maskParameterSymbol(newIrFunction, valueParameter.index / 32))
+                            dispatchReceiver = irGet(maskParameter(newIrFunction, valueParameter.index / 32))
                             putValueArgument(0, irInt(1 shl (valueParameter.index % 32)))
                         }, irInt(0))
                         val expressionBody = getDefaultParameterExpressionBody(irFunction, valueParameter)
@@ -122,41 +113,40 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                                 return irGet(valueSymbol)
                             }
                         })
-                        val variableInitialization = irIfThenElse(
-                            type = temporaryVariableSymbol.descriptor.type,
+                        irIfThenElse(
+                            type = parameter.type,
                             condition = condition,
                             thenPart = expressionBody.expression,
-                            elsePart = irGet(parameterSymbol)
+                            elsePart = irGet(parameter)
                         )
-                        +scope.createTemporaryVariable(
-                            symbol = temporaryVariableSymbol,
-                            initializer = variableInitialization
-                        )
+
                         /* Mapping calculated values with its origin variables. */
                     } else {
-                        +scope.createTemporaryVariable(
-                            symbol = temporaryVariableSymbol,
-                            initializer = irGet(parameterSymbol)
-                        )
+                        irGet(parameter)
                     }
+                    val temporaryVariable = irTemporary(argument, nameHint = parameter.name.asString())
+
+                    params.add(temporaryVariable)
+                    variables.put(valueParameter, temporaryVariable)
                 }
                 if (irFunction is IrConstructor) {
                     +IrDelegatingConstructorCallImpl(
                         startOffset = irFunction.startOffset,
                         endOffset = irFunction.endOffset,
+                        type = context.irBuiltIns.unitType,
                         symbol = irFunction.symbol, descriptor = irFunction.symbol.descriptor
                     ).apply {
                         params.forEachIndexed { i, variable ->
                             putValueArgument(i, irGet(variable))
                         }
                         if (functionDescriptor.dispatchReceiverParameter != null) {
-                            dispatchReceiver = irGet(newIrFunction.dispatchReceiverParameter!!.symbol)
+                            dispatchReceiver = irGet(newIrFunction.dispatchReceiverParameter!!)
                         }
                     }
                 } else {
-                    +irReturn(irCall(irFunction.symbol).apply {
+                    +irReturn(irCall(irFunction).apply {
                         if (functionDescriptor.dispatchReceiverParameter != null) {
-                            dispatchReceiver = irGet(newIrFunction.dispatchReceiverParameter!!.symbol)
+                            dispatchReceiver = irGet(newIrFunction.dispatchReceiverParameter!!)
                         }
                         if (functionDescriptor.extensionReceiverParameter != null) {
                             extensionReceiver = irGet(variables[functionDescriptor.extensionReceiverParameter!!]!!)
@@ -181,50 +171,29 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
     private fun log(msg: () -> String) = context.log { "DEFAULT-REPLACER: ${msg()}" }
 }
 
-private fun Scope.createTemporaryVariableDescriptor(parameterDescriptor: ParameterDescriptor?): VariableDescriptor =
-    IrTemporaryVariableDescriptorImpl(
-        containingDeclaration = this.scopeOwner,
-        name = parameterDescriptor!!.name.asString().synthesizedName,
-        outType = parameterDescriptor.type,
-        isMutable = false
-    )
-
-private fun Scope.createTemporaryVariable(symbol: IrVariableSymbol, initializer: IrExpression) =
-    IrVariableImpl(
-        startOffset = initializer.startOffset,
-        endOffset = initializer.endOffset,
-        origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-        symbol = symbol
-    ).apply {
-
-        this.initializer = initializer
-    }
-
 private fun getDefaultParameterExpressionBody(irFunction: IrFunction, valueParameter: ValueParameterDescriptor): IrExpressionBody {
     return irFunction.getDefault(valueParameter) ?: TODO("FIXME!!!")
 }
 
 private fun maskParameterDescriptor(function: IrFunction, number: Int) =
-    maskParameterSymbol(function, number).descriptor as ValueParameterDescriptor
+    maskParameter(function, number).descriptor as ValueParameterDescriptor
 
-private fun maskParameterSymbol(function: IrFunction, number: Int) =
-    function.valueParameters.single { it.descriptor.name == parameterMaskName(number) }.symbol
+private fun maskParameter(function: IrFunction, number: Int) =
+    function.valueParameters.single { it.descriptor.name == parameterMaskName(number) }
 
 private fun markerParameterDescriptor(descriptor: FunctionDescriptor) =
     descriptor.valueParameters.single { it.name == kConstructorMarkerName }
 
-private fun nullConst(expression: IrElement, type: KotlinType): IrExpression? {
-    when {
-        KotlinBuiltIns.isFloat(type) -> return IrConstImpl.float(expression.startOffset, expression.endOffset, type, 0.0F)
-        KotlinBuiltIns.isDouble(type) -> return IrConstImpl.double(expression.startOffset, expression.endOffset, type, 0.0)
-        KotlinBuiltIns.isBoolean(type) -> return IrConstImpl.boolean(expression.startOffset, expression.endOffset, type, false)
-        KotlinBuiltIns.isByte(type) -> return IrConstImpl.byte(expression.startOffset, expression.endOffset, type, 0)
-        KotlinBuiltIns.isChar(type) -> return IrConstImpl.char(expression.startOffset, expression.endOffset, type, 0.toChar())
-        KotlinBuiltIns.isShort(type) -> return IrConstImpl.short(expression.startOffset, expression.endOffset, type, 0)
-        KotlinBuiltIns.isInt(type) -> return IrConstImpl.int(expression.startOffset, expression.endOffset, type, 0)
-        KotlinBuiltIns.isLong(type) -> return IrConstImpl.long(expression.startOffset, expression.endOffset, type, 0)
-        else -> return IrConstImpl.constNull(expression.startOffset, expression.endOffset, type.builtIns.nullableNothingType)
-    }
+private fun nullConst(expression: IrElement, type: IrType, context: CommonBackendContext) = when {
+    type.isFloat() -> IrConstImpl.float(expression.startOffset, expression.endOffset, type, 0.0F)
+    type.isDouble() -> IrConstImpl.double(expression.startOffset, expression.endOffset, type, 0.0)
+    type.isBoolean() -> IrConstImpl.boolean(expression.startOffset, expression.endOffset, type, false)
+    type.isByte() -> IrConstImpl.byte(expression.startOffset, expression.endOffset, type, 0)
+    type.isChar() -> IrConstImpl.char(expression.startOffset, expression.endOffset, type, 0.toChar())
+    type.isShort() -> IrConstImpl.short(expression.startOffset, expression.endOffset, type, 0)
+    type.isInt() -> IrConstImpl.int(expression.startOffset, expression.endOffset, type, 0)
+    type.isLong() -> IrConstImpl.long(expression.startOffset, expression.endOffset, type, 0)
+    else -> IrConstImpl.constNull(expression.startOffset, expression.endOffset, context.irBuiltIns.nothingNType)
 }
 
 class DefaultParameterInjector constructor(val context: CommonBackendContext, private val skipInline: Boolean = true) : BodyLoweringPass {
@@ -240,10 +209,12 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext, pr
                 if (argumentsCount == descriptor.valueParameters.size)
                     return expression
                 val (symbolForCall, params) = parametersForCall(expression)
+                symbolForCall as IrConstructorSymbol
                 return IrDelegatingConstructorCallImpl(
                     startOffset = expression.startOffset,
                     endOffset = expression.endOffset,
-                    symbol = symbolForCall as IrConstructorSymbol,
+                    type = context.irBuiltIns.unitType,
+                    symbol = symbolForCall,
                     descriptor = symbolForCall.descriptor
                 )
                     .apply {
@@ -273,13 +244,14 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext, pr
                 return IrCallImpl(
                     startOffset = expression.startOffset,
                     endOffset = expression.endOffset,
+                    type = symbol.owner.returnType,
                     symbol = symbol,
                     descriptor = descriptor,
-                    typeArguments = expression.descriptor.typeParameters.map {
-                        it to (expression.getTypeArgument(it) ?: it.defaultType)
-                    }.toMap()
+                    typeArgumentsCount = expression.typeArgumentsCount
                 )
                     .apply {
+                        this.copyTypeArgumentsFrom(expression)
+
                         params.forEach {
                             log { "call::params@${it.first.index}/${it.first.name.asString()}: ${ir2string(it.second)}" }
                             putValueArgument(it.first.index, it.second)
@@ -310,8 +282,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext, pr
             private fun parametersForCall(expression: IrFunctionAccessExpression): Pair<IrFunctionSymbol, List<Pair<ValueParameterDescriptor, IrExpression?>>> {
                 val descriptor = expression.descriptor
                 val keyFunction = expression.symbol.owner.findSuperMethodWithDefaultArguments()!!
-                val keyDescriptor = keyFunction.descriptor
-                val realFunction = keyDescriptor.generateDefaultsFunction(context)
+                val realFunction = keyFunction.generateDefaultsFunction(context)
                 realFunction.parent = keyFunction.parent
                 val realDescriptor = realFunction.descriptor
 
@@ -325,15 +296,18 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext, pr
                         maskValues[maskIndex] = maskValues[maskIndex] or (1 shl (i % 32))
                     }
                     val valueParameterDescriptor = realDescriptor.valueParameters[i]
-                    val defaultValueArgument =
-                        if (valueParameterDescriptor.isVararg) null else nullConst(expression, valueParameterDescriptor.type)
+                    val defaultValueArgument = if (valueParameterDescriptor.isVararg) {
+                        null
+                    } else {
+                        nullConst(expression, realFunction.valueParameters[i].type, context)
+                    }
                     valueParameterDescriptor to (valueArgument ?: defaultValueArgument)
                 })
                 maskValues.forEachIndexed { i, maskValue ->
                     params += maskParameterDescriptor(realFunction, i) to IrConstImpl.int(
                         startOffset = irBody.startOffset,
                         endOffset = irBody.endOffset,
-                        type = descriptor.builtIns.intType,
+                        type = context.irBuiltIns.intType,
                         value = maskValue
                     )
                 }
@@ -347,7 +321,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext, pr
                     )
                 } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
                     params += realDescriptor.valueParameters.last() to
-                            IrConstImpl.constNull(irBody.startOffset, irBody.endOffset, context.builtIns.any.defaultType)
+                            IrConstImpl.constNull(irBody.startOffset, irBody.endOffset, context.irBuiltIns.anyType)
                 }
                 params.forEach {
                     log { "descriptor::${realDescriptor.name.asString()}#${it.first.index}: ${it.first.name.asString()}" }
@@ -366,7 +340,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext, pr
 private fun CallableMemberDescriptor.needsDefaultArgumentsLowering(skipInlineMethods: Boolean) =
     valueParameters.any { it.hasDefaultValue() } && !(this is FunctionDescriptor && isInline && skipInlineMethods)
 
-private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendContext): IrFunction {
+private fun IrFunction.generateDefaultsFunction(context: CommonBackendContext): IrFunction = with(this.descriptor) {
     return context.ir.defaultParameterDeclarationsCache.getOrPut(this) {
         val descriptor = when (this) {
             is ClassConstructorDescriptor ->
@@ -389,8 +363,10 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
             }
         }
 
+        val function = this@generateDefaultsFunction
+
         val syntheticParameters = MutableList((valueParameters.size + 31) / 32) { i ->
-            valueParameter(descriptor, valueParameters.size + i, parameterMaskName(i), descriptor.builtIns.intType)
+            valueParameter(descriptor, valueParameters.size + i, parameterMaskName(i), context.irBuiltIns.intType)
         }
         if (this is ClassConstructorDescriptor) {
             syntheticParameters += valueParameter(
@@ -402,9 +378,28 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
             syntheticParameters += valueParameter(
                 descriptor, syntheticParameters.last().index + 1,
                 "handler".synthesizedName,
-                context.ir.symbols.any.owner.defaultType
+                context.irBuiltIns.anyType
             )
         }
+
+        val newValueParameters = function.valueParameters.map {
+            val parameterDescriptor = ValueParameterDescriptorImpl(
+                containingDeclaration = descriptor,
+                original = null, /* ValueParameterDescriptorImpl::copy do not save original. */
+                index = it.index,
+                annotations = it.descriptor.annotations,
+                name = it.name,
+                outType = it.descriptor.type,
+                declaresDefaultValue = false,
+                isCrossinline = it.isCrossinline,
+                isNoinline = it.isNoinline,
+                varargElementType = (it.descriptor as ValueParameterDescriptor).varargElementType,
+                source = it.descriptor.source
+            )
+
+            it.copy(parameterDescriptor)
+
+        } + syntheticParameters
 
         descriptor.initialize(
             /* receiverParameterType         = */ extensionReceiverParameter?.type,
@@ -425,24 +420,11 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
                     setInitialized()
                 }
             },
-            /* unsubstitutedValueParameters  = */ valueParameters.map {
-                ValueParameterDescriptorImpl(
-                    containingDeclaration = descriptor,
-                    original = null, /* ValueParameterDescriptorImpl::copy do not save original. */
-                    index = it.index,
-                    annotations = it.annotations,
-                    name = it.name,
-                    outType = it.type,
-                    declaresDefaultValue = false,
-                    isCrossinline = it.isCrossinline,
-                    isNoinline = it.isNoinline,
-                    varargElementType = it.varargElementType,
-                    source = it.source
-                )
-            } + syntheticParameters,
+            /* unsubstitutedValueParameters  = */ newValueParameters.map { it.descriptor as ValueParameterDescriptor },
             /* unsubstitutedReturnType       = */ returnType,
             /* modality                      = */ Modality.FINAL,
-            /* visibility                    = */ this.visibility)
+            /* visibility                    = */ this.visibility
+        )
         descriptor.isSuspend = this.isSuspend
         context.log { "adds to cache[$this] = $descriptor" }
 
@@ -463,7 +445,29 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
             )
         }
 
-        result.createParameterDeclarations()
+        result.returnType = function.returnType
+
+        function.typeParameters.mapTo(result.typeParameters) {
+            assert(function.descriptor.typeParameters[it.index] == it.descriptor)
+            IrTypeParameterImpl(
+                startOffset, endOffset, origin, descriptor.typeParameters[it.index]
+            ).apply { this.superTypes += it.superTypes }
+        }
+        result.parent = function.parent
+        result.createDispatchReceiverParameter()
+
+        function.extensionReceiverParameter?.let {
+            result.extensionReceiverParameter = IrValueParameterImpl(
+                it.startOffset,
+                it.endOffset,
+                it.origin,
+                descriptor.extensionReceiverParameter!!,
+                it.type,
+                it.varargElementType
+            ).apply { parent = result }
+        }
+
+        result.valueParameters += newValueParameters.also { it.forEach { it.parent = result } }
 
         result
     }
@@ -472,19 +476,27 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
 object DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER :
     IrDeclarationOriginImpl("DEFAULT_PARAMETER_EXTENT")
 
-private fun valueParameter(descriptor: FunctionDescriptor, index: Int, name: Name, type: KotlinType): ValueParameterDescriptor {
-    return ValueParameterDescriptorImpl(
+private fun IrFunction.valueParameter(descriptor: FunctionDescriptor, index: Int, name: Name, type: IrType): IrValueParameter {
+    val parameterDescriptor = ValueParameterDescriptorImpl(
         containingDeclaration = descriptor,
         original = null,
         index = index,
         annotations = Annotations.EMPTY,
         name = name,
-        outType = type,
+        outType = type.toKotlinType(),
         declaresDefaultValue = false,
         isCrossinline = false,
         isNoinline = false,
         varargElementType = null,
         source = SourceElement.NO_SOURCE
+    )
+    return IrValueParameterImpl(
+        startOffset,
+        endOffset,
+        IrDeclarationOrigin.DEFINED,
+        parameterDescriptor,
+        type,
+        null
     )
 }
 

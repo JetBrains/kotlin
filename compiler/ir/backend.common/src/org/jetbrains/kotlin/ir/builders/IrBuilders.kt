@@ -16,17 +16,11 @@
 
 package org.jetbrains.kotlin.ir.builders
 
-import org.jetbrains.kotlin.backend.common.descriptors.substitute
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 
 fun IrBuilderWithScope.irWhile(origin: IrStatementOrigin? = null) =
     IrWhileLoopImpl(startOffset, endOffset, context.irBuiltIns.unitType, origin)
@@ -37,18 +31,5 @@ fun IrBuilderWithScope.irBreak(loop: IrLoop) =
 fun IrBuilderWithScope.irContinue(loop: IrLoop) =
     IrContinueImpl(startOffset, endOffset, context.irBuiltIns.nothingType, loop)
 
-fun IrBuilderWithScope.irTrue() = IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType, true)
-
-fun IrBuilderWithScope.irFalse() = IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType, false)
-
-fun IrBuilderWithScope.irCall(symbol: IrFunctionSymbol, typeArguments: Map<TypeParameterDescriptor, KotlinType>) =
-    IrCallImpl(this.startOffset, this.endOffset, symbol, symbol.descriptor.substitute(typeArguments), typeArguments)
-
-fun IrBuilderWithScope.irCall(symbol: IrFunctionSymbol, typeArguments: List<KotlinType>) =
-    irCall(symbol, symbol.descriptor.typeParameters.zip(typeArguments).toMap())
-
 fun IrBuilderWithScope.irGetObject(classSymbol: IrClassSymbol) =
-    IrGetObjectValueImpl(startOffset, endOffset, classSymbol.owner.defaultType, classSymbol)
-
-fun IrBuilderWithScope.irGetField(receiver: IrExpression?, symbol: IrFieldSymbol) =
-    IrGetFieldImpl(startOffset, endOffset, symbol, receiver)
+    IrGetObjectValueImpl(startOffset, endOffset, IrSimpleTypeImpl(classSymbol, false, emptyList(), emptyList()), classSymbol)
