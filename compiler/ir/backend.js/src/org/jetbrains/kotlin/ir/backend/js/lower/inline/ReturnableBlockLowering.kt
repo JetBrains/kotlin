@@ -12,133 +12,121 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.symbols.JsSymbolBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import kotlin.math.exp
 
-// Gets rid of IrReturnableBlock
-// Returnable block -> loop
 class ReturnableBlockLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
         irFile.transform(visitor, null)
     }
 
-    private var containingDeclaration: IrSymbolOwner? = null
-
-    private var labelCnt = 0
-    private val constFalse = JsIrBuilder.buildBoolean(context.builtIns.booleanType, false)
-
-
-    private var tmpVarCounter = 0;
-
-    class ReturnInfo(
-        val resultVariable: IrVariableSymbol,
-        val loop: IrLoop
-    ) {
-        var cnt = 0
-    }
-
-    private val returnMap = mutableMapOf<IrReturnableBlockSymbol, ReturnInfo>()
-
     val visitor = object : IrElementTransformerVoid() {
-
-        private fun IrReturn.patchReturnTo(info: ReturnInfo): IrExpression {
-            info.cnt++
-
-            val compoundBlock = IrCompositeImpl(
-                startOffset,
-                endOffset,
-                context.builtIns.unitType
-            )
-
-            compoundBlock.statements += JsIrBuilder.buildSetVariable(info.resultVariable, value)
-            compoundBlock.statements += JsIrBuilder.buildBreak(context.builtIns.unitType, info.loop)
-
-            return compoundBlock
-        }
 
         override fun visitReturn(expression: IrReturn): IrExpression {
             expression.transformChildren(this, null)
-            return returnMap[expression.returnTargetSymbol]?.let { info ->
-                expression.patchReturnTo(info)
-            } ?: expression
+            return returnMap[expression.returnTargetSymbol]?.invoke(expression) ?: expression
         }
-
-
 
         override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
             if (declaration is IrSymbolOwner) {
                 containingDeclaration = declaration
+                labelCnt = 0
             }
             return super.visitDeclaration(declaration)
         }
 
+        private var containingDeclaration: IrSymbolOwner? = null
+        private var labelCnt = 0
+        private val returnMap = mutableMapOf<IrReturnableBlockSymbol, (IrReturn) -> IrExpression>()
+
+        private val constFalse = JsIrBuilder.buildBoolean(context.builtIns.booleanType, false)
+
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-            if (expression is IrReturnableBlock) {
+            if (expression !is IrReturnableBlock) return super.visitContainerExpression(expression)
 
-                val replacementBlock = IrCompositeImpl(
-                    expression.startOffset,
-                    expression.endOffset,
+            val variable by lazy {
+                JsSymbolBuilder.buildTempVar(
+                    containingDeclaration!!.symbol,
                     expression.type,
-                    expression.origin
+                    "tmp\$ret\$${labelCnt++}",
+                    true
                 )
+            }
 
-                val variable = JsSymbolBuilder.buildTempVar(containingDeclaration!!.symbol, expression.type, "tmp\$ret\$${tmpVarCounter++}", true)
-                val varDeclaration = JsIrBuilder.buildVar(variable)
-                replacementBlock.statements += varDeclaration
-
-                val block = IrCompositeImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    context.builtIns.unitType,
-                    expression.origin
-                )
-
-                val loop = IrDoWhileLoopImpl(
+            val loop by lazy {
+                IrDoWhileLoopImpl(
                     expression.startOffset,
                     expression.endOffset,
                     context.builtIns.unitType,
                     expression.origin
                 ).apply {
-                    label = "l_${labelCnt++}"
+                    label = "l\$ret\$${labelCnt++}"
                     condition = constFalse
-                    body = block
                 }
+            }
 
-                val returnInfo = ReturnInfo(variable, loop)
-                returnMap[expression.symbol] = returnInfo
+            var hasReturned = false
 
+            returnMap[expression.symbol] = { returnExpression ->
+                hasReturned = true
 
-                expression.statements.let { list ->
-                    for (i in list.indices) {
-                        val s = list[i]
-                        list[i] =
-                                if (i == list.lastIndex && returnInfo.cnt == 0 && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
-                                    s.transformChildren(this, null)
-                                    if (returnInfo.cnt == 0) s.value else {
-                                        JsIrBuilder.buildSetVariable(variable, s.value)
-                                    }
-                                } else {
-                                    s.transform(this, null)
-                                }
+                IrCompositeImpl(
+                    returnExpression.startOffset,
+                    returnExpression.endOffset,
+                    context.builtIns.unitType
+                ).apply {
+                    statements += JsIrBuilder.buildSetVariable(variable, returnExpression.value)
+                    statements += JsIrBuilder.buildBreak(context.builtIns.unitType, loop)
+                }
+            }
+
+            val newStatements = expression.statements.mapIndexed { i, s ->
+                if (i == expression.statements.lastIndex && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
+                    s.transformChildren(this, null)
+                    if (!hasReturned) s.value else {
+                        JsIrBuilder.buildSetVariable(variable, s.value)
                     }
+                } else {
+                    s.transform(this, null)
                 }
+            }
 
-                block.statements += expression.statements
+            returnMap.remove(expression.symbol)
 
-                if (returnInfo.cnt == 0) {
-                    return block
+            if (!hasReturned) {
+                return IrCompositeImpl(
+                    expression.startOffset,
+                    expression.endOffset,
+                    expression.type,
+                    expression.origin,
+                    newStatements
+                )
+            } else {
+                loop.body = IrBlockImpl(
+                    expression.startOffset,
+                    expression.endOffset,
+                    context.builtIns.unitType,
+                    expression.origin,
+                    newStatements
+                )
+
+                return IrCompositeImpl(
+                    expression.startOffset,
+                    expression.endOffset,
+                    expression.type,
+                    expression.origin
+                ).apply {
+                    statements += JsIrBuilder.buildVar(variable)
+                    statements += loop
+                    statements += JsIrBuilder.buildGetValue(variable)
                 }
-
-                replacementBlock.statements += loop
-                replacementBlock.statements += JsIrBuilder.buildGetValue(variable)
-
-                return replacementBlock
-
-            } else return super.visitContainerExpression(expression)
+            }
         }
     }
 }
