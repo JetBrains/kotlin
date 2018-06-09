@@ -40,7 +40,7 @@ if not "!ARG!" == "" (
     )
     if "!ARG!" == "--time" (
         set "KONAN_ARGS=%KONAN_ARGS% --time"
-        set "JAVA_ARGS=%JAVA_ARGS% -agentlib:hprof=cpu=samples -Dkonan.profile=true"
+        set "JAVA_ARGS=%JAVA_ARGS% -Dkonan.profile=true"
         goto next
     )
 
