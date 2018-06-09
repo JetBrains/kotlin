@@ -29,8 +29,11 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
     object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
 
     override fun lower(irClass: IrClass) {
-        InnerClassTransformer(irClass).lowerInnerClass()
+        TODO()
+//        InnerClassTransformer(irClass).lowerInnerClass()
     }
+
+    /*
 
     private inner class InnerClassTransformer(val irClass: IrClass) {
         lateinit var outerThisField: IrField
@@ -189,10 +192,14 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
             return null
         }
     }
+
+    */
 }
 
 class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody) {
+        TODO()
+        /*
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
@@ -240,6 +247,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
 
             // TODO callable references?
         })
+        */
     }
 }
 
