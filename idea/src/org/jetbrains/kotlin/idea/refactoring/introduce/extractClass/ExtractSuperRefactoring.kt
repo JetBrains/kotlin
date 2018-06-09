@@ -45,12 +45,11 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.introduce.insertDeclaration
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getChildrenToAnalyze
-import org.jetbrains.kotlin.idea.refactoring.memberInfo.resolveToDescriptorWrapperAware
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.toJavaMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinMoveTargetForDeferredFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinMoveTargetForExistingElement
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveConflictChecker
-import org.jetbrains.kotlin.idea.refactoring.pullUp.checkPrivateMembersWithUsages
+import org.jetbrains.kotlin.idea.refactoring.pullUp.checkVisibilityInAbstractedMembers
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -175,15 +174,7 @@ class ExtractSuperRefactoring(
                         ExtractSuperClassUtil.checkSuperAccessible(targetParent, conflicts, originalClass.toLightClass())
                     }
 
-                    if (isExtractInterface) {
-                        val resolutionFacade = originalClass.getResolutionFacade()
-
-                        val membersToMove = elementsToMove.filterIsInstance<KtNamedDeclaration>()
-                        for (member in membersToMove) {
-                            val memberDescriptor = member.resolveToDescriptorWrapperAware(resolutionFacade)
-                            checkPrivateMembersWithUsages(member, memberDescriptor, originalClass, membersToMove, conflicts)
-                        }
-                    }
+                    checkVisibilityInAbstractedMembers(memberInfos, originalClass.getResolutionFacade(), conflicts)
                 }
             }
 

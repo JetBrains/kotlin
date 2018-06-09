@@ -3931,6 +3931,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             KotlinTestUtils.runTest(this::doExtractSuperclassTest, TargetBackend.ANY, testDataFilePath);
         }
 
+        @TestMetadata("abstractedMemberUsingPrivate.kt")
+        public void testAbstractedMemberUsingPrivate() throws Exception {
+            runTest("idea/testData/refactoring/extractSuperclass/abstractedMemberUsingPrivate.kt");
+        }
+
         @TestMetadata("addSuperclassNoSecondaryConstructors.kt")
         public void testAddSuperclassNoSecondaryConstructors() throws Exception {
             runTest("idea/testData/refactoring/extractSuperclass/addSuperclassNoSecondaryConstructors.kt");
@@ -4027,6 +4032,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
     public static class ExtractInterface extends AbstractExtractionTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doExtractInterfaceTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("abstractedMemberUsingPrivate.kt")
+        public void testAbstractedMemberUsingPrivate() throws Exception {
+            runTest("idea/testData/refactoring/extractInterface/abstractedMemberUsingPrivate.kt");
         }
 
         @TestMetadata("addInterface.kt")
