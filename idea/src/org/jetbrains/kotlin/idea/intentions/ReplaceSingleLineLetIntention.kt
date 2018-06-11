@@ -26,8 +26,8 @@ class ReplaceSingleLineLetInspection : IntentionBasedInspection<KtCallExpression
 }
 
 class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<KtCallExpression>(
-        KtCallExpression::class.java,
-        "Remove redundant '.let' call"
+    KtCallExpression::class.java,
+    "Remove redundant '.let' call"
 ) {
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
         element.lambdaArguments.firstOrNull()?.getLambdaExpression()?.bodyExpression?.children?.singleOrNull()?.let {
@@ -98,8 +98,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
                 is KtDotQualifiedExpression -> if (!left.isApplicable(parameterName)) return false
                 else -> return false
             }
-        }
-        else {
+        } else {
             if (!left.isApplicable(parameterName)) return false
         }
 
@@ -122,17 +121,15 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
     }
 
     private fun KtDotQualifiedExpression.isApplicable(parameterName: String) =
-            !hasLambdaExpression() && getLeftMostReceiverExpression().let { receiver ->
-                receiver is KtNameReferenceExpression &&
-                receiver.getReferencedName() == parameterName &&
-                !nameUsed(parameterName, except = receiver)
-            }
+        !hasLambdaExpression() && getLeftMostReceiverExpression().let { receiver ->
+            receiver is KtNameReferenceExpression &&
+                    receiver.getReferencedName() == parameterName &&
+                    !nameUsed(parameterName, except = receiver)
+        }
 
-    private fun KtDotQualifiedExpression.hasLambdaExpression()
-            = selectorExpression?.anyDescendantOfType<KtLambdaExpression>() ?: false
+    private fun KtDotQualifiedExpression.hasLambdaExpression() = selectorExpression?.anyDescendantOfType<KtLambdaExpression>() ?: false
 
-    private fun KtCallExpression.isLetMethodCall() =
-            calleeExpression?.text == "let" && isMethodCall("kotlin.let")
+    private fun KtCallExpression.isLetMethodCall() = calleeExpression?.text == "let" && isMethodCall("kotlin.let")
 
     private fun KtLambdaExpression.getParameterName(): String? {
         val parameters = valueParameters
@@ -141,5 +138,5 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
     }
 
     private fun KtExpression.nameUsed(name: String, except: KtNameReferenceExpression? = null): Boolean =
-            anyDescendantOfType<KtNameReferenceExpression> { it != except && it.getReferencedName() == name }
+        anyDescendantOfType<KtNameReferenceExpression> { it != except && it.getReferencedName() == name }
 }
