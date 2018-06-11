@@ -7669,6 +7669,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/modifiers/removeAbstractModifier.kt");
         }
 
+        @TestMetadata("removeConst.kt")
+        public void testRemoveConst() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/removeConst.kt");
+        }
+
         @TestMetadata("removeIncompatibleModifier.kt")
         public void testRemoveIncompatibleModifier() throws Exception {
             runTest("idea/testData/quickfix/modifiers/removeIncompatibleModifier.kt");
