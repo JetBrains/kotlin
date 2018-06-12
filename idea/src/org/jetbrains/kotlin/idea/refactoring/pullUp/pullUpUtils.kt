@@ -80,7 +80,17 @@ private fun KtParameter.needToBeAbstract(targetClass: KtClassOrObject): Boolean 
     return hasModifier(KtTokens.ABSTRACT_KEYWORD) || targetClass is KtClass && targetClass.isInterface()
 }
 
-private fun KtParameter.toProperty(): KtProperty = KtPsiFactory(this).createProperty(text)
+private fun KtParameter.toProperty(): KtProperty =
+    KtPsiFactory(this)
+        .createProperty(text)
+        .also {
+            val originalTypeRef = typeReference
+            val generatedTypeRef = it.typeReference
+            if (originalTypeRef != null && generatedTypeRef != null) {
+                // Preserve copyable user data of original type reference
+                generatedTypeRef.replace(originalTypeRef)
+            }
+        }
 
 fun doAddCallableMember(
         memberCopy: KtCallableDeclaration,

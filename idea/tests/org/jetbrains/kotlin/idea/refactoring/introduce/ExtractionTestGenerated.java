@@ -4039,6 +4039,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             runTest("idea/testData/refactoring/extractInterface/abstractedMemberUsingPrivate.kt");
         }
 
+        @TestMetadata("addImportOnParameterPullUp.kt")
+        public void testAddImportOnParameterPullUp() throws Exception {
+            runTest("idea/testData/refactoring/extractInterface/addImportOnParameterPullUp.kt");
+        }
+
         @TestMetadata("addInterface.kt")
         public void testAddInterface() throws Exception {
             runTest("idea/testData/refactoring/extractInterface/addInterface.kt");
