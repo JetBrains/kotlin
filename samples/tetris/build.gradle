@@ -43,7 +43,7 @@ konanArtifacts {
         }
 
         target 'linux', {
-            linkerOpts '-L/usr/lib/x86_64-linux-gnu -lSDL2'
+            linkerOpts '-L/usr/lib64 -L/usr/lib/x86_64-linux-gnu -lSDL2'
         }
 
         target 'raspberrypi', {

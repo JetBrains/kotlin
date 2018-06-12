@@ -7,7 +7,7 @@ konanArtifacts {
         defFile 'src/main/c_interop/ffmpeg.def'
 
         target 'linux', {
-            includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+            includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu', '/usr/include/ffmpeg'
         }
 
         target 'macbook', {
@@ -50,7 +50,7 @@ konanArtifacts {
         }
 
         target 'linux', {
-            linkerOpts '-L/usr/lib/x86_64-linux-gnu'
+            linkerOpts '-L/usr/lib/x86_64-linux-gnu', '-L/usr/lib64'
         }
 
         target 'mingw', {
