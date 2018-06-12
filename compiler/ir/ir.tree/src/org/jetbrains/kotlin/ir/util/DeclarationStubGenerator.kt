@@ -144,6 +144,6 @@ class DeclarationStubGenerator(
     }
 
     private fun generateChildStubs(descriptors: Collection<DeclarationDescriptor>, container: IrDeclarationContainer) {
-        descriptors.sortedWith(StableDescriptorsComparator).mapTo(container.declarations) { generateMemberStub(it) }
+        descriptors.mapTo(container.declarations) { generateMemberStub(it) }
     }
 }

@@ -7,86 +7,7 @@ MODULE_FRAGMENT name:<built-ins module>
         CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Comparable modality:ABSTRACT visibility:public flags:
         CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Serializable modality:ABSTRACT visibility:public flags:
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int flags:primary
-      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:Double flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:Float flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:Long flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:Double flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:Float flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:Long flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
-      CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public flags:companion
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion flags:
-        superClasses:
-          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int.Companion flags:primary
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
-          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MAX_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:Int flags:
-            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
-            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion flags:
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
-          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MIN_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:Int flags:
-            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
-            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion flags:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-          overridden:
-            FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-          overridden:
-            FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
-          overridden:
-            FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
-          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:inv visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:and visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:or visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:shl visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:shr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:ushr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:xor visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
@@ -98,6 +19,11 @@ MODULE_FRAGMENT name:<built-ins module>
       FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:OPEN <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:ABSTRACT <> ($this:kotlin.Comparable<T>, other:T) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
@@ -124,7 +50,20 @@ MODULE_FRAGMENT name:<built-ins module>
       FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:inc visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:inv visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
@@ -144,6 +83,27 @@ MODULE_FRAGMENT name:<built-ins module>
       FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:Double flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:Float flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:Long flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:or visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
@@ -174,6 +134,30 @@ MODULE_FRAGMENT name:<built-ins module>
       FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:IntRange flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:Double flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:Float flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:Long flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:shl visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:shr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
@@ -192,15 +176,6 @@ MODULE_FRAGMENT name:<built-ins module>
       FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:unaryMinus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:unaryPlus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:OPEN <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
-        overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:ABSTRACT <> ($this:kotlin.Comparable<T>, other:T) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:Byte flags:
         overridden:
           FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:ABSTRACT <> ($this:kotlin.Number) returnType:Byte flags:
@@ -229,28 +204,62 @@ MODULE_FRAGMENT name:<built-ins module>
         overridden:
           FUN IR_EXTERNAL_DECLARATION_STUB name:toShort visibility:public modality:ABSTRACT <> ($this:kotlin.Number) returnType:Short flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-        overridden:
-          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-        overridden:
-          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         overridden:
           FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
           FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:unaryMinus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:unaryPlus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:ushr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:xor visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public flags:companion
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion flags:
+        superClasses:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int.Companion flags:primary
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MAX_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:Int flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
+            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MIN_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:Int flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
+            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion flags:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
     CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags:
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Number flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
         CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Serializable modality:ABSTRACT visibility:public flags:
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Number flags:primary
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:ABSTRACT <> ($this:kotlin.Number) returnType:Byte flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Number flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:toChar visibility:public modality:ABSTRACT <> ($this:kotlin.Number) returnType:Char flags:
@@ -265,15 +274,6 @@ MODULE_FRAGMENT name:<built-ins module>
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Number flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:toShort visibility:public modality:ABSTRACT <> ($this:kotlin.Number) returnType:Short flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Number flags:
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-        overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-        overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         overridden:
           FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
@@ -302,13 +302,13 @@ MODULE_FRAGMENT name:<built-ins module>
     CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:primary
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
   EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin
     CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
@@ -317,86 +317,7 @@ MODULE_FRAGMENT name:<built-ins module>
         CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Comparable modality:ABSTRACT visibility:public flags:
         CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Serializable modality:ABSTRACT visibility:public flags:
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int flags:primary
-      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:Double flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:Float flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:Long flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:Double flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:Float flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:Long flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
-      CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public flags:companion
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion flags:
-        superClasses:
-          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int.Companion flags:primary
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
-          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MAX_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:Int flags:
-            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
-            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion flags:
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
-          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MIN_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:Int flags:
-            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
-            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion flags:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-          overridden:
-            FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-          overridden:
-            FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
-          overridden:
-            FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
-          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:inv visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:and visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:or visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:shl visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:shr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:ushr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:xor visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
@@ -408,6 +329,11 @@ MODULE_FRAGMENT name:<built-ins module>
       FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:OPEN <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:ABSTRACT <> ($this:kotlin.Comparable<T>, other:T) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
@@ -434,7 +360,20 @@ MODULE_FRAGMENT name:<built-ins module>
       FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:inc visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:inv visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
@@ -454,6 +393,27 @@ MODULE_FRAGMENT name:<built-ins module>
       FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:Double flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:Float flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:Long flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:or visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
@@ -484,6 +444,30 @@ MODULE_FRAGMENT name:<built-ins module>
       FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:IntRange flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Double) returnType:Double flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Double flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Float) returnType:Float flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Float flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:Long flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:shl visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:shr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte flags:
@@ -502,15 +486,6 @@ MODULE_FRAGMENT name:<built-ins module>
       FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:unaryMinus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:unaryPlus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:OPEN <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
-        overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:ABSTRACT <> ($this:kotlin.Comparable<T>, other:T) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:Byte flags:
         overridden:
           FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:ABSTRACT <> ($this:kotlin.Number) returnType:Byte flags:
@@ -539,28 +514,62 @@ MODULE_FRAGMENT name:<built-ins module>
         overridden:
           FUN IR_EXTERNAL_DECLARATION_STUB name:toShort visibility:public modality:ABSTRACT <> ($this:kotlin.Number) returnType:Short flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-        overridden:
-          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-        overridden:
-          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         overridden:
           FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
           FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:unaryMinus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:unaryPlus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:ushr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:xor visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public flags:companion
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion flags:
+        superClasses:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int.Companion flags:primary
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MAX_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:Int flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
+            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MIN_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:Int flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE type:kotlin.Int visibility:public modality:FINAL flags:const,val
+            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion flags:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
     CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags:
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Number flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
         CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Serializable modality:ABSTRACT visibility:public flags:
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Number flags:primary
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:ABSTRACT <> ($this:kotlin.Number) returnType:Byte flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Number flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:toChar visibility:public modality:ABSTRACT <> ($this:kotlin.Number) returnType:Char flags:
@@ -575,15 +584,6 @@ MODULE_FRAGMENT name:<built-ins module>
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Number flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:toShort visibility:public modality:ABSTRACT <> ($this:kotlin.Number) returnType:Short flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Number flags:
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-        overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-        overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         overridden:
           FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
@@ -612,13 +612,13 @@ MODULE_FRAGMENT name:<built-ins module>
     CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:primary
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
   EXTERNAL_PACKAGE_FRAGMENT fqName:java.io
     CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Serializable modality:ABSTRACT visibility:public flags:
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.io.Serializable flags:
