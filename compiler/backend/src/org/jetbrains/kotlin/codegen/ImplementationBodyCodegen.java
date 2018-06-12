@@ -558,8 +558,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.store(2, OBJECT_TYPE);
 
             for (PropertyDescriptor propertyDescriptor : properties) {
-                KotlinType type = propertyDescriptor.getType();
-                Type asmType = typeMapper.mapType(type);
+                Type asmType = typeMapper.mapType(propertyDescriptor);
 
                 Type thisPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, ImplementationBodyCodegen.this.classAsmType, 0);
                 StackValue.coerce(thisPropertyType, asmType, iv);
@@ -581,19 +580,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         value.put(Type.BOOLEAN_TYPE, iv);
                     }
                     else {
-                        if (TypeUtils.isNullableType(type)) {
+                        if (TypeUtils.isNullableType(propertyDescriptor.getType())) {
                             StackValue value =
                                     genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
                             value.put(Type.BOOLEAN_TYPE, iv);
                         }
                         else {
-                            ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
-                            Type owner =
-                                    !(classifier instanceof ClassDescriptor) || DescriptorUtils.isInterface(classifier)
-                                    ? AsmTypes.OBJECT_TYPE
-                                    : asmType;
-                            iv.invokevirtual(owner.getInternalName(), "equals",
-                                             Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE), false);
+                            iv.invokevirtual(
+                                    getEqualsOrHashCodeOwner(propertyDescriptor).getInternalName(), "equals",
+                                    Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE), false
+                            );
                         }
                     }
                     iv.ifeq(ne);
@@ -636,8 +632,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifnull(ifNull);
                 }
 
-                genHashCode(mv, iv, asmType, state.getTarget(),
-                            DescriptorUtils.isInterface(propertyDescriptor.getType().getConstructor().getDeclarationDescriptor()));
+                genHashCode(mv, iv, getEqualsOrHashCodeOwner(propertyDescriptor), state.getTarget());
 
                 if (ifNull != null) {
                     Label end = new Label();
@@ -659,6 +654,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             mv.visitInsn(IRETURN);
 
             FunctionCodegen.endVisit(mv, "hashCode", myClass);
+        }
+
+        @NotNull
+        private Type getEqualsOrHashCodeOwner(@NotNull PropertyDescriptor descriptor) {
+            ClassifierDescriptor classifier = descriptor.getType().getConstructor().getDeclarationDescriptor();
+            return !(classifier instanceof ClassDescriptor) || JvmCodegenUtil.isJvmInterface(classifier)
+                   ? AsmTypes.OBJECT_TYPE
+                   : typeMapper.mapType(descriptor);
         }
 
         @Override

@@ -7849,6 +7849,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/dataClasses/twoVarParams.kt");
         }
 
+        @TestMetadata("typeParameterWithInterfaceBound.kt")
+        public void testTypeParameterWithInterfaceBound() throws Exception {
+            runTest("compiler/testData/codegen/box/dataClasses/typeParameterWithInterfaceBound.kt");
+        }
+
         @TestMetadata("unitComponent.kt")
         public void testUnitComponent() throws Exception {
             runTest("compiler/testData/codegen/box/dataClasses/unitComponent.kt");
@@ -7952,11 +7957,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("sameinstance.kt")
             public void testSameinstance() throws Exception {
                 runTest("compiler/testData/codegen/box/dataClasses/equals/sameinstance.kt");
-            }
-
-            @TestMetadata("typeParameterWithInterfaceBound.kt")
-            public void testTypeParameterWithInterfaceBound() throws Exception {
-                runTest("compiler/testData/codegen/box/dataClasses/equals/typeParameterWithInterfaceBound.kt");
             }
         }
 
