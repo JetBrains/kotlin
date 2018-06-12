@@ -17,9 +17,16 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceSingleLineLetInspection : IntentionBasedInspection<KtCallExpression>(ReplaceSingleLineLetIntention::class) {
     override fun inspectionTarget(element: KtCallExpression) = element.calleeExpression
@@ -30,11 +37,12 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
     "Remove redundant '.let' call"
 ) {
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
-        element.lambdaArguments.firstOrNull()?.getLambdaExpression()?.bodyExpression?.children?.singleOrNull()?.let {
-            when (it) {
-                is KtDotQualifiedExpression -> it.applyTo(element)
-                is KtBinaryExpression -> it.applyTo(element)
-            }
+        val lambdaExpression = element.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return
+        val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return
+        when (bodyExpression) {
+            is KtDotQualifiedExpression -> bodyExpression.applyTo(element)
+            is KtBinaryExpression -> bodyExpression.applyTo(element)
+            is KtCallExpression -> bodyExpression.applyTo(element, lambdaExpression.functionLiteral, editor)
         }
     }
 
@@ -77,6 +85,19 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         }
     }
 
+    private fun KtCallExpression.applyTo(element: KtCallExpression, functionLiteral: KtFunctionLiteral, editor: Editor?) {
+        val parent = element.parent as? KtQualifiedExpression
+        val reference = functionLiteral.valueParameterReferences(this).firstOrNull()
+        val replaced = if (parent != null) {
+            reference?.replace(parent.receiverExpression)
+            parent.replaced(this)
+        } else {
+            reference?.replace(KtPsiFactory(this).createThisExpression())
+            element.replaced(this)
+        }
+        editor?.caretModel?.moveToOffset(replaced.startOffset)
+    }
+
     override fun isApplicableTo(element: KtCallExpression): Boolean {
         if (!element.isLetMethodCall()) return false
         val lambdaExpression = element.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return false
@@ -86,6 +107,8 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         return when (bodyExpression) {
             is KtBinaryExpression -> element.parent !is KtSafeQualifiedExpression && bodyExpression.isApplicable(parameterName)
             is KtDotQualifiedExpression -> bodyExpression.isApplicable(parameterName)
+            is KtCallExpression -> element.parent !is KtSafeQualifiedExpression
+                    && lambdaExpression.functionLiteral.valueParameterReferences(bodyExpression).count() <= 1
             else -> false
         }
     }
@@ -139,4 +162,15 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
 
     private fun KtExpression.nameUsed(name: String, except: KtNameReferenceExpression? = null): Boolean =
         anyDescendantOfType<KtNameReferenceExpression> { it != except && it.getReferencedName() == name }
+
+    private fun KtFunctionLiteral.valueParameterReferences(callExpression: KtCallExpression): List<KtReferenceExpression> {
+        val context = analyze(BodyResolveMode.PARTIAL)
+        val descriptor = context[BindingContext.FUNCTION, this]?.valueParameters?.singleOrNull() ?: return emptyList()
+        val name = descriptor.name.asString()
+        return callExpression.valueArguments.flatMap { arg ->
+            arg.collectDescendantsOfType<KtReferenceExpression>().filter {
+                it.text == name && it.getResolvedCall(context)?.resultingDescriptor == descriptor
+            }
+        }
+    }
 }
