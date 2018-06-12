@@ -82,7 +82,7 @@ class AddTargetVersionCheckQuickFix(val api: Int) : AndroidLintQuickFix {
     }
 
     private fun getSurrounder(element: KtElement, todoText: String?): KotlinIfSurrounder {
-        val used = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.USED_AS_EXPRESSION, element] ?: false
+        val used = element.analyze(BodyResolveMode.PARTIAL_WITH_CFA)[BindingContext.USED_AS_EXPRESSION, element] ?: false
         return if (used) {
             object : KotlinIfSurrounder() {
                 override fun getCodeTemplate(): String = "if (a) { \n} else {\nTODO(${todoText ?: ""})\n}"

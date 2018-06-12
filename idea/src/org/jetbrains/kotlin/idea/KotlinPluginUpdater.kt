@@ -48,7 +48,7 @@ sealed class PluginUpdateStatus {
 
     class CheckFailed(val message: String, val detail: String? = null) : PluginUpdateStatus()
 
-    class Unverified(val message: String, val updateStatus: Update) : PluginUpdateStatus()
+    class Unverified(val verifierName: String, val reason: String?, val updateStatus: Update) : PluginUpdateStatus()
 
     fun mergeWith(other: PluginUpdateStatus): PluginUpdateStatus {
         if (other is Update) {

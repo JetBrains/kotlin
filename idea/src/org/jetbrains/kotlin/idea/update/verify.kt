@@ -5,9 +5,24 @@
 
 package org.jetbrains.kotlin.idea.update
 
+import com.intellij.ide.plugins.IdeaPluginDescriptor
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
 
 // Do an additional verification with PluginUpdateVerifier. Enabled only in AS 32.
 fun verify(updateStatus: PluginUpdateStatus.Update): PluginUpdateStatus {
+    val pluginDescriptor: IdeaPluginDescriptor = updateStatus.pluginDescriptor
+    val pluginVerifiers = PluginUpdateVerifier.EP_NAME.extensions
+
+    for (pluginVerifier in pluginVerifiers) {
+        val verifyResult = pluginVerifier.verify(pluginDescriptor) ?: continue
+        if (!verifyResult.verified) {
+            return PluginUpdateStatus.Unverified(
+                pluginVerifier.verifierName,
+                verifyResult.declineMessage,
+                updateStatus
+            )
+        }
+    }
+
     return updateStatus
 }

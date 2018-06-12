@@ -54,8 +54,9 @@ class KotlinCallerChooser(
         previousTree: Tree?,
         callback: Consumer<Set<PsiElement>>
 ): CallerChooserBase<PsiElement>(declaration, project, title, previousTree, "dummy." + KotlinFileType.EXTENSION, callback) {
-    override fun createTreeNodeFor(method: PsiElement?, called: HashSet<PsiElement>?, cancelCallback: Runnable?) =
-        KotlinMethodNode(method, called ?: HashSet(), myProject, cancelCallback ?: Runnable {})
+    override fun createTreeNode(method: PsiElement, called: HashSet<PsiElement>, cancelCallback: Runnable): KotlinMethodNode {
+        return KotlinMethodNode(method, called, myProject, cancelCallback)
+    }
 
     override fun findDeepestSuperMethods(method: PsiElement) =
             method.toLightMethods().singleOrNull()?.findDeepestSuperMethods()
