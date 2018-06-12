@@ -123,11 +123,9 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiReferenceExpression.toJK(): JKExpression {
             val impl = this as PsiReferenceExpressionImpl
-            if (impl.resolve() !is PsiField) {
-                return JKNullLiteral() // TODO !!!
-            }
 
             val access = JKJavaFieldAccessExpressionImpl(symbolProvider.provideSymbol(impl) as JKFieldSymbol)
+
             return when {
                 impl.findChildByRole(ChildRole.DOT) != null &&
                         (impl.qualifierExpression as? PsiReferenceExpression)?.resolve() !is PsiClass ->
