@@ -43,7 +43,7 @@ class JKKtPropertyImpl(
 class JKKtFunctionImpl(
     returnType: JKTypeElement,
     name: JKNameIdentifier,
-    valueArguments: List<JKValueArgument>,
+    parameters: List<JKParameter>,
     block: JKBlock,
     modifierList: JKModifierList
 ) : JKBranchElementBase(), JKKtFunction {
@@ -51,7 +51,7 @@ class JKKtFunctionImpl(
 
     override var returnType: JKTypeElement by child(returnType)
     override var name: JKNameIdentifier by child(name)
-    override var valueArguments: List<JKValueArgument> by children(valueArguments)
+    override var parameters: List<JKParameter> by children(parameters)
     override var block: JKBlock by child(block)
     override var modifierList: JKModifierList by child(modifierList)
 }

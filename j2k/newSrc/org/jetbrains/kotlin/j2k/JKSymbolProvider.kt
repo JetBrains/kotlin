@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.tree.JKLocalVariable
+import org.jetbrains.kotlin.j2k.tree.JKParameter
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
@@ -26,7 +27,7 @@ class JKSymbolProvider {
                 is KtClassOrObject -> JKMultiverseKtClassSymbol(psi)
                 is PsiMethod -> JKMultiverseMethodSymbol(psi)
                 is PsiField -> JKMultiverseFieldSymbol(psi)
-                else -> TODO()
+                else -> TODO(psi::class.toString())
             }
         }
     }
@@ -38,6 +39,10 @@ class JKSymbolProvider {
     }
 
     fun provideLocalVarSymbol(psi: PsiLocalVariable, variable: JKLocalVariable): JKSymbol {
+        return symbols.getOrPut(psi) { JKUniverseFieldSymbol(variable) }
+    }
+
+    fun provideParameterSymbol(psi: PsiParameter, variable: JKParameter): JKSymbol {
         return symbols.getOrPut(psi) { JKUniverseFieldSymbol(variable) }
     }
 

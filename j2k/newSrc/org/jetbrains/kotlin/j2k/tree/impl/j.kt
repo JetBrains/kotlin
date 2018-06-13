@@ -35,14 +35,14 @@ class JKJavaFieldImpl(modifierList: JKModifierList, type: JKTypeElement, name: J
 }
 
 class JKJavaMethodImpl(
-    modifierList: JKModifierList, returnType: JKTypeElement, name: JKNameIdentifier, valueArguments: List<JKValueArgument>, block: JKBlock
+    modifierList: JKModifierList, returnType: JKTypeElement, name: JKNameIdentifier, parameters: List<JKParameter>, block: JKBlock
 ) : JKJavaMethod, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethod(this, data)
 
     override var modifierList: JKModifierList by child(modifierList)
     override var returnType: JKTypeElement by child(returnType)
     override var name: JKNameIdentifier by child(name)
-    override var valueArguments: List<JKValueArgument> by children(valueArguments)
+    override var parameters: List<JKParameter> by children(parameters)
     override var block: JKBlock by child(block)
 
 }
