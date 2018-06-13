@@ -252,7 +252,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                             ?: TODO()
                 },
                 JKNameIdentifierImpl(name),
-                parameterList.parameters.map { it -> it.toJK() },
+                parameterList.parameters.map { it.toJK() },
                 body?.toJK() ?: JKBodyStub
             ).also {
                 (symbolProvider.provideDirectSymbol(this) as? JKUniverseMethodSymbol)?.run { target = it }
@@ -265,8 +265,12 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             else -> null
         }
 
-        fun PsiParameter.toJK(): JKValueArgumentImpl {
-            return JKValueArgumentImpl(with(expressionTreeMapper) { typeElement?.toJK() } ?: TODO(), name!!)
+        fun PsiParameter.toJK(): JKParameter {
+            return JKParameterImpl(with(expressionTreeMapper) { typeElement?.toJK() } ?: TODO(),
+                                   JKNameIdentifierImpl(name!!),
+                                   with(modifierMapper) { modifierList.toJK() }).also {
+                symbolProvider.provideParameterSymbol(this, it)
+            }
         }
 
         fun PsiCodeBlock.toJK(): JKBlock {

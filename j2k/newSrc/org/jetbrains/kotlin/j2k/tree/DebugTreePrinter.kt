@@ -43,9 +43,9 @@ private class DebugTreePrinter : JKVisitorVoid {
     override fun visitJavaMethod(javaMethod: JKJavaMethod) {
         printer.println(javaMethod.classNameWithoutJK(), " [")
         printer.indented {
-            javaMethod.block?.accept(this, null)
+            javaMethod.block.accept(this, null)
             javaMethod.modifierList.accept(this, null)
-            javaMethod.valueArguments.forEach { it.accept(this, null) }
+            javaMethod.parameters.forEach { it.accept(this, null) }
         }
         printer.println("]")
     }

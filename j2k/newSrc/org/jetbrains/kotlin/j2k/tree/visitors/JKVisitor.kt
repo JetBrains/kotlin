@@ -34,7 +34,7 @@ interface JKVisitor<out R, in D> {
     fun visitTypeCastExpression(typeCastExpression: JKTypeCastExpression, data: D): R = visitExpression(typeCastExpression, data)
     fun visitExpressionList(expressionList: JKExpressionList, data: D): R = visitTreeElement(expressionList, data)
     fun visitLiteralExpression(literalExpression: JKLiteralExpression, data: D): R = visitExpression(literalExpression, data)
-    fun visitValueArgument(valueArgument: JKValueArgument, data: D): R = visitTreeElement(valueArgument, data)
+    fun visitParameter(parameter: JKParameter, data: D): R = visitField(parameter, data)
     fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression, data: D): R = visitLiteralExpression(stringLiteralExpression, data)
     fun visitStubExpression(stubExpression: JKStubExpression, data: D): R = visitExpression(stubExpression, data)
     fun visitLoopStatement(loopStatement: JKLoopStatement, data: D): R = visitStatement(loopStatement, data)

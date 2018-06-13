@@ -66,7 +66,7 @@ class FieldToPropertyConversion : RecursiveApplicableConversionBase() {
 
     private fun JKMethod.getterFor(): JKJavaField? {
         if (JvmAbi.isGetterName(name.value)) return null
-        if (this.valueArguments.isNotEmpty()) return null
+        if (this.parameters.isNotEmpty()) return null
         if (this !is JKJavaMethod) return null
         val returnStatement = block.statements.singleOrNull() as? JKReturnStatement ?: return null
         val fieldAccess = returnStatement.expression as? JKFieldAccessExpression ?: return null

@@ -45,7 +45,7 @@ interface JKClass : JKDeclaration, JKModifierListOwner {
 
 interface JKMethod : JKDeclaration, JKModifierListOwner {
     val name: JKNameIdentifier
-    var valueArguments: List<JKValueArgument>
+    var parameters: List<JKParameter>
     val returnType: JKTypeElement
 }
 
@@ -154,9 +154,8 @@ interface JKLiteralExpression : JKExpression {
     }
 }
 
-interface JKValueArgument : JKTreeElement {
-    var type: JKTypeElement
-    val name: String
+interface JKParameter : JKField {
+
 }
 
 interface JKStringLiteralExpression : JKLiteralExpression {

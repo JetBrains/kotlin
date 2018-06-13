@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.j2k.conversions
 import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKJavaMethod
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
-import org.jetbrains.kotlin.j2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKTypeElementImpl
 
 class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
     override fun visitTreeElement(element: JKTreeElement) {
@@ -36,7 +34,7 @@ class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
                 JKKtFunctionImpl(
                     it.returnType,
                     it.name,
-                    it.valueArguments,
+                    it.parameters,
                     it.block,
                     it.modifierList
                 )

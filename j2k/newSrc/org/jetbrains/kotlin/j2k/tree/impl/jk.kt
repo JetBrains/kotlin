@@ -46,9 +46,18 @@ class JKModifierListImpl(
     override var modifiers: List<JKModifier> by children(modifiers)
 }
 
-class JKValueArgumentImpl(type: JKTypeElement, override val name: String) : JKValueArgument, JKBranchElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitValueArgument(this, data)
+class JKParameterImpl(
+    type: JKTypeElement,
+    name: JKNameIdentifier,
+    modifierList: JKModifierList,
+    initializer: JKExpression = JKStubExpressionImpl()
 
+) : JKParameter, JKBranchElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitParameter(this, data)
+
+    override var modifierList by child(modifierList)
+    override val initializer by child(initializer)
+    override val name by child(name)
     override var type by child(type)
 }
 
