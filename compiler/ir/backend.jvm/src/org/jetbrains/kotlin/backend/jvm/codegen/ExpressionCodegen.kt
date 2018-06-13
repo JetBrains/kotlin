@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.TypeParameterMappings
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty
+import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.*
@@ -111,19 +112,29 @@ class ExpressionCodegen(
     fun generate() {
         mv.visitCode()
         val info = BlockInfo.create()
-        val result = irFunction.body?.accept(this, info)
-//        result?.apply {
-//            coerce(this.type, irFunction.body!!.as)
-//        }
+        val result = irFunction.body!!.accept(this, info)
+
         val returnType = typeMapper.mapReturnType(irFunction.descriptor)
-        if (returnType == Type.VOID_TYPE) {
-            //for implicit return
-            mv.areturn(Type.VOID_TYPE)
-        } else if (irFunction.body is IrExpressionBody) {
+        if (irFunction.body is IrExpressionBody) {
             mv.areturn(returnType)
+            //TODO merge branch inside next one
+        } else if (!endsWithReturn(irFunction.body!!)) {
+            if (returnType == Type.VOID_TYPE) {
+                mv.areturn(returnType)
+            } else {
+                StackValue.none().put(returnType, null, mv)
+                mv.areturn(returnType)
+            }
         }
         writeLocalVariablesInTable(info)
         mv.visitEnd()
+    }
+
+    private fun endsWithReturn(body: IrBody): Boolean {
+        val lastStatement = if (body is IrStatementContainer) {
+            body.statements.lastOrNull() ?: body
+        } else body
+        return lastStatement is IrReturn
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: BlockInfo): StackValue {
@@ -650,6 +661,8 @@ class ExpressionCodegen(
         if (!(condition is IrConst<*> && condition.value == true)) {
             gen(condition, data)
             BranchedValue.condJump(StackValue.onStack(condition.asmType), endLabel, true, mv)
+        } else {
+            mv.fakeAlwaysFalseIfeq(endLabel)
         }
 
         with(LoopInfo(loop, continueLabel, endLabel)) {
@@ -707,6 +720,9 @@ class ExpressionCodegen(
         val entry = markNewLabel()
         val endLabel = Label()
         val continueLabel = Label()
+
+        mv.fakeAlwaysFalseIfeq(continueLabel)
+        mv.fakeAlwaysFalseIfeq(endLabel)
 
         with(LoopInfo(loop, continueLabel, endLabel)) {
             data.addInfo(this)
