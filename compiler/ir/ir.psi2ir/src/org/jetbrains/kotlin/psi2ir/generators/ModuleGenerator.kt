@@ -23,12 +23,13 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.ir.util.AnnotationGenerator
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 
 class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
-    private val annotationGenerator = AnnotationGenerator(context.moduleDescriptor, context.symbolTable)
+    private val annotationGenerator = TypeTranslator(context.moduleDescriptor, context.symbolTable).annotationGenerator
 
     fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
         generateModuleFragmentWithoutDependencies(ktFiles).also { irModule ->

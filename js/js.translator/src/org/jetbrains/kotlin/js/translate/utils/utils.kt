@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.js.translate.utils
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
-import org.jetbrains.kotlin.backend.common.onlyIf
+// import org.jetbrains.kotlin.backend.common.onlyIf
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
@@ -34,6 +34,11 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.DFS
+
+fun <T: Any> T.onlyIf(condition: T.()->Boolean, then: (T)->Unit): T {
+    if (this.condition()) then(this)
+    return this
+}
 
 fun generateDelegateCall(
     classDescriptor: ClassDescriptor,
@@ -281,3 +286,4 @@ fun FunctionDescriptor.hasOrInheritsParametersWithDefaultValue(): Boolean = DFS.
 
 fun FunctionDescriptor.hasOwnParametersWithDefaultValue() =
     original.valueParameters.any { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault }
+

@@ -25,10 +25,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
+import org.jetbrains.kotlin.ir.util.TypeRemapper
 
 open class DeepCopyIrTreeWithReturnableBlockSymbols(
-        private val symbolRemapper: SymbolRemapper
-) : DeepCopyIrTreeWithSymbols(symbolRemapper) {
+        private val symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper
+) : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
 
     private inline fun <reified T : IrElement> T.transform() =
             transform(this@DeepCopyIrTreeWithReturnableBlockSymbols, null) as T

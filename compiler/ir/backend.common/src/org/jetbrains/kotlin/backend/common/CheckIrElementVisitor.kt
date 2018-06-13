@@ -146,28 +146,28 @@ class CheckIrElementVisitor(val builtIns: KotlinBuiltIns, val reportError: Repor
     override fun visitTypeOperator(expression: IrTypeOperatorCall) {
         super.visitTypeOperator(expression)
 
-        val operator = expression.operator
-        val typeOperand = expression.typeOperand
-
-        val naturalType = when (operator) {
-            IrTypeOperator.CAST,
-            IrTypeOperator.IMPLICIT_CAST,
-            IrTypeOperator.IMPLICIT_NOTNULL,
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-            IrTypeOperator.IMPLICIT_INTEGER_COERCION -> typeOperand
-
-            IrTypeOperator.SAFE_CAST -> typeOperand.makeNullable()
-
-            IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> builtIns.booleanType
-        }
-
-        if (operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT && typeOperand != builtIns.unitType) {
-            reportError(expression, "typeOperand is $typeOperand")
-        }
-
-        // TODO: check IMPLICIT_NOTNULL's argument type.
-
-        expression.ensureTypeIs(naturalType)
+//        val operator = expression.operator
+//        val typeOperand = expression.typeOperand
+//
+//        val naturalType = when (operator) {
+//            IrTypeOperator.CAST,
+//            IrTypeOperator.IMPLICIT_CAST,
+//            IrTypeOperator.IMPLICIT_NOTNULL,
+//            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+//            IrTypeOperator.IMPLICIT_INTEGER_COERCION -> typeOperand
+//
+//            IrTypeOperator.SAFE_CAST -> typeOperand.makeNullable()
+//
+//            IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> builtIns.booleanType
+//        }
+//
+//        if (operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT && typeOperand != builtIns.unitType) {
+//            reportError(expression, "typeOperand is $typeOperand")
+//        }
+//
+//        // TODO: check IMPLICIT_NOTNULL's argument type.
+//
+//        expression.ensureTypeIs(naturalType)
     }
 
     override fun visitLoop(loop: IrLoop) {

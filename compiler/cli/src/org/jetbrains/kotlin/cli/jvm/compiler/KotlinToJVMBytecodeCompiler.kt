@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+//import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
@@ -428,7 +428,7 @@ object KotlinToJVMBytecodeCompiler {
             sourceFiles,
             configuration
         )
-            .codegenFactory(if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory)
+            .codegenFactory(if (configuration.getBoolean(JVMConfigurationKeys.IR)) TODO() else DefaultCodegenFactory)
             .withModule(module)
             .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
             .build()

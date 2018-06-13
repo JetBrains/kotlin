@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class AnnotationGenerator(
     moduleDescriptor: ModuleDescriptor,
-    private val symbolTable: SymbolTable
+    private val symbolTable: SymbolTable,
+    val typeTranslator: TypeTranslator
 ) : IrElementVisitorVoid {
 
-    private val typeTranslator = TypeTranslator(moduleDescriptor, symbolTable)
     private val scopedTypeParameterResolver = ScopedTypeParametersResolver()
     private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, this, scopedTypeParameterResolver)
 

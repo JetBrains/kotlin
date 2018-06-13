@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.AnnotationGenerator
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
@@ -66,7 +67,7 @@ class Psi2IrTranslator(val configuration: Psi2IrConfiguration = Psi2IrConfigurat
     }
 
     private fun generateAnnotationsForDeclarations(context: GeneratorContext, irElement: IrElement) {
-        val annotationGenerator = AnnotationGenerator(context.moduleDescriptor, context.symbolTable)
+        val annotationGenerator = TypeTranslator(context.moduleDescriptor, context.symbolTable).annotationGenerator
         irElement.acceptVoid(annotationGenerator)
     }
 }

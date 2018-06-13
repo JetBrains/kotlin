@@ -19,6 +19,13 @@ abstract class IrTypeBase(
 
     override val type: IrType get() = this
 
+    override fun equals(other: Any?): Boolean {
+        if (other is KotlinType)
+            error(other)
+
+        return super.equals(other)
+    }
+
 }
 
 class IrErrorTypeImpl(

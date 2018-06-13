@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.backend.jvm.codegen.IrExpressionLambda
+//import org.jetbrains.kotlin.backend.jvm.codegen.IrExpressionLambda
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
@@ -374,17 +374,17 @@ class MethodInliner(
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
 
             private fun getNewIndex(`var`: Int): Int {
-                if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda) {
-                    if (`var` < parameters.argsSizeOnStack) {
-                        if (`var` < capturedParamsSize) {
-                            return `var` + realParametersSize
-                        }
-                        else {
-                            return `var` - capturedParamsSize
-                        }
-                    }
-                    return `var`
-                }
+//                if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda) {
+//                    if (`var` < parameters.argsSizeOnStack) {
+//                        if (`var` < capturedParamsSize) {
+//                            return `var` + realParametersSize
+//                        }
+//                        else {
+//                            return `var` - capturedParamsSize
+//                        }
+//                    }
+//                    return `var`
+//                }
                 return `var` + if (`var` < realParametersSize) 0 else capturedParamsSize
             }
 
@@ -759,32 +759,32 @@ class MethodInliner(
             return
         }
 
-        if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda) {
-            val capturedVars = inliningContext.lambdaInfo.capturedVars
-            var offset = parameters.realParametersSizeOnStack
-            val map = capturedVars.map {
-                offset to it.also { offset += it.type.size }
-            }.toMap()
-
-            var cur: AbstractInsnNode? = node.instructions.first
-            while (cur != null) {
-                if (cur is VarInsnNode && cur.opcode == Opcodes.ALOAD && map.contains(cur.`var`)) {
-                    val varIndex = cur.`var`
-                    val capturedParamDesc = map[varIndex]!!
-
-                    val newIns = FieldInsnNode(
-                        Opcodes.GETSTATIC,
-                        capturedParamDesc.containingLambdaName,
-                        foldName(capturedParamDesc.fieldName),
-                        capturedParamDesc.type.descriptor
-                    )
-                    node.instructions.insertBefore(cur, newIns)
-                    node.instructions.remove(cur)
-                    cur = newIns
-                }
-                cur = cur.next
-            }
-        }
+//        if (inliningContext.isInliningLambda && inliningContext.lambdaInfo is IrExpressionLambda) {
+//            val capturedVars = inliningContext.lambdaInfo.capturedVars
+//            var offset = parameters.realParametersSizeOnStack
+//            val map = capturedVars.map {
+//                offset to it.also { offset += it.type.size }
+//            }.toMap()
+//
+//            var cur: AbstractInsnNode? = node.instructions.first
+//            while (cur != null) {
+//                if (cur is VarInsnNode && cur.opcode == Opcodes.ALOAD && map.contains(cur.`var`)) {
+//                    val varIndex = cur.`var`
+//                    val capturedParamDesc = map[varIndex]!!
+//
+//                    val newIns = FieldInsnNode(
+//                        Opcodes.GETSTATIC,
+//                        capturedParamDesc.containingLambdaName,
+//                        foldName(capturedParamDesc.fieldName),
+//                        capturedParamDesc.type.descriptor
+//                    )
+//                    node.instructions.insertBefore(cur, newIns)
+//                    node.instructions.remove(cur)
+//                    cur = newIns
+//                }
+//                cur = cur.next
+//            }
+//        }
 
         // Fold all captured variables access chains
         //          ALOAD 0

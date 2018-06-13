@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -54,20 +55,20 @@ class DeclarationIrBuilder(
     startOffset,
     endOffset
 )
-
-abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
-    protected abstract fun remapVariable(value: ValueDescriptor): IrValueParameter?
-
-    override fun visitGetValue(expression: IrGetValue): IrExpression =
-        remapVariable(expression.descriptor)?.let {
-            IrGetValueImpl(expression.startOffset, expression.endOffset, it.symbol, expression.origin)
-        } ?: expression
-}
-
-class VariableRemapper(val mapping: Map<ValueDescriptor, IrValueParameter>) : AbstractVariableRemapper() {
-    override fun remapVariable(value: ValueDescriptor): IrValueParameter? =
-        mapping[value]
-}
+//
+//abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
+//    protected abstract fun remapVariable(value: ValueDescriptor): IrValueParameter?
+//
+//    override fun visitGetValue(expression: IrGetValue): IrExpression =
+//        remapVariable(expression.descriptor)?.let {
+//            IrGetValueImpl(expression.startOffset, expression.endOffset, it.symbol, expression.origin)
+//        } ?: expression
+//}
+//
+//class VariableRemapper(val mapping: Map<ValueDescriptor, IrValueParameter>) : AbstractVariableRemapper() {
+//    override fun remapVariable(value: ValueDescriptor): IrValueParameter? =
+//        mapping[value]
+//}
 
 fun BackendContext.createIrBuilder(
     symbol: IrSymbol,
@@ -83,9 +84,9 @@ fun <T : IrBuilder> T.at(element: IrElement) = this.at(element.startOffset, elem
  * Builds [IrBlock] to be used instead of given expression.
  */
 inline fun IrGeneratorWithScope.irBlock(
-    expression: IrExpression, origin: IrStatementOrigin? = null,
-    resultType: KotlinType? = expression.type,
-    body: IrBlockBuilder.() -> Unit
+        expression: IrExpression, origin: IrStatementOrigin? = null,
+        resultType: IrType? = expression.type,
+        body: IrBlockBuilder.() -> Unit
 ) =
     this.irBlock(expression.startOffset, expression.endOffset, origin, resultType, body)
 
@@ -93,13 +94,15 @@ inline fun IrGeneratorWithScope.irBlockBody(irElement: IrElement, body: IrBlockB
     this.irBlockBody(irElement.startOffset, irElement.endOffset, body)
 
 fun IrBuilderWithScope.irIfThen(condition: IrExpression, thenPart: IrExpression) =
-    IrIfThenElseImpl(startOffset, endOffset, context.builtIns.unitType, condition, thenPart, null)
+    IrIfThenElseImpl(startOffset, endOffset, context.irBuiltIns.unitType).apply {
+        branches += IrBranchImpl(condition, thenPart)
+    }
 
 fun IrBuilderWithScope.irNot(arg: IrExpression) =
     primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCL, arg)
 
 fun IrBuilderWithScope.irThrow(arg: IrExpression) =
-    IrThrowImpl(startOffset, endOffset, context.builtIns.nothingType, arg)
+    IrThrowImpl(startOffset, endOffset, context.irBuiltIns.nothingType, arg)
 
 fun IrBuilderWithScope.irCatch(catchParameter: IrVariable) =
     IrCatchImpl(
@@ -107,20 +110,11 @@ fun IrBuilderWithScope.irCatch(catchParameter: IrVariable) =
         catchParameter
     )
 
-fun IrBuilderWithScope.irCast(arg: IrExpression, type: KotlinType, typeOperand: KotlinType) =
-    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, typeOperand, arg)
-
 fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
     IrTypeOperatorCallImpl(
-        startOffset, endOffset, context.builtIns.unitType,
-        IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.builtIns.unitType, arg
+        startOffset, endOffset, context.irBuiltIns.unitType,
+        IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.irBuiltIns.unitType, context.irBuiltIns.unitClass, arg
     )
-
-fun IrBuilderWithScope.irGetField(receiver: IrExpression, symbol: IrFieldSymbol) =
-    IrGetFieldImpl(startOffset, endOffset, symbol, receiver)
-
-fun IrBuilderWithScope.irSetField(receiver: IrExpression, symbol: IrFieldSymbol, value: IrExpression) =
-    IrSetFieldImpl(startOffset, endOffset, symbol, receiver, value)
 
 open class IrBuildingTransformer(private val context: BackendContext) : IrElementTransformerVoid() {
     private var currentBuilder: IrBuilderWithScope? = null

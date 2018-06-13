@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
 import org.jetbrains.kotlin.ir.util.DescriptorsRemapper
+import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 @Suppress("UNCHECKED_CAST")
@@ -41,8 +43,10 @@ fun <T : IrElement> T.deepCopyWithVariables(): T {
     val symbolsRemapper = DeepCopySymbolRemapper(descriptorsRemapper)
     acceptVoid(symbolsRemapper)
 
+    val typesRemapper = DeepCopyTypeRemapper(symbolsRemapper)
+
     return this.transform(
-            object : DeepCopyIrTreeWithReturnableBlockSymbols(symbolsRemapper) {
+            object : DeepCopyIrTreeWithReturnableBlockSymbols(symbolsRemapper, typesRemapper) {
                 override fun getNonTransformedLoop(irLoop: IrLoop): IrLoop {
                     return irLoop
                 }

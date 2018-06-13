@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -245,8 +246,8 @@ val IrClass.constructors: Sequence<IrConstructor>
 val IrFunction.explicitParameters: List<IrValueParameter>
     get() = (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters)
 
-val IrClass.defaultType: KotlinType
-    get() = this.descriptor.defaultType
+val IrClass.defaultType: IrType
+    get() = this.thisReceiver!!.type
 
 val IrSimpleFunction.isReal: Boolean get() = descriptor.kind.isReal
 

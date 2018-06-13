@@ -13,8 +13,10 @@ val compilerManifestClassPath = "kotlin-stdlib.jar kotlin-reflect.jar kotlin-scr
 
 dependencies {
     compilerModules.forEach { module ->
-        compile(project(module)) { isTransitive = false }
+        if (module != ":compiler:backend.js")
+            compile(project(module)) { isTransitive = false }
     }
+    compile(project(":compiler:ir.backend.common")) { isTransitive = false }
 
     fatJarContents(project(":core:builtins", configuration = "builtins"))
     fatJarContents(commonDep("javax.inject"))

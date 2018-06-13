@@ -25,7 +25,7 @@ class TypeTranslator(
     private val symbolTable: SymbolTable
 ) {
 
-    private val annotationGenerator = AnnotationGenerator(moduleDescriptor, symbolTable)
+    val annotationGenerator = AnnotationGenerator(moduleDescriptor, symbolTable, this)
     private val typeParametersResolver = ScopedTypeParametersResolver()
 
     fun enterScope(irElement: IrTypeParametersContainer) {

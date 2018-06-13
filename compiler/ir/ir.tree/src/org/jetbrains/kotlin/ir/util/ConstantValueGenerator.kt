@@ -26,7 +26,7 @@ class ConstantValueGenerator(
     private val scopedTypeParameterResolver: ScopedTypeParametersResolver?
 ) {
 
-    private val typeTranslator = TypeTranslator(moduleDescriptor, symbolTable)
+    private val typeTranslator = annotationGenerator?.typeTranslator ?: TypeTranslator(moduleDescriptor, symbolTable)
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
