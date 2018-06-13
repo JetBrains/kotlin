@@ -59,7 +59,13 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
     private fun mapPrimitiveType(type: JKJavaPrimitiveType, typeElement: JKTypeElement): JKTypeElement {
         val fqName = type.jvmPrimitiveType.primitiveType.typeFqName
 
-        return classTypeByFqName(context.backAnnotator(typeElement), ClassId.topLevel(fqName), emptyList())?.let { JKTypeElementImpl(it) }
-                ?: typeElement
+        val convertedType = classTypeByFqName(
+            context.backAnnotator(typeElement),
+            ClassId.topLevel(fqName),
+            emptyList(),
+            nullability = Nullability.NotNull
+        ) ?: return typeElement
+
+        return JKTypeElementImpl(convertedType)
     }
 }
