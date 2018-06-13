@@ -28,6 +28,7 @@ interface JKVisitor<out R, in D> {
     fun visitQualifiedExpression(qualifiedExpression: JKQualifiedExpression, data: D): R = visitExpression(qualifiedExpression, data)
     fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression, data: D): R = visitExpression(methodCallExpression, data)
     fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression, data: D): R = visitExpression(fieldAccessExpression, data)
+    fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression, data: D): R = visitExpression(classAccessExpression, data)
     fun visitArrayAccessExpression(arrayAccessExpression: JKArrayAccessExpression, data: D): R = visitExpression(arrayAccessExpression, data)
     fun visitParenthesizedExpression(parenthesizedExpression: JKParenthesizedExpression, data: D): R = visitExpression(parenthesizedExpression, data)
     fun visitTypeCastExpression(typeCastExpression: JKTypeCastExpression, data: D): R = visitExpression(typeCastExpression, data)

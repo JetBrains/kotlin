@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
+import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.j2k.tree.impl.JKFieldSymbol
 import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
@@ -120,6 +121,10 @@ interface JKMethodCallExpression : JKExpression {
 
 interface JKFieldAccessExpression : JKExpression {
     val identifier: JKFieldSymbol
+}
+
+interface JKClassAccessExpression : JKExpression {
+    val identifier: JKClassSymbol
 }
 
 interface JKArrayAccessExpression : JKExpression {
