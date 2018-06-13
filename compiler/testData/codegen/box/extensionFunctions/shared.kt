@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 infix fun <T> T.mustBe(t : T) {
     assert("$this must be $t") {this == t}
 }

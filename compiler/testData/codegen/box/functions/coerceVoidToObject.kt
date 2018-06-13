@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun a(): String? = null
 
 fun b(): Nothing = throw Exception()

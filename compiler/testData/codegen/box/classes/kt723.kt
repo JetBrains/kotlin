@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 operator fun Int?.inc() : Int { if (this != null) return this.inc() else throw NullPointerException() }
 
 public fun box() : String {

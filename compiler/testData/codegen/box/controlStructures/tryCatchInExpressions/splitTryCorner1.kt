@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun shouldReturnFalse() : Boolean {
     try {
         return true

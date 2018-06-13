@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun foo(args: Array<String>) {
     try {
     } finally {

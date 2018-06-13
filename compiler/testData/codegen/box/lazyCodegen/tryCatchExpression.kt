@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class A {
     val p : Int = try{
         1

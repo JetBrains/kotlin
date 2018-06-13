@@ -2981,6 +2981,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/try/multipleCatchBlocks.kt");
             }
 
+            @TestMetadata("nestedTryCatchInCatch.kt")
+            public void testNestedTryCatchInCatch() throws Exception {
+                runTest("js/js.translator/testData/box/expression/try/nestedTryCatchInCatch.kt");
+            }
+
             @TestMetadata("rethrowExceptionIfNotCaught.kt")
             public void testRethrowExceptionIfNotCaught() throws Exception {
                 runTest("js/js.translator/testData/box/expression/try/rethrowExceptionIfNotCaught.kt");

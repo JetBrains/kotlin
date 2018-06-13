@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 public inline fun fails(block: () -> Unit): Throwable? {
     var thrown: Throwable? = null
     try {

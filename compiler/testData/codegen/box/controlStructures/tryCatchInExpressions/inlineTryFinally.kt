@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 inline fun <T> tryAndThen(f1: () -> Unit, f2: () -> Unit, f3: () -> T): T {
     try {
         f1()

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 var order: String = ""
 
 fun a(i: Int): Int? {

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun shouldReturn11() : Int {
     var x = 0
     while (true) {
