@@ -190,7 +190,7 @@ private fun writeFunction(c: WriteContext, flags: Flags, name: String, output: (
         }
     }
 
-private fun writeProperty(
+fun writeProperty(
     c: WriteContext, flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags, output: (ProtoBuf.Property.Builder) -> Unit
 ): KmPropertyVisitor = object : KmPropertyVisitor() {
     val t = ProtoBuf.Property.newBuilder()
@@ -479,6 +479,11 @@ open class PackageWriter(stringTable: StringTable) : KmPackageVisitor() {
 
     override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? =
         writeTypeAlias(c, flags, name) { t.addTypeAlias(it) }
+
+    override fun visitExtensions(type: KmExtensionType): KmPackageExtensionVisitor? =
+        c.applySingleExtension(type) {
+            writePackageExtensions(type, t, c)
+        }
 
     override fun visitEnd() {
         c.versionRequirements.serialize()?.let {

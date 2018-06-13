@@ -6,11 +6,8 @@
 package kotlinx.metadata.jvm.impl
 
 import kotlinx.metadata.*
-import kotlinx.metadata.impl.ReadContext
-import kotlinx.metadata.impl.WriteContext
+import kotlinx.metadata.impl.*
 import kotlinx.metadata.impl.extensions.MetadataExtensions
-import kotlinx.metadata.impl.readAnnotation
-import kotlinx.metadata.impl.writeAnnotation
 import kotlinx.metadata.jvm.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
@@ -25,6 +22,26 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         if (anonymousObjectOriginName != null) {
             ext.visitAnonymousObjectOriginName(c[anonymousObjectOriginName])
         }
+
+        for (property in proto.getExtension(JvmProtoBuf.classLocalVariable)) {
+            ext.visitLocalDelegatedProperty(
+                property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
+            )?.let { property.accept(it, c) }
+        }
+
+        ext.visitEnd()
+    }
+
+    override fun readPackageExtensions(v: KmPackageVisitor, proto: ProtoBuf.Package, c: ReadContext) {
+        val ext = v.visitExtensions(JvmPackageExtensionVisitor.TYPE) as? JvmPackageExtensionVisitor ?: return
+
+        for (property in proto.getExtension(JvmProtoBuf.packageLocalVariable)) {
+            ext.visitLocalDelegatedProperty(
+                property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
+            )?.let { property.accept(it, c) }
+        }
+
+        ext.visitEnd()
     }
 
     override fun readFunctionExtensions(v: KmFunctionVisitor, proto: ProtoBuf.Function, c: ReadContext) {
@@ -85,6 +102,25 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         return object : JvmClassExtensionVisitor() {
             override fun visitAnonymousObjectOriginName(internalName: String) {
                 proto.setExtension(JvmProtoBuf.anonymousObjectOriginName, c[internalName])
+            }
+
+            override fun visitLocalDelegatedProperty(
+                flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags
+            ): KmPropertyVisitor = writeProperty(c, flags, name, getterFlags, setterFlags) {
+                proto.addExtension(JvmProtoBuf.classLocalVariable, it.build())
+            }
+        }
+    }
+
+    override fun writePackageExtensions(
+        type: KmExtensionType, proto: ProtoBuf.Package.Builder, c: WriteContext
+    ): KmPackageExtensionVisitor? {
+        if (type != JvmPackageExtensionVisitor.TYPE) return null
+        return object : JvmPackageExtensionVisitor() {
+            override fun visitLocalDelegatedProperty(
+                flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags
+            ): KmPropertyVisitor = writeProperty(c, flags, name, getterFlags, setterFlags) {
+                proto.addExtension(JvmProtoBuf.packageLocalVariable, it.build())
             }
         }
     }

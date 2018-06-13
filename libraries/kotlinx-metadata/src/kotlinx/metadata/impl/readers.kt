@@ -93,6 +93,10 @@ fun ProtoBuf.Package.accept(v: KmPackageVisitor, strings: NameResolver) {
 
     v.visitDeclarations(functionList, propertyList, typeAliasList, c)
 
+    for (extension in c.extensions) {
+        extension.readPackageExtensions(v, this, c)
+    }
+
     v.visitEnd()
 }
 
@@ -107,15 +111,8 @@ private fun KmDeclarationContainerVisitor.visitDeclarations(
     }
 
     for (property in properties) {
-        val flags = property.flags
-        val defaultAccessorFlags = F.getAccessorFlags(
-            F.HAS_ANNOTATIONS.get(flags), F.VISIBILITY.get(flags), F.MODALITY.get(flags), false, false, false
-        )
         visitProperty(
-            flags,
-            c[property.name],
-            if (property.hasGetterFlags()) property.getterFlags else defaultAccessorFlags,
-            if (property.hasSetterFlags()) property.setterFlags else defaultAccessorFlags
+            property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
         )?.let { property.accept(it, c) }
     }
 
@@ -182,7 +179,7 @@ private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
     v.visitEnd()
 }
 
-private fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
+fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
     val c = outer.withTypeParameters(typeParameterList)
 
     for (typeParameter in typeParameterList) {
@@ -425,3 +422,12 @@ private val ProtoBuf.Type.typeFlags: Flags
 
 private val ProtoBuf.TypeParameter.typeParameterFlags: Flags
     get() = if (reified) 1 else 0
+
+fun ProtoBuf.Property.getPropertyGetterFlags(): Flags =
+    if (hasGetterFlags()) getterFlags else getDefaultPropertyAccessorFlags(flags)
+
+fun ProtoBuf.Property.getPropertySetterFlags(): Flags =
+    if (hasSetterFlags()) setterFlags else getDefaultPropertyAccessorFlags(flags)
+
+private fun getDefaultPropertyAccessorFlags(flags: Flags): Flags =
+    F.getAccessorFlags(F.HAS_ANNOTATIONS.get(flags), F.VISIBILITY.get(flags), F.MODALITY.get(flags), false, false, false)

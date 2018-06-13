@@ -1,5 +1,9 @@
 # kotlinx-metadata-jvm
 
+## 0.0.3
+
+- Support metadata of local delegated properties (see `JvmDeclarationContainerExtensionVisitor.visitLocalDelegatedProperty`)
+
 ## 0.0.2
 
 - Change group ID from `org.jetbrains.kotlin` to `org.jetbrains.kotlinx`
