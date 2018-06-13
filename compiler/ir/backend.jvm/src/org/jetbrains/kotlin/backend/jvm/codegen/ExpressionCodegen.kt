@@ -585,8 +585,8 @@ class ExpressionCodegen(
         val asmType = expression.typeOperand.asmType
         when (expression.operator) {
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
-                expression.argument.accept(this, data)
-                coerce(expression.argument.asmType, Type.VOID_TYPE, mv)
+                val result = expression.argument.accept(this, data)
+                coerce(result.type, Type.VOID_TYPE, mv)
                 return none()
             }
 
