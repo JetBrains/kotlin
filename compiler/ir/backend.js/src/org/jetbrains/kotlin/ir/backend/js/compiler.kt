@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.ReturnableBlockLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.referenceAllTypeExternalClassifiers
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.replaceUnboundSymbols
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -49,26 +51,7 @@ fun compile(
 
     ExternalDependenciesGenerator(psi2IrContext.symbolTable, psi2IrContext.irBuiltIns).generateUnboundSymbolsAsDependencies(moduleFragment)
 
-    println("Before inlining:")
-    println(moduleFragment.dump())
-
-    FunctionInlining(context).inline(moduleFragment)
-
-    println("After inlining:")
-    println(moduleFragment.dump())
-
-    val symbolTable = context.symbolTable
-    moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
-
-    do {
-        @Suppress("DEPRECATION")
-        moduleFragment.replaceUnboundSymbols(context)
-        moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
-    } while (symbolTable.unboundClasses.isNotEmpty())
-
-    moduleFragment.patchDeclarationParents()
-
-
+    context.performInlining(moduleFragment)
 
     moduleFragment.files.forEach { context.lower(it) }
     val transformer = SecondaryCtorLowering.CallsiteRedirectionTransformer(context)
@@ -79,11 +62,25 @@ fun compile(
     return program.toString()
 }
 
+fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment) {
+    FunctionInlining(this).inline(moduleFragment)
+
+    val symbolTable = symbolTable
+    moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
+
+    do {
+        @Suppress("DEPRECATION")
+        moduleFragment.replaceUnboundSymbols(this)
+        moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
+    } while (symbolTable.unboundClasses.isNotEmpty())
+
+    moduleFragment.patchDeclarationParents()
+}
+
 fun JsIrBackendContext.lower(file: IrFile) {
     LateinitLowering(this, true).lower(file)
     DefaultArgumentStubGenerator(this).runOnFilePostfix(file)
     SharedVariablesLowering(this).runOnFilePostfix(file)
-    // TODO: fails on SharedVariable lowering. Why?
     ReturnableBlockLowering(this).lower(file)
     LocalDeclarationsLowering(this).runOnFilePostfix(file)
     InnerClassesLowering(this).runOnFilePostfix(file)

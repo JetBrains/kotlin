@@ -3,13 +3,14 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.js
+package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.addChildren
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.*
 
+// backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/ir/util/IrUnboundSymbolReplacer.kt
 @Deprecated("")
 internal fun IrModuleFragment.replaceUnboundSymbols(context: JsIrBackendContext) {
     val collector = DeclarationSymbolCollector()
@@ -39,7 +41,12 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: JsIrBackendContext)
 
     val symbolTable = context.symbolTable
 
-    this.transformChildrenVoid(IrUnboundSymbolReplacer(symbolTable, collector.descriptorToSymbol))
+    this.transformChildrenVoid(
+        IrUnboundSymbolReplacer(
+            symbolTable,
+            collector.descriptorToSymbol
+        )
+    )
 
     // Generate missing external stubs:
     // TODO: ModuleGenerator::generateUnboundSymbolsAsDependencies(IRModuleFragment) is private function :/

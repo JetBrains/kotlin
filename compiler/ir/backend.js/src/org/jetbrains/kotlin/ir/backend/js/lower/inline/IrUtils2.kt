@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
+// backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/ir/util/IrUtils2.kt
 fun IrSimpleFunction.setOverrides(symbolTable: SymbolTable) {
     assert(this.overriddenSymbols.isEmpty())
 

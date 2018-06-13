@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 
 typealias Context = JsIrBackendContext
 
+// backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/FunctionInlining.kt
 internal class FunctionInlining(val context: Context): IrElementTransformerVoidWithContext() {
 
   // TODO  private val deserializer = DeserializerDriver(context)
