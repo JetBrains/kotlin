@@ -131,8 +131,10 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
                     return@Processor false
                 }
             }
-            val function = usage.getParentOfType<KtNamedFunction>(true)
-            val insideInlineFun = function?.modifierList?.let { it.hasModifier(KtTokens.INLINE_KEYWORD) && !function.isPrivate() } ?: false
+            val function = usage.getParentOfTypesAndPredicate<KtDeclarationWithBody>(
+                true, KtNamedFunction::class.java, KtPropertyAccessor::class.java
+            ) { true }
+            val insideInlineFun = function?.let { it.hasModifier(KtTokens.INLINE_KEYWORD) && !function.isPrivate() } ?: false
             if (insideInlineFun) {
                 otherUsageFound = true
                 false

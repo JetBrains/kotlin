@@ -15,5 +15,10 @@ object TT {
         }
     }
 
+    val x: String
+        inline get() = baz
+
     fun bar(s: String) = s
+
+    val baz = ""
 }
