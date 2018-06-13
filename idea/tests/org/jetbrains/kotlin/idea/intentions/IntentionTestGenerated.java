@@ -2509,6 +2509,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/ifElseSwallowTail.kt");
                 }
 
+                @TestMetadata("ifThenReturn.kt")
+                public void testIfThenReturn() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/ifThenReturn.kt");
+                }
+
                 @TestMetadata("ifWithEqualityTests.kt")
                 public void testIfWithEqualityTests() throws Exception {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/ifWithEqualityTests.kt");
