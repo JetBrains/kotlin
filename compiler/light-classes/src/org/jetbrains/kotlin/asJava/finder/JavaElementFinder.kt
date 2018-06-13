@@ -186,7 +186,7 @@ class JavaElementFinder(
 
         private fun List<PsiClass>.sortByClasspathPreferringNonFakeFiles(searchScope: GlobalSearchScope): List<PsiClass> {
             return this.sortedWith(byClasspathComparator(searchScope)).sortedBy {
-                this is FakeLightClassForFileOfPackage
+                it is FakeLightClassForFileOfPackage
             }
         }
     }
