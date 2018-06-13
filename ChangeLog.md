@@ -8,6 +8,7 @@
 - [`KT-24278`](https://youtrack.jetbrains.com/issue/KT-24278) Hard-code to kotlin compiler annotation for android library migration
 - [`KT-24472`](https://youtrack.jetbrains.com/issue/KT-24472) Support argfiles in kotlinc with -Xargfile
 - [`KT-24593`](https://youtrack.jetbrains.com/issue/KT-24593) Support -XXLanguage:{+|-}LanguageFeature compiler arguments to enable/disable specific features
+- [`KT-24637`](https://youtrack.jetbrains.com/issue/KT-24637) Introduce "progressive" mode of compiler
 
 #### Backend. JS
 
@@ -37,6 +38,10 @@
 - [`KT-23209`](https://youtrack.jetbrains.com/issue/KT-23209) Compiler throwing frontend exception
 - [`KT-23589`](https://youtrack.jetbrains.com/issue/KT-23589) Report a warning on local annotation classes
 - [`KT-23760`](https://youtrack.jetbrains.com/issue/KT-23760) Unable to implement common interface with fun member function with typealiased parameter
+
+### Android
+
+- [`KT-23244`](https://youtrack.jetbrains.com/issue/KT-23244) Option to Disable View Binding generation in Kotlin Android Extensions Plugin
 
 ### IDE
 
@@ -92,6 +97,7 @@
 - [`KT-23383`](https://youtrack.jetbrains.com/issue/KT-23383) Optional plugin dependency for kotlin gradle plugin 'java' subsystem dependent features
 - [`KT-22588`](https://youtrack.jetbrains.com/issue/KT-22588) Resolver for 'project source roots and libraries for platform JVM' does not know how to resolve on Gradle Kotlin DSL project without Java and Kotlin
 - [`KT-23616`](https://youtrack.jetbrains.com/issue/KT-23616) Synchronize script dependencies not at Gradle Sync
+- [`KT-24444`](https://youtrack.jetbrains.com/issue/KT-24444) Do not store proxy objects from Gradle importer in the project model
 - [`KT-24586`](https://youtrack.jetbrains.com/issue/KT-24586) MVNFE “Cannot resolve external dependency org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41 because no repositories are defined.” on creating Gradle project with Kotlin only (probably due to lack of repositories block)
 - [`KT-24671`](https://youtrack.jetbrains.com/issue/KT-24671) dependencies missed in buildscript block after creating new Gradle-based project in 173 IDEA
 
@@ -195,6 +201,7 @@
 
 #### IDE. Scratch
 
+- [`KT-6928`](https://youtrack.jetbrains.com/issue/KT-6928) Support Kotlin scratch files
 - [`KT-23441`](https://youtrack.jetbrains.com/issue/KT-23441) Scratch options reset on IDE restart
 - [`KT-23480`](https://youtrack.jetbrains.com/issue/KT-23480) java.util.NoSuchElementException: "Collection contains no element matching the predicate" on run of a scratch file with unresolved function parameter
 - [`KT-23587`](https://youtrack.jetbrains.com/issue/KT-23587) Scratch: references from scratch file aren't taken into account
@@ -232,7 +239,10 @@
 
 ### Tools. kapt
 
+- [`KT-23286`](https://youtrack.jetbrains.com/issue/KT-23286) kapt + nonascii = weird pathes
+- [`KT-23427`](https://youtrack.jetbrains.com/issue/KT-23427) kapt: for element with multiple annotations,  annotation values erroneously use default when first annotation uses default
 - [`KT-23721`](https://youtrack.jetbrains.com/issue/KT-23721) Warning informing user that 'tools.jar' is absent in the plugin classpath is not show when there is also an error
+- [`KT-23898`](https://youtrack.jetbrains.com/issue/KT-23898) Kapt: Do now show a warning for APs from 'annotationProcessor' configuration also declared in 'kapt' configuration
 - [`KT-23964`](https://youtrack.jetbrains.com/issue/KT-23964) Kotlin Gradle plugin does not define inputs and outputs of annotation processors
 
 ## 1.2.41
