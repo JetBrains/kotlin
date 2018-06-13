@@ -1,3 +1,4 @@
+// FIX: Convert sealed sub-class to object
 // WITH_RUNTIME
 
 abstract class Base {

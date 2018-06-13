@@ -1225,6 +1225,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/convertSealedSubClassToObject"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("baseEquals.kt")
+        public void testBaseEquals() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/baseEquals.kt");
+        }
+
         @TestMetadata("baseState.kt")
         public void testBaseState() throws Exception {
             runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/baseState.kt");
@@ -1255,6 +1260,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/generic.kt");
         }
 
+        @TestMetadata("noEquals.kt")
+        public void testNoEquals() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/noEquals.kt");
+        }
+
         @TestMetadata("nonEmptyConstructor.kt")
         public void testNonEmptyConstructor() throws Exception {
             runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/nonEmptyConstructor.kt");
@@ -1265,9 +1275,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/openSubclass.kt");
         }
 
+        @TestMetadata("ownEquals.kt")
+        public void testOwnEquals() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/ownEquals.kt");
+        }
+
         @TestMetadata("ownState.kt")
         public void testOwnState() throws Exception {
             runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/ownState.kt");
+        }
+
+        @TestMetadata("sealedEquals.kt")
+        public void testSealedEquals() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertSealedSubClassToObject/sealedEquals.kt");
         }
 
         @TestMetadata("sealedState.kt")

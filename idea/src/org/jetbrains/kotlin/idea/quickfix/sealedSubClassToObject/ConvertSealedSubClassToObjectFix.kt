@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class ConvertSealedSubClassToObjectFix : LocalQuickFix {
 
-    override fun getFamilyName() = "Convert Sealed Sub-class to Object"
+    override fun getFamilyName() = "Convert sealed sub-class to object"
 
     companion object {
         val JAVA_LANG = Language.findLanguageByID("JAVA")
