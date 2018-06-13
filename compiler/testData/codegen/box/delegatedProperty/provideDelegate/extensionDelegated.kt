@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 import kotlin.reflect.KProperty
 
 var log = ""

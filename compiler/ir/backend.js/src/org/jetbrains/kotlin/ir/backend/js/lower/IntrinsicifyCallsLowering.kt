@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.ConversionNames
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -29,12 +31,12 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
     // TODO: should/can we unify these maps?
     private val memberToTransformer: Map<SimpleMemberKey, (IrCall) -> IrCall>
-    private val memberToIrFunction: Map<SimpleMemberKey, IrSimpleFunction>
+    private val memberToIrFunction: Map<SimpleMemberKey, IrSimpleFunctionSymbol>
     private val symbolToIrFunction: Map<IrFunctionSymbol, IrSimpleFunction>
     private val nameToIrTransformer: Map<Name, (IrCall) -> IrCall>
 
-    val kCallable = context.builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kCallable.toSafe())
-    val kProperty = context.builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kProperty.asSingleFqName())
+    private val kCallable = context.builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kCallable.toSafe())
+    private val kProperty = context.builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kProperty.asSingleFqName())
 
     init {
         memberToIrFunction = mutableMapOf()
@@ -76,6 +78,49 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 op(it, OperatorNames.OR, context.intrinsics.jsBitOr)
                 op(it, OperatorNames.NOT, context.intrinsics.jsNot)
                 op(it, OperatorNames.XOR, context.intrinsics.jsBitXor)
+            }
+
+            // Conversion rules are ported from NumberAndCharConversionFIF
+            // TODO: Add Char, Long and Number conversions
+
+            context.irBuiltIns.byte.let {
+                op(it, ConversionNames.TO_BYTE, context.intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_DOUBLE, context.intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_FLOAT, context.intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_INT, context.intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_SHORT, context.intrinsics.jsAsIs)
+            }
+
+            context.irBuiltIns.double.let {
+                op(it, ConversionNames.TO_BYTE, context.intrinsics.jsNumberToByte)
+                op(it, ConversionNames.TO_DOUBLE, context.intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_FLOAT, context.intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_INT, context.intrinsics.jsNumberToInt)
+                op(it, ConversionNames.TO_SHORT, context.intrinsics.jsNumberToShort)
+            }
+
+            for (type in listOf(context.irBuiltIns.float, context.irBuiltIns.double)) {
+                op(type, ConversionNames.TO_BYTE, context.intrinsics.jsNumberToByte)
+                op(type, ConversionNames.TO_DOUBLE, context.intrinsics.jsAsIs)
+                op(type, ConversionNames.TO_FLOAT, context.intrinsics.jsAsIs)
+                op(type, ConversionNames.TO_INT, context.intrinsics.jsNumberToInt)
+                op(type, ConversionNames.TO_SHORT, context.intrinsics.jsNumberToShort)
+            }
+
+            context.irBuiltIns.int.let {
+                op(it, ConversionNames.TO_BYTE, context.intrinsics.jsToByte)
+                op(it, ConversionNames.TO_DOUBLE, context.intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_FLOAT, context.intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_INT, context.intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_SHORT, context.intrinsics.jsToShort)
+            }
+
+            context.irBuiltIns.short.let {
+                op(it, ConversionNames.TO_BYTE, context.intrinsics.jsToByte)
+                op(it, ConversionNames.TO_DOUBLE, context.intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_FLOAT, context.intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_INT, context.intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_SHORT, context.intrinsics.jsAsIs)
             }
         }
 
@@ -119,13 +164,23 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
             addWithPredicate(
                 Name.identifier(Namer.KPROPERTY_GET),
                 { call -> call.symbol.owner.dispatchReceiverParameter?.run { DescriptorUtils.isSubtypeOfClass(type, kProperty) } ?: false },
-                { call -> irCall(call, context.intrinsics.jsPropertyGet.symbol, dispatchReceiverAsFirstArgument = true)}
+                { call -> irCall(call, context.intrinsics.jsPropertyGet.symbol, dispatchReceiverAsFirstArgument = true) }
             )
 
             addWithPredicate(
                 Name.identifier(Namer.KPROPERTY_SET),
-                { call -> call.symbol.owner.dispatchReceiverParameter?.run { DescriptorUtils.isSubtypeOfClass(type, kProperty) } ?: false},
-                { call -> irCall(call, context.intrinsics.jsPropertySet.symbol, dispatchReceiverAsFirstArgument = true)}
+                { call -> call.symbol.owner.dispatchReceiverParameter?.run { DescriptorUtils.isSubtypeOfClass(type, kProperty) } ?: false },
+                { call -> irCall(call, context.intrinsics.jsPropertySet.symbol, dispatchReceiverAsFirstArgument = true) }
+            )
+
+            addWithPredicate(
+                Name.identifier("hashCode"), { call -> call.superQualifier == null },
+                { call -> irCall(call, context.intrinsics.jsHashCode, dispatchReceiverAsFirstArgument = true) }
+            )
+
+            addWithPredicate(
+                Name.identifier("toString"), { call -> call.superQualifier == null },
+                { call -> irCall(call, context.intrinsics.jsToString, dispatchReceiverAsFirstArgument = true) }
             )
         }
     }
@@ -149,8 +204,11 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                             val key = SimpleMemberKey(it.type, symbol.owner.name)
 
                             memberToIrFunction[key]?.let {
+                                if (it == context.intrinsics.jsAsIs) {
+                                    return call.dispatchReceiver!!
+                                }
                                 // TODO: don't apply intrinsics when type of receiver or argument is Long
-                                return irCall(call, it.symbol, dispatchReceiverAsFirstArgument = true)
+                                return irCall(call, it, dispatchReceiverAsFirstArgument = true)
                             }
 
                             memberToTransformer[key]?.let {
@@ -172,7 +230,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 }
 
 // TODO extract to common place?
-private fun irCall(call: IrCall, newSymbol: IrFunctionSymbol, dispatchReceiverAsFirstArgument: Boolean = false): IrCall =
+fun irCall(call: IrCall, newSymbol: IrFunctionSymbol, dispatchReceiverAsFirstArgument: Boolean = false): IrCall =
     call.run {
         IrCallImpl(
             startOffset,
@@ -207,9 +265,18 @@ private fun IrCall.copyTypeAndValueArgumentsFrom(call: IrCall, dispatchReceiverA
     }
 }
 
-private fun <V> MutableMap<SimpleMemberKey, V>.op(type: KotlinType, name: Name, v: V) {
+private fun MutableMap<SimpleMemberKey, IrSimpleFunctionSymbol>.op(type: KotlinType, name: Name, v: IrSimpleFunctionSymbol) {
     put(SimpleMemberKey(type, name), v)
 }
+
+private fun MutableMap<SimpleMemberKey, IrSimpleFunctionSymbol>.op(type: KotlinType, name: Name, v: IrSimpleFunction) {
+    put(SimpleMemberKey(type, name), v.symbol)
+}
+
+private fun MutableMap<SimpleMemberKey, (IrCall) -> IrCall>.op(type: KotlinType, name: Name, v: (IrCall) -> IrCall) {
+    put(SimpleMemberKey(type, name), v)
+}
+
 
 // TODO issue: marked as unused, but used; rename works wrongly.
 private fun <V> MutableMap<SimpleMemberKey, V>.op(type: KotlinType, name: String, v: V) {
@@ -230,6 +297,7 @@ private fun <K> MutableMap<K, (IrCall) -> IrCall>.addWithPredicate(from: K, pred
     put(from) { call: IrCall -> select({ predicate(call) }, { action(call) }, { call }) }
 }
 
-private inline fun <T> select(crossinline predicate: () -> Boolean, crossinline ifTrue: () -> T, crossinline ifFalse: () -> T): T = if (predicate()) ifTrue() else ifFalse()
+private inline fun <T> select(crossinline predicate: () -> Boolean, crossinline ifTrue: () -> T, crossinline ifFalse: () -> T): T =
+    if (predicate()) ifTrue() else ifFalse()
 
 private data class SimpleMemberKey(val klass: KotlinType, val name: Name)

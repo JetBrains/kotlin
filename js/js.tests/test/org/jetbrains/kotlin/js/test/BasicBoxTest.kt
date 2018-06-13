@@ -545,7 +545,11 @@ abstract class BasicBoxTest(
         val psiManager = PsiManager.getInstance(project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
-        return psiManager.findFile(fileSystem.findFileByPath(fileName)!!) as KtFile
+        val file = fileSystem.findFileByPath(fileName)
+        if (file == null)
+            error("File not found: ${fileName}")
+
+        return psiManager.findFile(file) as KtFile
     }
 
     private fun createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)

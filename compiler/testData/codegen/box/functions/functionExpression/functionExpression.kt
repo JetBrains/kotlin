@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 val foo1 = fun Any.(): String {
 return  "239" + this
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 val _0 : Double = 0.0
 val _0dbl  : Double = 0.toDouble()
 
