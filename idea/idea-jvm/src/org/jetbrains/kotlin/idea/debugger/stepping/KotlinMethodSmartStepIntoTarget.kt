@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import javax.swing.Icon
 
 class KotlinMethodSmartStepTarget(
-        val descriptor: CallableMemberDescriptor,
-        label: String,
-        highlightElement: PsiElement,
-        lines: Range<Int>
-): SmartStepTarget(label, highlightElement, false, lines) {
+    val descriptor: CallableMemberDescriptor,
+    label: String,
+    highlightElement: PsiElement,
+    lines: Range<Int>
+) : SmartStepTarget(label, highlightElement, false, lines) {
     override fun getIcon(): Icon? {
         return when {
             descriptor.isExtension -> KotlinIcons.EXTENSION_FUNCTION

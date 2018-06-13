@@ -36,8 +36,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class KotlinBasicStepMethodFilter(
-        targetDescriptor: CallableMemberDescriptor,
-        private val myCallingExpressionLines: Range<Int>
+    targetDescriptor: CallableMemberDescriptor,
+    private val myCallingExpressionLines: Range<Int>
 ) : NamedMethodFilter {
     private val myTargetMethodName: String = when (targetDescriptor) {
         is ClassDescriptor, is ConstructorDescriptor -> "<init>"
@@ -46,7 +46,7 @@ class KotlinBasicStepMethodFilter(
     }
 
     private val _targetDescriptor = SofterReference(
-            (targetDescriptor as? FunctionDescriptor)?.let { SamCodegenUtil.getOriginalIfSamAdapter(it) } ?: targetDescriptor
+        (targetDescriptor as? FunctionDescriptor)?.let { SamCodegenUtil.getOriginalIfSamAdapter(it) } ?: targetDescriptor
     )
 
     override fun getCallingExpressionLines() = myCallingExpressionLines

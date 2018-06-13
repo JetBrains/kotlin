@@ -54,8 +54,8 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
         val elementAtOffset = position.elementAt ?: return emptyList()
 
-        val element = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, elementAtOffset.textRange.startOffset) as? KtElement ?:
-                      return emptyList()
+        val element = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, elementAtOffset.textRange.startOffset) as? KtElement
+                ?: return emptyList()
 
         val elementTextRange = element.textRange ?: return emptyList()
 
@@ -67,7 +67,7 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         val result = OrderedSet<SmartStepTarget>()
 
         // TODO support class initializers, local functions, delegated properties with specified type, setter for properties
-        element.accept(object: KtTreeVisitorVoid() {
+        element.accept(object : KtTreeVisitorVoid() {
             override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
                 recordFunctionLiteral(lambdaExpression.functionLiteral)
             }
@@ -87,8 +87,11 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                         if (argument.arguments.any { getArgumentExpression(it) == function }) {
                             val resultingDescriptor = resolvedCall.resultingDescriptor
                             val label = KotlinLambdaSmartStepTarget.calcLabel(resultingDescriptor, param.name)
-                            result.add(KotlinLambdaSmartStepTarget(
-                                    label, function, lines, InlineUtil.isInline(resultingDescriptor), param.type.isSuspendFunctionType))
+                            result.add(
+                                KotlinLambdaSmartStepTarget(
+                                    label, function, lines, InlineUtil.isInline(resultingDescriptor), param.type.isSuspendFunctionType
+                                )
+                            )
                             return true
                         }
                     }
@@ -96,7 +99,8 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 return false
             }
 
-            private fun getArgumentExpression(it: ValueArgument) = (it.getArgumentExpression() as? KtLambdaExpression)?.functionLiteral ?: it.getArgumentExpression()
+            private fun getArgumentExpression(it: ValueArgument) =
+                (it.getArgumentExpression() as? KtLambdaExpression)?.functionLiteral ?: it.getArgumentExpression()
 
             override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
                 // skip calls in object declarations
@@ -159,10 +163,10 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                                     val label = KotlinMethodSmartStepTarget.calcLabel(getterDescriptor)
                                     result.add(KotlinMethodSmartStepTarget(getterDescriptor, label, expression, lines))
                                 }
-                            }
-                            else {
+                            } else {
                                 val delegatedPropertyGetterDescriptor = delegatedResolvedCall.resultingDescriptor
-                                val label = "${propertyDescriptor.name}." + KotlinMethodSmartStepTarget.calcLabel(delegatedPropertyGetterDescriptor)
+                                val label =
+                                    "${propertyDescriptor.name}." + KotlinMethodSmartStepTarget.calcLabel(delegatedPropertyGetterDescriptor)
                                 result.add(KotlinMethodSmartStepTarget(delegatedPropertyGetterDescriptor, label, expression, lines))
                             }
                         }
@@ -180,8 +184,7 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                         (DescriptorToSourceUtilsIde.getAnyDeclaration(file.project, descriptor) as? PsiMethod)?.let {
                             result.add(MethodSmartStepTarget(it, null, expression, false, lines))
                         }
-                    }
-                    else {
+                    } else {
                         if (descriptor is ConstructorDescriptor && descriptor.isPrimary) {
                             val psiElement = DescriptorToSourceUtilsIde.getAnyDeclaration(file.project, descriptor)
                             if (psiElement is KtClass && psiElement.getAnonymousInitializers().isEmpty()) {
@@ -216,7 +219,8 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 KotlinBasicStepMethodFilter(stepTarget.descriptor, stepTarget.callingExpressionLines!!)
             is KotlinLambdaSmartStepTarget ->
                 KotlinLambdaMethodFilter(
-                        stepTarget.getLambda(), stepTarget.callingExpressionLines!!, stepTarget.isInline, stepTarget.isSuspend)
+                    stepTarget.getLambda(), stepTarget.callingExpressionLines!!, stepTarget.isInline, stepTarget.isSuspend
+                )
             else -> super.createMethodFilter(stepTarget)
         }
     }
