@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
+import org.jetbrains.kotlin.resolve.calls.components.SamConversionTransformer
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
@@ -50,6 +51,6 @@ object KonanPlatformConfigurator : PlatformConfigurator(
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(SyntheticScopes.Empty)
         container.useInstance(TypeSpecificityComparator.NONE)
- 
+        container.useInstance(SamConversionTransformer.Empty)
     }
 }

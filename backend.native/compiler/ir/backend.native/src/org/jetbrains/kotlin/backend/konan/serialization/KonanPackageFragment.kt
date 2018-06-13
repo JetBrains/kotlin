@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.metadata.KonanLinkData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -33,6 +35,12 @@ class KonanPackageFragment(
         val reader: KonanLibraryReader,
         storageManager: StorageManager, module: ModuleDescriptor
 ) : DeserializedPackageFragment(FqName(fqNameString), storageManager, module) {
+
+    lateinit var components: DeserializationComponents
+
+    override fun initialize(components: DeserializationComponents) {
+        this.components = components
+    }
 
     // The proto field is lazy so that we can load only needed
     // packages from the library.
@@ -52,7 +60,7 @@ class KonanPackageFragment(
         KonanClassDataFinder(proto, nameResolver)
     }
 
-    override fun computeMemberScope(): DeserializedPackageMemberScope {
+    override fun getMemberScope(): DeserializedPackageMemberScope {
         val packageProto = proto.getPackage()
 
         return DeserializedPackageMemberScope( this, packageProto,

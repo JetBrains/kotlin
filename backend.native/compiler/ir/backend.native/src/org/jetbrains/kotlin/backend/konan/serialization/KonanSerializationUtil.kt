@@ -95,7 +95,7 @@ fun createKonanPackageFragmentProvider(
         emptyList(), notFoundClasses, ContractDeserializer.DEFAULT, extensionRegistryLite = KonanSerializerProtocol.extensionRegistry )
 
         for (packageFragment in packageFragments) {
-            packageFragment.components = components
+            packageFragment.initialize(components)
         }
 
     return provider

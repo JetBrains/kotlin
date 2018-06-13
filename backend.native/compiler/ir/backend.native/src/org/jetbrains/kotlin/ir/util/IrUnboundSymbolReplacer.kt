@@ -60,7 +60,8 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: Context) {
         override fun visitModuleFragment(declaration: IrModuleFragment) {
             declaration.dependencyModules.forEach { it.acceptVoid(this) }
 
-            val dependencyModules = declaration.dependencyModules.groupBy { it.descriptor }.map { (_, fragments) ->
+            // TODO: toSet added to avoid duplicates introduced in 8094cb7dc5506895466b4912a44e9e7f99a14902.
+            val dependencyModules = declaration.dependencyModules.toSet().groupBy { it.descriptor }.map { (_, fragments) ->
                 fragments.reduce { firstModule, nextModule ->
                     firstModule.apply {
                         mergeFrom(nextModule)
@@ -79,7 +80,8 @@ private fun IrModuleFragment.mergeFrom(other: IrModuleFragment): Unit {
     assert(this.files.isEmpty())
     assert(other.files.isEmpty())
 
-    val thisPackages = this.externalPackageFragments.groupBy { it.packageFragmentDescriptor }
+    // TODO: toSet added to avoid duplicates introduced in 8094cb7dc5506895466b4912a44e9e7f99a14902.
+    val thisPackages = this.externalPackageFragments.toSet().groupBy { it.packageFragmentDescriptor }
     other.externalPackageFragments.forEach {
         val thisPackage = thisPackages[it.packageFragmentDescriptor]?.single()
         if (thisPackage == null) {

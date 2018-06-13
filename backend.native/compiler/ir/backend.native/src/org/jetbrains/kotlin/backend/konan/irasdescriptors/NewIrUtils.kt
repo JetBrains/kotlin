@@ -251,6 +251,10 @@ fun IrModuleFragment.referenceAllTypeExternalClassifiers(symbolTable: SymbolTabl
                     override fun visitLongValue(p0: LongValue, p1: Nothing?) {}
                     override fun visitCharValue(p0: CharValue?, p1: Nothing?) {}
                     override fun visitIntValue(p0: IntValue?, p1: Nothing?) {}
+                    override fun visitUIntValue(p0: UIntValue?, p1: Nothing?) {}
+                    override fun visitUShortValue(p0: UShortValue?, p1: Nothing?) {}
+                    override fun visitUByteValue(p0: UByteValue?, p1: Nothing?) {}
+                    override fun visitULongValue(p0: ULongValue?, p1: Nothing?) {}
                     override fun visitErrorValue(p0: ErrorValue?, p1: Nothing?) {}
                     override fun visitFloatValue(p0: FloatValue?, p1: Nothing?) {}
                     override fun visitEnumValue(p0: EnumValue?, p1: Nothing?) {}
