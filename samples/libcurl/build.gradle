@@ -13,6 +13,13 @@ konanArtifacts {
         target('macbook') {
             includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
         }
+        pom {
+            withXml {
+                def root = asNode()
+                root.appendNode('name', 'libcurl interop library')
+                root.appendNode('description', 'A library providing interoperability with host libcurl')
+            }
+        }
     }
 }
 
@@ -21,11 +28,6 @@ def localMavenRepo="file://${new File(System.properties['user.home'] as String)}
 publishing {
     publications{
         libcurl(MavenPublication) {
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('name', 'libcurl interop library')
-                root.appendNode('description', 'A library providing interoperability with host libcurl')
-            }
             artifact sourceJar{
                 classifier "source"
             }
