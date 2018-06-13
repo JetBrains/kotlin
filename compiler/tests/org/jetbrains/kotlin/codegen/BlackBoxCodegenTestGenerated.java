@@ -18410,6 +18410,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/inlineFun.kt");
                 }
 
+                @TestMetadata("localAndNonLocal.kt")
+                public void testLocalAndNonLocal() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/localAndNonLocal.kt");
+                }
+
                 @TestMetadata("localDelegatedProperty.kt")
                 public void testLocalDelegatedProperty() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/localDelegatedProperty.kt");
