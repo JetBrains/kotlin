@@ -4,23 +4,39 @@ import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.psi.PsiElement
 import com.intellij.util.Range
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import javax.swing.Icon
 
 class KotlinMethodSmartStepTarget(
-    val descriptor: CallableMemberDescriptor,
+    descriptor: CallableMemberDescriptor,
+    val declaration: KtDeclaration?,
     label: String,
     highlightElement: PsiElement,
     lines: Range<Int>
 ) : SmartStepTarget(label, highlightElement, false, lines) {
+    val isInvoke = descriptor is FunctionInvokeDescriptor
+
+    init {
+        assert(declaration != null || isInvoke)
+    }
+
+    private val isExtension = descriptor.isExtension
+
+    val targetMethodName: String = when (descriptor) {
+        is ClassDescriptor, is ConstructorDescriptor -> "<init>"
+        is PropertyAccessorDescriptor -> JvmAbi.getterName(descriptor.correspondingProperty.name.asString())
+        else -> descriptor.name.asString()
+    }
+
     override fun getIcon(): Icon? {
         return when {
-            descriptor.isExtension -> KotlinIcons.EXTENSION_FUNCTION
+            isExtension -> KotlinIcons.EXTENSION_FUNCTION
             else -> KotlinIcons.FUNCTION
         }
     }
@@ -44,19 +60,19 @@ class KotlinMethodSmartStepTarget(
 
         if (other == null || other !is KotlinMethodSmartStepTarget) return false
 
-        if (descriptor is FunctionInvokeDescriptor && other.descriptor is FunctionInvokeDescriptor) {
+        if (isInvoke && other.isInvoke) {
             // Don't allow to choose several invoke targets in smart step into as we can't distinguish them reliably during debug
             return true
         }
 
-        return descriptor == other.descriptor
+        return declaration === other.declaration
     }
 
     override fun hashCode(): Int {
-        if (descriptor is FunctionInvokeDescriptor) {
+        if (isInvoke) {
             // Predefined value to make all FunctionInvokeDescriptor targets equal
             return 42
         }
-        return descriptor.hashCode()
+        return declaration!!.hashCode()
     }
 }

@@ -18,17 +18,14 @@ package org.jetbrains.kotlin.idea.debugger.stepping
 
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.NamedMethodFilter
+import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.util.Range
-import com.intellij.util.SofterReference
 import com.sun.jdi.Location
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
-import org.jetbrains.kotlin.codegen.SamCodegenUtil
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
@@ -36,32 +33,26 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class KotlinBasicStepMethodFilter(
-    targetDescriptor: CallableMemberDescriptor,
+    private val declarationPtr: SmartPsiElementPointer<KtDeclaration>?,
+    private val isInvoke: Boolean,
+    private val targetMethodName: String,
     private val myCallingExpressionLines: Range<Int>
 ) : NamedMethodFilter {
-    private val myTargetMethodName: String = when (targetDescriptor) {
-        is ClassDescriptor, is ConstructorDescriptor -> "<init>"
-        is PropertyAccessorDescriptor -> JvmAbi.getterName(targetDescriptor.correspondingProperty.name.asString())
-        else -> targetDescriptor.name.asString()
+    init {
+        assert(declarationPtr != null || isInvoke)
     }
-
-    private val _targetDescriptor = SofterReference(
-        (targetDescriptor as? FunctionDescriptor)?.let { SamCodegenUtil.getOriginalIfSamAdapter(it) } ?: targetDescriptor
-    )
 
     override fun getCallingExpressionLines() = myCallingExpressionLines
 
-    override fun getMethodName() = myTargetMethodName
+    override fun getMethodName() = targetMethodName
 
     override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {
-        val targetDescriptor = _targetDescriptor.get() ?: return true
-
         val method = location.method()
-        if (myTargetMethodName != method.name()) return false
+        if (targetMethodName != method.name()) return false
 
         val positionManager = process.positionManager
 
-        val currentDescriptor = runReadAction {
+        val (currentDescriptor, currentDeclaration) = runReadAction {
             val elementAt = positionManager.getSourcePosition(location)?.elementAt
 
             val declaration = elementAt?.getParentOfTypesAndPredicate(false, KtDeclaration::class.java) {
@@ -69,44 +60,36 @@ class KotlinBasicStepMethodFilter(
             }
 
             if (declaration is KtClass && method.name() == "<init>") {
-                declaration.resolveToDescriptorIfAny()?.unsubstitutedPrimaryConstructor
+                declaration.resolveToDescriptorIfAny()?.unsubstitutedPrimaryConstructor to declaration
             } else {
-                declaration?.resolveToDescriptorIfAny()
+                declaration?.resolveToDescriptorIfAny() to declaration
             }
-        } ?: return false // TODO: Check that we can always find a descriptor (libraries with sources, libraries without sources)
+        }
+
+        if (currentDescriptor == null || currentDeclaration == null) {
+            return false
+        }
 
         @Suppress("FoldInitializerAndIfToElvis")
         if (currentDescriptor !is CallableMemberDescriptor) return false
         if (currentDescriptor.kind != DECLARATION) return false
 
-        if (targetDescriptor is FunctionInvokeDescriptor) {
+        if (isInvoke) {
             // There can be only one 'invoke' target at the moment so consider position as expected.
             // Descriptors can be not-equal, say when parameter has type `(T) -> T` and lambda is `Int.() -> Int`.
             return true
         }
 
-        if (compareDescriptors(currentDescriptor, targetDescriptor)) return true
+        val declaration = declarationPtr?.element
+                ?: return true // Element is lost. But we know that name is matches, so stop.
 
-        // We should stop if current descriptor overrides the target one or some base descriptor of target
-        // (if target descriptor is delegation or fake override)
-
-        val baseDescriptors = when (targetDescriptor.kind) {
-            DELEGATION, FAKE_OVERRIDE ->
-                targetDescriptor.getDirectlyOverriddenDeclarations()
-            DECLARATION, SYNTHESIZED ->
-                listOf(targetDescriptor)
-        }
-
-        if (baseDescriptors.any { baseOfTarget -> compareDescriptors(baseOfTarget, currentDescriptor) }) {
+        if (currentDeclaration.isEquivalentTo(declaration)) {
             return true
         }
 
         return DescriptorUtils.getAllOverriddenDescriptors(currentDescriptor).any { baseOfCurrent ->
-            baseDescriptors.any { baseOfTarget -> compareDescriptors(baseOfCurrent, baseOfTarget) }
+            val currentBaseDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(currentDeclaration.project, baseOfCurrent)
+            declaration.isEquivalentTo(currentBaseDeclaration)
         }
     }
-}
-
-private fun compareDescriptors(d1: DeclarationDescriptor, d2: DeclarationDescriptor): Boolean {
-    return d1 == d2 || d1.original == d2.original
 }
