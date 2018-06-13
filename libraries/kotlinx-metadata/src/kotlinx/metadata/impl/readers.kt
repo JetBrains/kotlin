@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.metadata.deserialization.Flags as F
 
 class ReadContext(
-    internal val strings: NameResolver,
-    internal val types: TypeTable,
+    val strings: NameResolver,
+    val types: TypeTable,
     internal val versionRequirements: VersionRequirementTable,
     private val parent: ReadContext? = null
 ) {
@@ -82,7 +82,7 @@ fun ProtoBuf.Class.accept(v: KmClassVisitor, strings: NameResolver) {
     }
 
     for (extension in c.extensions) {
-        extension.readClassExtensions(v, this, c.strings, c.types)
+        extension.readClassExtensions(v, this, c)
     }
 
     v.visitEnd()
@@ -142,7 +142,7 @@ private fun ProtoBuf.Constructor.accept(v: KmConstructorVisitor, c: ReadContext)
     }
 
     for (extension in c.extensions) {
-        extension.readConstructorExtensions(v, this, c.strings, c.types)
+        extension.readConstructorExtensions(v, this, c)
     }
 
     v.visitEnd()
@@ -176,7 +176,7 @@ private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
     }
 
     for (extension in c.extensions) {
-        extension.readFunctionExtensions(v, this, c.strings, c.types)
+        extension.readFunctionExtensions(v, this, c)
     }
 
     v.visitEnd()
@@ -207,7 +207,7 @@ private fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
     }
 
     for (extension in c.extensions) {
-        extension.readPropertyExtensions(v, this, c.strings, c.types)
+        extension.readPropertyExtensions(v, this, c)
     }
 
     v.visitEnd()
@@ -270,7 +270,7 @@ private fun ProtoBuf.TypeParameter.accept(v: KmTypeParameterVisitor, c: ReadCont
     }
 
     for (extension in c.extensions) {
-        extension.readTypeParameterExtensions(v, this, c.strings)
+        extension.readTypeParameterExtensions(v, this, c)
     }
 
     v.visitEnd()
@@ -324,7 +324,7 @@ private fun ProtoBuf.Type.accept(v: KmTypeVisitor, c: ReadContext) {
     }
 
     for (extension in c.extensions) {
-        extension.readTypeExtensions(v, this, c.strings)
+        extension.readTypeExtensions(v, this, c)
     }
 
     v.visitEnd()
