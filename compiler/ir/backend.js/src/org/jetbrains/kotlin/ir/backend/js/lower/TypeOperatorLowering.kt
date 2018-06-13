@@ -122,7 +122,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
             private fun lowerImplicitCast(expression: IrTypeOperatorCall) = expression.run {
                 assert(operator == IrTypeOperator.IMPLICIT_CAST)
-                IrCompositeImpl(startOffset, endOffset, typeOperand, null, listOf(argument))
+                argument
             }
 
             // Note: native `instanceOf` is not used which is important because of null-behaviour

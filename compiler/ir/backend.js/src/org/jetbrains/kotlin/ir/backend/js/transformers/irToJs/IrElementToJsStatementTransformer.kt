@@ -65,6 +65,21 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return JsEmpty
     }
 
+    override fun visitTry(aTry: IrTry, context: JsGenerationContext): JsStatement {
+
+        val jsTryBlock = aTry.tryResult.accept(this, context).asBlock()
+
+        val jsCatch = aTry.catches.singleOrNull()?.let {
+            val name = context.getNameForSymbol(it.catchParameter.symbol)
+            val jsCatchBlock = it.result.accept(this, context)
+            JsCatch(context.currentScope, name.ident, jsCatchBlock)
+        }
+
+        val jsFinallyBlock = aTry.finallyExpression?.accept(this, context)?.asBlock()
+
+        return JsTry(jsTryBlock, jsCatch, jsFinallyBlock)
+    }
+
     override fun visitWhen(expression: IrWhen, context: JsGenerationContext): JsStatement {
         return expression.toJsNode(this, context, ::JsIf) ?: JsEmpty
     }

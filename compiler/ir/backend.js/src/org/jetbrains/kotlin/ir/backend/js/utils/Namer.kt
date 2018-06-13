@@ -46,7 +46,7 @@ object Namer {
 
     val EXTENSION_RECEIVER_NAME = "\$receiver"
     val IMPLICIT_RECEIVER_NAME = "this"
-    val ANOTHER_THIS_PARAMETER_NAME = "$this"
+    val ANOTHER_THIS_PARAMETER_NAME = "\$this"
 
     val THROW_CLASS_CAST_EXCEPTION_FUN_NAME = "throwCCE"
     val THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME = "throwISE"
@@ -59,6 +59,8 @@ object Namer {
     val IS_ARRAY_FUN_REF = JsNameRef("isArray", "Array")
     val DEFINE_INLINE_FUNCTION = "defineInlineFunction"
     val DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX = "\$default"
+
+    val JS_ERROR = JsNameRef("Error")
 
     val JS_OBJECT = JsNameRef("Object")
     val JS_OBJECT_CREATE_FUNCTION = JsNameRef("create", JS_OBJECT)

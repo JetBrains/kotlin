@@ -17,10 +17,15 @@ class IrModuleToJsTransformer(val backendContext: JsIrBackendContext) : BaseIrEl
         val rootContext = JsGenerationContext(JsRootScope(program), backendContext)
 
         // TODO: fix it up with new name generator
-        val kotlinAny = "kotlin\$${backendContext.builtIns.any.name.asString()}"
-        val anyName = rootContext.currentScope.declareName(kotlinAny)
+        val symbolTable = backendContext.symbolTable
+
+        val anySymbol = symbolTable.referenceClass(backendContext.builtIns.any)
+        val throwableSymbol = symbolTable.referenceClass(backendContext.builtIns.throwable)
+        val anyName = rootContext.getNameForSymbol(anySymbol)
+        val throwableName = rootContext.getNameForSymbol(throwableSymbol)
 
         program.globalBlock.statements += JsVars(JsVars.JsVar(anyName, Namer.JS_OBJECT))
+        program.globalBlock.statements += JsVars(JsVars.JsVar(throwableName, Namer.JS_ERROR))
 
         declaration.files.forEach {
             program.globalBlock.statements.add(it.accept(IrFileToJsTransformer(), rootContext))

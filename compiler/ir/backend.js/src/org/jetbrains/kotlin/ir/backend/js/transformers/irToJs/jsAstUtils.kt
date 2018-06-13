@@ -65,3 +65,5 @@ fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGene
 }
 
 val IrFunction.isStatic: Boolean get() = this.dispatchReceiverParameter == null
+
+fun JsStatement.asBlock() = this as? JsBlock ?: JsBlock(this)

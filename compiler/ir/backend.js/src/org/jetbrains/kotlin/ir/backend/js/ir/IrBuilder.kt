@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -38,6 +36,8 @@ object JsIrBuilder {
     fun buildReturn(targetSymbol: IrFunctionSymbol, value: IrExpression) =
         IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, targetSymbol, value)
 
+    fun buildThrow(type: KotlinType, value: IrExpression) = IrThrowImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, value)
+
     fun buildValueParameter(symbol: IrValueParameterSymbol) =
         IrValueParameterImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SYNTHESIZED_DECLARATION, symbol)
 
@@ -45,6 +45,7 @@ object JsIrBuilder {
 
     fun buildGetObjectValue(type: KotlinType, classSymbol: IrClassSymbol) =
         IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, classSymbol)
+
     fun buildGetClass(expression: IrExpression, type: KotlinType) = IrGetClassImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, expression)
 
     fun buildGetValue(symbol: IrValueSymbol) = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, SYNTHESIZED_STATEMENT)
@@ -75,6 +76,12 @@ object JsIrBuilder {
     fun buildIfElse(type: KotlinType, cond: IrExpression, thenBranch: IrExpression, elseBranch: IrExpression? = null) = IrIfThenElseImpl(
         UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, cond, thenBranch, elseBranch, SYNTHESIZED_STATEMENT
     )
+
+    fun buildWhen(type: KotlinType, branches: List<IrBranch>) =
+        IrWhenImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, SYNTHESIZED_STATEMENT, branches)
+
+    fun buildTypeOperator(type: KotlinType, operator: IrTypeOperator, argument: IrExpression, toType: KotlinType, symbol: IrClassifierSymbol) =
+        IrTypeOperatorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, operator, toType, argument, symbol)
 
     fun buildNull(type: KotlinType) = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type)
     fun buildBoolean(type: KotlinType, v: Boolean) = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, v)

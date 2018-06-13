@@ -225,7 +225,9 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) : IrElementTransfor
             }
 
             val fromPrimary = ownerFunc!! is IrConstructor
-            val newCall = redirectCall(expression, context.secondaryConstructorsMap[target]!!.delegate)
+            // TODO: what is `deserialized` constructor?
+            val ctor = context.secondaryConstructorsMap[target] ?: return expression
+            val newCall = redirectCall(expression, ctor.delegate)
 
             val readThis = if (fromPrimary) {
                 IrGetValueImpl(
