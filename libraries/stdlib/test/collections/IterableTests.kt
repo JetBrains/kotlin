@@ -390,6 +390,9 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
 
         expect(3.0) { data.sumByDouble { it.length.toDouble() / 2 } }
         expect(0.0) { empty.sumByDouble { it.length.toDouble() / 2 } }
+
+        expect(6) { data.sumByLong { it.length.toLong() } }
+        expect(0) { empty.sumByLong { it.length.toLong() } }
     }
 
     @Test

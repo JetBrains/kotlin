@@ -1325,6 +1325,19 @@ public inline fun <T> Sequence<T>.sumByDouble(selector: (T) -> Double): Double {
 }
 
 /**
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+public inline fun <T> Sequence<T>.sumByLong(selector: (T) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
  * Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements.
  *
  * The operation is _intermediate_ and _stateless_.

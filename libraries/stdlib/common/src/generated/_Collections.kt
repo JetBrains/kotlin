@@ -1785,6 +1785,17 @@ public inline fun <T> Iterable<T>.sumByDouble(selector: (T) -> Double): Double {
 }
 
 /**
+ * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ */
+public inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
  * Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements.
  */
 public fun <T : Any> Iterable<T?>.requireNoNulls(): Iterable<T> {

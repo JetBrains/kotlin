@@ -12108,6 +12108,105 @@ public inline fun CharArray.sumByDouble(selector: (Char) -> Double): Double {
 }
 
 /**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun <T> Array<out T>.sumByLong(selector: (T) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun ByteArray.sumByLong(selector: (Byte) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun ShortArray.sumByLong(selector: (Short) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun IntArray.sumByLong(selector: (Int) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun LongArray.sumByLong(selector: (Long) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun FloatArray.sumByLong(selector: (Float) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun DoubleArray.sumByLong(selector: (Double) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun BooleanArray.sumByLong(selector: (Boolean) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun CharArray.sumByLong(selector: (Char) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
  * Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements.
  */
 public fun <T : Any> Array<T?>.requireNoNulls(): Array<T> {

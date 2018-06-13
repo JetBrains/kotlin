@@ -1151,6 +1151,17 @@ public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
 }
 
 /**
+ * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
+ */
+public inline fun CharSequence.sumByLong(selector: (Char) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
  * Splits this char sequence into a list of strings each not exceeding the given [size].
  * 
  * The last string in the resulting list may have less characters than the given [size].
