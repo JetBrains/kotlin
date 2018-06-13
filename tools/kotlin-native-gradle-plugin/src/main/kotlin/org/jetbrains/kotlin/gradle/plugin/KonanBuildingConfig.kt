@@ -24,6 +24,7 @@ import org.gradle.api.Task
 import org.gradle.api.internal.DefaultNamedDomainObjectSet
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.publish.maven.MavenPom
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanBuildingTask
@@ -45,6 +46,8 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     protected val targetToTask = mutableMapOf<KonanTarget, T>()
 
     internal val aggregateBuildTask: Task
+
+    internal var pomActions = mutableListOf<Action<MavenPom>>()
 
     private val konanTargets: Iterable<KonanTarget>
         get() = project.hostManager.toKonanTargets(targets).distinct()
@@ -187,4 +190,6 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
             target(targetString) { configureAction.execute(this) }
     fun target(targetString: String, configureAction: Closure<Unit>) =
             target(targetString, ConfigureUtil.configureUsing(configureAction))
+
+    fun pom(action: Action<MavenPom>) = pomActions + action
 }

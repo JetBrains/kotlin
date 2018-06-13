@@ -27,9 +27,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.language.cpp.internal.NativeVariantIdentity
-import org.gradle.tooling.UnsupportedVersionException
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
@@ -358,8 +356,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
             if (!isPublicationEnabled)
                 return@afterEvaluate
             project.pluginManager.withPlugin("maven-publish") {
-                container.all {
-                    val buildingConfig = it
+                container.all { buildingConfig ->
                     val konanSoftwareComponent = buildingConfig.mainVariant
                     project.extensions.configure(PublishingExtension::class.java) {
                         val builtArtifact = buildingConfig.name
@@ -369,18 +366,24 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                             groupId = project.group.toString()
                             from(konanSoftwareComponent)
                         }
+                        buildingConfig.pomActions.forEach {
+                            mavenPublication.pom(it)
+                        }
                     }
 
                     project.extensions.configure(PublishingExtension::class.java) {
                         val publishing = it
                         for (v in konanSoftwareComponent.variants) {
-                            publishing.publications.create(v.name, MavenPublication::class.java) {
+                            publishing.publications.create(v.name, MavenPublication::class.java) { mavenPublication ->
                                 val coordinates = (v as NativeVariantIdentity).coordinates
                                 project.logger.info("variant with coordinates($coordinates) and module: ${coordinates.module}")
-                                it.artifactId = coordinates.module.name
-                                it.groupId = coordinates.group
-                                it.version = coordinates.version
-                                it.from(v)
+                                mavenPublication.artifactId = coordinates.module.name
+                                mavenPublication.groupId = coordinates.group
+                                mavenPublication.version = coordinates.version
+                                mavenPublication.from(v)
+                                buildingConfig.pomActions.forEach {
+                                    mavenPublication.pom(it)
+                                }
                             }
                         }
                     }
