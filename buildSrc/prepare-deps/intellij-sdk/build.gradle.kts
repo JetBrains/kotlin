@@ -1,7 +1,7 @@
 
 @file:Suppress("PropertyName")
 
-import org.gradle.api.publish.ivy.internal.artifact.DefaultIvyArtifact
+import org.gradle.api.publish.ivy.internal.artifact.FileBasedIvyArtifact
 import org.gradle.api.publish.ivy.internal.publication.DefaultIvyConfiguration
 import org.gradle.api.publish.ivy.internal.publication.DefaultIvyPublicationIdentity
 import org.gradle.api.publish.ivy.internal.publisher.IvyDescriptorFileGenerator
@@ -171,12 +171,12 @@ fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, 
         jarFiles.asFileTree.files.forEach {
             if (it.isFile && it.extension == "jar") {
                 val relativeName = it.toRelativeString(baseDir).removeSuffix(".jar")
-                addArtifact(DefaultIvyArtifact(it, relativeName, "jar", "jar", null).also { it.conf = "default" })
+                addArtifact(FileBasedIvyArtifact(it, DefaultIvyPublicationIdentity(customDepsOrg, relativeName, intellijVersion)).also { it.conf = "default" })
             }
         }
         if (sourcesJar != null) {
             val sourcesArtifactName = sourcesJar.name.removeSuffix(".jar").substringBefore("-")
-            addArtifact(DefaultIvyArtifact(sourcesJar, sourcesArtifactName, "jar", "sources", "sources").also { it.conf = "sources" })
+            addArtifact(FileBasedIvyArtifact(sourcesJar, DefaultIvyPublicationIdentity(customDepsOrg, sourcesArtifactName, intellijVersion)).also { it.conf = "sources" })
         }
         writeTo(File(customDepsRepoModulesDir, "$fileName.ivy.xml"))
     }

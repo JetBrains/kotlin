@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.DependencyConstraint
+import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.capabilities.Capability
