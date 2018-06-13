@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.Variance
 class JsIntrinsics(
     private val module: ModuleDescriptor,
     private val irBuiltIns: IrBuiltIns,
-    context: JsIrBackendContext
+    val context: JsIrBackendContext
 ) {
 
     private val stubBuilder = DeclarationStubGenerator(module, context.symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB)
@@ -89,14 +89,34 @@ class JsIntrinsics(
     val jsTypeOf = unOp("jsTypeOf", irBuiltIns.string)
 
 
+    // Number conversions:
+
+    val jsAsIs = getInternalFunction("asIs")  // as-is conversion. Call can be replaced with first paramenter
+    val jsNumberToByte = getInternalFunction("numberToByte")
+    val jsNumberToDouble = getInternalFunction("numberToDouble")
+    val jsNumberToInt = getInternalFunction("numberToInt")
+    val jsNumberToShort = getInternalFunction("numberToShort")
+    val jsToByte = getInternalFunction("toByte")
+    val jsToShort = getInternalFunction("toShort")
+
+
     // Other:
 
     val jsObjectCreate = defineObjectCreateIntrinsic() // Object.create
     val jsSetJSField = defineSetJSPropertyIntrinsic() // till we don't have dynamic type we use intrinsic which sets a field with any name
     val jsToJsType = defineToJsType() // creates name reference to KotlinType
-    val jsCode = context.getInternalFunctions("js").singleOrNull()?.let { context.symbolTable.referenceFunction(it) } // js("<code>")
+    val jsCode = getInternalFunction("js") // js("<code>")
+    val jsHashCode = getInternalFunction("hashCode")
+    val jsToString = getInternalFunction("toString")
+    val jsCompareTo = getInternalFunction("compareTo")
+    val jsEquals = getInternalFunction("equals")
+
+
 
     // Helpers:
+
+    private fun getInternalFunction(name: String) =
+        context.symbolTable.referenceSimpleFunction(context.getInternalFunctions(name).single())
 
     private fun defineToJsType(): IrSimpleFunction {
         val desc = SimpleFunctionDescriptorImpl.create(
