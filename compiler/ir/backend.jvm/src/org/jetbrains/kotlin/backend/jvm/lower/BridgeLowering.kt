@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescripto
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.getSuperClassDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
@@ -212,7 +213,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
             bridge.descriptor.returnType, Modality.OPEN, descriptor.visibility
         )
 
-        val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, bridgeDescriptorForIrFunction)
+        val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.BRIDGE, bridgeDescriptorForIrFunction)
         irFunction.createParameterDeclarations()
 
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
@@ -222,11 +223,14 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 generateTypeCheckBarrierIfNeeded(descriptor, bridgeDescriptorForIrFunction, irFunction, delegateTo.method.argumentTypes)
             }
 
-            val implementation = if (isSpecialBridge) delegateTo.descriptor.copyAsDeclaration() else delegateTo.descriptor
+            val implementation = if (isSpecialBridge) delegateTo.copyAsDeclaration() else delegateTo.descriptor
             val call = IrCallImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 implementation,
-                null, JvmLoweredStatementOrigin.BRIDGE_DELEGATION, null
+                null, JvmLoweredStatementOrigin.BRIDGE_DELEGATION,
+                if (isStubDeclarationWithDelegationToSuper) getSuperClassDescriptor(
+                    descriptor.containingDeclaration as ClassDescriptor
+                ) else null
             )
             call.dispatchReceiver = IrGetValueImpl(
                 UNDEFINED_OFFSET,
@@ -321,17 +325,19 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 SignatureAndDescriptor(typeMapper.mapAsmMethod(descriptor), descriptor)
         }
 
-        fun FunctionDescriptor.copyAsDeclaration(): FunctionDescriptor {
-            val isGetter = this is PropertyGetterDescriptor
-            val isAccessor = this is PropertyAccessorDescriptor
-            val directMember = getDirectMember(this)
-            val copy =
-                directMember.copy(directMember.containingDeclaration, directMember.modality, directMember.visibility, DECLARATION, false)
-            if (isAccessor) {
-                val property = copy as PropertyDescriptor
-                return if (isGetter) property.getter!! else property.setter!!
-            }
-            return copy as FunctionDescriptor
+        fun SignatureAndDescriptor.copyAsDeclaration(): FunctionDescriptor {
+            val containingClass = getDirectMember(descriptor).containingDeclaration as ClassDescriptor
+            val delegationDescriptor = JvmFunctionDescriptorImpl(
+                containingClass, null, Annotations.EMPTY, Name.identifier(method.name),
+                CallableMemberDescriptor.Kind.SYNTHESIZED, descriptor.source, 0
+            )
+
+            delegationDescriptor.initialize(
+                descriptor.extensionReceiverParameter?.returnType, containingClass.thisAsReceiverParameter, emptyList(),
+                descriptor.valueParameters.map { it.copy(delegationDescriptor, it.name, it.index) },
+                descriptor.returnType, Modality.OPEN, descriptor.visibility
+            )
+            return delegationDescriptor
         }
     }
 
