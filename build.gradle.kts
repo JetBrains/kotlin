@@ -170,12 +170,12 @@ extra["intellijSeparateSdks"] = intellijSeparateSdks
 extra["IntellijCoreDependencies"] =
         listOf("annotations",
                "asm-all",
-               "guava-21.0",
+               "guava",
                "jdom",
                "jna",
                "log4j",
                "picocontainer",
-               "snappy-in-java-0.5.1",
+               "snappy-in-java",
                "streamex",
                "trove4j")
 
