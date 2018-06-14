@@ -93,7 +93,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
     override val lookupLocation = KotlinLookupLocation(callElement)
 
 
-    override val callElementText by lazy {
+    override val callElementText: String by lazy {
         callElement.text
     }
 
@@ -203,7 +203,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         mappings: List<FileMapping>
     ): SMAP {
         val containingFile = declaration.containingFile
-        CodegenUtil.getLineNumberForElement(containingFile, true) ?: error("Couldn't extract line count in " + containingFile)
+        CodegenUtil.getLineNumberForElement(containingFile, true) ?: error("Couldn't extract line count in $containingFile")
 
         return SMAP(mappings)
     }
@@ -261,7 +261,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         val element = DescriptorToSourceUtils.descriptorToDeclaration(callableDescriptor)
 
         if (!(element is KtNamedFunction || element is KtPropertyAccessor)) {
-            throw IllegalStateException("Couldn't find declaration for function " + callableDescriptor)
+            throw IllegalStateException("Couldn't find declaration for function $callableDescriptor")
         }
         val inliningFunction = element as KtDeclarationWithBody?
 
@@ -274,7 +274,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
         //for maxLocals calculation
         val maxCalcAdapter = wrapWithMaxLocalCalc(node)
-        val parentContext = context.parentContext ?: error("Context has no parent: " + context)
+        val parentContext = context.parentContext ?: error("Context has no parent: $context")
         val methodContext = parentContext.intoFunction(callableDescriptor)
 
         val smap = if (callDefault) {
@@ -286,7 +286,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 false
             )
             if (element !is KtNamedFunction) {
-                throw IllegalStateException("Property accessors with default parameters not supported " + callableDescriptor)
+                throw IllegalStateException("Property accessors with default parameters not supported $callableDescriptor")
             }
             FunctionCodegen.generateDefaultImplBody(
                 methodContext, callableDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
@@ -416,7 +416,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 return PackageContext(descriptor, state.rootContext, null, sourceFile)
             }
 
-            val container = descriptor.containingDeclaration ?: error("No container for descriptor: " + descriptor)
+            val container = descriptor.containingDeclaration ?: error("No container for descriptor: $descriptor")
             val parent = getContext(
                 container,
                 descriptor,
@@ -454,7 +454,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                     parent.intoFunction(descriptor)
                 }
                 else -> {
-                    throw IllegalStateException("Couldn't build context for " + descriptor)
+                    throw IllegalStateException("Couldn't build context for $descriptor")
                 }
             }
 

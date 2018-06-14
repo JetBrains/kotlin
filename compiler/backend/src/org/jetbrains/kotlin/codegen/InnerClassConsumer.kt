@@ -37,14 +37,14 @@ interface InnerClassConsumer {
             if (defaultImpls) {
                 if (DescriptorUtils.isLocal(descriptor)) return null
                 val classDescriptorImpl = ClassDescriptorImpl(
-                        descriptor, Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME),
-                        Modality.FINAL, ClassKind.CLASS, Collections.emptyList(), SourceElement.NO_SOURCE,
-                        /* isExternal = */ false, LockBasedStorageManager.NO_LOCKS)
+                    descriptor, Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME),
+                    Modality.FINAL, ClassKind.CLASS, Collections.emptyList(), SourceElement.NO_SOURCE,
+                    /* isExternal = */ false, LockBasedStorageManager.NO_LOCKS
+                )
 
                 classDescriptorImpl.initialize(MemberScope.Empty, emptySet(), null)
                 return classDescriptorImpl
-            }
-            else {
+            } else {
                 return if (DescriptorUtils.isTopLevelDeclaration(descriptor)) null else descriptor
             }
         }
