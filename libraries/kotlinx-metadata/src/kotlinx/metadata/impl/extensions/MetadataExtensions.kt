@@ -46,7 +46,7 @@ interface MetadataExtensions {
 
     companion object {
         val INSTANCES: List<MetadataExtensions> by lazy {
-            ServiceLoader.load(MetadataExtensions::class.java).toList().also {
+            ServiceLoader.load(MetadataExtensions::class.java, MetadataExtensions::class.java.classLoader).toList().also {
                 if (it.isEmpty()) error(
                     "No MetadataExtensions instances found in the classpath. Please ensure that the META-INF/services/ " +
                             "is not stripped from your application and that the Java virtual machine is not running " +
