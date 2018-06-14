@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializer
 import org.gradle.jvm.tasks.Jar
 import java.io.File
 
-val builtinsSrc = File(rootDir, "core", "builtins", "src")
-val builtinsNative = File(rootDir, "core", "builtins", "native")
+val builtinsSrc = fileFrom(rootDir, "core", "builtins", "src")
+val builtinsNative = fileFrom(rootDir, "core", "builtins", "native")
 // TODO: rewrite dependent projects on using build results instead of the fixed location
 val builtinsSerialized = File(rootProject.extra["distDir"].toString(), "builtins")
 

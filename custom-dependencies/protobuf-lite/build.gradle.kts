@@ -41,7 +41,7 @@ task("prepare") {
             return result
         }
 
-        val allFiles = loadAllFromJar(File(relocatedProtobuf.singleFile))
+        val allFiles = loadAllFromJar(relocatedProtobuf.singleFile)
 
         val keepClasses = arrayListOf<String>()
 

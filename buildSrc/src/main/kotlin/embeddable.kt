@@ -6,6 +6,7 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.task
 import org.gradle.kotlin.dsl.*
+import java.io.File
 
 val kotlinEmbeddableRootPackage = "org.jetbrains.kotlin"
 

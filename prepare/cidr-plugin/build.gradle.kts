@@ -26,7 +26,7 @@ val pluginXml by tasks.creating {
 
     inputs.property("pluginFullVersionNumber", pluginFullVersionNumber)
     inputs.files(kotlinPlugin)
-    outputs.files(File(buildDir, name, pluginXmlPath))
+    outputs.files(fileFrom(buildDir, name, pluginXmlPath))
 
     doFirst {
         val placeholderRegex = Regex(

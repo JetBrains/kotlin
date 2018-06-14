@@ -679,7 +679,7 @@ tasks.create("findShadowJarsInClasspath").doLast {
         for (task in project.tasks) {
             when (task) {
                 is ShadowJar -> {
-                    shadowJars.add(File(task.archivePath))
+                    shadowJars.add(fileFrom(task.archivePath))
                 }
                 is ProGuardTask -> {
                     shadowJars.addAll(task.outputs.files.toList())

@@ -42,8 +42,9 @@ fun Project.getResourceFiles(): SourceDirectorySet? = withJavaPlugin {
     javaPluginConvention().sourceSets.getByName("main").resources
 }
 
-fun File(root: File, vararg children: String): File = children.fold(root, { f, c -> File(f, c) })
-fun File(root: String, vararg children: String): File = children.fold(File(root), { f, c -> File(f, c) })
+fun fileFrom(root: File, vararg children: String): File = children.fold(root) { f, c -> File(f, c) }
+
+fun fileFrom(root: String, vararg children: String): File = children.fold(File(root)) { f, c -> File(f, c) }
 
 var Project.jvmTarget: String?
     get() = extra.takeIf { it.has("jvmTarget") }?.get("jvmTarget") as? String
