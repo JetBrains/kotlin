@@ -335,7 +335,8 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
             JavaParameters params = new JavaParameters();
             JavaRunConfigurationModule module = myConfiguration.getConfigurationModule();
 
-            int classPathType = getClasspathType(module);
+            int classPathType = DumbService.getInstance(module.getProject()).computeWithAlternativeResolveEnabled(
+                    () -> getClasspathType(module));
 
             String jreHome = myConfiguration.ALTERNATIVE_JRE_PATH_ENABLED ? myConfiguration.ALTERNATIVE_JRE_PATH : null;
             JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
