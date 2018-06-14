@@ -21,9 +21,13 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
     @get:Classpath
     lateinit var annotationProcessingJars: List<File>
 
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Internal
     lateinit var projectDir: File
+
+    @Input
+    fun getProjectDirPath(): String {
+        return projectDir.toRelativeString(project.rootProject.projectDir)
+    }
 
     @get:Input
     var isVerbose: Boolean = false
