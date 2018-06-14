@@ -1,0 +1,23 @@
+package
+
+public fun array(/*0*/ vararg a: kotlin.UIntArray /*kotlin.Array<out kotlin.UIntArray>*/): kotlin.Unit
+public fun ubyte(/*0*/ vararg a: kotlin.UByte /*kotlin.Array<out kotlin.UByte>*/): kotlin.Unit
+public fun uint(/*0*/ vararg a: kotlin.UInt /*kotlin.Array<out kotlin.UInt>*/): kotlin.Unit
+public fun ulong(/*0*/ vararg a: kotlin.ULong /*kotlin.Array<out kotlin.ULong>*/): kotlin.Unit
+public fun ushort(/*0*/ vararg a: kotlin.UShort /*kotlin.Array<out kotlin.UShort>*/): kotlin.Unit
+
+public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ vararg a: kotlin.UInt /*kotlin.Array<out kotlin.UInt>*/)
+    public final val a: kotlin.Array<out kotlin.UInt>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ValueParam {
+    public constructor ValueParam(/*0*/ vararg a: kotlin.ULong /*kotlin.Array<out kotlin.ULong>*/)
+    public final val a: kotlin.Array<out kotlin.ULong>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
