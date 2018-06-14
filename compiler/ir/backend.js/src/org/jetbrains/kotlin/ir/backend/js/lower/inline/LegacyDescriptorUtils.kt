@@ -47,9 +47,6 @@ internal val FunctionDescriptor.isFunctionInvoke: Boolean
                 this.isOperator && this.name == OperatorNameConventions.INVOKE
     }
 
-internal val FunctionDescriptor.target: FunctionDescriptor
-    get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
-
 // It is possible to declare "external inline fun",
 // but it doesn't have much sense for native,
 // since externals don't have IR bodies.
@@ -62,12 +59,4 @@ internal val FunctionDescriptor.needsInlining: Boolean
         val inlineConstructor = annotations.hasAnnotation(inlineConstructor)
         if (inlineConstructor) return true
         return (this.isInline && !this.isExternal)
-    }
-
-val ClassDescriptor.enumEntries: List<ClassDescriptor>
-    get() {
-        assert(this.kind == ClassKind.ENUM_CLASS)
-        return this.unsubstitutedMemberScope.getContributedDescriptors()
-            .filterIsInstance<ClassDescriptor>()
-            .filter { it.kind == ClassKind.ENUM_ENTRY }
     }
