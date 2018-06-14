@@ -1707,11 +1707,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            boolean isUnderlyingPropertyOfInlineClass =
-                    InlineClassesUtilsKt.isInlineClass(propertyDescriptor.getContainingDeclaration()) &&
-                    JvmCodegenUtil.hasBackingField(propertyDescriptor, contextKind(), bindingContext);
-
-            if (isUnderlyingPropertyOfInlineClass) {
+            if (InlineClassesUtilsKt.isUnderlyingPropertyOfInlineClass(propertyDescriptor)) {
                 KotlinType propertyType = propertyDescriptor.getType();
                 return StackValue.underlyingValueOfInlineClass(typeMapper.mapType(propertyType), propertyType, receiver);
             }

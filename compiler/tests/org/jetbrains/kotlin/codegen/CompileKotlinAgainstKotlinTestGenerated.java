@@ -39,6 +39,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/annotationsOnTypeAliases.kt");
     }
 
+    @TestMetadata("callDeserializedPropertyOnInlineClassType.kt")
+    public void testCallDeserializedPropertyOnInlineClassType() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/callDeserializedPropertyOnInlineClassType.kt");
+    }
+
     @TestMetadata("callsToMultifileClassFromOtherPackage.kt")
     public void testCallsToMultifileClassFromOtherPackage() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/callsToMultifileClassFromOtherPackage.kt");

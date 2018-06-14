@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.types.KotlinType
@@ -38,4 +39,11 @@ fun KotlinType.isNullableUnderlyingType(): Boolean {
     val underlyingType = unsubstitutedUnderlyingType() ?: return false
 
     return TypeUtils.isNullableType(underlyingType)
+}
+
+fun PropertyDescriptor.isUnderlyingPropertyOfInlineClass(): Boolean {
+    val containingDeclaration = this.containingDeclaration
+    if (!containingDeclaration.isInlineClass()) return false
+
+    return (containingDeclaration as ClassDescriptor).underlyingRepresentation()?.name == this.name
 }
