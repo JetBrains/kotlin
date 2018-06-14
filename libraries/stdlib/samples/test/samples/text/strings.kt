@@ -127,4 +127,14 @@ class Strings {
         val noPadding = "abcde".padEnd(3)
         assertPrints("'$noPadding'", "'abcde'")
     }
+    @Sample
+    fun clearStringBuilder() {
+        val builder = StringBuilder()
+        builder.append("content").append(1)
+        assertPrints(builder, "content1")
+
+        builder.clear()
+        assertPrints(builder, "")
+    }
+
 }
