@@ -120,6 +120,15 @@ public expect fun CharSequence.repeat(n: Int): String
 
 
 /**
+ * Clears the content of this string builder making it empty.
+ *
+ * @sample samples.text.Strings.clearStringBuilder
+ */
+@SinceKotlin("1.3")
+public expect fun StringBuilder.clear(): StringBuilder
+
+
+/**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  */
 expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String

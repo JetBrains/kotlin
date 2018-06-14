@@ -94,4 +94,14 @@ class Strings {
         assertPrints(byteArray.toString(charset), "Hello")
     }
 
+    @Sample
+    fun clearStringBuilder() {
+        val builder = StringBuilder()
+        builder.append("content").append(1)
+        assertPrints(builder, "content1")
+
+        builder.clear()
+        assertPrints(builder, "")
+    }
+
 }
