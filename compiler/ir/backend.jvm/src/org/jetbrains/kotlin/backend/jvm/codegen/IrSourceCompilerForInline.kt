@@ -53,8 +53,9 @@ class IrSourceCompilerForInline(
     override val callElementText: String
         get() = callElement.toString()
 
+    //TODO
     override val callsiteFile: PsiFile?
-        get() = TODO("not implemented")
+        get() = callElement.descriptor.psiElement?.containingFile
 
     override val contextKind: OwnerKind
         get() = OwnerKind.getMemberOwnerKind(callElement.descriptor.containingDeclaration)
@@ -63,21 +64,19 @@ class IrSourceCompilerForInline(
         get() = InlineCallSiteInfo("TODO", null, null)
 
     override val lazySourceMapper: DefaultSourceMapper
-        get() = DefaultSourceMapper(SourceInfo("TODO", "TODO", 100))
+        get() = codegen.classCodegen.getOrCreateSourceMapper()
 
     override fun generateLambdaBody(adapter: MethodVisitor, jvmMethodSignature: JvmMethodSignature, lambdaInfo: ExpressionLambda): SMAP {
         lambdaInfo as? IrExpressionLambda ?: error("Expecting ir lambda, but $lambdaInfo")
 
         val functionCodegen = object : FunctionCodegen(lambdaInfo.function, codegen.classCodegen) {
             override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
-                //TODO: to avoid smap assertion
-                adapter.visitLineNumber(1, Label())
                 return adapter
             }
         }
         functionCodegen.generate()
 
-        return SMAP(/*TODO*/listOf(FileMapping("TODO", "TODO").also { it.id = 1; it.addRangeMapping(RangeMapping(1, 1, 1)) }))
+        return SMAP(codegen.classCodegen.getOrCreateSourceMapper().resultMappings)
     }
 
     override fun doCreateMethodNodeFromSource(

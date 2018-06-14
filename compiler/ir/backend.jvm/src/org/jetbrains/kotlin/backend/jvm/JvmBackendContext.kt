@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class JvmBackendContext(
     val state: GenerationState,
-    psiSourceManager: PsiSourceManager,
+    val psiSourceManager: PsiSourceManager,
     override val irBuiltIns: IrBuiltIns,
     irModuleFragment: IrModuleFragment, symbolTable: SymbolTable
 ) : CommonBackendContext {

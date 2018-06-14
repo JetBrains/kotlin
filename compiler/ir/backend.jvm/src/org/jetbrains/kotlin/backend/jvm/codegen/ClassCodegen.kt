@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
+import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isTopLevelDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -60,9 +60,15 @@ class ClassCodegen private constructor(
         descriptor.source.getPsi() as KtElement
     ) else typeMapper.mapType(descriptor)
 
+    private val sourceManager = context.psiSourceManager
+
+    private val fileEntry = sourceManager.getFileEntry(irClass.fileParent)
+
     val psiElement = irClass.descriptor.psiElement!!
 
     val visitor: ClassBuilder = state.factory.newVisitor(OtherOrigin(psiElement, descriptor), type, psiElement.containingFile)
+
+    private var sourceMapper: DefaultSourceMapper? = null
 
     fun generate() {
         val superClassInfo = SuperClassInfo.getSuperClassInfo(descriptor, typeMapper)
@@ -83,7 +89,15 @@ class ClassCodegen private constructor(
             generateDeclaration(it)
         }
 
+        done()
+    }
+
+    private fun done() {
         writeInnerClasses()
+
+        sourceMapper?.let {
+            SourceMapper.flushToClassBuilder(it, visitor)
+        }
 
         visitor.done()
     }
@@ -192,6 +206,20 @@ class ClassCodegen private constructor(
         }
     }
 
+
+    fun getOrCreateSourceMapper(): DefaultSourceMapper {
+        if (sourceMapper == null) {
+            sourceMapper = DefaultSourceMapper(
+                SourceInfo.createInfoForIr(
+                    fileEntry.getSourceRangeInfo(irClass.startOffset, irClass.endOffset).endLineNumber + 1,
+                    irClass.name.asString(),
+                    fileEntry.name
+                )
+            )
+        }
+        return sourceMapper!!
+    }
+
 }
 
 fun ClassDescriptor.calculateClassFlags(): Int {
@@ -268,9 +296,6 @@ private val MemberDescriptor.effectiveModality: Modality
 
         return modality
     }
-
-private val DeclarationDescriptorWithSource.psiElement: PsiElement?
-    get() = (source as? PsiSourceElement)?.psi
 
 private val IrField.OtherOrigin: JvmDeclarationOrigin
     get() = OtherOrigin(descriptor.psiElement, this.descriptor)

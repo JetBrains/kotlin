@@ -274,7 +274,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
         //for maxLocals calculation
         val maxCalcAdapter = wrapWithMaxLocalCalc(node)
-        val parentContext = context.parentContext ?: error("Context has no parent: $context")
+        val parentContext = context.parentContext ?: error("Context has no parent: " + context)
         val methodContext = parentContext.intoFunction(callableDescriptor)
 
         val smap = if (callDefault) {
