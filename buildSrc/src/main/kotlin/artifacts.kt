@@ -23,7 +23,7 @@ fun Project.classesDirsArtifact(): FileCollection {
 
     val classesDirsCfg = configurations.getOrCreate("classes-dirs")
 
-    val classesDirs = javaPluginConvention().sourceSets["main"].output.classesDirs
+    val classesDirs = mainSourceSet.output.classesDirs
 
     val classesTask = tasks["classes"]
 
@@ -44,7 +44,7 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
     return task<Jar>(MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME) {
         dependsOn("testClasses")
         pluginManager.withPlugin("java") {
-            from(project.javaPluginConvention().sourceSets.getByName("test").output)
+            from(testSourceSet.output)
         }
         classifier = "tests"
         body()

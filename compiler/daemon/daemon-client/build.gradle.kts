@@ -35,7 +35,7 @@ sourceSets {
 noDefaultJar()
 
 runtimeJar(task<ShadowJar>("shadowJar")) {
-    from(javaPluginConvention().sourceSets.getByName("main").output)
+    from(mainSourceSet.output)
     fromEmbeddedComponents()
 }
 

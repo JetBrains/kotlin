@@ -128,7 +128,6 @@ val performanceTestRuntime by configurations.creating {
 }
 
 val performanceTest by run {
-    val sourceSets = javaPluginConvention().sourceSets
     sourceSets.creating {
         compileClasspath += sourceSets["test"].output
         compileClasspath += sourceSets["main"].output

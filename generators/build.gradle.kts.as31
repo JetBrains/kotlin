@@ -9,7 +9,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val builtinsSourceSet = javaPluginConvention().sourceSets.create("builtins") {
+val builtinsSourceSet = sourceSets.create("builtins") {
     java.srcDir("builtins")
 }
 val builtinsCompile by configurations

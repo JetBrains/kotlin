@@ -8,10 +8,10 @@ import org.gradle.api.file.CopySourceSpec
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.kotlin.dsl.creating
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
 import java.io.File
 import java.util.concurrent.Callable
@@ -30,17 +30,11 @@ inline fun <T : Any> Project.withJavaPlugin(crossinline body: () -> T?): T? {
     return res
 }
 
-fun Project.getCompiledClasses(): SourceSetOutput? = withJavaPlugin {
-    javaPluginConvention().sourceSets.getByName("main").output
-}
+fun Project.getCompiledClasses(): SourceSetOutput? = withJavaPlugin { mainSourceSet.output }
 
-fun Project.getSources(): SourceDirectorySet? = withJavaPlugin {
-    javaPluginConvention().sourceSets.getByName("main").allSource
-}
+fun Project.getSources(): SourceDirectorySet? = withJavaPlugin { mainSourceSet.allSource }
 
-fun Project.getResourceFiles(): SourceDirectorySet? = withJavaPlugin {
-    javaPluginConvention().sourceSets.getByName("main").resources
-}
+fun Project.getResourceFiles(): SourceDirectorySet? = withJavaPlugin { mainSourceSet.resources }
 
 fun fileFrom(root: File, vararg children: String): File = children.fold(root) { f, c -> File(f, c) }
 
@@ -59,7 +53,7 @@ var Project.javaHome: String?
     }
 
 fun Project.generator(fqName: String, sourceSet: SourceSet? = null) = smartJavaExec {
-    classpath = (sourceSet ?: javaPluginConvention().sourceSets["test"]).runtimeClasspath
+    classpath = (sourceSet ?: testSourceSet).runtimeClasspath
     main = fqName
     workingDir = rootDir
 }
