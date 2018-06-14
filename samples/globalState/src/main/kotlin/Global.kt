@@ -17,6 +17,7 @@
 import global.*
 import kotlinx.cinterop.*
 import platform.posix.*
+import konan.worker.*
 
 inline fun Int.ensureUnixCallResult(op: String, predicate: (Int) -> Boolean = { x -> x == 0} ): Int {
     if (!predicate(this)) {
@@ -28,6 +29,10 @@ inline fun Int.ensureUnixCallResult(op: String, predicate: (Int) -> Boolean = { 
 data class SharedDataMember(val double: Double)
 
 data class SharedData(val string: String, val int: Int, val member: SharedDataMember)
+
+// Here we access the same shared frozen Kotlin object from multiple threads.
+val globalObject: SharedData?
+    get() = sharedData.frozenKotlinObject?.asStableRef<SharedData>()?.get()
 
 fun dumpShared(prefix: String): Unit {
     println("""
@@ -43,10 +48,15 @@ fun main(args: Array<String>) {
     sharedData.x = 239
     sharedData.f = 0.5f
     sharedData.string = "Hello Kotlin!".cstr.getPointer(arena)
+    // Here we create detached mutable object, which could be later reattached by another thread.
     sharedData.kotlinObject = konan.worker.detachObjectGraph {
         SharedData("A string", 42, SharedDataMember(2.39))
     }
+    // Here we create shared frozen object reference,
+    val stableRef = StableRef.create(SharedData("Shared", 239, SharedDataMember(2.71)).freeze())
+    sharedData.frozenKotlinObject = stableRef.asCPointer()
     dumpShared("thread1")
+    println("frozen is $globalObject")
 
     // Start a new thread, that sees the variable.
     // memScoped is needed to pass thread's local address to pthread_create().
@@ -58,7 +68,7 @@ fun main(args: Array<String>) {
             dumpShared("thread2")
             val kotlinObject = konan.worker.attachObjectGraph<SharedData>(sharedData.kotlinObject)
             val arg = konan.worker.attachObjectGraph<SharedDataMember>(argC)
-            println("thread arg is $arg Kotlin object is $kotlinObject")
+            println("thread arg is $arg Kotlin object is $kotlinObject frozen is $globalObject")
             // Workaround for compiler issue.
             null as COpaquePointer?
         }, konan.worker.detachObjectGraph { SharedDataMember(3.14)} ).ensureUnixCallResult("pthread_create")
@@ -68,5 +78,6 @@ fun main(args: Array<String>) {
     // At this moment we do not need data stored in shared data, so clean up the data
     // and free memory.
     sharedData.string = null
+    stableRef.dispose()
     arena.clear()
 }

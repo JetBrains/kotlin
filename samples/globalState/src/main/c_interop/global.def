@@ -6,6 +6,7 @@ typedef struct {
   float f;
   char* string;
   void* kotlinObject;
+  void* frozenKotlinObject;
 } SharedData;
 
 SharedData sharedData;
