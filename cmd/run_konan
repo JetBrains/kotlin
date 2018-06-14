@@ -72,9 +72,9 @@ java_opts=(-ea \
             ${JAVA_OPTS})
 
 # Unset some environment variables which are set by XCode and may potentially affect the tool executed.
-for VAR in `cat "${KONAN_HOME}/tools/env_blacklist"`; do
-    unset $VAR
-done
+while IFS=$'\r' read -r line || [[ -n "$line" ]]; do
+    unset $line
+done < "${KONAN_HOME}/tools/env_blacklist"
 
 KONAN_JAR="${KONAN_HOME}/konan/lib/backend.native.jar"
 KOTLIN_JAR="${KONAN_HOME}/konan/lib/kotlin-compiler.jar"
