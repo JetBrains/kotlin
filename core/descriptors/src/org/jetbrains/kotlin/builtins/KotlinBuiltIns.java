@@ -74,6 +74,7 @@ public abstract class KotlinBuiltIns {
     private ModuleDescriptorImpl builtInsModule;
 
     private final NotNullLazyValue<Primitives> primitives;
+    private final MemoizedFunctionToNotNull<ModuleDescriptor, UnsignedPrimitives> unsignedPrimitives;
     private final NotNullLazyValue<PackageFragments> packageFragments;
 
     private final MemoizedFunctionToNotNull<Integer, ClassDescriptor> suspendFunctionClasses;
@@ -120,6 +121,29 @@ public abstract class KotlinBuiltIns {
                 return new Primitives(
                         primitiveTypeToArrayKotlinType, primitiveKotlinTypeToKotlinArrayType, kotlinArrayTypeToPrimitiveKotlinType
                 );
+            }
+        });
+
+        this.unsignedPrimitives = storageManager.createMemoizedFunction(new Function1<ModuleDescriptor, UnsignedPrimitives>() {
+            @Override
+            public UnsignedPrimitives invoke(ModuleDescriptor module) {
+                Map<KotlinType, SimpleType> unsignedKotlinTypeToKotlinArrayType = new HashMap<KotlinType, SimpleType>();
+                Map<SimpleType, SimpleType> kotlinArrayTypeToUnsignedKotlinType = new HashMap<SimpleType, SimpleType>();
+                for (UnsignedType unsigned : UnsignedType.values()) {
+                    ClassDescriptor descriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(module, unsigned.getClassId());
+                    if (descriptor == null) continue;
+
+                    ClassDescriptor arrayDescriptor =
+                            FindClassInModuleKt.findClassAcrossModuleDependencies(module, unsigned.getArrayClassId());
+                    if (arrayDescriptor == null) continue;
+
+                    SimpleType type = descriptor.getDefaultType();
+                    SimpleType arrayType = arrayDescriptor.getDefaultType();
+
+                    unsignedKotlinTypeToKotlinArrayType.put(type, arrayType);
+                    kotlinArrayTypeToUnsignedKotlinType.put(arrayType, type);
+                }
+                return new UnsignedPrimitives(unsignedKotlinTypeToKotlinArrayType, kotlinArrayTypeToUnsignedKotlinType);
             }
         });
 
@@ -236,6 +260,19 @@ public abstract class KotlinBuiltIns {
             this.primitiveTypeToArrayKotlinType = primitiveTypeToArrayKotlinType;
             this.primitiveKotlinTypeToKotlinArrayType = primitiveKotlinTypeToKotlinArrayType;
             this.kotlinArrayTypeToPrimitiveKotlinType = kotlinArrayTypeToPrimitiveKotlinType;
+        }
+    }
+
+    private static class UnsignedPrimitives {
+        public final Map<KotlinType, SimpleType> unsignedKotlinTypeToKotlinArrayType;
+        public final Map<SimpleType, SimpleType> kotlinArrayTypeToUnsignedKotlinType;
+
+        private UnsignedPrimitives(
+                @NotNull Map<KotlinType, SimpleType> unsignedKotlinTypeToKotlinArrayType,
+                @NotNull Map<SimpleType, SimpleType> kotlinArrayTypeToUnsignedKotlinType
+        ) {
+            this.unsignedKotlinTypeToKotlinArrayType = unsignedKotlinTypeToKotlinArrayType;
+            this.kotlinArrayTypeToUnsignedKotlinType = kotlinArrayTypeToUnsignedKotlinType;
         }
     }
 
@@ -802,12 +839,20 @@ public abstract class KotlinBuiltIns {
             }
             return arrayType.getArguments().get(0).getType();
         }
+        KotlinType notNullArrayType = TypeUtils.makeNotNullable(arrayType);
         //noinspection SuspiciousMethodCalls
-        KotlinType primitiveType = primitives.invoke().kotlinArrayTypeToPrimitiveKotlinType.get(TypeUtils.makeNotNullable(arrayType));
-        if (primitiveType == null) {
-            throw new IllegalStateException("not array: " + arrayType);
+        KotlinType primitiveType = primitives.invoke().kotlinArrayTypeToPrimitiveKotlinType.get(notNullArrayType);
+        if (primitiveType != null) return primitiveType;
+
+        ModuleDescriptor module = DescriptorUtils.getContainingModuleOrNull(notNullArrayType);
+        if (module != null) {
+            //noinspection SuspiciousMethodCalls
+            SimpleType unsignedType = unsignedPrimitives.invoke(module).kotlinArrayTypeToUnsignedKotlinType.get(notNullArrayType);
+            if (unsignedType != null) return unsignedType;
         }
-        return primitiveType;
+
+
+        throw new IllegalStateException("not array: " + arrayType);
     }
 
     @NotNull
@@ -820,7 +865,17 @@ public abstract class KotlinBuiltIns {
      */
     @Nullable
     public SimpleType getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(@NotNull KotlinType kotlinType) {
-        return primitives.invoke().primitiveKotlinTypeToKotlinArrayType.get(kotlinType);
+        SimpleType primitiveArray = primitives.invoke().primitiveKotlinTypeToKotlinArrayType.get(kotlinType);
+        if (primitiveArray != null) return primitiveArray;
+
+        if (UnsignedTypes.INSTANCE.isUnsignedType(kotlinType)) {
+            ModuleDescriptor module = DescriptorUtils.getContainingModuleOrNull(kotlinType);
+            if (module == null) return null;
+
+            return unsignedPrimitives.invoke(module).unsignedKotlinTypeToKotlinArrayType.get(kotlinType);
+        }
+
+        return null;
     }
 
     public static boolean isPrimitiveArray(@NotNull FqNameUnsafe arrayFqName) {

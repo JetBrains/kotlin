@@ -58,4 +58,9 @@ public class DiagnosticsWithUnsignedTypesGenerated extends AbstractDiagnosticsWi
     public void testUnsignedLiteralsTypeCheck() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/unsignedLiteralsTypeCheck.kt");
     }
+
+    @TestMetadata("varargTypeToArrayTypeCheck.kt")
+    public void testVarargTypeToArrayTypeCheck() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/varargTypeToArrayTypeCheck.kt");
+    }
 }
