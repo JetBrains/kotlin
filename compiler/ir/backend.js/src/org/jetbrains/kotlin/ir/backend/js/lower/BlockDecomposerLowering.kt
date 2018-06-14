@@ -664,14 +664,14 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
         }
 
         override fun visitLoop(loop: IrLoop, data: VisitData): VisitResult {
-            val result = loop.accept(statementVisitor, null)
+            val result = loop.accept(statementVisitor, data)
             return if (result.status == VisitStatus.KEPT) {
                 DecomposedResult(loop, unitValue)
             } else result
         }
 
         override fun visitSetField(expression: IrSetField, data: VisitData): VisitResult {
-            val result = expression.accept(statementVisitor, null)
+            val result = expression.accept(statementVisitor, data)
             return if (result.status == VisitStatus.KEPT) {
                 DecomposedResult(expression, unitValue)
             } else result

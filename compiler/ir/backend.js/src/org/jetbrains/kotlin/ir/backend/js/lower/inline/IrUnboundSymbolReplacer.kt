@@ -81,11 +81,7 @@ private fun IrModuleFragment.mergeFrom(other: IrModuleFragment): Unit {
 
     val thisPackages = this.externalPackageFragments.groupBy { it.packageFragmentDescriptor }
     other.externalPackageFragments.forEach {
-        val thisPackage = try {
-            thisPackages[it.packageFragmentDescriptor]?.toSet()?.single()
-        } catch (t: Throwable) {
-            throw t
-        }
+        val thisPackage = thisPackages[it.packageFragmentDescriptor]?.toSet()?.single()
         if (thisPackage == null) {
             this.externalPackageFragments.add(it)
         } else {

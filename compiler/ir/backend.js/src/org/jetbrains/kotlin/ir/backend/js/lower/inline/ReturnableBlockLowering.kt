@@ -16,114 +16,116 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 class ReturnableBlockLowering(val context: JsIrBackendContext) : FileLoweringPass {
-
     override fun lower(irFile: IrFile) {
-        irFile.transform(visitor, null)
+        irFile.transform(ReturnableBlockTransformer(context), ReturnableBlockLoweringContext(irFile))
+    }
+}
+
+private class ReturnableBlockLoweringContext(val containingDeclaration: IrSymbolOwner) {
+    var labelCnt = 0
+    val returnMap = mutableMapOf<IrReturnableBlockSymbol, (IrReturn) -> IrExpression>()
+}
+
+private class ReturnableBlockTransformer(
+    val context: JsIrBackendContext
+) : IrElementTransformer<ReturnableBlockLoweringContext> {
+
+    override fun visitReturn(expression: IrReturn, data: ReturnableBlockLoweringContext): IrExpression {
+        expression.transformChildren(this, data)
+        return data.returnMap[expression.returnTargetSymbol]?.invoke(expression) ?: expression
     }
 
-    val visitor = object : IrElementTransformerVoid() {
+    override fun visitDeclaration(declaration: IrDeclaration, data: ReturnableBlockLoweringContext): IrStatement {
+        if (declaration is IrSymbolOwner) {
+            declaration.transformChildren(this, ReturnableBlockLoweringContext(declaration))
+        }
+        return super.visitDeclaration(declaration, data)
+    }
 
-        override fun visitReturn(expression: IrReturn): IrExpression {
-            expression.transformChildren(this, null)
-            return returnMap[expression.returnTargetSymbol]?.invoke(expression) ?: expression
+    private val constFalse = JsIrBuilder.buildBoolean(context.builtIns.booleanType, false)
+
+    override fun visitContainerExpression(expression: IrContainerExpression, data: ReturnableBlockLoweringContext): IrExpression {
+        if (expression !is IrReturnableBlock) return super.visitContainerExpression(expression, data)
+
+        val variable by lazy {
+            JsSymbolBuilder.buildTempVar(
+                data.containingDeclaration.symbol,
+                expression.type,
+                "tmp\$ret\$${data.labelCnt++}",
+                true
+            )
         }
 
-        override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
-            if (declaration is IrSymbolOwner) {
-                containingDeclaration = declaration
-                labelCnt = 0
+        val loop by lazy {
+            IrDoWhileLoopImpl(
+                expression.startOffset,
+                expression.endOffset,
+                context.builtIns.unitType,
+                expression.origin
+            ).apply {
+                label = "l\$ret\$${data.labelCnt++}"
+                condition = constFalse
             }
-            return super.visitDeclaration(declaration)
         }
 
-        private var containingDeclaration: IrSymbolOwner? = null
-        private var labelCnt = 0
-        private val returnMap = mutableMapOf<IrReturnableBlockSymbol, (IrReturn) -> IrExpression>()
+        var hasReturned = false
 
-        private val constFalse = JsIrBuilder.buildBoolean(context.builtIns.booleanType, false)
+        data.returnMap[expression.symbol] = { returnExpression ->
+            hasReturned = true
 
-        override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-            if (expression !is IrReturnableBlock) return super.visitContainerExpression(expression)
-
-            val variable by lazy {
-                JsSymbolBuilder.buildTempVar(
-                    containingDeclaration!!.symbol,
-                    expression.type,
-                    "tmp\$ret\$${labelCnt++}",
-                    true
-                )
+            IrCompositeImpl(
+                returnExpression.startOffset,
+                returnExpression.endOffset,
+                context.builtIns.unitType
+            ).apply {
+                statements += JsIrBuilder.buildSetVariable(variable, returnExpression.value)
+                statements += JsIrBuilder.buildBreak(context.builtIns.unitType, loop)
             }
+        }
 
-            val loop by lazy {
-                IrDoWhileLoopImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    context.builtIns.unitType,
-                    expression.origin
-                ).apply {
-                    label = "l\$ret\$${labelCnt++}"
-                    condition = constFalse
+        val newStatements = expression.statements.mapIndexed { i, s ->
+            if (i == expression.statements.lastIndex && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
+                s.transformChildren(this, data)
+                if (!hasReturned) s.value else {
+                    JsIrBuilder.buildSetVariable(variable, s.value)
                 }
-            }
-
-            var hasReturned = false
-
-            returnMap[expression.symbol] = { returnExpression ->
-                hasReturned = true
-
-                IrCompositeImpl(
-                    returnExpression.startOffset,
-                    returnExpression.endOffset,
-                    context.builtIns.unitType
-                ).apply {
-                    statements += JsIrBuilder.buildSetVariable(variable, returnExpression.value)
-                    statements += JsIrBuilder.buildBreak(context.builtIns.unitType, loop)
-                }
-            }
-
-            val newStatements = expression.statements.mapIndexed { i, s ->
-                if (i == expression.statements.lastIndex && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
-                    s.transformChildren(this, null)
-                    if (!hasReturned) s.value else {
-                        JsIrBuilder.buildSetVariable(variable, s.value)
-                    }
-                } else {
-                    s.transform(this, null)
-                }
-            }
-
-            returnMap.remove(expression.symbol)
-
-            if (!hasReturned) {
-                return IrCompositeImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    expression.type,
-                    expression.origin,
-                    newStatements
-                )
             } else {
-                loop.body = IrBlockImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    context.builtIns.unitType,
-                    expression.origin,
-                    newStatements
-                )
+                s.transform(this, data)
+            }
+        }
 
-                return IrCompositeImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    expression.type,
-                    expression.origin
-                ).apply {
-                    statements += JsIrBuilder.buildVar(variable)
-                    statements += loop
-                    statements += JsIrBuilder.buildGetValue(variable)
-                }
+        data.returnMap.remove(expression.symbol)
+
+        if (!hasReturned) {
+            return IrCompositeImpl(
+                expression.startOffset,
+                expression.endOffset,
+                expression.type,
+                expression.origin,
+                newStatements
+            )
+        } else {
+            loop.body = IrBlockImpl(
+                expression.startOffset,
+                expression.endOffset,
+                context.builtIns.unitType,
+                expression.origin,
+                newStatements
+            )
+
+            return IrCompositeImpl(
+                expression.startOffset,
+                expression.endOffset,
+                expression.type,
+                expression.origin
+            ).apply {
+                statements += JsIrBuilder.buildVar(variable)
+                statements += loop
+                statements += JsIrBuilder.buildGetValue(variable)
             }
         }
     }

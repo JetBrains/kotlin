@@ -64,7 +64,6 @@ fun compile(
 fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment) {
     FunctionInlining(this).inline(moduleFragment)
 
-    val symbolTable = symbolTable
     moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
 
     do {
