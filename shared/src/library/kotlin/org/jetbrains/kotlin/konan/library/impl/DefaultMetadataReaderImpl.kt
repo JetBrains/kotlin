@@ -10,4 +10,16 @@ internal object DefaultMetadataReaderImpl : MetadataReader {
 
     override fun loadSerializedPackageFragment(libraryLayout: KonanLibraryLayout, fqName: String, partName: String): ByteArray =
             libraryLayout.packageFragmentFile(fqName, partName).readBytes()
+
+    override fun loadWholeIr(libraryLayout: KonanLibraryLayout): ByteArray =
+            libraryLayout.wholeIrFile.readBytes()
+
+    override fun loadIrDeclaraton(libraryLayout: KonanLibraryLayout, index: Long, isLocal: Boolean): ByteArray {
+        val name = index.toULong().toString(16)
+        val file = if (isLocal)
+            libraryLayout.hiddenDeclarationFile(name)
+        else
+            libraryLayout.visibleDeclarationFile(name)
+        return file.readBytes()
+    }
 }

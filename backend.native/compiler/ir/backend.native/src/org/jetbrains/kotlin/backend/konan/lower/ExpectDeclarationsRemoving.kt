@@ -30,15 +30,25 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
  * Note: org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationsRemoving is copy of this lower.
  */
 internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPass {
-
     override fun lower(irFile: IrFile) {
         // All declarations with `isExpect == true` are nested into a top-level declaration with `isExpect == true`.
         irFile.declarations.removeAll {
             if (it.descriptor.isExpectMember) {
-                copyDefaultArgumentsFromExpectToActual(it)
                 true
             } else {
                 false
+            }
+        }
+    }
+}
+
+internal class ExpectToActualDefaultValueCopier(val context: Context) : FileLoweringPass {
+
+    override fun lower(irFile: IrFile) {
+        // All declarations with `isExpect == true` are nested into a top-level declaration with `isExpect == true`.
+        irFile.declarations.forEach {
+            if (it.descriptor.isExpectMember) {
+                copyDefaultArgumentsFromExpectToActual(it)
             }
         }
     }

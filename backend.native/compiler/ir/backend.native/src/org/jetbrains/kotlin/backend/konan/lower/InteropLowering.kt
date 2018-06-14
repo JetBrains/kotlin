@@ -86,7 +86,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
     private val outerClasses = mutableListOf<IrClass>()
 
     override fun visitClass(declaration: IrClass): IrStatement {
-        if (declaration.descriptor.isKotlinObjCClass()) {
+        if (declaration.isKotlinObjCClass()) {
             lowerKotlinObjCClass(declaration)
         }
 
@@ -507,13 +507,13 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
         val constructedClass = outerClasses.peek()!!
         val constructedClassDescriptor = constructedClass.descriptor
 
-        if (!constructedClassDescriptor.isObjCClass()) {
+        if (!constructedClass.isObjCClass()) {
             return expression
         }
 
-        constructedClassDescriptor.containingDeclaration.let { classContainer ->
-            if (classContainer is ClassDescriptor && classContainer.isObjCClass() &&
-                    constructedClassDescriptor == classContainer.companionObjectDescriptor) {
+        constructedClass.parent.let { parent ->
+            if (parent is IrClass && parent.isObjCClass() &&
+                    constructedClass.isCompanion) {
 
                 // Note: it is actually not used; getting values of such objects is handled by code generator
                 // in [FunctionGenerationContext.getObjectValue].
@@ -522,8 +522,8 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
             }
         }
 
-        if (!constructedClassDescriptor.isExternalObjCClass() &&
-                expression.descriptor.constructedClass.isExternalObjCClass()) {
+        if (!constructedClass.isExternalObjCClass() &&
+            (expression.symbol.owner.constructedClass).isExternalObjCClass()) {
 
             // Calling super constructor from Kotlin Objective-C class.
 
@@ -531,7 +531,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
 
             val initMethod = expression.descriptor.getObjCInitMethod()!!
 
-            if (!expression.descriptor.objCConstructorIsDesignated()) {
+            if (!expression.symbol.owner.objCConstructorIsDesignated()) {
                 context.reportCompilationError(
                         "Unable to call non-designated initializer as super constructor",
                         currentFile,
@@ -582,7 +582,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
         val superClass = superQualifier?.let { getObjCClass(it) } ?:
                 irCall(symbols.getNativeNullPtr, symbols.nativePtrType)
 
-        val bridge = symbolTable.referenceSimpleFunction(info.bridge)
+        val bridge = symbols.lazySymbolTable.referenceSimpleFunction(info.bridge)
         return irCall(bridge, symbolTable.translateErased(info.bridge.returnType!!)).apply {
             putValueArgument(0, superClass)
             putValueArgument(1, receiver)

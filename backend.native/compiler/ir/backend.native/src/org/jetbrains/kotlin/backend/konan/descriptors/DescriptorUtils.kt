@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
+import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.ClassDescriptor
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.FunctionDescriptor
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.types.SimpleType
@@ -37,7 +40,7 @@ internal val ClassDescriptor.implementedInterfaces: List<ClassDescriptor>
  *
  * TODO: this method is actually a part of resolve and probably duplicates another one
  */
-internal fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction {
+internal fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false): IrSimpleFunction {
     if (this.isReal) {
         return this
     }
@@ -72,7 +75,7 @@ internal fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction {
         realSupers.toList().forEach { excludeOverridden(it) }
     }
 
-    return realSupers.first { it.modality != Modality.ABSTRACT }
+    return realSupers.first { allowAbstract || it.modality != Modality.ABSTRACT }
 }
 
 // TODO: don't forget to remove descriptor access here.
@@ -131,11 +134,11 @@ private fun FunctionDescriptor.needBridgeToAt(target: FunctionDescriptor, index:
 internal fun FunctionDescriptor.needBridgeTo(target: FunctionDescriptor)
         = (0..this.valueParameters.size + 2).any { needBridgeToAt(target, it) }
 
-internal val SimpleFunctionDescriptor.target: SimpleFunctionDescriptor
+internal val IrSimpleFunction.target: IrSimpleFunction
     get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
 
 internal val FunctionDescriptor.target: FunctionDescriptor get() = when (this) {
-    is SimpleFunctionDescriptor -> this.target
+    is IrSimpleFunction -> this.target
     is ConstructorDescriptor -> this
     else -> error(this)
 }
@@ -185,11 +188,11 @@ internal class BridgeDirections(val array: Array<BridgeDirection>) {
     }
 }
 
-val SimpleFunctionDescriptor.allOverriddenDescriptors: Set<SimpleFunctionDescriptor>
+val IrSimpleFunction.allOverriddenDescriptors: Set<IrSimpleFunction>
     get() {
-        val result = mutableSetOf<SimpleFunctionDescriptor>()
+        val result = mutableSetOf<IrSimpleFunction>()
 
-        fun traverse(function: SimpleFunctionDescriptor) {
+        fun traverse(function: IrSimpleFunction) {
             if (function in result) return
             result += function
             function.overriddenSymbols.forEach { traverse(it.owner) }
@@ -200,8 +203,8 @@ val SimpleFunctionDescriptor.allOverriddenDescriptors: Set<SimpleFunctionDescrip
         return result
     }
 
-internal fun SimpleFunctionDescriptor.bridgeDirectionsTo(
-        overriddenDescriptor: SimpleFunctionDescriptor
+internal fun IrSimpleFunction.bridgeDirectionsTo(
+        overriddenDescriptor: IrSimpleFunction
 ): BridgeDirections {
     val ourDirections = BridgeDirections(this.valueParameters.size)
     for (index in ourDirections.array.indices)
@@ -226,3 +229,23 @@ tailrec internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescrip
 
 fun FunctionDescriptor.isComparisonDescriptor(map: Map<SimpleType, IrSimpleFunction>): Boolean =
         this in map.values
+
+val IrDeclaration.isPropertyAccessor get() =
+    this is IrSimpleFunction && this.correspondingProperty != null
+
+val IrDeclaration.isPropertyField get() =
+    this is IrField && this.correspondingProperty != null
+
+val IrDeclaration.isTopLevelDeclaration get() =
+    parent !is IrDeclaration && !this.isPropertyAccessor && !this.isPropertyField
+
+fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
+    this.isTopLevelDeclaration ->
+        this
+    this.isPropertyAccessor ->
+        (this as IrSimpleFunction).correspondingProperty!!.findTopLevelDeclaration()
+    this.isPropertyField ->
+        (this as IrField).correspondingProperty!!.findTopLevelDeclaration()
+    else ->
+        (this.parent as IrDeclaration).findTopLevelDeclaration()
+}

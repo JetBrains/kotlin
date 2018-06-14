@@ -9,16 +9,16 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
-import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.common.lower.CoroutineIntrinsicLambdaOrigin
+import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
-import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.isInlineParameter
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -119,7 +119,6 @@ internal class Ref<T>(var value: T)
 
 internal class FunctionInlining(val context: Context): IrElementTransformerWithContext<Ref<Boolean>>() {
 
-    private val deserializer = DeserializerDriver(context)
     private val globalSubstituteMap = mutableMapOf<DeclarationDescriptor, SubstitutedDescriptor>()
     private val inlineFunctions = mutableMapOf<FunctionDescriptor, Boolean>()
 
@@ -138,8 +137,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerWithC
         val result = super.visitFunctionNew(declaration, localData)
         data.value = data.value or localData.value
 
-        if (descriptor.needsInlining)
+        if (descriptor.needsInlining) {
             inlineFunctions[descriptor] = localData.value
+        }
         return result
     }
 
@@ -163,19 +163,20 @@ internal class FunctionInlining(val context: Context): IrElementTransformerWithC
         }
         data.value = data.value or callee.second
 
+        // TODO: do we still need this Ref<Boolean> mechanism?
         val childIsBad = Ref(inlineFunctions[functionDescriptor] ?: false)
         callee.first.transformChildren(this, childIsBad)                            // Process recursive inline.
         inlineFunctions[functionDescriptor] = childIsBad.value
         data.value = data.value or childIsBad.value
 
-        val currentCalleeIsBad = argsAreBad.value or childIsBad.value or callee.second
+
+        val currentCalleeIsBad = false
         val inliner = Inliner(globalSubstituteMap, callSite, callee.first, !currentCalleeIsBad, currentScope!!,
                 allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull(), context, this)
         return inliner.inline()
     }
 
-    //-------------------------------------------------------------------------//
-
+    // TODO: do we really need this function anymore?
     private fun getFunctionDeclaration(descriptor: FunctionDescriptor): Pair<IrFunction, Boolean>? =
             when {
                 descriptor.isBuiltInIntercepted(context.config.configuration.languageVersionSettings) ->
@@ -189,7 +190,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerWithC
 
                 else ->
                     context.ir.originalModuleIndex.functions[descriptor]?.let { it to false }
-                            ?: deserializer.deserializeInlineBody(descriptor)?.let { it as IrFunction to true }
+                            ?: context.ir.symbols.symbolTable.referenceFunction(descriptor).owner to true
             }
 }
 
@@ -258,8 +259,8 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
                         constructorDescriptor.typeParameters.map { delegatingConstructorCall.getTypeArgument(it)!! }).apply {
                     constructorDescriptor.valueParameters.forEach { putValueArgument(it, delegatingConstructorCall.getValueArgument(it)) }
                 }
-                val oldThis = delegatingConstructorCall.descriptor.constructedClass.thisAsReceiverParameter
-                val newThis = currentScope.scope.createTemporaryVariable(
+                val oldThis = (callee as IrConstructor).constructedClass.thisReceiver!!.descriptor
+                val newThis = currentScope.scope.createTemporaryVariableWithWrappedDescriptor(
                         irExpression = constructorCall,
                         nameHint     = delegatingConstructorCall.descriptor.fqNameSafe.toString() + ".this"
                 )
@@ -399,7 +400,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
 
         val isInlinableLambdaArgument : Boolean
             get() {
-                if (!InlineUtil.isInlineParameter(parameter.descriptor)) return false
+                if (!parameter.isInlineParameter()) return false
                 if (argumentExpression is IrFunctionReference
                         && !argumentExpression.descriptor.isSuspend) return true // Skip suspend functions for now since it's not supported by FE anyway.
 
@@ -521,7 +522,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
                 return@forEach
             }
 
-            val newVariable = currentScope.scope.createTemporaryVariable(
+            val newVariable = currentScope.scope.createTemporaryVariableWithWrappedDescriptor(         // Create new variable and init it with the parameter expression.
                 irExpression = it.argumentExpression.transform(substitutor, data = null),   // Arguments may reference the previous ones - substitute them.
                 nameHint     = callee.descriptor.name.toString(),
                 isMutable    = false)

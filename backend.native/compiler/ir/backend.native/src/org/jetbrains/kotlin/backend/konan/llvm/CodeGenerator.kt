@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.ClassDescriptor
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.FunctionDescriptor
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.konan.llvm.objc.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -655,7 +654,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
          * if toString/eq/hc is invoked on an interface instance, we resolve
          * owner as Any and dispatch it via vtable.
          */
-        val anyMethod = (descriptor as SimpleFunctionDescriptor).findOverriddenMethodOfAny()
+        val anyMethod = (descriptor as IrSimpleFunction).findOverriddenMethodOfAny()
         val owner = (anyMethod ?: descriptor).containingDeclaration as ClassDescriptor
 
         val llvmMethod = if (!owner.isInterface) {

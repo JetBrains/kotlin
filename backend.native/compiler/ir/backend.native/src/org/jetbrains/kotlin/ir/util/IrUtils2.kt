@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.substitute
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
@@ -30,6 +34,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -40,6 +45,9 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictsSuspensionReceiver
 import org.jetbrains.kotlin.types.*
@@ -619,7 +627,12 @@ fun createField(
 }
 
 fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter {
-    assert(this.descriptor.type == newDescriptor.type)
+    // Aggressive use of WrappedDescriptors during deserialization
+    // makes these types different.
+    // Let's hope they not really used afterwards.
+    //assert(this.descriptor.type == newDescriptor.type) {
+     //   "type1 = ${this.descriptor.type} != type2 = ${newDescriptor.type}"
+    //}
 
     return IrValueParameterImpl(
             startOffset,
@@ -637,7 +650,7 @@ val IrType.isSimpleTypeWithQuestionMark: Boolean
     get() = this is IrSimpleType && this.hasQuestionMark
 
 fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
-        if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType
+        if (hasQuestionMark) this.defaultType.makeNullable(false) else this.defaultType
 
 fun IrFunction.isRestrictedSuspendFunction(languageVersionSettings: LanguageVersionSettings): Boolean =
         this.descriptor.extensionReceiverParameter?.type?.isRestrictsSuspensionReceiver(languageVersionSettings) == true

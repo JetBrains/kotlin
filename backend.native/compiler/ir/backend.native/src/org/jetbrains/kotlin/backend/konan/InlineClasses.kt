@@ -55,7 +55,7 @@ fun IrType.computePrimitiveBinaryTypeOrNull(): PrimitiveBinaryType? =
 
 fun IrType.computeBinaryType(): BinaryType<IrClass> = IrTypeInlineClassesSupport.computeBinaryType(this)
 
-fun IrClass.inlinedClassIsNullable(): Boolean = this.defaultType.makeNullable().getInlinedClass() == this // TODO: optimize
+fun IrClass.inlinedClassIsNullable(): Boolean = this.defaultType.makeNullable(false).getInlinedClass() == this // TODO: optimize
 fun IrClass.isUsedAsBoxClass(): Boolean = IrTypeInlineClassesSupport.isUsedAsBoxClass(this)
 
 /**

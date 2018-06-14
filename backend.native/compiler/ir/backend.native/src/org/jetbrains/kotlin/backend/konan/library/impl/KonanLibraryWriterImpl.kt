@@ -52,6 +52,7 @@ class LibraryWriterImpl(
         nativeDir.mkdirs()
         includedDir.mkdirs()
         resourcesDir.mkdirs()
+        irDir.mkdirs()
         // TODO: <name>:<hash> will go somewhere around here.
         manifestProperties.setProperty(KLIB_PROPERTY_UNIQUE_NAME, moduleName)
         manifestProperties.writeKonanLibraryVersioning(versions)

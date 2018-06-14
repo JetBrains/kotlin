@@ -117,9 +117,11 @@ fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
     return result as Array<T>
 }
 
+@PublishedApi
 @TypedIntrinsic(IntrinsicType.CREATE_UNINITIALIZED_INSTANCE)
 internal external fun <T> createUninitializedInstance(): T
 
+@PublishedApi
 @TypedIntrinsic(IntrinsicType.INIT_INSTANCE)
 internal external fun initInstance(thiz: Any, constructorCall: Any): Unit
 

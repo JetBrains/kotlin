@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.isObjCClass
-import org.jetbrains.kotlin.backend.konan.serialization.isExported
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -20,12 +19,18 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.konanModuleOrigin
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.util.isFunction
+import org.jetbrains.kotlin.ir.util.isKFunction
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -44,7 +49,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
  *
  * TODO: this method is actually a part of resolve and probably duplicates another one
  */
-internal fun <T : CallableMemberDescriptor> T.resolveFakeOverride(): T {
+internal fun <T : CallableMemberDescriptor> T.resolveFakeOverride(allowAbstract: Boolean = false): T {
     if (this.kind.isReal) {
         return this
     } else {
@@ -52,7 +57,7 @@ internal fun <T : CallableMemberDescriptor> T.resolveFakeOverride(): T {
         val filtered = OverridingUtil.filterOutOverridden(overridden)
         // TODO: is it correct to take first?
         @Suppress("UNCHECKED_CAST")
-        return filtered.first { it.modality != Modality.ABSTRACT } as T
+        return filtered.first { allowAbstract || it.modality != Modality.ABSTRACT } as T
     }
 }
 
@@ -84,6 +89,15 @@ internal val FunctionDescriptor.isFunctionInvoke: Boolean
 
         return (dispatchReceiver.type.isFunctionType || dispatchReceiver.type.isSuspendFunctionType) &&
                 this.isOperator && this.name == OperatorNameConventions.INVOKE
+    }
+
+internal val IrFunction.isFunctionInvoke: Boolean
+    get() {
+        val dispatchReceiver = dispatchReceiverParameter ?: return false
+        assert(!dispatchReceiver.type.isKFunction())
+
+        return dispatchReceiver.type.isFunction() &&
+               /* this.isOperator &&*/ this.name == OperatorNameConventions.INVOKE
     }
 
 internal fun ClassDescriptor.isUnit() = this.defaultType.isUnit()
@@ -159,9 +173,6 @@ internal val FunctionDescriptor.needsInlining: Boolean
         return (this.isInline && !this.isExternal)
     }
 
-internal val FunctionDescriptor.needsSerializedIr: Boolean
-    get() = (this.needsInlining && this.isExported())
-
 fun AnnotationDescriptor.getStringValueOrNull(name: String): String? {
     val constantValue = this.allValueArguments.entries.atMostOne {
         it.key.asString() == name
@@ -198,6 +209,9 @@ val ClassDescriptor.enumEntries: List<ClassDescriptor>
 
 internal val DeclarationDescriptor.isExpectMember: Boolean
     get() = this is MemberDescriptor && this.isExpect
+
+internal val DeclarationDescriptor.isSerializableExpectClass: Boolean
+    get() = this is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(this)
 
 internal fun KotlinType?.createExtensionReceiver(owner: CallableDescriptor): ReceiverParameterDescriptor? =
         DescriptorFactory.createExtensionReceiverParameterForCallable(
@@ -286,3 +300,5 @@ fun createAnnotation(
         values.map { (name, value) -> Name.identifier(name) to StringValue(value) }.toMap(),
         SourceElement.NO_SOURCE
 )
+
+val ModuleDescriptor.konanLibrary get() = (this.konanModuleOrigin as? DeserializedKonanModuleOrigin)?.library

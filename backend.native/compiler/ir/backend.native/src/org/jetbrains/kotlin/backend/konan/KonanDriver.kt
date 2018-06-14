@@ -5,16 +5,20 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
+import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
 import org.jetbrains.kotlin.backend.konan.llvm.emitLLVM
-import org.jetbrains.kotlin.backend.konan.serialization.KonanSerializationUtil
-import org.jetbrains.kotlin.backend.konan.serialization.markBackingFields
+import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
+import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 
@@ -62,9 +66,30 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
         @Suppress("DEPRECATION")
         context.psi2IrGeneratorContext = generatorContext
 
-        val symbols = KonanSymbols(context, generatorContext.symbolTable, generatorContext.symbolTable.lazyWrapper)
+        val forwardDeclarationsModuleDescriptor = context.moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
-        val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles())
+        val deserializer = KonanIrModuleDeserializer(
+            context.moduleDescriptor,
+            context as LoggingContext,
+            generatorContext.irBuiltIns,
+            generatorContext.symbolTable,
+            forwardDeclarationsModuleDescriptor
+        )
+
+        val irModules = context.moduleDescriptor.allDependencyModules.map {
+            val library = it.konanLibrary
+            if (library == null) {
+                return@map null
+            }
+            deserializer.deserializeIrModule(it, library.irHeader)
+        }.filterNotNull()
+
+        val symbols = KonanSymbols(context, generatorContext.symbolTable, generatorContext.symbolTable.lazyWrapper)
+        val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), deserializer)
+
+        irModules.forEach {
+            it.patchDeclarationParents()
+        }
 
         context.irModule = module
         context.ir.symbols = symbols
@@ -80,10 +105,23 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
     phaser.phase(KonanPhase.GEN_SYNTHETIC_FIELDS) {
         markBackingFields(context)
     }
+
+    // TODO: We copy default value expressions from expects to actuals before IR serialization,
+    // because the current infrastructure doesn't allow us to get them at deserialization stage.
+    // That equires some design and implementation work.
+    phaser.phase(KonanPhase.COPY_DEFAULT_VALUES_TO_ACTUAL) {
+        context.irModule!!.files.forEach(ExpectToActualDefaultValueCopier(context)::lower)
+    }
+
+    context.irModule!!.patchDeclarationParents() // why do we need it?
+
     phaser.phase(KonanPhase.SERIALIZER) {
-        val serializer = KonanSerializationUtil(context, context.config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!)
+        val declarationTable = DeclarationTable(context.irModule!!.irBuiltins, DescriptorTable())
+        val serializedIr = IrModuleSerializer(context, declarationTable/*, onlyForInlines = false*/).serializedIrModule(context.irModule!!)
+
+        val serializer = KonanSerializationUtil(context, context.config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!, declarationTable)
         context.serializedLinkData =
-            serializer.serializeModule(context.moduleDescriptor)
+            serializer.serializeModule(context.moduleDescriptor, serializedIr)
     }
     phaser.phase(KonanPhase.BACKEND) {
         phaser.phase(KonanPhase.LOWER) {

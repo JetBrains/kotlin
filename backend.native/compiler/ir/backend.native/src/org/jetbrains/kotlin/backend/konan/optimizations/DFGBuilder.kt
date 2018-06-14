@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-private fun IrClass.getOverridingOf(function: FunctionDescriptor) = (function as? SimpleFunctionDescriptor)?.let {
+private fun IrClass.getOverridingOf(function: FunctionDescriptor) = (function as? IrSimpleFunction)?.let {
     it.allOverriddenDescriptors.atMostOne { it.parent == this }
 }
 

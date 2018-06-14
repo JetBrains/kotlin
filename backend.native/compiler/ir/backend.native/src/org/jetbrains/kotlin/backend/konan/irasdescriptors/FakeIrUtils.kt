@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -25,15 +26,10 @@ internal val IrDeclaration.module get() = this.descriptor.module
 internal val IrField.isDelegate get() = @Suppress("DEPRECATION") this.descriptor.isDelegated
 
 internal fun IrFunction.getObjCMethodInfo() = this.descriptor.getObjCMethodInfo()
-internal fun IrClass.isExternalObjCClass() = this.descriptor.isExternalObjCClass()
-internal fun IrClass.isKotlinObjCClass() = this.descriptor.isKotlinObjCClass()
 internal fun IrFunction.getExternalObjCMethodInfo() = this.descriptor.getExternalObjCMethodInfo()
 internal fun IrFunction.isObjCClassMethod() = this.descriptor.isObjCClassMethod()
-internal fun IrFunction.canObjCClassMethodBeCalledVirtually(overridden: IrFunction) =
-        this.descriptor.canObjCClassMethodBeCalledVirtually(overridden.descriptor)
-internal fun IrClass.isObjCClass() = this.descriptor.isObjCClass()
+
 internal fun IrClass.isObjCMetaClass() = this.descriptor.isObjCMetaClass()
-internal fun IrFunction.isExternalObjCClassMethod() = this.descriptor.isExternalObjCClassMethod()
 
 internal val IrDeclaration.llvmSymbolOrigin get() = this.descriptor.llvmSymbolOrigin
 

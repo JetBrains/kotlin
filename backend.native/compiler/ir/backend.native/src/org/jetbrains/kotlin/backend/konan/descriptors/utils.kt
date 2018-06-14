@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 
 val DeserializedPropertyDescriptor.konanBackingField: PropertyDescriptor?
     get() = 
@@ -48,4 +47,10 @@ internal val FunctionDescriptor.deserializedPropertyIfAccessor: DeserializedCall
 internal val CallableMemberDescriptor.isDeserializableCallable
     get () = (this.propertyIfAccessor is DeserializedCallableMemberDescriptor)
 
+fun DeclarationDescriptor.findTopLevelDescriptor(): DeclarationDescriptor {
+    return if (this.containingDeclaration is org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor) this.propertyIfAccessor
+    else this.containingDeclaration!!.findTopLevelDescriptor()
+}
 
+val ModuleDescriptor.isForwardDeclarationModule get() =
+    name == Name.special("<forward declarations>")

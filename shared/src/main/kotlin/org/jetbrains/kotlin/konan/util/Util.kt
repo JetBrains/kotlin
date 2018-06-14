@@ -20,11 +20,13 @@ import kotlin.system.measureTimeMillis
 import org.jetbrains.kotlin.konan.file.*
 
 // FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove this function:
-fun printMillisec(message: String, body: () -> Unit) {
+fun <T> printMillisec(message: String, body: () -> T): T {
+    var result: T? = null
     val msec = measureTimeMillis{
-        body()
+        result = body()
     }
     println("$message: $msec msec")
+    return result!!
 }
 
 // FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove this function:

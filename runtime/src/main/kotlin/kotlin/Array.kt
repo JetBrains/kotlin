@@ -33,6 +33,7 @@ public final class Array<T> {
         }
     }
 
+    @PublishedApi
     @ExportForCompiler
     internal constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 

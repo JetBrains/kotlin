@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 
 internal typealias DeclarationDescriptor = IrDeclaration
 internal typealias FunctionDescriptor = IrFunction
-internal typealias SimpleFunctionDescriptor = IrSimpleFunction
 internal typealias ClassDescriptor = IrClass
 internal typealias ConstructorDescriptor = IrConstructor
 internal typealias ClassConstructorDescriptor = IrConstructor

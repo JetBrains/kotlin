@@ -16,23 +16,30 @@ option optimize_for = LITE_RUNTIME;
 
 // Konan extensions to the "descriptors" protobuf.
 
+message DescriptorUniqId {
+    required int64 index = 1;
+}
+
 extend Package {
     optional int32 package_fq_name = 171;
 }
 
 extend Class {
     repeated Annotation class_annotation = 170;
+    optional DescriptorUniqId class_uniq_id = 171;
 }
 
 extend Constructor {
     repeated Annotation constructor_annotation = 170;
     optional InlineIrBody inline_constructor_ir_body = 171;
+    optional DescriptorUniqId constructor_uniq_id = 172;
 }
 
 extend Function {
     repeated Annotation function_annotation = 170;
     optional InlineIrBody inline_ir_body = 171;
     optional int32 function_file = 172;
+    optional DescriptorUniqId function_uniq_id = 173;
 }
 
 extend Property {
@@ -45,15 +52,18 @@ extend Property {
     optional InlineIrBody inline_getter_ir_body = 174;
     optional InlineIrBody inline_setter_ir_body = 175;
     optional int32 property_file = 176;
+    optional DescriptorUniqId property_uniq_id = 179;
 }
 
 extend EnumEntry {
     repeated Annotation enum_entry_annotation = 170;
     optional int32 enum_entry_ordinal = 171;
+    optional DescriptorUniqId enum_entry_uniq_id = 172;
 }
 
 extend ValueParameter {
     repeated Annotation parameter_annotation = 170;
+    optional DescriptorUniqId value_param_uniq_id = 171;
 }
 
 extend Type {
@@ -63,6 +73,7 @@ extend Type {
 
 extend TypeParameter {
     repeated Annotation type_parameter_annotation = 170;
+    optional DescriptorUniqId type_param_uniq_id = 171;
 }
 
 message InlineIrBody {

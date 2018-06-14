@@ -3109,7 +3109,6 @@ task library_mismatch(type: RunStandaloneKonanTest) {
     doFirst {
         def konancScript = isWindows() ? "konanc.bat" : "konanc"
         def konanc = "$dist/bin/$konancScript"
-
         "$konanc $lib -p library -o $dir/1.2/empty -target $currentTarget -lv 1.2".execute().waitFor()
         "$konanc $lib -p library -o $dir/3.4/empty -target $someOtherTarget".execute().waitFor()
         "$konanc $lib -p library -o $dir/5.6/empty -target $currentTarget -lv 5.6".execute().waitFor()

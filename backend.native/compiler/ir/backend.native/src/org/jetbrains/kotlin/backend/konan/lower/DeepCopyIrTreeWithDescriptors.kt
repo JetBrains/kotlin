@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
@@ -21,18 +21,25 @@ import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.createClassSymbolOrNull
+import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
 
 internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
                                                    val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
@@ -71,6 +78,10 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
             }
 
             override fun visitField(declaration: IrField) {
+                // TODO: inlining a function returning an object
+                // we get PropertyDescriptors from whithin that object here.
+                // That is a bug, most probably.
+                // We workaround the issue with question marks here.
                 (declaration.descriptor as? WrappedFieldDescriptor)?.bind(declaration)
                 declaration.acceptChildrenVoid(this)
             }
@@ -96,7 +107,6 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
                 declaration.acceptChildrenVoid(this)
             }
         })
-
         result.patchDeclarationParents(parent)
         return result
     }

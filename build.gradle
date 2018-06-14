@@ -397,7 +397,10 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
     }
 
     destinationDir = file('.')
-    if (!isWindows()) {
+
+    if (isWindows()) {
+        zip64 true
+    } else {
         extension = 'tar.gz'
         compression = Compression.GZIP
     }

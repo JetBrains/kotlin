@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.lower.VarargInjectionLowering
 import org.jetbrains.kotlin.backend.konan.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.util.checkDeclarationParents
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.replaceUnboundSymbols
@@ -63,13 +64,6 @@ internal class KonanLower(val context: Context, val parentPhaser: PhaseManager) 
         phaser.phase(KonanPhase.LOWER_INTEROP_PART1) {
             irModule.files.forEach(InteropLoweringPart1(context)::lower)
         }
-
-        val symbolTable = context.ir.symbols.symbolTable
-
-        do {
-            @Suppress("DEPRECATION")
-            irModule.replaceUnboundSymbols(context)
-        } while (symbolTable.unboundClasses.isNotEmpty())
 
         irModule.patchDeclarationParents()
 

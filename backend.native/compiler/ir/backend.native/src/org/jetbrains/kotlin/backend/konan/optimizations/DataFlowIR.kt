@@ -601,7 +601,7 @@ internal object DataFlowIR {
                 }
 
                 else -> {
-                    val isAbstract = it is SimpleFunctionDescriptor && it.modality == Modality.ABSTRACT
+                    val isAbstract = it is IrSimpleFunction && it.modality == Modality.ABSTRACT
                     val classDescriptor = it.containingDeclaration as? ClassDescriptor
                     val bridgeTarget = it.bridgeTarget
                     val isSpecialBridge = bridgeTarget.let {

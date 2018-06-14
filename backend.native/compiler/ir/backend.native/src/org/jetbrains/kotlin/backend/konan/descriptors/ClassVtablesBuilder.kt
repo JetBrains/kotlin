@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 
 internal class OverriddenFunctionDescriptor(
-        val descriptor: SimpleFunctionDescriptor,
-        overriddenDescriptor: SimpleFunctionDescriptor
+    val descriptor: IrSimpleFunction,
+    overriddenDescriptor: IrSimpleFunction
 ) {
     val overriddenDescriptor = overriddenDescriptor.original
 
@@ -40,7 +41,7 @@ internal class OverriddenFunctionDescriptor(
                 && descriptor.target.overrides(overriddenDescriptor)
                 && descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()
 
-    fun getImplementation(context: Context): SimpleFunctionDescriptor? {
+    fun getImplementation(context: Context): IrSimpleFunction? {
         val target = descriptor.target
         val implementation = if (!needBridge)
             target
@@ -154,7 +155,7 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
         inheritedVtableSlots + filteredNewVtableSlots.sortedBy { it.overriddenDescriptor.uniqueId }
     }
 
-    fun vtableIndex(function: SimpleFunctionDescriptor): Int {
+    fun vtableIndex(function: IrSimpleFunction): Int {
         val bridgeDirections = function.target.bridgeDirectionsTo(function.original)
         val index = vtableEntries.indexOfFirst { it.descriptor == function.original && it.bridgeDirections == bridgeDirections }
         if (index < 0) throw Error(function.toString() + " not in vtable of " + classDescriptor.toString())
@@ -170,7 +171,7 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
         // TODO: probably method table should contain all accessible methods to improve binary compatibility
     }
 
-    private val IrClass.sortedOverridableOrOverridingMethods: List<SimpleFunctionDescriptor>
+    private val IrClass.sortedOverridableOrOverridingMethods: List<IrSimpleFunction>
         get() =
             this.simpleFunctions()
                     .filter { (it.isOverridable || it.overriddenSymbols.isNotEmpty())

@@ -601,7 +601,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return
         }
 
-        if (declaration.isObjCConstructor()) {
+        if (declaration.isObjCConstructor) {
             // Do not generate any ctors for external Objective-C classes.
             return
         }
@@ -1996,7 +1996,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateFunctionReference(expression: IrFunctionReference): LLVMValueRef {
         // TODO: consider creating separate IR element for pointer to function.
-        assert (expression.type.getClass()?.descriptor == context.interopBuiltIns.cPointer)
+        assert (expression.type.getClass()?.descriptor == context.interopBuiltIns.cPointer) {
+            "assert: ${expression.type.getClass()?.descriptor} == ${context.interopBuiltIns.cPointer}"
+        }
 
         assert (expression.getArguments().isEmpty())
 
@@ -2142,7 +2144,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             descriptor: FunctionDescriptor, args: List<LLVMValueRef>,
             resultLifetime: Lifetime, superClass: ClassDescriptor? = null): LLVMValueRef {
         //context.log{"evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}"}
-        if (superClass == null && descriptor is SimpleFunctionDescriptor && descriptor.isOverridable)
+        if (superClass == null && descriptor is IrSimpleFunction && descriptor.isOverridable)
             return callVirtual(descriptor, args, resultLifetime)
         else
             return callDirect(descriptor, args, resultLifetime)
