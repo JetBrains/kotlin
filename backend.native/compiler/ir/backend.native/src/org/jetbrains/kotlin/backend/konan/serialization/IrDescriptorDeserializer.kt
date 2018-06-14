@@ -108,7 +108,7 @@ internal class IrDescriptorDeserializer(val context: Context,
                 descriptorIndex[index]!!
             CLASS, CONSTRUCTOR, FUNCTION, ACCESSOR ->
                 descriptorIndex[index] ?:
-                    findInTheDescriptorTree(proto)!! // Note: can be null when using `@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")`
+                    findInTheDescriptorTree(proto) ?: error("${proto.name} is not found") // Note: can be null when using `@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")`
             else -> TODO("Unexpected descriptor kind: $kind")
         }
 

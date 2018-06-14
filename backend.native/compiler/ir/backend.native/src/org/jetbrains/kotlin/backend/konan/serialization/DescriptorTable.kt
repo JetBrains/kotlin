@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.name.FqName
@@ -107,6 +108,11 @@ val IrBuiltIns.irBuiltInDescriptors
 internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
     assert(!this.isExpectMember) { this }
 
+    if (this.annotations.findAnnotation(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN) != null) {
+        // TODO: Seems like this should be deleted in PsiToIR.
+        // Treat any `@ContractsDsl` declaration as exported.
+        return true
+    }
     if (this.annotations.findAnnotation(symbolNameAnnotation) != null) {
         // Treat any `@SymbolName` declaration as exported.
         return true

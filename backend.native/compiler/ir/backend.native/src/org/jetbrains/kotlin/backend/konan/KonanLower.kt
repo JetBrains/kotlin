@@ -70,6 +70,8 @@ internal class KonanLower(val context: Context) {
 
         phaser.phase(KonanPhase.LOWER_AFTER_INLINE) {
             irModule.files.forEach(PostInlineLowering(context)::lower)
+            // TODO: Seems like this should be deleted in PsiToIR.
+            irModule.files.forEach(ContractsDslRemover(context)::lower)
         }
 
         phaser.phase(KonanPhase.LOWER_INTEROP_PART1) {
