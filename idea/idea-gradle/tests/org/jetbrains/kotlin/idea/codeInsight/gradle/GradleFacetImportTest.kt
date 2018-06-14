@@ -1407,13 +1407,11 @@ compileTestKotlin {
             buildscript {
                 repositories {
                     jcenter()
-                    maven {
-                        url='https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
+                    mavenCentral()
                 }
                 dependencies {
                     classpath "com.android.tools.build:gradle:2.3.0"
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
+                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50"
                 }
             }
 
@@ -1451,6 +1449,12 @@ compileTestKotlin {
                     }
                 }
             }
+
+            tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+                kotlinOptions {
+                    freeCompilerArgs = ['-Xprogressive']
+                }
+            }
         """
         )
         createProjectSubFile(
@@ -1468,7 +1472,8 @@ compileTestKotlin {
         )
         importProject()
 
-        Assert.assertNotNull(KotlinFacet.get(getModule("project")))
+        val kotlinFacet = KotlinFacet.get(getModule("project"))!!
+        Assert.assertTrue(kotlinFacet.configuration.settings.mergedCompilerArguments!!.progressiveMode)
     }
 
     @Test
