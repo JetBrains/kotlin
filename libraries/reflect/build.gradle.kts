@@ -2,16 +2,24 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import org.gradle.kotlin.dsl.extra
-import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.pill.PillExtension
 import proguard.gradle.ProGuardTask
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
-import java.io.ByteArrayOutputStream
-import java.io.DataInputStream
-import java.io.DataOutputStream
+import kotlinx.metadata.jvm.KotlinModuleMetadata
+import kotlinx.metadata.jvm.KmModuleVisitor
 
 description = "Kotlin Full Reflection Library"
+
+buildscript {
+    repositories {
+        maven(url = "https://kotlin.bintray.com/kotlinx/")
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.0.2")
+    }
+}
 
 plugins {
     java
@@ -85,29 +93,17 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
         fun relocate(content: String): String =
                 context.relocators.fold(content) { acc, relocator -> relocator.applyToSourceContent(acc) }
 
-        val input = DataInputStream(context.`is`)
-        val version = IntArray(input.readInt()) { input.readInt() }
-        logger.info("Transforming ${context.path} with version ${version.toList()}")
-
-        val table = JvmModuleProtoBuf.Module.parseFrom(context.`is`).toBuilder()
-
-        val newTable = JvmModuleProtoBuf.Module.newBuilder().apply {
-            for (packageParts in table.packagePartsList + table.metadataPartsList) {
-                addPackageParts(JvmModuleProtoBuf.PackageParts.newBuilder(packageParts).apply {
-                    packageFqName = relocate(packageFqName)
-                })
+        val metadata = KotlinModuleMetadata.read(context.`is`.readBytes())
+                ?: error("Not a .kotlin_module file: ${context.path}")
+        val writer = KotlinModuleMetadata.Writer()
+        logger.info("Transforming ${context.path}")
+        metadata.accept(object : KmModuleVisitor(writer) {
+            override fun visitPackageParts(fqName: String, fileFacades: List<String>, multiFileClassParts: Map<String, String>) {
+                assert(multiFileClassParts.isEmpty()) { multiFileClassParts } // There are no multi-file class parts in core
+                super.visitPackageParts(relocate(fqName), fileFacades.map(::relocate), multiFileClassParts)
             }
-            addAllJvmPackageName(table.jvmPackageNameList.map(::relocate))
-        }
-
-        val baos = ByteArrayOutputStream()
-        val output = DataOutputStream(baos)
-        output.writeInt(version.size)
-        version.forEach(output::writeInt)
-        newTable.build().writeTo(output)
-        output.flush()
-
-        data += Entry(context.path, baos.toByteArray())
+        })
+        data += Entry(context.path, writer.write().bytes)
     }
 
     override fun hasTransformedResource(): Boolean =
