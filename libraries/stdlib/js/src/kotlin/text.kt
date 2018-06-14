@@ -53,5 +53,27 @@ public actual class StringBuilder(content: String = "") : Appendable, CharSequen
         return this
     }
 
+    /**
+     * Clears the content of this string builder making it empty.
+     *
+     * @sample samples.text.Strings.clearStringBuilder
+     */
+    @SinceKotlin("1.3")
+    public fun clear(): StringBuilder {
+        string = ""
+        return this
+    }
+
     override fun toString(): String = string
 }
+
+
+
+/**
+ * Clears the content of this string builder making it empty.
+ *
+ * @sample samples.text.Strings.clearStringBuilder
+ */
+@SinceKotlin("1.3")
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+public actual fun StringBuilder.clear(): StringBuilder = this.clear()
