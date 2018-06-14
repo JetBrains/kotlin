@@ -306,6 +306,17 @@ public expect fun floor(x: Double): Double
 public expect fun truncate(x: Double): Double
 
 /**
+ * Returns the fractional part of the given value [x].
+ *
+ * @return the result of `x - truncate(x)`.
+ *
+ * Special cases:
+ *   - `frac(x)` is `NaN` where `x` is `NaN` or `+Inf` or `-Inf`.
+ */
+//@SinceKotlin("1.3")
+public fun frac(x: Double): Double = x - truncate(x)
+
+/**
  * Rounds the given value [x] towards the closest integer with ties rounded towards even integer.
  *
  * Special cases:
@@ -764,6 +775,17 @@ public expect fun floor(x: Float): Float
  */
 @SinceKotlin("1.2")
 public expect fun truncate(x: Float): Float
+
+/**
+ * Returns the fractional part of the given value [x].
+ *
+ * @return the result of `x - truncate(x)`.
+ *
+ * Special cases:
+ *   - `frac(x)` is `NaN` where `x` is `NaN` or `+Inf` or `-Inf`.
+ */
+//@SinceKotlin("1.3")
+public fun frac(x: Float): Float = x - truncate(x)
 
 /**
  * Rounds the given value [x] towards the closest integer with ties rounded towards even integer.

@@ -8,17 +8,17 @@ package test.numbers
 import kotlin.math.*
 import kotlin.test.*
 
-fun assertAlmostEquals(expected: Double, actual: Double, tolerance: Double? = null) {
+fun assertAlmostEquals(expected: Double, actual: Double, message: String? = null, tolerance: Double? = null) {
     val tolerance_ = tolerance?.let { abs(it) } ?: 0.000000000001
     if (abs(expected - actual) > tolerance_) {
-        assertEquals(expected, actual)
+        assertEquals(expected, actual, message)
     }
 }
 
-fun assertAlmostEquals(expected: Float, actual: Float, tolerance: Double? = null) {
+fun assertAlmostEquals(expected: Float, actual: Float, message: String? = null, tolerance: Double? = null) {
     val tolerance_ = tolerance?.let { abs(it) } ?: 0.0000001
     if (abs(expected - actual) > tolerance_) {
-        assertEquals(expected, actual)
+        assertEquals(expected, actual, message)
     }
 }
 
@@ -187,6 +187,34 @@ class DoubleMathTest {
         assertEquals(9.999995000003334e-7, ln1p(1e-6))
         assertEquals(Double.MIN_VALUE, ln1p(Double.MIN_VALUE))
         assertEquals(Double.NEGATIVE_INFINITY, ln1p(-1.0))
+    }
+
+    @Test fun fractional() {
+        val dataExact = arrayOf(
+            //               v   frac(v)
+            doubleArrayOf(10.0,  0.0),
+            doubleArrayOf( 0.0,  0.0),
+            doubleArrayOf(-0.0,  0.0),
+            doubleArrayOf(-Double.MAX_VALUE, 0.0)
+        )
+        for ((v, f) in dataExact) {
+            assertEquals(f, frac(v), "frac($v)")
+            assertTrue(v == truncate(v) + frac(v))
+        }
+
+        val dataApprox = arrayOf(
+            doubleArrayOf( 2.3,  0.3),
+            doubleArrayOf(-1000.3, -0.3)
+        )
+        for ((v, f) in dataApprox) {
+            assertAlmostEquals(f, frac(v), "frac($v)")
+            assertTrue(v == truncate(v) + frac(v))
+        }
+
+        val specials = listOf(Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY)
+        for (v in specials) {
+            assertTrue(frac(v).isNaN(), "frac($v)")
+        }
     }
 
     @Test fun rounding() {
@@ -521,6 +549,34 @@ class FloatMathTest {
         assertTrue(ln1p(-1.1F).isNaN())
         assertEquals(0.0F, ln1p(0.0F))
         assertEquals(Float.NEGATIVE_INFINITY, ln1p(-1.0F))
+    }
+
+    @Test fun fractional() {
+        val dataExact = arrayOf(
+            //         v   frac(v)
+            listOf(10.0F,  0.0F),
+            listOf( 0.0F,  0.0F),
+            listOf(-0.0F,  0.0F),
+            listOf(-Float.MAX_VALUE, 0.0F)
+        )
+        for ((v, f) in dataExact) {
+            assertEquals(f, frac(v), "frac($v)")
+            assertTrue(v == truncate(v) + frac(v))
+        }
+
+        val dataApprox = arrayOf(
+            floatArrayOf( 2.3F,     0.3F),
+            floatArrayOf(-1000.3F, -0.3F)
+        )
+        for ((v, f) in dataApprox) {
+            assertAlmostEquals(f, frac(v), "frac($v)", tolerance = 0.0001)
+            assertTrue(v == truncate(v) + frac(v))
+        }
+
+        val specials = listOf(Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY)
+        for (v in specials) {
+            assertTrue(frac(v).isNaN(), "frac($v)")
+        }
     }
 
     @Test fun rounding() {
