@@ -31,7 +31,9 @@ interface TargetableExternalStorage {
     fun downloadDependencies()
 }
 
-abstract class KonanPropertiesLoader(override val target: KonanTarget, val properties: Properties, val baseDir: String? = null) : Configurables {
+abstract class KonanPropertiesLoader(override val target: KonanTarget,
+                                     val properties: Properties,
+                                     val baseDir: String? = null) : Configurables {
     open val dependencies get() = hostTargetList("dependencies")
 
     override fun downloadDependencies() {
@@ -67,7 +69,7 @@ fun Properties.keepOnlyDefaultProfiles() {
     // Force build to use only 'default' profile:
     this.setProperty(DEPENDENCY_PROFILES_KEY, "default")
     // Force build to use fixed Xcode version:
-    this.setProperty("useFixedXcodeVersion", "9.4")
+    this.setProperty("useFixedXcodeVersion", "9.4.1")
     // TODO: it actually affects only resolution made in :dependencies,
     // that's why we assume that 'default' profile comes first (and check this above).
 }
