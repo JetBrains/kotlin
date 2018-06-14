@@ -26,27 +26,19 @@ import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
-import org.jetbrains.kotlin.backend.konan.llvm.types
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.getDefault
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -100,10 +92,11 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
     private fun getFunctionDeclaration(descriptor: FunctionDescriptor): IrFunction? {
         val originalDescriptor = descriptor.resolveFakeOverride().original
-        if (originalDescriptor.isBuiltInIntercepted(languageVersionSettings))
-            return getFunctionDeclaration(context.ir.symbols.intercepted.descriptor)
-        if (originalDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings))
-            return getFunctionDeclaration(context.ir.symbols.suspendCoroutineUninterceptedOrReturn.descriptor)
+        if (originalDescriptor == context.ir.symbols.intercepted)
+            return getFunctionDeclaration(context.ir.symbols.konanIntercepted.descriptor)
+        if (originalDescriptor == context.ir.symbols.suspendCoroutineUninterceptedOrReturn) {
+            return getFunctionDeclaration(context.ir.symbols.konanSuspendCoroutineUninterceptedOrReturn.descriptor)
+        }
         val functionDeclaration =
             context.ir.originalModuleIndex.functions[originalDescriptor] ?:                 // If function is declared in the current module.
                 deserializer.deserializeInlineBody(originalDescriptor)                      // Function is declared in another module.

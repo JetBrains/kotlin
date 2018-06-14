@@ -282,14 +282,22 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val getContinuation = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("getContinuation").single())
 
-    val intercepted = symbolTable.referenceSimpleFunction(
+    val konanIntercepted = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("intercepted").single())
 
-    val suspendCoroutineUninterceptedOrReturn = symbolTable.referenceSimpleFunction(
+    val konanSuspendCoroutineUninterceptedOrReturn = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("suspendCoroutineUninterceptedOrReturn").single())
 
     private val coroutinesPackage = context.builtIns.builtInsModule.getPackage(
         context.config.configuration.languageVersionSettings.coroutinesIntrinsicsPackageFqName()).memberScope
+
+    val intercepted = coroutinesPackage
+            .getContributedFunctions(INTERCEPTED_NAME, NoLookupLocation.FROM_BACKEND)
+            .single()
+
+    val suspendCoroutineUninterceptedOrReturn = coroutinesPackage
+            .getContributedFunctions(SUSPEND_COROUTINE_UNINTERCEPTED_OR_RETURN_NAME, NoLookupLocation.FROM_BACKEND)
+            .single()
 
     override val coroutineImpl = symbolTable.referenceClass(context.getInternalClass("CoroutineImpl"))
 
