@@ -66,6 +66,7 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
                     with(it) {
                         addPluginRepository(additionalRepository)
                         addMavenCentralPluginRepository()
+                        addPluginRepository(DEFAULT_GRADLE_PLUGIN_REPOSITORY)
                     }
                 }
                 buildScriptData.addRepositoriesDefinition("mavenCentral()")

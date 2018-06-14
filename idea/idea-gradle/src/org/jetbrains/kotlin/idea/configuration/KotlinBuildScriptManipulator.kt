@@ -82,6 +82,7 @@ class KotlinBuildScriptManipulator(
                             with(KotlinWithGradleConfigurator.getManipulator(it)) {
                                 addPluginRepository(repository)
                                 addMavenCentralPluginRepository()
+                                addPluginRepository(DEFAULT_GRADLE_PLUGIN_REPOSITORY)
                             }
                         }
                     }
