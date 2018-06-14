@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.SourceInfo
 import java.util.*
 
-val KOTLIN_STRATA_NAME = "Kotlin"
-val KOTLIN_DEBUG_STRATA_NAME = "KotlinDebug"
+const val KOTLIN_STRATA_NAME = "Kotlin"
+const val KOTLIN_DEBUG_STRATA_NAME = "KotlinDebug"
 
 //TODO join parameter
 class SMAPBuilder(
@@ -104,7 +104,7 @@ open class NestedSourceMapper(
             mappedLineNumber
         } else {
             val rangeForMapping =
-                (if (lastVisitedRange?.contains(lineNumber) ?: false) lastVisitedRange!! else findMappingIfExists(lineNumber))
+                (if (lastVisitedRange?.contains(lineNumber) == true) lastVisitedRange!! else findMappingIfExists(lineNumber))
                         ?: error("Can't find range to map line $lineNumber in ${sourceInfo.source}: ${sourceInfo.pathOrCleanFQN}")
             val sourceLineNumber = rangeForMapping.mapDestToSource(lineNumber)
             val newLineNumber = parent.mapLineNumber(sourceLineNumber, rangeForMapping.parent!!.name, rangeForMapping.parent!!.path)
@@ -135,7 +135,7 @@ open class InlineLambdaSourceMapper(
     }
 
     override fun mapLineNumber(lineNumber: Int): Int {
-        if (ranges.firstOrNull()?.contains(lineNumber) ?: false) {
+        if (ranges.firstOrNull()?.contains(lineNumber) == true) {
             //don't remap origin lambda line numbers
             return lineNumber
         }
