@@ -4731,6 +4731,7 @@ public final class kotlin/text/StringsKt {
 	public static final fun chunked (Ljava/lang/CharSequence;ILkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static final fun chunkedSequence (Ljava/lang/CharSequence;I)Lkotlin/sequences/Sequence;
 	public static final fun chunkedSequence (Ljava/lang/CharSequence;ILkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
+	public static final fun clear (Ljava/lang/StringBuilder;)Ljava/lang/StringBuilder;
 	public static final fun commonPrefixWith (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Z)Ljava/lang/String;
 	public static synthetic fun commonPrefixWith$default (Ljava/lang/CharSequence;Ljava/lang/CharSequence;ZILjava/lang/Object;)Ljava/lang/String;
 	public static final fun commonSuffixWith (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Z)Ljava/lang/String;
