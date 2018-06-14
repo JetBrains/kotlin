@@ -36,6 +36,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
+import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ExceptionUtil
 import com.sun.jdi.*
 import com.sun.jdi.request.EventRequest
@@ -70,6 +71,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasse
 import org.jetbrains.kotlin.idea.debugger.getBackingFieldName
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
 import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriorityWithPCE
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
@@ -82,6 +84,7 @@ import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
@@ -220,7 +223,12 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
     companion object {
         private fun extractAndCompile(codeFragment: KtCodeFragment, sourcePosition: SourcePosition, context: EvaluationContextImpl): CompiledDataDescriptor {
-            codeFragment.checkForErrors()
+            val (bindingContext) = codeFragment.checkForErrors()
+
+            if (codeFragment.wrapToStringIfNeeded(bindingContext)) {
+                // Repeat analysis with toString() added
+                codeFragment.checkForErrors()
+            }
 
             val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.file, sourcePosition.line)
                                    ?: throw IllegalStateException("Code fragment cannot be extracted to function: ${codeFragment.text}")
@@ -253,6 +261,29 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     additionalFiles,
                     sourcePosition,
                     parametersDescriptor)
+        }
+
+        private fun KtCodeFragment.wrapToStringIfNeeded(bindingContext: BindingContext): Boolean {
+            if (this !is KtExpressionCodeFragment) {
+                return false
+            }
+
+            val contentElement = runReadAction { getContentElement() }
+            val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, contentElement]?.type
+            if (contentElement != null && expressionType?.isInlineClassType() == true) {
+                val newExpression = runReadAction {
+                    val expressionText = contentElement.text
+                    KtPsiFactory(project).createExpression("($expressionText).toString()")
+                }
+                runInEdtAndWait {
+                    project.executeWriteCommand("Wrap with 'toString()'") {
+                        contentElement.replace(newExpression)
+                    }
+                }
+                return true
+            }
+
+            return false
         }
 
         private fun getClassName(fileName: String): String {
