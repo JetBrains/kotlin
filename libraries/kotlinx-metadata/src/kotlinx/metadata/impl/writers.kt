@@ -406,8 +406,8 @@ private fun writeEffectExpression(c: WriteContext, output: (ProtoBuf.Expression.
     }
 
 open class ClassWriter(stringTable: StringTable) : KmClassVisitor() {
-    val t = ProtoBuf.Class.newBuilder()!!
-    val c = WriteContext(stringTable)
+    protected val t = ProtoBuf.Class.newBuilder()!!
+    protected val c = WriteContext(stringTable)
 
     override fun visit(flags: Flags, name: ClassName) {
         if (flags != ProtoBuf.Class.getDefaultInstance().flags) {
@@ -468,8 +468,8 @@ open class ClassWriter(stringTable: StringTable) : KmClassVisitor() {
 }
 
 open class PackageWriter(stringTable: StringTable) : KmPackageVisitor() {
-    val t = ProtoBuf.Package.newBuilder()!!
-    val c = WriteContext(stringTable)
+    protected val t = ProtoBuf.Package.newBuilder()!!
+    protected val c = WriteContext(stringTable)
 
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
         writeFunction(c, flags, name) { t.addFunction(it) }
@@ -493,8 +493,8 @@ open class PackageWriter(stringTable: StringTable) : KmPackageVisitor() {
 }
 
 open class LambdaWriter(stringTable: StringTable) : KmLambdaVisitor() {
-    var t: ProtoBuf.Function.Builder? = null
-    val c = WriteContext(stringTable)
+    protected var t: ProtoBuf.Function.Builder? = null
+    protected val c = WriteContext(stringTable)
 
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
         writeFunction(c, flags, name) { t = it }
