@@ -2,7 +2,7 @@ LineBreakpoint created at inlineMethodsInSignature.kt:8
 Run Java
 Connected to the target VM
 inlineMethodsInSignature.kt:8
-Compile bytecode for i
+Compile bytecode for (i).toString()
 Disconnected from the target VM
 
 Process finished with exit code 0
