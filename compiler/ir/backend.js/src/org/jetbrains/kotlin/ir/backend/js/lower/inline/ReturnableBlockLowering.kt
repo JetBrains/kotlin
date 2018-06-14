@@ -19,6 +19,53 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
+/**
+ * Replaces returnable blocks and `return`'s with loops and `break`'s correspondingly.
+ *
+ * Converts returnable blocks into regular composite blocks when the only `return` is the last statement.
+ *
+ * ```
+ * block {
+ *   ...
+ *   return@block e
+ *   ...
+ * }
+ * ```
+ *
+ * is transformed into
+ *
+ * ```
+ * {
+ *   val result
+ *   loop@ do {
+ *     ...
+ *     {
+ *       result = e
+ *       break@loop
+ *     }
+ *     ...
+ *   } while (false)
+ *   result
+ * }
+ * ```
+ *
+ * When the only `return` for the block is the last statement:
+ *
+ * ```
+ * block {
+ *   ...
+ *   return@block e
+ * }
+ * ```
+ *
+ * is transformed into
+ *
+ * {
+ *   ...
+ *   e
+ * }
+ *
+ */
 class ReturnableBlockLowering(val context: JsIrBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transform(ReturnableBlockTransformer(context), ReturnableBlockLoweringContext(irFile))
