@@ -133,7 +133,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test<T> flags:val
-          TYPE_OP type=Test<T> origin=CAST typeOperand=Test<T>
+          TYPE_OP type=Test<T> origin=IMPLICIT_CAST typeOperand=Test<T>
             typeOperand: CLASS CLASS name:Test modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
