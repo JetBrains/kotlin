@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.android.synthetic.idea.res
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.android.synthetic.idea.androidExtensionsIsExperiment
 import org.jetbrains.kotlin.android.synthetic.res.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
@@ -62,9 +64,16 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
     }
 
     override fun doExtractResources(layoutGroup: AndroidLayoutGroupData, module: ModuleDescriptor): AndroidLayoutGroup {
-        val layouts = layoutGroup.layouts.filter { it.isValid }.map { layout ->
+        val psiManager = PsiManager.getInstance(project)
+        val layouts = layoutGroup.layouts.map { psiFile ->
+            // Sometimes due to a race of later-invoked runnables, the PsiFile can be invalidated; make sure to refresh if possible,
+            val layout = when {
+                psiFile.isValid -> psiFile
+                else -> runReadAction { psiManager.findFile(psiFile.virtualFile) }
+            }
+
             val resources = arrayListOf<AndroidResource>()
-            layout.accept(AndroidXmlVisitor { id, widgetType, attribute ->
+            layout?.accept(AndroidXmlVisitor { id, widgetType, attribute ->
                 resources += parseAndroidResource(id, widgetType, attribute.valueElement)
             })
             AndroidLayout(resources)
