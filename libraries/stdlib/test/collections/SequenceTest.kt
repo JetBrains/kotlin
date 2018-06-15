@@ -543,6 +543,14 @@ public class SequenceTest {
         assertEquals(listOf("act", "wast", "test"), sequenceOf("act", "test", "wast").sortedWith(comparator).toList())
     }
 
+    @Test fun orEmpty() {
+        val s1: Sequence<Int>? = null
+        assertEquals(emptySequence(), s1.orEmpty())
+
+        val s2: Sequence<Int>? = sequenceOf(1)
+        assertEquals(s2, s2.orEmpty())
+    }
+
     /*
     test fun pairIterator() {
         val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).joinToString(limit = 10)
