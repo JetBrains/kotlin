@@ -549,6 +549,10 @@ fun main(args: Array<String>) {
             model("codeInsight/lineMarker")
         }
 
+        testClass<AbstractLineMarkersTestInLibrarySources> {
+            model("codeInsightInLibrary/lineMarker", testMethod = "doTestWithLibrary")
+        }
+
         testClass<AbstractMultiModuleLineMarkerTest> {
             model("multiModuleLineMarker", extension = null, recursive = false)
         }

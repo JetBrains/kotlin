@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.rt.execution.junit.FileComparisonFailure
@@ -40,58 +41,63 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
         return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
     }
 
-    fun doTest(path: String) {
+    fun doTest(path: String) = doTest(path) {}
+
+    protected fun doAndCheckHighlighting(
+        documentToAnalyze: Document, expectedHighlighting: ExpectedHighlightingData, expectedFile: File
+    ): List<LineMarkerInfo<*>> {
+        myFixture.doHighlighting()
+
+        val markers = DaemonCodeAnalyzerImpl.getLineMarkers(documentToAnalyze, myFixture.project)
+
+        try {
+            expectedHighlighting.checkLineMarkers(markers, documentToAnalyze.text)
+
+            // This is a workaround for sad bug in ExpectedHighlightingData:
+            // the latter doesn't throw assertion error when some line markers are expected, but none are present.
+            if (FileUtil.loadFile(expectedFile).contains("<lineMarker") && markers.isEmpty()) {
+                throw AssertionError("Some line markers are expected, but nothing is present at all")
+            }
+        } catch (error: AssertionError) {
+            try {
+                val actualTextWithTestData = TagsTestDataUtil.insertInfoTags(markers, true, myFixture.file.text)
+                KotlinTestUtils.assertEqualsToFile(expectedFile, actualTextWithTestData)
+            } catch (failure: FileComparisonFailure) {
+                throw FileComparisonFailure(
+                    error.message + "\n" + failure.message,
+                    failure.expected,
+                    failure.actual,
+                    failure.filePath
+                )
+            }
+        }
+        return markers
+    }
+
+    fun doTest(path: String, additionalCheck: () -> Unit) {
         val fileText = FileUtil.loadFile(File(path))
         try {
             ConfigLibraryUtil.configureLibrariesByDirective(myFixture.module, PlatformTestUtil.getCommunityPath(), fileText)
-            if (InTextDirectivesUtils.findStringWithPrefixes(fileText,"METHOD_SEPARATORS") != null) {
+            if (InTextDirectivesUtils.findStringWithPrefixes(fileText, "METHOD_SEPARATORS") != null) {
                 DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS = true
             }
-
 
             myFixture.configureByFile(path)
             val project = myFixture.project
             val document = myFixture.editor.document
 
-            val data = ExpectedHighlightingData(
-                    document, false, false, false, myFixture.file)
+            val data = ExpectedHighlightingData(document, false, false, false, myFixture.file)
             data.init()
 
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-            myFixture.doHighlighting()
-
-            val markers = DaemonCodeAnalyzerImpl.getLineMarkers(document, project)
-
-            try {
-                data.checkLineMarkers(markers, document.text)
-
-                // This is a workaround for sad bug in ExpectedHighlightingData:
-                // the latter doesn't throw assertion error when some line markers are expected, but none are present.
-                if (FileUtil.loadFile(File(path)).contains("<lineMarker") && markers.isEmpty()) {
-                    throw AssertionError("Some line markers are expected, but nothing is present at all")
-                }
-            }
-            catch (error: AssertionError) {
-                try {
-                    val actualTextWithTestData = TagsTestDataUtil.insertInfoTags(markers, true, myFixture.file.text)
-                    KotlinTestUtils.assertEqualsToFile(File(path), actualTextWithTestData)
-                }
-                catch (failure: FileComparisonFailure) {
-                    throw FileComparisonFailure(error.message + "\n" + failure.message,
-                                                failure.expected,
-                                                failure.actual,
-                                                failure.filePath)
-                }
-
-            }
+            val markers = doAndCheckHighlighting(document, data, File(path))
 
             assertNavigationElements(markers)
-        }
-        catch (exc: Exception) {
+            additionalCheck()
+        } catch (exc: Exception) {
             throw RuntimeException(exc)
-        }
-        finally {
+        } finally {
             ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
             DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS = false
         }
