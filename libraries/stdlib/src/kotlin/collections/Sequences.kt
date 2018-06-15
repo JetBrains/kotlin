@@ -48,6 +48,14 @@ private object EmptySequence : Sequence<Nothing>, DropTakeSequence<Nothing> {
 }
 
 /**
+ * Returns this sequence if it's not `null` and the empty sequence otherwise.
+ * @sample samples.collections.Sequences.Usage.sequenceOrEmpty
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>?.orEmpty(): Sequence<T> = this ?: emptySequence()
+
+/**
  * Returns a sequence of all elements from all sequences in this sequence.
  *
  * The operation is _intermediate_ and _stateless_.
