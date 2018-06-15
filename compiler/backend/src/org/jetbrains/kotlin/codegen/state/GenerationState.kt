@@ -229,12 +229,12 @@ class GenerationState private constructor(
 
     val jvmDefaultMode = languageVersionSettings.getFlag(AnalysisFlag.jvmDefaultMode)
 
-    init {
-        val disableOptimization = configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)
+    val disableOptimization = configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)
 
+    init {
         this.interceptedBuilderFactory = builderFactory
             .wrapWith(
-                { OptimizationClassBuilderFactory(it, disableOptimization, constructorCallNormalizationMode) },
+                { OptimizationClassBuilderFactory(it, this) },
                 {
                     BuilderFactoryForDuplicateSignatureDiagnostics(
                         it, this.bindingContext, diagnostics, this.moduleName,
