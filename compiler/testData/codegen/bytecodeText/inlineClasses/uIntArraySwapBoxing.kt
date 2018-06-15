@@ -16,8 +16,8 @@ fun UIntArray.swap(i: Int, j: Int) {
     this[j] = this[i].also { this[i] = this[j] }
 }
 
-// 2 INVOKEVIRTUAL UInt.unbox
-// 1 INVOKESTATIC UInt\$Erased.box
+// 0 INVOKEVIRTUAL UInt.unbox
+// 0 INVOKESTATIC UInt\$Erased.box
 
 // 0 intValue
 // 0 valueOf

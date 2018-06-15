@@ -424,6 +424,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/fold.kt");
         }
 
+        @TestMetadata("inlineClassesAndInlinedLambda.kt")
+        public void testInlineClassesAndInlinedLambda() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/inlineClassesAndInlinedLambda.kt");
+        }
+
         @TestMetadata("intCompareTo.kt")
         public void testIntCompareTo() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/intCompareTo.kt");

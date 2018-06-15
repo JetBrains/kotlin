@@ -39,6 +39,25 @@ class OptimizationMethodVisitor(
     private val constructorCallNormalizationTransformer =
         UninitializedStoresMethodTransformer(generationState.constructorCallNormalizationMode)
 
+    val normalizationMethodTransformer = CompositeMethodTransformer(
+        FixStackWithLabelNormalizationMethodTransformer(),
+        MethodVerifier("AFTER mandatory stack transformations")
+    )
+
+    val optimizationTransformer = CompositeMethodTransformer(
+        CapturedVarsOptimizationMethodTransformer(),
+        RedundantNullCheckMethodTransformer(generationState),
+        RedundantCheckCastEliminationMethodTransformer(),
+        ConstantConditionEliminationMethodTransformer(),
+        RedundantBoxingMethodTransformer(generationState),
+        StackPeepholeOptimizationsTransformer(),
+        PopBackwardPropagationTransformer(),
+        DeadCodeEliminationMethodTransformer(),
+        RedundantGotoMethodTransformer(),
+        RedundantNopsCleanupMethodTransformer(),
+        MethodVerifier("AFTER optimizations")
+    )
+
     override fun performTransformations(methodNode: MethodNode) {
         normalizationMethodTransformer.transform("fake", methodNode)
         constructorCallNormalizationTransformer.transform("fake", methodNode)
@@ -52,25 +71,6 @@ class OptimizationMethodVisitor(
 
     companion object {
         private val MEMORY_LIMIT_BY_METHOD_MB = 50
-
-        val normalizationMethodTransformer = CompositeMethodTransformer(
-            FixStackWithLabelNormalizationMethodTransformer(),
-            MethodVerifier("AFTER mandatory stack transformations")
-        )
-
-        val optimizationTransformer = CompositeMethodTransformer(
-            CapturedVarsOptimizationMethodTransformer(),
-            RedundantNullCheckMethodTransformer(),
-            RedundantCheckCastEliminationMethodTransformer(),
-            ConstantConditionEliminationMethodTransformer(),
-            RedundantBoxingMethodTransformer(),
-            StackPeepholeOptimizationsTransformer(),
-            PopBackwardPropagationTransformer(),
-            DeadCodeEliminationMethodTransformer(),
-            RedundantGotoMethodTransformer(),
-            RedundantNopsCleanupMethodTransformer(),
-            MethodVerifier("AFTER optimizations")
-        )
 
         fun canBeOptimized(node: MethodNode): Boolean {
             val totalFramesSizeMb = node.instructions.size() * (node.maxLocals + node.maxStack) / (1024 * 1024)
