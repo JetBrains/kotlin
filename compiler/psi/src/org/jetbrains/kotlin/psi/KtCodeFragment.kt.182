@@ -99,7 +99,7 @@ abstract class KtCodeFragment(
     override fun clone(): KtCodeFragment {
         val clone = cloneImpl(calcTreeElement().clone() as FileElement) as KtCodeFragment
         clone.isPhysical = false
-        clone.originalFile = this
+        clone.myOriginalFile = this
         clone.imports = imports
         clone.viewProvider =
                 SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(name, KotlinFileType.INSTANCE, text), false)
