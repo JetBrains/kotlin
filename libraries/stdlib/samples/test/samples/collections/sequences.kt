@@ -7,6 +7,19 @@ import kotlin.coroutines.experimental.buildSequence
 
 @RunWith(Enclosed::class)
 class Sequences {
+
+    class Usage {
+
+        @Sample
+        fun sequenceOrEmpty() {
+            val nullSequence: Sequence<Int>? = null
+            assertPrints(nullSequence.orEmpty().toList(), "[]")
+
+            val sequence: Sequence<Int>? = sequenceOf(1, 2, 3)
+            assertPrints(sequence.orEmpty().toList(), "[1, 2, 3]")
+        }
+    }
+
     class Building {
 
         @Sample
