@@ -13,9 +13,9 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtilCore
-import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.plugins.gradle.execution.GradleOrderEnumeratorHandler
 import org.jetbrains.plugins.gradle.model.ExternalSourceDirectorySet
@@ -49,7 +49,6 @@ class AndroidGradleOrderEnumerationHandler(module: Module) : GradleOrderEnumerat
         KotlinFacet.get(rootModel.module) ?: return false
 
         val module = rootModel.module
-        fun Module.isAndroidModule() = AndroidFacet.getInstance(this) != null
 
         // The current module has to be an ordinary Java module, but the code below is for Android projects
         if (module.isAndroidModule() || ModuleManager.getInstance(module.project).modules.none { it.isAndroidModule() }) {
