@@ -457,6 +457,10 @@ private val ANNOTATION_PROCESSOR = "annotationProcessor"
 private val ANNOTATION_PROCESSOR_CAP = ANNOTATION_PROCESSOR.capitalize()
 
 internal fun checkAndroidAnnotationProcessorDependencyUsage(project: Project) {
+    if (project.hasProperty("kapt.dont.warn.annotationProcessor.dependencies")) {
+        return
+    }
+
     val isKapt3Enabled = Kapt3GradleSubplugin.isEnabled(project)
 
     val apConfigurations = project.configurations
