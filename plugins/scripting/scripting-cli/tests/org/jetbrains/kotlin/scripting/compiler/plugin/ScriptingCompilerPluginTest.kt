@@ -156,6 +156,42 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
 
         Assert.assertEquals(ExitCode.OK, exitCode)
     }
+
+    fun testLazyScriptDefinitionOtherAnnotation() {
+
+        val defsOut = File(tmpdir, "testLazyScriptDefinition/out/otherAnn")
+        val defsSrc = File(TEST_DATA_DIR, "lazyDefinitions/definitions")
+        val defClasses = listOf("TestScriptWithOtherAnnotation")
+
+        val messageCollector = TestMessageCollector()
+
+        val definitionsCompileResult = KotlinToJVMBytecodeCompiler.compileBunchOfSources(
+            createEnvironment(defClasses.map { File(defsSrc, "$it.kt").canonicalPath }, defsOut, messageCollector) {
+                addJvmClasspathRoots(runtimeClasspath)
+                addJvmClasspathRoots(scriptingClasspath)
+            }
+        )
+
+        assertTrue(definitionsCompileResult) {
+            "Compilation of script definitions failed: $messageCollector"
+        }
+
+        val templatesDir = File(defsOut, SCRIPT_DEFINITION_MARKERS_PATH).also { it.mkdirs() }
+        for (def in defClasses) {
+            File(templatesDir, def).createNewFile()
+        }
+
+        messageCollector.clear()
+
+        discoverScriptTemplatesInClasspath(listOf(defsOut), emptyList(), this::class.java.classLoader, emptyMap(), messageCollector).toList()
+
+        assertTrue(
+            messageCollector.messages.isNotEmpty()
+                    && messageCollector.messages.all { it.message.contains("s not marked with any known kotlin script annotation") }
+        ) {
+            "Unexpected messages from discovery sequence:\n$messageCollector"
+        }
+    }
 }
 
 class TestMessageCollector : MessageCollector {
