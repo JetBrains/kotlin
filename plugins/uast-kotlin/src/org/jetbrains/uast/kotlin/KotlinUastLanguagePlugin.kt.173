@@ -17,6 +17,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.lang.Language
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -27,13 +28,12 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -46,9 +46,11 @@ import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
-interface KotlinUastBindingContextProviderService {
+interface KotlinUastResolveProviderService {
     fun getBindingContext(element: KtElement): BindingContext
     fun getTypeMapper(element: KtElement): KotlinTypeMapper?
+    fun getLanguageVersionSettings(element: KtElement): LanguageVersionSettings
+    fun isJvmElement(psiElement: PsiElement): Boolean
 }
 
 var PsiElement.destructuringDeclarationInitializer: Boolean? by UserDataProperty(Key.create("kotlin.uast.destructuringDeclarationInitializer"))
@@ -63,14 +65,10 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         return fileName.endsWith(".kt", false) || fileName.endsWith(".kts", false)
     }
 
-    private val PsiElement.isJvmElement
-        get() = try {
-            // Workaround for UAST used without full-fledged IDEA when ProjectFileIndex is not available
-            // If we can't get the module (or don't have one), act as if the current platform is JVM
-            val module = module
-            module == null || TargetPlatformDetector.getPlatform(module) is JvmPlatform
-        } catch (e: Exception) {
-            true
+    private val PsiElement.isJvmElement: Boolean
+        get() {
+            val resolveProvider = ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)
+            return resolveProvider.isJvmElement(this)
         }
 
     override fun convertElement(element: PsiElement, parent: UElement?, requiredType: Class<out UElement>?): UElement? {
