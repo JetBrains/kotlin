@@ -51,7 +51,8 @@ class GenerationState private constructor(
     moduleName: String?,
     val outDirectory: File?,
     private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
-    wantsDiagnostics: Boolean
+    wantsDiagnostics: Boolean,
+    val jvmBackendClassResolver: JvmBackendClassResolver
 ) {
 
     class Builder(
@@ -94,11 +95,16 @@ class GenerationState private constructor(
         fun wantsDiagnostics(v: Boolean) =
             apply { wantsDiagnostics = v }
 
+        var jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module); private set
+        fun jvmBackendClassResolver(v: JvmBackendClassResolver) =
+            apply { jvmBackendClassResolver = v }
+
         fun build() =
             GenerationState(
                 project, builderFactory, module, bindingContext, files, configuration,
                 generateDeclaredClassFilter, codegenFactory, targetId,
-                moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics
+                moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics,
+                jvmBackendClassResolver
             )
     }
 
