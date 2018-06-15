@@ -27,6 +27,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.language.cpp.internal.NativeVariantIdentity
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
@@ -360,12 +361,13 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                     val konanSoftwareComponent = buildingConfig.mainVariant
                     project.extensions.configure(PublishingExtension::class.java) {
                         val builtArtifact = buildingConfig.name
-                        val mavenPublication = it.publications.maybeCreate(builtArtifact) as MavenPublication
+                        val mavenPublication = it.publications.maybeCreate(builtArtifact, MavenPublication::class.java)
                         mavenPublication.apply {
                             artifactId = builtArtifact
                             groupId = project.group.toString()
                             from(konanSoftwareComponent)
                         }
+                        (mavenPublication as MavenPublicationInternal).publishWithOriginalFileName()
                         buildingConfig.pomActions.forEach {
                             mavenPublication.pom(it)
                         }
@@ -381,6 +383,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                                 mavenPublication.groupId = coordinates.group
                                 mavenPublication.version = coordinates.version
                                 mavenPublication.from(v)
+                                (mavenPublication as MavenPublicationInternal).publishWithOriginalFileName()
                                 buildingConfig.pomActions.forEach {
                                     mavenPublication.pom(it)
                                 }
