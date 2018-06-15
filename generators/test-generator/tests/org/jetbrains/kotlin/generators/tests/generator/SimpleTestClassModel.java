@@ -137,7 +137,7 @@ public class SimpleTestClassModel implements TestClassModel {
         if (testMethods == null) {
             if (!rootFile.isDirectory()) {
                 if (CoroutinesKt.isCommonCoroutineTest(rootFile)) {
-                    testMethods = CoroutinesKt.createCommonCoroutinesTestMethodModels(rootFile, rootFile, doTestMethodName, filenamePattern,
+                    testMethods = CoroutinesKt.createCommonCoroutinesTestMethodModels(rootFile, rootFile, filenamePattern,
                                                                                       checkFilenameStartsLowerCase, targetBackend,
                                                                                       skipIgnored);
                 }
@@ -155,6 +155,9 @@ public class SimpleTestClassModel implements TestClassModel {
                 result.add(new TestAllFilesPresentMethodModel());
 
                 File[] listFiles = rootFile.listFiles();
+
+                boolean hasCoroutines = false;
+
                 if (listFiles != null) {
                     for (File file : listFiles) {
                         if (filenamePattern.matcher(file.getName()).matches()) {
@@ -164,7 +167,8 @@ public class SimpleTestClassModel implements TestClassModel {
                             }
 
                             if (!file.isDirectory() && CoroutinesKt.isCommonCoroutineTest(file)) {
-                                result.addAll(CoroutinesKt.createCommonCoroutinesTestMethodModels(rootFile, file, doTestMethodName,
+                                hasCoroutines = true;
+                                result.addAll(CoroutinesKt.createCommonCoroutinesTestMethodModels(rootFile, file,
                                                                                                   filenamePattern,
                                                                                                   checkFilenameStartsLowerCase,
                                                                                                   targetBackend, skipIgnored));
@@ -176,6 +180,12 @@ public class SimpleTestClassModel implements TestClassModel {
                         }
                     }
                 }
+
+                if (hasCoroutines) {
+                    String methodName = doTestMethodName + "WithCoroutinesPackageReplacement";
+                    result.add(new RunTestMethodWithPackageReplacementModel(targetBackend, methodName, testRunnerMethodName));
+                }
+
                 result.sort(BY_NAME);
 
                 testMethods = result;
