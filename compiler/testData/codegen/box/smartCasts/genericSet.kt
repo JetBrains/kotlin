@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class Wrapper<T>(var x: T)
 
 inline fun <reified T> change(w: Wrapper<T>, x: Any?) {

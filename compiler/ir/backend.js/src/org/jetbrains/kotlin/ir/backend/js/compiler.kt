@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.lower.*
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.FunctionInlining
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.ReturnableBlockLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.referenceAllTypeExternalClassifiers
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.replaceUnboundSymbols
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -73,6 +70,10 @@ fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment) {
     } while (symbolTable.unboundClasses.isNotEmpty())
 
     moduleFragment.patchDeclarationParents()
+
+    moduleFragment.files.forEach { file ->
+        RemoveInlineFunctionsWithReifiedTypeParametersLowering.runOnFilePostfix(file)
+    }
 }
 
 fun JsIrBackendContext.lower(file: IrFile) {
