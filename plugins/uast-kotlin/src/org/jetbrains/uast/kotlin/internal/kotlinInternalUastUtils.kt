@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
@@ -202,12 +201,16 @@ internal fun KotlinType.toPsiType(lightDeclaration: PsiModifierListOwner?, conte
     if (this.containsLocalTypes()) return UastErrorType
 
     val project = context.project
-    val typeMapper = ServiceManager.getService(project, KotlinUastBindingContextProviderService::class.java)
+
+    val typeMapper = ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)
         .getTypeMapper(context) ?: return UastErrorType
+
+    val languageVersionSettings = ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)
+        .getLanguageVersionSettings(context)
 
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
     val typeMappingMode = if (boxed) TypeMappingMode.GENERIC_ARGUMENT else TypeMappingMode.DEFAULT
-    val approximatedType = TypeApproximator().approximateDeclarationType(this, true, context.languageVersionSettings)
+    val approximatedType = TypeApproximator().approximateDeclarationType(this, true, languageVersionSettings)
     typeMapper.mapType(approximatedType, signatureWriter, typeMappingMode)
 
     val signature = StringCharacterIterator(signatureWriter.toString())
@@ -281,7 +284,7 @@ internal fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
 
 internal fun KtElement.analyze(): BindingContext {
     if (containingFile !is KtFile) return BindingContext.EMPTY // EA-114080, EA-113475
-    return ServiceManager.getService(project, KotlinUastBindingContextProviderService::class.java)
+    return ServiceManager.getService(project, KotlinUastResolveProviderService::class.java)
         ?.getBindingContext(this) ?: BindingContext.EMPTY
 }
 

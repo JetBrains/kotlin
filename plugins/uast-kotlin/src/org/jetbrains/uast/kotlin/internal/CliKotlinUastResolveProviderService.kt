@@ -1,10 +1,16 @@
 package org.jetbrains.uast.kotlin.internal
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.container.ComponentProvider
+import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtElement
@@ -12,9 +18,9 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
-import org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService
+import org.jetbrains.uast.kotlin.KotlinUastResolveProviderService
 
-class CliKotlinUastBindingContextProviderService : KotlinUastBindingContextProviderService {
+class CliKotlinUastResolveProviderService : KotlinUastResolveProviderService {
     val Project.analysisCompletedHandler: UastAnalysisHandlerExtension?
         get() = getExtensions(AnalysisHandlerExtension.extensionPointName)
                 .filterIsInstance<UastAnalysisHandlerExtension>()
@@ -27,13 +33,22 @@ class CliKotlinUastBindingContextProviderService : KotlinUastBindingContextProvi
     override fun getTypeMapper(element: KtElement): KotlinTypeMapper? {
         return element.project.analysisCompletedHandler?.getTypeMapper()
     }
+
+    override fun isJvmElement(psiElement: PsiElement) = true
+
+    override fun getLanguageVersionSettings(element: KtElement): LanguageVersionSettings {
+        return element.project.analysisCompletedHandler?.getLanguageVersionSettings() ?: LanguageVersionSettingsImpl.DEFAULT
+    }
 }
 
 class UastAnalysisHandlerExtension : AnalysisHandlerExtension {
     private var context: BindingContext? = null
     private var typeMapper: KotlinTypeMapper? = null
+    private var languageVersionSettings: LanguageVersionSettings? = null
 
     fun getBindingContext() = context
+
+    fun getLanguageVersionSettings() = languageVersionSettings
 
     fun getTypeMapper(): KotlinTypeMapper? {
         if (typeMapper != null) return typeMapper
@@ -45,6 +60,18 @@ class UastAnalysisHandlerExtension : AnalysisHandlerExtension {
         )
         this.typeMapper = typeMapper
         return typeMapper
+    }
+
+    override fun doAnalysis(
+        project: Project,
+        module: ModuleDescriptor,
+        projectContext: ProjectContext,
+        files: Collection<KtFile>,
+        bindingTrace: BindingTrace,
+        componentProvider: ComponentProvider
+    ): AnalysisResult? {
+        languageVersionSettings = componentProvider.get<LanguageVersionSettings>()
+        return super.doAnalysis(project, module, projectContext, files, bindingTrace, componentProvider)
     }
 
     override fun analysisCompleted(
