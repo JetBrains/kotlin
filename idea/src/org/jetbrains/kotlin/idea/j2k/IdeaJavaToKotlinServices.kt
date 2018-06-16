@@ -59,3 +59,9 @@ private object IdeaJavaDataFlowAnalyzerFacade : JavaDataFlowAnalyzerFacade {
         IntellijNullability.NULLABLE -> Nullability.Nullable
     }
 }
+
+object IdeaNewJavaToKotlinServices : NewJavaToKotlinServices {
+    override val oldServices: JavaToKotlinConverterServices
+        get() = IdeaJavaToKotlinServices
+
+}
