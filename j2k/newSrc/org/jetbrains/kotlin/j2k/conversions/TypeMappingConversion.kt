@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
@@ -27,7 +28,10 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
                 is JKJavaPrimitiveType -> mapPrimitiveType(type, element)
                 is JKClassType -> mapClassType(type, element)
                 is JKJavaVoidType -> classTypeByFqName(
-                    context.backAnnotator(element), ClassId.fromString("kotlin.Unit"), emptyList(), Nullability.NotNull
+                    context.backAnnotator(element),
+                    ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.unit.toSafe()),
+                    emptyList(),
+                    Nullability.NotNull
                 )?.let { JKTypeElementImpl(it) } ?: element
                 else -> applyRecursive(element, this::applyToElement)
             }
