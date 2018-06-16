@@ -58,7 +58,6 @@ interface JKVisitor<out R, in D> {
     fun visitJavaFieldAccessExpression(javaFieldAccessExpression: JKJavaFieldAccessExpression, data: D): R = visitFieldAccessExpression(javaFieldAccessExpression, data)
     fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression, data: D): R = visitExpression(javaNewExpression, data)
     fun visitJavaDefaultNewExpression(javaDefaultNewExpression: JKJavaDefaultNewExpression, data: D): R = visitExpression(javaDefaultNewExpression, data)
-    fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier, data: D): R = visitAccessModifier(javaAccessModifier, data)
     fun visitJavaModifier(javaModifier: JKJavaModifier, data: D): R = visitModifier(javaModifier, data)
     fun visitJavaNewEmptyArray(javaNewEmptyArray: JKJavaNewEmptyArray, data: D): R = visitExpression(javaNewEmptyArray, data)
     fun visitJavaNewArray(javaNewArray: JKJavaNewArray, data: D): R = visitExpression(javaNewArray, data)

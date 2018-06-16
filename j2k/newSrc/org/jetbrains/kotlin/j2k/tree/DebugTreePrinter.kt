@@ -36,10 +36,6 @@ private class DebugTreePrinter : JKVisitorVoid {
         printer.println(javaModifier.classNameWithoutJK(), "(", javaModifier.type, ")")
     }
 
-    override fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier) {
-        printer.println(javaAccessModifier.classNameWithoutJK(), "(", javaAccessModifier.type, ")")
-    }
-
     override fun visitJavaMethod(javaMethod: JKJavaMethod) {
         printer.println(javaMethod.classNameWithoutJK(), " [")
         printer.indented {

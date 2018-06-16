@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.j2k.tree.JKElement
 
 data class ConversionContext(
     val symbolProvider: JKSymbolProvider,
-    val project: Project,
+    val converter: NewJavaToKotlinConverter,
     val backAnnotator: (JKElement) -> PsiElement?
-)
+) {
+
+    val project: Project get() = converter.project
+}

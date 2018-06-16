@@ -43,19 +43,11 @@ interface JKJavaDefaultNewExpression : JKExpression {
     val classSymbol: JKClassSymbol
 }
 
-interface JKJavaAccessModifier : JKAccessModifier {
-    val type: AccessModifierType
-
-    enum class AccessModifierType {
-        PUBLIC, PROTECTED, PRIVATE
-    }
-}
-
 interface JKJavaModifier : JKModifier {
     val type: JavaModifierType
 
     enum class JavaModifierType {
-        ABSTRACT, FINAL, NATIVE, STATIC, STRICTFP, SYNCHRONIZED, TRANSIENT, VOLATILE
+        NATIVE, STATIC, STRICTFP, SYNCHRONIZED, TRANSIENT, VOLATILE
     }
 }
 
