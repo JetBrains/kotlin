@@ -113,8 +113,6 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression, data: Nothing?) = visitJavaNewExpression(javaNewExpression)
     fun visitJavaDefaultNewExpression(javaDefaultNewExpression: JKJavaDefaultNewExpression) = visitExpression(javaDefaultNewExpression, null)
     override fun visitJavaDefaultNewExpression(javaDefaultNewExpression: JKJavaDefaultNewExpression, data: Nothing?) = visitJavaDefaultNewExpression(javaDefaultNewExpression)
-    fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier) = visitAccessModifier(javaAccessModifier, null)
-    override fun visitJavaAccessModifier(javaAccessModifier: JKJavaAccessModifier, data: Nothing?) = visitJavaAccessModifier(javaAccessModifier)
     fun visitJavaModifier(javaModifier: JKJavaModifier) = visitModifier(javaModifier, null)
     override fun visitJavaModifier(javaModifier: JKJavaModifier, data: Nothing?) = visitJavaModifier(javaModifier)
     fun visitJavaNewEmptyArray(javaNewEmptyArray: JKJavaNewEmptyArray) = visitExpression(javaNewEmptyArray, null)

@@ -52,6 +52,20 @@ class JKModifierListImpl(
     override var modifiers: List<JKModifier> by children(modifiers)
 }
 
+
+var JKModifierList.modality
+    get() = modifiers.filterIsInstance<JKModalityModifier>().first().modality
+    set(value) {
+        modifiers = modifiers.filterNot { it is JKModalityModifier } + JKModalityModifierImpl(value)
+    }
+
+var JKModifierList.visibility
+    get() = modifiers.filterIsInstance<JKAccessModifier>().first().visibility
+    set(value) {
+        modifiers = modifiers.filterNot { it is JKAccessModifier } + JKAccessModifierImpl(value)
+    }
+
+
 class JKParameterImpl(
     type: JKTypeElement,
     name: JKNameIdentifier,
@@ -285,4 +299,12 @@ class JKIfElseExpressionImpl(condition: JKExpression, thenBranch: JKExpression, 
 
 class JKClassAccessExpressionImpl(override var identifier: JKClassSymbol) : JKClassAccessExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClassAccessExpression(this, data)
+}
+
+class JKModalityModifierImpl(override val modality: JKModalityModifier.Modality) : JKModalityModifier, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitModalityModifier(this, data)
+}
+
+class JKAccessModifierImpl(override val visibility: JKAccessModifier.Visibility) : JKAccessModifier, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAccessModifier(this, data)
 }

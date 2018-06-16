@@ -324,18 +324,43 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
     }
 
     private inner class ModifierMapper {
-        fun PsiModifierList?.toJK(): JKModifierList = JKModifierListImpl(
-            if (this == null) emptyList()
-            else PsiModifier.MODIFIERS.filter { hasExplicitModifier(it) }.map { modifierToJK(it) }.toMutableList()
-        )
+        fun PsiModifierList?.toJK(): JKModifierList {
 
-        fun modifierToJK(name: String): JKModifier = when (name) {
-            PsiModifier.PUBLIC -> JKJavaAccessModifierImpl(JKJavaAccessModifier.AccessModifierType.PUBLIC)
-            PsiModifier.PRIVATE -> JKJavaAccessModifierImpl(JKJavaAccessModifier.AccessModifierType.PRIVATE)
-            PsiModifier.PROTECTED -> JKJavaAccessModifierImpl(JKJavaAccessModifier.AccessModifierType.PROTECTED)
+            val modifiers = if (this == null) mutableListOf()
+            else PsiModifier.MODIFIERS.filter { hasExplicitModifier(it) }.mapNotNull { modifierToJK(it) }.toMutableList()
 
-            PsiModifier.ABSTRACT -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.ABSTRACT)
-            PsiModifier.FINAL -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.FINAL)
+            modifiers += extractAccess()
+            modifiers += extractModality()
+
+            return JKModifierListImpl(
+                modifiers
+            )
+        }
+
+        fun PsiModifierList?.extractModality(): JKModalityModifier {
+            val modality = when {
+                this == null -> JKModalityModifier.Modality.OPEN
+                hasModifierProperty(PsiModifier.FINAL) -> JKModalityModifier.Modality.FINAL
+                hasModifierProperty(PsiModifier.ABSTRACT) -> JKModalityModifier.Modality.ABSTRACT
+                else -> JKModalityModifier.Modality.OPEN
+            }
+            return JKModalityModifierImpl(modality)
+        }
+
+
+        fun PsiModifierList?.extractAccess(): JKAccessModifier {
+            val visibility = when {
+                this == null -> JKAccessModifier.Visibility.PACKAGE_PRIVATE
+                hasModifierProperty(PsiModifier.PACKAGE_LOCAL) -> JKAccessModifier.Visibility.PACKAGE_PRIVATE
+                hasModifierProperty(PsiModifier.PRIVATE) -> JKAccessModifier.Visibility.PRIVATE
+                hasModifierProperty(PsiModifier.PROTECTED) -> JKAccessModifier.Visibility.PROTECTED
+                hasModifierProperty(PsiModifier.PUBLIC) -> JKAccessModifier.Visibility.PUBLIC
+                else -> JKAccessModifier.Visibility.PACKAGE_PRIVATE
+            }
+            return JKAccessModifierImpl(visibility)
+        }
+
+        fun modifierToJK(name: String): JKModifier? = when (name) {
             PsiModifier.NATIVE -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.NATIVE)
             PsiModifier.STATIC -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.STATIC)
             PsiModifier.STRICTFP -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.STRICTFP)
@@ -343,8 +368,16 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             PsiModifier.TRANSIENT -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.TRANSIENT)
             PsiModifier.VOLATILE -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.VOLATILE)
 
+            PsiModifier.PROTECTED -> null
+            PsiModifier.PUBLIC -> null
+            PsiModifier.PRIVATE -> null
+
+            PsiModifier.FINAL -> null
+            PsiModifier.ABSTRACT -> null
+
             else -> TODO("Not yet supported")
         }
+
     }
 
     private inner class ElementVisitor : JavaElementVisitor() {

@@ -24,6 +24,7 @@ object ConversionsRunner {
     fun doApply(trees: List<JKTreeElement>, context: ConversionContext) {
 
         trees.forEach {
+            ModalityConversion(context).runConversion(it, context)
             FieldToPropertyConversion().runConversion(it, context)
             TypeMappingConversion(context).runConversion(it, context)
             AssignmentAsExpressionToAlsoConversion(context).runConversion(it, context)

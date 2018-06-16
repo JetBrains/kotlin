@@ -67,9 +67,21 @@ interface JKModifierList : JKTreeElement {
     var modifiers: List<JKModifier>
 }
 
-interface JKAccessModifier : JKModifier
+interface JKAccessModifier : JKModifier {
+    enum class Visibility {
+        PUBLIC, INTERNAL, PACKAGE_PRIVATE, PROTECTED, PRIVATE
+    }
 
-interface JKModalityModifier : JKModifier
+    val visibility: Visibility
+}
+
+interface JKModalityModifier : JKModifier {
+    enum class Modality {
+        OPEN, FINAL, ABSTRACT
+    }
+
+    val modality: Modality
+}
 
 interface JKTypeElement : JKTreeElement {
     val type: JKType

@@ -24,8 +24,9 @@ import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.prettyDebugPrintTree
 
 class NewJavaToKotlinConverter(
-    private val project: Project,
-    private val settings: ConverterSettings
+    val project: Project,
+    val settings: ConverterSettings,
+    val converterServices: NewJavaToKotlinServices
 ) {
 
     private fun List<JKTreeElement>.prettyPrintTrees() = buildString {
@@ -46,7 +47,7 @@ class NewJavaToKotlinConverter(
 
         val context = ConversionContext(
             symbolProvider,
-            project
+            this
         ) { treeBuilder.backAnnotation[it] }
 
         ConversionsRunner.doApply(fileTrees, context)
