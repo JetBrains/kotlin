@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.idea.j2k
 
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -24,7 +28,6 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParenthesesIfPossible
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.*
@@ -40,10 +43,7 @@ import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
@@ -81,6 +81,8 @@ object J2KPostProcessingRegistrar {
         registerInspectionBasedProcessing(ReplacePutWithAssignmentInspection())
         _processings.add(UseExpressionBodyProcessing())
         registerInspectionBasedProcessing(UnnecessaryVariableInspection())
+        registerGeneralInspectionBasedProcessing(RedundantModalityModifierInspection())
+        registerGeneralInspectionBasedProcessing(RedundantVisibilityModifierInspection())
 
         registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
 
@@ -163,6 +165,38 @@ object J2KPostProcessingRegistrar {
                 return {
                     if (intention.applicabilityRange(tElement) != null) { // check availability of the intention again because something could change
                         intention.applyTo(element, null)
+                    }
+                }
+            }
+        })
+    }
+
+    private inline fun <TInspection : AbstractKotlinInspection> registerGeneralInspectionBasedProcessing(
+        inspection: TInspection,
+        acceptInformationLevel: Boolean = false
+    ) {
+        _processings.add(object : J2kPostProcessing {
+            override val writeActionNeeded = false
+
+
+            override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
+                val holder = ProblemsHolder(InspectionManager.getInstance(element.project), element.containingFile, false)
+                val visitor = inspection.buildVisitor(
+                    holder,
+                    false,
+                    LocalInspectionToolSession(element.containingFile, 0, element.containingFile.endOffset)
+                )
+                element.accept(visitor)
+                if (!holder.hasResults()) return null
+                return {
+                    holder.results.clear()
+                    element.accept(visitor)
+                    if (holder.hasResults()) {
+                        ApplicationManager.getApplication().runWriteAction {
+                            holder.results
+                                .filter { acceptInformationLevel || it.highlightType != ProblemHighlightType.INFORMATION }
+                                .forEach { it.fixes?.firstOrNull()?.applyFix(element.project, it) }
+                        }
                     }
                 }
             }
