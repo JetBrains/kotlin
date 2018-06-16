@@ -7,6 +7,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitTreeElement(treeElement: JKTreeElement, data: Nothing?) = visitTreeElement(treeElement)
     fun visitDeclaration(declaration: JKDeclaration) = visitTreeElement(declaration, null)
     override fun visitDeclaration(declaration: JKDeclaration, data: Nothing?) = visitDeclaration(declaration)
+    fun visitFile(file: JKFile) = visitTreeElement(file, null)
+    override fun visitFile(file: JKFile, data: Nothing?) = visitFile(file)
     fun visitClass(klass: JKClass) = visitDeclaration(klass, null)
     override fun visitClass(klass: JKClass, data: Nothing?) = visitClass(klass)
     fun visitMethod(method: JKMethod) = visitDeclaration(method, null)
