@@ -48,6 +48,10 @@ class NewCodeBuilder {
             printer.print("/* !!! Hit visitElement for element type: ${treeElement::class} !!! */")
         }
 
+        override fun visitFile(file: JKFile) {
+            file.acceptChildren(this)
+        }
+
         override fun visitModifierList(modifierList: JKModifierList) {
             modifierList.modifiers.firstOrNull()?.accept(this)
             for (i in 1..modifierList.modifiers.lastIndex) {

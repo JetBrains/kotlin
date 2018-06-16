@@ -23,6 +23,12 @@ import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.BOOLEAN
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.NULL
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
+class JKFileImpl : JKFile, JKBranchElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitFile(this, data)
+
+    override var declarationList by children<JKDeclaration>()
+}
+
 class JKClassImpl(
     modifierList: JKModifierList,
     name: JKNameIdentifier,

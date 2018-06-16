@@ -226,8 +226,9 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             val psi = this
             return JKClassImpl(with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name!!), classKind).also {
                 it.declarationList = psi.children.mapNotNull {
-                    ElementVisitor(this@DeclarationMapper).apply { it.accept(this) }.resultElement as? JKDeclaration
+                    ElementVisitor().apply { it.accept(this) }.resultElement as? JKDeclaration
                 }
+                backAnnotation[it] = this
                 (symbolProvider.provideDirectSymbol(psi) as? JKUniverseClassSymbol)?.run { target = it }
             }
         }
@@ -346,7 +347,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         }
     }
 
-    private inner class ElementVisitor(val declarationMapper: DeclarationMapper) : JavaElementVisitor() {
+    private inner class ElementVisitor : JavaElementVisitor() {
 
         var resultElement: JKTreeElement? = null
 
@@ -363,14 +364,16 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         }
 
         override fun visitFile(file: PsiFile) {
-            file.acceptChildren(this)
+            resultElement = JKFileImpl().apply {
+                declarationList += file.children.mapNotNull { ElementVisitor().apply { it.accept(this) }.resultElement as? JKDeclaration }
+            }
         }
     }
 
 
     fun buildTree(psi: PsiElement): JKTreeElement? {
         assert(psi.language.`is`(JavaLanguage.INSTANCE)) { "Unable to build JK Tree using Java Visitor for language ${psi.language}" }
-        val elementVisitor = ElementVisitor(declarationMapper)
+        val elementVisitor = ElementVisitor()
         psi.accept(elementVisitor)
         return elementVisitor.resultElement
     }

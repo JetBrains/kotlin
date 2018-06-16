@@ -33,6 +33,10 @@ interface JKTreeElement : JKElement {
 
 interface JKDeclaration : JKTreeElement
 
+interface JKFile : JKTreeElement, JKBranchElement {
+    var declarationList: List<JKDeclaration>
+}
+
 interface JKClass : JKDeclaration, JKModifierListOwner {
     val name: JKNameIdentifier
     var declarationList: List<JKDeclaration>
