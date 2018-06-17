@@ -127,8 +127,8 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
     private fun expressionToKotlin(code: String, settings: ConverterSettings, project: Project): String {
         val result = statementToKotlin("final Object o =$code}", settings, project)
         return result
-                .replaceFirst("val o:Any? = ", "")
-                .replaceFirst("val o:Any = ", "")
+                .replaceFirst("val o: Any? = ", "")
+                .replaceFirst("val o: Any = ", "")
                 .replaceFirst("val o = ", "")
                 .trim()
     }

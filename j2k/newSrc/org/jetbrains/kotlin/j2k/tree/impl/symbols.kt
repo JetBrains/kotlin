@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.j2k.tree.impl
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKField
 import org.jetbrains.kotlin.j2k.tree.JKMethod
@@ -86,5 +87,10 @@ class JKMultiverseFieldSymbol(override val target: PsiField) : JKFieldSymbol {
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String
         get() = target.name
+}
 
+class JKUnresolvedField(override val target: PsiReference) : JKFieldSymbol {
+    override val declaredIn: JKSymbol
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val fqName: String = target.canonicalText
 }

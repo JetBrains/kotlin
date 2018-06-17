@@ -97,6 +97,8 @@ class JKKtOperatorImpl private constructor(override val token: IElementType) : J
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.ANDAND]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.ANDAND]!!
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.OROR]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.OROR]!!
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.PLUS]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.PLUS]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GT]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.GT]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.LT]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.LT]!!
             }
         }
     }

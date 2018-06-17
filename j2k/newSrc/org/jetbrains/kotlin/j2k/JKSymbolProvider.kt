@@ -35,7 +35,7 @@ class JKSymbolProvider {
     fun provideSymbol(reference: PsiReference): JKSymbol {
         val target = reference.resolve()
         if (target != null) return provideDirectSymbol(target)
-        TODO()
+        return JKUnresolvedField(reference)
     }
 
     fun provideLocalVarSymbol(psi: PsiLocalVariable, variable: JKLocalVariable): JKSymbol {
