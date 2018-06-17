@@ -243,6 +243,10 @@ class NewCodeBuilder {
             returnStatement.expression.accept(this)
             printer.printlnWithNoIndent()
         }
+
+        override fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression) {
+            printer.printWithNoIndent(FqName(fieldAccessExpression.identifier.fqName).shortName().asString())
+        }
     }
 
     fun printCodeOut(root: JKTreeElement): String {
