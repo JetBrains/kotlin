@@ -339,7 +339,7 @@ internal object Devirtualization {
 
                 DEBUG_OUTPUT(1) { println("Visiting $resolvedFunctionSymbol") }
 
-                val function = (moduleDFG.functions[resolvedFunctionSymbol] ?: externalModulesDFG.functionDFGs[resolvedFunctionSymbol])!!
+                val function = (moduleDFG.functions[resolvedFunctionSymbol] ?: externalModulesDFG.functionDFGs[resolvedFunctionSymbol]) ?: error("Unknown function $resolvedFunctionSymbol")
 
                 DEBUG_OUTPUT(1) { function.debugOutput() }
 

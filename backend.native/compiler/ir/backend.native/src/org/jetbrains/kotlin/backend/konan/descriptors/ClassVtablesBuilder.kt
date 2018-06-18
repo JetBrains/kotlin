@@ -176,7 +176,7 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
         classDescriptor.sortedOverridableOrOverridingMethods
                 .flatMap { method -> method.allOverriddenDescriptors.map { OverriddenFunctionDescriptor(method, it) } }
                 .filter { it.canBeCalledVirtually }
-                .distinctBy { Triple(it.overriddenDescriptor.uniqueId, it.descriptor, it.needBridge) }
+                .distinctBy { it.overriddenDescriptor.uniqueId }
                 .sortedBy { it.overriddenDescriptor.uniqueId }
         // TODO: probably method table should contain all accessible methods to improve binary compatibility
     }
