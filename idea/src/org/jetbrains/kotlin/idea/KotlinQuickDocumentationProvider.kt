@@ -115,7 +115,9 @@ class WrapValueParameterHandler(val base: DescriptorRenderer.ValueParametersHand
         parameterCount: Int,
         builder: StringBuilder
     ) {
-        base.appendAfterValueParameter(parameter, parameterIndex, parameterCount, builder)
+        if (parameterIndex != parameterCount - 1) {
+            builder.append(",")
+        }
     }
 
     override fun appendAfterValueParameters(parameterCount: Int, builder: StringBuilder) {

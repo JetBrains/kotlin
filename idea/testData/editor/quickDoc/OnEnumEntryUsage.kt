@@ -6,4 +6,4 @@ fun test() {
     TestEnum.<caret>C
 }
 
-//INFO: <pre><b>enum entry</b> C <i>defined in</i> TestEnum</pre><b>Enum constant ordinal: 2</b>
+//INFO: <div class='definition'><pre><a href="psi_element://TestEnum"><code>TestEnum</code></a><br><b>enum entry</b> CEnum constant ordinal: 2</pre></div>

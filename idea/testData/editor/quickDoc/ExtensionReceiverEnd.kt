@@ -7,4 +7,4 @@ fun Foo.bar() {
     foo(this<caret>)
 }
 
-//INFO: <pre><b>public</b> <b>fun</b> <a href="psi_element://Foo">Foo</a>.bar(): Unit <i>defined in</i> root package <i>in file</i> ExtensionReceiverEnd.kt</pre>
+//INFO: <div class='definition'><pre>(ExtensionReceiverEnd.kt)<br><b>public</b> <b>fun</b> <a href="psi_element://Foo">Foo</a>.bar(): Unit</pre></div></pre></div><table class='sections'><p></table>
