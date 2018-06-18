@@ -7849,9 +7849,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/dataClasses/twoVarParams.kt");
         }
 
-        @TestMetadata("typeParameterWithInterfaceBound.kt")
-        public void testTypeParameterWithInterfaceBound() throws Exception {
-            runTest("compiler/testData/codegen/box/dataClasses/typeParameterWithInterfaceBound.kt");
+        @TestMetadata("typeParameterWithNonTrivialBound.kt")
+        public void testTypeParameterWithNonTrivialBound() throws Exception {
+            runTest("compiler/testData/codegen/box/dataClasses/typeParameterWithNonTrivialBound.kt");
         }
 
         @TestMetadata("unitComponent.kt")

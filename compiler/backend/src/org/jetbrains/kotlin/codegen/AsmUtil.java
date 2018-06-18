@@ -524,7 +524,7 @@ public class AsmUtil {
             }
         }
         else if (type.getSort() == Type.OBJECT) {
-            iv.invokevirtual(type.getInternalName(), "hashCode", "()I", false);
+            iv.invokevirtual("java/lang/Object", "hashCode", "()I", false);
         }
         else if (type.getSort() == Type.BOOLEAN) {
             Label end = new Label();

@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
@@ -52,7 +51,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -575,23 +573,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifne(ne);
                 }
                 else {
-                    if (isPrimitive(asmType)) {
-                        StackValue value = StackValue.cmp(KtTokens.EQEQ, asmType, StackValue.onStack(asmType), StackValue.onStack(asmType));
-                        value.put(Type.BOOLEAN_TYPE, iv);
-                    }
-                    else {
-                        if (TypeUtils.isNullableType(propertyDescriptor.getType())) {
-                            StackValue value =
-                                    genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
-                            value.put(Type.BOOLEAN_TYPE, iv);
-                        }
-                        else {
-                            iv.invokevirtual(
-                                    getEqualsOrHashCodeOwner(propertyDescriptor).getInternalName(), "equals",
-                                    Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE), false
-                            );
-                        }
-                    }
+                    StackValue value =
+                            genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
+                    value.put(Type.BOOLEAN_TYPE, iv);
                     iv.ifeq(ne);
                 }
             }
@@ -632,7 +616,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifnull(ifNull);
                 }
 
-                genHashCode(mv, iv, getEqualsOrHashCodeOwner(propertyDescriptor), state.getTarget());
+                genHashCode(mv, iv, asmType, state.getTarget());
 
                 if (ifNull != null) {
                     Label end = new Label();
@@ -654,14 +638,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             mv.visitInsn(IRETURN);
 
             FunctionCodegen.endVisit(mv, "hashCode", myClass);
-        }
-
-        @NotNull
-        private Type getEqualsOrHashCodeOwner(@NotNull PropertyDescriptor descriptor) {
-            ClassifierDescriptor classifier = descriptor.getType().getConstructor().getDeclarationDescriptor();
-            return !(classifier instanceof ClassDescriptor) || JvmCodegenUtil.isJvmInterface(classifier)
-                   ? AsmTypes.OBJECT_TYPE
-                   : typeMapper.mapType(descriptor);
         }
 
         @Override
