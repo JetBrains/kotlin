@@ -245,7 +245,10 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         val containerAsmType = codegen.typeMapper.mapType(parcelableClass)
         val creatorAsmType = codegen.typeMapper.mapType(creatorClass)
 
-        createMethod(creatorClass, CREATE_FROM_PARCEL, parcelableClass.builtIns.anyType, "in" to parcelClassType).write(codegen) {
+        createMethod(
+            creatorClass, CREATE_FROM_PARCEL, Modality.FINAL,
+            parcelableClass.builtIns.anyType, "in" to parcelClassType
+        ).write(codegen) {
             if (parcelerObject != null) {
                 val (companionAsmType, companionFieldName) = getCompanionClassType(containerAsmType, parcelerObject)
 
@@ -361,7 +364,7 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         val builtIns = parcelableClass.builtIns
         val parcelableAsmType = codegen.typeMapper.mapType(parcelableClass)
 
-        createMethod(creatorClass, NEW_ARRAY,
+        createMethod(creatorClass, NEW_ARRAY, Modality.FINAL,
                 builtIns.getArrayType(Variance.INVARIANT, builtIns.anyType),
                 "size" to builtIns.intType
         ).write(codegen) {
