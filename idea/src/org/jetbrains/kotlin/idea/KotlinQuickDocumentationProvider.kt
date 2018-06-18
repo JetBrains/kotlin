@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
 import org.jetbrains.kotlin.idea.kdoc.*
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocContent
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocSection
-import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.renderKDocContent
 import org.jetbrains.kotlin.idea.kdoc.KDocTemplate.DescriptionBodyTemplate
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -60,6 +59,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.constant
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class HtmlClassifierNamePolicy(val base: ClassifierNamePolicy) : ClassifierNamePolicy {
     override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
@@ -173,10 +173,6 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         }
 
         private fun renderEnumSpecialFunction(element: KtClass, functionDescriptor: FunctionDescriptor, quickNavigation: Boolean): String {
-            val renderedDeclaration = DESCRIPTOR_RENDERER.render(functionDescriptor)
-
-            if (quickNavigation) return renderedDeclaration
-
             val kdoc = run {
                 val declarationDescriptor = element.resolveToDescriptorIfAny()
                 val enumDescriptor = declarationDescriptor?.getSuperClassNotAny() ?: return@run null
@@ -198,7 +194,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                     definition {
                         renderDefinition(functionDescriptor, DESCRIPTOR_RENDERER)
                     }
-                    if (section != null) {
+                    if (!quickNavigation && section != null) {
                         description {
                             insert(DescriptionBodyTemplate.Kotlin()) {
                                 content {
@@ -380,16 +376,25 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                     if (!fqName.isRoot) {
                         DocumentationManagerUtil.createHyperlink(this, fqName.asString(), fqName.asString(), false)
                     }
-                    if (containingDeclaration is PackageFragmentDescriptor && descriptor is DeclarationDescriptorWithSource) {
+                    val fileName =
+                        descriptor
+                            .safeAs<DeclarationDescriptorWithSource>()
+                            ?.source
+                            ?.containingFile
+                            ?.name
+                            ?.takeIf { containingDeclaration is PackageFragmentDescriptor }
+
+                    if (fileName != null) {
                         if (!fqName.isRoot) {
                             append(" ")
                         }
                         append("(")
-                        append(descriptor.source.containingFile.name)
+                        append(fileName)
                         append(")")
                     }
-
-                    append("<br>")
+                    if (fileName != null || !fqName.isRoot) {
+                        append("<br>")
+                    }
                 }
             }
 
