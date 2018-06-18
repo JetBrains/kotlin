@@ -9,7 +9,7 @@
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/enter_mathematic_exression" />
+        android:text="@string/enter_mathematical_expression" />
 
     <EditText
         android:id="@+id/input"
