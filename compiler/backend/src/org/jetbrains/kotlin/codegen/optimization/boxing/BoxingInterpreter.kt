@@ -69,6 +69,19 @@ open class BoxingInterpreter(
 
         return when {
             insn.isBoxing(generationState) -> {
+                /*
+                * It's possible to have chain of several boxings and it's important to retain these boxing methods, consider:
+                *
+                * inline class AsAny(val a: Any)
+                *
+                * fun takeAny(a: Any)
+                *
+                * fun foo() {
+                *   takeAny(AsAny(42)) // valueOf -> AsAny$Erased.box
+                * }
+                *
+                * */
+                values.markBoxedArgumentValues()
                 createNewBoxing(insn, value.type, null)
             }
             insn.isUnboxing(generationState) && firstArg is BoxedBasicValue -> {
@@ -94,12 +107,16 @@ open class BoxingInterpreter(
                 // N-ary operation should be a method call or multinewarray.
                 // Arguments for multinewarray could be only numeric,
                 // so if there are boxed values in args, it's not a case of multinewarray.
-                for (arg in values) {
-                    if (arg is BoxedBasicValue) {
-                        onMethodCallWithBoxedValue(arg)
-                    }
-                }
+                values.markBoxedArgumentValues()
                 value
+            }
+        }
+    }
+
+    private fun List<BasicValue>.markBoxedArgumentValues() {
+        for (arg in this) {
+            if (arg is BoxedBasicValue) {
+                onMethodCallWithBoxedValue(arg)
             }
         }
     }
