@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
@@ -35,11 +36,13 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.getDefault
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
+import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -83,9 +86,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
             return irCall
         }
 
-        functionDeclaration.transformChildrenVoid(this)                                  // Process recursive inline.
-        val inliner = Inliner(globalSubstituteMap, functionDeclaration, currentScope!!, context)    // Create inliner for this scope.
-        return inliner.inline(irCall)   // Return newly created IrInlineBody instead of IrCall.
+        functionDeclaration.transformChildrenVoid(this)                                     // Process recursive inline.
+        val inliner = Inliner(globalSubstituteMap, functionDeclaration, currentScope!!, context, this)    // Create inliner for this scope.
+        return inliner.inline(irCall)                                  // Return newly created IrInlineBody instead of IrCall.
     }
 
     //-------------------------------------------------------------------------//
@@ -116,7 +119,8 @@ private val FunctionDescriptor.isInlineConstructor get() = annotations.hasAnnota
 private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor, SubstitutedDescriptor>,
                       val functionDeclaration: IrFunction,                                  // Function to substitute.
                       val currentScope: ScopeWithIr,
-                      val context: Context) {
+                      val context: Context,
+                      val owner: FunctionInlining /*TODO: make inner*/) {
 
     val copyIrElement = DeepCopyIrTreeWithDescriptors(functionDeclaration.descriptor, currentScope.scope.scopeOwner, context) // Create DeepCopy for current scope.
     val substituteMap = mutableMapOf<ValueDescriptor, IrExpression>()
@@ -206,17 +210,51 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         //-----------------------------------------------------------------//
 
         override fun visitCall(expression: IrCall): IrExpression {
+            if (!isLambdaCall(expression))
+                return super.visitCall(expression)
 
-            if (!isLambdaCall(expression)) return super.visitCall(expression)               // If it is not lambda call - return.
-
-            val dispatchReceiver = expression.dispatchReceiver as IrGetValue                // Here we can have only GetValue as dispatch receiver.
-            val functionArgument = substituteMap[dispatchReceiver.descriptor]               // Try to find lambda representation.   // TODO original?
-            if (functionArgument == null)     return super.visitCall(expression)            // It is not call of argument lambda - nothing to substitute.
-            if (functionArgument !is IrBlock) return super.visitCall(expression)
-
-            val dispatchDescriptor = dispatchReceiver.descriptor                            // Check if this functional parameter has "noInline" tag
+            val dispatchReceiver = expression.dispatchReceiver as IrGetValue
+            val functionArgument = substituteMap[dispatchReceiver.descriptor]
+            if (functionArgument == null)
+                return super.visitCall(expression)
+            val dispatchDescriptor = dispatchReceiver.descriptor
             if (dispatchDescriptor is ValueParameterDescriptor &&
-                dispatchDescriptor.isNoinline) return super.visitCall(expression)
+                    dispatchDescriptor.isNoinline) return super.visitCall(expression)
+
+            if (functionArgument is IrFunctionReference) {
+                val functionDescriptor = functionArgument.descriptor
+                val functionParameters = functionDescriptor.explicitParameters
+                val boundFunctionParameters = functionArgument.getArguments()
+                val unboundFunctionParameters = functionParameters - boundFunctionParameters.map { it.first }
+                val boundFunctionParametersMap = boundFunctionParameters.associate { it.first to it.second }
+
+                var unboundIndex = 0
+                val unboundArgsSet = unboundFunctionParameters.toSet()
+                val valueParameters = expression.getArguments().drop(1) // Skip dispatch receiver.
+
+                val immediateCall = IrCallImpl(
+                        startOffset = expression.startOffset,
+                        endOffset   = expression.endOffset,
+                        symbol      = functionArgument.symbol,
+                        descriptor  = functionArgument.descriptor).apply {
+                    functionParameters.forEach {
+                        val argument =
+                                if (!unboundArgsSet.contains(it))
+                                    boundFunctionParametersMap[it]!!
+                                else
+                                    valueParameters[unboundIndex++].second
+                        when (it) {
+                            functionDescriptor.dispatchReceiverParameter -> this.dispatchReceiver = argument
+                            functionDescriptor.extensionReceiverParameter -> this.extensionReceiver = argument
+                            else -> putValueArgument((it as ValueParameterDescriptor).index, argument)
+                        }
+                    }
+                    assert(unboundIndex == valueParameters.size, { "Not all arguments of <invoke> are used" })
+                }
+                return owner.visitCall(super.visitCall(immediateCall) as IrCall)
+            }
+            if (functionArgument !is IrBlock)
+                return super.visitCall(expression)
 
             val functionDeclaration = getLambdaFunction(functionArgument)
             val newExpression = inlineFunction(expression, functionDeclaration)             // Inline the lambda. Lambda parameters will be substituted with lambda arguments.
@@ -262,19 +300,22 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
     private class ParameterToArgument(val parameterDescriptor: ParameterDescriptor,
                                       val argumentExpression : IrExpression) {
 
-        val isInlinableLambda : Boolean
+        val isInlinableLambdaArgument : Boolean
             get() {
-                if (!InlineUtil.isInlineParameter(parameterDescriptor))                 return false
-                if (argumentExpression !is IrBlock)                                     return false    // Lambda must be represented with IrBlock.
-                if (argumentExpression.origin != IrStatementOrigin.LAMBDA &&                            // Origin must be LAMBDA or ANONYMOUS.
-                    argumentExpression.origin != IrStatementOrigin.ANONYMOUS_FUNCTION)  return false
+                if (!InlineUtil.isInlineParameter(parameterDescriptor)) return false
+                if (argumentExpression is IrFunctionReference
+                        && !argumentExpression.descriptor.isSuspend) return true // Skip suspend functions for now since it's not supported by FE anyway.
 
-                val statements          = argumentExpression.statements
-                val irFunction          = statements[0]                                     // Lambda function declaration.
-                val irCallableReference = statements[1]                                     // Lambda callable reference.
-                if (irFunction !is IrFunction)                   return false               // First statement of the block must be lambda declaration.
-                if (irCallableReference !is IrCallableReference) return false               // Second statement of the block must be CallableReference.
-                return true                                                                 // The expression represents lambda.
+                // Do pattern-matching on IR.
+                if (argumentExpression !is IrBlock) return false
+                if (argumentExpression.origin != IrStatementOrigin.LAMBDA &&
+                    argumentExpression.origin != IrStatementOrigin.ANONYMOUS_FUNCTION) return false
+                val statements = argumentExpression.statements
+                val irFunction = statements[0]
+                val irCallableReference = statements[1]
+                if (irFunction !is IrFunction) return false
+                if (irCallableReference !is IrCallableReference) return false
+                return true
             }
 
         val isImmutableVariableLoad: Boolean
@@ -373,11 +414,11 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             val parameterDescriptor = it.parameterDescriptor
 
             /*
-             * We need to create temporary variable for each argument except inlinable lambdas.
+             * We need to create temporary variable for each argument except inlinable lambda arguments.
              * For simplicity and to produce simpler IR we don't create temporaries for every immutable variable,
              * not only for those referring to inlinable lambdas.
              */
-            if (it.isInlinableLambda || it.isImmutableVariableLoad) {
+            if (it.isInlinableLambdaArgument || it.isImmutableVariableLoad) {
                 substituteMap[parameterDescriptor] = it.argumentExpression
                 return@forEach
             }
