@@ -155,6 +155,11 @@ projectTest(taskName = "performanceTest") {
 
     maxHeapSize = "3g"
     jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")
+    jvmArgs(
+        "-XX:ReservedCodeCacheSize=240m",
+        "-XX:+UseCompressedOops",
+        "-XX:+UseConcMarkSweepGC"
+    )
     jvmArgs("-XX:+UnlockCommercialFeatures", "-XX:+FlightRecorder")
 
     if (hasProperty("perf.flight.recorder.override")) {
