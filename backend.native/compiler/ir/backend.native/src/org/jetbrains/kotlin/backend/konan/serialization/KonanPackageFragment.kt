@@ -60,13 +60,13 @@ class KonanPackageFragment(
         KonanClassDataFinder(proto, nameResolver)
     }
 
-    override fun getMemberScope(): DeserializedPackageMemberScope {
-        val packageProto = proto.getPackage()
-
-        return DeserializedPackageMemberScope( this, packageProto,
-            nameResolver, /* containerSource = */ null,
-            components, {loadClassNames()} )
+    private val memberScope_ by lazy {
+        DeserializedPackageMemberScope(this, proto.getPackage(),
+                nameResolver, /* containerSource = */ null,
+                components, { loadClassNames() })
     }
+
+    override fun getMemberScope(): DeserializedPackageMemberScope = memberScope_
 
     private val classifierNames by lazy {
         val result = mutableSetOf<Name>()
