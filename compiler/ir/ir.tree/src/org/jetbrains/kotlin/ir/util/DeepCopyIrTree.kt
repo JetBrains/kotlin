@@ -482,7 +482,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
         return IrFunctionReferenceImpl(
             expression.startOffset, expression.endOffset,
             expression.type,
-            newCallee.original,
+            newCallee,
             expression.typeArgumentsCount,
             mapStatementOrigin(expression.origin)
         ).apply {
