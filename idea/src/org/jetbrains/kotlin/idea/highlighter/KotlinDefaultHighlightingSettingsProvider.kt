@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 class KotlinDefaultHighlightingSettingsProvider : DefaultHighlightingSettingProvider() {
     override fun getDefaultSetting(project: Project, file: VirtualFile): FileHighlightingSetting? {
         return when {
-            ProjectRootsUtil.isProjectSourceFile(project, file) -> null
-            else -> FileHighlightingSetting.SKIP_INSPECTION
+            ProjectRootsUtil.isLibraryFile(project, file) -> FileHighlightingSetting.SKIP_INSPECTION
+            else -> null
         }
     }
 }
