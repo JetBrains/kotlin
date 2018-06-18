@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// TARGET_BACKEND: JVM
 
 inline class UInt(val x: Int)
 
