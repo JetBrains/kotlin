@@ -14,11 +14,11 @@ import org.gradle.api.internal.tasks.TaskResolver
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
-import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -210,7 +210,7 @@ internal class KotlinMultiplatformProjectConfigurator(
     ) {
         matchSymmetricallyByNames(commonExtension.sourceSets, platformExtension.sourceSets) {
                 commonSourceSet: KotlinSourceSet, platformSourceSet: KotlinSourceSet ->
-            //todo add the sources to the task as it's done in old MPP
+            //todo add the sources to the task as it's done in old MPP?
             platformSourceSet.kotlin.source(commonSourceSet.kotlin)
         }
 

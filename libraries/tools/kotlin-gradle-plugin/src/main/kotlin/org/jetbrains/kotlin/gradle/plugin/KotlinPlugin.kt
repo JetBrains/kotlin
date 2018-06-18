@@ -680,7 +680,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         val logger = compileTask.project.logger
 
         for (provider in getSourceProviders(variantData)) {
-            val kotlinSourceSet = provider.getConvention(KOTLIN_DSL_NAME) as? KotlinBaseSourceSet ?: continue
+            val kotlinSourceSet = provider.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet ?: continue
             compileTask.source(kotlinSourceSet.kotlin)
         }
 
