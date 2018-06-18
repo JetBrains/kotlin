@@ -1257,7 +1257,7 @@ public class KotlinTypeMapper {
 
         JvmMethodGenericSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f));
 
-        if (kind != OwnerKind.DEFAULT_IMPLS && !hasSpecialBridge) {
+        if (kind != OwnerKind.DEFAULT_IMPLS && kind != OwnerKind.ERASED_INLINE_CLASS && !hasSpecialBridge) {
             SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo(f);
 
             if (specialSignatureInfo != null) {
