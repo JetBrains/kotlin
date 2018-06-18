@@ -32,6 +32,7 @@ dependencies {
     testRuntime(intellijPluginDep("junit")) { includeJars("idea-junit", "resources_en") }
 
     robolectricClasspath(commonDep("org.robolectric", "robolectric"))
+    robolectricClasspath("org.robolectric:android-all:4.4_r1-robolectric-1")
     robolectricClasspath(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 
     embeddedComponents(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
