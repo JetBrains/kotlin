@@ -6,83 +6,125 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.addAnnotation
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.getAbbreviatedType
 
 class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
-    KtThrowExpression::class.java, "Add @Throws annotation"
+    KtThrowExpression::class.java, "Add '@Throws' annotation"
 ) {
 
     override fun isApplicableTo(element: KtThrowExpression, caretOffset: Int): Boolean {
-        val thrownExpression = element.thrownExpression ?: return false
-        thrownExpression.getThrowsAnnotationArgumentText() ?: return false
+        if (element.platform == JsPlatform) return false
         val containingDeclaration = element.getContainingDeclaration() ?: return false
+
+        val type = element.thrownExpression?.resolveToCall()?.resultingDescriptor?.returnType ?: return false
+        if ((type.constructor.declarationDescriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.LOCAL) return false
 
         val annotationEntry = containingDeclaration.findThrowsAnnotation() ?: return true
         val valueArguments = annotationEntry.valueArguments
         if (valueArguments.isEmpty()) return true
 
-        val thrownClass = thrownExpression.getCallableDescriptor()?.containingDeclaration?.let {
-            DescriptorToSourceUtils.descriptorToDeclaration(it)
-        }
-        return valueArguments.none {
-            val expression = it.getArgumentExpression() as? KtClassLiteralExpression ?: return@none false
-            val klass = expression.getChildOfType<KtReferenceExpression>()?.mainReference?.resolve() ?: return@none false
-            klass == thrownClass
+        val context = element.analyze(BodyResolveMode.PARTIAL)
+        return valueArguments.none { arg ->
+            val expression = arg.getArgumentExpression()
+            when (expression) {
+                is KtClassLiteralExpression -> listOf(expression)
+                is KtCollectionLiteralExpression -> expression.getInnerExpressions().mapNotNull { it as? KtClassLiteralExpression }
+                is KtCallExpression -> expression.valueArguments.mapNotNull { it.getArgumentExpression() as? KtClassLiteralExpression }
+                else -> emptyList()
+            }.any {
+                it.getType(context)?.arguments?.firstOrNull()?.type == type
+            }
         }
     }
 
     override fun applyTo(element: KtThrowExpression, editor: Editor?) {
-        val thrownExpression = element.thrownExpression ?: return
-        val annotationArgumentText = thrownExpression.getThrowsAnnotationArgumentText() ?: return
         val containingDeclaration = element.getContainingDeclaration() ?: return
+        val type = element.thrownExpression?.resolveToCall()?.resultingDescriptor?.returnType ?: return
+
+        val annotationArgumentText = if (type.getAbbreviatedType() != null)
+            "$type::class"
+        else
+            type.constructor.declarationDescriptor?.fqNameSafe?.let { "$it::class" } ?: return
 
         val annotationEntry = containingDeclaration.findThrowsAnnotation()
-
         if (annotationEntry == null || annotationEntry.valueArguments.isEmpty()) {
             annotationEntry?.delete()
-            containingDeclaration.addAnnotation(throwsAnnotationFqName, annotationArgumentText)
+            val whiteSpaceText = if (containingDeclaration is KtPropertyAccessor) " " else "\n"
+            containingDeclaration.addAnnotation(throwsAnnotationFqName, annotationArgumentText, whiteSpaceText)
         } else {
-            val added = annotationEntry.valueArgumentList?.addArgument(KtPsiFactory(element).createArgument(annotationArgumentText))
-            added?.also { ShortenReferences.DEFAULT.process(it) }
+            val factory = KtPsiFactory(element)
+            val argument = annotationEntry.valueArguments.firstOrNull()
+            val expression = argument?.getArgumentExpression()
+            val added = when {
+                argument?.getArgumentName() == null ->
+                    annotationEntry.valueArgumentList?.addArgument(factory.createArgument(annotationArgumentText))
+                expression is KtCallExpression ->
+                    expression.valueArgumentList?.addArgument(factory.createArgument(annotationArgumentText))
+                expression is KtClassLiteralExpression -> {
+                    expression.replaced(
+                        factory.createCollectionLiteral(listOf(expression), annotationArgumentText)
+                    ).getInnerExpressions().lastOrNull()
+                }
+                expression is KtCollectionLiteralExpression -> {
+                    expression.replaced(
+                        factory.createCollectionLiteral(expression.getInnerExpressions(), annotationArgumentText)
+                    ).getInnerExpressions().lastOrNull()
+                }
+                else -> null
+            }
+            if (added != null) ShortenReferences.DEFAULT.process(added)
         }
     }
 }
 
-private val throwsAnnotationFqName: FqName by lazy { FqName("kotlin.jvm.Throws") }
-
-private fun KtExpression.getThrowsAnnotationArgumentText(): String? {
-    val callee = getCalleeExpressionIfAny() ?: return null
-    val receiverText = (this as? KtQualifiedExpression)?.receiverExpression?.let {
-        "${it.text}."
-    } ?: ""
-    return "$receiverText${callee.text}::class"
-}
+private val throwsAnnotationFqName = FqName("kotlin.jvm.Throws")
 
 private fun KtThrowExpression.getContainingDeclaration(): KtDeclaration? {
-    return getParentOfTypesAndPredicate(
+    val parent = getParentOfTypesAndPredicate(
         true,
         KtNamedFunction::class.java,
         KtSecondaryConstructor::class.java,
-        KtPropertyAccessor::class.java
+        KtPropertyAccessor::class.java,
+        KtClassInitializer::class.java,
+        KtLambdaExpression::class.java
     ) { true }
+    if (parent is KtClassInitializer || parent is KtLambdaExpression) return null
+    return parent as? KtDeclaration
 }
 
 private fun KtDeclaration.findThrowsAnnotation(): KtAnnotationEntry? {
+    val annotationEntries = this.annotationEntries + (parent as? KtProperty)?.annotationEntries.orEmpty()
     val context = analyze(BodyResolveMode.PARTIAL)
     return annotationEntries.find {
         val typeReference = it.typeReference ?: return@find false
         context[BindingContext.TYPE, typeReference]?.constructor?.declarationDescriptor?.fqNameSafe == throwsAnnotationFqName
     }
+}
+
+private fun KtPsiFactory.createCollectionLiteral(expressions: List<KtExpression>, lastExpression: String): KtCollectionLiteralExpression {
+    return buildExpression {
+        appendFixedText("[")
+        expressions.forEach {
+            appendExpression(it)
+            appendFixedText(", ")
+        }
+        appendFixedText(lastExpression)
+        appendFixedText("]")
+    } as KtCollectionLiteralExpression
 }

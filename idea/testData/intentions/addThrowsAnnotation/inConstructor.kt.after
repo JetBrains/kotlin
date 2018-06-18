@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+
 class FooException : Exception()
 
 class Test {

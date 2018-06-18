@@ -1,9 +1,8 @@
 // WITH_RUNTIME
+
 class FooException : Exception()
 
 class Test {
     var setter: String = ""
-        @Throws(FooException::class)
-
         set(value) = <caret>throw FooException()
 }

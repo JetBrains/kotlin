@@ -1,9 +1,9 @@
 // WITH_RUNTIME
+
 class FooException : Exception()
 
 class Test {
-    val getter: String
+    var setter: String = ""
         @Throws(FooException::class)
-
-        get() = <caret>throw FooException()
+        set(value) = <caret>throw FooException()
 }
