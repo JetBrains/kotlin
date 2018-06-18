@@ -88,6 +88,13 @@ inline fun IrGeneratorWithScope.irBlock(
 ) =
     this.irBlock(expression.startOffset, expression.endOffset, origin, resultType, body)
 
+inline fun IrGeneratorWithScope.irComposite(
+    expression: IrExpression, origin: IrStatementOrigin? = null,
+    resultType: IrType? = expression.type,
+    body: IrBlockBuilder.() -> Unit
+) =
+    this.irComposite(expression.startOffset, expression.endOffset, origin, resultType, body)
+
 inline fun IrGeneratorWithScope.irBlockBody(irElement: IrElement, body: IrBlockBodyBuilder.() -> Unit) =
     this.irBlockBody(irElement.startOffset, irElement.endOffset, body)
 

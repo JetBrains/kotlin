@@ -124,7 +124,7 @@ abstract class BasicBoxTest(
                 generateJavaScriptFile(
                     file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
-                    outputPrefixFile, outputPostfixFile, mainCallParameters, testPackage, testFunction
+                    outputPrefixFile, outputPostfixFile, mainCallParameters, testPackage, testFunction, coroutinesPackage.isNotEmpty()
                 )
 
                 if (!module.name.endsWith(OLD_MODULE_SUFFIX)) Pair(outputFileName, module) else null
@@ -291,18 +291,19 @@ abstract class BasicBoxTest(
     private fun TestModule.outputFileName(directory: File) = directory.absolutePath + "/" + outputFileSimpleName() + "_v5"
 
     private fun generateJavaScriptFile(
-            directory: String,
-            module: TestModule,
-            outputFileName: String,
-            dependencies: List<String>,
-            friends: List<String>,
-            multiModule: Boolean,
-            remap: Boolean,
-            outputPrefixFile: File?,
-            outputPostfixFile: File?,
-            mainCallParameters: MainCallParameters,
-            testPackage: String?,
-            testFunction: String
+        directory: String,
+        module: TestModule,
+        outputFileName: String,
+        dependencies: List<String>,
+        friends: List<String>,
+        multiModule: Boolean,
+        remap: Boolean,
+        outputPrefixFile: File?,
+        outputPostfixFile: File?,
+        mainCallParameters: MainCallParameters,
+        testPackage: String?,
+        testFunction: String,
+        doNotCache: Boolean
     ) {
         val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -324,7 +325,7 @@ abstract class BasicBoxTest(
         val incrementalData = IncrementalData()
         translateFiles(
             psiFiles.map(TranslationUnit::SourceFile), outputFile, config, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, doNotCache
         )
 
         if (module.hasFilesToRecompile) {
@@ -371,7 +372,7 @@ abstract class BasicBoxTest(
 
         translateFiles(
             translationUnits, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, false
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -435,7 +436,8 @@ abstract class BasicBoxTest(
         incrementalData: IncrementalData,
         remap: Boolean,
         testPackage: String?,
-        testFunction: String
+        testFunction: String,
+        doNotCache: Boolean
     ) {
         val translator = K2JSTranslator(config)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)

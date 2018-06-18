@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
 
     override fun visitVararg(expression: IrVararg, context: JsGenerationContext): JsExpression {
@@ -158,7 +159,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val arguments = translateCallArguments(expression, context)
 
         if (dispatchReceiver != null &&
-            dispatchReceiver.type.isFunctionTypeOrSubtype() && symbol.owner.name == OperatorNameConventions.INVOKE
+            dispatchReceiver.type.isFunctionTypeOrSubtype() && symbol.descriptor.name == OperatorNameConventions.INVOKE && !symbol.descriptor.isSuspend
         ) {
             return JsInvocation(jsDispatchReceiver!!, arguments)
         }

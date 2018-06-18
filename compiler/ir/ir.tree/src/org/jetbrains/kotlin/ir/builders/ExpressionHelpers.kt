@@ -183,8 +183,12 @@ fun IrBuilderWithScope.irGet(type: IrType, receiver: IrExpression, getterSymbol:
         origin = IrStatementOrigin.GET_PROPERTY
     )
 
-fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType): IrCall =
-    IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor)
+fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType, typeArguments: List<IrType> = emptyList()): IrCall =
+    IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor).apply {
+        typeArguments.forEachIndexed { index, irType ->
+            this.putTypeArgument(index, irType)
+        }
+    }
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrCall =
     IrCallImpl(startOffset, endOffset, callee.owner.returnType, callee, callee.descriptor)
@@ -237,3 +241,14 @@ fun IrBuilderWithScope.irString(value: String) =
 
 fun IrBuilderWithScope.irConcat() =
     IrStringConcatenationImpl(startOffset, endOffset, context.irBuiltIns.stringType)
+
+
+fun IrBuilderWithScope.irSetField(receiver: IrExpression, irField: IrField, value: IrExpression): IrExpression =
+    IrSetFieldImpl(
+        startOffset,
+        endOffset,
+        irField.symbol,
+        receiver = receiver,
+        value = value,
+        type = context.irBuiltIns.unitType
+    )

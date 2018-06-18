@@ -6,7 +6,6 @@
 import helpers.*
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
-import kotlin.test.assertEquals
 
 class A(val w: String) {
     suspend fun Long.ext(): String = suspendCoroutineUninterceptedOrReturn {

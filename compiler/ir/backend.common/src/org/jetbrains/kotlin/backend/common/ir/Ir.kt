@@ -44,7 +44,7 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
         return initializer()
     }
 
-    val refClass = calc { symbolTable.referenceClass(context.getInternalClass("Ref")) }
+//    val refClass = calc { symbolTable.referenceClass(context.getInternalClass("Ref")) }
 
     //abstract val areEqualByValue: List<IrFunctionSymbol>
 

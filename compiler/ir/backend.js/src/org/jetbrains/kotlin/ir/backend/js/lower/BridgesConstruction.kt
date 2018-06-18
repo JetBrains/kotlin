@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -48,18 +49,21 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 //  Example: for given class hierarchy
 //
 //          class C<T>  {
-//            fun foo(t: T) = ...
+//            fun foo(t: T) = ... // bridge
 //          }
 //
 //          class D : C<Int> {
-//            override fun foo(t: Int) = impl
+//            override fun foo(t: Int) = impl // delegate to
+//          }
+//
+//          class E : D {
+//            <fake override> fun foo(t: Int)  // function
 //          }
 //
 //  it adds method D that delegates generic calls to implementation:
 //
-//          class D : C<Int> {
-//            override fun foo(t: Int) = impl
-//            fun foo(t: Any?) = foo(t as Int)  // Constructed bridge
+//          class E : D {
+//            fun foo(t: Any?) = foo(t as Int) // bridgeDescriptorForIrFunction
 //          }
 //
 class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
@@ -125,6 +129,8 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
             bridge.descriptor.returnType, bridge.descriptor.modality, function.visibility
         )
 
+        bridgeDescriptorForIrFunction.isSuspend = bridge.descriptor.isSuspend
+
         // TODO: Support offsets for debug info
         val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, bridgeDescriptorForIrFunction)
         irFunction.createParameterDeclarations()
@@ -136,7 +142,10 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
             irFunction.extensionReceiverParameter?.let {
                 call.extensionReceiver = irCastIfNeeded(irGet(it), delegateTo.extensionReceiverParameter!!.type)
             }
-            irFunction.valueParameters.mapIndexed { i, valueParameter ->
+
+            val toTake = irFunction.valueParameters.size - if (call.descriptor.isSuspend xor irFunction.descriptor.isSuspend) 1 else 0
+
+            irFunction.valueParameters.subList(0, toTake).mapIndexed { i, valueParameter ->
                 call.putValueArgument(i, irCastIfNeeded(irGet(valueParameter), delegateTo.valueParameters[i].type))
             }
             +irReturn(call)
@@ -147,8 +156,9 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         return irFunction
     }
 
+    // TODO: get rid of Unit check
     private fun IrBlockBodyBuilder.irCastIfNeeded(argument: IrExpression, type: IrType): IrExpression =
-        if (argument.type.classifierOrNull == type.classifierOrNull) argument else irAs(argument, type)
+        if (argument.type.classifierOrNull == type.classifierOrNull || type.isUnit()) argument else irAs(argument, type)
 }
 
 // Handle for common.bridges

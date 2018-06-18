@@ -67,21 +67,25 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
 
                 val commonType = mergeTypes(aTry.catches.map { it.catchParameter.type })
 
-                val pendingExceptionSymbol = JsSymbolBuilder.buildVar(data!!.descriptor, commonType, "\$pending\$", false)
+                val pendingExceptionSymbol = JsSymbolBuilder.buildVar(data!!.descriptor, commonType, "\$p", false)
                 val pendingExceptionDeclaration = JsIrBuilder.buildVar(pendingExceptionSymbol, type = commonType)
                 val pendingException = JsIrBuilder.buildGetValue(pendingExceptionSymbol)
 
                 val branches = mutableListOf<IrBranch>()
 
                 for (catch in aTry.catches) {
-                    assert(!catch.catchParameter.isVar) { "caught exception parameter has to immutable" }
+                    assert(!catch.catchParameter.isVar) { "caught exception parameter has to be immutable" }
                     val type = catch.catchParameter.type
+
                     val typeSymbol = type.classifierOrNull
+                    val castedPendingException = if (type !is IrDynamicType)
+                        buildImplicitCast(pendingException, type, typeSymbol!!)
+                    else pendingException
+
                     val catchBody = catch.result.transform(object : IrElementTransformer<VariableDescriptor> {
                         override fun visitGetValue(expression: IrGetValue, data: VariableDescriptor) =
-                            if (typeSymbol != null && expression.descriptor == data)
-                                // TODO how is it good to generate implicit cast for each access?
-                                buildImplicitCast(pendingException, type, typeSymbol)
+                            if (expression.descriptor == data)
+                                castedPendingException
                             else
                                 expression
                     }, catch.parameter)
