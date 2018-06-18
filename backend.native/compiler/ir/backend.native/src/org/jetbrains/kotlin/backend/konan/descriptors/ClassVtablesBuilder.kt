@@ -162,7 +162,7 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
             filteredNewVtableSlots.forEach { println("    ${it.overriddenDescriptor.descriptor} -> ${it.descriptor.descriptor}") }
         }
 
-        inheritedVtableSlots + filteredNewVtableSlots.sortedBy { it.overriddenDescriptor.functionName.localHash.value }
+        inheritedVtableSlots + filteredNewVtableSlots.sortedBy { it.overriddenDescriptor.uniqueId }
     }
 
     fun vtableIndex(function: SimpleFunctionDescriptor): Int {
@@ -176,8 +176,8 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
         classDescriptor.sortedOverridableOrOverridingMethods
                 .flatMap { method -> method.allOverriddenDescriptors.map { OverriddenFunctionDescriptor(method, it) } }
                 .filter { it.canBeCalledVirtually }
-                .distinctBy { Triple(it.overriddenDescriptor.functionName, it.descriptor, it.needBridge) }
-                .sortedBy { it.overriddenDescriptor.functionName.localHash.value }
+                .distinctBy { Triple(it.overriddenDescriptor.uniqueId, it.descriptor, it.needBridge) }
+                .sortedBy { it.overriddenDescriptor.uniqueId }
         // TODO: probably method table should contain all accessible methods to improve binary compatibility
     }
 
@@ -186,6 +186,9 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
             this.simpleFunctions()
                     .filter { (it.isOverridable || it.overriddenSymbols.isNotEmpty())
                                && it.bridgeTarget == null }
-                    .sortedBy { it.functionName.localHash.value }
+                    .sortedBy { it.uniqueId }
 
+    private val functionIds = mutableMapOf<FunctionDescriptor, Long>()
+
+    private val FunctionDescriptor.uniqueId get() = functionIds.getOrPut(this) { functionName.localHash.value }
 }
