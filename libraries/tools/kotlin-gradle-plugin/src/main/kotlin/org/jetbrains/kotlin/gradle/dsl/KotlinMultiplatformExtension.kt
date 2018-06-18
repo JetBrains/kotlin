@@ -59,6 +59,15 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension() {
     }
 
     fun js(configure: Closure<*>) = js { executeClosure(configure) }
+
+    val android: KotlinAndroidPlatformExtension
+        get() = getOrCreatePlatformExtension("android") { projectConfigurator.createAndroidPlatformExtension() }
+
+    fun android(configure: KotlinAndroidPlatformExtension.() -> Unit) {
+        android.apply(configure)
+    }
+
+    fun android(configure: Closure<*>) = android { executeClosure(configure) }
 }
 
 open class KotlinMppPlatformExtension : KotlinOnlyPlatformExtension() {

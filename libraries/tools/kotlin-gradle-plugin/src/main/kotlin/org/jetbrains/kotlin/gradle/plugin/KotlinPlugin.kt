@@ -511,33 +511,50 @@ internal open class KotlinAndroidPlugin(
         val kotlinPlatformExtension = project.kotlinExtension as KotlinAndroidPlatformExtension
         registerKotlinSourceSetsIfAbsent(kotlinSourceSetProvider, kotlinPlatformExtension)
 
-        val version = loadAndroidPluginVersion()
-        if (version != null) {
-            val minimalVersion = "1.1.0"
-            if (compareVersionNumbers(version, minimalVersion) < 0) {
-                throw IllegalStateException("Kotlin: Unsupported version of com.android.tools.build:gradle plugin: version $minimalVersion or higher should be used with kotlin-android plugin")
-            }
-        }
+        applyToExtension(
+            project, kotlinPlatformExtension, kotlinSourceSetProvider,
+            tasksProvider, kotlinPluginVersion, kotlinGradleBuildServices
+        )
+    }
 
-        val kotlinTools = KotlinConfigurationTools(
+    companion object {
+        fun applyToExtension(
+            project: Project,
+            kotlinPlatformExtension: KotlinAndroidPlatformExtension,
+            kotlinSourceSetProvider: KotlinSourceSetProvider,
+            tasksProvider: KotlinTasksProvider,
+            kotlinPluginVersion: String,
+            kotlinGradleBuildServices: KotlinGradleBuildServices
+        ) {
+
+            val version = loadAndroidPluginVersion()
+            if (version != null) {
+                val minimalVersion = "1.1.0"
+                if (compareVersionNumbers(version, minimalVersion) < 0) {
+                    throw IllegalStateException("Kotlin: Unsupported version of com.android.tools.build:gradle plugin: version $minimalVersion or higher should be used with kotlin-android plugin")
+                }
+            }
+
+            val kotlinTools = KotlinConfigurationTools(
                 kotlinSourceSetProvider,
                 tasksProvider,
-                kotlinPluginVersion)
+                kotlinPluginVersion
+            )
 
-        val legacyVersionThreshold = "2.5.0"
+            val legacyVersionThreshold = "2.5.0"
 
-        val variantProcessor = if (compareVersionNumbers(version, legacyVersionThreshold) < 0) {
-            LegacyAndroidAndroidProjectHandler(kotlinTools)
-        }
-        else {
-            val android25ProjectHandlerClass = Class.forName("org.jetbrains.kotlin.gradle.plugin.Android25ProjectHandler")
-            val ctor = android25ProjectHandlerClass.constructors.single {
-                it.parameterTypes.contentEquals(arrayOf(kotlinTools.javaClass))
+            val variantProcessor = if (compareVersionNumbers(version, legacyVersionThreshold) < 0) {
+                LegacyAndroidAndroidProjectHandler(kotlinTools)
+            } else {
+                val android25ProjectHandlerClass = Class.forName("org.jetbrains.kotlin.gradle.plugin.Android25ProjectHandler")
+                val ctor = android25ProjectHandlerClass.constructors.single {
+                    it.parameterTypes.contentEquals(arrayOf(kotlinTools.javaClass))
+                }
+                ctor.newInstance(kotlinTools) as AbstractAndroidProjectHandler<*>
             }
-            ctor.newInstance(kotlinTools) as AbstractAndroidProjectHandler<*>
-        }
 
-        variantProcessor.handleProject(project)
+            variantProcessor.handleProject(project, kotlinPlatformExtension)
+        }
     }
 }
 
@@ -572,7 +589,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 
     protected abstract fun wrapVariantDataForKapt(variantData: V): KaptVariantData<V>
 
-    fun handleProject(project: Project) {
+    fun handleProject(project: Project, kotlinAndroidPlatformExtension: KotlinAndroidPlatformExtension) {
         val ext = project.extensions.getByName("android") as BaseExtension
         val aptConfigurations = hashMapOf<String, Configuration>()
 
@@ -584,7 +601,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
             Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, sourceSet.name)
         }
 
-        project.kotlinExtension.sourceSets.all { kotlinSourceSet ->
+        kotlinAndroidPlatformExtension.sourceSets.all { kotlinSourceSet ->
             ext.sourceSets.maybeCreate(kotlinSourceSet.name)
         }
 
@@ -613,6 +630,10 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                 }
             }
         }
+    }
+
+    fun handleExtension(kotlinAndroidPlatformExtension: KotlinAndroidPlatformExtension) {
+
     }
 
     private fun processVariant(variantData: V,

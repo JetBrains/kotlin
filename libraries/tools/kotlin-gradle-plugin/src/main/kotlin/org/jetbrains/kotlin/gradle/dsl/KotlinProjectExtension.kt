@@ -53,7 +53,9 @@ internal fun KotlinPlatformExtension.disambiguateName(simpleName: String) =
     platformDisambiguationClassifier?.plus(simpleName.capitalize()) ?: simpleName
 
 open class KotlinAndroidPlatformExtension : KotlinProjectExtension(), KotlinPlatformExtension {
-    override val platformName: String = "kotlin"
+    override var platformName: String = "kotlin"
+        internal set
+
     override val platformType = KotlinPlatformType.jvm
 }
 

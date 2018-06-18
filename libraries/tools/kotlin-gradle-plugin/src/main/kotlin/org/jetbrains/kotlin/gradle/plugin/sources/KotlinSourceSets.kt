@@ -78,7 +78,9 @@ abstract class AbstractKotlinSourceSet(
 class KotlinAndroidSourceSet(
     displayName: String,
     fileResolver: FileResolver
-) : AbstractKotlinSourceSet(displayName, fileResolver)
+) : AbstractKotlinSourceSet(displayName, fileResolver) {
+    override fun toString(): String = "source set '$displayName' (Android)"
+}
 
 class KotlinJavaSourceSet(
     displayName: String,

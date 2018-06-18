@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.base.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinPlatformSoftwareComponent
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.*
+import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCommonTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -98,9 +99,7 @@ internal class KotlinMultiplatformProjectConfigurator(
             )
         }
 
-        project.multiplatformExtension.common {
-            linkCommonAndPlatformExtensions(this@common, extension)
-        }
+        linkCommonAndPlatformExtensions(project.multiplatformExtension.common, extension)
 
         return extension
     }
@@ -131,11 +130,30 @@ internal class KotlinMultiplatformProjectConfigurator(
             )
         }
 
-        project.multiplatformExtension.common {
-            linkCommonAndPlatformExtensions(this@common, extension)
-        }
+        linkCommonAndPlatformExtensions(project.multiplatformExtension.common, extension)
 
         setupConfigurationsInProjectWithJava(project, extension)
+
+        return extension
+    }
+
+    fun createAndroidPlatformExtension(): KotlinAndroidPlatformExtension {
+        val platformClassifier = "android"
+
+        val sourceSets = KotlinAndroidSourceSetContainer(instantiator, project, fileResolver)
+
+        val extension = objectFactory.newInstance(KotlinAndroidPlatformExtension::class.java).apply {
+            val multiplatformExtension = project.multiplatformExtension
+            (multiplatformExtension as ExtensionAware).extensions.add(platformClassifier, this@apply)
+            registerKotlinSourceSetsIfAbsent(sourceSets, this@apply)
+            platformName = "kotlin" + platformClassifier.capitalize()
+        }
+
+        val tasksProvider = AndroidTasksProvider()
+
+        KotlinAndroidPlugin.applyToExtension(project, extension, sourceSets, tasksProvider, kotlinPluginVersion, kotlinGradleBuildServices)
+
+        linkCommonAndPlatformExtensions(project.multiplatformExtension.common, extension)
 
         return extension
     }
@@ -170,9 +188,7 @@ internal class KotlinMultiplatformProjectConfigurator(
             Kotlin2JsSourceSetProcessor(project, sourceSet, tasksProvider, sourceSets, extension)
         }
 
-        project.multiplatformExtension.common {
-            linkCommonAndPlatformExtensions(this@common, extension)
-        }
+        linkCommonAndPlatformExtensions(project.multiplatformExtension.common , extension)
 
         return extension
     }
@@ -194,6 +210,7 @@ internal class KotlinMultiplatformProjectConfigurator(
     ) {
         matchSymmetricallyByNames(commonExtension.sourceSets, platformExtension.sourceSets) {
                 commonSourceSet: KotlinSourceSet, platformSourceSet: KotlinSourceSet ->
+            //todo add the sources to the task as it's done in old MPP
             platformSourceSet.kotlin.source(commonSourceSet.kotlin)
         }
 
