@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused") // usages in build scripts are not tracked properly
+
+// usages in build scripts are not tracked properly
+@file:Suppress("unused")
 
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.task
-import org.gradle.kotlin.dsl.the
-import org.gradle.kotlin.dsl.*
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
 
@@ -44,14 +44,14 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
             }
 
             val classFileNameWithoutExtension = maybeClassFqName.replace('.', '/')
-            val classFileName = classFileNameWithoutExtension + ".class"
+            val classFileName = "$classFileNameWithoutExtension.class"
 
             include {
                 val path = it.path
                 if (it.isDirectory) {
                     classFileNameWithoutExtension.startsWith(path)
                 } else {
-                    path == classFileName || (path.endsWith(".class") && path.startsWith(classFileNameWithoutExtension + "$"))
+                    path == classFileName || (path.endsWith(".class") && path.startsWith("$classFileNameWithoutExtension$"))
                 }
             }
         }
@@ -67,14 +67,22 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
 
     dependsOn(":test-instrumenter:jar")
 
-    jvmArgs("-ea", "-XX:+HeapDumpOnOutOfMemoryError", "-Xmx1600m", "-XX:+UseCodeCacheFlushing", "-XX:ReservedCodeCacheSize=128m", "-Djna.nosys=true")
+    jvmArgs(
+        "-ea",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-Xmx1600m",
+        "-XX:+UseCodeCacheFlushing",
+        "-XX:ReservedCodeCacheSize=128m",
+        "-Djna.nosys=true"
+    )
+
     maxHeapSize = "1600m"
     systemProperty("idea.is.unit.test", "true")
     systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
     environment("PROJECT_CLASSES_DIRS", javaPluginConvention().sourceSets.getByName("test").output.classesDirs.asPath)
     environment("PROJECT_BUILD_DIR", buildDir)
-    systemProperty("jps.kotlin.home", rootProject.extra["distKotlinHomeDir"])
+    systemProperty("jps.kotlin.home", rootProject.extra["distKotlinHomeDir"]!!)
     systemProperty("kotlin.ni", if (rootProject.hasProperty("newInferenceTests")) "true" else "false")
     body()
 }
@@ -82,7 +90,7 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
 private inline fun String.isFirstChar(f: (Char) -> Boolean) = isNotEmpty() && f(first())
 
 inline fun <reified T : Task> Project.getOrCreateTask(taskName: String, body: T.() -> Unit): T =
-        (tasks.findByName(taskName)?.let { it as T } ?: task<T>(taskName)).apply { body() }
+    (tasks.findByName(taskName)?.let { it as T } ?: task<T>(taskName)).apply { body() }
 
 object TaskUtils {
     fun useAndroidSdk(task: Task) {
