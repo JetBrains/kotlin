@@ -20,7 +20,6 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.name.FqName
@@ -31,7 +30,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     private fun flagsFromClass(classDescriptor: ClassDescriptor): Int {
         var result = 0
-        if (classDescriptor.isImmutable)
+        if (classDescriptor.isFrozen)
            result = result or 1 /* TF_IMMUTABLE */
         return result
     }

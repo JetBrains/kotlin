@@ -22,7 +22,7 @@ import kotlinx.cinterop.*
  * An immutable compile-time array of bytes.
  */
 @ExportTypeInfo("theImmutableBinaryBlobTypeInfo")
-@Immutable
+@Frozen
 public final class ImmutableBinaryBlob private constructor() {
     public val size: Int
         get() = getArrayLength()

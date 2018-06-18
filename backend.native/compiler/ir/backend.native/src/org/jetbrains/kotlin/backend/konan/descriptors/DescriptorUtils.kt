@@ -83,17 +83,17 @@ internal fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction {
 }
 
 private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
-private val immutableAnnotation = FqName("konan.internal.Immutable")
+private val frozenAnnotation = FqName("konan.internal.Frozen")
 
 // TODO: don't forget to remove descriptor access here.
 internal val FunctionDescriptor.isIntrinsic: Boolean
     get() = this.descriptor.annotations.hasAnnotation(intrinsicAnnotation)
 
-internal val org.jetbrains.kotlin.descriptors.DeclarationDescriptor.isImmutable: Boolean
-    get() = this.annotations.hasAnnotation(immutableAnnotation)
+internal val org.jetbrains.kotlin.descriptors.DeclarationDescriptor.isFrozen: Boolean
+    get() = this.annotations.hasAnnotation(frozenAnnotation)
 
-internal val DeclarationDescriptor.isImmutable: Boolean
-    get() = this.descriptor.isImmutable
+internal val DeclarationDescriptor.isFrozen: Boolean
+    get() = this.descriptor.isFrozen
 
 private val intrinsicTypes = setOf(
         "kotlin.Boolean", "kotlin.Char",

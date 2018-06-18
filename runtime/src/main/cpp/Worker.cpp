@@ -25,9 +25,6 @@
 #if WITH_WORKERS
 #include <pthread.h>
 #include <sys/time.h>
-
-#include <deque>
-#include <unordered_map>
 #endif
 
 #include "Alloc.h"

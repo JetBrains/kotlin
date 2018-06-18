@@ -18,7 +18,7 @@ package konan.internal
 
 import kotlinx.cinterop.*
 
-@Immutable
+@Frozen
 class NativePtrBox(val value: NativePtr) {
     override fun equals(other: Any?): Boolean {
         if (other !is NativePtrBox) {
@@ -35,7 +35,7 @@ class NativePtrBox(val value: NativePtr) {
 
 fun boxNativePtr(value: NativePtr) = NativePtrBox(value)
 
-@Immutable
+@Frozen
 class NativePointedBox(val value: NativePointed) {
     override fun equals(other: Any?): Boolean {
         if (other !is NativePointedBox) {
@@ -56,7 +56,7 @@ class NativePointedBox(val value: NativePointed) {
 fun boxNativePointed(value: NativePointed?) = if (value != null) NativePointedBox(value) else null
 fun unboxNativePointed(box: NativePointedBox?) = box?.value
 
-@Immutable
+@Frozen
 class CPointerBox(val value: CPointer<CPointed>) : CValuesRef<CPointed>() {
     override fun equals(other: Any?): Boolean {
         if (other !is CPointerBox) {
