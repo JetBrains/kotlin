@@ -308,13 +308,13 @@ actual class ArrayList<E> private constructor(
         override fun nextIndex(): Int = index
 
         override fun previous(): E {
-            if (index <= 0) throw IndexOutOfBoundsException()
+            if (index <= 0) throw NoSuchElementException()
             lastIndex = --index
             return list.array[list.offset + lastIndex]
         }
 
         override fun next(): E {
-            if (index >= list.length) throw IndexOutOfBoundsException()
+            if (index >= list.length) throw NoSuchElementException()
             lastIndex = index++
             return list.array[list.offset + lastIndex]
         }
