@@ -33,11 +33,14 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
         val patterns = filter.includePatterns + ((filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: emptySet())
         if (patterns.isEmpty() || patterns.any { '*' in it }) return@doFirst
         patterns.forEach { pattern ->
+            var isClassPattern = false
             val maybeMethodName = pattern.substringAfterLast('.')
-            val maybeClassFqName = if (maybeMethodName.isFirstChar(::isLowerCase))
+            val maybeClassFqName = if (maybeMethodName.isFirstChar(::isLowerCase)) {
                 pattern.substringBeforeLast('.')
-            else
+            } else {
+                isClassPattern = true
                 pattern
+            }
 
             if (!maybeClassFqName.substringAfterLast('.').isFirstChar(::isUpperCase)) {
                 return@forEach
@@ -45,6 +48,10 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
 
             val classFileNameWithoutExtension = maybeClassFqName.replace('.', '/')
             val classFileName = "$classFileNameWithoutExtension.class"
+
+            if (isClassPattern) {
+                filter.includePatterns.add("$pattern$*")
+            }
 
             include {
                 val path = it.path
