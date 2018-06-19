@@ -21708,6 +21708,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/when/whenSubjectVariable/sparseIntSwitchWithSubjectVariable.kt");
             }
 
+            @TestMetadata("subjectExpressionIsEvaluatedOnce.kt")
+            public void testSubjectExpressionIsEvaluatedOnce() throws Exception {
+                runTest("compiler/testData/codegen/box/when/whenSubjectVariable/subjectExpressionIsEvaluatedOnce.kt");
+            }
+
             @TestMetadata("whenByEnum.kt")
             public void testWhenByEnum() throws Exception {
                 runTest("compiler/testData/codegen/box/when/whenSubjectVariable/whenByEnum.kt");
