@@ -353,22 +353,25 @@ class KotlinCoreEnvironment private constructor(
         }.orEmpty()
     }
 
-    private fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
-        return when (root) {
-            is JvmClasspathRoot -> if (root.file.isFile) findJarRoot(root.file) else findLocalFile(root)
-            is JvmModulePathRoot -> if (root.file.isFile) findJarRoot(root.file) else findLocalFile(root)
-            is JavaSourceRoot -> findLocalFile(root)
-            else -> throw IllegalStateException("Unexpected root: $root")
+    private fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? =
+        when (root) {
+            is JvmClasspathRoot ->
+                if (root.file.isFile) findJarRoot(root.file) else findExistingRoot(root, "Classpath entry")
+            is JvmModulePathRoot ->
+                if (root.file.isFile) findJarRoot(root.file) else findExistingRoot(root, "Java module root")
+            is JavaSourceRoot ->
+                findExistingRoot(root, "Java source root")
+            else ->
+                throw IllegalStateException("Unexpected root: $root")
         }
-    }
 
     internal fun findLocalFile(path: String): VirtualFile? =
             applicationEnvironment.localFileSystem.findFileByPath(path)
 
-    private fun findLocalFile(root: JvmContentRoot): VirtualFile? {
+    private fun findExistingRoot(root: JvmContentRoot, rootDescription: String): VirtualFile? {
         return findLocalFile(root.file.absolutePath).also {
             if (it == null) {
-                report(STRONG_WARNING, "Classpath entry points to a non-existent location: ${root.file}")
+                report(STRONG_WARNING, "$rootDescription points to a non-existent location: ${root.file}")
             }
         }
     }
