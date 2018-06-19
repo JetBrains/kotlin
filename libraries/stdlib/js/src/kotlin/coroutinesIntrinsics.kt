@@ -32,3 +32,13 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
 public actual fun <T> (suspend () -> T).createCoroutineUnchecked(
     completion: Continuation<T>
 ): Continuation<Unit> = this.asDynamic()(completion, true).facade
+
+
+/**
+ * This value is used as a return value of [suspendCoroutineOrReturn] `block` argument to state that
+ * the execution was suspended and will not return any result immediately.
+ */
+@SinceKotlin("1.1")
+public actual val COROUTINE_SUSPENDED: Any = CoroutineSuspendedMarker
+
+private object CoroutineSuspendedMarker
