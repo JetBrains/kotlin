@@ -13,6 +13,7 @@ import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.command.CommandAdapter
 import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.command.CommandProcessor
@@ -25,6 +26,7 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JavaProjectRootsUtil
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.*
 import com.intellij.openapi.util.Pass
@@ -74,8 +76,6 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.util.actualsForExpected
-import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
@@ -981,13 +981,6 @@ fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
     return containingObject.isCompanion() && containingObject.containingClassOrObject == klass
 }
 
-internal fun KtDeclaration.withExpectedActuals(): List<KtDeclaration> {
-    val expect = liftToExpected() ?: return listOf(this)
-    val actuals = expect.actualsForExpected()
-    return listOf(expect) + actuals
-}
-
-internal fun KtDeclaration.resolveToExpectedDescriptorIfPossible(): DeclarationDescriptor {
-    val descriptor = unsafeResolveToDescriptor()
-    return descriptor.liftToExpected() ?: descriptor
+fun DialogWrapper.showWithTransaction() {
+    TransactionGuard.submitTransaction(disposable, Runnable { show() })
 }
