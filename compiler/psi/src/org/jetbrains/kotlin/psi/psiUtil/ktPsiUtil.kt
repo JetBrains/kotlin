@@ -480,6 +480,10 @@ fun KtClassOrObject.findPropertyByName(name: String): KtNamedDeclaration? {
             ?: primaryConstructorParameters.firstOrNull { it.hasValOrVar() && it.name == name }
 }
 
+fun KtClassOrObject.findFunctionByName(name: String): KtNamedDeclaration? {
+    return declarations.firstOrNull { it is KtNamedFunction && it.name == name } as KtNamedDeclaration?
+}
+
 fun isTypeConstructorReference(e: PsiElement): Boolean {
     val parent = e.parent
     return parent is KtUserType && parent.referenceExpression == e

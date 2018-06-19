@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.findFunctionByName
 import org.jetbrains.kotlin.psi.psiUtil.findPropertyByName
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
@@ -39,19 +40,20 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             if (expression.text != objectDeclaration.name) return
 
             val containingClass = objectDeclaration.containingClass() ?: return
+            val containingClassDescriptor = containingClass.descriptor as? ClassDescriptor ?: return
             val selectorDescriptor = selectorExpression?.getCallableDescriptor()
             when (selectorDescriptor) {
                 is PropertyDescriptor -> {
                     val name = selectorDescriptor.name
                     if (containingClass.findPropertyByName(name.asString()) != null) return
                     val variable = expression.getResolutionScope().findVariable(name, NoLookupLocation.FROM_IDE)
-                    if (variable.isLocalOrExtension(containingClass)) return
+                    if (variable != null && variable.isLocalOrExtension(containingClassDescriptor)) return
                 }
                 is FunctionDescriptor -> {
                     val name = selectorDescriptor.name
                     val function = containingClass.findFunctionByName(name.asString())?.descriptor
                             ?: expression.getResolutionScope().findFunction(name, NoLookupLocation.FROM_IDE)?.takeIf {
-                                it.isLocalOrExtension(containingClass)
+                                it.isLocalOrExtension(containingClassDescriptor)
                             }
                     if (function is FunctionDescriptor) {
                         val functionParams = function.valueParameters
@@ -80,13 +82,9 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
     }
 }
 
-private fun KtClass.findFunctionByName(name: String): KtDeclaration? {
-    return declarations.firstOrNull { it is KtNamedFunction && it.name == name }
-}
-
-private fun CallableDescriptor?.isLocalOrExtension(extensionClass: KtClass): Boolean {
-    return this?.visibility == Visibilities.LOCAL
-            || this?.extensionReceiverParameter?.type?.constructor?.declarationDescriptor == extensionClass.descriptor
+private fun CallableDescriptor.isLocalOrExtension(extensionClassDescriptor: ClassDescriptor): Boolean {
+    return visibility == Visibilities.LOCAL ||
+            extensionReceiverParameter?.type?.constructor?.declarationDescriptor == extensionClassDescriptor
 }
 
 private class RemoveRedundantCompanionReferenceFix : LocalQuickFix {
