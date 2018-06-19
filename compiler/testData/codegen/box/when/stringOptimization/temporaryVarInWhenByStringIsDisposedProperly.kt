@@ -1,9 +1,10 @@
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 
 val String.name get() = this
 
 fun List<String>.normalize(): List<String> {
-    val list = ArrayList<String>(this.size)
+    val list = ArrayList<String>()
     for (str in this) {
         when (str.name) {
             "." -> {}

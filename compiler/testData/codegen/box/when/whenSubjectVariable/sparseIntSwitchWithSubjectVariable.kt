@@ -1,6 +1,6 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, JS_IR
 
 fun sparse(x: Int): Int {
     return when (val xx = (x % 4) * 100) {

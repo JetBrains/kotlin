@@ -1,5 +1,5 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, JS_IR
 
 var effectCount = 0
 
