@@ -1,0 +1,6 @@
+// "Move to companion object" "true"
+class Test {
+    companion object {
+        const val foo = ""
+    }
+}
