@@ -407,7 +407,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         context.checkCanceled()
 
         environment.withProgressReporter { progress ->
-            progress.progress("updating IC caches")
+            progress.progress("performing incremental compilation analysis")
 
             val changesCollector = ChangesCollector()
             for ((target, files) in generatedFiles) {
