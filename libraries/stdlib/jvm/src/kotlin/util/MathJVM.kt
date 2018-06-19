@@ -10,17 +10,33 @@ package kotlin.math
 
 import kotlin.*
 import kotlin.internal.InlineOnly
+import kotlin.math.Constants.LN2
+import kotlin.math.Constants.taylor_2_bound
+import kotlin.math.Constants.taylor_n_bound
+import kotlin.math.Constants.upper_taylor_2_bound
+import kotlin.math.Constants.upper_taylor_n_bound
+
+
 import java.lang.Math as nativeMath
 
+private object Constants {
 // constants
-/** Natural logarithm of 2.0, used to compute [log2] function */
-private val LN2: Double = ln(2.0)
+    /** Natural logarithm of 2.0, used to compute [log2] function */
+    @JvmField
+    internal val LN2: Double = ln(2.0)
 
-private val epsilon: Double = nativeMath.ulp(1.0)
-private val taylor_2_bound = nativeMath.sqrt(epsilon)
-private val taylor_n_bound = nativeMath.sqrt(taylor_2_bound)
-private val upper_taylor_2_bound = 1 / taylor_2_bound
-private val upper_taylor_n_bound = 1 / taylor_n_bound
+    @JvmField
+    internal val epsilon: Double = nativeMath.ulp(1.0)
+    @JvmField
+    internal val taylor_2_bound = nativeMath.sqrt(epsilon)
+    @JvmField
+    internal val taylor_n_bound = nativeMath.sqrt(taylor_2_bound)
+    @JvmField
+    internal val upper_taylor_2_bound = 1 / taylor_2_bound
+    @JvmField
+    internal val upper_taylor_n_bound = 1 / taylor_n_bound
+
+}
 
 // ================ Double Math ========================================
 
