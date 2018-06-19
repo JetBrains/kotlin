@@ -33,6 +33,11 @@ public class ReflectionFactory {
 
     @SinceKotlin(version = "1.1")
     public String renderLambdaToString(Lambda lambda) {
+        return renderLambdaToString((FunctionBase) lambda);
+    }
+
+    @SinceKotlin(version = "1.3")
+    public String renderLambdaToString(FunctionBase lambda) {
         String result = lambda.getClass().getGenericInterfaces()[0].toString();
         return result.startsWith(KOTLIN_JVM_FUNCTIONS) ? result.substring(KOTLIN_JVM_FUNCTIONS.length()) : result;
     }
