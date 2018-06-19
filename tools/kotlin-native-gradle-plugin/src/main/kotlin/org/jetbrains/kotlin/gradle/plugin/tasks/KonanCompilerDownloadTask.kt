@@ -72,7 +72,7 @@ open class KonanCompilerDownloadTask : DefaultTask() {
 
         // Download dependencies if a user said so.
         if (downloadDependencies) {
-            val runner = KonanCompilerRunner(project)
+            val runner = KonanCompilerRunner(project, project.konanExtension.jvmArgs)
             project.konanTargets.forEach {
                 runner.run("--check_dependencies", "-target", it.visibleName)
             }

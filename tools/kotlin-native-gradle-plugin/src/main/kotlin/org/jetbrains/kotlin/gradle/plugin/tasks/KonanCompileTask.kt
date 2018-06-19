@@ -36,7 +36,7 @@ import java.io.File
  */
 abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
-    @Internal override val toolRunner = KonanCompilerRunner(project)
+    @Internal override val toolRunner = KonanCompilerRunner(project, project.konanExtension.jvmArgs)
 
     abstract val produce: CompilerOutputKind
         @Internal get

@@ -34,7 +34,12 @@ internal interface KonanToolRunner: Named {
     fun run(vararg args: String) = run(args.toList())
 }
 
-internal abstract class KonanCliRunner(val toolName: String, val fullName: String, val project: Project): KonanToolRunner {
+internal abstract class KonanCliRunner(
+        val toolName: String,
+        val fullName: String,
+        val project: Project,
+        private val additionalJvmArgs: List<String>
+): KonanToolRunner {
     override val mainClass = "org.jetbrains.kotlin.cli.utilities.MainKt"
 
     override fun getName() = toolName
@@ -51,11 +56,11 @@ internal abstract class KonanCliRunner(val toolName: String, val fullName: Strin
             .apply { include("*.jar")  }
 
     override val jvmArgs = mutableListOf("-ea").apply {
-        if (project.konanExtension.jvmArgs.none { it.startsWith("-Xmx") } &&
+        if (additionalJvmArgs.none { it.startsWith("-Xmx") } &&
             project.jvmArgs.none { it.startsWith("-Xmx") }) {
             add("-Xmx3G")
         }
-        addAll(project.konanExtension.jvmArgs)
+        addAll(additionalJvmArgs)
         addAll(project.jvmArgs)
     }
 
@@ -87,8 +92,8 @@ internal abstract class KonanCliRunner(val toolName: String, val fullName: Strin
     }
 }
 
-internal class KonanInteropRunner(project: Project)
-    : KonanCliRunner("cinterop", "Kotlin/Native cinterop tool", project)
+internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<String> = emptyList())
+    : KonanCliRunner("cinterop", "Kotlin/Native cinterop tool", project, additionalJvmArgs)
 {
     init {
         if (HostManager.host == KonanTarget.MINGW_X64) {
@@ -100,5 +105,8 @@ internal class KonanInteropRunner(project: Project)
     }
 }
 
-internal class KonanCompilerRunner(project: Project) : KonanCliRunner("konanc", "Kotlin/Native compiler", project)
-internal class KonanKlibRunner(project: Project) : KonanCliRunner("klib", "Klib management tool", project)
+internal class KonanCompilerRunner(project: Project, additionalJvmArgs: List<String> = emptyList())
+    : KonanCliRunner("konanc", "Kotlin/Native compiler", project, additionalJvmArgs)
+
+internal class KonanKlibRunner(project: Project, additionalJvmArgs: List<String> = emptyList())
+    : KonanCliRunner("klib", "Klib management tool", project, additionalJvmArgs)

@@ -36,7 +36,7 @@ import java.io.File
  */
 open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
 
-    @Internal override val toolRunner: KonanToolRunner = KonanInteropRunner(project)
+    @Internal override val toolRunner: KonanToolRunner = KonanInteropRunner(project, project.konanExtension.jvmArgs)
 
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(config, destinationDir, artifactName, target)
