@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.util.PerformanceCounter
-import org.jetbrains.kotlin.util.getExceptionMessage
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 import java.io.DataInput
@@ -96,10 +95,8 @@ fun JavaClassDescriptor.convertToProto(): SerializedJavaClassWithSource {
     val file = javaSourceFile.sure { "convertToProto should only be called for source based classes" }
 
     val extension = JavaClassesSerializerExtension()
-    val serializer = DescriptorSerializer.createTopLevel(extension)
-    val classProto: ProtoBuf.Class
-    try {
-        classProto = serializer.classProto(this).build()
+    val classProto = try {
+        DescriptorSerializer.create(this, extension).classProto(this).build()
     } catch (e: Exception) {
         throw IllegalStateException(
             "Error during writing proto for descriptor: ${DescriptorRenderer.DEBUG_TEXT.render(this)}\n" +
