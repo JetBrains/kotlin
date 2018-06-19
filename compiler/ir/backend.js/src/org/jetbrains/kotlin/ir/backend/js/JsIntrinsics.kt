@@ -91,7 +91,7 @@ class JsIntrinsics(
 
     // Number conversions:
 
-    val jsAsIs = getInternalFunction("asIs") // TODO: Simplify
+    val jsAsIs = getInternalFunction("asIs")  // as-is conversion. Call can be replaced with first paramenter
     val jsNumberToByte = getInternalFunction("numberToByte")
     val jsNumberToDouble = getInternalFunction("numberToDouble")
     val jsNumberToInt = getInternalFunction("numberToInt")

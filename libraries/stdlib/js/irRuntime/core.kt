@@ -7,18 +7,18 @@ package kotlin.js
 
 fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     if (obj1 == null) {
-        return obj2 == null;
+        return obj2 == null
     }
 
     if (obj2 == null) {
-        return false;
+        return false
+    }
+
+    if (obj1 !== obj1) {
+        return obj2 !== obj2
     }
 
     return js("""
-    if (obj1 !== obj1) {
-        return obj2 !== obj2;
-    }
-
     if (typeof obj1 === "object" && typeof obj1.equals === "function") {
         return obj1.equals(obj2);
     }
@@ -31,7 +31,7 @@ fun equals(obj1: dynamic, obj2: dynamic): Boolean {
 }
 
 fun isArrayish(o: dynamic) =
-    js("Array.isArray(o) || ArrayBuffer.isView(o)").unsafeCast<Boolean>()
+    isArray(o) || js("ArrayBuffer.isView(o)").unsafeCast<Boolean>()
 
 fun toString(o: dynamic): String {
     if (o == null) {
@@ -45,7 +45,7 @@ fun toString(o: dynamic): String {
     }
 }
 
-// TODO: Simplify
+// TODO: Simplify, extract kotlin declarations for inner helper functions
 fun hashCode(obj: dynamic): Int {
     return js(
         """
