@@ -18,7 +18,16 @@ package konan.test
 
 import kotlin.system.exitProcess
 
-fun main(args:Array<String>) {
-    val exitCode = TestRunner.run(args)
-    exitProcess(exitCode)
+private val _generatedSuites = mutableListOf<TestSuite>()
+
+internal fun registerSuite(suite: TestSuite): Unit {
+    _generatedSuites.add(suite)
+}
+
+fun testLauncherEntryPoint(args: Array<String>): Int {
+    return TestRunner(_generatedSuites, args).run()
+}
+
+fun main(args: Array<String>) {
+    exitProcess(testLauncherEntryPoint(args))
 }

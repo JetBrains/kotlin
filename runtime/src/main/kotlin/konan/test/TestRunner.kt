@@ -21,22 +21,55 @@ import kotlin.system.getTimeMillis
 import kotlin.system.measureTimeMillis
 import kotlin.text.StringBuilder
 
-object TestRunner {
-
-    private val suites_ = mutableListOf<TestSuite>()
-    val suites: Collection<TestSuite>
-        get() = suites_
-
-    var logger: TestLogger = GTestLogger()
+class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
+    private val filters = mutableListOf<(TestCase) -> Boolean>()
+    private val listeners = mutableSetOf<TestListener>()
+    private var logger: TestLogger = GTestLogger()
+    private var runTests = true
     var iterations = 1
-
-    val listeners = mutableSetOf<TestListener>()
-    val filters = mutableListOf<(TestCase) -> Boolean>()
-
+        private set
     var exitCode = 0
         private set
 
-    class FilteredSuite(val innerSuite: TestSuite): TestSuite by innerSuite {
+    init {
+        args.filter {
+            it.startsWith("--gtest_") || it.startsWith("--ktest_") || it == "--help" || it == "-h"
+        }.forEach {
+            val arg = it.split('=')
+            when (arg.size) {
+                1 -> when (arg[0]) {
+                    "--gtest_list_tests",
+                    "--ktest_list_tests" -> {
+                        logger.logTestList(this, filterSuites()); runTests = false
+                    }
+                    "-h",
+                    "--help" -> {
+                        logger.log(help); runTests = false
+                    }
+                    else -> throw IllegalArgumentException("Unknown option: $it\n$help")
+                }
+                2 -> {
+                    val key = arg[0]
+                    val value = arg[1]
+                    when (key) {
+                        "--ktest_logger" -> setLoggerFromArg(value)
+                        "--gtest_filter",
+                        "--ktest_filter" -> setGTestFilterFromArg(value)
+                        "--ktest_regex_filter" -> setRegexFilterFromArg(value, true)
+                        "--ktest_negative_regex_filter" -> setRegexFilterFromArg(value, false)
+                        "--ktest_repeat",
+                        "--gtest_repeat" -> iterations = value.toIntOrNull() ?: throw IllegalArgumentException("Cannot parse number: $value")
+                        else -> if (key.startsWith("--ktest_")) {
+                            throw IllegalArgumentException("Unknown option: $it\n$help")
+                        }
+                    }
+                }
+                else -> throw IllegalArgumentException("Unknown option: $it\n$help")
+            }
+        }
+    }
+
+    inner class FilteredSuite(val innerSuite: TestSuite) : TestSuite by innerSuite {
 
         private val TestCase.matchFilters: Boolean
             get() = filters.map { it(this) }.all { it }
@@ -49,10 +82,6 @@ object TestRunner {
     }
 
     private fun filterSuites(): Collection<TestSuite> = suites.map { FilteredSuite(it) }
-
-    fun register(suite: TestSuite) = suites_.add(suite)
-    fun register(suites: Iterable<TestSuite>) = suites_.addAll(suites)
-    fun register(vararg suites: TestSuite) = suites_.addAll(suites)
 
     // TODO: Support short aliases.
     // TODO: Support several test iterations.
@@ -82,54 +111,9 @@ object TestRunner {
      *
      *  --ktest_logger=GTEST|TEAMCITY|SIMPLE|SILENT         - Use the specified output format. The default one is GTEST.
      */
-    fun useArgs(args: Array<String>): Boolean {
-        try {
-            return parseArgs(args)
-        } catch (e: IllegalArgumentException) {
-            logger.log("Error: ${e.message}")
-            return false
-        }
-    }
-
-    private fun parseArgs(args: Array<String>): Boolean {
-        var result = true
-        args.filter {
-            it.startsWith("--gtest_") || it.startsWith("--ktest_") || it == "--help" || it == "-h"
-        }.forEach {
-            val arg = it.split('=')
-            when (arg.size) {
-                1 -> when (arg[0]) {
-                    "--gtest_list_tests",
-                    "--ktest_list_tests" -> { logger.logTestList(this, filterSuites()); result = false }
-                    "-h",
-                    "--help" -> { logger.log(help); result = false }
-                    else -> throw IllegalArgumentException("Unknown option: $it\n$help")
-                }
-                2 -> {
-                    val key = arg[0]
-                    val value = arg[1]
-                    when (key) {
-                        "--ktest_logger" -> setLoggerFromArg(value)
-                        "--gtest_filter",
-                        "--ktest_filter" -> setGTestFilterFromArg(value)
-                        "--ktest_regex_filter" -> setRegexFilterFromArg(value, true)
-                        "--ktest_negative_regex_filter" -> setRegexFilterFromArg(value, false)
-                        "--ktest_repeat",
-                        "--gtest_repeat" -> iterations = value.toIntOrNull() ?:
-                                throw IllegalArgumentException("Cannot parse number: $value")
-                        else -> if (key.startsWith("--ktest_")) {
-                            throw IllegalArgumentException("Unknown option: $it\n$help")
-                        }
-                    }
-                }
-                else -> throw IllegalArgumentException("Unknown option: $it\n$help")
-            }
-        }
-        return result
-    }
 
     private fun String.substringEscaped(range: IntRange) =
-            this.substring(range).let { if(it.isNotEmpty()) Regex.escape(it) else "" }
+            this.substring(range).let { if (it.isNotEmpty()) Regex.escape(it) else "" }
 
     private fun String.toGTestPatterns() = splitToSequence(':').map { pattern ->
         val result = StringBuilder()
@@ -137,8 +121,8 @@ object TestRunner {
         pattern.forEachIndexed { index, c ->
             if (c == '*' || c == '?') {
                 result.append(pattern.substringEscaped(prevIndex until index))
-                prevIndex = index+1
-                result.append( if (c == '*') ".*" else ".")
+                prevIndex = index + 1
+                result.append(if (c == '*') ".*" else ".")
             }
         }
         result.append(pattern.substringEscaped(prevIndex until pattern.length))
@@ -159,7 +143,7 @@ object TestRunner {
 
         this.filters.add { testCase ->
             positivePatterns.any { testCase.prettyName.matches(it) } &&
-            negativePatterns.none { testCase.prettyName.matches(it) }
+                    negativePatterns.none { testCase.prettyName.matches(it) }
         }
     }
 
@@ -174,7 +158,7 @@ object TestRunner {
     }
 
     private fun setLoggerFromArg(logger: String) {
-        when(logger.toUpperCase()) {
+        when (logger.toUpperCase()) {
             "GTEST" -> this.logger = GTestLogger()
             "TEAMCITY" -> this.logger = TeamCityLogger()
             "SIMPLE" -> this.logger = SimpleTestLogger()
@@ -249,15 +233,9 @@ object TestRunner {
         sendToListeners { finishIteration(this@TestRunner, iteration, iterationTime) }
     }
 
-    fun run(args: Array<String>): Int {
-        return if (useArgs(args)) {
-            run()
-        } else {
-            0
-        }
-    }
-
     fun run(): Int {
+        if (!runTests)
+            return 0
         sendToListeners { startTesting(this@TestRunner) }
         val totalTime = measureTimeMillis {
             var i = 1
@@ -268,5 +246,6 @@ object TestRunner {
         }
         sendToListeners { finishTesting(this@TestRunner, totalTime) }
         return exitCode
+
     }
 }

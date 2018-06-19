@@ -73,7 +73,7 @@ abstract class AbstractTestSuite<F: Function<Unit>>(override val name: String, o
     abstract fun createTestCase(name: String, testFunction: F, ignored: Boolean):  BasicTestCase<F>
 
     init {
-        TestRunner.register(this)
+        registerSuite(this)
     }
 
     override val size: Int

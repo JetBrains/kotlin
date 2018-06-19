@@ -75,7 +75,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
         val functionDescriptor = irCall.descriptor
         if (!functionDescriptor.needsInlining) return irCall                                // This call does not need inlining.
 
-        val functionDeclaration = getFunctionDeclaration(functionDescriptor)                // Get declaration of the function to be inlined.
+        val functionDeclaration = getFunctionDeclaration(functionDescriptor)     // Get declaration of the function to be inlined.
         if (functionDeclaration == null) {                                                  // We failed to get the declaration.
             val message = "Inliner failed to obtain function declaration: " +
                           functionDescriptor.fqNameSafe.toString()
@@ -83,9 +83,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
             return irCall
         }
 
-        functionDeclaration.transformChildrenVoid(this)                                     // Process recursive inline.
+        functionDeclaration.transformChildrenVoid(this)                                  // Process recursive inline.
         val inliner = Inliner(globalSubstituteMap, functionDeclaration, currentScope!!, context)    // Create inliner for this scope.
-        return inliner.inline(irCall )                                  // Return newly created IrInlineBody instead of IrCall.
+        return inliner.inline(irCall)   // Return newly created IrInlineBody instead of IrCall.
     }
 
     //-------------------------------------------------------------------------//
@@ -134,7 +134,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
     private fun inlineFunction(callee: IrCall,                                              // Call to be substituted.
                                caller: IrFunction): IrReturnableBlockImpl {                 // Function to substitute.
 
-        val copyFunctionDeclaration = copyIrElement.copy(                                   // Create copy of original function.
+        val copyFunctionDeclaration = copyIrElement.copy(                         // Create copy of original function.
             irElement       = caller,                                                       // Descriptors declared inside the function will be copied.
             typeSubstitutor = createTypeSubstitutor(callee)                                 // Type parameters will be substituted with type arguments.
         ) as IrFunction

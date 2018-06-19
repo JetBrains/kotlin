@@ -10,5 +10,5 @@ fun test() {
 
 fun main(args: Array<String>) {
     println("Custom main")
-    TestRunner.run(args)
+    testLauncherEntryPoint(args)
 }

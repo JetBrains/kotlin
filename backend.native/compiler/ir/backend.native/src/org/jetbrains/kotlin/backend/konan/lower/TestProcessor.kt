@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
@@ -405,9 +406,10 @@ internal class TestProcessor (val context: KonanBackendContext) {
                         endOffset =     UNDEFINED_OFFSET,
                         symbol =        symbols.symbolTable.referenceConstructor(superConstructor),
                         descriptor =    superConstructor,
-                        typeArguments = mapOf(superConstructor.typeParameters[0] to testClassType,
-                                superConstructor.typeParameters[1] to testCompanionType)
+                        typeArgumentsCount = 2
                 ).apply {
+                    copyTypeArgumentsFrom(mapOf(superConstructor.typeParameters[0] to testClassType,
+                            superConstructor.typeParameters[1] to testCompanionType))
                     putValueArgument(0, IrConstImpl.string(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
