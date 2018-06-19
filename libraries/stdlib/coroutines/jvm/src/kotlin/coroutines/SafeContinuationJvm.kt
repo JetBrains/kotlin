@@ -6,7 +6,7 @@ package kotlin.coroutines
 
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 import kotlin.*
-import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.CoroutineSingletons.*
 
 @PublishedApi
 @SinceKotlin("1.3")
@@ -15,7 +15,6 @@ internal actual constructor(
     private val delegate: Continuation<T>,
     initialResult: Any?
 ) : Continuation<T> {
-
     @PublishedApi
     internal actual constructor(delegate: Continuation<T>) : this(delegate, UNDECIDED)
 
@@ -25,10 +24,7 @@ internal actual constructor(
     @Volatile
     private var result: Any? = initialResult
 
-    companion object {
-        private val UNDECIDED: Any? = Any()
-        private val RESUMED: Any? = Any()
-
+    private companion object {
         @Suppress("UNCHECKED_CAST")
         @JvmStatic
         private val RESULT = AtomicReferenceFieldUpdater.newUpdater<SafeContinuation<*>, Any?>(
@@ -36,29 +32,13 @@ internal actual constructor(
         )
     }
 
-    private class Fail(val exception: Throwable)
-
-    actual override fun resume(value: T) {
+    public actual override fun resumeWith(result: SuccessOrFailure<T>) {
         while (true) { // lock-free loop
-            val result = this.result // atomic read
+            val cur = this.result // atomic read
             when {
-                result === UNDECIDED -> if (RESULT.compareAndSet(this, UNDECIDED, value)) return
-                result === COROUTINE_SUSPENDED -> if (RESULT.compareAndSet(this, COROUTINE_SUSPENDED, RESUMED)) {
-                    delegate.resume(value)
-                    return
-                }
-                else -> throw IllegalStateException("Already resumed")
-            }
-        }
-    }
-
-    actual override fun resumeWithException(exception: Throwable) {
-        while (true) { // lock-free loop
-            val result = this.result // atomic read
-            when {
-                result === UNDECIDED -> if (RESULT.compareAndSet(this, UNDECIDED, Fail(exception))) return
-                result === COROUTINE_SUSPENDED -> if (RESULT.compareAndSet(this, COROUTINE_SUSPENDED, RESUMED)) {
-                    delegate.resumeWithException(exception)
+                cur === UNDECIDED -> if (RESULT.compareAndSet(this, UNDECIDED, result)) return
+                cur === COROUTINE_SUSPENDED -> if (RESULT.compareAndSet(this, COROUTINE_SUSPENDED, RESUMED)) {
+                    delegate.resumeWith(result)
                     return
                 }
                 else -> throw IllegalStateException("Already resumed")
@@ -67,16 +47,16 @@ internal actual constructor(
     }
 
     @PublishedApi
-    internal actual fun getResult(): Any? {
+    internal actual fun getOrThrow(): Any? {
         var result = this.result // atomic read
         if (result === UNDECIDED) {
             if (RESULT.compareAndSet(this, UNDECIDED, COROUTINE_SUSPENDED)) return COROUTINE_SUSPENDED
             result = this.result // reread volatile var
         }
-        when {
-            result === RESUMED -> return COROUTINE_SUSPENDED // already called continuation, indicate COROUTINE_SUSPENDED upstream
-            result is Fail -> throw result.exception
-            else -> return result // either COROUTINE_SUSPENDED or data
+        return when {
+            result === RESUMED -> COROUTINE_SUSPENDED // already called continuation, indicate COROUTINE_SUSPENDED upstream
+            result is Failure -> throw result.exception
+            else -> result // either COROUTINE_SUSPENDED or data
         }
     }
 }

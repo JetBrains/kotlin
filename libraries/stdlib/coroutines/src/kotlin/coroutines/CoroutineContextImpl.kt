@@ -3,9 +3,12 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 package kotlin.coroutines
 
 import kotlin.coroutines.CoroutineContext.*
+import kotlin.io.Serializable
 
 /**
  * Base class for [CoroutineContext.Element] implementations.
@@ -17,7 +20,10 @@ public abstract class AbstractCoroutineContextElement(public override val key: K
  * An empty coroutine context.
  */
 @SinceKotlin("1.3")
-public object EmptyCoroutineContext : CoroutineContext {
+public object EmptyCoroutineContext : CoroutineContext, Serializable {
+    private const val serialVersionUID: Long = 0
+    private fun readResolve(): Any = this
+
     public override fun <E : Element> get(key: Key<E>): E? = null
     public override fun <R> fold(initial: R, operation: (R, Element) -> R): R = initial
     public override fun plus(context: CoroutineContext): CoroutineContext = context
@@ -31,7 +37,11 @@ public object EmptyCoroutineContext : CoroutineContext {
 // this class is not exposed, but is hidden inside implementations
 // this is a left-biased list, so that `plus` works naturally
 @SinceKotlin("1.3")
-internal class CombinedContext(val left: CoroutineContext, val element: Element) : CoroutineContext {
+internal class CombinedContext(
+    private val left: CoroutineContext,
+    private val element: Element
+) : CoroutineContext, Serializable {
+
     override fun <E : Element> get(key: Key<E>): E? {
         var cur = this
         while (true) {
@@ -58,8 +68,14 @@ internal class CombinedContext(val left: CoroutineContext, val element: Element)
         }
     }
 
-    private fun size(): Int =
-        if (left is CombinedContext) left.size() + 1 else 2
+    private fun size(): Int {
+        var cur = this
+        var size = 2
+        while (true) {
+            cur = cur.left as? CombinedContext ?: return size
+            size++
+        }
+    }
 
     private fun contains(element: Element): Boolean =
         get(element.key) == element
@@ -84,6 +100,22 @@ internal class CombinedContext(val left: CoroutineContext, val element: Element)
 
     override fun toString(): String =
         "[" + fold("") { acc, element ->
-            if (acc.isEmpty()) element.toString() else acc + ", " + element
+            if (acc.isEmpty()) element.toString() else "$acc, $element"
         } + "]"
+
+    private fun writeReplace(): Any {
+        val list = ArrayList<CoroutineContext>(size())
+        fold(Unit) { _, element ->
+            if (element is Serializable) list += element
+        }
+        return Serialized(list.toTypedArray())
+    }
+
+    private class Serialized(val elements: Array<CoroutineContext>) : Serializable {
+        companion object {
+            private const val serialVersionUID: Long = 0L
+        }
+
+        private fun readResolve(): Any = elements.fold(EmptyCoroutineContext, CoroutineContext::plus)
+    }
 }
