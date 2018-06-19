@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
 
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
+import org.jetbrains.kotlin.idea.refactoring.showWithTransaction
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -355,12 +357,15 @@ open class KotlinIntroduceParameterHandler(
                         if (introducer.startInplaceIntroduceTemplate()) return
                     }
 
-                    KotlinIntroduceParameterDialog(project,
-                                                   editor,
-                                                   introduceParameterDescriptor,
-                                                   suggestedNames.toTypedArray(),
-                                                   listOf(replacementType) + replacementType.supertypes(),
-                                                   helper).show()
+                    val dialog = KotlinIntroduceParameterDialog(
+                            project,
+                            editor,
+                            introduceParameterDescriptor,
+                            suggestedNames.toTypedArray(),
+                            listOf(replacementType) + replacementType.supertypes(),
+                            helper
+                    )
+                    dialog.showWithTransaction()
                 }
         )
     }
@@ -508,7 +513,7 @@ open class KotlinIntroduceLambdaParameterHandler(
                 dialog.performRefactoring()
             }
             else {
-                dialog.show()
+                dialog.showWithTransaction()
             }
         }
     }

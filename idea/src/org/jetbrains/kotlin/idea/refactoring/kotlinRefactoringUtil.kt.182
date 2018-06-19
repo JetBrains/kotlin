@@ -13,6 +13,7 @@ import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.command.CommandAdapter
 import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.command.CommandProcessor
@@ -25,6 +26,7 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JavaProjectRootsUtil
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.*
 import com.intellij.openapi.util.Pass
@@ -990,4 +992,8 @@ internal fun KtDeclaration.withExpectedActuals(): List<KtDeclaration> {
 internal fun KtDeclaration.resolveToExpectedDescriptorIfPossible(): DeclarationDescriptor {
     val descriptor = unsafeResolveToDescriptor()
     return descriptor.liftToExpected() ?: descriptor
+}
+
+fun DialogWrapper.showWithTransaction() {
+    TransactionGuard.submitTransaction(disposable, Runnable { show() })
 }

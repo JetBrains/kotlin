@@ -20,12 +20,10 @@ import com.intellij.openapi.command.impl.FinishMarkAction
 import com.intellij.openapi.command.impl.StartMarkAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.refactoring.BaseRefactoringProcessor
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.refactoring.ui.NameSuggestionsField
 import com.intellij.refactoring.ui.RefactoringDialog
 import com.intellij.ui.NonFocusableCheckBox
-import com.intellij.usageView.BaseUsageViewDescriptor
-import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.ExtractFunctionParameterTablePanel
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
@@ -34,6 +32,8 @@ import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.refactoring.validateElement
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
@@ -241,88 +241,82 @@ class KotlinIntroduceParameterDialog private constructor(
     }
 
     fun performRefactoring() {
-        invokeRefactoring(
-                object : BaseRefactoringProcessor(myProject) {
-                    override fun findUsages() = UsageInfo.EMPTY_ARRAY
+        close(DialogWrapper.OK_EXIT_CODE)
 
-                    override fun performRefactoring(usages: Array<out UsageInfo>) {
-                        fun createLambdaForArgument(function: KtFunction): KtExpression {
-                            val statement = (function.bodyExpression as KtBlockExpression).statements.single()
-                            val space = if (statement.isMultiLine()) "\n" else " "
-                            val parameters = function.valueParameters
-                            val parametersText = if (parameters.isNotEmpty()) {
-                                " " + parameters.map { it.name }.joinToString() + " ->"
-                            } else ""
-                            val text = "{$parametersText$space${statement.text}$space}"
+        project.executeCommand(commandName) {
+            fun createLambdaForArgument(function: KtFunction): KtExpression {
+                val statement = (function.bodyExpression as KtBlockExpression).statements.single()
+                val space = if (statement.isMultiLine()) "\n" else " "
+                val parameters = function.valueParameters
+                val parametersText = if (parameters.isNotEmpty()) {
+                    " " + parameters.map { it.name }.joinToString() + " ->"
+                } else ""
+                val text = "{$parametersText$space${statement.text}$space}"
 
-                            return KtPsiFactory(myProject).createExpression(text)
+                return KtPsiFactory(myProject).createExpression(text)
+            }
+
+            val chosenName = nameField.enteredName.quoteIfNeeded()
+            var chosenType = typeField.enteredName
+            var newArgumentValue = descriptor.newArgumentValue
+            var newReplacer = descriptor.occurrenceReplacer
+
+            val startMarkAction = StartMarkAction.start(editor, myProject, this@KotlinIntroduceParameterDialog.commandName)
+
+            lambdaExtractionDescriptor?.let { oldDescriptor ->
+                val newDescriptor = KotlinExtractFunctionDialog.createNewDescriptor(
+                        oldDescriptor,
+                        chosenName,
+                        null,
+                        parameterTablePanel?.selectedReceiverInfo,
+                        parameterTablePanel?.selectedParameterInfos ?: listOf(),
+                        null
+                )
+                val options = ExtractionGeneratorOptions.DEFAULT.copy(
+                        target = ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION,
+                        allowExpressionBody = false
+                )
+                runWriteAction {
+                    with (ExtractionGeneratorConfiguration(newDescriptor, options).generateDeclaration()) {
+                        val function = declaration as KtFunction
+                        val receiverType = function.receiverTypeReference?.text
+                        val parameterTypes = function
+                            .valueParameters.joinToString { it.typeReference!!.text }
+                        val returnType = function.typeReference?.text ?: "Unit"
+
+                        chosenType = (receiverType?.let { "$it." } ?: "") + "($parameterTypes) -> $returnType"
+                        if (KtTokens.SUSPEND_KEYWORD in newDescriptor.modifiers) {
+                            chosenType = "${KtTokens.SUSPEND_KEYWORD} $chosenType"
                         }
+                        newArgumentValue = createLambdaForArgument(function)
+                        newReplacer = { }
 
-                        val chosenName = nameField.enteredName.quoteIfNeeded()
-                        var chosenType = typeField.enteredName
-                        var newArgumentValue = descriptor.newArgumentValue
-                        var newReplacer = descriptor.occurrenceReplacer
-
-                        val startMarkAction = StartMarkAction.start(editor, myProject, this@KotlinIntroduceParameterDialog.commandName)
-
-                        lambdaExtractionDescriptor?.let { oldDescriptor ->
-                            val newDescriptor = KotlinExtractFunctionDialog.createNewDescriptor(
-                                    oldDescriptor,
-                                    chosenName,
-                                    null,
-                                    parameterTablePanel?.selectedReceiverInfo,
-                                    parameterTablePanel?.selectedParameterInfos ?: listOf(),
-                                    null
-                            )
-                            val options = ExtractionGeneratorOptions.DEFAULT.copy(
-                                    target = ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION,
-                                    allowExpressionBody = false
-                            )
-                            with (ExtractionGeneratorConfiguration(newDescriptor, options).generateDeclaration()) {
-                                val function = declaration as KtFunction
-                                val receiverType = function.receiverTypeReference?.text
-                                val parameterTypes = function
-                                        .valueParameters.joinToString { it.typeReference!!.text }
-                                val returnType = function.typeReference?.text ?: "Unit"
-
-                                chosenType = (receiverType?.let { "$it." } ?: "") + "($parameterTypes) -> $returnType"
-                                if (KtTokens.SUSPEND_KEYWORD in newDescriptor.modifiers) {
-                                    chosenType = "${KtTokens.SUSPEND_KEYWORD} $chosenType"
-                                }
-                                newArgumentValue = createLambdaForArgument(function)
-                                newReplacer = { }
-
-                                processDuplicates(duplicateReplacers, myProject, editor)
-                            }
-                        }
-
-                        val descriptorToRefactor = descriptor.copy(
-                                newParameterName = chosenName,
-                                newParameterTypeText = chosenType,
-                                argumentValue = newArgumentValue,
-                                withDefaultValue = defaultValueCheckBox!!.isSelected,
-                                occurrencesToReplace = with(descriptor) {
-                                    if (replaceAllCheckBox?.isSelected ?: true) {
-                                        occurrencesToReplace
-                                    }
-                                    else {
-                                        Collections.singletonList(originalOccurrence)
-                                    }
-                                },
-                                parametersToRemove = removeParamsCheckBoxes.filter { it.key.isEnabled && it.key.isSelected }.map { it.value },
-                                occurrenceReplacer = newReplacer
-                        )
-
-                        val introduceParameter = { helper.configure(descriptorToRefactor).performRefactoring() }
-                        introduceParameter.runRefactoringWithPostprocessing(myProject, INTRODUCE_PARAMETER_REFACTORING_ID) {
-                            FinishMarkAction.finish(myProject, editor, startMarkAction)
-                        }
+                        processDuplicates(duplicateReplacers, myProject, editor)
                     }
-
-                    override fun createUsageViewDescriptor(usages: Array<out UsageInfo>) = BaseUsageViewDescriptor()
-
-                    override fun getCommandName(): String = this@KotlinIntroduceParameterDialog.commandName
                 }
-        )
+            }
+
+            val descriptorToRefactor = descriptor.copy(
+                    newParameterName = chosenName,
+                    newParameterTypeText = chosenType,
+                    argumentValue = newArgumentValue,
+                    withDefaultValue = defaultValueCheckBox!!.isSelected,
+                    occurrencesToReplace = with(descriptor) {
+                        if (replaceAllCheckBox?.isSelected ?: true) {
+                            occurrencesToReplace
+                        }
+                        else {
+                            Collections.singletonList(originalOccurrence)
+                        }
+                    },
+                    parametersToRemove = removeParamsCheckBoxes.filter { it.key.isEnabled && it.key.isSelected }.map { it.value },
+                    occurrenceReplacer = newReplacer
+            )
+
+            val introduceParameter = { helper.configure(descriptorToRefactor).performRefactoring() }
+            introduceParameter.runRefactoringWithPostprocessing(myProject, INTRODUCE_PARAMETER_REFACTORING_ID) {
+                FinishMarkAction.finish(myProject, editor, startMarkAction)
+            }
+        }
     }
 }

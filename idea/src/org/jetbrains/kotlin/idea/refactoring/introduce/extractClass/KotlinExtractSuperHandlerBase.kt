@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.extractClass
 
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.project.Project
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.idea.refactoring.SeparateFileWrapper
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ui.KotlinExtractSuperDialogBase
+import org.jetbrains.kotlin.idea.refactoring.showWithTransaction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -79,8 +79,7 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
     }
 
     private fun doInvoke(klass: KtClassOrObject, targetParent: PsiElement) {
-        val dialog = createDialog(klass, targetParent)
-        TransactionGuard.submitTransaction(dialog.disposable, Runnable { dialog.show() })
+        createDialog(klass, targetParent).showWithTransaction()
     }
 
     private fun selectElements(klass: KtClassOrObject, editor: Editor?) {
