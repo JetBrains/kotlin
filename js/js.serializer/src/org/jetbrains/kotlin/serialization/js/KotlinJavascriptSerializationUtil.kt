@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.js
 
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.isPreRelease
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -197,15 +196,16 @@ object KotlinJavascriptSerializationUtil {
         }
 
         val fileRegistry = KotlinFileRegistry()
-        val serializerExtension = KotlinJavascriptSerializerExtension(fileRegistry)
-        val serializer = DescriptorSerializer.createTopLevel(serializerExtension)
+        val extension = KotlinJavascriptSerializerExtension(fileRegistry)
 
         val classDescriptors = scope.filterIsInstance<ClassDescriptor>().sortedBy { it.fqNameSafe.asString() }
 
         fun serializeClasses(descriptors: Collection<DeclarationDescriptor>) {
             fun serializeClass(classDescriptor: ClassDescriptor) {
                 if (skip(classDescriptor)) return
-                val classProto = serializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
+                val classProto =
+                    DescriptorSerializer.create(classDescriptor, extension).classProto(classDescriptor).build()
+                            ?: error("Class not serialized: $classDescriptor")
                 builder.addClass_(classProto)
                 serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getContributedDescriptors())
             }
@@ -219,10 +219,10 @@ object KotlinJavascriptSerializationUtil {
 
         serializeClasses(classDescriptors)
 
-        val stringTable = serializerExtension.stringTable
+        val stringTable = extension.stringTable
 
         val members = scope.filterNot(skip)
-        builder.`package` = serializer.packagePartProto(fqName, members).build()
+        builder.`package` = DescriptorSerializer.createTopLevel(extension).packagePartProto(fqName, members).build()
 
         builder.setExtension(
                 JsProtoBuf.packageFragmentFiles,
