@@ -22,9 +22,22 @@ public interface ContinuationInterceptor : CoroutineContext.Element {
      * This function is invoked by coroutines framework when needed and the resulting continuations are
      * cached internally per each instance of the original [continuation].
      *
-     * By convention, implementations that install themselves as *the* interceptor in the context with
-     * the [Key] shall also scan the context for other element that implement [ContinuationInterceptor] interface
-     * and use their [interceptContinuation] functions, too.
+     * This function may simply return `this` if it does not want to intercept this particular continuation.
+     *
+     * When the original [continuation] completes coroutine framework invokes [disposeContinuation]
+     * with the resulting continuation if it was intercepted.
      */
     public fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T>
+
+    /**
+     * Invoked for the continuation instance returned by [interceptContinuation] when the original
+     * continuation completes and will not be used anymore.
+     *
+     * Default implementation does nothing.
+     *
+     * @param continuation Continuation instance returned by this interceptor's [interceptContinuation] invocation.
+     */
+    public fun disposeContinuation(continuation: Continuation<*>) {
+        /* do nothing by default */
+    }
 }

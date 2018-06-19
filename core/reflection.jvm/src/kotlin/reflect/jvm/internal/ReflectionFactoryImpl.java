@@ -51,7 +51,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     }
 
     @Override
-    public String renderLambdaToString(Lambda lambda) {
+    public String renderLambdaToString(FunctionBase lambda) {
         KFunction kFunction = ReflectLambdaKt.reflect(lambda);
         if (kFunction != null) {
             KFunctionImpl impl = UtilKt.asKFunctionImpl(kFunction);
