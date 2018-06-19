@@ -813,6 +813,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/SafeCall.kt");
             }
 
+            @TestMetadata("Sequence.kt")
+            public void testSequence() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/Sequence.kt");
+            }
+
             @TestMetadata("String.kt")
             public void testString() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/uselessCallOnNotNull/String.kt");
