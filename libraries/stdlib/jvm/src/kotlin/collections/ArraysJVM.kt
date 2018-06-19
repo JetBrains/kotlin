@@ -35,7 +35,7 @@ public inline fun ByteArray.toString(charset: Charset): String = String(this, ch
 public actual inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
     @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     val thisCollection = this as java.util.Collection<T>
-    return thisCollection.toArray(arrayOfNulls<T>(0)) as Array<T>
+    return thisCollection.toArray(arrayOfNulls<T>(thisCollection.size())) as Array<T>
 }
 
 /** Internal unsafe construction of array based on reference array type */
