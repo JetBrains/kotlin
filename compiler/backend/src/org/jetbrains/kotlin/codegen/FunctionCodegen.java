@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.coroutines.SuspendFunctionGenerationStrategy
 import org.jetbrains.kotlin.codegen.coroutines.SuspendInlineFunctionGenerationStrategy;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
 import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.config.LanguageFeature;
@@ -615,7 +616,7 @@ public class FunctionCodegen {
         KotlinTypeMapper typeMapper = parentCodegen.typeMapper;
         if (BuiltinSpecialBridgesUtil.shouldHaveTypeSafeBarrier(functionDescriptor, typeMapper::mapAsmMethod)) {
             generateTypeCheckBarrierIfNeeded(
-                    new InstructionAdapter(mv), functionDescriptor, signature.getReturnType(), /* delegateParameterTypes = */null);
+                    new InstructionAdapter(mv), functionDescriptor, signature.getReturnType(), null, typeMapper);
         }
 
         Label methodEnd;
@@ -1422,16 +1423,23 @@ public class FunctionCodegen {
         Type[] argTypes = bridge.getArgumentTypes();
         Type[] originalArgTypes = delegateTo.getArgumentTypes();
 
+        List<ParameterDescriptor> allKotlinParameters = new ArrayList<>(argTypes.length);
+        if (descriptor.getExtensionReceiverParameter() != null) allKotlinParameters.add(descriptor.getExtensionReceiverParameter());
+        allKotlinParameters.addAll(descriptor.getValueParameters());
+
+        boolean safeToUseKotlinTypes = allKotlinParameters.size() == argTypes.length;
+
         InstructionAdapter iv = new InstructionAdapter(mv);
         MemberCodegen.markLineNumberForDescriptor(owner.getThisDescriptor(), iv);
 
         if (delegateTo.getArgumentTypes().length > 0 && isSpecialBridge) {
-            generateTypeCheckBarrierIfNeeded(iv, descriptor, bridge.getReturnType(), delegateTo.getArgumentTypes());
+            generateTypeCheckBarrierIfNeeded(iv, descriptor, bridge.getReturnType(), delegateTo.getArgumentTypes(), typeMapper);
         }
 
         iv.load(0, OBJECT_TYPE);
         for (int i = 0, reg = 1; i < argTypes.length; i++) {
-            StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
+            KotlinType kotlinType = safeToUseKotlinTypes ? allKotlinParameters.get(i).getType() : null;
+            StackValue.local(reg, argTypes[i], kotlinType).put(originalArgTypes[i], kotlinType, iv);
             //noinspection AssignmentToForLoopParameter
             reg += argTypes[i].getSize();
         }
@@ -1451,7 +1459,8 @@ public class FunctionCodegen {
             }
         }
 
-        StackValue.coerce(delegateTo.getReturnType(), bridge.getReturnType(), iv);
+        KotlinType returnType = descriptor.getReturnType();
+        StackValue.coerce(delegateTo.getReturnType(), returnType, bridge.getReturnType(), returnType, iv);
         iv.areturn(bridge.getReturnType());
 
         endVisit(mv, "bridge method", origin);
@@ -1461,7 +1470,8 @@ public class FunctionCodegen {
             @NotNull InstructionAdapter iv,
             @NotNull FunctionDescriptor descriptor,
             @NotNull Type returnType,
-            @Nullable Type[] delegateParameterTypes
+            @Nullable Type[] delegateParameterTypes,
+            @NotNull KotlinTypeMapper typeMapper
     ) {
         BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription typeSafeBarrierDescription =
                 BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor);
@@ -1489,7 +1499,13 @@ public class FunctionCodegen {
                 iv.ifnull(defaultBranch);
             }
             else {
-                CodegenUtilKt.generateIsCheck(iv, kotlinType, boxType(delegateParameterTypes[i]));
+                Type targetBoxedType;
+                if (InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
+                    targetBoxedType = typeMapper.mapTypeAsDeclaration(kotlinType);
+                } else {
+                    targetBoxedType = boxType(delegateParameterTypes[i]);
+                }
+                CodegenUtilKt.generateIsCheck(iv, kotlinType, targetBoxedType);
                 iv.ifeq(defaultBranch);
             }
         }
