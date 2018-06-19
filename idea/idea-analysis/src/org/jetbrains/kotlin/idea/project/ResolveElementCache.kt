@@ -177,17 +177,23 @@ class ResolveElementCache(
 
                 val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, contextElements, bodyResolveMode)
 
-                if (statementFilter == StatementFilter.NONE) {
-                    // partial resolve is not supported for the given declaration - full resolve performed instead
+                if (statementFilter == StatementFilter.NONE &&
+                    bodyResolveMode.doControlFlowAnalysis && !bodyResolveMode.bindingTraceFilter.ignoreDiagnostics
+                ) {
+                    // Without statement filter, we analyze everything, so we can count partial resolve result as full resolve
+                    // But we can do this only if our resolve mode also provides *both* CFA and diagnostics
+                    // This is true only for PARTIAL_WITH_DIAGNOSTICS resolve mode
                     fullResolveMap[resolveElement] = CachedFullResolve(bindingContext, resolveElement)
                     return bindingContext
                 }
 
                 val resolveToCache = CachedPartialResolve(bindingContext, file, bodyResolveMode)
 
-                for (statement in (statementFilter as PartialBodyResolveFilter).allStatementsToResolve) {
-                    if (bindingContext[BindingContext.PROCESSED, statement] == true) {
-                        partialResolveMap.putIfAbsent(statement, resolveToCache)
+                if (statementFilter is PartialBodyResolveFilter) {
+                    for (statement in statementFilter.allStatementsToResolve) {
+                        if (bindingContext[BindingContext.PROCESSED, statement] == true) {
+                            partialResolveMap.putIfAbsent(statement, resolveToCache)
+                        }
                     }
                 }
 

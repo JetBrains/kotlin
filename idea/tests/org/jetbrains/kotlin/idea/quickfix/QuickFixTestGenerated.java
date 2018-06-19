@@ -1301,6 +1301,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/autoImports/excludedFromImport.kt");
         }
 
+        @TestMetadata("inPrimaryConstructor.kt")
+        public void testInPrimaryConstructor() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/inPrimaryConstructor.kt");
+        }
+
         @TestMetadata("infixCallAndObject.kt")
         public void testInfixCallAndObject() throws Exception {
             runTest("idea/testData/quickfix/autoImports/infixCallAndObject.kt");
@@ -2501,6 +2506,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("classInPackage.kt")
                 public void testClassInPackage() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/classInPackage.kt");
+                }
+
+                @TestMetadata("classInPrimaryConstructor.kt")
+                public void testClassInPrimaryConstructor() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/classInPrimaryConstructor.kt");
                 }
 
                 @TestMetadata("classNoReceiver.kt")
