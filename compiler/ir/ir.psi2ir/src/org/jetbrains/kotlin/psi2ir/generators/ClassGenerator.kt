@@ -244,7 +244,7 @@ class ClassGenerator(
                 IrGetFieldImpl(
                     startOffset, endOffset,
                     irDelegate.symbol,
-                    dispatchReceiverType,
+                    irDelegate.type,
                     IrGetValueImpl(
                         startOffset, endOffset,
                         dispatchReceiverType,
