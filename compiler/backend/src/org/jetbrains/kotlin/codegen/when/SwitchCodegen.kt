@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.`when`
 import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
@@ -69,6 +70,9 @@ abstract class SwitchCodegen(
         generateSubjectValue()
         generateSubjectValueToIndex()
 
+        val beginLabel = Label()
+        v.mark(beginLabel)
+
         generateSwitchInstructionByTransitionsTable()
 
         generateEntries()
@@ -81,6 +85,13 @@ abstract class SwitchCodegen(
 
         codegen.markLineNumber(expression, isStatement)
         v.mark(endLabel)
+
+        subjectVariableDescriptor?.let {
+            v.visitLocalVariable(
+                it.name.asString(), subjectType.descriptor, null,
+                beginLabel, endLabel, subjectLocal
+            )
+        }
     }
 
     /**
@@ -115,19 +126,23 @@ abstract class SwitchCodegen(
         }
     }
 
+    private var subjectVariableDescriptor: VariableDescriptor? = null
+
     /**
      * Generates subject value on top of the stack.
      * If the subject is a variable, it's stored and loaded.
      */
     private fun generateSubjectValue() {
         if (subjectVariable != null) {
-            val variableDescriptor = bindingContext[BindingContext.VARIABLE, subjectVariable]
+            val mySubjectVariable = bindingContext[BindingContext.VARIABLE, subjectVariable]
                     ?: throw AssertionError("Unresolved subject variable: $expression")
-            subjectLocal = codegen.frameMap.enter(variableDescriptor, subjectType)
+            subjectLocal = codegen.frameMap.enter(mySubjectVariable, subjectType)
             codegen.visitProperty(subjectVariable, null)
             StackValue.local(subjectLocal, subjectType).put(subjectType, codegen.v)
+            subjectVariableDescriptor = mySubjectVariable
         } else {
             codegen.gen(subjectExpression, subjectType)
+            subjectVariableDescriptor = null
         }
     }
 

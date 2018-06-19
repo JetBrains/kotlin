@@ -4513,11 +4513,12 @@ The "returned" value of try expression with no finally is either the last expres
 
             int subjectLocal;
             Type subjectType;
+            VariableDescriptor subjectVariableDescriptor = null;
             if (subjectVariable != null) {
-                VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, subjectVariable);
-                assert variableDescriptor != null : "Unresolved subject variable: " + subjectVariable.getName();
-                subjectType = asmType(variableDescriptor.getType());
-                subjectLocal = myFrameMap.enter(variableDescriptor, subjectType);
+                subjectVariableDescriptor = bindingContext.get(BindingContext.VARIABLE, subjectVariable);
+                assert subjectVariableDescriptor != null : "Unresolved subject variable: " + subjectVariable.getName();
+                subjectType = asmType(subjectVariableDescriptor.getType());
+                subjectLocal = myFrameMap.enter(subjectVariableDescriptor, subjectType);
                 visitProperty(subjectVariable, null);
                 tempVariables.put(subjectExpression, StackValue.local(subjectLocal, subjectType));
             }
@@ -4532,6 +4533,9 @@ The "returned" value of try expression with no finally is either the last expres
                 subjectLocal = -1;
                 subjectType = Type.VOID_TYPE;
             }
+
+            Label begin = new Label();
+            v.mark(begin);
 
             Label end = new Label();
             boolean hasElse = KtPsiUtil.checkWhenExpressionHasSingleElse(expression);
@@ -4572,7 +4576,16 @@ The "returned" value of try expression with no finally is either the last expres
             markLineNumber(expression, isStatement);
             v.mark(end);
 
-            myFrameMap.leaveTemp(subjectType);
+            if (subjectVariableDescriptor != null) {
+                myFrameMap.leave(subjectVariableDescriptor);
+                v.visitLocalVariable(
+                        subjectVariableDescriptor.getName().asString(), subjectType.getDescriptor(), null,
+                        begin, end, subjectLocal
+                );
+            }
+            else {
+                myFrameMap.leaveTemp(subjectType);
+            }
             tempVariables.remove(subjectExpression);
             return null;
         });
