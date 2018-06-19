@@ -3,6 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SequenceBuilderKt")
 
@@ -10,7 +11,7 @@ package kotlin.sequences
 
 import kotlin.*
 import kotlin.coroutines.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.intrinsics.*
 
 /**
  * Builds a [Sequence] lazily yielding values one by one.
@@ -32,7 +33,7 @@ public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Uni
 @SinceKotlin("1.3")
 public fun <T> buildIterator(builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> {
     val iterator = SequenceBuilderIterator<T>()
-    iterator.nextStep = builderAction.createCoroutineUnchecked(receiver = iterator, completion = iterator)
+    iterator.nextStep = builderAction.createCoroutineUnintercepted(receiver = iterator, completion = iterator)
     return iterator
 }
 
@@ -152,32 +153,29 @@ private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Co
     }
 
 
-    suspend override fun yield(value: T) {
+    override suspend fun yield(value: T) {
         nextValue = value
         state = State_Ready
-        return suspendCoroutineOrReturn { c ->
+        return suspendCoroutineUninterceptedOrReturn { c ->
             nextStep = c
             COROUTINE_SUSPENDED
         }
     }
 
-    suspend override fun yieldAll(iterator: Iterator<T>) {
+    override suspend fun yieldAll(iterator: Iterator<T>) {
         if (!iterator.hasNext()) return
         nextIterator = iterator
         state = State_ManyReady
-        return suspendCoroutineOrReturn { c ->
+        return suspendCoroutineUninterceptedOrReturn { c ->
             nextStep = c
             COROUTINE_SUSPENDED
         }
     }
 
     // Completion continuation implementation
-    override fun resume(value: Unit) {
+    override fun resumeWith(result: SuccessOrFailure<Unit>) {
+        result.getOrThrow() // just rethrow exception if it is there
         state = State_Done
-    }
-
-    override fun resumeWithException(exception: Throwable) {
-        throw exception // just rethrow
     }
 
     override val context: CoroutineContext
