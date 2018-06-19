@@ -119,7 +119,10 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
 
     public void setFqName(@NotNull FqName fqName) {
         if (fqName.isRoot()) {
-            delete();
+            if (!getFqName().isRoot()) {
+                //noinspection ConstantConditions
+                replace(new KtPsiFactory(getProject()).createFile("").getPackageDirective());
+            }
             return;
         }
 
