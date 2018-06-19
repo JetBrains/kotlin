@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
+import org.jetbrains.kotlin.idea.refactoring.broadcastRefactoringExit
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangePropertySignatureDialog
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangeSignatureDialog
 import org.jetbrains.kotlin.idea.refactoring.createJavaMethod
@@ -60,7 +61,11 @@ fun runChangeSignature(project: Project,
                               configuration: KotlinChangeSignatureConfiguration,
                               defaultValueContext: PsiElement,
                               commandName: String? = null): Boolean {
-    return KotlinChangeSignature(project, callableDescriptor, configuration, defaultValueContext, commandName).run()
+    val result = KotlinChangeSignature(project, callableDescriptor, configuration, defaultValueContext, commandName).run()
+    if (!result) {
+        broadcastRefactoringExit(project, "refactoring.changeSignature")
+    }
+    return result
 }
 
 class KotlinChangeSignature(

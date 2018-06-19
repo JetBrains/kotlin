@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.Extrac
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.isMultiLine
-import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.refactoring.validateElement
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -313,10 +312,9 @@ class KotlinIntroduceParameterDialog private constructor(
                     occurrenceReplacer = newReplacer
             )
 
-            val introduceParameter = { helper.configure(descriptorToRefactor).performRefactoring() }
-            introduceParameter.runRefactoringWithPostprocessing(myProject, INTRODUCE_PARAMETER_REFACTORING_ID) {
-                FinishMarkAction.finish(myProject, editor, startMarkAction)
-            }
+            helper.configure(descriptorToRefactor).performRefactoring(
+                    onExit = { FinishMarkAction.finish(myProject, editor, startMarkAction) }
+            )
         }
     }
 }
