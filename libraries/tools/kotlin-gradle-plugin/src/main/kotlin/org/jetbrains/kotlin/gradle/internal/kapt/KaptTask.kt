@@ -74,6 +74,7 @@ abstract class KaptTask : ConventionTask() {
             .filterTo(HashSet(), ::isRootAllowed)
 
     private fun isRootAllowed(file: File): Boolean =
-        !FileUtil.isAncestor(destinationDir, file, /* strict = */ false) &&
+        file.exists() &&
+                !FileUtil.isAncestor(destinationDir, file, /* strict = */ false) &&
                 !FileUtil.isAncestor(classesDir, file, /* strict = */ false)
 }
