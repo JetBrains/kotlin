@@ -467,22 +467,22 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                         typeArguments!!.keys.single().defaultType,
                         state.typeMapper
                     )
-                    return SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1))
+                    return SMAPAndMethodNode(node, createDefaultFakeSMAP())
                 }
                 functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm(languageVersionSettings) ->
                     return SMAPAndMethodNode(
                         createMethodNodeForSuspendCoroutineOrReturn(functionDescriptor, state.typeMapper, languageVersionSettings),
-                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                        createDefaultFakeSMAP()
                     )
                 functionDescriptor.isBuiltInIntercepted(languageVersionSettings) ->
                     return SMAPAndMethodNode(
                         createMethodNodeForIntercepted(functionDescriptor, state.typeMapper, languageVersionSettings),
-                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                        createDefaultFakeSMAP()
                     )
                 functionDescriptor.isBuiltInCoroutineContext(languageVersionSettings) ->
                     return SMAPAndMethodNode(
                         createMethodNodeForCoroutineContext(functionDescriptor, languageVersionSettings),
-                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                        createDefaultFakeSMAP()
                     )
                 functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings) ->
                     return SMAPAndMethodNode(
@@ -491,12 +491,12 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                             state.typeMapper,
                             languageVersionSettings
                         ),
-                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                        createDefaultFakeSMAP()
                     )
                 functionDescriptor.isBuiltinAlwaysEnabledAssert() ->
                     return SMAPAndMethodNode(
                         createMethodNodeForAlwaysEnabledAssert(functionDescriptor, state.typeMapper),
-                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                        createDefaultFakeSMAP()
                     )
             }
 
@@ -522,6 +522,8 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
             return resultInCache.copyWithNewNode(cloneMethodNode(resultInCache.node))
         }
+
+        private fun createDefaultFakeSMAP() = SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
 
         // For suspend inline functions we generate two methods:
         // 1) normal one: with state machine to call directly
