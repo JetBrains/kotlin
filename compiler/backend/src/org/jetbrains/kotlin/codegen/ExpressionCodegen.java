@@ -491,12 +491,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             Label end = new Label();
 
-            gen(thenExpression, asmType);
+            gen(thenExpression, asmType, kotlinType);
 
             v.goTo(end);
             v.mark(elseLabel);
 
-            gen(elseExpression, asmType);
+            gen(elseExpression, asmType, kotlinType);
 
             markLineNumber(expression, isStatement);
             v.mark(end);

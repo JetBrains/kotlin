@@ -11244,6 +11244,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/inlineClasses/computablePropertyInsideInlineClass.kt");
         }
 
+        @TestMetadata("correctBoxingForBranchExpressions.kt")
+        public void testCorrectBoxingForBranchExpressions() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressions.kt");
+        }
+
         @TestMetadata("createInlineClassInArgumentPosition.kt")
         public void testCreateInlineClassInArgumentPosition() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPosition.kt");
