@@ -41,6 +41,7 @@ internal enum class OptionsParser {
                         "derivedClasses" -> isDerivedClasses = true
                         "functionUsages" -> isMethodsUsages = true
                         "propertyUsages" -> isFieldsUsages = true
+                        "expected" -> searchExpected = true
                         else -> throw IllegalStateException("Invalid option: " + s)
                     }
                 }
@@ -63,6 +64,10 @@ internal enum class OptionsParser {
                             isIncludeOverloadUsages = true
                             isUsages = true
                         }
+                        "expected" -> {
+                            searchExpected = true
+                            isUsages = true
+                        }
                         else -> throw IllegalStateException("Invalid option: " + s)
                     }
                 }
@@ -80,6 +85,7 @@ internal enum class OptionsParser {
                         "overrides" -> searchOverrides = true
                         "skipRead" -> isReadAccess = false
                         "skipWrite" -> isWriteAccess = false
+                        "expected" -> searchExpected = true
                         else -> throw IllegalStateException("Invalid option: " + s)
                     }
                 }
