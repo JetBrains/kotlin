@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // See also KT-6299
 public open class Outer private constructor(val x: Int = 0) {
     class Inner: Outer()

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 annotation class A(val a: Int = 0)
 
 @A fun test1() = 1

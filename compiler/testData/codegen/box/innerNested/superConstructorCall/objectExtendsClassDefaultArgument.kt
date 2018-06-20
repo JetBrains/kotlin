@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // KT-3581
 
 open class A(val result: String = "OK") {

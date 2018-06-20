@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class C(val value: String = "C") {
 
     inner class B(val s: String) {

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 open class A(val result: String) {
     constructor(x: Int = 11, y: Int = 22, z: Int = 33) : this("$x$y$z")
 }
