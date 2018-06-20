@@ -30,7 +30,8 @@ import java.lang.Character.isUpperCase
 
 fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): Test = getOrCreateTask(taskName) {
     doFirst {
-        val patterns = filter.includePatterns + ((filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: emptySet())
+        val commandLineIncludePatterns = (filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: emptySet()
+        val patterns = filter.includePatterns + commandLineIncludePatterns
         if (patterns.isEmpty() || patterns.any { '*' in it }) return@doFirst
         patterns.forEach { pattern ->
             var isClassPattern = false
@@ -50,7 +51,13 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
             val classFileName = "$classFileNameWithoutExtension.class"
 
             if (isClassPattern) {
-                filter.includePatterns.add("$pattern$*")
+                val innerClassPattern = "$pattern$*"
+                if (pattern in commandLineIncludePatterns) {
+                    commandLineIncludePatterns.add(innerClassPattern)
+                    (filter as? DefaultTestFilter)?.setCommandLineIncludePatterns(commandLineIncludePatterns)
+                } else {
+                    filter.includePatterns.add(innerClassPattern)
+                }
             }
 
             include {
