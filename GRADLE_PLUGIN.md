@@ -599,3 +599,39 @@ tables below.
         // Use the ':foo' project as a common project for multiplatform build.
         expectedBy project(':common')
     }
+
+## Publishing to Maven.
+
+Publishing the Kotlin/Native artifacts depends on mechanisms which was introduced in Gradle Native support, e.g. Gradle's 
+metadata feature, thus there are some additional steps are required. First of all gradle version it shouldn't be less 
+then gradle version of kotlin native plugin depends on (currently Gradle 4.7). before Gradle 5.0 feature 
+[GRADLE_METADATA](https://github.com/gradle/gradle/blob/master/subprojects/docs/src/docs/design/gradle-module-metadata-specification.md) 
+should be enabled for build. e.g. in settings.gradle
+````
+enableFeaturePreview('GRADLE_METADATA')
+````
+
+Some maven repositories requires some declarations in `pom` files, that should be presents in all auxilary `pom` files (
+platform x build types). To meet this requirement the Kotlin/Native plugin has following syntax to do it:
+
+ ````
+ konanArtifacts {
+     interop('libcurl') {
+         target('linux') {
+             includeDirs.headerFilterOnly '/usr/include'
+         }
+         target('macbook') {
+             includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+         }
+         pom {
+             withXml {
+                 def root = asNode()
+                 root.appendNode('name', 'libcurl interop library')
+                 root.appendNode('description', 'A library providing interoperability with host libcurl')
+             }
+         }
+     }
+ }
+
+ ````
+ In this example `name` and `description` tags will be added to each generated `pom` file for _libcurl_ published artifact.
