@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 import javax.swing.*;
 
@@ -49,7 +50,9 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
     private StateRestoringCheckBox cbReaders;
     private StateRestoringCheckBox cbWriters;
     private StateRestoringCheckBox cbOverrides;
+    private StateRestoringCheckBox cbExpected;
 
+    @NotNull
     @Override
     protected KotlinPropertyFindUsagesOptions getFindUsagesOptions() {
         return (KotlinPropertyFindUsagesOptions) myFindUsagesOptions;
@@ -67,6 +70,7 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
         options.isReadAccess = isSelected(cbReaders);
         options.isWriteAccess = isSelected(cbWriters);
         options.setSearchOverrides(isSelected(cbOverrides));
+        options.setSearchExpected(isSelected(cbExpected));
     }
 
     @Override
@@ -112,6 +116,16 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
                     ? KotlinBundle.message("find.what.implementing.properties.checkbox")
                     : KotlinBundle.message("find.what.overriding.properties.checkbox"),
                     FindSettings.getInstance().isSearchOverloadedMethods(),
+                    optionsPanel,
+                    false
+            );
+        }
+        boolean isActual = PsiUtilsKt.hasActualModifier(property);
+        KotlinPropertyFindUsagesOptions options = getFindUsagesOptions();
+        if (isActual) {
+            cbExpected = addCheckboxToPanel(
+                    "Expected properties",
+                    options.getSearchExpected(),
                     optionsPanel,
                     false
             );
