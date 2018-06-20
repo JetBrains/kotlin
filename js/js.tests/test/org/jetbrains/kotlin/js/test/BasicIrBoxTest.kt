@@ -47,6 +47,7 @@ abstract class BasicIrBoxTest(
             "libraries/stdlib/js/src/kotlin/core.kt",
             "libraries/stdlib/js/irRuntime/core.kt",
             "libraries/stdlib/js/irRuntime/numberConversion.kt",
+            "libraries/stdlib/js/irRuntime/compareTo.kt",
             "libraries/stdlib/js/irRuntime/annotations.kt",
             "libraries/stdlib/js/irRuntime/DefaultConstructorMarker.kt",
             "libraries/stdlib/js/irRuntime/exceptions.kt",

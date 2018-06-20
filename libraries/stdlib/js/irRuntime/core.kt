@@ -14,13 +14,13 @@ fun equals(obj1: dynamic, obj2: dynamic): Boolean {
         return false
     }
 
-    if (obj1 !== obj1) {
-        return obj2 !== obj2
-    }
-
     return js("""
     if (typeof obj1 === "object" && typeof obj1.equals === "function") {
         return obj1.equals(obj2);
+    }
+
+    if (obj1 !== obj1) {
+        return obj2 !== obj2;
     }
 
     if (typeof obj1 === "number" && typeof obj2 === "number") {

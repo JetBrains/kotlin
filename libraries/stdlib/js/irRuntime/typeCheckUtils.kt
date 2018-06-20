@@ -75,7 +75,7 @@ public fun isInterface(ctor: dynamic, IType: dynamic): Boolean {
 }
 */
 
-inline private fun typeOf(obj: dynamic) = js("typeof obj").unsafeCast<String>()
+inline fun typeOf(obj: dynamic) = js("typeof obj").unsafeCast<String>()
 
 fun isObject(obj: dynamic): Boolean {
     val objTypeOf = typeOf(obj)

@@ -108,6 +108,9 @@ class JsIntrinsics(
     val jsCode = getInternalFunction("js") // js("<code>")
     val jsHashCode = getInternalFunction("hashCode")
     val jsToString = getInternalFunction("toString")
+    val jsCompareTo = getInternalFunction("compareTo")
+    val jsEquals = getInternalFunction("equals")
+
 
 
     // Helpers:
