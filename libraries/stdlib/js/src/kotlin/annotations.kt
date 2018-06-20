@@ -138,10 +138,10 @@ annotation class JsNonModule
  * The compiler turns references to `external` declarations either to plain unprefixed names (in case of *plain* modules)
  * or to plain imports.
  * However, if a JavaScript library provides its declarations in packages, you won't be satisfied with this.
- * You can tell the compiler to generate additional prefix before references to `external` declarations using the `@JsQuafier(...)`
+ * You can tell the compiler to generate additional prefix before references to `external` declarations using the `@JsQualifier(...)`
  * annotation.
  *
- * Note that a file marked with the `@JsQulifier(...)` annotation can't contain non-`external` declarations.
+ * Note that a file marked with the `@JsQualifier(...)` annotation can't contain non-`external` declarations.
  *
  * Example:
  *
