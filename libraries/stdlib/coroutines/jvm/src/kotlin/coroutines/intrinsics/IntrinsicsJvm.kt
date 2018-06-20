@@ -12,8 +12,6 @@ package kotlin.coroutines.intrinsics
 import kotlin.coroutines.*
 import kotlin.coroutines.jvm.internal.ContinuationImpl
 import kotlin.coroutines.jvm.internal.RestrictedContinuationImpl
-import kotlin.coroutines.jvm.internal.SuspendFunction0
-import kotlin.coroutines.jvm.internal.SuspendFunction1
 import kotlin.internal.InlineOnly
 
 /**
@@ -111,7 +109,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
 public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> =
-    if (this is SuspendFunction0)
+    if (this is RestrictedContinuationImpl)
         create(completion)
     else
         createCoroutineFromSuspendFunction(completion) {
@@ -139,7 +137,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     receiver: R,
     completion: Continuation<T>
 ): Continuation<Unit> =
-    if (this is SuspendFunction1)
+    if (this is RestrictedContinuationImpl)
         create(receiver, completion)
     else {
         createCoroutineFromSuspendFunction(completion) {
