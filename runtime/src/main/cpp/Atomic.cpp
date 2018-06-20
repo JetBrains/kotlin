@@ -16,9 +16,15 @@
 
 #include "Atomic.h"
 #include "Common.h"
+#include "Memory.h"
 #include "Types.h"
 
 namespace {
+
+struct AtomicReferenceLayout {
+  KRef value_;
+  KInt lock_;
+};
 
 template <typename T> T addAndGetImpl(KRef thiz, T delta) {
   volatile T* location = reinterpret_cast<volatile T*>(thiz + 1);
@@ -28,6 +34,10 @@ template <typename T> T addAndGetImpl(KRef thiz, T delta) {
 template <typename T> T compareAndSwapImpl(KRef thiz, T expectedValue, T newValue) {
     volatile T* location = reinterpret_cast<volatile T*>(thiz + 1);
     return compareAndSwap(location, expectedValue, newValue);
+}
+
+inline AtomicReferenceLayout* asAtomicReference(KRef thiz) {
+    return reinterpret_cast<AtomicReferenceLayout*>(thiz + 1);
 }
 
 }  // namespace
@@ -62,9 +72,20 @@ void Kotlin_AtomicReference_checkIfFrozen(KRef value) {
     }
 }
 
-KRef Kotlin_AtomicReference_compareAndSwap(KRef thiz, KRef expectedValue, KRef newValue) {
+OBJ_GETTER(Kotlin_AtomicReference_compareAndSwap, KRef thiz, KRef expectedValue, KRef newValue) {
     Kotlin_AtomicReference_checkIfFrozen(newValue);
-    return compareAndSwapImpl(thiz, expectedValue, newValue);
+    // See Kotlin_AtomicReference_get() for explanations, why locking is needed.
+    AtomicReferenceLayout* ref = asAtomicReference(thiz);
+    RETURN_RESULT_OF(SwapRefLocked, &ref->value_, expectedValue, newValue, &ref->lock_);
+}
+
+OBJ_GETTER(Kotlin_AtomicReference_get, KRef thiz) {
+    // Here we must take a lock to prevent race when value, while taken here, is CASed and immediately
+    // destroyed by an another thread. AtomicReference no longer holds such an object, so if we got
+    // rescheduled unluckily, between the moment value is read from the field and RC is incremented,
+    // object may go away.
+    AtomicReferenceLayout* ref = asAtomicReference(thiz);
+    RETURN_RESULT_OF(ReadRefLocked, &ref->value_, &ref->lock_);
 }
 
 }  // extern "C"

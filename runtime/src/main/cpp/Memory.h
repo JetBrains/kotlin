@@ -434,6 +434,11 @@ void UpdateRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 void UpdateRefIfNull(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Updates reference in return slot.
 void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) RUNTIME_NOTHROW;
+// Compares and swaps reference with taken lock.
+OBJ_GETTER(SwapRefLocked,
+    ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock) RUNTIME_NOTHROW;
+// Reads reference with taken lock.
+OBJ_GETTER(ReadRefLocked, ObjHeader** location, int32_t* spinlock) RUNTIME_NOTHROW;
 // Optimization: release all references in range.
 void ReleaseRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
 // Called on frame enter, if it has object slots.

@@ -21,8 +21,7 @@ import konan.SymbolName
 import kotlinx.cinterop.NativePtr
 
 @Frozen
-class AtomicInt(private var value: Int = 0) : Number() {
-    /* Atomic operations. */
+class AtomicInt(private var value: Int = 0) {
 
     /**
      * Increments the value by [delta] and returns the new value.
@@ -52,47 +51,14 @@ class AtomicInt(private var value: Int = 0) : Number() {
      */
     fun get(): Int = value
 
-    /* Operations from Number. */
-
     /**
-     * Returns the value of this number as a [Double], which may involve rounding.
+     * Returns the string representation of this object.
      */
-    public override fun toDouble(): Double = value.toDouble()
-
-    /**
-     * Returns the value of this number as a [Float], which may involve rounding.
-     */
-    public override fun toFloat(): Float = value.toFloat()
-
-    /**
-     * Returns the value of this number as a [Long], which may involve rounding or truncation.
-     */
-    public override fun toLong(): Long = value.toLong()
-
-    /**
-     * Returns the value of this number as an [Int], which may involve rounding or truncation.
-     */
-    public override fun toInt(): Int = value.toInt()
-
-    /**
-     * Returns the [Char] with the numeric value equal to this number, truncated to 16 bits if appropriate.
-     */
-    public override fun toChar(): Char = value.toChar()
-
-    /**
-     * Returns the value of this number as a [Short], which may involve rounding or truncation.
-     */
-    public override fun toShort(): Short = value.toShort()
-
-    /**
-     * Returns the value of this number as a [Byte], which may involve rounding or truncation.
-     */
-    public override fun toByte(): Byte = value.toByte()
+    public override fun toString(): String = "AtomicInt $value"
 }
 
 @Frozen
-class AtomicLong(private var value: Long = 0) : Number() {
-    /* Atomic operations. */
+class AtomicLong(private var value: Long = 0)  {
 
     /**
      * Increments the value by [delta] and returns the new value.
@@ -127,42 +93,10 @@ class AtomicLong(private var value: Long = 0) : Number() {
      */
     fun get(): Long = value
 
-    /* Operations from Number. */
-
     /**
-     * Returns the value of this number as a [Double], which may involve rounding.
+     * Returns the string representation of this object.
      */
-    public override fun toDouble(): Double = value.toDouble()
-
-    /**
-     * Returns the value of this number as a [Float], which may involve rounding.
-     */
-    public override fun toFloat(): Float = value.toFloat()
-
-    /**
-     * Returns the value of this number as a [Long], which may involve rounding or truncation.
-     */
-    public override fun toLong(): Long = value.toLong()
-
-    /**
-     * Returns the value of this number as an [Int], which may involve rounding or truncation.
-     */
-    public override fun toInt(): Int = value.toInt()
-
-    /**
-     * Returns the [Char] with the numeric value equal to this number, truncated to 16 bits if appropriate.
-     */
-    public override fun toChar(): Char = value.toChar()
-
-    /**
-     * Returns the value of this number as a [Short], which may involve rounding or truncation.
-     */
-    public override fun toShort(): Short = value.toShort()
-
-    /**
-     * Returns the value of this number as a [Byte], which may involve rounding or truncation.
-     */
-    public override fun toByte(): Byte = value.toByte()
+    public override fun toString(): String = "AtomicLong $value"
 }
 
 @Frozen
@@ -185,6 +119,9 @@ external private fun checkIfFrozen(ref: Any?)
 
 @Frozen
 class AtomicReference<T>(private var value: T? = null) {
+    // A spinlock to fix potential ARC race. Not an AtomicInt just for the effeciency sake.
+    private var lock: Int = 0
+
     /**
      * Creates a new atomic reference pointing to given [ref]. If reference is not frozen,
      * @InvalidMutabilityException is thrown.
@@ -200,10 +137,11 @@ class AtomicReference<T>(private var value: T? = null) {
      * Returns the old value.
      */
     @SymbolName("Kotlin_AtomicReference_compareAndSwap")
-    external fun compareAndSwap(expected: T?, new: T?): T?
+    external public fun compareAndSwap(expected: T?, new: T?): T?
 
     /**
      * Returns the current value.
      */
-    public fun get(): T? = value
+    @SymbolName("Kotlin_AtomicReference_get")
+    external public fun get(): T?
 }

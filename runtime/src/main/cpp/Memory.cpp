@@ -21,12 +21,12 @@
 
 #include "Alloc.h"
 #include "Assert.h"
+#include "Atomic.h"
 #include "Exceptions.h"
 #include "Memory.h"
 #include "MemoryPrivate.hpp"
 #include "Natives.h"
 #include "Porting.h"
-#include "Atomic.h"
 
 // If garbage collection algorithm for cyclic garbage to be used.
 // We are using the Bacon's algorithm for GC, see
@@ -397,6 +397,15 @@ inline FrameOverlay* asFrameOverlay(ObjHeader** slot) {
 inline bool isRefCounted(KConstRef object) {
   return isFreeable(object->container());
 }
+
+inline void lock(KInt* spinlock) {
+  while (compareAndSwap(spinlock, 0, 1) != 0) {}
+}
+
+inline void unlock(KInt* spinlock) {
+  RuntimeCheck(compareAndSwap(spinlock, 1, 0) == 1, "Must succeed");
+}
+
 } // namespace
 
 extern "C" {
@@ -1243,14 +1252,27 @@ void UpdateRef(ObjHeader** location, const ObjHeader* object) {
   }
 }
 
-void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
-  if (isArenaSlot(returnSlot)) {
+inline ObjHeader** slotAddressFor(ObjHeader** returnSlot, const ObjHeader* value) {
+    if (!isArenaSlot(returnSlot)) return returnSlot;
     // Not a subject of reference counting.
-    if (object == nullptr || !isRefCounted(object)) return;
-    auto arena = initedArena(asArenaSlot(returnSlot));
-    returnSlot = arena->getSlot();
+    if (value == nullptr || !isRefCounted(value)) return nullptr;
+    return initedArena(asArenaSlot(returnSlot))->getSlot();
+}
+
+inline void updateReturnRefAdded(ObjHeader** returnSlot, const ObjHeader* value) {
+  returnSlot = slotAddressFor(returnSlot, value);
+  if (returnSlot == nullptr) return;
+  ObjHeader* old = *returnSlot;
+  *const_cast<const ObjHeader**>(returnSlot) = value;
+  if (old != nullptr) {
+    ReleaseRef(old);
   }
-  UpdateRef(returnSlot, object);
+}
+
+void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* value) {
+  returnSlot = slotAddressFor(returnSlot, value);
+  if (returnSlot == nullptr) return;
+  UpdateRef(returnSlot, value);
 }
 
 void UpdateRefIfNull(ObjHeader** location, const ObjHeader* object) {
@@ -1650,6 +1672,37 @@ void FreezeSubgraph(ObjHeader* root) {
 // If object is frozen, an exception is thrown.
 void MutationCheck(ObjHeader* obj) {
   if (obj->container()->frozen()) ThrowInvalidMutabilityException();
+}
+
+OBJ_GETTER(SwapRefLocked,
+    ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock) {
+  lock(spinlock);
+  ObjHeader* oldValue = *location;
+  // We do not use UpdateRef() here to avoid having ReleaseRef() on return slot under lock.
+  if (oldValue == expectedValue) {
+    SetRef(location, newValue);
+  } else {
+    // We create an additional reference to the [oldValue] in the return slot.
+    if (oldValue != nullptr && isRefCounted(oldValue)) {
+      AddRef(oldValue);
+    }
+  }
+  unlock(spinlock);
+  // [oldValue] ownership was either transferred from *location to return slot if CAS succeeded, or
+  // we explicitly added a new reference if CAS failed.
+  updateReturnRefAdded(OBJ_RESULT, oldValue);
+  return oldValue;
+}
+
+OBJ_GETTER(ReadRefLocked, ObjHeader** location, int32_t* spinlock) {
+  lock(spinlock);
+  ObjHeader* value = *location;
+  // We do not use UpdateRef() here to avoid having ReleaseRef() on return slot under lock.
+  if (value != nullptr)
+    AddRef(value);
+  unlock(spinlock);
+  updateReturnRefAdded(OBJ_RESULT, value);
+  return value;
 }
 
 } // extern "C"

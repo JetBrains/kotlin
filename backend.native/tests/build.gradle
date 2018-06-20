@@ -673,7 +673,7 @@ task freeze2(type: RunKonanTest) {
 
 task atomic0(type: RunKonanTest) {
     disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
-    goldValue = "35\n" + "20\n"
+    goldValue = "35\n" + "20\n" + "OK\n"
     source = "runtime/workers/atomic0.kt"
 }
 
