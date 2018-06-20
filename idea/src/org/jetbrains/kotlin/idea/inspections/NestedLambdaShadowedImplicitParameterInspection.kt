@@ -32,7 +32,7 @@ class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection
             val callee = lambda.getStrictParentOfType<KtCallExpression>()?.calleeExpression ?: return
             holder.registerProblem(
                 callee,
-                "implicit parameter 'it' is shadowed",
+                "Implicit parameter 'it' of enclosing lambda is shadowed",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 AddExplicitParameterNameFix()
             )
