@@ -100,13 +100,16 @@ class NewCodeBuilder {
             builder.append(" ")
             printer.print(classKindString(klass.classKind))
             builder.append(" ")
-            printer.print(klass.name.value)
+            printer.printWithNoIndent(klass.name.value)
             if (klass.declarationList.isNotEmpty()) {
                 printer.println(" {")
                 printer.pushIndent()
                 klass.declarationList.forEach { it.accept(this) }
                 printer.popIndent()
                 printer.println("}")
+
+            } else {
+                printer.println()
             }
         }
 
