@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.ScriptDefinitionsSource
@@ -19,40 +17,48 @@ import java.net.URLClassLoader
 import java.util.jar.JarFile
 import kotlin.coroutines.experimental.buildSequence
 import kotlin.script.experimental.annotations.KotlinScript
+import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptingEnvironment
 import kotlin.script.experimental.api.ScriptingEnvironmentProperties
 import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.jvm.JvmGetScriptingClass
+import kotlin.script.templates.ScriptTemplateDefinition
 
 internal const val SCRIPT_DEFINITION_MARKERS_PATH = "META-INF/kotlin/script/templates/"
 
 class ScriptDefinitionsFromClasspathDiscoverySource(
-    private val configuration: CompilerConfiguration,
+    private val classpath: List<File>,
     private val defaultScriptDefinitionClasspath: List<File>,
-    private val scriptDefinitionParentClassloader: ClassLoader,
+    private val scriptResolverEnv: Map<String, Any?>,
     private val messageCollector: MessageCollector
 ) : ScriptDefinitionsSource {
 
     override val definitions: Sequence<KotlinScriptDefinition> = run {
         discoverScriptTemplatesInClasspath(
-            configuration.jvmClasspathRoots,
+            classpath,
             defaultScriptDefinitionClasspath,
-            scriptDefinitionParentClassloader,
+            this::class.java.classLoader,
+            scriptResolverEnv,
             messageCollector
         )
     }
 }
 
-private fun discoverScriptTemplatesInClasspath(
-    classpath: Iterable<File>,
+internal fun discoverScriptTemplatesInClasspath(
+    classpath: List<File>,
     defaultScriptDefinitionClasspath: List<File>,
-    scriptDefinitionParentClassloader: ClassLoader,
+    baseClassLoader: ClassLoader,
+    scriptResolverEnv: Map<String, Any?>,
     messageCollector: MessageCollector
-): Sequence<LazyScriptDefinitionFromDiscoveredClass> = buildSequence {
+): Sequence<KotlinScriptDefinition> = buildSequence {
+    // TODO: try to find a way to reduce classpath (and classloader) to minimal one needed to load script definition and its dependencies
+    val classLoader by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), baseClassLoader)
+    }
     for (dep in classpath) {
         try {
             when {
-                // checking for extension is the compiler current behaviour, so the same logic is implemented here
-                dep.isFile && dep.extension == "jar" -> {
+                dep.isFile && dep.extension == "jar" -> { // checking for extension is the compiler current behaviour, so the same logic is implemented here
                     val jar = JarFile(dep)
                     if (jar.getJarEntry(SCRIPT_DEFINITION_MARKERS_PATH) != null) {
                         for (template in jar.entries()) {
@@ -65,17 +71,16 @@ private fun discoverScriptTemplatesInClasspath(
                                         "Configure scripting: class not found $templateClassName"
                                     )
                                 } else {
-                                    messageCollector.report(
-                                        CompilerMessageSeverity.LOGGING,
-                                        "Configure scripting: Added template $templateClassName from $dep"
-                                    )
-                                    yield(
-                                        LazyScriptDefinitionFromDiscoveredClass(
-                                            jar.getInputStream(templateClass).readBytes(),
-                                            templateClassName, listOf(dep) + jar.extractClasspath(defaultScriptDefinitionClasspath),
-                                            scriptDefinitionParentClassloader, messageCollector
+                                    loadScriptDefinition(
+                                        jar.getInputStream(templateClass).readBytes(),
+                                        templateClassName, classpath, { classLoader }, scriptResolverEnv, messageCollector
+                                    )?.let {
+                                        messageCollector.report(
+                                            CompilerMessageSeverity.LOGGING,
+                                            "Configure scripting: Added template $templateClassName from $dep"
                                         )
-                                    )
+                                        yield(it)
+                                    }
                                 }
                             }
                         }
@@ -84,25 +89,30 @@ private fun discoverScriptTemplatesInClasspath(
                 dep.isDirectory -> {
                     val dir = File(dep, SCRIPT_DEFINITION_MARKERS_PATH)
                     if (dir.isDirectory) {
-                        dir.listFiles().forEach {
-                            val templateClass = File(dep, "${it.name.replace('.', '/')}.class")
-                            if (!templateClass.exists() || !templateClass.isFile) {
+                        val templateClasspath by lazy(LazyThreadSafetyMode.PUBLICATION) {
+                            listOf(dep) + defaultScriptDefinitionClasspath
+                        }
+                        val classLoader by lazy(LazyThreadSafetyMode.PUBLICATION) {
+                            URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassLoader)
+                        }
+                        dir.listFiles().forEach { templateClassNmae ->
+                            val templateClassFile = File(dep, "${templateClassNmae.name.replace('.', '/')}.class")
+                            if (!templateClassFile.exists() || !templateClassFile.isFile) {
                                 messageCollector.report(
                                     CompilerMessageSeverity.WARNING,
-                                    "Configure scripting: class not found ${it.name}"
+                                    "Configure scripting: class not found ${templateClassNmae.name}"
                                 )
                             } else {
-                                messageCollector.report(
-                                    CompilerMessageSeverity.LOGGING,
-                                    "Configure scripting: Added template ${it.name} from $dep"
-                                )
-                                yield(
-                                    LazyScriptDefinitionFromDiscoveredClass(
-                                        templateClass.readBytes(),
-                                        it.name, listOf(dep) + defaultScriptDefinitionClasspath,
-                                        scriptDefinitionParentClassloader, messageCollector
+                                loadScriptDefinition(
+                                    templateClassFile.readBytes(),
+                                    templateClassNmae.name, templateClasspath, { classLoader }, scriptResolverEnv, messageCollector
+                                )?.let {
+                                    messageCollector.report(
+                                        CompilerMessageSeverity.LOGGING,
+                                        "Configure scripting: Added template ${templateClassNmae.name} from $dep"
                                     )
-                                )
+                                    yield(it)
+                                }
                             }
                         }
                     }
@@ -124,23 +134,138 @@ private fun discoverScriptTemplatesInClasspath(
     }
 }
 
+internal fun loadScriptTemplatesFromClasspath(
+    scriptTemplates: List<String>,
+    classpath: List<File>,
+    dependenciesClasspath: List<File>,
+    baseClassLoader: ClassLoader,
+    scriptResolverEnv: Map<String, Any?>,
+    messageCollector: MessageCollector
+): Sequence<KotlinScriptDefinition> = buildSequence {
+    val templatesLeftToFind = ArrayList<String>()
+    // trying the direct classloading from baseClassloader first, since this is the most performant variant
+    for (template in scriptTemplates) {
+        val def = loadScriptDefinition(baseClassLoader, template, scriptResolverEnv, messageCollector)
+        if (def == null) {
+            templatesLeftToFind.add(template)
+        } else {
+            yield(def!!)
+        }
+    }
+    // then searching the remaining templates in the supplied classpath
+    if (templatesLeftToFind.isNotEmpty()) {
+        val templateClasspath by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            classpath + dependenciesClasspath
+        }
+        val classLoader by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassLoader)
+        }
+        for (dep in classpath) {
+            try {
+                when {
+                    dep.isFile && dep.extension == "jar" -> { // checking for extension is the compiler current behaviour, so the same logic is implemented here
+                        val jar = JarFile(dep)
+                        for (templateClassName in templatesLeftToFind) {
+                            val templateClassEntry = jar.getJarEntry("${templateClassName.replace('.', '/')}.class")
+                            if (templateClassEntry != null) {
+                                loadScriptDefinition(
+                                    jar.getInputStream(templateClassEntry).readBytes(),
+                                    templateClassName, templateClasspath, { classLoader }, scriptResolverEnv, messageCollector
+                                )?.let {
+                                    templatesLeftToFind.remove(templateClassName)
+                                    yield(it)
+                                }
+                            }
+                        }
+                    }
+                    dep.isDirectory -> {
+                        for (templateClassName in scriptTemplates) {
+                            val templateClassFile = File(dep, "${templateClassName.replace('.', '/')}.class")
+                            if (templateClassFile.exists()) {
+                                loadScriptDefinition(
+                                    templateClassFile.readBytes(),
+                                    templateClassName, templateClasspath, { classLoader }, scriptResolverEnv, messageCollector
+                                )?.let {
+                                    templatesLeftToFind.remove(templateClassName)
+                                    yield(it)
+                                }
+                            }
+                        }
+                    }
+                    else -> {
+                        // assuming that invalid classpath entries will be reported elsewhere anyway, so do not spam user with additional warnings here
+                        messageCollector.report(
+                            CompilerMessageSeverity.LOGGING,
+                            "Configure scripting: Unknown classpath entry $dep"
+                        )
+                    }
+                }
+            } catch (e: IOException) {
+                messageCollector.report(
+                    CompilerMessageSeverity.WARNING,
+                    "Configure scripting: unable to process classpath entry $dep: $e"
+                )
+            }
+        }
+    }
+    if (templatesLeftToFind.isNotEmpty()) {
+        messageCollector.report(
+            CompilerMessageSeverity.WARNING,
+            "Configure scripting: unable to find script definition classes: $templatesLeftToFind"
+        )
+    }
+}
+
+private fun loadScriptDefinition(
+    templateClassBytes: ByteArray,
+    templateClassName: String,
+    templateClasspath: List<File>,
+    getClassLoader: () -> ClassLoader,
+    scriptResolverEnv: Map<String, Any?>,
+    messageCollector: MessageCollector
+): KotlinScriptDefinition? {
+    val anns = loadAnnotationsFromClass(templateClassBytes)
+    for (ann in anns) {
+        var def: KotlinScriptDefinition? = null
+        if (ann.name == KotlinScript::class.simpleName) {
+            def = LazyScriptDefinitionFromDiscoveredClass(anns, templateClassName, templateClasspath, messageCollector)
+        } else if (ann.name == ScriptTemplateDefinition::class.simpleName) {
+            val templateClass = getClassLoader().loadClass(templateClassName).kotlin
+            def = KotlinScriptDefinitionFromAnnotatedTemplate(templateClass, scriptResolverEnv, templateClasspath)
+        }
+        if (def != null) {
+            messageCollector.report(
+                CompilerMessageSeverity.LOGGING,
+                "Configure scripting: Added template $templateClassName from $templateClasspath"
+            )
+            return def
+        }
+    }
+    messageCollector.report(
+        CompilerMessageSeverity.WARNING,
+        "Configure scripting: $templateClassName is not marked with any known kotlin script annotation"
+    )
+    return null
+}
+
 private fun JarFile.extractClasspath(defaultClasspath: List<File>): List<File> =
     manifest.mainAttributes.getValue("Class-Path")?.split(" ")?.map(::File) ?: defaultClasspath
 
-internal fun loadScriptDefinition(
-    classloader: URLClassLoader,
+private fun loadScriptDefinition(
+    classLoader: ClassLoader,
     template: String,
     scriptResolverEnv: Map<String, Any?>,
     messageCollector: MessageCollector
 ): KotlinScriptDefinition? {
     try {
-        val cls = classloader.loadClass(template)
+        val cls = classLoader.loadClass(template)
         val def =
             if (cls.annotations.firstIsInstanceOrNull<KotlinScript>() != null) {
                 KotlinScriptDefinitionAdapterFromNewAPI(
                     ScriptDefinitionFromAnnotatedBaseClass(
                         ScriptingEnvironment(
-                            ScriptingEnvironmentProperties.baseClass to cls.kotlin
+                            ScriptingEnvironmentProperties.baseClass to KotlinType(cls.kotlin),
+                            ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
                         )
                     )
                 )
@@ -154,7 +279,7 @@ internal fun loadScriptDefinition(
         )
         return def
     } catch (ex: ClassNotFoundException) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, "Cannot find script definition template class $template")
+        // return null
     } catch (ex: Exception) {
         messageCollector.report(
             CompilerMessageSeverity.ERROR,

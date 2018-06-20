@@ -9,17 +9,17 @@ fun <T> T.idExtension(): T = this
 inline fun <T> T.inlinedIdExtension(): T = this
 
 fun test(f: Foo) {
-    inlinedId(f) // box
+    inlinedId(f)
     inlinedId(f).idExtension() // box
 
-    f.inlinedIdExtension() // box
+    f.inlinedIdExtension()
 
     val a = inlinedId(f).idExtension() // box unbox
-    val b = inlinedId(f).inlinedIdExtension() // box unbox
+    val b = inlinedId(f).inlinedIdExtension()
 }
 
-// 5 INVOKESTATIC Foo\$Erased.box
-// 2 INVOKEVIRTUAL Foo.unbox
+// 2 INVOKESTATIC Foo\$Erased.box
+// 1 INVOKEVIRTUAL Foo.unbox
 
 // 0 valueOf
 // 0 intValue

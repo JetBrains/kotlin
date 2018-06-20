@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.checkers;
 
-import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -42,6 +41,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
@@ -72,7 +72,7 @@ public class DebugInfoUtil {
             @NotNull BindingContext bindingContext,
             @NotNull DebugInfoReporter debugInfoReporter
     ) {
-        Map<KtReferenceExpression, DiagnosticFactory<?>> markedWithErrorElements = Maps.newHashMap();
+        Map<KtReferenceExpression, DiagnosticFactory<?>> markedWithErrorElements = new HashMap<>();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             DiagnosticFactory<?> factory = diagnostic.getFactory();
             if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {

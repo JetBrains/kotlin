@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.diagnostics.rendering
 
 import com.google.common.collect.Lists
-import com.google.common.collect.Sets
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -252,7 +251,7 @@ object Renderers {
         for (substitutedDescriptor in substitutedDescriptors) {
             val receiverType = DescriptorUtils.getReceiverParameterType(substitutedDescriptor.extensionReceiverParameter)
 
-            val errorPositions = Sets.newHashSet<ConstraintPosition>()
+            val errorPositions = hashSetOf<ConstraintPosition>()
             val parameterTypes = Lists.newArrayList<KotlinType>()
             for (valueParameterDescriptor in substitutedDescriptor.valueParameters) {
                 parameterTypes.add(valueParameterDescriptor.type)

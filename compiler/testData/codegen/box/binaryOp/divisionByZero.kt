@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS
 // reason - no ArithmeticException in JS
 fun box(): String {

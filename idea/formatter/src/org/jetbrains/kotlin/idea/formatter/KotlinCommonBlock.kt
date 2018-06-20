@@ -17,6 +17,7 @@ import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
@@ -257,7 +258,7 @@ abstract class KotlinCommonBlock(
             return ChildAttributes(Indent.getNoneIndent(), null)
         }
 
-        if (type == KtNodeTypes.IF) {
+        if (type == IF) {
             val elseBlock = mySubBlocks?.getOrNull(newChildIndex)
             if (elseBlock != null && elseBlock.node.elementType == KtTokens.ELSE_KEYWORD) {
                 return ChildAttributes.DELEGATE_TO_NEXT_CHILD
@@ -272,7 +273,7 @@ abstract class KotlinCommonBlock(
         }
 
         return when (type) {
-            in CODE_BLOCKS, KtNodeTypes.WHEN, KtNodeTypes.IF, KtNodeTypes.FOR, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE -> ChildAttributes(
+            in CODE_BLOCKS, WHEN, IF, FOR, WHILE, DO_WHILE, WHEN_ENTRY -> ChildAttributes(
                 Indent.getNormalIndent(),
                 null
             )
@@ -339,7 +340,7 @@ abstract class KotlinCommonBlock(
                     kotlinCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR
                 )
 
-            parentType === KtNodeTypes.WHEN ->
+            parentType === WHEN ->
                 getAlignmentForCaseBranch(kotlinCustomSettings.ALIGN_IN_COLUMNS_CASE_BRANCH)
 
             parentType === KtNodeTypes.WHEN_ENTRY ->
@@ -737,19 +738,19 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Opening parenthesis for conditions")
         .forType(LPAR)
-        .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+        .within(IF, KtNodeTypes.WHEN_ENTRY, WHILE, DO_WHILE)
         .set(Indent.getContinuationWithoutFirstIndent(true)),
 
     strategy("Closing parenthesis for conditions")
         .forType(RPAR)
         .forElement { node -> !hasErrorElementBefore(node) }
-        .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+        .within(IF, KtNodeTypes.WHEN_ENTRY, WHILE, DO_WHILE)
         .set(Indent.getNoneIndent()),
 
     strategy("Closing parenthesis for incomplete conditions")
         .forType(RPAR)
         .forElement { node -> hasErrorElementBefore(node) }
-        .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+        .within(IF, KtNodeTypes.WHEN_ENTRY, WHILE, DO_WHILE)
         .set(Indent.getContinuationWithoutFirstIndent()),
 
     strategy("KDoc comment indent")

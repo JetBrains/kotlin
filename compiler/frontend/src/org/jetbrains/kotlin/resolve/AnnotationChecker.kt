@@ -34,7 +34,7 @@ class AnnotationChecker(
     private val languageVersionSettings: LanguageVersionSettings
 ) {
     fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
-        val actualTargets = getActualTargetList(annotated, descriptor, trace)
+        val actualTargets = getActualTargetList(annotated, descriptor, trace.bindingContext)
         checkEntries(annotated.annotationEntries, actualTargets, trace, annotated)
         if (annotated is KtCallableDeclaration) {
             annotated.typeReference?.let { check(it, trace) }
@@ -64,7 +64,7 @@ class AnnotationChecker(
     }
 
     fun checkExpression(expression: KtExpression, trace: BindingTrace) {
-        checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null, trace), trace)
+        checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null, trace.bindingContext), trace)
         if (expression is KtLambdaExpression) {
             for (parameter in expression.valueParameters) {
                 parameter.typeReference?.let { check(it, trace) }
@@ -197,15 +197,15 @@ class AnnotationChecker(
             }.toSet()
         }
 
-        fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?, trace: BindingTrace):
+        fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?, context: BindingContext):
                 List<KotlinTarget> {
-            return getActualTargetList(annotated, descriptor, trace).defaultTargets
+            return getActualTargetList(annotated, descriptor, context).defaultTargets
         }
 
-        private fun DeclarationDescriptor?.hasBackingField(bindingTrace: BindingTrace) =
-            (this as? PropertyDescriptor)?.let { bindingTrace.get(BindingContext.BACKING_FIELD_REQUIRED, it) } ?: false
+        private fun DeclarationDescriptor?.hasBackingField(context: BindingContext) =
+            (this as? PropertyDescriptor)?.let { context.get(BindingContext.BACKING_FIELD_REQUIRED, it) } ?: false
 
-        fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?, trace: BindingTrace): TargetList {
+        fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?, context: BindingContext): TargetList {
             return when (annotated) {
                 is KtClassOrObject ->
                     (descriptor as? ClassDescriptor)?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
@@ -213,8 +213,8 @@ class AnnotationChecker(
                 is KtProperty -> {
                     when {
                         annotated.isLocal -> TargetLists.T_LOCAL_VARIABLE
-                        annotated.isMember -> TargetLists.T_MEMBER_PROPERTY(descriptor.hasBackingField(trace), annotated.hasDelegate())
-                        else -> TargetLists.T_TOP_LEVEL_PROPERTY(descriptor.hasBackingField(trace), annotated.hasDelegate())
+                        annotated.isMember -> TargetLists.T_MEMBER_PROPERTY(descriptor.hasBackingField(context), annotated.hasDelegate())
+                        else -> TargetLists.T_TOP_LEVEL_PROPERTY(descriptor.hasBackingField(context), annotated.hasDelegate())
                     }
                 }
                 is KtParameter -> {

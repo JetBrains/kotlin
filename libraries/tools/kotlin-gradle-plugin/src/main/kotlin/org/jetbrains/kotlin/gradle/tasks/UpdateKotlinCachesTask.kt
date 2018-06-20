@@ -10,7 +10,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.utils.inputsCompatible
-import org.jetbrains.kotlin.incremental.isClassFile
+import org.jetbrains.kotlin.gradle.utils.isClassFile
 import java.io.File
 
 internal open class InspectClassesForMultiModuleIC : DefaultTask() {

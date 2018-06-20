@@ -23,51 +23,24 @@ import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.plugin.JetBrainsSubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
+import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 class SamWithReceiverGradleSubplugin : Plugin<Project> {
     companion object {
         fun isEnabled(project: Project) = project.plugins.findPlugin(SamWithReceiverGradleSubplugin::class.java) != null
-
-        fun getSamWithReceiverExtension(project: Project): SamWithReceiverExtension {
-            return project.extensions.getByType(SamWithReceiverExtension::class.java)
-        }
     }
 
-    fun Project.getBuildscriptArtifacts(): Set<ResolvedArtifact> =
-            buildscript.configurations.findByName("classpath")?.resolvedConfiguration?.resolvedArtifacts ?: emptySet()
-
     override fun apply(project: Project) {
-        val samWithReceiverExtension = project.extensions.create("samWithReceiver", SamWithReceiverExtension::class.java)
-
-        project.afterEvaluate {
-            val fqNamesAsString = samWithReceiverExtension.myAnnotations.joinToString(",")
-            val presetsAsString = samWithReceiverExtension.myPresets.joinToString(",")
-            project.extensions.extraProperties.set("kotlinSamWithReceiverAnnotations", fqNamesAsString)
-
-            val allBuildscriptArtifacts = project.getBuildscriptArtifacts() + project.rootProject.getBuildscriptArtifacts()
-            val samWithReceiverCompilerPluginFile = allBuildscriptArtifacts.filter {
-                val id = it.moduleVersion.id
-                id.group == SamWithReceiverKotlinGradleSubplugin.SAM_WITH_RECEIVER_GROUP_NAME
-                && id.name == SamWithReceiverKotlinGradleSubplugin.SAM_WITH_RECEIVER_ARTIFACT_NAME
-            }.firstOrNull()?.file?.absolutePath ?: ""
-
-            open class TaskForSamWithReceiver : AbstractTask()
-            project.tasks.add(project.tasks.create("samWithReceiverDataStorageTask", TaskForSamWithReceiver::class.java).apply {
-                isEnabled = false
-                description = "Supported annotations: " + fqNamesAsString +
-                              "; Presets: $presetsAsString" +
-                              "; Compiler plugin classpath: $samWithReceiverCompilerPluginFile"
-            })
-        }
+        project.extensions.create("samWithReceiver", SamWithReceiverExtension::class.java)
     }
 }
 
 class SamWithReceiverKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     companion object {
-        val SAM_WITH_RECEIVER_GROUP_NAME = "org.jetbrains.kotlin"
-        val SAM_WITH_RECEIVER_ARTIFACT_NAME = "kotlin-sam-with-receiver"
+        const val SAM_WITH_RECEIVER_ARTIFACT_NAME = "kotlin-sam-with-receiver"
 
         private val ANNOTATION_ARG_NAME = "annotation"
         private val PRESET_ARG_NAME = "preset"
@@ -100,7 +73,7 @@ class SamWithReceiverKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompi
         return options
     }
 
-    override fun getArtifactName() = "kotlin-sam-with-receiver"
-    override fun getGroupName() = "org.jetbrains.kotlin"
     override fun getCompilerPluginId() = "org.jetbrains.kotlin.samWithReceiver"
+    override fun getPluginArtifact(): SubpluginArtifact =
+        JetBrainsSubpluginArtifact(artifactId = SAM_WITH_RECEIVER_ARTIFACT_NAME)
 }

@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.types;
 
 import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class SubstitutionUtils {
      */
     @NotNull
     public static TypeSubstitutor buildDeepSubstitutor(@NotNull KotlinType type) {
-        Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap();
+        Map<TypeConstructor, TypeProjection> substitution = new HashMap<>();
         TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitution);
         // we use the mutability of the map here
         fillInDeepSubstitutor(type, typeSubstitutor, substitution, null);
@@ -59,7 +59,7 @@ public class SubstitutionUtils {
     @NotNull
     public static Multimap<TypeParameterDescriptor, TypeProjection> buildDeepSubstitutionMultimap(@NotNull KotlinType type) {
         Multimap<TypeParameterDescriptor, TypeProjection> fullSubstitution = LinkedHashMultimap.create();
-        Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap();
+        Map<TypeConstructor, TypeProjection> substitution = new HashMap<>();
         TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitution);
         // we use the mutability of the map here
         fillInDeepSubstitutor(type, typeSubstitutor, substitution, fullSubstitution);

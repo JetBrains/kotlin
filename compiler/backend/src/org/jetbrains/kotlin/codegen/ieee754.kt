@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -28,12 +28,18 @@ fun calcProperTypeForIeee754ArithmeticIfNeeded(
     typeMapper: KotlinTypeMapper
 ): TypeAndNullability? {
     if (inferredPrimitiveType == null) return null
-    val ktType = expression.kotlinType(bindingContext) ?: return null
+    val ktType = expression.getKotlinTypeForComparison(bindingContext) ?: return null
     val isNullable = TypeUtils.isNullableType(ktType)
     val asmType = typeMapper.mapType(inferredPrimitiveType)
     if (!AsmUtil.isPrimitive(asmType)) return null
     return TypeAndNullability(asmType, isNullable)
 }
+
+private fun KtExpression.getKotlinTypeForComparison(bindingContext: BindingContext): KotlinType? =
+    when {
+        this is KtProperty -> bindingContext[BindingContext.VARIABLE, this]?.type
+        else -> kotlinType(bindingContext)
+    }
 
 fun legacyCalcTypeForIeee754ArithmeticIfNeeded(
     expression: KtExpression?,
@@ -41,7 +47,7 @@ fun legacyCalcTypeForIeee754ArithmeticIfNeeded(
     descriptor: DeclarationDescriptor,
     languageVersionSettings: LanguageVersionSettings
 ): TypeAndNullability? {
-    val ktType = expression.kotlinType(bindingContext) ?: return null
+    val ktType = expression?.getKotlinTypeForComparison(bindingContext) ?: return null
 
     if (KotlinBuiltIns.isDoubleOrNullableDouble(ktType)) {
         return TypeAndNullability(
@@ -59,7 +65,7 @@ fun legacyCalcTypeForIeee754ArithmeticIfNeeded(
 
     // NB. Using DataFlowValueFactoryImpl is a hack, but it is ok for 'legacy'
     val dataFlow = DataFlowValueFactoryImpl().createDataFlowValue(
-        expression!!,
+        expression,
         ktType,
         bindingContext,
         descriptor

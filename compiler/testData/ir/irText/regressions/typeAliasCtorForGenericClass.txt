@@ -16,6 +16,7 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter q: Q' type=Q origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-q> visibility:public modality:FINAL <> ($this:A<Q>) returnType:Q flags:
+        correspondingProperty: PROPERTY name:q type:Q visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A<Q> flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-q>(): Q'

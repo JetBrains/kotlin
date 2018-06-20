@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.util.slicedMap;
 
-import com.google.common.collect.Maps;
-
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public interface MapSupplier {
@@ -25,14 +25,14 @@ public interface MapSupplier {
     MapSupplier HASH_MAP_SUPPLIER = new MapSupplier() {
         @Override
         public <K, V> Map<K, V> get() {
-            return Maps.newHashMap();
+            return new HashMap<>();
         }
     };
 
     MapSupplier LINKED_HASH_MAP_SUPPLIER = new MapSupplier() {
         @Override
         public <K, V> Map<K, V> get() {
-            return Maps.newLinkedHashMap();
+            return new LinkedHashMap<>();
         }
     };
 

@@ -42,7 +42,7 @@ projectTest {
               ":kotlin-script-runtime:dist")
     workingDir = File(rootDir, "libraries/tools/kotlin-compiler-client-embeddable-test/src")
     doFirst {
-        systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
+        systemProperty("kotlin.test.script.classpath", javaPluginConvention().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
         systemProperty("compilerJar", testRuntimeCompilerJar.singleFile.canonicalPath)
         systemProperty("stdlibJar", testStdlibJar.singleFile.canonicalPath)
         systemProperty("scriptRuntimeJar", testScriptRuntimeJar.singleFile.canonicalPath)

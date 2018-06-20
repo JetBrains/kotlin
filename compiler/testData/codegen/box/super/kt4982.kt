@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 abstract class WaitFor {
     init {
         condition()

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -209,9 +210,9 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
 
         return (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
-            val proto = descriptor.classProto.getExtension(JvmProtoBuf.classLocalVariable, index)
-            val nameResolver = descriptor.c.nameResolver
-            deserializeToDescriptor(jClass, proto, nameResolver, descriptor.c.typeTable, MemberDeserializer::loadProperty)
+            descriptor.classProto.getExtensionOrNull(JvmProtoBuf.classLocalVariable, index)?.let { proto ->
+                deserializeToDescriptor(jClass, proto, descriptor.c.nameResolver, descriptor.c.typeTable, MemberDeserializer::loadProperty)
+            }
         }
     }
 

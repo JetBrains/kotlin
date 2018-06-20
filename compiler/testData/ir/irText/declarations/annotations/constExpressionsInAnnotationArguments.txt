@@ -4,6 +4,7 @@ FILE fqName:<root> fileName:/constExpressionsInAnnotationArguments.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ONE> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:ONE type:kotlin.Int visibility:public modality:FINAL flags:const,val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-ONE>(): Int'
           GET_FIELD 'ONE: Int' type=kotlin.Int origin=null
@@ -18,6 +19,7 @@ FILE fqName:<root> fileName:/constExpressionsInAnnotationArguments.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'

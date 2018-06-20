@@ -300,6 +300,10 @@ public abstract class AnnotationCodegen {
             return null;
         }
 
+        if (classDescriptor.isExpect()) {
+            return null;
+        }
+
         innerClassConsumer.addInnerClassInfoFromAnnotation(classDescriptor);
 
         String asmTypeDescriptor = typeMapper.mapType(annotationDescriptor.getType()).getDescriptor();
@@ -399,6 +403,26 @@ public abstract class AnnotationCodegen {
             public Void visitKClassValue(KClassValue value, Void data) {
                 annotationVisitor.visit(name, typeMapper.mapType(value.getValue()));
                 return null;
+            }
+
+            @Override
+            public Void visitUByteValue(UByteValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitUShortValue(UShortValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitUIntValue(UIntValue value, Void data) {
+                return visitSimpleValue(value);
+            }
+
+            @Override
+            public Void visitULongValue(ULongValue value, Void data) {
+                return visitSimpleValue(value);
             }
 
             private Void visitSimpleValue(ConstantValue<?> value) {

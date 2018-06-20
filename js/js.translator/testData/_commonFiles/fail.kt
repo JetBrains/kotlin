@@ -3,6 +3,5 @@ package kotlin
 // see StdLibTestBase.removeAdHocAssertions
 
 fun fail(message: String? = null): Nothing {
-    js("throw new Error(message)")
-    null!!
+    throw Exception(message)
 }

@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.idea.caches.project
 
-import com.intellij.facet.FacetTypeRegistry
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.project.Project
@@ -21,7 +18,6 @@ import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import org.jetbrains.jps.model.java.JavaSourceRootType
@@ -35,8 +31,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
-import org.jetbrains.kotlin.idea.facet.KotlinFacetType
-import org.jetbrains.kotlin.idea.facet.KotlinFacetType.Companion.ID
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -94,10 +88,6 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, for
     }
 }
 
-fun <T> Module.cached(provider: CachedValueProvider<T>): T {
-    return CachedValuesManager.getManager(project).getCachedValue(this, provider)
-}
-
 private fun OrderEntry.acceptAsDependency(forProduction: Boolean): Boolean {
     return this !is ExportableOrderEntry
             || !forProduction
@@ -126,18 +116,6 @@ private fun ideaModelDependencies(
     return result.filterNot { it is LibraryInfo && it.platform != platform }
 }
 
-fun Module.findImplementedModuleNames(modelsProvider: IdeModifiableModelsProvider): List<String> {
-    val facetModel = modelsProvider.getModifiableFacetModel(this)
-    val facet = facetModel.findFacet(
-        KotlinFacetType.TYPE_ID,
-        FacetTypeRegistry.getInstance().findFacetType(ID)!!.defaultFacetName
-    )
-    return facet?.configuration?.settings?.implementedModuleNames ?: emptyList()
-}
-
-fun Module.findImplementedModules(modelsProvider: IdeModifiableModelsProvider) =
-    findImplementedModuleNames(modelsProvider).mapNotNull { modelsProvider.findIdeModule(it) }
-
 interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
     val module: Module
 
@@ -158,8 +136,7 @@ interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
 sealed class ModuleSourceInfoWithExpectedBy(private val forProduction: Boolean) : ModuleSourceInfo {
     override val expectedBy: List<ModuleSourceInfo>
         get() {
-            val modelsProvider = IdeModifiableModelsProviderImpl(module.project)
-            val expectedByModules = module.findImplementedModules(modelsProvider)
+            val expectedByModules = module.implementedModules
             return expectedByModules.mapNotNull { if (forProduction) it.productionSourceInfo() else it.testSourceInfo() }
         }
 
@@ -423,9 +400,9 @@ interface SourceForBinaryModuleInfo : IdeaModuleInfo {
         get() = ModuleOrigin.OTHER
 }
 
-class PlatformModuleInfo(
-    private val platformModule: ModuleSourceInfo,
-    private val commonModules: List<ModuleSourceInfo>
+data class PlatformModuleInfo(
+    internal val platformModule: ModuleSourceInfo,
+    private val commonModules: List<ModuleSourceInfo> // NOTE: usually contains a single element for current implementation
 ) : IdeaModuleInfo, CombinedModuleInfo, TrackableModuleInfo {
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = platformModule.capabilities
@@ -441,6 +418,8 @@ class PlatformModuleInfo(
         get() = platformModule.moduleOrigin
 
     override fun dependencies() = platformModule.dependencies()
+
+    override fun modulesWhoseInternalsAreVisible() = containedModules.flatMap { it.modulesWhoseInternalsAreVisible() }
 
     override val name: Name
         get() = Name.special("<Platform module ${platformModule.displayedName} including ${commonModules.map { it.displayedName }}>")

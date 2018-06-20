@@ -3422,6 +3422,29 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineUsedAsNoinline extends AbstractBlackBoxInlineCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInlineUsedAsNoinline() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("inlineOnly.kt")
+            public void testInlineOnly() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline/inlineOnly.kt");
+            }
+
+            @TestMetadata("simpleNamed.kt")
+            public void testSimpleNamed() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline/simpleNamed.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/suspend/receiver")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

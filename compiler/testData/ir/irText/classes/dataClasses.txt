@@ -15,6 +15,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test1) returnType:Int flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test1 flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
@@ -25,6 +26,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Test1) returnType:String flags:
+        correspondingProperty: PROPERTY name:y type:kotlin.String visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test1 flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): String'
@@ -35,6 +37,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter z: Any' type=kotlin.Any origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:Test1) returnType:Any flags:
+        correspondingProperty: PROPERTY name:z type:kotlin.Any visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test1 flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z>(): Any'
@@ -148,7 +151,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test1 flags:val
-          TYPE_OP type=Test1 origin=CAST typeOperand=Test1
+          TYPE_OP type=Test1 origin=IMPLICIT_CAST typeOperand=Test1
             typeOperand: CLASS CLASS name:Test1 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -197,6 +200,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test2) returnType:Any? flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.Any? visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test2 flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Any?'
@@ -275,7 +279,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test2 flags:val
-          TYPE_OP type=Test2 origin=CAST typeOperand=Test2
+          TYPE_OP type=Test2 origin=IMPLICIT_CAST typeOperand=Test2
             typeOperand: CLASS CLASS name:Test2 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -307,6 +311,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter d: Double' type=kotlin.Double origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> visibility:public modality:FINAL <> ($this:Test3) returnType:Double flags:
+        correspondingProperty: PROPERTY name:d type:kotlin.Double visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test3 flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-d>(): Double'
@@ -317,6 +322,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter dn: Double?' type=kotlin.Double? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-dn> visibility:public modality:FINAL <> ($this:Test3) returnType:Double? flags:
+        correspondingProperty: PROPERTY name:dn type:kotlin.Double? visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test3 flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-dn>(): Double?'
@@ -327,6 +333,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter f: Float' type=kotlin.Float origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-f> visibility:public modality:FINAL <> ($this:Test3) returnType:Float flags:
+        correspondingProperty: PROPERTY name:f type:kotlin.Float visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test3 flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-f>(): Float'
@@ -337,6 +344,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter df: Float?' type=kotlin.Float? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-df> visibility:public modality:FINAL <> ($this:Test3) returnType:Float? flags:
+        correspondingProperty: PROPERTY name:df type:kotlin.Float? visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Test3 flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-df>(): Float?'
@@ -495,7 +503,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test3 flags:val
-          TYPE_OP type=Test3 origin=CAST typeOperand=Test3
+          TYPE_OP type=Test3 origin=IMPLICIT_CAST typeOperand=Test3
             typeOperand: CLASS CLASS name:Test3 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null

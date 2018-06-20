@@ -22,6 +22,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter runA: A.(String) -> Unit = ...' type=A.(kotlin.String) -> kotlin.Unit origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-runA> visibility:public modality:FINAL <> ($this:A) returnType:[@kotlin.ExtensionFunctionType] Function2<A, String, Unit> flags:
+        correspondingProperty: PROPERTY name:runA type:A.(kotlin.String) -> kotlin.Unit visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-runA>(): A.(String) -> Unit'
@@ -89,7 +90,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:A flags:val
-          TYPE_OP type=A origin=CAST typeOperand=A
+          TYPE_OP type=A origin=IMPLICIT_CAST typeOperand=A
             typeOperand: CLASS CLASS name:A modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -142,6 +143,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Any = ...' type=kotlin.Any origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:B) returnType:Any flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.Any visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:B flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Any'
@@ -209,7 +211,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:B flags:val
-          TYPE_OP type=B origin=CAST typeOperand=B
+          TYPE_OP type=B origin=IMPLICIT_CAST typeOperand=B
             typeOperand: CLASS CLASS name:B modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null

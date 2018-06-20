@@ -84,6 +84,11 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         runTest("compiler/testData/multiplatform/incorrectImplInClass/");
     }
 
+    @TestMetadata("inlineClasses")
+    public void testInlineClasses() throws Exception {
+        runTest("compiler/testData/multiplatform/inlineClasses/");
+    }
+
     @TestMetadata("jsNameClash")
     public void testJsNameClash() throws Exception {
         runTest("compiler/testData/multiplatform/jsNameClash/");
@@ -97,6 +102,16 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
     @TestMetadata("missingOverload")
     public void testMissingOverload() throws Exception {
         runTest("compiler/testData/multiplatform/missingOverload/");
+    }
+
+    @TestMetadata("optionalExpectation")
+    public void testOptionalExpectation() throws Exception {
+        runTest("compiler/testData/multiplatform/optionalExpectation/");
+    }
+
+    @TestMetadata("optionalExpectationIncorrectUse")
+    public void testOptionalExpectationIncorrectUse() throws Exception {
+        runTest("compiler/testData/multiplatform/optionalExpectationIncorrectUse/");
     }
 
     @TestMetadata("simple")
@@ -530,6 +545,19 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         }
     }
 
+    @TestMetadata("compiler/testData/multiplatform/inlineClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineClasses extends AbstractMultiPlatformIntegrationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInlineClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/inlineClasses"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+    }
+
     @TestMetadata("compiler/testData/multiplatform/jsNameClash")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -566,6 +594,32 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
         public void testAllFilesPresentInMissingOverload() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/missingOverload"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+    }
+
+    @TestMetadata("compiler/testData/multiplatform/optionalExpectation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class OptionalExpectation extends AbstractMultiPlatformIntegrationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInOptionalExpectation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/optionalExpectation"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+    }
+
+    @TestMetadata("compiler/testData/multiplatform/optionalExpectationIncorrectUse")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class OptionalExpectationIncorrectUse extends AbstractMultiPlatformIntegrationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInOptionalExpectationIncorrectUse() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/optionalExpectationIncorrectUse"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
     }
 

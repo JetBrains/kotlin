@@ -34,12 +34,14 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:IntCell) returnType:Int flags:
+        correspondingProperty: PROPERTY name:value type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:IntCell flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): Int'
             GET_FIELD 'value: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@IntCell: IntCell' type=IntCell origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:IntCell, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:value type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:IntCell flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.BaseExtension
@@ -40,8 +45,7 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
                                  androidExt: BaseExtension,
                                  variantData: BaseVariantData<out BaseVariantOutputData>,
                                  javaTask: AbstractCompile,
-                                 kotlinTask: KotlinCompile,
-                                 kotlinAfterJavaTask: KotlinCompile?
+                                 kotlinTask: KotlinCompile
     ) {
         kotlinTask.dependsOn(*javaTask.dependsOn.toTypedArray())
 
@@ -56,7 +60,7 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
         }
 
         configureJavaTask(kotlinTask, javaTask, logger)
-        createSyncOutputTask(project, kotlinTask, javaTask, kotlinAfterJavaTask, getVariantName(variantData))
+        createSyncOutputTask(project, kotlinTask, javaTask, getVariantName(variantData))
 
         // In lib modules, the androidTest variants get the classes jar in their classpath instead of the Java
         // destination dir. Attach the JAR to be consumed as friend path:

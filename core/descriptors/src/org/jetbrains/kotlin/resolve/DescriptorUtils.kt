@@ -197,14 +197,6 @@ fun ValueParameterDescriptor.declaresOrInheritsDefaultValue(): Boolean {
     )
 }
 
-fun FunctionDescriptor.hasOrInheritsParametersWithDefaultValue(): Boolean = DFS.ifAny(
-        listOf(this),
-        { current -> current.overriddenDescriptors.map { it.original } },
-        { it.hasOwnParametersWithDefaultValue() }
-)
-
-fun FunctionDescriptor.hasOwnParametersWithDefaultValue() = original.valueParameters.any { it.declaresDefaultValue() }
-
 fun Annotated.isRepeatableAnnotation(): Boolean =
         annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.repeatable) != null
 
@@ -442,3 +434,6 @@ fun isParameterOfAnnotation(parameterDescriptor: ParameterDescriptor): Boolean =
 
 fun DeclarationDescriptor.isAnnotationConstructor(): Boolean =
     this is ConstructorDescriptor && DescriptorUtils.isAnnotationClass(this.constructedClass)
+
+fun DeclarationDescriptor.isPrimaryConstructorOfInlineClass(): Boolean =
+    this is ConstructorDescriptor && this.isPrimary && this.constructedClass.isInline

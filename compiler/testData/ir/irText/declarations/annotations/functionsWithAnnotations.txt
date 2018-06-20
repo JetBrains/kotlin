@@ -10,6 +10,7 @@ FILE fqName:<root> fileName:/functionsWithAnnotations.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnn) returnType:Int flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:TestAnn flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'

@@ -113,19 +113,18 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                         null
 
             irProperty.getter = generateGetterIfRequired(ktProperty, propertyDescriptor)
-
             irProperty.setter = generateSetterIfRequired(ktProperty, propertyDescriptor)
         }
 
     private fun PropertyDescriptor.hasBackingField(): Boolean =
         get(BindingContext.BACKING_FIELD_REQUIRED, this) ?: false
 
-    private fun generateGetterIfRequired(ktProperty: KtProperty, property: PropertyDescriptor): IrFunction? {
+    private fun generateGetterIfRequired(ktProperty: KtProperty, property: PropertyDescriptor): IrSimpleFunction? {
         val getter = property.getter ?: return null
         return FunctionGenerator(declarationGenerator).generatePropertyAccessor(getter, ktProperty, ktProperty.getter)
     }
 
-    private fun generateSetterIfRequired(ktProperty: KtProperty, property: PropertyDescriptor): IrFunction? {
+    private fun generateSetterIfRequired(ktProperty: KtProperty, property: PropertyDescriptor): IrSimpleFunction? {
         if (!property.isVar) return null
         val setter = property.setter ?: return null
         return FunctionGenerator(declarationGenerator).generatePropertyAccessor(setter, ktProperty, ktProperty.setter)

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 open class A(private val s: String = "") {
     fun foo() = s
 }

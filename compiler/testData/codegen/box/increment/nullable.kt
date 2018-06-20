@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun box(): String {
     var aByte: Byte? = 0
     var bByte: Byte = 0

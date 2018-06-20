@@ -48,6 +48,8 @@ import java.util.List;
 public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static final String TESTDATA_DIR = "$TESTDATA_DIR$";
 
+    private static final String EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX = "-Xargfile=";
+
     public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLITool<?> compiler, @NotNull List<String> args) {
         StringBuilder output = new StringBuilder();
 
@@ -180,28 +182,57 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private static List<String> readArgs(@NotNull String argsFilePath, @NotNull String tempDir) {
-        List<String> lines = FilesKt.readLines(new File(argsFilePath), Charsets.UTF_8);
+    private static List<String> readArgs(@NotNull String testArgsFilePath, @NotNull String tempDir) {
+        File testArgsFile = new File(testArgsFilePath);
+        List<String> lines = FilesKt.readLines(testArgsFile, Charsets.UTF_8);
+        return CollectionsKt.mapNotNull(lines, arg -> readArg(arg, testArgsFile.getParent(), tempDir));
+    }
 
-        return CollectionsKt.mapNotNull(lines, arg -> {
-            if (arg.isEmpty()) {
-                return null;
-            }
+    private static String readArg(String arg, @NotNull String testDataDir, @NotNull String tempDir) {
+        if (arg.isEmpty()) {
+            return null;
+        }
 
-            // Do not replace ':' after '\' (used in compiler plugin tests)
-            String argsWithColonsReplaced = arg
-                    .replace("\\:", "$COLON$")
-                    .replace(":", File.pathSeparator)
-                    .replace("$COLON$", ":");
+        String argWithColonsReplaced = arg
+                .replace("\\:", "$COLON$")
+                .replace(":", File.pathSeparator)
+                .replace("$COLON$", ":");
 
-            return argsWithColonsReplaced
-                    .replace("$TEMP_DIR$", tempDir)
-                    .replace(TESTDATA_DIR, new File(argsFilePath).getParent())
-                    .replace(
-                            "$FOREIGN_ANNOTATIONS_DIR$",
-                            new File(AbstractForeignAnnotationsTestKt.getFOREIGN_ANNOTATIONS_SOURCES_PATH()).getPath()
-                    );
-        });
+        String argWithTestPathsReplaced = replaceTestPaths(argWithColonsReplaced, testDataDir, tempDir);
+
+        if (arg.startsWith(EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX)) {
+            return mockArgfile(argWithTestPathsReplaced, testDataDir, tempDir);
+        }
+        else {
+            return argWithTestPathsReplaced;
+        }
+    }
+
+    // Create new temp. argfile with all test paths replaced and return argfile-argument pointing to that file
+    private static String mockArgfile(@NotNull String argfileArgument, @NotNull String testDataDir, @NotNull String tempDir) {
+        String argfilePath = kotlin.text.StringsKt.substringAfter(argfileArgument, EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX, argfileArgument);
+        File argfile = new File(argfilePath);
+
+        if (argfile.exists()) {
+            File mockArgfile = FilesKt.createTempFile(argfile.getAbsolutePath(), "", new File(tempDir));
+            String oldArgfileContent = FilesKt.readText(argfile, Charsets.UTF_8);
+            String newArgfileContent = replaceTestPaths(oldArgfileContent, testDataDir, tempDir);
+            FilesKt.writeText(mockArgfile, newArgfileContent, Charsets.UTF_8);
+            return EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX + mockArgfile.getAbsolutePath();
+        } else {
+            return argfileArgument;
+        }
+
+    }
+
+    private static String replaceTestPaths(@NotNull String str, @NotNull String testDataDir, @NotNull String tempDir) {
+        return str
+                .replace("$TEMP_DIR$", tempDir)
+                .replace(TESTDATA_DIR, testDataDir)
+                .replace(
+                        "$FOREIGN_ANNOTATIONS_DIR$",
+                        new File(AbstractForeignAnnotationsTestKt.getFOREIGN_ANNOTATIONS_SOURCES_PATH()).getPath()
+                );
     }
 
     protected void doJvmTest(@NotNull String fileName) {

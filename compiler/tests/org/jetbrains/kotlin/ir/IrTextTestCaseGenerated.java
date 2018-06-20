@@ -381,6 +381,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/declarations/annotations/functionsWithAnnotations.kt");
             }
 
+            @TestMetadata("javaAnnotation.kt")
+            public void testJavaAnnotation() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/javaAnnotation.kt");
+            }
+
             @TestMetadata("localDelegatedPropertiesWithAnnotations.kt")
             public void testLocalDelegatedPropertiesWithAnnotations() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/localDelegatedPropertiesWithAnnotations.kt");
@@ -732,6 +737,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/callableReferenceToImportedFromObject.kt");
         }
 
+        @TestMetadata("callableReferenceTypeArguments.kt")
+        public void testCallableReferenceTypeArguments() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/callableReferenceTypeArguments.kt");
+        }
+
         @TestMetadata("calls.kt")
         public void testCalls() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/calls.kt");
@@ -865,6 +875,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("implicitCastOnPlatformType.kt")
         public void testImplicitCastOnPlatformType() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/implicitCastOnPlatformType.kt");
+        }
+
+        @TestMetadata("implicitCastToNonNull.kt")
+        public void testImplicitCastToNonNull() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/implicitCastToNonNull.kt");
         }
 
         @TestMetadata("implicitCastToTypeParameter.kt")
@@ -1110,6 +1125,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("whenReturn.kt")
         public void testWhenReturn() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/whenReturn.kt");
+        }
+
+        @TestMetadata("whenWithSubjectVariable.kt")
+        public void testWhenWithSubjectVariable() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/whenWithSubjectVariable.kt");
         }
 
         @TestMetadata("whileDoWhile.kt")

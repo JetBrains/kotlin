@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.Call.CallType
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtWhenConditionInRange
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -148,8 +149,9 @@ private fun translateFunctionCall(
     var callExpression = callInfo.translateFunctionCall()
 
     if (CallExpressionTranslator.shouldBeInlined(inlineResolvedCall.resultingDescriptor, context)) {
-        setInlineCallMetadata(callExpression, resolvedCall.call.callElement as KtExpression,
-                              inlineResolvedCall.resultingDescriptor, context)
+        val callElement = resolvedCall.call.callElement
+        val ktExpression = (callElement as? KtWhenConditionInRange)?.rangeExpression ?: callElement as KtExpression
+        setInlineCallMetadata(callExpression, ktExpression, inlineResolvedCall.resultingDescriptor, context)
     }
 
     if (resolvedCall.resultingDescriptor.isSuspend) {

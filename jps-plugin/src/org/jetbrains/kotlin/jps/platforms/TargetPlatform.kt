@@ -45,16 +45,16 @@ val CompileContext.kotlinBuildTargets: KotlinBuildTargets
     }
 
 class KotlinBuildTargets internal constructor(val compileContext: CompileContext) {
-    private val byJpsModuleBuildTarget = ConcurrentHashMap<ModuleBuildTarget, KotlinModuleBuilderTarget>()
+    private val byJpsModuleBuildTarget = ConcurrentHashMap<ModuleBuildTarget, KotlinModuleBuildTarget<*>>()
     private val isKotlinJsStdlibJar = ConcurrentHashMap<String, Boolean>()
 
     @JvmName("getNullable")
-    operator fun get(target: ModuleBuildTarget?): KotlinModuleBuilderTarget? {
+    operator fun get(target: ModuleBuildTarget?): KotlinModuleBuildTarget<*>? {
         if (target == null) return null
         return get(target)
     }
 
-    operator fun get(target: ModuleBuildTarget): KotlinModuleBuilderTarget? {
+    operator fun get(target: ModuleBuildTarget): KotlinModuleBuildTarget<*>? {
         if (target.module.moduleType != JpsJavaModuleType.INSTANCE) return null
 
         return byJpsModuleBuildTarget.computeIfAbsent(target) {

@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.allKotlinFiles
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
+import java.io.File
 
 class TestRootAffectedIT : BaseGradleIT() {
     @Test
@@ -36,8 +38,7 @@ class TestRootAffectedIT : BaseGradleIT() {
 
     @Test
     fun testSourceRootClassIsRemovedIC() {
-        // todo: update Gradle after https://github.com/gradle/gradle/issues/3051 is resolved
-        val project = Project("kotlinProject", GradleVersionRequired.Exact("3.0"))
+        val project = Project("kotlinProject")
         val buildOptions = defaultBuildOptions().copy(incremental = true)
 
         project.build("build", options = buildOptions) {
@@ -49,7 +50,9 @@ class TestRootAffectedIT : BaseGradleIT() {
 
         project.build("build", options = buildOptions) {
             assertSuccessful()
-            assertCompiledKotlinSources(emptyList())
+            // see KT-20541
+            val kotlinTestFiles = File(project.projectDir, "src/test").allKotlinFiles()
+            assertCompiledKotlinSources(project.relativize(kotlinTestFiles))
         }
     }
 

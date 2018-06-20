@@ -37,8 +37,6 @@ interface SourceCompilerForInline {
 
     val callElement: Any
 
-    val callableDescriptor: CallableDescriptor?
-
     val lookupLocation: LookupLocation
 
     val callElementText: String
@@ -94,8 +92,6 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
     override val lookupLocation = KotlinLookupLocation(callElement)
 
-    override val callableDescriptor: CallableDescriptor?
-        get() = (this.context as? MethodContext)?.functionDescriptor
 
     override val callElementText by lazy {
         callElement.text
@@ -192,7 +188,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             else -> FunctionGenerationStrategy.FunctionDefault(state, expression as KtDeclarationWithBody)
         }
 
-        FunctionCodegen.generateMethodBody(adapter, descriptor, context, jvmMethodSignature, strategy, parentCodegen)
+        FunctionCodegen.generateMethodBody(adapter, descriptor, context, jvmMethodSignature, strategy, parentCodegen, state.jvmDefaultMode)
 
         if (isLambda) {
             codegen.propagateChildReifiedTypeParametersUsages(parentCodegen.reifiedTypeParametersUsages)

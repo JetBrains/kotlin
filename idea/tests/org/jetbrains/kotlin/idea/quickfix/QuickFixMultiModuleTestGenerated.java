@@ -45,6 +45,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/addActualToTopLevelMember/");
     }
 
+    @TestMetadata("addFunctionToCommonClassFromJavaUsage")
+    public void testAddFunctionToCommonClassFromJavaUsage() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/addFunctionToCommonClassFromJavaUsage/");
+    }
+
     @TestMetadata("addOperatorByHeader")
     public void testAddOperatorByHeader() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/addOperatorByHeader/");
@@ -177,6 +182,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("functionTypeReceiverToParameterByImpl")
     public void testFunctionTypeReceiverToParameterByImpl() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/functionTypeReceiverToParameterByImpl/");
+    }
+
+    @TestMetadata("implementAbstractExpectMemberInheritedFromInterface")
+    public void testImplementAbstractExpectMemberInheritedFromInterface() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/implementAbstractExpectMemberInheritedFromInterface/");
     }
 
     @TestMetadata("implementMembersInImplClassNonImplInheritor")

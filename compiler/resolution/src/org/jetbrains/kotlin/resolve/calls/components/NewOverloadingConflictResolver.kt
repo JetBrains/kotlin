@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.SimpleConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature.Companion.argumentValueType
 import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.types.KotlinType
@@ -29,11 +31,13 @@ import java.util.*
 
 class NewOverloadingConflictResolver(
     builtIns: KotlinBuiltIns,
+    module: ModuleDescriptor,
     specificityComparator: TypeSpecificityComparator,
     statelessCallbacks: KotlinResolutionStatelessCallbacks,
     constraintInjector: ConstraintInjector
 ) : OverloadingConflictResolver<KotlinResolutionCandidate>(
     builtIns,
+    module,
     specificityComparator,
     {
         // todo investigate
@@ -59,9 +63,9 @@ class NewOverloadingConflictResolver(
                     numDefaults++
                 } else {
                     val originalValueParameter = originalValueParameters[valueParameter.index]
-                    val parameterType = originalValueParameter.argumentValueType
                     for (valueArgument in resolvedValueArgument.arguments) {
-                        valueArgumentToParameterType[valueArgument] = parameterType
+                        valueArgumentToParameterType[valueArgument] = candidate.resolvedCall.argumentsWithConversion[valueArgument]?.convertedTypeByOriginParameter ?:
+                                valueArgument.getExpectedType(originalValueParameter, candidate.callComponents.languageVersionSettings)
                     }
                 }
             }

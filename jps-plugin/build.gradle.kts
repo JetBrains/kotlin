@@ -13,6 +13,7 @@ dependencies {
     compile(project(":compiler:daemon-common"))
     compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(project(":compiler:frontend.java"))
+    compile(project(":js:js.frontend"))
     compile(projectRuntimeJar(":kotlin-preloader"))
     compile(project(":idea:idea-jps-common"))
     compileOnly(group = "org.jetbrains", name = "annotations", version = "13.0")
@@ -27,6 +28,7 @@ dependencies {
     testCompile(projectTests(":kotlin-build-common"))
     testCompileOnly(intellijDep("jps-standalone")) { includeJars("jps-builders", "jps-builders-6") }
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "platform-api", "log4j") }
+    testCompile(intellijDep("devkit"))
     testCompile(intellijDep("jps-build-test"))
     compilerModules.forEach {
         testRuntime(project(it))

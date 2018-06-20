@@ -30,6 +30,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-qux> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:qux type:kotlin.Int visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-qux>(): Int'
           GET_FIELD 'qux: Int' type=kotlin.Int origin=null
@@ -38,6 +39,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
       EXPRESSION_BODY
         CLASS_REFERENCE 'A' type=kotlin.reflect.KClass<A>
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:KClass<A> flags:
+      correspondingProperty: PROPERTY name:test1 type:kotlin.reflect.KClass<A> visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): KClass<A>'
           GET_FIELD 'test1: KClass<A>' type=kotlin.reflect.KClass<A> origin=null
@@ -47,6 +49,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
         GET_CLASS type=kotlin.reflect.KClass<out kotlin.Int>
           CALL '<get-qux>(): Int' type=kotlin.Int origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:KClass<out Int> flags:
+      correspondingProperty: PROPERTY name:test2 type:kotlin.reflect.KClass<out kotlin.Int> visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): KClass<out Int>'
           GET_FIELD 'test2: KClass<out Int>' type=kotlin.reflect.KClass<out kotlin.Int> origin=null
@@ -55,6 +58,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction1<A, kotlin.Unit> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:KFunction1<A, Unit> flags:
+      correspondingProperty: PROPERTY name:test3 type:kotlin.reflect.KFunction1<A, kotlin.Unit> visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test3>(): KFunction1<A, Unit>'
           GET_FIELD 'test3: KFunction1<A, Unit>' type=kotlin.reflect.KFunction1<A, kotlin.Unit> origin=null
@@ -63,6 +67,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'constructor A()' type=kotlin.reflect.KFunction0<A> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:KFunction0<A> flags:
+      correspondingProperty: PROPERTY name:test4 type:kotlin.reflect.KFunction0<A> visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test4>(): KFunction0<A>'
           GET_FIELD 'test4: KFunction0<A>' type=kotlin.reflect.KFunction0<A> origin=null
@@ -72,6 +77,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
         FUNCTION_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
           $this: CALL 'constructor A()' type=A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:KFunction0<Unit> flags:
+      correspondingProperty: PROPERTY name:test5 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test5>(): KFunction0<Unit>'
           GET_FIELD 'test5: KFunction0<Unit>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
@@ -80,6 +86,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'bar(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:KFunction0<Unit> flags:
+      correspondingProperty: PROPERTY name:test6 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test6>(): KFunction0<Unit>'
           GET_FIELD 'test6: KFunction0<Unit>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
@@ -88,6 +95,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
       EXPRESSION_BODY
         PROPERTY_REFERENCE 'qux: Int' field=null getter='<get-qux>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> () returnType:KProperty0<Int> flags:
+      correspondingProperty: PROPERTY name:test7 type:kotlin.reflect.KProperty0<kotlin.Int> visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test7>(): KProperty0<Int>'
           GET_FIELD 'test7: KProperty0<Int>' type=kotlin.reflect.KProperty0<kotlin.Int> origin=null

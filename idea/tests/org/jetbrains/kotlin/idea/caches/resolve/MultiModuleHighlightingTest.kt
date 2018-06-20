@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
@@ -57,7 +58,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
         module2.addDependency(module1)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testDependency() {
@@ -76,7 +77,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module4.addDependency(module2)
         module4.addDependency(module3)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testLazyResolvers() {
@@ -94,7 +95,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             assertTrue(module2 !in tracker.moduleResolversComputed)
             assertTrue(module3 !in tracker.moduleResolversComputed)
 
-            checkHighlightingInAllFiles { "m3" in file.name }
+            checkHighlightingInProject { project.allKotlinFiles().filter { "m3" in it.name } }
 
             assertTrue(module1 in tracker.moduleResolversComputed)
             assertTrue(module2 !in tracker.moduleResolversComputed)
@@ -129,7 +130,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
             assertEquals(0, tracker.sdkResolversComputed.size)
 
-            checkHighlightingInAllFiles { "m2" in file.name }
+            checkHighlightingInProject { project.allKotlinFiles().filter { "m2" in it.name } }
 
             assertEquals(2, tracker.moduleResolversComputed.size)
 
@@ -156,14 +157,14 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             assertEquals(currentModCount, module2ModTracker.modificationCount)
             assertEquals(currentModCount, module3ModTracker.modificationCount)
 
-            checkHighlightingInAllFiles { "m2" in file.name }
+            checkHighlightingInProject { project.allKotlinFiles().filter { "m2" in it.name } }
 
             assertEquals(0, tracker.sdkResolversComputed.size)
             assertEquals(1, tracker.moduleResolversComputed.size)
 
             tracker.moduleResolversComputed.clear()
             (PsiModificationTracker.SERVICE.getInstance(myProject) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
-            checkHighlightingInAllFiles { "m2" in file.name }
+            checkHighlightingInProject { project.allKotlinFiles().filter { "m2" in it.name } }
             assertEquals(0, tracker.sdkResolversComputed.size)
             assertEquals(2, tracker.moduleResolversComputed.size)
         }
@@ -178,7 +179,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module3.addDependency(module2, dependencyScope = DependencyScope.TEST)
         module2.addDependency(module1, dependencyScope = DependencyScope.COMPILE)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testLanguageVersionsViaFacets() {
@@ -192,7 +193,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         m1.addDependency(m2)
         m2.addDependency(m1)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testSamWithReceiverExtension() {
@@ -210,7 +211,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module1.addDependency(module2)
         module2.addDependency(module1)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testJvmExperimentalLibrary() {
@@ -221,8 +222,9 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
                 "-Xexperimental=lib.ExperimentalAPI"
             )
         )
+
         module("usage").addLibrary(lib)
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testJsExperimentalLibrary() {
@@ -233,8 +235,9 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
                 "-Xexperimental=lib.ExperimentalAPI"
             )
         )
+
         module("usage").addLibrary(lib, kind = JSLibraryKind)
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     private fun Module.setupKotlinFacet(configure: KotlinFacetConfiguration.() -> Unit) = apply {

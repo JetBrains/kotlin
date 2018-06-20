@@ -191,7 +191,11 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         irClass.addMember(generateDelegatedFunction(irDelegate, delegated, overridden))
     }
 
-    private fun generateDelegatedFunction(irDelegate: IrField, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrFunction =
+    private fun generateDelegatedFunction(
+        irDelegate: IrField,
+        delegated: FunctionDescriptor,
+        overridden: FunctionDescriptor
+    ): IrSimpleFunction =
         context.symbolTable.declareSimpleFunctionWithOverrides(
             irDelegate.startOffset, irDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_MEMBER,

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types.expressions
 
-import com.google.common.collect.Sets
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -35,7 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getDeclarationsByLabel
 
 object LabelResolver {
     private fun getElementsByLabelName(labelName: Name, labelExpression: KtSimpleNameExpression): Set<KtElement> {
-        val elements = Sets.newLinkedHashSet<KtElement>()
+        val elements = linkedSetOf<KtElement>()
         var parent: PsiElement? = labelExpression.parent
         while (parent != null) {
             val name = getLabelNameIfAny(parent)

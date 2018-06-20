@@ -10,6 +10,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:String flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): String'
@@ -42,12 +43,14 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Cell) returnType:Int flags:
+        correspondingProperty: PROPERTY name:value type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:Cell flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): Int'
             GET_FIELD 'value: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Cell: Cell' type=Cell origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:Cell, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:value type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:Cell flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
@@ -93,6 +96,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
       annotations:
         CALL 'constructor A(String)' type=A origin=null
           x: CONST String type=kotlin.String value=test1.get
+      correspondingProperty: PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:delegated,val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): Int'
           CALL 'getValue(Any?, Any?): Int' type=kotlin.Int origin=null
@@ -108,6 +112,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
       annotations:
         CALL 'constructor A(String)' type=A origin=null
           x: CONST String type=kotlin.String value=test2.get
+      correspondingProperty: PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:delegated,var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): Int'
           CALL 'getValue(Any?, Any?): Int' type=kotlin.Int origin=null
@@ -118,6 +123,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
       annotations:
         CALL 'constructor A(String)' type=A origin=null
           x: CONST String type=kotlin.String value=test2.set
+      correspondingProperty: PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:delegated,var
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         annotations:
           CALL 'constructor A(String)' type=A origin=null

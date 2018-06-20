@@ -480,6 +480,10 @@ fun KtClassOrObject.findPropertyByName(name: String): KtNamedDeclaration? {
             ?: primaryConstructorParameters.firstOrNull { it.hasValOrVar() && it.name == name }
 }
 
+fun KtClassOrObject.findFunctionByName(name: String): KtNamedDeclaration? {
+    return declarations.firstOrNull { it is KtNamedFunction && it.name == name } as KtNamedDeclaration?
+}
+
 fun isTypeConstructorReference(e: PsiElement): Boolean {
     val parent = e.parent
     return parent is KtUserType && parent.referenceExpression == e
@@ -578,4 +582,13 @@ fun KtNamedDeclaration.safeFqNameForLazyResolve(): FqName? {
     //NOTE: should only create special names for package level declarations, so we can safely rely on real fq name for parent
     val parentFqName = KtNamedDeclarationUtil.getParentFqName(this)
     return parentFqName?.child(safeNameForLazyResolve())
+}
+
+fun isTopLevelInFileOrScript(element: PsiElement): Boolean {
+    val parent = element.parent
+    return when (parent) {
+        is KtFile -> true
+        is KtBlockExpression -> parent.parent is KtScript
+        else -> false
+    }
 }

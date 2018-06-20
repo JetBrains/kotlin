@@ -30,6 +30,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.PsiTestUtil
+import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.test.util.projectLibrary
 import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
+import org.junit.ComparisonFailure
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.script.dependencies.Environment
@@ -62,6 +64,20 @@ abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfi
             editor,
             InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_WARNINGS"),
             InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_INFOS"))
+    }
+
+    fun doComplexTest(path: String) {
+        configureScriptFile(path)
+        assertException(object : AbstractExceptionCase<ComparisonFailure>() {
+            override fun getExpectedExceptionClass(): Class<ComparisonFailure> = ComparisonFailure::class.java
+
+            override fun tryClosure() {
+                checkHighlighting(editor, false, false)
+            }
+        })
+
+        updateScriptDependenciesSynchronously(myFile.virtualFile, project)
+        checkHighlighting(editor, false, false)
     }
 
     override fun setUp() {

@@ -155,7 +155,7 @@ public class IdeErrorMessages {
         MAP.put(CONFLICTING_JVM_DECLARATIONS, "<html>Platform declaration clash: {0}</html>", HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ACCIDENTAL_OVERRIDE, "<html>Accidental override: {0}</html>", HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
 
-        URL errorIconUrl = AllIcons.class.getResource("/general/error.png");
+        URL errorIconUrl = AllIcons.class.getResource(ErrorIconUtil.getErrorIconUrl());
         MAP.put(EXCEPTION_FROM_ANALYZER, "<html>Internal Error occurred while analyzing this expression <br/>" +
                                          "<table cellspacing=\"0\" cellpadding=\"0\">" +
                                          "<tr>" +

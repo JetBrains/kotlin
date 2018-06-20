@@ -11,6 +11,7 @@ FILE fqName:<root> fileName:/coercionToUnit.kt
                   CONST Int type=kotlin.Int value=42
           FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Function0<Unit> flags:
+      correspondingProperty: PROPERTY name:test1 type:() -> kotlin.Unit visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): () -> Unit'
           GET_FIELD 'test1: () -> Unit' type=() -> kotlin.Unit origin=null

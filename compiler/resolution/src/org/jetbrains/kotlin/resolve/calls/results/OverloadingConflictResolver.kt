@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.resolve.calls.results
 import gnu.trove.THashSet
 import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.builtins.UnsignedTypes
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -34,6 +32,7 @@ import java.util.*
 
 open class OverloadingConflictResolver<C : Any>(
     private val builtIns: KotlinBuiltIns,
+    private val module: ModuleDescriptor,
     private val specificityComparator: TypeSpecificityComparator,
     private val getResultingDescriptor: (C) -> CallableDescriptor,
     private val createEmptyConstraintSystem: () -> SimpleConstraintSystem,
@@ -280,11 +279,35 @@ open class OverloadingConflictResolver<C : Any>(
         override fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean {
             val _double = builtIns.doubleType
             val _float = builtIns.floatType
-            val _long = builtIns.longType
-            val _int = builtIns.intType
-            val _byte = builtIns.byteType
-            val _short = builtIns.shortType
 
+            if (UnsignedTypes.isUnsignedType(specific) && UnsignedTypes.isUnsignedType(general)) {
+                val uLong = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uLong)?.defaultType ?: return false
+                val uInt = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt)?.defaultType ?: return false
+                val uByte = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uByte)?.defaultType ?: return false
+                val uShort = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uShort)?.defaultType ?: return false
+
+                return isNonSubtypeNotLessSpecific(specific, general, _double, _float, uLong, uInt, uByte, uShort)
+            } else {
+                val _long = builtIns.longType
+                val _int = builtIns.intType
+                val _byte = builtIns.byteType
+                val _short = builtIns.shortType
+
+                return isNonSubtypeNotLessSpecific(specific, general, _double, _float, _long, _int, _byte, _short)
+            }
+
+        }
+
+        private fun isNonSubtypeNotLessSpecific(
+            specific: KotlinType,
+            general: KotlinType,
+            _double: KotlinType,
+            _float: KotlinType,
+            _long: KotlinType,
+            _int: KotlinType,
+            _byte: KotlinType,
+            _short: KotlinType
+        ): Boolean {
             when {
                 TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float) -> return true
                 TypeUtils.equalTypes(specific, _int) -> {

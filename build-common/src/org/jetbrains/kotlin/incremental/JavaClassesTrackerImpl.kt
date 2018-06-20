@@ -29,11 +29,13 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.java.JavaClassProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.util.getExceptionMessage
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 import java.io.DataInput
@@ -95,7 +97,16 @@ fun JavaClassDescriptor.convertToProto(): SerializedJavaClassWithSource {
 
     val extension = JavaClassesSerializerExtension()
     val serializer = DescriptorSerializer.createTopLevel(extension)
-    val classProto = serializer.classProto(this).build()
+    val classProto: ProtoBuf.Class
+    try {
+        classProto = serializer.classProto(this).build()
+    } catch (e: Exception) {
+        throw IllegalStateException(
+            "Error during writing proto for descriptor: ${DescriptorRenderer.DEBUG_TEXT.render(this)}\n" +
+                    "Source file: $file",
+            e
+        )
+    }
 
     val (stringTable, qualifiedNameTable) = extension.stringTable.buildProto()
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // KT-6153 java.lang.IllegalStateException while building
 object Bug {
     fun title(id:Int) = when (id) {

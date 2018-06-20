@@ -1,7 +1,0 @@
-a java.lang.Deprecated 0
-p org.test 0
-c 0 0/SomeClass$SomeInnerObject
-c 0 0/SomeClass$InnerClass
-c 0 0/SomeClass$InnerClass$InnerClassInInnerClass
-c 0 0/SomeClass$NestedClass
-c 0 0/SomeClass$Companion

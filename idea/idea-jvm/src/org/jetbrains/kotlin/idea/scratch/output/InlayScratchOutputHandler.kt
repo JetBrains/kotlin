@@ -16,27 +16,15 @@
 
 package org.jetbrains.kotlin.idea.scratch.output
 
-import com.intellij.execution.ui.ConsoleViewContentType
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.EditorCustomElementRenderer
-import com.intellij.openapi.editor.impl.ComplementaryFontsRegistry
-import com.intellij.openapi.editor.impl.FontInfo
-import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.ui.Colors
-import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
-import org.jetbrains.kotlin.idea.scratch.ui.ScratchToolWindow
-import java.awt.Color
-import java.awt.Font
-import java.awt.Graphics
-import java.awt.Rectangle
 
 object InlayScratchOutputHandler : ScratchOutputHandler {
+    private const val maxLineLength = 120
     private const val maxInsertOffset = 60
     private const val minSpaceCount = 4
 
@@ -45,20 +33,17 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     }
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
-        val inlayText = StringUtil.shortenTextWithEllipsis(output.text.substringBefore("\n"), 50, 0)
-        if (inlayText != output.text) {
-            ScratchToolWindow.addMessageToToolWindow(file.project, output.text, ConsoleViewContentType.NORMAL_OUTPUT)
-        }
+        if (output.text.isBlank()) return
 
-        createInlay(file, expression.lineStart, inlayText, output.type)
+        createInlay(file, expression, output)
 
         if (output.type == ScratchOutputType.ERROR) {
-            error(file, output.text)
+            ToolWindowScratchOutputHandler.handle(file, expression, output)
         }
     }
 
     override fun error(file: ScratchFile, message: String) {
-        ScratchToolWindow.addMessageToToolWindow(file.project, message, ConsoleViewContentType.ERROR_OUTPUT)
+        ToolWindowScratchOutputHandler.error(file, message)
     }
 
     override fun onFinish(file: ScratchFile) {
@@ -67,109 +52,63 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
 
     override fun clear(file: ScratchFile) {
         clearInlays(file.editor)
-        ScratchToolWindow.clearToolWindow(file.project)
+        ToolWindowScratchOutputHandler.clear(file)
     }
 
-    private fun createInlay(file: ScratchFile, line: Int, inlayText: String, outputType: ScratchOutputType) {
+    private fun createInlay(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
         UIUtil.invokeLaterIfNeeded {
             val editor = file.editor.editor
+            val line = expression.lineStart
 
             val lineStartOffset = editor.document.getLineStartOffset(line)
             val lineEndOffset = editor.document.getLineEndOffset(line)
             val lineLength = lineEndOffset - lineStartOffset
             var spaceCount = maxLineLength(file) - lineLength + minSpaceCount
 
-            while(spaceCount + lineLength > maxInsertOffset && spaceCount > minSpaceCount) spaceCount--
+            while (spaceCount + lineLength > maxInsertOffset && spaceCount > minSpaceCount) spaceCount--
+
+            fun addInlay(text: String) {
+                val textBeforeNewLine = if (StringUtil.containsLineBreak(text)) text.substringBefore("\n") + "..." else text
+                val maxInlayLength = (maxLineLength - spaceCount - lineLength).takeIf { it > 5 } ?: 5
+                val shortText = StringUtil.shortenTextWithEllipsis(textBeforeNewLine, maxInlayLength, 0)
+                if (shortText != text) {
+                    printToToolWindow(file, expression, output)
+                }
+                editor.inlayModel.addInlineElement(lineEndOffset, InlayScratchFileRenderer(" ".repeat(spaceCount) + shortText, output.type))
+            }
 
             val existing = editor.inlayModel
                 .getInlineElementsInRange(lineEndOffset, lineEndOffset)
-                .singleOrNull { it.renderer is ScratchFileRenderer }
+                .singleOrNull { it.renderer is InlayScratchFileRenderer }
             if (existing != null) {
                 existing.dispose()
-                editor.inlayModel.addInlineElement(
-                    lineEndOffset,
-                    ScratchFileRenderer((existing.renderer as ScratchFileRenderer).text + "; " + inlayText, outputType)
-                )
+                addInlay(((existing.renderer as InlayScratchFileRenderer).text + "; " + output.text).drop(spaceCount))
             } else {
-                editor.inlayModel.addInlineElement(lineEndOffset, ScratchFileRenderer(" ".repeat(spaceCount) + inlayText, outputType))
+                addInlay(output.text)
             }
+        }
+    }
+
+    private fun printToToolWindow(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
+        if (output.type != ScratchOutputType.ERROR) {
+            ToolWindowScratchOutputHandler.handle(file, expression, output)
         }
     }
 
     private fun maxLineLength(file: ScratchFile): Int {
         val doc = file.editor.editor.document
-        return (0 until doc.lineCount)
+        return file.getExpressions()
+            .flatMap { it.lineStart..it.lineEnd }
             .map { doc.getLineEndOffset(it) - doc.getLineStartOffset(it) }
-            .max()
-                ?: -1
+            .max() ?: 0
     }
 
     private fun clearInlays(editor: TextEditor) {
         UIUtil.invokeLaterIfNeeded {
             editor
                 .editor.inlayModel.getInlineElementsInRange(0, editor.editor.document.textLength)
-                .filter { it.renderer is ScratchFileRenderer }
+                .filter { it.renderer is InlayScratchFileRenderer }
                 .forEach { Disposer.dispose(it) }
-        }
-    }
-
-    class ScratchFileRenderer(val text: String, val outputType: ScratchOutputType) : EditorCustomElementRenderer {
-        private fun getFontInfo(editor: Editor): FontInfo {
-            val colorsScheme = editor.colorsScheme
-            val fontPreferences = colorsScheme.fontPreferences
-            val attributes = getAttributes()
-            val fontStyle = attributes.fontType
-            return ComplementaryFontsRegistry.getFontAbleToDisplay(
-                'a'.toInt(), fontStyle, fontPreferences, FontInfo.getFontRenderContext(editor.contentComponent)
-            )
-        }
-
-        override fun calcWidthInPixels(editor: Editor): Int {
-            val fontInfo = getFontInfo(editor)
-            return fontInfo.fontMetrics().stringWidth(text)
-        }
-
-        override fun paint(editor: Editor, g: Graphics, r: Rectangle, textAttributes: TextAttributes) {
-            val attributes = getAttributes()
-            val fgColor = attributes.foregroundColor ?: return
-            g.color = fgColor
-            val fontInfo = getFontInfo(editor)
-            g.font = fontInfo.font
-            val metrics = fontInfo.fontMetrics()
-            g.drawString(text, r.x, r.y + metrics.ascent)
-        }
-
-        private fun getAttributes(): TextAttributes {
-            return when (outputType) {
-                ScratchOutputType.OUTPUT -> userOutputAttributes
-                ScratchOutputType.RESULT -> normalAttributes
-                ScratchOutputType.ERROR -> errorAttributes
-            }
-        }
-
-        override fun toString(): String {
-            return "${outputType.name}: ${text.trim()}"
-        }
-
-        companion object {
-            private val normalAttributes = TextAttributes(
-                JBColor.GRAY,
-                null, null, null,
-                Font.ITALIC
-            )
-
-            private val errorAttributes = TextAttributes(
-                JBColor(Colors.DARK_RED, Colors.DARK_RED),
-                null, null, null,
-                Font.ITALIC
-            )
-
-            private val userOutputColor = Color(0x5C5CFF)
-            private val userOutputAttributes = TextAttributes(
-                JBColor(userOutputColor, userOutputColor),
-                null, null, null,
-                Font.ITALIC
-            )
         }
     }
 }

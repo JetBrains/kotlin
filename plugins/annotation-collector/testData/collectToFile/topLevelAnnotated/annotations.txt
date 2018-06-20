@@ -1,6 +1,0 @@
-a java.lang.annotation.Retention 0
-p org.test 0
-c 0 0/Ann
-a org.test.Ann 1
-m 1 0/TopLevelAnnotatedKt someAnnotatedFunction
-m 1 0/TopLevelAnnotatedKt someAnnotatedValue$annotations

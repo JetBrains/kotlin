@@ -227,6 +227,9 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                     }
                     else if (declaration is KtFunction) {
                         processStaticsFromCompanionObject(declaration)
+                        if (element.isMangled) {
+                            searchNamedElement(declaration) { it.restrictToKotlinSources() }
+                        }
                     }
                 }
 
@@ -297,9 +300,14 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
             return allMethods.filter { it is KtLightMethod && it.kotlinOrigin == declaration }
         }
 
-        private fun searchNamedElement(element: PsiNamedElement?, name: String? = element?.name) {
+        private fun searchNamedElement(
+            element: PsiNamedElement?,
+            name: String? = element?.name,
+            modifyScope: ((SearchScope) -> SearchScope)? = null
+        ) {
             if (name != null && element != null) {
-                val scope = queryParameters.effectiveSearchScope(element)
+                val baseScope = queryParameters.effectiveSearchScope(element)
+                val scope = if (modifyScope != null) modifyScope(baseScope) else baseScope
                 val context = UsageSearchContext.IN_CODE + UsageSearchContext.IN_FOREIGN_LANGUAGES + UsageSearchContext.IN_COMMENTS
                 val resultProcessor = KotlinRequestResultProcessor(element,
                                                                    queryParameters.elementToSearch.namedUnwrappedElement ?: element,

@@ -14,14 +14,6 @@ import org.jetbrains.kotlin.js.backend.ast.*
 
 class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
 
-    // TODO: is it right place for this logic? Or should it be implemented as a separate lowering?
-    override fun visitTypeOperator(expression: IrTypeOperatorCall, context: JsGenerationContext): JsStatement {
-        if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
-            return expression.argument.accept(this, context)
-        }
-        return super.visitTypeOperator(expression, context)
-    }
-
     override fun visitBlockBody(body: IrBlockBody, context: JsGenerationContext): JsStatement {
         return JsBlock(body.statements.map { it.accept(this, context) })
     }
@@ -40,11 +32,11 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitBreak(jump: IrBreak, context: JsGenerationContext): JsStatement {
-        return JsBreak(jump.label?.let(::JsNameRef))
+        return JsBreak(context.getNameForLoop(jump.loop)?.makeRef())
     }
 
     override fun visitContinue(jump: IrContinue, context: JsGenerationContext): JsStatement {
-        return JsContinue(jump.label?.let(::JsNameRef))
+        return JsContinue(context.getNameForLoop(jump.loop)?.makeRef())
     }
 
     override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
@@ -73,17 +65,36 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return JsEmpty
     }
 
+    override fun visitTry(aTry: IrTry, context: JsGenerationContext): JsStatement {
+
+        val jsTryBlock = aTry.tryResult.accept(this, context).asBlock()
+
+        val jsCatch = aTry.catches.singleOrNull()?.let {
+            val name = context.getNameForSymbol(it.catchParameter.symbol)
+            val jsCatchBlock = it.result.accept(this, context)
+            JsCatch(context.currentScope, name.ident, jsCatchBlock)
+        }
+
+        val jsFinallyBlock = aTry.finallyExpression?.accept(this, context)?.asBlock()
+
+        return JsTry(jsTryBlock, jsCatch, jsFinallyBlock)
+    }
+
     override fun visitWhen(expression: IrWhen, context: JsGenerationContext): JsStatement {
         return expression.toJsNode(this, context, ::JsIf) ?: JsEmpty
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop, context: JsGenerationContext): JsStatement {
         //TODO what if body null?
-        return JsWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context))
+        val label = context.getNameForLoop(loop)
+        val loopStatement = JsWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context))
+        return label?.let { JsLabel(it, loopStatement) } ?: loopStatement
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, context: JsGenerationContext): JsStatement {
         //TODO what if body null?
-        return JsDoWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context))
+        val label = context.getNameForLoop(loop)
+        val loopStatement = JsDoWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context))
+        return label?.let { JsLabel(it, loopStatement) } ?: loopStatement
     }
 }

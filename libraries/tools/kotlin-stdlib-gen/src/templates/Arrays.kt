@@ -408,6 +408,7 @@ object ArrayOps : TemplateGroupBase() {
         include(ArraysOfPrimitives, PrimitiveType.defaultPrimitives)
     } builder {
         doc { "Returns new array which is a copy of the original array." }
+        sample("samples.collections.Arrays.CopyOfOperations.copyOf")
         returns("SELF")
         on(Platform.JVM) {
             inlineOnly()
@@ -443,8 +444,17 @@ object ArrayOps : TemplateGroupBase() {
         include(ArraysOfPrimitives, PrimitiveType.defaultPrimitives)
         include(InvariantArraysOfObjects)
     } builder {
-        doc { "Returns new array which is a copy of the original array, resized to the given [newSize]." }
+        doc {
+            """
+            Returns new array which is a copy of the original array, resized to the given [newSize].
+            The copy is either truncated or padded at the end with ${primitive.zero} values if necessary.
+
+            - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+            - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with ${primitive.zero} values.
+            """
+        }
         specialFor(ArraysOfPrimitives) {
+            sample("samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf")
             returns("SELF")
             on(Platform.JS) {
                 when (primitive!!) {
@@ -461,6 +471,7 @@ object ArrayOps : TemplateGroupBase() {
 
         }
         specialFor(InvariantArraysOfObjects) {
+            sample("samples.collections.Arrays.CopyOfOperations.resizingCopyOf")
             returns("Array<T?>")
             on(Platform.JS) {
                 family = ArraysOfObjects

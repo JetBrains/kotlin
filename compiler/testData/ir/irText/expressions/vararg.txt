@@ -5,6 +5,7 @@ FILE fqName:<root> fileName:/vararg.kt
         CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> origin=null
           <reified T>: String
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Array<String> flags:
+      correspondingProperty: PROPERTY name:test1 type:kotlin.Array<kotlin.String> visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): Array<String>'
           GET_FIELD 'test1: Array<String>' type=kotlin.Array<kotlin.String> origin=null
@@ -18,6 +19,7 @@ FILE fqName:<root> fileName:/vararg.kt
             CONST String type=kotlin.String value=2
             CONST String type=kotlin.String value=3
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:Array<String> flags:
+      correspondingProperty: PROPERTY name:test2 type:kotlin.Array<kotlin.String> visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): Array<String>'
           GET_FIELD 'test2: Array<String>' type=kotlin.Array<kotlin.String> origin=null
@@ -34,6 +36,7 @@ FILE fqName:<root> fileName:/vararg.kt
               CALL '<get-test1>(): Array<String>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
             CONST String type=kotlin.String value=4
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:Array<String> flags:
+      correspondingProperty: PROPERTY name:test3 type:kotlin.Array<kotlin.String> visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test3>(): Array<String>'
           GET_FIELD 'test3: Array<String>' type=kotlin.Array<kotlin.String> origin=null

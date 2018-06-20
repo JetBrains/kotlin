@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers
@@ -28,7 +17,9 @@ const val API_VERSION_DIRECTIVE = "API_VERSION"
 
 const val EXPERIMENTAL_DIRECTIVE = "EXPERIMENTAL"
 const val USE_EXPERIMENTAL_DIRECTIVE = "USE_EXPERIMENTAL"
-const val ENABLE_JVM_DEFAULT = "ENABLE_JVM_DEFAULT"
+const val IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE = "IGNORE_DATA_FLOW_IN_ASSERT"
+const val JVM_DEFAULT_MODE = "JVM_DEFAULT_MODE"
+const val SKIP_METADATA_VERSION_CHECK = "SKIP_METADATA_VERSION_CHECK"
 
 data class CompilerTestLanguageVersionSettings(
         private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
@@ -36,7 +27,7 @@ data class CompilerTestLanguageVersionSettings(
         override val languageVersion: LanguageVersion,
         private val analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()
 ) : LanguageVersionSettings {
-    private val languageFeatures = initialLanguageFeatures + specificFeaturesForTests()
+    private val languageFeatures = specificFeaturesForTests() + initialLanguageFeatures
     private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion)
 
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
@@ -60,9 +51,11 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVer
     val languageFeaturesString = directiveMap[LANGUAGE_DIRECTIVE]
     val experimental = directiveMap[EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.experimental to it }
     val useExperimental = directiveMap[USE_EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.useExperimental to it }
-    val enableJvmDefault = AnalysisFlag.enableJvmDefault to directiveMap.containsKey(ENABLE_JVM_DEFAULT)
+    val ignoreDataFlowInAssert = AnalysisFlag.ignoreDataFlowInAssert to directiveMap.containsKey(IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE)
+    val enableJvmDefault = directiveMap[JVM_DEFAULT_MODE]?.let { AnalysisFlag.jvmDefaultMode to JvmDefaultMode.fromStringOrNull(it)!! }
+    val skipMetadataVersionCheck = AnalysisFlag.skipMetadataVersionCheck to directiveMap.containsKey(SKIP_METADATA_VERSION_CHECK)
 
-    if (apiVersionString == null && languageFeaturesString == null && experimental == null && useExperimental == null) return null
+    if (apiVersionString == null && languageFeaturesString == null && experimental == null && useExperimental == null && !ignoreDataFlowInAssert.second) return null
 
     val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST_STABLE)
                      ?: error("Unknown API version: $apiVersionString")
@@ -73,7 +66,11 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVer
 
     return CompilerTestLanguageVersionSettings(
         languageFeatures, apiVersion, languageVersion,
-        mapOf(*listOfNotNull(experimental, useExperimental, enableJvmDefault).toTypedArray())
+        mapOf(
+            *listOfNotNull(
+                experimental, useExperimental, enableJvmDefault, ignoreDataFlowInAssert, skipMetadataVersionCheck
+            ).toTypedArray()
+        )
     )
 }
 

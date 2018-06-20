@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.model;
 
-import com.google.common.collect.Maps;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.SmartList;
 import kotlin.Unit;
@@ -132,17 +131,17 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @NotNull
     private static Map<ValueParameterDescriptor, ResolvedValueArgument> createValueArgumentsMap(CallableDescriptor descriptor) {
-        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : Maps.newLinkedHashMap();
+        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : new LinkedHashMap<>();
     }
 
     @NotNull
     private static Map<ValueArgument, ArgumentMatchImpl> createArgumentsToParameterMap(CallableDescriptor descriptor) {
-        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : Maps.newHashMap();
+        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : new HashMap<>();
     }
 
     @NotNull
     private static Map<TypeParameterDescriptor, KotlinType> createTypeArgumentsMap(CallableDescriptor descriptor) {
-        return descriptor.getTypeParameters().isEmpty() ? Collections.emptyMap() : Maps.newLinkedHashMap();
+        return descriptor.getTypeParameters().isEmpty() ? Collections.emptyMap() : new LinkedHashMap<>();
     }
 
     @Override

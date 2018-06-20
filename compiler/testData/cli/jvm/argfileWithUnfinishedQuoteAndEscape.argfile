@@ -1,0 +1,7 @@
+
+$TESTDATA_DIR$/simple.kt       -d   $TEMP_DIR$
+
+
+
+
+-jdk-home     "abacaba\

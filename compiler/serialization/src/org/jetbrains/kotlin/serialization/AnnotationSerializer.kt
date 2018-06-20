@@ -123,6 +123,26 @@ class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) 
                 type = Type.STRING
                 stringValue = stringTable.getStringIndex(value.value)
             }
+
+            override fun visitUByteValue(value: UByteValue, data: Unit?) {
+                type = Type.BYTE
+                intValue = value.value.toLong()
+            }
+
+            override fun visitUShortValue(value: UShortValue, data: Unit?) {
+                type = Type.SHORT
+                intValue = value.value.toLong()
+            }
+
+            override fun visitUIntValue(value: UIntValue, data: Unit?) {
+                type = Type.INT
+                intValue = value.value.toLong()
+            }
+
+            override fun visitULongValue(value: ULongValue, data: Unit?) {
+                type = Type.LONG
+                intValue = value.value
+            }
         }, Unit)
     }
 }

@@ -16,6 +16,7 @@ dependencies {
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:daemon-common"))
     compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(project(":js:js.frontend"))
     compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
@@ -34,7 +35,7 @@ sourceSets {
 noDefaultJar()
 
 runtimeJar(task<ShadowJar>("shadowJar")) {
-    from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
+    from(javaPluginConvention().sourceSets.getByName("main").output)
     fromEmbeddedComponents()
 }
 

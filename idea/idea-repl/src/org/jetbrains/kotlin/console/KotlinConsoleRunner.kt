@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.moduleInfo
+import org.jetbrains.kotlin.idea.caches.project.forcedModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.*
@@ -293,7 +293,7 @@ class KotlinConsoleRunner(
         }
 
     private fun configureFileDependencies(psiFile: KtFile) {
-        psiFile.moduleInfo = module.testSourceInfo() ?: module.productionSourceInfo() ?:
+        psiFile.forcedModuleInfo = module.testSourceInfo() ?: module.productionSourceInfo() ?:
                 NotUnderContentRootModuleInfo
     }
 }

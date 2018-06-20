@@ -21,6 +21,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
           EXPRESSION_BODY
             GET_VAR 'value-parameter s: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:Host.StringDelegate) returnType:String flags:
+          correspondingProperty: PROPERTY name:s type:kotlin.String visibility:public modality:FINAL flags:val
           $this: VALUE_PARAMETER name:<this> type:Host.StringDelegate flags:
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-s>(): String'
@@ -67,6 +68,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
             host: GET_VAR 'this@Host: Host' type=Host origin=null
             p: PROPERTY_REFERENCE 'plusK: String on String' field=null getter='<get-plusK>() on String: String' setter=null type=kotlin.reflect.KProperty2<kotlin.String, Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-plusK> visibility:public modality:FINAL <> ($this:Host, $receiver:kotlin.String) returnType:String flags:
+        correspondingProperty: PROPERTY name:plusK type:kotlin.String visibility:public modality:FINAL flags:delegated,val
         $this: VALUE_PARAMETER name:<this> type:Host flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         BLOCK_BODY
@@ -83,6 +85,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
             $this: GET_VAR 'this@Host: Host' type=Host origin=null
             $receiver: CONST String type=kotlin.String value=O
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> ($this:Host) returnType:String flags:
+        correspondingProperty: PROPERTY name:ok type:kotlin.String visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Host flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-ok>(): String'

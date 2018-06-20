@@ -13,10 +13,69 @@ import java.io.File
 class KotlinAndroidGradleIT :
     AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionRequired.AtLeast("3.4"), androidGradlePluginVersion = "2.3.0")
 
-class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(androidGradlePluginVersion = "2.3.+")
-
 // TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
-class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtLeast("4.5"), "3.2.0-alpha06")
+class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtLeast("4.6"), "3.2.0-alpha15") {
+
+    @Test
+    fun testKaptUsingApOptionProvidersAsNestedInputOutput() = with(Project("AndroidProject", gradleVersion)) {
+        setupWorkingDir()
+
+        gradleBuildScript(subproject = "Android").appendText(
+            """
+
+            apply plugin: 'kotlin-kapt'
+
+            class MyNested implements org.gradle.process.CommandLineArgumentProvider {
+                String value = ""
+
+                @InputFile
+                File inputFile = null
+
+                @Override
+                Iterable<String> asArguments() { return [value] }
+            }
+
+            def nested = new MyNested()
+            nested.value = '123'
+            nested.inputFile = file("${'$'}projectDir/in.txt")
+
+            android.applicationVariants.all {
+                it.javaCompileOptions.annotationProcessorOptions.compilerArgumentProviders.add(nested)
+            }
+            """.trimIndent()
+        )
+
+        File(projectDir, "Android/in.txt").appendText("1234")
+
+        val kaptTasks = listOf(":Android:kaptFlavor1DebugKotlin")
+        val javacTasks = listOf(":Android:compileFlavor1DebugJavaWithJavac")
+
+        val buildTasks = (kaptTasks + javacTasks).toTypedArray()
+
+        build(*buildTasks) {
+            assertSuccessful()
+            assertTasksExecuted(kaptTasks + javacTasks)
+        }
+
+        File(projectDir, "Android/in.txt").appendText("5678")
+
+        build(*buildTasks) {
+            assertSuccessful()
+            assertTasksExecuted(kaptTasks)
+            assertTasksUpToDate(javacTasks)
+        }
+
+        gradleBuildScript(subproject = "Android").modify {
+            it.replace("nested.value = '123'", "nested.value = '456'")
+        }
+
+        build(*buildTasks) {
+            assertSuccessful()
+            assertTasksExecuted(kaptTasks)
+            assertTasksUpToDate(javacTasks)
+        }
+    }
+}
 
 class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtLeast("4.1"), "3.0.0")
 
@@ -35,6 +94,7 @@ abstract class KotlinAndroid3GradleIT(
             text.replace("com.android.library", "com.android.feature")
                 .replace("compileSdkVersion 22", "compileSdkVersion 26")
                 .apply { assert(!equals(text)) }
+                .plus("\nandroid { baseFeature true }")
         }
 
         // Check that Kotlin tasks were created for both lib and feature variants:
@@ -69,7 +129,7 @@ abstract class AbstractKotlinAndroidGradleTests(
 
         val modules = listOf("Android", "Lib")
         val flavors = listOf("Flavor1", "Flavor2")
-        val buildTypes = listOf("Debug", "Release")
+        val buildTypes = listOf("Debug")
 
         val tasks = arrayListOf<String>()
         for (module in modules) {
@@ -80,31 +140,26 @@ abstract class AbstractKotlinAndroidGradleTests(
             }
         }
 
-        project.build("build", "assembleAndroidTest") {
+        project.build("assembleDebug", "test") {
             assertSuccessful()
             // Before 3.0 AGP test only modules are compiled only against one flavor and one build type,
             // and contain only the compileDebugKotlin task.
             // After 3.0 AGP test only modules contain a compile<Variant>Kotlin task for each variant.
             tasks.addAll(findTasksByPattern(":Test:compile[\\w\\d]+Kotlin"))
             assertTasksExecuted(tasks)
-            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-                // known bug: new AGP does not run Kotlin tests
-                // https://issuetracker.google.com/issues/38454212
-                // TODO: remove when the bug is fixed
-                assertContains("InternalDummyTest PASSED")
-            }
+            assertContains("InternalDummyTest PASSED")
             checkKotlinGradleBuildServices()
         }
 
         // Run the build second time, assert everything is up-to-date
-        project.build("build") {
+        project.build("assembleDebug") {
             assertSuccessful()
             assertTasksUpToDate(tasks)
         }
 
         // Run the build third time, re-run tasks
 
-        project.build("build", "--rerun-tasks") {
+        project.build("assembleDebug", "--rerun-tasks") {
             assertSuccessful()
             assertTasksExecuted(tasks)
             checkKotlinGradleBuildServices()
@@ -118,7 +173,7 @@ abstract class AbstractKotlinAndroidGradleTests(
         // Execute 'assembleAndroidTest' first, without 'build' side effects
         project.build("assembleAndroidTest") {
             assertSuccessful()
-            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+            if (project.testGradleVersionBelow("4.0")) {
                 val tasks = ArrayList<String>().apply {
                     for (subProject in listOf("Android", "Lib")) {
                         for (flavor in listOf("Flavor1", "Flavor2")) {
@@ -144,7 +199,7 @@ abstract class AbstractKotlinAndroidGradleTests(
         val getSomethingKt = project.projectDir.walk().filter { it.isFile && it.name.endsWith("getSomething.kt") }.first()
         getSomethingKt.writeText(
             """
-package foo
+package com.example
 
 fun getSomething() = 10
 """
@@ -152,8 +207,12 @@ fun getSomething() = 10
 
         project.build("assembleDebug", options = options) {
             assertSuccessful()
-            assertCompiledKotlinSources(listOf("app/src/main/kotlin/foo/KotlinActivity1.kt", "app/src/main/kotlin/foo/getSomething.kt"))
-            assertCompiledJavaSources(listOf("app/src/main/java/foo/JavaActivity.java"), weakTesting = true)
+            val affectedKotlinFiles = listOf(
+                "app/src/main/kotlin/com/example/KotlinActivity1.kt",
+                "app/src/main/kotlin/com/example/getSomething.kt"
+            )
+            assertCompiledKotlinSources(affectedKotlinFiles)
+            assertCompiledJavaSources(listOf("app/src/main/java/com/example/JavaActivity.java"), weakTesting = true)
         }
     }
 
@@ -225,18 +284,6 @@ fun getSomething() = 10
     }
 
     @Test
-    fun testKaptKt15814() {
-        val project = Project("kaptKt15814", gradleVersion)
-        project.allowOriginalKapt()
-
-        val options = defaultBuildOptions().copy(incremental = false)
-
-        project.build("assembleDebug", "test", options = options) {
-            assertSuccessful()
-        }
-    }
-
-    @Test
     fun testAndroidIcepickProject() {
         val project = Project("AndroidIcepickProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
@@ -284,22 +331,47 @@ fun getSomething() = 10
 
     @Test
     fun testAndroidExtensionsManyVariants() {
+        if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+            // Library dependencies are not supported in older versions of Android Gradle plugin (< 3.0)
+            return
+        }
+
         val project = Project("AndroidExtensionsManyVariants", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
 
         project.build("assemble", options = options) {
-            assertSuccessful()
+            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+                // Library dependencies are not supported in older versions of Android Gradle plugin (< 3.0)
+                assertFailed()
+                assertContains("Unresolved reference: layout_in_library")
+                assertContains("Unresolved reference: text_view")
+            } else {
+                assertSuccessful()
+            }
         }
     }
 
     @Test
-    fun testAndroidKaptChangingDependencies() {
-        val project = Project("AndroidKaptChangingDependencies", gradleVersion)
-        project.allowOriginalKapt()
+    fun testAndroidExtensionsSpecificFeatures() {
+        val project = Project("AndroidExtensionsSpecificFeatures", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = false)
 
-        project.build("assembleDebug") {
+        project.build("assemble", options = options) {
+            assertFailed()
+            assertContains("Unresolved reference: textView")
+        }
+
+        File(project.projectDir, "app/build.gradle").modify { it.replace("[\"parcelize\"]", "[\"views\"]") }
+
+        project.build("assemble", options = options) {
+            assertFailed()
+            assertContains("Class 'User' is not abstract and does not implement abstract member public abstract fun writeToParcel")
+        }
+
+        File(project.projectDir, "app/build.gradle").modify { it.replace("[\"views\"]", "[\"parcelize\", \"views\"]") }
+
+        project.build("assemble", options = options) {
             assertSuccessful()
-            assertNotContains("Changed dependencies of configuration .+ after it has been included in dependency resolution".toRegex())
         }
     }
 
@@ -342,30 +414,6 @@ fun getSomething() = 10
             assertFileExists("libAndroid/build/tmp/kotlin-classes/release/foo/PlatformClass.class")
             assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
             assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
-        }
-    }
-}
-
-
-abstract class AbstractKotlinAndroidWithJackGradleTests(
-    private val androidGradlePluginVersion: String
-) : BaseGradleIT() {
-
-    fun getEnvJDK_18() = System.getenv()["JDK_18"]
-
-    override fun defaultBuildOptions() =
-        super.defaultBuildOptions().copy(
-            androidHome = KotlinTestUtils.findAndroidSdk(),
-            androidGradlePluginVersion = androidGradlePluginVersion, javaHome = File(getEnvJDK_18())
-        )
-
-    @Test
-    fun testSimpleCompile() {
-        val project = Project("AndroidJackProject", GradleVersionRequired.Exact("3.4"))
-
-        project.build("assemble") {
-            assertFailed()
-            assertContains("Kotlin Gradle plugin does not support the deprecated Jack toolchain")
         }
     }
 }

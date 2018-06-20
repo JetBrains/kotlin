@@ -48,6 +48,16 @@ object ConstantValueFactory {
         }
     }
 
+    fun createUnsignedValue(constantValue: ConstantValue<*>, type: KotlinType): UnsignedValueConstant<*>? {
+        return when (constantValue) {
+            is ByteValue -> UByteValue(constantValue.value)
+            is ShortValue -> UShortValue(constantValue.value)
+            is IntValue -> UIntValue(constantValue.value)
+            is LongValue -> ULongValue(constantValue.value)
+            else -> null
+        }
+    }
+
     private fun createArrayValue(value: List<*>, componentType: PrimitiveType): ArrayValue =
         ArrayValue(value.toList().mapNotNull(this::createConstantValue)) { module ->
             module.builtIns.getPrimitiveArrayKotlinType(componentType)
@@ -55,16 +65,31 @@ object ConstantValueFactory {
 
     fun createIntegerConstantValue(
             value: Long,
-            expectedType: KotlinType
+            expectedType: KotlinType,
+            isUnsigned: Boolean
     ): ConstantValue<*>? {
         val notNullExpected = TypeUtils.makeNotNullable(expectedType)
-        return when {
-            KotlinBuiltIns.isLong(notNullExpected) -> LongValue(value)
-            KotlinBuiltIns.isInt(notNullExpected) && value == value.toInt().toLong() -> IntValue(value.toInt())
-            KotlinBuiltIns.isShort(notNullExpected) && value == value.toShort().toLong() -> ShortValue(value.toShort())
-            KotlinBuiltIns.isByte(notNullExpected) && value == value.toByte().toLong() -> ByteValue(value.toByte())
-            KotlinBuiltIns.isChar(notNullExpected) -> IntValue(value.toInt())
-            else -> null
+        return if (isUnsigned) {
+            when {
+                KotlinBuiltIns.isUByte(notNullExpected) && value == value.toByte().fromUByteToLong() -> UByteValue(value.toByte())
+                KotlinBuiltIns.isUShort(notNullExpected) && value == value.toShort().fromUShortToLong() -> UShortValue(value.toShort())
+                KotlinBuiltIns.isUInt(notNullExpected) && value == value.toInt().fromUIntToLong() -> UIntValue(value.toInt())
+                KotlinBuiltIns.isULong(notNullExpected) -> ULongValue(value)
+                else -> null
+            }
+        } else {
+            when {
+                KotlinBuiltIns.isLong(notNullExpected) -> LongValue(value)
+                KotlinBuiltIns.isInt(notNullExpected) && value == value.toInt().toLong() -> IntValue(value.toInt())
+                KotlinBuiltIns.isShort(notNullExpected) && value == value.toShort().toLong() -> ShortValue(value.toShort())
+                KotlinBuiltIns.isByte(notNullExpected) && value == value.toByte().toLong() -> ByteValue(value.toByte())
+                KotlinBuiltIns.isChar(notNullExpected) -> IntValue(value.toInt())
+                else -> null
+            }
         }
     }
 }
+
+fun Byte.fromUByteToLong(): Long = this.toLong() and 0xFF
+fun Short.fromUShortToLong(): Long = this.toLong() and 0xFFFF
+fun Int.fromUIntToLong(): Long = this.toLong() and 0xFFFF_FFFF

@@ -56,7 +56,7 @@ public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
         super.setUp();
         KotlinCoreEnvironment environment = getEnvironment();
         KotlinTestUtils.resolveAllKotlinFiles(environment);
-        finder = JavaElementFinder.getInstance(environment.getProject());
+        finder = JavaElementFinder.Companion.getInstance(environment.getProject());
     }
 
     @Override

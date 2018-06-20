@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun checkLess(x: Int, y: Double) = when {
     x >= y    -> "Fail $x >= $y"
     !(x < y)  -> "Fail !($x < $y)"

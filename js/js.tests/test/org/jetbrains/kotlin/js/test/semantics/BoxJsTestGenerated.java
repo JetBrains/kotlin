@@ -86,6 +86,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/callableReference/function/classMemberAndNonExtensionCompatibility.kt");
             }
 
+            @TestMetadata("classMemberDirectCache.kt")
+            public void testClassMemberDirectCache() throws Exception {
+                runTest("js/js.translator/testData/box/callableReference/function/classMemberDirectCache.kt");
+            }
+
             @TestMetadata("classMemberFromClass.kt")
             public void testClassMemberFromClass() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/function/classMemberFromClass.kt");
@@ -194,6 +199,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             @TestMetadata("extensionWithClosure.kt")
             public void testExtensionWithClosure() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/function/extensionWithClosure.kt");
+            }
+
+            @TestMetadata("functionReferenceName.kt")
+            public void testFunctionReferenceName() throws Exception {
+                runTest("js/js.translator/testData/box/callableReference/function/functionReferenceName.kt");
             }
 
             @TestMetadata("localAndTopLevelExtensions.kt")
@@ -1809,6 +1819,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/cast/castToNullable.kt");
             }
 
+            @TestMetadata("checkThrowCCE.kt")
+            public void testCheckThrowCCE() throws Exception {
+                runTest("js/js.translator/testData/box/expression/cast/checkThrowCCE.kt");
+            }
+
             @TestMetadata("explicitUpcast.kt")
             public void testExplicitUpcast() throws Exception {
                 runTest("js/js.translator/testData/box/expression/cast/explicitUpcast.kt");
@@ -2066,6 +2081,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/evaluationOrder/compareToIntrinsicWithSideEffect.kt");
             }
 
+            @TestMetadata("concatWithTerminator.kt")
+            public void testConcatWithTerminator() throws Exception {
+                runTest("js/js.translator/testData/box/expression/evaluationOrder/concatWithTerminator.kt");
+            }
+
             @TestMetadata("dangerousInline.kt")
             public void testDangerousInline() throws Exception {
                 runTest("js/js.translator/testData/box/expression/evaluationOrder/dangerousInline.kt");
@@ -2074,6 +2094,16 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             @TestMetadata("dangerousInsideDangerous.kt")
             public void testDangerousInsideDangerous() throws Exception {
                 runTest("js/js.translator/testData/box/expression/evaluationOrder/dangerousInsideDangerous.kt");
+            }
+
+            @TestMetadata("deepExpression.kt")
+            public void testDeepExpression() throws Exception {
+                runTest("js/js.translator/testData/box/expression/evaluationOrder/deepExpression.kt");
+            }
+
+            @TestMetadata("delegationCtorWithExpression.kt")
+            public void testDelegationCtorWithExpression() throws Exception {
+                runTest("js/js.translator/testData/box/expression/evaluationOrder/delegationCtorWithExpression.kt");
             }
 
             @TestMetadata("elvisComplex.kt")
@@ -2951,6 +2981,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/try/multipleCatchBlocks.kt");
             }
 
+            @TestMetadata("nestedTryCatchInCatch.kt")
+            public void testNestedTryCatchInCatch() throws Exception {
+                runTest("js/js.translator/testData/box/expression/try/nestedTryCatchInCatch.kt");
+            }
+
             @TestMetadata("rethrowExceptionIfNotCaught.kt")
             public void testRethrowExceptionIfNotCaught() throws Exception {
                 runTest("js/js.translator/testData/box/expression/try/rethrowExceptionIfNotCaught.kt");
@@ -2984,6 +3019,39 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             @TestMetadata("tryCatchWithDifferentParameterNames.kt")
             public void testTryCatchWithDifferentParameterNames() throws Exception {
                 runTest("js/js.translator/testData/box/expression/try/tryCatchWithDifferentParameterNames.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/expression/typeCheck")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeCheck extends AbstractBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTypeCheck() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/expression/typeCheck"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("simpleAsClass.kt")
+            public void testSimpleAsClass() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/simpleAsClass.kt");
+            }
+
+            @TestMetadata("simpleAsInterface.kt")
+            public void testSimpleAsInterface() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/simpleAsInterface.kt");
+            }
+
+            @TestMetadata("simpleIsClass.kt")
+            public void testSimpleIsClass() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsClass.kt");
+            }
+
+            @TestMetadata("simpleIsInterface.kt")
+            public void testSimpleIsInterface() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsInterface.kt");
             }
         }
 
@@ -3132,6 +3200,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             @TestMetadata("whenWithLongRangeClause.kt")
             public void testWhenWithLongRangeClause() throws Exception {
                 runTest("js/js.translator/testData/box/expression/when/whenWithLongRangeClause.kt");
+            }
+
+            @TestMetadata("whenWithMapRangeClause.kt")
+            public void testWhenWithMapRangeClause() throws Exception {
+                runTest("js/js.translator/testData/box/expression/when/whenWithMapRangeClause.kt");
             }
 
             @TestMetadata("whenWithOneStmWhen.kt")
@@ -3694,6 +3767,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/inline/classObject.kt");
         }
 
+        @TestMetadata("continueInLoopWithInlinableCondition.kt")
+        public void testContinueInLoopWithInlinableCondition() throws Exception {
+            runTest("js/js.translator/testData/box/inline/continueInLoopWithInlinableCondition.kt");
+        }
+
         @TestMetadata("dontInlineFunctionCall.kt")
         public void testDontInlineFunctionCall() throws Exception {
             runTest("js/js.translator/testData/box/inline/dontInlineFunctionCall.kt");
@@ -3887,6 +3965,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("localInlineFunctionReference.kt")
         public void testLocalInlineFunctionReference() throws Exception {
             runTest("js/js.translator/testData/box/inline/localInlineFunctionReference.kt");
+        }
+
+        @TestMetadata("loopWithInlinableCondition.kt")
+        public void testLoopWithInlinableCondition() throws Exception {
+            runTest("js/js.translator/testData/box/inline/loopWithInlinableCondition.kt");
         }
 
         @TestMetadata("metadataForPublicFunction.kt")
@@ -6943,6 +7026,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("isComparable.kt")
         public void testIsComparable() throws Exception {
             runTest("js/js.translator/testData/box/rtti/isComparable.kt");
+        }
+
+        @TestMetadata("isJsPrimitiveNullableType.kt")
+        public void testIsJsPrimitiveNullableType() throws Exception {
+            runTest("js/js.translator/testData/box/rtti/isJsPrimitiveNullableType.kt");
         }
 
         @TestMetadata("isJsPrimitiveType.kt")

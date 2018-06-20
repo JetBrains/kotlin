@@ -44,6 +44,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='BaseClass'
     PROPERTY name:fromClass type:T visibility:public modality:FINAL flags:val
       FUN name:<get-fromClass> visibility:public modality:FINAL <T> ($this:BaseClass, $receiver:T) returnType:T flags:
+        correspondingProperty: PROPERTY name:fromClass type:T visibility:public modality:FINAL flags:val
         TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
           superClassifiers:
             CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
@@ -97,12 +98,14 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=4
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
+        correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-p>(): Int'
             GET_FIELD 'p: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-p> visibility:public modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:Unit flags:
+        correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         BLOCK_BODY
@@ -111,6 +114,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     PROPERTY name:ext type:kotlin.Int visibility:public modality:FINAL flags:val
       FUN name:<get-ext> visibility:public modality:FINAL <> ($this:C, $receiver:kotlin.Int) returnType:Int flags:
+        correspondingProperty: PROPERTY name:ext type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:C flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
         BLOCK_BODY
@@ -127,6 +131,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           GET_VAR 'value-parameter t: T' type=T origin=null
     PROPERTY name:g2 type:T visibility:public modality:FINAL flags:val
       FUN name:<get-g2> visibility:public modality:FINAL <T> ($this:C, $receiver:T) returnType:T flags:
+        correspondingProperty: PROPERTY name:g2 type:T visibility:public modality:FINAL flags:val
         TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
           superClassifiers:
             CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
@@ -137,6 +142,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             GET_VAR 'this@g2: T' type=T origin=null
     PROPERTY FAKE_OVERRIDE name:fromClass type:T visibility:public modality:FINAL flags:val
       FUN FAKE_OVERRIDE name:<get-fromClass> visibility:public modality:FINAL <> ($this:BaseClass, $receiver:T) returnType:T flags:
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:fromClass type:T visibility:public modality:FINAL flags:val
         overridden:
           FUN name:<get-fromClass> visibility:public modality:FINAL <T> ($this:BaseClass, $receiver:T) returnType:T flags:
         $this: VALUE_PARAMETER name:<this> type:BaseClass flags:

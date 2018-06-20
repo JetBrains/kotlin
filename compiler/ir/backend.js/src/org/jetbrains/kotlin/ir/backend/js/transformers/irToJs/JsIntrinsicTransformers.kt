@@ -37,6 +37,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             binOp(intrinsics.jsLtEq, JsBinaryOperator.LTE)
 
             prefixOp(intrinsics.jsNot, JsUnaryOperator.NOT)
+            binOp(intrinsics.jsAnd, JsBinaryOperator.AND)
+            binOp(intrinsics.jsOr, JsBinaryOperator.OR)
 
             prefixOp(intrinsics.jsUnaryPlus, JsUnaryOperator.POS)
             prefixOp(intrinsics.jsUnaryMinus, JsUnaryOperator.NEG)
@@ -63,11 +65,30 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             binOp(intrinsics.jsInstanceOf, JsBinaryOperator.INSTANCEOF)
 
+            prefixOp(intrinsics.jsTypeOf, JsUnaryOperator.TYPEOF)
+
             add(intrinsics.jsObjectCreate) { call, context ->
                 val classToCreate = call.getTypeArgument(0)!!
                 val className = context.getNameForSymbol(IrClassSymbolImpl(classToCreate.constructor.declarationDescriptor as ClassDescriptor))
                 val prototype = prototypeOf(className.makeRef())
                 JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototype)
+            }
+
+            add(intrinsics.jsSetJSField) { call, context ->
+                val args = translateCallArguments(call, context)
+                val receiver = args[0]
+                val fieldName = args[1] as JsStringLiteral
+                val fieldValue = args[2]
+
+                val fieldNameLiteral = fieldName.value!!
+
+                jsAssignment(JsNameRef(fieldNameLiteral, receiver), fieldValue)
+            }
+
+            add(intrinsics.jsToJsType) { call, context ->
+                val typeParameter = call.getTypeArgument(0)!!
+                val typeName = context.getNameForSymbol(IrClassSymbolImpl(typeParameter.constructor.declarationDescriptor as ClassDescriptor))
+                typeName.makeRef()
             }
 
             add(backendContext.sharedVariablesManager.closureBoxConstructorTypeSymbol) { call, context ->
@@ -85,6 +106,27 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 // TODO don't generate function for this case
                     else -> JsInvocation(JsFunction(context.currentScope, jsCode as? JsBlock ?: JsBlock(jsCode as JsStatement), ""))
                 }
+            }
+
+            add(intrinsics.jsName) { call: IrCall, context ->
+                val args = translateCallArguments(call, context)
+                val receiver = args[0]
+                JsNameRef(Namer.KCALLABLE_NAME, receiver)
+            }
+
+            add(intrinsics.jsPropertyGet) { call: IrCall, context ->
+                val args = translateCallArguments(call, context)
+                val reference = args[0]
+                val receiver = args[1]
+                JsInvocation(JsNameRef(Namer.KPROPERTY_GET, reference), listOf(receiver))
+            }
+
+            add(intrinsics.jsPropertySet) { call: IrCall, context ->
+                val args = translateCallArguments(call, context)
+                val reference = args[0]
+                val receiver = args[1]
+                val value = args[2]
+                JsInvocation(JsNameRef(Namer.KPROPERTY_SET, reference), listOf(receiver, value))
             }
         }
     }

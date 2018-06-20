@@ -214,7 +214,6 @@
             </constraints>
             <properties>
               <focusable value="false"/>
-              <icon value="general/warningDialog.png"/>
               <inheritsPopupMenu value="false"/>
               <text value=""/>
               <visible value="false"/>

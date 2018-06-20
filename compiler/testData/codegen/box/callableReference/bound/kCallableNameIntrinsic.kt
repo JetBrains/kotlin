@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // SKIP_SOURCEMAP_REMAPPING
 
 fun box(): String {

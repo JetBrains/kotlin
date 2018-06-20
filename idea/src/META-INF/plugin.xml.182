@@ -2,11 +2,18 @@
   <id>org.jetbrains.kotlin</id>
 
   <name>Kotlin</name>
-  <description>Kotlin language support</description>
+  <description><![CDATA[
+The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
+<br>
+<a href="http://kotlinlang.org/docs/tutorials/getting-started.html">Getting Started in IntelliJ IDEA</a><br>
+<a href="http://kotlinlang.org/docs/tutorials/kotlin-android.html">Getting Started in Android Studio</a><br>
+<a href="http://slack.kotlinlang.org/">Public Slack</a><br>
+<a href="https://youtrack.jetbrains.com/issues/KT">Issue tracker</a><br>
+]]></description>
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="182.1" until-build="183.*"/>
+  <idea-version since-build="182.3040" until-build="183.*"/>
 
   <depends>com.intellij.modules.platform</depends>
 
@@ -22,6 +29,7 @@
   <depends optional="true" config-file="coverage.xml">Coverage</depends>
   <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
   <depends optional="true" config-file="decompiler.xml">org.jetbrains.java.decompiler</depends>
+  <depends optional="true" config-file="git4idea.xml">Git4Idea</depends>
 
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
@@ -471,6 +479,10 @@
     <codeInsight.template.postfixTemplateProvider language="kotlin"
                                                   implementationClass="org.jetbrains.kotlin.idea.codeInsight.postfix.KtPostfixTemplateProvider"/>
 
+
+    <codeInsight.linkHandler prefix="#kotlinClass/" handlerClass="org.jetbrains.kotlin.idea.highlighter.markers.KotlinClassTooltipLinkHandler"/>
+
+    <defaultHighlightingSettingProvider language="kotlin" implementation="org.jetbrains.kotlin.idea.highlighter.KotlinDefaultHighlightingSettingsProvider"/>
 
     <typeDeclarationProvider implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinTypeDeclarationProvider"/>
 
@@ -1627,6 +1639,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddWhenRemainingBranchesIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupPath="Kotlin"
@@ -2761,7 +2778,7 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="WEAK WARNING"
+                     level="INFORMATION"
                      language="kotlin"
     />
 
@@ -2820,11 +2837,11 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanSealedSubClassBeObjectInspection"
-                     displayName="Refactor Sealed Sub-class to Object"
+                     displayName="Sealed sub-class without state and overridden equals"
                      groupPath="Kotlin"
-                     groupName="Style issues"
+                     groupName="Probable bugs"
                      enabledByDefault="true"
-                     level="INFO"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 
@@ -2838,7 +2855,7 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MainFunctionReturnUnitInspection"
-                     displayName="Main function should return Unit"
+                     displayName="Entry point function should return Unit"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
@@ -2870,6 +2887,15 @@
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
+                     language="kotlin"
+    />
+    
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.NestedLambdaShadowedImplicitParameterInspection"
+                     displayName="Nested lambda has shadowed implicit parameter"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WARNING"
                      language="kotlin"
     />
 

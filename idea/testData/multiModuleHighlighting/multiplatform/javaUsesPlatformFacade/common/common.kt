@@ -1,0 +1,5 @@
+package c
+
+fun common() {
+
+}

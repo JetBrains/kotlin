@@ -78,7 +78,7 @@ private fun compile(file: File, disposable: Disposable, tmpdir: File, forEachOut
 }
 
 private fun StringBuilder.appendFileName(file: File) {
-    appendln("// $file")
+    appendln("// ${file.invariantSeparatorsPath}")
     appendln("// ------------------------------------------")
 }
 

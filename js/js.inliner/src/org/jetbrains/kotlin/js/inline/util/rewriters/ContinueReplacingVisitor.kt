@@ -26,6 +26,7 @@ class ContinueReplacingVisitor(val loopLabelName: JsName?, val guardLabelName: J
     override fun visit(x: JsContinue, ctx: JsContext<JsNode>): Boolean {
         val target = x.label?.name
         val shouldReplace = if (target == null) loopNestingLevel == 0 else target == loopLabelName
+        assert(loopNestingLevel >= 0)
         if (shouldReplace) {
             ctx.replaceMe(JsBreak(guardLabelName.makeRef()))
         }
@@ -42,6 +43,7 @@ class ContinueReplacingVisitor(val loopLabelName: JsName?, val guardLabelName: J
 
     override fun endVisit(x: JsWhile, ctx: JsContext<JsNode>) {
         super.endVisit(x, ctx)
+        if (loopLabelName == null) return
         loopNestingLevel--
     }
 
@@ -54,6 +56,7 @@ class ContinueReplacingVisitor(val loopLabelName: JsName?, val guardLabelName: J
 
     override fun endVisit(x: JsDoWhile, ctx: JsContext<JsNode>) {
         super.endVisit(x, ctx)
+        if (loopLabelName == null) return
         loopNestingLevel--
     }
 
@@ -66,6 +69,7 @@ class ContinueReplacingVisitor(val loopLabelName: JsName?, val guardLabelName: J
 
     override fun endVisit(x: JsFor, ctx: JsContext<JsNode>) {
         super.endVisit(x, ctx)
+        if (loopLabelName == null) return
         loopNestingLevel--
     }
 
@@ -78,6 +82,7 @@ class ContinueReplacingVisitor(val loopLabelName: JsName?, val guardLabelName: J
 
     override fun endVisit(x: JsForIn, ctx: JsContext<JsNode>) {
         super.endVisit(x, ctx)
+        if (loopLabelName == null) return
         loopNestingLevel--
     }
 }

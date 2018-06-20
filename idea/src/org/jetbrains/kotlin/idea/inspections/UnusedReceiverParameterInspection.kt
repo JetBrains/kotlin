@@ -32,10 +32,17 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatu
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
+import org.jetbrains.kotlin.idea.refactoring.explicateAsTextForReceiver
+import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -52,22 +59,33 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 val receiverTypeReference = callableDeclaration.receiverTypeReference
                 if (receiverTypeReference == null || receiverTypeReference.textRange.isEmpty) return
 
-                val context = receiverTypeReference.analyze()
-                val receiverType = context[BindingContext.TYPE, receiverTypeReference] ?: return
-                if (DescriptorUtils.isCompanionObject(receiverType.constructor.declarationDescriptor)) return
-
-                if (callableDeclaration.isOverridable() ||
-                    callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) ||
-                    callableDeclaration.hasModifier(KtTokens.OPERATOR_KEYWORD) ||
-                    callableDeclaration.hasModifier(KtTokens.INFIX_KEYWORD)
-                ) return
-
                 if (callableDeclaration is KtProperty && callableDeclaration.accessors.isEmpty()) return
                 if (callableDeclaration is KtNamedFunction && !callableDeclaration.hasBody()) return
+
+                if (callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) ||
+                    callableDeclaration.hasModifier(KtTokens.OPERATOR_KEYWORD) ||
+                    callableDeclaration.hasModifier(KtTokens.INFIX_KEYWORD) ||
+                    callableDeclaration.hasActualModifier() ||
+                    callableDeclaration.isOverridable()
+                ) return
+
+                val context = receiverTypeReference.analyze()
+                val receiverType = context[BindingContext.TYPE, receiverTypeReference] ?: return
+                val receiverTypeDeclaration = receiverType.constructor.declarationDescriptor
+                if (DescriptorUtils.isCompanionObject(receiverTypeDeclaration)) return
 
                 val callable = callableDeclaration.descriptor
 
                 if (callable != null && MainFunctionDetector.isMain(callable)) return
+
+                val containingDeclaration = callable?.containingDeclaration
+                if (containingDeclaration != null && containingDeclaration == receiverTypeDeclaration) {
+                    val thisLabelName = containingDeclaration.getThisLabelName()
+                    if (!callableDeclaration.anyDescendantOfType<KtThisExpression> { it.getLabelName() == thisLabelName }) {
+                        registerProblem(receiverTypeReference, true)
+                    }
+                    return
+                }
 
                 var used = false
                 callableDeclaration.acceptChildren(object : KtVisitorVoid() {
@@ -102,14 +120,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                     }
                 })
 
-                if (!used) {
-                    holder.registerProblem(
-                        receiverTypeReference,
-                        KotlinBundle.message("unused.receiver.parameter"),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        MyQuickFix()
-                    )
-                }
+                if (!used) registerProblem(receiverTypeReference)
             }
 
             override fun visitNamedFunction(function: KtNamedFunction) {
@@ -119,10 +130,19 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
             override fun visitProperty(property: KtProperty) {
                 check(property)
             }
+
+            private fun registerProblem(receiverTypeReference: KtTypeReference, inSameClass: Boolean = false) {
+                holder.registerProblem(
+                    receiverTypeReference,
+                    KotlinBundle.message("unused.receiver.parameter"),
+                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                    MyQuickFix(inSameClass)
+                )
+            }
         }
     }
 
-    private class MyQuickFix : LocalQuickFix {
+    private class MyQuickFix(private val inSameClass: Boolean) : LocalQuickFix {
         override fun getName(): String = KotlinBundle.message("unused.receiver.parameter.remove")
 
         private fun configureChangeSignature() = object : KotlinChangeSignatureConfiguration {
@@ -136,7 +156,18 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
             val function = element.parent as? KtCallableDeclaration ?: return
             val callableDescriptor = function.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? CallableDescriptor ?: return
-            runChangeSignature(project, callableDescriptor, configureChangeSignature(), element, name)
+
+            if (inSameClass) {
+                runWriteAction {
+                    val explicateAsTextForReceiver = callableDescriptor.explicateAsTextForReceiver()
+                    function.forEachDescendantOfType<KtThisExpression> {
+                        if (it.text == explicateAsTextForReceiver) it.labelQualifier?.delete()
+                    }
+                    function.setReceiverTypeReference(null)
+                }
+            } else {
+                runChangeSignature(project, callableDescriptor, configureChangeSignature(), element, name)
+            }
         }
 
         override fun getFamilyName(): String = name

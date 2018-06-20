@@ -155,6 +155,16 @@ public class KotlinTypeMapper {
             @NotNull ClassBuilderMode classBuilderMode,
             @NotNull IncompatibleClassTracker incompatibleClassTracker,
             @NotNull String moduleName,
+            boolean isJvm8Target
+    ) {
+        this(bindingContext, classBuilderMode, incompatibleClassTracker, moduleName, isJvm8Target, false);
+    }
+
+    public KotlinTypeMapper(
+            @NotNull BindingContext bindingContext,
+            @NotNull ClassBuilderMode classBuilderMode,
+            @NotNull IncompatibleClassTracker incompatibleClassTracker,
+            @NotNull String moduleName,
             boolean isJvm8Target,
             boolean isReleaseCoroutines
     ) {
@@ -871,7 +881,7 @@ public class KotlinTypeMapper {
 
                 FunctionDescriptor overriddenSpecialBuiltinFunction =
                         SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(functionDescriptor.getOriginal());
-                FunctionDescriptor functionToCall = overriddenSpecialBuiltinFunction != null && !superCall
+                FunctionDescriptor functionToCall = overriddenSpecialBuiltinFunction != null && !superCall && !toInlinedErasedClass
                                                     ? overriddenSpecialBuiltinFunction.getOriginal()
                                                     : functionDescriptor.getOriginal();
 
@@ -1247,7 +1257,7 @@ public class KotlinTypeMapper {
 
         JvmMethodGenericSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f));
 
-        if (kind != OwnerKind.DEFAULT_IMPLS && !hasSpecialBridge) {
+        if (kind != OwnerKind.DEFAULT_IMPLS && kind != OwnerKind.ERASED_INLINE_CLASS && !hasSpecialBridge) {
             SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo(f);
 
             if (specialSignatureInfo != null) {
@@ -1666,13 +1676,21 @@ public class KotlinTypeMapper {
         }
 
         @Nullable
-        public static String internalNameWithoutModuleSuffix(@NotNull String name) {
+        public static String demangleInternalName(@NotNull String name) {
             int indexOfDollar = name.indexOf('$');
-            if (indexOfDollar == -1) {
-                return null;
-            }
+            return indexOfDollar >= 0 ? name.substring(0, indexOfDollar) : null;
+        }
 
-            return name.substring(0, indexOfDollar) + '$';
+        @Nullable
+        public static String getModuleNameSuffix(@NotNull String name) {
+            int indexOfDollar = name.indexOf('$');
+            return indexOfDollar >= 0 ? name.substring(indexOfDollar + 1) : null;
+        }
+
+        @Nullable
+        public static String internalNameWithoutModuleSuffix(@NotNull String name) {
+            String demangledName = demangleInternalName(name);
+            return demangledName != null ? demangledName + '$' : null;
         }
     }
 }

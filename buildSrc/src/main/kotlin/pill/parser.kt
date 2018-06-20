@@ -289,8 +289,12 @@ private fun getKotlinOptions(kotlinCompileTask: Any): PSourceRootKotlinOptions? 
     val addCompilerBuiltins = "Xadd-compiler-builtins"
     val loadBuiltinsFromDependencies = "Xload-builtins-from-dependencies"
 
+    fun isOptionForScriptingCompilerPlugin(option: String)
+            = option.startsWith("-Xplugin=") && option.contains("kotlin-scripting-gradle")
+
     val extraArguments = compileArguments.filter {
-        it.startsWith("-X") && it != "-$addCompilerBuiltins" && it != "-$loadBuiltinsFromDependencies"
+        it.startsWith("-X") && !isOptionForScriptingCompilerPlugin(it)
+                && it != "-$addCompilerBuiltins" && it != "-$loadBuiltinsFromDependencies"
     }
 
     return PSourceRootKotlinOptions(

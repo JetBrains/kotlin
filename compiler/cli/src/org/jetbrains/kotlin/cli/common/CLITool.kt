@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.cli.common
 
 import org.fusesource.jansi.AnsiConsole
-import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
-import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
@@ -142,6 +139,9 @@ abstract class CLITool<A : CommonToolArguments> {
                         "as no stability/compatibility guarantees are given on\n" +
                         "compiler or generated code. Use it at your own risk!\n"
             )
+        }
+        for (argfileError in errors.argfileErrors) {
+            collector.report(STRONG_WARNING, argfileError)
         }
     }
 

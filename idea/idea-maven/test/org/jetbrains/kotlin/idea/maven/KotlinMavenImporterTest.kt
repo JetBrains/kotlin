@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.Assert
@@ -2714,6 +2715,63 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         with(facetSettings) {
             Assert.assertEquals("-Xjsr305=strict", compilerSettings!!.additionalArguments)
         }
+    }
+
+    fun testInternalArgumentsFacetImporting() {
+        importProject(
+            """
+            <groupId>test</groupId>
+            <artifactId>project</artifactId>
+            <version>1.0.0</version>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib</artifactId>
+                    <version>$kotlinVersion</version>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+                <plugins>
+                    <plugin>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-plugin</artifactId>
+
+                        <executions>
+                            <execution>
+                                <id>compile</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <languageVersion>1.2</languageVersion>
+                            <args>
+                                <arg>-XXLanguage:+InlineClasses</arg>
+                            </args>
+                            <jvmTarget>1.8</jvmTarget>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            """
+        )
+
+        assertImporterStatePresent()
+
+        // Check that we haven't lost internal argument during importing to facet
+        Assert.assertEquals("-XXLanguage:+InlineClasses", facetSettings.compilerSettings?.additionalArguments)
+
+        // Check that internal argument influenced LanguageVersionSettings correctly
+        Assert.assertEquals(
+            LanguageFeature.State.ENABLED,
+            getModule("project").languageVersionSettings.getFeatureSupport(LanguageFeature.InlineClasses)
+        )
     }
 
     private fun assertImporterStatePresent() {

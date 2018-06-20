@@ -1,15 +1,17 @@
 public final class WhenIsKt {
-    public static final fun foo(bar: java.lang.Object) : java.lang.String = switch (bar)  {
-        it is java.lang.String -> {
-            bar
-            break
-        }
+    public static final fun foo(bar: java.lang.Object) : java.lang.String {
+        return switch (bar)  {
+            it is java.lang.String -> {
+                bar
+                break
+            }
 
-        it !is java.lang.String -> {
-            "<error>"
-            break
+            it !is java.lang.String -> {
+                "<error>"
+                break
+            }
+
         }
 
     }
-
 }

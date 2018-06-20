@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.descriptors.impl.LazyClassReceiverParameterDescripto
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.descriptors.JsSymbolBuilder
-import org.jetbrains.kotlin.ir.backend.js.descriptors.initialize
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.symbols.JsSymbolBuilder
+import org.jetbrains.kotlin.ir.backend.js.symbols.initialize
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -225,7 +225,9 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) : IrElementTransfor
             }
 
             val fromPrimary = ownerFunc!! is IrConstructor
-            val newCall = redirectCall(expression, context.secondaryConstructorsMap[target]!!.delegate)
+            // TODO: what is `deserialized` constructor?
+            val ctor = context.secondaryConstructorsMap[target] ?: return expression
+            val newCall = redirectCall(expression, ctor.delegate)
 
             val readThis = if (fromPrimary) {
                 IrGetValueImpl(

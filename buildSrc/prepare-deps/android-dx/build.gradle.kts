@@ -26,6 +26,9 @@ repositories {
     ivy {
         artifactPattern("https://dl-ssl.google.com/android/repository/[artifact]_[revision](-[classifier]).[ext]")
         artifactPattern("https://android.googlesource.com/platform/dalvik/+archive/android-$dxSourcesVersion/[artifact].[ext]")
+        metadataSources {
+            artifact()
+        }
     }
 }
 

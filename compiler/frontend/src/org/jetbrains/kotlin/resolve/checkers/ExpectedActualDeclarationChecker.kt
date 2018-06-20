@@ -23,13 +23,12 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isPrimaryConstructorOfInlineClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility
@@ -41,6 +40,8 @@ import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
 object ExpectedActualDeclarationChecker : DeclarationChecker {
+    internal val OPTIONAL_EXPECTATION_FQ_NAME = FqName("kotlin.OptionalExpectation")
+
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
 
@@ -67,6 +68,8 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
         val compatibility = ExpectedActualResolver.findActualForExpected(descriptor, platformModule) ?: return
 
+        if (compatibility.allStrongIncompatibilities() && isOptionalAnnotationClass(descriptor)) return
+
         val shouldReportError =
             compatibility.allStrongIncompatibilities() ||
                     Compatible !in compatibility && compatibility.values.flatMapTo(hashSetOf()) { it }.all { actual ->
@@ -87,6 +90,10 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
 
             expectActualTracker.reportExpectActual(expected = descriptor, actualMembers = actualMembers)
         }
+    }
+
+    internal fun isOptionalAnnotationClass(descriptor: DeclarationDescriptor): Boolean {
+        return descriptor.annotations.hasAnnotation(OPTIONAL_EXPECTATION_FQ_NAME)
     }
 
     private fun ExpectActualTracker.reportExpectActual(expected: MemberDescriptor, actualMembers: Sequence<MemberDescriptor>) {
@@ -128,9 +135,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             if (compatibility.allStrongIncompatibilities()) return
 
             if (Compatible in compatibility) {
-                // we suppress error, because annotation classes can only have one constructor and it's a 100% boilerplate
-                // to require every annotation constructor with additional parameters with default values be marked with the `actual` modifier
-                if (checkActual && !descriptor.isAnnotationConstructor()) {
+                if (checkActual && requireActualModifier(descriptor, trace)) {
                     trace.report(Errors.ACTUAL_MISSING.on(reportOn))
                 }
 
@@ -193,6 +198,22 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                 }
             }
         }
+    }
+
+    // we don't require `actual` modifier on
+    //  - annotation constructors, because annotation classes can only have one constructor
+    //  - inline class primary constructors, because inline class must have primary constructor
+    //  - value parameter inside primary constructor of inline class, because inline class must have one value parameter
+    private fun requireActualModifier(descriptor: MemberDescriptor, trace: BindingTrace): Boolean {
+        return !descriptor.isAnnotationConstructor() &&
+                !descriptor.isPrimaryConstructorOfInlineClass() &&
+                !isMainPropertyOfInlineClass(descriptor, trace)
+    }
+
+    private fun isMainPropertyOfInlineClass(descriptor: MemberDescriptor, trace: BindingTrace): Boolean {
+        if (descriptor !is PropertyDescriptor) return false
+        if (!descriptor.containingDeclaration.isInlineClass()) return false
+        return trace.bindingContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor] == true
     }
 
     // This should ideally be handled by CallableMemberDescriptor.Kind, but default constructors have kind DECLARATION and non-empty source.

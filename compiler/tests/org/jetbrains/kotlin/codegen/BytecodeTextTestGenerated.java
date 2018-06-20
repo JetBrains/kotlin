@@ -424,6 +424,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/fold.kt");
         }
 
+        @TestMetadata("inlineClassesAndInlinedLambda.kt")
+        public void testInlineClassesAndInlinedLambda() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/inlineClassesAndInlinedLambda.kt");
+        }
+
         @TestMetadata("intCompareTo.kt")
         public void testIntCompareTo() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/intCompareTo.kt");
@@ -957,6 +962,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/constants/byte.kt");
         }
 
+        @TestMetadata("inlineUnsignedIntConstant.kt")
+        public void testInlineUnsignedIntConstant() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/constants/inlineUnsignedIntConstant.kt");
+        }
+
         @TestMetadata("kt9532.kt")
         public void testKt9532() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/constants/kt9532.kt");
@@ -1230,24 +1240,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/usedInVarStore.kt");
                 doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
             }
-        }
-    }
-
-    @TestMetadata("compiler/testData/codegen/bytecodeText/dataClasses")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class DataClasses extends AbstractBytecodeTextTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInDataClasses() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/dataClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("kt12330.kt")
-        public void testKt12330() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/dataClasses/kt12330.kt");
         }
     }
 
@@ -2817,6 +2809,26 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("simpleConstValsInsideWhen.kt")
         public void testSimpleConstValsInsideWhen() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/when/simpleConstValsInsideWhen.kt");
+        }
+
+        @TestMetadata("subjectValHasLocalVariableSlot.kt")
+        public void testSubjectValHasLocalVariableSlot() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/subjectValHasLocalVariableSlot.kt");
+        }
+
+        @TestMetadata("subjectValInEnumWhenHasLocalVariableSlot.kt")
+        public void testSubjectValInEnumWhenHasLocalVariableSlot() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/subjectValInEnumWhenHasLocalVariableSlot.kt");
+        }
+
+        @TestMetadata("subjectValInIntWhenHasLocalVariableSlot.kt")
+        public void testSubjectValInIntWhenHasLocalVariableSlot() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/subjectValInIntWhenHasLocalVariableSlot.kt");
+        }
+
+        @TestMetadata("subjectValInStringWhenHasLocalVariableSlot.kt")
+        public void testSubjectValInStringWhenHasLocalVariableSlot() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/subjectValInStringWhenHasLocalVariableSlot.kt");
         }
 
         @TestMetadata("whenNull.kt")

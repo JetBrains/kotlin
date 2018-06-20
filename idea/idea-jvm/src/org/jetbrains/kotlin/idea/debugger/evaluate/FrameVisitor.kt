@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
-import com.intellij.debugger.jdi.StackFrameProxyImpl
+import com.intellij.openapi.diagnostic.Attachment
 import com.sun.jdi.ClassType
 import com.sun.jdi.InvalidStackFrameException
 import com.sun.jdi.ObjectReference
@@ -30,14 +30,17 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.INLINE_TRANSFORMATION_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
+import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.debugger.isInsideInlineFunctionBody
 import org.jetbrains.kotlin.idea.debugger.numberOfInlinedFunctions
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
-class FrameVisitor(context: EvaluationContextImpl) {
+class FrameVisitor(val context: EvaluationContextImpl) {
     private val scope = context.debugProcess.searchScope
     private val frame = context.frameProxy
 
@@ -95,7 +98,31 @@ class FrameVisitor(context: EvaluationContextImpl) {
     }
 
     private fun fail(message: String, shouldFail: Boolean): Value? {
-        return if (shouldFail) throw EvaluateExceptionUtil.createEvaluateException(message) else null
+        if (!shouldFail) {
+            return null
+        }
+
+        val location = frame?.location()
+
+        val locationText = location?.run { "Location: ${sourceName()}:${lineNumber()}" } ?: "No location available"
+
+        val sourceName = location?.sourceName()
+        val declaringTypeName = location?.declaringType()?.name()?.replace('.', '/')?.let { JvmClassName.byInternalName(it) }
+
+        val sourceFile = if (sourceName != null && declaringTypeName != null) {
+            DebuggerUtils.findSourceFileForClassIncludeLibrarySources(context.project, scope, declaringTypeName, sourceName)
+        } else {
+            null
+        }
+
+        val sourceFileText = runReadAction { sourceFile?.text }
+
+        if (sourceName != null && sourceFileText != null) {
+            val attachments = mergeAttachments(Attachment(sourceName, sourceFileText), Attachment("location.txt", locationText))
+            LOG.error(message, attachments)
+        }
+
+        throw EvaluateExceptionUtil.createEvaluateException(message)
     }
 
     private fun findThis(asmType: Type?): Value? {

@@ -1,6 +1,8 @@
 public final class TestPropertyInitializer {
     private var withSetter: java.lang.String = "/sdcard"
-    public final fun getWithSetter() : java.lang.String = field
+    public final fun getWithSetter() : java.lang.String {
+        return field
+    }
     public final fun setWithSetter(p: java.lang.String) : void {
         field = p
     }

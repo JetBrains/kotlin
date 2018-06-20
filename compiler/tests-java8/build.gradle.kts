@@ -27,7 +27,7 @@ projectTest {
     executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
     dependsOn(":dist")
     workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
+    systemProperty("kotlin.test.script.classpath", javaPluginConvention().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
     systemProperty("idea.home.path", intellijRootDir().canonicalPath)
 }
 

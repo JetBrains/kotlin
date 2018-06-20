@@ -61,6 +61,21 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/apiVersionLessThanLanguage.args");
         }
 
+        @TestMetadata("apiVersionLessThanLanguageUsingArgfile.args")
+        public void testApiVersionLessThanLanguageUsingArgfile() throws Exception {
+            runTest("compiler/testData/cli/jvm/apiVersionLessThanLanguageUsingArgfile.args");
+        }
+
+        @TestMetadata("argfileWithEscaping.args")
+        public void testArgfileWithEscaping() throws Exception {
+            runTest("compiler/testData/cli/jvm/argfileWithEscaping.args");
+        }
+
+        @TestMetadata("argfileWithUnfinishedQuoteAndEscape.args")
+        public void testArgfileWithUnfinishedQuoteAndEscape() throws Exception {
+            runTest("compiler/testData/cli/jvm/argfileWithUnfinishedQuoteAndEscape.args");
+        }
+
         @TestMetadata("argumentPassedMultipleTimes.args")
         public void testArgumentPassedMultipleTimes() throws Exception {
             runTest("compiler/testData/cli/jvm/argumentPassedMultipleTimes.args");
@@ -221,12 +236,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/help.args");
         }
 
-        @TestMetadata("importsProducer.args")
-        public void testImportsProducer() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/importsProducer.args");
-            doJvmTest(fileName);
-        }
-
         @TestMetadata("inlineCycle.args")
         public void testInlineCycle() throws Exception {
             runTest("compiler/testData/cli/jvm/inlineCycle.args");
@@ -234,44 +243,37 @@ public class CliTestGenerated extends AbstractCliTest {
 
         @TestMetadata("internalArgDisableLanguageFeature.args")
         public void testInternalArgDisableLanguageFeature() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgDisableLanguageFeature.args");
-            doJvmTest(fileName);
+            runTest("compiler/testData/cli/jvm/internalArgDisableLanguageFeature.args");
         }
 
         @TestMetadata("internalArgEmptyFeatureName.args")
         public void testInternalArgEmptyFeatureName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgEmptyFeatureName.args");
-            doJvmTest(fileName);
+            runTest("compiler/testData/cli/jvm/internalArgEmptyFeatureName.args");
         }
 
         @TestMetadata("internalArgEnableLanguageFeature.args")
         public void testInternalArgEnableLanguageFeature() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgEnableLanguageFeature.args");
-            doJvmTest(fileName);
+            runTest("compiler/testData/cli/jvm/internalArgEnableLanguageFeature.args");
         }
 
         @TestMetadata("internalArgMissingModificator.args")
         public void testInternalArgMissingModificator() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgMissingModificator.args");
-            doJvmTest(fileName);
+            runTest("compiler/testData/cli/jvm/internalArgMissingModificator.args");
         }
 
         @TestMetadata("internalArgUnrecognizedFeature.args")
         public void testInternalArgUnrecognizedFeature() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgUnrecognizedFeature.args");
-            doJvmTest(fileName);
+            runTest("compiler/testData/cli/jvm/internalArgUnrecognizedFeature.args");
         }
 
         @TestMetadata("internalArgWrongPrefix.args")
         public void testInternalArgWrongPrefix() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgWrongPrefix.args");
-            doJvmTest(fileName);
+            runTest("compiler/testData/cli/jvm/internalArgWrongPrefix.args");
         }
 
         @TestMetadata("internalArgumentOverrideExtraArgument.args")
         public void testInternalArgumentOverrideExtraArgument() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgumentOverrideExtraArgument.args");
-            doJvmTest(fileName);
+            runTest("compiler/testData/cli/jvm/internalArgumentOverrideExtraArgument.args");
         }
 
         @TestMetadata("javaSrcWrongPackage.args")
@@ -394,6 +396,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/legacySmartCastsAfterTry.args");
         }
 
+        @TestMetadata("mixingArgfilesAndUsualArgs.args")
+        public void testMixingArgfilesAndUsualArgs() throws Exception {
+            runTest("compiler/testData/cli/jvm/mixingArgfilesAndUsualArgs.args");
+        }
+
         @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
         public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
             runTest("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
@@ -434,6 +441,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/nonexistentScript.args");
         }
 
+        @TestMetadata("nonexistingArgfile.args")
+        public void testNonexistingArgfile() throws Exception {
+            runTest("compiler/testData/cli/jvm/nonexistingArgfile.args");
+        }
+
         @TestMetadata("pluginSimple.args")
         public void testPluginSimple() throws Exception {
             runTest("compiler/testData/cli/jvm/pluginSimple.args");
@@ -441,14 +453,12 @@ public class CliTestGenerated extends AbstractCliTest {
 
         @TestMetadata("progressiveModeOff.args")
         public void testProgressiveModeOff() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/progressiveModeOff.args");
-            doJvmTest(fileName);
+            runTest("compiler/testData/cli/jvm/progressiveModeOff.args");
         }
 
         @TestMetadata("progressiveModeOn.args")
         public void testProgressiveModeOn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/progressiveModeOn.args");
-            doJvmTest(fileName);
+            runTest("compiler/testData/cli/jvm/progressiveModeOn.args");
         }
 
         @TestMetadata("returnAsWhenKey.args")

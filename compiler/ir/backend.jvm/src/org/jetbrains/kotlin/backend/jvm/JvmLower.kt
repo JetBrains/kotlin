@@ -66,6 +66,7 @@ class JvmLower(val context: JvmBackendContext) {
         BridgeLowering(context).runOnFilePostfix(irFile)
 
         TailrecLowering(context).runOnFilePostfix(irFile)
+        ToArrayLowering(context).runOnFilePostfix(irFile)
 
         irFile.acceptVoid(PatchDeclarationParentsVisitor())
     }

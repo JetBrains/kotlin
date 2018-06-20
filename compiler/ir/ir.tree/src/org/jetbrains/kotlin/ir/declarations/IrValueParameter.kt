@@ -23,9 +23,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.types.KotlinType
 
 interface IrValueParameter : IrValueDeclaration, IrSymbolDeclaration<IrValueParameterSymbol> {
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.VALUE_PARAMETER
-
     override val descriptor: ParameterDescriptor
 
     val index: Int

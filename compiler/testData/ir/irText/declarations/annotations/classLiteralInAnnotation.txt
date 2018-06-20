@@ -10,6 +10,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter klass: KClass<*>' type=kotlin.reflect.KClass<*> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-klass> visibility:public modality:FINAL <> ($this:A) returnType:KClass<*> flags:
+        correspondingProperty: PROPERTY name:klass type:kotlin.reflect.KClass<*> visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-klass>(): KClass<*>'
@@ -88,6 +89,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
           CALL 'constructor <no name provided>()' type=test2.<no name provided><T> origin=OBJECT_LITERAL
   PROPERTY name:test3 type:kotlin.Any visibility:public modality:FINAL flags:var
     FUN name:<get-test3> visibility:public modality:FINAL <T> ($receiver:T) returnType:Any flags:inline
+      correspondingProperty: PROPERTY name:test3 type:kotlin.Any visibility:public modality:FINAL flags:var
       TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
         superClassifiers:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
@@ -121,6 +123,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
             CALL 'constructor <no name provided>()' type=<get-test3>.<no name provided> origin=OBJECT_LITERAL
     FUN name:<set-test3> visibility:public modality:FINAL <T> ($receiver:T, v:kotlin.Any) returnType:Unit flags:inline
+      correspondingProperty: PROPERTY name:test3 type:kotlin.Any visibility:public modality:FINAL flags:var
       TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
         superClassifiers:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
@@ -155,3 +158,4 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
                   FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
             CALL 'constructor <no name provided>()' type=<set-test3>.<no name provided> origin=OBJECT_LITERAL
+

@@ -34,7 +34,11 @@ object Namer {
     val CALL_FUNCTION = "call"
     val APPLY_FUNCTION = "apply"
 
-    val OUTER_FIELD_NAME = "\$outer"
+    val SLICE_FUNCTION = "slice"
+    val CONCAT_FUNCTION = "concat"
+
+    val OUTER_NAME = "\$outer"
+    val UNREACHABLE_NAME = "\$unreachable"
 
     val DELEGATE = "\$delegate"
 
@@ -42,7 +46,7 @@ object Namer {
 
     val EXTENSION_RECEIVER_NAME = "\$receiver"
     val IMPLICIT_RECEIVER_NAME = "this"
-    val ANOTHER_THIS_PARAMETER_NAME = "$this"
+    val ANOTHER_THIS_PARAMETER_NAME = "\$this"
 
     val THROW_CLASS_CAST_EXCEPTION_FUN_NAME = "throwCCE"
     val THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME = "throwISE"
@@ -55,6 +59,8 @@ object Namer {
     val IS_ARRAY_FUN_REF = JsNameRef("isArray", "Array")
     val DEFINE_INLINE_FUNCTION = "defineInlineFunction"
     val DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX = "\$default"
+
+    val JS_ERROR = JsNameRef("Error")
 
     val JS_OBJECT = JsNameRef("Object")
     val JS_OBJECT_CREATE_FUNCTION = JsNameRef("create", JS_OBJECT)
@@ -79,6 +85,12 @@ object Namer {
 
     val GETTER_PREFIX = "get_"
     val SETTER_PREFIX = "set_"
+
+    val KCALLABLE_GET_NAME = "<get-name>"
+    val KCALLABLE_NAME = "callableName"
+    val KPROPERTY_GET = "get"
+    val KPROPERTY_SET = "set"
+    val KCALLABLE_CACHE_SUFFIX = "\$cache"
 
     val SETTER_ARGUMENT = "\$setValue"
 

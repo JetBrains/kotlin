@@ -12,43 +12,59 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.js.JsDescriptorsFactory
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.ModuleIndex
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.KotlinType
 
 class JsIrBackendContext(
     val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
-    irModuleFragment: IrModuleFragment,
-    symbolTable: SymbolTable
+    val symbolTable: SymbolTable,
+    irModuleFragment: IrModuleFragment
 ) : CommonBackendContext {
 
-    val intrinsics = JsIntrinsics(module, irBuiltIns, symbolTable)
-
     override val builtIns = module.builtIns
+
     override val sharedVariablesManager =
         JsSharedVariablesManager(builtIns, KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal")))
-    override val descriptorsFactory = JsDescriptorsFactory(builtIns)
-
+    override val descriptorsFactory = JsDescriptorsFactory()
     override val reflectionTypes: ReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
         // TODO
         ReflectionTypes(module, FqName("kotlin.reflect"))
     }
 
-    override val ir: Ir<CommonBackendContext> = object : Ir<CommonBackendContext>(this, irModuleFragment) {
-        override val symbols: Symbols<CommonBackendContext> = object : Symbols<CommonBackendContext>(this@JsIrBackendContext, symbolTable) {
+    private val internalPackageName = FqName("kotlin.js")
+    private val internalPackage = module.getPackage(internalPackageName)
+
+    val intrinsics = JsIntrinsics(module, irBuiltIns, this)
+
+    private val operatorMap = referenceOperators()
+
+    data class SecondaryCtorPair(val delegate: IrSimpleFunctionSymbol, val stub: IrSimpleFunctionSymbol)
+
+    val secondaryConstructorsMap = mutableMapOf<IrConstructorSymbol, SecondaryCtorPair>()
+
+    fun getOperatorByName(name: Name, type: KotlinType) = operatorMap[name]?.get(type)
+
+    val originalModuleIndex = ModuleIndex(irModuleFragment)
+
+    override val ir = object : Ir<CommonBackendContext>(this, irModuleFragment) {
+        override val symbols = object : Symbols<CommonBackendContext>(this@JsIrBackendContext, symbolTable) {
 
             override fun calc(initializer: () -> IrClassSymbol): IrClassSymbol {
                 return object : IrClassSymbol {
@@ -63,13 +79,13 @@ class JsIrBackendContext(
                 get () = TODO("not implemented")
 
             override val ThrowNullPointerException
-                get () = TODO("not implemented")
+                get () = irBuiltIns.throwNpeSymbol
 
             override val ThrowNoWhenBranchMatchedException
-                get () = TODO("not implemented")
+                get () = irBuiltIns.noWhenBranchMatchedExceptionSymbol
 
             override val ThrowTypeCastException
-                get () = TODO("not implemented")
+                get () = irBuiltIns.throwCceSymbol
 
             override val ThrowUninitializedPropertyAccessException = symbolTable.referenceSimpleFunction(
                 irBuiltIns.defineOperator(
@@ -92,29 +108,30 @@ class JsIrBackendContext(
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
 
-    data class SecondaryCtorPair(val delegate: IrSimpleFunctionSymbol, val stub: IrSimpleFunctionSymbol)
+    private fun referenceOperators() = OperatorNames.ALL.map { name ->
+        name to irBuiltIns.primitiveTypes.fold(mutableMapOf<KotlinType, IrFunctionSymbol>()) { m, t ->
+            val function = t.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).singleOrNull()
+            function?.let { m.put(t, symbolTable.referenceSimpleFunction(it)) }
+            m
+        }
+    }.toMap()
 
-    val secondaryConstructorsMap = mutableMapOf<IrConstructorSymbol, SecondaryCtorPair>()
+    private fun findClass(memberScope: MemberScope, className: String) = findClass(memberScope, Name.identifier(className))
 
-    private fun find(memberScope: MemberScope, className: String): ClassDescriptor {
-        return find(memberScope, Name.identifier(className))
-    }
+    private fun findClass(memberScope: MemberScope, name: Name) =
+        memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
 
-    private fun find(memberScope: MemberScope, name: Name): ClassDescriptor {
-        return memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-    }
+    private fun findFunctions(memberScope: MemberScope, className: String) =
+        findFunctions(memberScope, Name.identifier(className))
 
-    override fun getInternalClass(name: String): ClassDescriptor {
-        return find(module.getPackage(FqName("kotlin.js")).memberScope, name)
-    }
+    private fun findFunctions(memberScope: MemberScope, name: Name) =
+        memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).toList()
 
-    override fun getClass(fqName: FqName): ClassDescriptor {
-        return find(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
-    }
+    override fun getInternalClass(name: String) = findClass(internalPackage.memberScope, name)
 
-    override fun getInternalFunctions(name: String): List<FunctionDescriptor> {
-        TODO("not implemented")
-    }
+    override fun getClass(fqName: FqName) = findClass(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
+
+    override fun getInternalFunctions(name: String) = findFunctions(internalPackage.memberScope, name)
 
     override fun log(message: () -> String) {
         /*TODO*/

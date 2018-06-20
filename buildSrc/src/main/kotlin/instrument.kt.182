@@ -45,7 +45,7 @@ fun Project.configureInstrumentation() {
         // classes from the "friendly directory" to the compile classpath.
         val testCompile = tasks.findByName("compileTestKotlin") as AbstractCompile?
         testCompile?.doFirst {
-            val mainSourceSet = the<JavaPluginConvention>().sourceSets.getByName("main")
+            val mainSourceSet = javaPluginConvention().sourceSets.getByName("main")
             testCompile.classpath = (testCompile.classpath
                                      - mainSourceSet.output.classesDirs
                                      + files((mainSourceSet as ExtensionAware).extra.get("classesDirsCopy")))
@@ -59,7 +59,7 @@ fun Project.configureInstrumentation() {
     }
 
     afterEvaluate {
-        the<JavaPluginConvention>().sourceSets.all { sourceSetParam ->
+        javaPluginConvention().sourceSets.all { sourceSetParam ->
             // This copy will ignore filters, but they are unlikely to be used.
             val classesDirs = (sourceSetParam.output.classesDirs as ConfigurableFileCollection).from as Collection<Any>
 
@@ -150,7 +150,7 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
 
         // Instrumentation needs to have access to sources of forms for inclusion
         val depSourceDirectorySets = project.configurations["compile"].dependencies.withType(ProjectDependency::class.java)
-                .map { p -> p.dependencyProject.the<JavaPluginConvention>().sourceSets.getByName("main").allSource.sourceDirectories }
+                .map { p -> p.dependencyProject.javaPluginConvention().sourceSets.getByName("main").allSource.sourceDirectories }
         val instrumentationClasspath =
                 depSourceDirectorySets.fold(sourceSet!!.compileClasspath) { acc, v -> acc + v }.asPath.also {
                     logger.info("Using following dependency source dirs: $it")

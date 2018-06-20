@@ -26,6 +26,7 @@ import java.util.*
 fun mapKotlinTaskProperties(project: Project, task: AbstractKotlinCompile<*>) {
     PropertiesProvider(project).apply {
         coroutines?.let { task.coroutinesFromGradleProperties = it }
+        useFallbackCompilerSearch?.let { task.useFallbackCompilerSearch = it }
 
         if (task is KotlinCompile) {
             incrementalJvm?.let { task.incremental = it }
@@ -66,6 +67,9 @@ internal class PropertiesProvider(private val project: Project) {
 
     val usePreciseJavaTracking: Boolean?
         get() = booleanProperty("kotlin.incremental.usePreciseJavaTracking")
+
+    val useFallbackCompilerSearch: Boolean?
+        get() = booleanProperty("kotlin.useFallbackCompilerSearch")
 
     private fun booleanProperty(propName: String): Boolean? =
             property(propName)?.toBoolean()

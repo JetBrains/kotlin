@@ -28,7 +28,6 @@ import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.w3c.dom.Document
 import java.io.File
@@ -47,12 +46,7 @@ class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
     }
 
     private fun addAndroidExtensionsRuntimeIfNeeded(project: Project) {
-        val kotlinPluginWrapper = project.plugins.findPlugin(KotlinAndroidPluginWrapper::class.java) ?: run {
-            project.logger.error("'kotlin-android' plugin should be enabled before 'kotlin-android-extensions'")
-            return
-        }
-
-        val kotlinPluginVersion = kotlinPluginWrapper.kotlinPluginVersion
+        val kotlinPluginVersion = project.getKotlinPluginVersion() ?: return
 
         project.configurations.all { configuration ->
             val name = configuration.name
@@ -105,6 +99,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val sourceSets = androidExtension.sourceSets
 
         val pluginOptions = arrayListOf<SubpluginOption>()
+        pluginOptions += SubpluginOption("features", AndroidExtensionsFeature.VIEWS.featureName)
 
         val mainSourceSet = sourceSets.getByName("main")
         val manifestFile = mainSourceSet.manifest.srcFile
@@ -128,7 +123,9 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         addVariant(mainSourceSet)
 
-        val flavorSourceSets = AndroidGradleWrapper.getProductFlavorsSourceSets(androidExtension).filterNotNull()
+        val flavorSourceSets = androidExtension.productFlavors
+            .mapNotNull { androidExtension.sourceSets.findByName(it.name) }
+
         for (sourceSet in flavorSourceSets) {
             addVariant(sourceSet)
         }
@@ -156,74 +153,101 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         androidProjectHandler as? AbstractAndroidProjectHandler<Any?> ?: return emptyList()
 
         val pluginOptions = arrayListOf<SubpluginOption>()
+        pluginOptions += SubpluginOption("features",
+                AndroidExtensionsFeature.parseFeatures(androidExtensionsExtension.features).joinToString(",") { it.featureName })
 
         pluginOptions += SubpluginOption("experimental", "true")
-        pluginOptions += SubpluginOption("defaultCacheImplementation",
-                androidExtensionsExtension.defaultCacheImplementation.optionName)
+        pluginOptions += SubpluginOption("defaultCacheImplementation", androidExtensionsExtension.defaultCacheImplementation.optionName)
 
         val mainSourceSet = androidExtension.sourceSets.getByName("main")
         pluginOptions += SubpluginOption("package", getApplicationPackage(project, mainSourceSet))
 
+        val enabledVariants = getVariantComponentNames(variantData)
+        val allResDirectories = mutableMapOf<String, List<File>>()
+
+        androidProjectHandler.forEachVariant(project) { variant ->
+            val variantName = androidProjectHandler.getVariantName(variant)
+            if (androidProjectHandler.getTestedVariantData(variant) != null) {
+                return@forEachVariant
+            }
+
+            allResDirectories[variantName] = androidProjectHandler.getResDirectories(variant)
+        }
+
         fun addVariant(name: String, resDirectories: List<File>) {
             val optionValue = buildString {
-                append(name)
-                append(';')
+                append(name).append(';')
                 resDirectories.joinTo(this, separator = ";") { it.canonicalPath }
             }
-            pluginOptions += CompositeSubpluginOption("variant", optionValue, listOf(
+
+            pluginOptions += CompositeSubpluginOption(
+                "variant", optionValue, listOf(
                     SubpluginOption("variantName", name),
                     // use INTERNAL option kind since the resources are tracked as sources (see below)
-                    FilesSubpluginOption("resDirs", resDirectories)))
+                    FilesSubpluginOption("resDirs", resDirectories)
+                )
+            )
 
             kotlinCompile.source(project.files(getLayoutDirectories(resDirectories)))
         }
 
-        fun addSourceSetAsVariant(name: String) {
-            val sourceSet = androidExtension.sourceSets.findByName(name) ?: return
-            val srcDirs = sourceSet.res.srcDirs.toList()
-            if (srcDirs.isNotEmpty()) {
-                addVariant(sourceSet.name, srcDirs)
-            }
+        val actualResDirectories = allResDirectories.filterKeys { it in enabledVariants }
+        val localProjectResDirs = actualResDirectories.values
+                .flatMap { it }
+                .filter { it.isProjectLibraryResDirectory() || it.isPackageResDirectory() }
+
+        val commonResDirectories = getCommonResDirectories(allResDirectories.values) + localProjectResDirs
+        addVariant("main", commonResDirectories.distinct().sorted())
+
+        for (sourceSetName in enabledVariants) {
+            val srcDirs = androidExtension.sourceSets.findByName(sourceSetName)
+                    ?.res?.srcDirs?.toList()?.takeIf { it.isNotEmpty() } ?: continue
+
+            addVariant(sourceSetName, (srcDirs - commonResDirectories).sorted())
         }
 
-        val resDirectoriesForAllVariants = mutableListOf<List<File>>()
-
-        androidProjectHandler.forEachVariant(project) { variant ->
-            if (androidProjectHandler.getTestedVariantData(variant) != null) return@forEachVariant
-            resDirectoriesForAllVariants += androidProjectHandler.getResDirectories(variant)
-        }
-
-        val commonResDirectories = getCommonResDirectories(resDirectoriesForAllVariants)
-
-        addVariant("main", commonResDirectories.toList())
-
-        getVariantComponentNames(variantData)?.let { (variantName, flavorName, buildTypeName) ->
-            addSourceSetAsVariant(buildTypeName)
-
-            if (flavorName.isNotEmpty()) {
-                addSourceSetAsVariant(flavorName)
-            }
-
-            addSourceSetAsVariant(variantName)
-        }
+        project.logger.warn("Blah: " + allResDirectories)
 
         return wrapPluginOptions(pluginOptions, "configuration")
     }
 
-    // Android25ProjectHandler.KaptVariant actually contains BaseVariant, not BaseVariantData
-    private fun getVariantComponentNames(flavorData: Any?): VariantComponentNames? = when(flavorData) {
-        is KaptVariantData<*> -> getVariantComponentNames(flavorData.variantData)
-        is TestVariantData -> getVariantComponentNames(flavorData.testedVariantData)
-        is TestVariant -> getVariantComponentNames(flavorData.testedVariant)
-        is BaseVariant -> VariantComponentNames(flavorData.name, flavorData.flavorName, flavorData.buildType.name)
-        is BaseVariantData<*> -> VariantComponentNames(flavorData.name, flavorData.variantConfiguration.flavorName,
-                flavorData.variantConfiguration.buildType.name)
-        else -> null
+    private fun File.isPackageResDirectory(): Boolean {
+        val packagedResDir = parentFile ?: return false
+        val intermediatesDir = packagedResDir.parentFile ?: return false
+        val buildDir = intermediatesDir.parentFile ?: return false
+
+        return packagedResDir.name == "packaged_res" && intermediatesDir.name == "intermediates" && buildDir.name == "build"
     }
 
-    private data class VariantComponentNames(val variantName: String, val flavorName: String, val buildTypeName: String)
+    private fun File.isProjectLibraryResDirectory(): Boolean {
+        if (name != "res") {
+            return false
+        }
 
-    private fun getCommonResDirectories(resDirectories: List<List<File>>): Set<File> {
+        val bundlesDir = parentFile?.parentFile ?: return false
+        val intermediatesDir = bundlesDir.parentFile ?: return false
+        val buildDir = intermediatesDir.parentFile ?: return false
+
+        return bundlesDir.name == "bundles" && intermediatesDir.name == "intermediates" && buildDir.name == "build"
+    }
+
+    // Android25ProjectHandler.KaptVariant actually contains BaseVariant, not BaseVariantData
+    private fun getVariantComponentNames(variantData: Any?): List<String> = when(variantData) {
+        is KaptVariantData<*> -> getVariantComponentNames(variantData.variantData)
+        is TestVariantData -> getVariantComponentNames(variantData.testedVariantData)
+        is TestVariant -> getVariantComponentNames(variantData.testedVariant)
+        is BaseVariant -> listOfNotNull(variantData.name, variantData.flavorName, variantData.buildType.name).distinct()
+        is BaseVariantData<*> -> {
+            listOfNotNull(
+                variantData.name,
+                variantData.variantConfiguration.flavorName,
+                variantData.variantConfiguration.buildType.name
+            ).distinct()
+        }
+        else -> emptyList()
+    }
+
+    private fun getCommonResDirectories(resDirectories: Iterable<Iterable<File>>): Set<File> {
         var common = resDirectories.firstOrNull()?.toSet() ?: return emptySet()
 
         for (resDirs in resDirectories.drop(1)) {
@@ -258,9 +282,8 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     override fun getCompilerPluginId() = "org.jetbrains.kotlin.android"
 
-    override fun getGroupName() = "org.jetbrains.kotlin"
-
-    override fun getArtifactName() = "kotlin-android-extensions"
+    override fun getPluginArtifact(): SubpluginArtifact =
+        JetBrainsSubpluginArtifact(artifactId = "kotlin-android-extensions")
 
     private fun File.parseXml(): Document {
         val factory = DocumentBuilderFactory.newInstance()

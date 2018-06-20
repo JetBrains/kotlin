@@ -14,6 +14,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
+        correspondingProperty: PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
@@ -24,6 +25,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
+        correspondingProperty: PROPERTY name:y type:kotlin.Int visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
@@ -114,7 +116,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:A flags:val
-          TYPE_OP type=A origin=CAST typeOperand=A
+          TYPE_OP type=A origin=IMPLICIT_CAST typeOperand=A
             typeOperand: CLASS CLASS name:A modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -155,10 +157,12 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
                   other: GET_VAR 'y: Int' type=kotlin.Int origin=null
           FUNCTION_REFERENCE '<anonymous>(A): Int' type=(A) -> kotlin.Int origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fn> visibility:public modality:FINAL <> () returnType:Function1<A, Int> flags:
+      correspondingProperty: PROPERTY name:fn type:(A) -> kotlin.Int visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-fn>(): (A) -> Int'
           GET_FIELD 'fn: (A) -> Int' type=(A) -> kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-fn> visibility:public modality:FINAL <> (<set-?>:(A) -> kotlin.Int) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:fn type:(A) -> kotlin.Int visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:<set-?> index:0 type:(A) -> kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'fn: (A) -> Int' type=kotlin.Unit origin=null

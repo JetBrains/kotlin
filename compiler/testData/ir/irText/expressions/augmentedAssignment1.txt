@@ -4,10 +4,12 @@ FILE fqName:<root> fileName:/augmentedAssignment1.kt
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Int flags:
+      correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>(): Int'
           GET_FIELD 'p: Int' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-p> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
+      correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'p: Int' type=kotlin.Unit origin=null

@@ -409,7 +409,7 @@ fun getStepOverAction(
         // this filter locations with too big code indexes manually
         val returnCodeIndex: Long = if (isDexDebug) {
             val method = location.method()
-            val locationsOfLine = method.locationsOfLine(range.last)
+            val locationsOfLine = method.safeLocationsOfLine(range.last)
             if (locationsOfLine.isNotEmpty()) {
                 locationsOfLine.map { it.codeIndex() }.max() ?: -1L
             }
@@ -439,7 +439,7 @@ fun getStepOutAction(
 ): Action {
     val computedReferenceType = location.declaringType() ?: return Action.STEP_OUT()
 
-    val locations = computedReferenceType.allLineLocations()
+    val locations = computedReferenceType.safeAllLineLocations()
     val nextLineLocations = locations
             .dropWhile { it != location }
             .drop(1)
@@ -531,8 +531,10 @@ private fun getInlineArgumentIfAny(elementAt: PsiElement?): KtFunctionLiteral? {
 }
 
 private fun findReturnFromDexBytecode(method: Method): Long {
-    val methodLocations = method.allLineLocations()
-    if (methodLocations.isEmpty())  return -1L
+    val methodLocations = method.safeAllLineLocations()
+    if (methodLocations.isEmpty()) {
+        return -1L
+    }
 
     var lastMethodCodeIndex = methodLocations.last().codeIndex()
     // Continue while it's possible to get location

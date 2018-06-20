@@ -11,6 +11,7 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     PROPERTY name:bar type:kotlin.Int visibility:public modality:ABSTRACT flags:val
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:IBase<T>) returnType:Int flags:
+        correspondingProperty: PROPERTY name:bar type:kotlin.Int visibility:public modality:ABSTRACT flags:val
         $this: VALUE_PARAMETER name:<this> type:IBase<T> flags:
     FUN name:qux visibility:public modality:ABSTRACT <X> ($this:IBase<T>, t:T, x:X) returnType:Unit flags:
       TYPE_PARAMETER name:X index:0 variance: upperBounds:[kotlin.Any?]
@@ -75,6 +76,7 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
           x: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
     PROPERTY DELEGATED_MEMBER name:bar type:kotlin.Int visibility:public modality:OPEN flags:val
       FUN DELEGATED_MEMBER name:<get-bar> visibility:public modality:OPEN <> ($this:Test<TT>) returnType:Int flags:
+        correspondingProperty: PROPERTY DELEGATED_MEMBER name:bar type:kotlin.Int visibility:public modality:OPEN flags:val
         overridden:
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:IBase<T>) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Test<TT> flags:

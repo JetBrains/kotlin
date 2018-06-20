@@ -12,7 +12,7 @@ import proguard.gradle.ProGuardTask
 buildscript {
     extra["defaultSnapshotVersion"] = "1.2-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.60-dev-170", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.60-dev-544", onlySuccessBootstrap = false))
 
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
@@ -22,7 +22,7 @@ buildscript {
             "https://jcenter.bintray.com/",
             "https://plugins.gradle.org/m2",
             "http://dl.bintray.com/kotlin/kotlinx",
-            "https://repo.gradle.org/gradle/libs-releases-local", // for native-platform
+            "https://repo.gradle.org/gradle/ext-releases-local", // for native-platform
             "https://jetbrains.bintray.com/intellij-third-party-dependencies", // for jflex
             "https://dl.bintray.com/jetbrains/markdown" // for org.jetbrains:markdown
     )
@@ -141,7 +141,6 @@ extra["versions.javaslang"] = "2.0.6"
 extra["versions.ant"] = "1.8.2"
 extra["versions.android"] = "2.3.1"
 extra["versions.kotlinx-coroutines-core"] = "0.20"
-extra["versions.kotlinx-serialization-runtime"] = "0.4.2"
 extra["versions.kotlinx-coroutines-jdk8"] = "0.20"
 extra["versions.json"] = "20160807"
 extra["versions.native-platform"] = "0.14"
@@ -287,7 +286,7 @@ allprojects {
     // therefore it is disabled by default
     // buildDir = File(commonBuildDir, project.name)
 
-    val repos: List<String> by rootProject.extra
+    val repos = rootProject.extra["repos"] as List<String>
     repositories {
         intellijSdkRepo(project)
         androidDxJarRepo(project)
@@ -348,7 +347,7 @@ allprojects {
         fun FileCollection.printClassPath(role: String) =
                 println("${project.path} $role classpath:\n  ${joinToString("\n  ") { it.toProjectRootRelativePathOrSelf() } }")
 
-        try { the<JavaPluginConvention>() } catch (_: UnknownDomainObjectException) { null }?.let { javaConvention ->
+        try { javaPluginConvention() } catch (_: UnknownDomainObjectException) { null }?.let { javaConvention ->
             task("printCompileClasspath") { doFirst { javaConvention.sourceSets["main"].compileClasspath.printClassPath("compile") } }
             task("printRuntimeClasspath") { doFirst { javaConvention.sourceSets["main"].runtimeClasspath.printClassPath("runtime") } }
             task("printTestCompileClasspath") { doFirst { javaConvention.sourceSets["test"].compileClasspath.printClassPath("test compile") } }
@@ -398,6 +397,7 @@ tasks {
         (coreLibProjects + listOf(
                 ":kotlin-stdlib:samples",
                 ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
+                ":kotlinx-metadata-jvm",
                 ":tools:binary-compatibility-validator"
         )).forEach {
             dependsOn(it + ":check")
@@ -440,6 +440,10 @@ tasks {
         dependsOn(":compiler:incremental-compilation-impl:test")
     }
 
+    "toolsTest" {
+        dependsOn(":tools:kotlinp:test")
+    }
+
     "examplesTest" {
         dependsOn("dist")
         (project(":examples").subprojects + project(":kotlin-gradle-subplugin-example")).forEach { p ->
@@ -449,6 +453,7 @@ tasks {
 
     "distTest" {
         dependsOn("compilerTest")
+        dependsOn("toolsTest")
         dependsOn("gradlePluginTest")
         dependsOn("examplesTest")
     }

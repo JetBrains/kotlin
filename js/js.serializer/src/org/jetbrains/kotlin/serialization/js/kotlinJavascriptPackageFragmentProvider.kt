@@ -80,7 +80,7 @@ fun createKotlinJavascriptPackageFragmentProvider(
     )
 
     for (packageFragment in packageFragments.filterIsInstance<KotlinJavascriptPackageFragment>()) {
-        packageFragment.components = components
+        packageFragment.initialize(components)
     }
 
     return provider

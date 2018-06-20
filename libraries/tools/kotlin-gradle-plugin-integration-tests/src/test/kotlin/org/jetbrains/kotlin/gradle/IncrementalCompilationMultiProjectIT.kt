@@ -284,10 +284,6 @@ class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaChangesB
 }
 
 abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking: Boolean?) : BaseGradleIT() {
-    companion object {
-        protected val GRADLE_VERSION = "2.10"
-    }
-
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
 

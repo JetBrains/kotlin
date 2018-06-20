@@ -16,16 +16,4 @@
 
 package org.jetbrains.kotlin.daemon.common
 
-import java.rmi.RemoteException
-
-interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase {
-    // AnnotationFileUpdater
-    @Throws(RemoteException::class)
-    fun hasAnnotationsFileUpdater(): Boolean
-
-    @Throws(RemoteException::class)
-    fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>)
-
-    @Throws(RemoteException::class)
-    fun revert()
-}
+interface IncrementalCompilerServicesFacade : CompilerServicesFacadeBase

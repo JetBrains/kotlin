@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class X(var value: Long)
 
 operator fun X.inc(): X {

@@ -153,8 +153,18 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
 
     val result = KotlinUastLanguagePlugin().convertElementWithParent(parentUnwrapped, null)
 
+    if (result is KotlinUBlockExpression && element is UClass) {
+        return KotlinUDeclarationsExpression(result).apply {
+            declarations = listOf(element)
+        }
+    }
+
     if (result is UEnumConstant && element is UDeclaration) {
         return result.initializingClass
+    }
+
+    if (result is UCallExpression && result.uastParent is UEnumConstant) {
+        return result.uastParent
     }
 
     if (result is USwitchClauseExpressionWithBody && !isInConditionBranch(element, result)) {

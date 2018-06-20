@@ -47,6 +47,7 @@ fun selectElementsWithTargetSibling(
         file: KtFile,
         title: String,
         elementKinds: Collection<CodeInsightUtils.ElementKind>,
+        elementValidator: (List<PsiElement>) -> String?,
         getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
         continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit
 ) {
@@ -69,7 +70,7 @@ fun selectElementsWithTargetSibling(
         continuation(elements, outermostParent)
     }
 
-    selectElementsWithTargetParent(operationName, editor, file, title, elementKinds, getContainers, ::onSelectionComplete)
+    selectElementsWithTargetParent(operationName, editor, file, title, elementKinds, elementValidator, getContainers, ::onSelectionComplete)
 }
 
 fun selectElementsWithTargetParent(
@@ -78,6 +79,7 @@ fun selectElementsWithTargetParent(
         file: KtFile,
         title: String,
         elementKinds: Collection<CodeInsightUtils.ElementKind>,
+        elementValidator: (List<PsiElement>) -> String?,
         getContainers: (elements: List<PsiElement>, commonParent: PsiElement) -> List<PsiElement>,
         continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit
 ) {
@@ -86,6 +88,11 @@ fun selectElementsWithTargetParent(
     }
 
     fun selectTargetContainer(elements: List<PsiElement>) {
+        elementValidator(elements)?.let {
+            showErrorHint(file.project, editor, it, operationName)
+            return
+        }
+
         val physicalElements = elements.map { it.substringContextOrThis }
         val parent = PsiTreeUtil.findCommonParent(physicalElements)
                      ?: throw AssertionError("Should have at least one parent: ${physicalElements.joinToString("\n")}")
@@ -236,4 +243,11 @@ fun <T : KtDeclaration> insertDeclaration(declaration: T, targetSibling: PsiElem
     return (targetContainer.addBefore(declaration, anchor) as T).apply {
         targetContainer.addBefore(KtPsiFactory(declaration).createWhiteSpace("\n\n"), anchor)
     }
+}
+
+internal fun validateExpressionElements(elements: List<PsiElement>): String? {
+    if (elements.any { it is KtConstructor<*> || it is KtParameter || it is KtTypeAlias || it is KtPropertyAccessor }) {
+        return "Refactoring is not applicable to this code fragment"
+    }
+    return null
 }

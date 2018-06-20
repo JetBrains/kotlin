@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class Foo {
   var rnd = 10
 

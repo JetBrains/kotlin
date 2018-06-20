@@ -66,3 +66,4 @@ FILE fqName:<root> fileName:/kt24114.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: RETURN type=kotlin.Nothing from='test2(): Int'
                   CONST Int type=kotlin.Int value=3
+

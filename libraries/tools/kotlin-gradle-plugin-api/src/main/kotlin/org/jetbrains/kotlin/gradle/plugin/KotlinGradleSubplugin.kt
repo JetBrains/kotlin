@@ -63,6 +63,10 @@ interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
     ): List<AbstractCompile> = emptyList()
 
     fun getCompilerPluginId(): String
-    fun getGroupName(): String
-    fun getArtifactName(): String
+
+    fun getPluginArtifact(): SubpluginArtifact
 }
+
+open class SubpluginArtifact(val groupId: String, val artifactId: String)
+
+class JetBrainsSubpluginArtifact(artifactId: String) : SubpluginArtifact(groupId = "org.jetbrains.kotlin", artifactId = artifactId)

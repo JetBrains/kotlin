@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 inline fun <reified T> Any?.check(): Boolean {
     return this is T
 }

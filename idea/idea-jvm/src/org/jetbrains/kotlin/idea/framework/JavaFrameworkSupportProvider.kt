@@ -43,14 +43,14 @@ class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                         rootModel,
                         JSLibraryStdDescription.SUITABLE_LIBRARY_KINDS,
-                        JSFrameworkType.instance)
+                        "Kotlin/\u200BJS")
 
                 description!!.finishLibConfiguration(module, rootModel)
             }
 
             override fun onFrameworkSelectionChanged(selected: Boolean) {
                 if (selected) {
-                    val providerId = JSFrameworkType.instance.id
+                    val providerId = "kotlin-js-framework-id"
                     if (model.isFrameworkSelected(providerId)) {
                         model.setFrameworkComponentEnabled(providerId, false)
                     }

@@ -264,9 +264,8 @@ open class KotlinChangeInfo(
                     }
                     buffer.append('.')
                 }
+                buffer.append(name)
             }
-
-            buffer.append(name)
         }
 
         buffer.append(getNewParametersSignature(inheritedCallable))

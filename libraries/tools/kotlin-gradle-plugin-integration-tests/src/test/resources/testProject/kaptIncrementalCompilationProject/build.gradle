@@ -10,7 +10,7 @@ buildscript {
 
 apply plugin: "java"
 apply plugin: "kotlin"
-// APPLY_KAPT_PLUGIN
+apply plugin: "kotlin-kapt"
 
 repositories {
     jcenter()
@@ -22,8 +22,4 @@ dependencies {
     compile "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     testCompile 'junit:junit:4.12'
-}
-
-kapt {
-    generateStubs = GENERATE_STUBS_PLACEHOLDER
 }

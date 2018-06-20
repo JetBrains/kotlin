@@ -334,11 +334,11 @@ internal object KotlinConverter {
 
             is KtExpression -> KotlinConverter.convertExpression(element, givenParent, requiredType)
             is KtLambdaArgument -> element.getLambdaExpression()?.let { KotlinConverter.convertExpression(it, givenParent, requiredType) }
-            is KtLightAnnotationForSourceEntry.LightExpressionValue<*> -> {
-                val expression = element.originalExpression
+            is KtLightElementBase -> {
+                val expression = element.kotlinOrigin
                 when (expression) {
                     is KtExpression -> KotlinConverter.convertExpression(expression, givenParent, requiredType)
-                    else -> el<UExpression> { UastEmptyExpression }
+                    else -> el<UExpression> { UastEmptyExpression(givenParent) }
                 }
             }
             is KtLiteralStringTemplateEntry, is KtEscapeStringTemplateEntry -> el<ULiteralExpression>(build(::KotlinStringULiteralExpression))
@@ -550,7 +550,9 @@ private fun convertVariablesDeclaration(
         psi: KtVariableDeclaration,
         parent: UElement?
 ): UDeclarationsExpression {
-    val declarationsExpression = KotlinUDeclarationsExpression(null, parent, psi)
+    val declarationsExpression = parent as? KotlinUDeclarationsExpression
+            ?: psi.parent.toUElementOfType<UDeclarationsExpression>() as? KotlinUDeclarationsExpression
+            ?: KotlinUDeclarationsExpression(null, parent, psi)
     val parentPsiElement = parent?.psi
     val variable = KotlinUAnnotatedLocalVariable(
             UastKotlinPsiVariable.create(psi, parentPsiElement, declarationsExpression), psi, declarationsExpression) { annotationParent ->

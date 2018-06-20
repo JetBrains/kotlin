@@ -1008,4 +1008,8 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testGetConventionRenameToFoo() = doTest { newName = "foo" }
 
     fun testGetConventionRenameToInvoke() = doTest { newName = "invoke" }
+
+    fun testKotlinOverridingJavaWithDifferentParamName() = doJavaTest {
+        newParameters.add(ParameterInfoImpl(-1, "n", PsiType.INT))
+    }
 }

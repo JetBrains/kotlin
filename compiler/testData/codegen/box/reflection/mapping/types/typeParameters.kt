@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS, NATIVE
 
@@ -18,7 +19,7 @@ fun box(): String {
     if (t !is TypeVariable<*>) return "Fail, t should be a type variable: $t"
 
     assertEquals("T", t.name)
-    assertEquals("A", (t.genericDeclaration as Class<*>).name)
+    assertEquals(A::class.java, (t.genericDeclaration as Class<*>))
 
     return "OK"
 }

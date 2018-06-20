@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetSibling
+import org.jetbrains.kotlin.idea.refactoring.introduce.validateExpressionElements
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
 
 class ExtractKotlinFunctionHandler(
         private val allContainersEnabled: Boolean = false,
@@ -69,6 +69,7 @@ class ExtractKotlinFunctionHandler(
                 file,
                 "Select target code block",
                 listOf(CodeInsightUtils.ElementKind.EXPRESSION),
+                ::validateExpressionElements,
                 { elements, parent -> parent.getExtractionContainers(elements.size == 1, allContainersEnabled) },
                 continuation
         )

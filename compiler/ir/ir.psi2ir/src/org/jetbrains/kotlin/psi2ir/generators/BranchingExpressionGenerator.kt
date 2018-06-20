@@ -84,9 +84,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     }
 
     fun generateWhenExpression(expression: KtWhenExpression): IrExpression {
-        val irSubject = expression.subjectExpression?.let {
-            scope.createTemporaryVariable(it.genExpr(), "subject")
-        }
+        val irSubject = generateWhenSubject(expression)
 
         val inferredType = getInferredTypeWithImplicitCastsOrFail(expression)
 
@@ -127,6 +125,16 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         return generateWhenBody(expression, irSubject, irWhen)
     }
 
+    private fun generateWhenSubject(expression: KtWhenExpression): IrVariable? {
+        val subjectVariable = expression.subjectVariable
+        val subjectExpression = expression.subjectExpression
+        return when {
+            subjectVariable != null -> statementGenerator.visitProperty(subjectVariable, null) as IrVariable
+            subjectExpression != null -> scope.createTemporaryVariable(subjectExpression.genExpr(), "subject")
+            else -> null
+        }
+    }
+
     private fun addElseBranchForExhaustiveWhenIfNeeded(irWhen: IrWhen, whenExpression: KtWhenExpression) {
         if (irWhen.branches.filterIsInstance<IrElseBranch>().isEmpty()) {
             //TODO: check condition: seems it's safe to always generate exception
@@ -144,8 +152,8 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
                 || true == get(BindingContext.EXHAUSTIVE_WHEN, this)
                 || true == get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, this)
 
-    private fun generateWhenBody(expression: KtWhenExpression, irSubject: IrVariable?, irWhen: IrWhen): IrExpression {
-        return if (irSubject == null) {
+    private fun generateWhenBody(expression: KtWhenExpression, irSubject: IrVariable?, irWhen: IrWhen): IrExpression =
+        if (irSubject == null) {
             if (irWhen.branches.isEmpty())
                 IrBlockImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, IrStatementOrigin.WHEN)
             else
@@ -162,7 +170,6 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
                 irBlock
             }
         }
-    }
 
     private fun generateWhenConditionNoSubject(ktCondition: KtWhenCondition): IrExpression =
         (ktCondition as KtWhenConditionWithExpression).expression!!.genExpr()

@@ -6,21 +6,21 @@
 // a package is omitted to get declarations directly under the module
 
 @JsName("throwNPE")
-private fun throwNPE(message: String) {
+internal fun throwNPE(message: String) {
     throw NullPointerException(message)
 }
 
 @JsName("throwCCE")
-private fun throwCCE() {
+internal fun throwCCE() {
     throw ClassCastException("Illegal cast")
 }
 
 @JsName("throwISE")
-private fun throwISE(message: String) {
+internal fun throwISE(message: String) {
     throw IllegalStateException(message)
 }
 
 @JsName("throwUPAE")
-private fun throwUPAE(propertyName: String) {
+internal fun throwUPAE(propertyName: String) {
     throw UninitializedPropertyAccessException("lateinit property ${propertyName} has not been initialized")
 }

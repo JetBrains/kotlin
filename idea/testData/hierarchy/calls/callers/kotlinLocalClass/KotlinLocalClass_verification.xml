@@ -1,6 +1,6 @@
-<node text="client.KA  ()" base="true">
-  <node text="bar.localFun()  ()"/>
-  <node text="client.bar()  ()"/>
-  <node text="client.KClientObj  ()"/>
+<node text="KClient.client.KA  ()" base="true">
+  <node text="KClient.client.bar.localFun()  ()"/>
   <node text="KClient.client()  ()"/>
+  <node text="KClient.client.bar()  ()"/>
+  <node text="KClient.client.KClientObj  ()"/>
 </node>

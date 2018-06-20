@@ -45,6 +45,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
           CALL 'constructor <no name provided>()' type=test1.<no name provided> origin=OBJECT_LITERAL
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Any flags:
+      correspondingProperty: PROPERTY name:test1 type:kotlin.Any visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): Any'
           GET_FIELD 'test1: Any' type=kotlin.Any origin=null
@@ -82,6 +83,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
           CALL 'constructor <no name provided>()' type=test2.<no name provided> origin=OBJECT_LITERAL
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:IFoo flags:
+      correspondingProperty: PROPERTY name:test2 type:IFoo visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): IFoo'
           GET_FIELD 'test2: IFoo' type=IFoo origin=null

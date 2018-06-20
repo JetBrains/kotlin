@@ -243,7 +243,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return functionNameField;
+        return functionNameField.getFocusableComponent();
     }
 
     @Override

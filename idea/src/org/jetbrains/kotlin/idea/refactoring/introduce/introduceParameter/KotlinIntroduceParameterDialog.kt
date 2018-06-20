@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.refactoring.validateElement
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.types.KotlinType
@@ -285,6 +286,9 @@ class KotlinIntroduceParameterDialog private constructor(
                                 val returnType = function.typeReference?.text ?: "Unit"
 
                                 chosenType = (receiverType?.let { "$it." } ?: "") + "($parameterTypes) -> $returnType"
+                                if (KtTokens.SUSPEND_KEYWORD in newDescriptor.modifiers) {
+                                    chosenType = "${KtTokens.SUSPEND_KEYWORD} $chosenType"
+                                }
                                 newArgumentValue = createLambdaForArgument(function)
                                 newReplacer = { }
 

@@ -28,6 +28,6 @@ class Java8MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
         module1.addDependency(module2)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 }

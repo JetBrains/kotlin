@@ -230,6 +230,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
         }
 
         fun addAccessorToClass(accessor: AccessorForCallableDescriptor<*>, irClassToAddAccessor: IrClass, context: JvmBackendContext) {
+            if (accessor is PropertySetterDescriptor && !accessor.correspondingProperty.isVar) return
             val accessorOwner = (accessor as FunctionDescriptor).containingDeclaration as ClassOrPackageFragmentDescriptor
             val body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             val isConstructor = accessor.calleeDescriptor is ConstructorDescriptor

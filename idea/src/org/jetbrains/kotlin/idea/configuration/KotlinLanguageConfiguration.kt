@@ -44,6 +44,8 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
     private val form = ConfigurePluginUpdatesForm()
     private var update: PluginUpdateStatus.Update? = null
 
+    private var savedChannel = -1
+
     private var versionForInstallation: String? = null
 
     private var installedVersion: String? = null
@@ -108,11 +110,15 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
             }
         }
 
-        val savedChannel: Int = EAPChannels.EAP_1_3.indexIfAvailable() ?: EAPChannels.EAP_1_2.indexIfAvailable() ?: 0
+        savedChannel = EAPChannels.EAP_1_3.indexIfAvailable() ?: EAPChannels.EAP_1_2.indexIfAvailable() ?: 0
         form.channelCombo.selectedIndex = savedChannel
 
         form.channelCombo.addActionListener {
-            checkForUpdates()
+            val newChannel = form.channelCombo.selectedIndex
+            if (newChannel != savedChannel) {
+                savedChannel = newChannel
+                checkForUpdates()
+            }
         }
 
         checkForUpdates()
@@ -121,7 +127,7 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
     }
 
     private fun checkForUpdates() {
-        saveSettings()
+        saveChannelSettings()
         form.updateCheckProgressIcon.resume()
         form.resetUpdateStatus()
         KotlinPluginUpdater.getInstance().runUpdateCheck{ pluginUpdateStatus ->
@@ -156,7 +162,7 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
         }
     }
 
-    private fun saveSettings() {
+    private fun saveChannelSettings() {
         saveSelectedChannel(form.channelCombo.selectedIndex)
     }
 }

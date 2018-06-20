@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 
-data class KotlinTodoOccurrence(private val _file: PsiFile, private val _textRange: TextRange, private val _pattern: IndexPattern) : IndexPatternOccurrence {
+data class KotlinTodoOccurrence(private val _file: PsiFile, private val _textRange: TextRange, private val _pattern: IndexPattern) :
+    IndexPatternOccurrence {
     override fun getFile() = _file
     override fun getPattern() = _pattern
     override fun getTextRange() = _textRange
@@ -46,8 +47,8 @@ class KotlinTodoSearcher : QueryExecutorBase<IndexPatternOccurrence, IndexPatter
         val cacheManager = TodoCacheManager.SERVICE.getInstance(file.project)
         val patternProvider = queryParameters.patternProvider
         val count = if (patternProvider != null) {
-            cacheManager.getTodoCount(file.virtualFile, patternProvider)}
-        else
+            cacheManager.getTodoCount(file.virtualFile, patternProvider)
+        } else
             cacheManager.getTodoCount(file.virtualFile, pattern)
         if (count == 0) return
 

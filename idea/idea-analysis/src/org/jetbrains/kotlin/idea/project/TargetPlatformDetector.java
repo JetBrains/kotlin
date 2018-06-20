@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.KtCodeFragment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
-import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 public class TargetPlatformDetector {
@@ -39,7 +38,7 @@ public class TargetPlatformDetector {
 
     @NotNull
     public static TargetPlatform getPlatform(@NotNull KtFile file) {
-        TargetPlatform explicitPlatform = TargetPlatformKt.getTargetPlatform(file);
+        TargetPlatform explicitPlatform = PlatformKt.getForcedTargetPlatform(file);
         if (explicitPlatform != null) return explicitPlatform;
 
         if (file instanceof KtCodeFragment) {

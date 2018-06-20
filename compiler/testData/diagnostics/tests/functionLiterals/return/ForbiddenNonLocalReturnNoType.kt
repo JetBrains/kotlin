@@ -1,18 +1,18 @@
 // !WITH_NEW_INFERENCE
 fun test() {
     run {<!RETURN_NOT_ALLOWED!>return<!>}
-    run {}
+    <!NI;UNREACHABLE_CODE!>run {}<!>
 }
 
 fun test2() {
     run {<!RETURN_NOT_ALLOWED!>return@test2<!>}
-    run {}
+    <!NI;UNREACHABLE_CODE!>run {}<!>
 }
 
 fun test3() {
     fun test4() {
         run {<!RETURN_NOT_ALLOWED!>return@test3<!>}
-        run {}
+        <!NI;UNREACHABLE_CODE!>run {}<!>
     }
 }
 

@@ -71,7 +71,11 @@ interface Mover : (KtNamedDeclaration, KtElement) -> KtNamedDeclaration {
     object Default : Mover {
         override fun invoke(originalElement: KtNamedDeclaration, targetContainer: KtElement): KtNamedDeclaration {
             return when (targetContainer) {
-                is KtFile -> targetContainer.add(originalElement) as KtNamedDeclaration
+                is KtFile -> {
+                    val declarationContainer: KtElement =
+                        if (targetContainer.isScript()) targetContainer.script!!.blockExpression else targetContainer
+                    declarationContainer.add(originalElement) as KtNamedDeclaration
+                }
                 is KtClassOrObject -> targetContainer.addDeclaration(originalElement)
                 else -> error("Unexpected element: ${targetContainer.getElementTextWithContext()}")
             }.apply {

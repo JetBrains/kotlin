@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 public class A {
 
     fun getMyStr(): String {

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIf
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.versions.collectModulesWithOutdatedRuntime
 import org.jetbrains.kotlin.idea.versions.findOutdatedKotlinLibraries
-import org.jetbrains.kotlin.idea.versions.notifyOutdatedKotlinRuntime
 import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectComponent(project) {
@@ -84,13 +83,8 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
                 module.getAndCacheLanguageLevelByDependencies()
             }
 
-            val libraries = findOutdatedKotlinLibraries(myProject)
-            if (!libraries.isEmpty()) {
-                ApplicationManager.getApplication().invokeLater {
-                    notifyOutdatedKotlinRuntime(myProject, libraries)
-                }
-            }
             if (!isSyncing) {
+                val libraries = findOutdatedKotlinLibraries(myProject)
                 val excludeModules = collectModulesWithOutdatedRuntime(libraries)
                 showConfigureKotlinNotificationIfNeeded(myProject, excludeModules)
             } else {

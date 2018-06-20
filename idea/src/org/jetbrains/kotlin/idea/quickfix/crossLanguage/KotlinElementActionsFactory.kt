@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -63,6 +64,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.annotations.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
@@ -377,7 +379,8 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         val modifierBuilder = ModifierBuilder(targetContainer).apply { addJvmModifiers(request.modifiers) }
         if (!modifierBuilder.isValid) return emptyList()
 
-        val resolutionFacade = targetContainer.getResolutionFacade()
+        val resolutionFacade = KotlinCacheService.getInstance(targetContainer.project)
+            .getResolutionFacadeByFile(targetContainer.containingFile, JvmPlatform) ?: return emptyList()
         val returnTypeInfo = request.returnType.toKotlinTypeInfo(resolutionFacade)
         val parameters = request.parameters as List<Pair<SuggestedNameInfo, List<ExpectedType>>>
         val parameterInfos = parameters.map { (suggestedNames, expectedTypes) ->

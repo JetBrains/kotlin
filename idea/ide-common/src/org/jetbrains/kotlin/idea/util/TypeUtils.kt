@@ -44,6 +44,8 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
         preferNotNull: Boolean = false,
         preferStarForRaw: Boolean = false
 ): SimpleType {
+    if (this is ErrorType) return this
+
     if (isFlexible()) {
         val flexible = asFlexibleType()
         val lowerClass = flexible.lowerBound.constructor.declarationDescriptor as? ClassDescriptor?

@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.js.translate.context;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
@@ -68,7 +70,7 @@ public class TranslationContext {
     @Nullable
     private final ClassDescriptor classDescriptor;
     @Nullable
-    private final VariableDescriptor continuationParameterDescriptor;
+    private final ValueParameterDescriptor continuationParameterDescriptor;
 
     @Nullable
     private InlineFunctionContext inlineFunctionContext;
@@ -115,7 +117,7 @@ public class TranslationContext {
         }
     }
 
-    private VariableDescriptor calculateContinuationParameter() {
+    private ValueParameterDescriptor calculateContinuationParameter() {
         if (parent != null && parent.declarationDescriptor == declarationDescriptor) {
             return parent.continuationParameterDescriptor;
         }
@@ -127,12 +129,10 @@ public class TranslationContext {
                                 getCurrentModule(), NoLookupLocation.FROM_BACKEND,
                                 getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
 
-                return new LocalVariableDescriptor(
-                        declarationDescriptor,
-                        Annotations.Companion.getEMPTY(),
-                        Name.identifier("continuation"),
-                        continuationDescriptor.getDefaultType(),
-                        SourceElement.NO_SOURCE);
+                return new ValueParameterDescriptorImpl(function, null, function.getValueParameters().size(),
+                                                        Annotations.Companion.getEMPTY(), Name.identifier("continuation"),
+                                                        continuationDescriptor.getDefaultType(), false, false, false, null,
+                                                        SourceElement.NO_SOURCE);
             }
         }
         return null;
@@ -858,7 +858,7 @@ public class TranslationContext {
     }
 
     @Nullable
-    public VariableDescriptor getContinuationParameterDescriptor() {
+    public ValueParameterDescriptor getContinuationParameterDescriptor() {
         return continuationParameterDescriptor;
     }
 

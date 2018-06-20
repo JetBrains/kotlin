@@ -73,9 +73,9 @@ class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
 
     private fun doTest(intentionName: String) {
         val buildGradleVFile = createProjectSubFile("build.gradle", File(getTestDataPath(), "build.gradle").readText())
+        val sourceVFile = createProjectSubFile("src/main/kotlin/src.kt", File(getTestDataPath(), "src.kt").readText())
         importProject()
         runInEdtAndWait {
-            val sourceVFile = createProjectSubFile("src/main/kotlin/src.kt", File(getTestDataPath(), "src.kt").readText())
             codeInsightTestFixture.configureFromExistingVirtualFile(sourceVFile)
             codeInsightTestFixture.launchAction(codeInsightTestFixture.findSingleIntention(intentionName))
             FileDocumentManager.getInstance().saveAllDocuments()

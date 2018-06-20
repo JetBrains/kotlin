@@ -42,13 +42,14 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
-import org.jetbrains.kotlin.idea.caches.project.moduleInfo
+import org.jetbrains.kotlin.idea.caches.project.forcedModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.forcedTargetPlatform
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.move.KotlinMoveUsage
 import org.jetbrains.kotlin.idea.search.and
@@ -72,7 +73,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.resolve.targetPlatform
 import org.jetbrains.kotlin.util.isJavaDescriptor
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -289,8 +289,8 @@ class MoveConflictChecker(
 
             val targetModuleInfo = getModuleInfoByVirtualFile(project, targetScope)
             val dummyFile = KtPsiFactory(targetElement.project).createFile("dummy.kt", "").apply {
-                moduleInfo = targetModuleInfo
-                targetPlatform = TargetPlatformDetector.getPlatform(targetModule)
+                forcedModuleInfo = targetModuleInfo
+                forcedTargetPlatform = TargetPlatformDetector.getPlatform(targetModule)
             }
 
             val newTargetDescriptors = dummyFile.resolveImportReference(fqName)

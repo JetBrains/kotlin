@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.backend.jvm.codegen.IrExpressionLambda
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
@@ -370,14 +369,7 @@ class MethodInliner(
         )
 
         val transformationVisitor = object : MethodVisitor(API, transformedNode) {
-            /*
-                Ignore simple @InlineOnly functions such as 'error()' or 'assert()' without lambda parameters,
-                as we likely to want to have a line number from the call site in a stack trace.
-             */
-            private val GENERATE_LINE_NUMBERS = GENERATE_SMAP && (inlineOnlySmapSkipper == null || run {
-                val callableDescriptor = inliningContext.root.sourceCompilerForInline.callableDescriptor
-                callableDescriptor != null && callableDescriptor.valueParameters.any { it.type.isFunctionType }
-            })
+            private val GENERATE_DEBUG_INFO = GENERATE_SMAP && inlineOnlySmapSkipper == null
 
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
 
@@ -409,7 +401,7 @@ class MethodInliner(
             }
 
             override fun visitLineNumber(line: Int, start: Label) {
-                if (isInliningLambda || GENERATE_LINE_NUMBERS) {
+                if (isInliningLambda || GENERATE_DEBUG_INFO) {
                     super.visitLineNumber(line, start)
                 }
             }
@@ -437,7 +429,7 @@ class MethodInliner(
             override fun visitLocalVariable(
                     name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
             ) {
-                if (isInliningLambda || (GENERATE_SMAP && inlineOnlySmapSkipper == null)) {
+                if (isInliningLambda || GENERATE_DEBUG_INFO) {
                     val varSuffix = if (inliningContext.isRoot && !isFakeLocalVariableForInline(name)) INLINE_FUN_VAR_SUFFIX else ""
                     val varName = if (!varSuffix.isEmpty() && name == "this") name + "_" else name
                     super.visitLocalVariable(varName + varSuffix, desc, signature, start, end, getNewIndex(index))
