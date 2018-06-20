@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotationsWithPossibleTargets
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 class TypeDeserializer(
@@ -164,7 +166,16 @@ class TypeDeserializer(
     ): SimpleType? {
         val functionType = KotlinTypeFactory.simpleType(annotations, functionTypeConstructor, arguments, nullable)
         if (!functionType.isFunctionType) return null
-        return transformRuntimeFunctionTypeToSuspendFunction(functionType, isReleaseCoroutines)
+
+        transformRuntimeFunctionTypeToSuspendFunction(functionType, isReleaseCoroutines)?.let { return it }
+
+        // kotlin.suspend is still built with LV=1.2, thus it references old Continuation
+        // And otherwise, once stdlib is compiled with 1.3 one may want to stay at LV=1.2
+        if (c.containingDeclaration.safeAs<CallableDescriptor>()?.fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) {
+            transformRuntimeFunctionTypeToSuspendFunction(functionType, !isReleaseCoroutines)?.let { return it }
+        }
+
+        return null
     }
 
     private fun typeParameterTypeConstructor(typeParameterId: Int): TypeConstructor? =

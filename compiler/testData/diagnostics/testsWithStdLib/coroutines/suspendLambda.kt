@@ -1,6 +1,5 @@
-import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.coroutines.experimental.startCoroutine
+// COMMON_COROUTINES_TEST
+import COROUTINES_PACKAGE.*
 
 fun bar() {
     suspend {

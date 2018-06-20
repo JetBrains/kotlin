@@ -1520,8 +1520,15 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         }
 
         @TestMetadata("suspendLambda.kt")
-        public void testSuspendLambda() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendLambda.kt");
+        public void testSuspendLambda_1_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendLambda.kt");
+            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("suspendLambda.kt")
+        public void testSuspendLambda_1_3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendLambda.kt");
+            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
         }
 
         @TestMetadata("suspendOverridability.kt")

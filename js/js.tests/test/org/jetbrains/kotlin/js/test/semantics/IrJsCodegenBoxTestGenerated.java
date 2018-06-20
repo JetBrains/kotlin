@@ -7203,8 +7203,15 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             }
 
             @TestMetadata("suspendModifier.kt")
-            public void testSuspendModifier() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/suspendModifier.kt");
+            public void testSuspendModifier_1_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/suspendModifier.kt");
+                try {
+                    doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
         }
 
