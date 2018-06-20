@@ -647,6 +647,16 @@ class CollectionTest {
         assertTrue(hashSetOf(45, 14, 13).toIterable().contains(14))
     }
 
+    @Test fun containsAll() {
+        assertFalse(hashSetOf<Int>().containsAll(listOf(1, 2)))
+        assertTrue(listOf(10, 20, 30).containsAll(listOf(20, 30)))
+    }
+
+    @Test fun containsAllVararg() {
+        assertFalse(hashSetOf<Int>().containsAll(1, 2))
+        assertTrue(listOf(10, 20, 30).containsAll(20, 30))
+    }
+
     @Test fun min() {
         expect(null, { listOf<Int>().min() })
         expect(1, { listOf(1).min() })
