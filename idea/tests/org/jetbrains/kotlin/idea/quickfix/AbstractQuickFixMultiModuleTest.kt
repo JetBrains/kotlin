@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
+abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), QuickFixTest {
 
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleQuickFix/"
 
@@ -34,10 +34,12 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
 
     private fun doQuickFixTest() {
         val actionFile = project.findFileWithCaret()
-        configureByExistingFile(actionFile.virtualFile!!)
-
+        val virtualFile = actionFile.virtualFile!!
+        configureByExistingFile(virtualFile)
         val actionFileText = actionFile.text
         val actionFileName = actionFile.name
+        val inspections = parseInspectionsToEnable(virtualFile.path, actionFileText).toTypedArray()
+        enableInspectionTools(*inspections)
 
         CommandProcessor.getInstance().executeCommand(project, {
             try {
