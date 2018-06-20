@@ -22,7 +22,13 @@ import com.intellij.find.findUsages.JavaMethodFindUsagesOptions
 import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
 import com.intellij.openapi.project.Project
 
-class KotlinClassFindUsagesOptions(project: Project) : JavaClassFindUsagesOptions(project) {
+interface KotlinMemberFindUsagesOptions {
+    var searchExpected: Boolean
+}
+
+class KotlinClassFindUsagesOptions(project: Project) : KotlinMemberFindUsagesOptions, JavaClassFindUsagesOptions(project) {
+    override var searchExpected: Boolean = true
+
     var searchConstructorUsages: Boolean = true
 
     override fun equals(other: Any?): Boolean {
@@ -34,13 +40,15 @@ class KotlinClassFindUsagesOptions(project: Project) : JavaClassFindUsagesOption
     }
 }
 
-interface KotlinCallableFindUsagesOptions {
+interface KotlinCallableFindUsagesOptions : KotlinMemberFindUsagesOptions {
     var searchOverrides: Boolean
 
     fun toJavaOptions(project: Project): FindUsagesOptions?
 }
 
 class KotlinFunctionFindUsagesOptions(project: Project) : KotlinCallableFindUsagesOptions, JavaMethodFindUsagesOptions(project) {
+    override var searchExpected: Boolean = true
+
     override var searchOverrides: Boolean
         get() = isOverridingMethods
         set(value) {
@@ -67,6 +75,7 @@ class KotlinFunctionFindUsagesOptions(project: Project) : KotlinCallableFindUsag
 class KotlinPropertyFindUsagesOptions(
     project: Project
 ) : KotlinCallableFindUsagesOptions, JavaVariableFindUsagesOptions(project) {
+    override var searchExpected: Boolean = true
     var isReadWriteAccess: Boolean = true
     override var searchOverrides: Boolean = false
 
