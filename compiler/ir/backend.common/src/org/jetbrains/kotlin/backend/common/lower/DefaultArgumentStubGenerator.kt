@@ -49,8 +49,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -83,12 +83,18 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
         functionDescriptor.overriddenDescriptors.forEach { context.log { "DEFAULT-REPLACER: $it" } }
         if (bodies.isNotEmpty()) {
             val newIrFunction = functionDescriptor.generateDefaultsFunction(context)
+            newIrFunction.parent = irFunction.parent
             val descriptor = newIrFunction.descriptor
             log { "$functionDescriptor -> $descriptor" }
             val builder = context.createIrBuilder(newIrFunction.symbol)
-            val body = builder.irBlockBody(irFunction) {
+            newIrFunction.body = builder.irBlockBody(newIrFunction) {
                 val params = mutableListOf<IrVariableSymbol>()
                 val variables = mutableMapOf<ValueDescriptor, IrValueSymbol>()
+
+                irFunction.dispatchReceiverParameter?.let {
+                    variables[it.descriptor] = newIrFunction.dispatchReceiverParameter!!.symbol
+                }
+
                 if (descriptor.extensionReceiverParameter != null) {
                     variables[functionDescriptor.extensionReceiverParameter!!] =
                             newIrFunction.extensionReceiverParameter!!.symbol
@@ -166,7 +172,6 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                 it.defaultValue = null
             }
 
-            newIrFunction.body = body
             return listOf(irFunction, newIrFunction)
         }
         return listOf(irFunction)
@@ -290,13 +295,24 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext, pr
                     }
             }
 
-            private fun parametersForCall(expression: IrMemberAccessExpression): Pair<IrFunctionSymbol, List<Pair<ValueParameterDescriptor, IrExpression?>>> {
-                val descriptor = expression.descriptor as FunctionDescriptor
-                val keyDescriptor = if (DescriptorUtils.isOverride(descriptor))
-                    DescriptorUtils.getAllOverriddenDescriptors(descriptor).first { it.needsDefaultArgumentsLowering(skipInline) }
-                else
-                    descriptor.original
+            private fun IrFunction.findSuperMethodWithDefaultArguments(): IrFunction? {
+                if (!this.descriptor.needsDefaultArgumentsLowering(skipInline)) return null
+
+                if (this !is IrSimpleFunction) return this
+
+                this.overriddenSymbols.forEach {
+                    it.owner.findSuperMethodWithDefaultArguments()?.let { return it }
+                }
+
+                return this
+            }
+
+            private fun parametersForCall(expression: IrFunctionAccessExpression): Pair<IrFunctionSymbol, List<Pair<ValueParameterDescriptor, IrExpression?>>> {
+                val descriptor = expression.descriptor
+                val keyFunction = expression.symbol.owner.findSuperMethodWithDefaultArguments()!!
+                val keyDescriptor = keyFunction.descriptor
                 val realFunction = keyDescriptor.generateDefaultsFunction(context)
+                realFunction.parent = keyFunction.parent
                 val realDescriptor = realFunction.descriptor
 
                 log { "$descriptor -> $realDescriptor" }
@@ -309,8 +325,9 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext, pr
                         maskValues[maskIndex] = maskValues[maskIndex] or (1 shl (i % 32))
                     }
                     val valueParameterDescriptor = realDescriptor.valueParameters[i]
-                    val pair = valueParameterDescriptor to (valueArgument ?: nullConst(expression, valueParameterDescriptor.type))
-                    return@mapIndexed pair
+                    val defaultValueArgument =
+                        if (valueParameterDescriptor.isVararg) null else nullConst(expression, valueParameterDescriptor.type)
+                    valueParameterDescriptor to (valueArgument ?: defaultValueArgument)
                 })
                 maskValues.forEachIndexed { i, maskValue ->
                     params += maskParameterDescriptor(realFunction, i) to IrConstImpl.int(
