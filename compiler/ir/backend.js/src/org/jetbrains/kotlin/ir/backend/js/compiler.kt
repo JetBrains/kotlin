@@ -79,6 +79,7 @@ fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment) {
 fun JsIrBackendContext.lower(file: IrFile) {
     LateinitLowering(this, true).lower(file)
     DefaultArgumentStubGenerator(this).runOnFilePostfix(file)
+    DefaultParameterInjector(this).runOnFilePostfix(file)
     SharedVariablesLowering(this).runOnFilePostfix(file)
     ReturnableBlockLowering(this).lower(file)
     LocalDeclarationsLowering(this).runOnFilePostfix(file)
