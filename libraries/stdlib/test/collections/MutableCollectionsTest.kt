@@ -50,6 +50,7 @@ class MutableCollectionTest {
         testOperation(content, expected, true).let { assertRemove ->
             assertRemove { removeAll(data) }
             assertRemove { removeAll(data.toTypedArray()) }
+            assertRemove { removeAll(*data.toTypedArray()) }
             assertRemove { removeAll(data.toTypedArray().asIterable()) }
             assertRemove { removeAll { it in data } }
             assertRemove { (this as MutableIterable<String>).removeAll { it in data } }
@@ -61,6 +62,7 @@ class MutableCollectionTest {
         testOperation(content, content, false).let { assertRemove ->
             assertRemove { removeAll(emptyList()) }
             assertRemove { removeAll(emptyArray()) }
+            assertRemove { removeAll(*emptyArray()) }
             assertRemove { removeAll(emptySequence()) }
             assertRemove { removeAll { false } }
             assertRemove { (this as MutableIterable<String>).removeAll { false } }
