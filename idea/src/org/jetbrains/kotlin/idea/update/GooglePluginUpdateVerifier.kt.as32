@@ -43,9 +43,9 @@ class GooglePluginUpdateVerifier : PluginUpdateVerifier() {
             else
                 PluginVerifyResult.decline("version to be verified")
         } catch (e: Exception) {
-            LOG.error("Exception when verifying plugin ${pluginDescriptor.pluginId.idString} version $version", e)
+            LOG.info("Exception when verifying plugin ${pluginDescriptor.pluginId.idString} version $version", e)
             return when (e) {
-                is MalformedURLException, is IOException ->
+                is IOException ->
                     PluginVerifyResult.decline("unable to connect to compatibility verification repository")
                 is JAXBException -> PluginVerifyResult.decline("unable to parse compatibility verification metadata")
                 else -> PluginVerifyResult.decline("exception during verification ${e.message}")
