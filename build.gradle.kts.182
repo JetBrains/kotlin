@@ -35,7 +35,14 @@ buildscript {
         }
     }
 
+    // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
+    // kotlin-stdlib external dependency with local project :kotlin-stdlib in kotlinCompilerClasspath configuration.
+    // see also configureCompilerClasspath@
+    val bootstrapCompilerClasspath by configurations.creating
+
     dependencies {
+        bootstrapCompilerClasspath(kotlinDep("compiler-embeddable", bootstrapKotlinVersion))
+
         classpath("com.gradle.publish:plugin-publish-plugin:0.9.7")
         classpath(kotlinDep("gradle-plugin", bootstrapKotlinVersion))
         classpath("net.sf.proguard:proguard-gradle:5.3.3")
@@ -351,6 +358,13 @@ allprojects {
             task("printRuntimeClasspath") { doFirst { javaConvention.sourceSets["main"].runtimeClasspath.printClassPath("runtime") } }
             task("printTestCompileClasspath") { doFirst { javaConvention.sourceSets["test"].compileClasspath.printClassPath("test compile") } }
             task("printTestRuntimeClasspath") { doFirst { javaConvention.sourceSets["test"].runtimeClasspath.printClassPath("test runtime") } }
+        }
+
+        run configureCompilerClasspath@ {
+            val bootstrapCompilerClasspath by rootProject.buildscript.configurations
+            configurations.findByName("kotlinCompilerClasspath")?.let {
+                dependencies.add(it.name, files(bootstrapCompilerClasspath))
+            }
         }
     }
 }
