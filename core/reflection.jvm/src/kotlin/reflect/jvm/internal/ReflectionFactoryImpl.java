@@ -51,6 +51,11 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     }
 
     @Override
+    public String renderLambdaToString(Lambda lambda) {
+        return renderLambdaToString((FunctionBase) lambda);
+    }
+
+    @Override
     public String renderLambdaToString(FunctionBase lambda) {
         KFunction kFunction = ReflectLambdaKt.reflect(lambda);
         if (kFunction != null) {
