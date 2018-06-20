@@ -150,7 +150,7 @@ public fun <T> MutableCollection<in T>.addAll(elements: Array<out T>): Boolean {
 }
 
 /**
- * Adds all elements of the given [elements] array to this [MutableCollection].
+ * Adds all [elements] to this [MutableCollection].
  * @sample samples.collections.Collections.Collections.collectionAddAllVararg
  */
 @JvmName("addAllV") //Required so this method won't clash with addAll(elements: Array<out T>)
