@@ -21467,8 +21467,7 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
 
             @TestMetadata("importForTypealiasObject.kt")
             public void testImportForTypealiasObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/importForTypealiasObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/diagnostics/tests/typealias/importForTypealiasObject.kt");
             }
 
             @TestMetadata("importFromTypeAliasObject.kt")
