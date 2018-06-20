@@ -7,18 +7,19 @@ package org.jetbrains.kotlin.idea.update
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManagerCore
-import org.intellij.lang.annotations.Language
-import java.net.URL
-import java.util.*
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.annotation.*
 import com.intellij.ide.plugins.PluginNode
 import com.intellij.openapi.diagnostic.Logger
 import java.io.IOException
 import java.net.MalformedURLException
+import java.net.URL
+import java.util.*
+import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
+import javax.xml.bind.annotation.*
 
 class GooglePluginUpdateVerifier : PluginUpdateVerifier() {
+    override val verifierName: String
+        get() = "Android Studio"
 
     // Verifies if a plugin can be installed in Android Studio 3.2+.
     // Currently used only by KotlinPluginUpdater.
@@ -36,9 +37,12 @@ class GooglePluginUpdateVerifier : PluginUpdateVerifier() {
             val pluginCompatibility = unmarshaller.unmarshal(stream) as PluginCompatibility
 
             val release = getRelease(pluginCompatibility) ?: return PluginVerifyResult.decline("no verified versions for this build")
-            return if (release.plugins().any { KOTLIN_PLUGIN_ID == it.id && version == it.version }) PluginVerifyResult.accept()
-                   else PluginVerifyResult.decline("version to be verified")
-        } catch (e : Exception) {
+
+            return if (release.plugins().any { KOTLIN_PLUGIN_ID == it.id && version == it.version })
+                PluginVerifyResult.accept()
+            else
+                PluginVerifyResult.decline("version to be verified")
+        } catch (e: Exception) {
             LOG.error("Exception when verifying plugin ${pluginDescriptor.pluginId.idString} version $version", e)
             return when (e) {
                 is MalformedURLException, is IOException ->
@@ -49,7 +53,7 @@ class GooglePluginUpdateVerifier : PluginUpdateVerifier() {
         }
     }
 
-    private fun getRelease(pluginCompatibility: PluginCompatibility) : StudioRelease? {
+    private fun getRelease(pluginCompatibility: PluginCompatibility): StudioRelease? {
         for (studioRelease in pluginCompatibility.releases()) {
             if (buildInRange(studioRelease.name, studioRelease.sinceBuild, studioRelease.untilBuild)) {
                 return studioRelease

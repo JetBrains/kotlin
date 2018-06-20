@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.update
 
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
 
-// Do an additional verification with PluginUpdateVerifier. Enabled only in AS 32.
+// Do an additional verification with PluginUpdateVerifier. Enabled only in AS 3.2+
 fun verify(updateStatus: PluginUpdateStatus.Update): PluginUpdateStatus {
     return updateStatus
 }

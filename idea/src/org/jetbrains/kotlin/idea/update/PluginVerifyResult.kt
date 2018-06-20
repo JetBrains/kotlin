@@ -15,7 +15,8 @@ class PluginVerifyResult {
     var declineMessage: String? = null
 
     companion object {
-        fun decline(reason: String): PluginVerifyResult = PluginVerifyResult().apply {
+        @JvmOverloads
+        fun decline(reason: String? = null): PluginVerifyResult = PluginVerifyResult().apply {
             declineMessage = reason
             verified = false
         }
