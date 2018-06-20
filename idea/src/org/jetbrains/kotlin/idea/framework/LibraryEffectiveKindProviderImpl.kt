@@ -12,11 +12,13 @@ import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
-import java.util.*
+import com.intellij.util.containers.SoftFactoryMap
 
 class LibraryEffectiveKindProviderImpl(project: Project) : LibraryEffectiveKindProvider {
     companion object {
-        private val effectiveKindMap = HashMap<LibraryEx, PersistentLibraryKind<*>?>()
+        private val effectiveKindMap = object : SoftFactoryMap<LibraryEx, PersistentLibraryKind<*>?>() {
+            override fun create(key: LibraryEx) = detectLibraryKind(key.getFiles(OrderRootType.CLASSES))
+        }
     }
 
     init {
@@ -36,10 +38,8 @@ class LibraryEffectiveKindProviderImpl(project: Project) : LibraryEffectiveKindP
         val kind = library.kind
         return when (kind) {
             is KotlinLibraryKind -> kind
-            else -> {
-                synchronized(effectiveKindMap) {
-                    effectiveKindMap.getOrPut(library) { detectLibraryKind(library.getFiles(OrderRootType.CLASSES)) }
-                }
+            else -> synchronized(effectiveKindMap) {
+                effectiveKindMap.get(library)
             }
         }
     }
