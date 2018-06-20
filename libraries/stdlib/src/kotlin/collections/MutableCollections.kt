@@ -160,6 +160,8 @@ public fun <T> MutableCollection<in T>.addAll(vararg elements: T) : Boolean {
 
 /**
  * Removes all [elements] from this [MutableCollection]
+ *
+ * @sample samples.collections.Collections.Collections.collectionRemoveAllVararg
  */
 @JvmName("removeAllV")  //Required so this method won't clash with removeAll(elements: Array<out T>)
 public fun <T> MutableCollection<in T>.removeAll(vararg elements: T): Boolean {
