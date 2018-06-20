@@ -66,6 +66,12 @@ class NewCodeBuilder {
         }
 
         override fun visitModalityModifier(modalityModifier: JKModalityModifier) {
+            val containingDeclaration = modalityModifier.parent?.parent
+            //TODO: merge with bottom one
+            if (modalityModifier.modality == JKModalityModifier.Modality.ABSTRACT && containingDeclaration is JKClass) {
+                if (containingDeclaration.classKind != JKClass.ClassKind.CLASS) return
+            }
+
             printer.printWithNoIndent(
                 when (modalityModifier.modality) {
                     JKModalityModifier.Modality.OPEN -> "open"
