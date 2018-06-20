@@ -1082,6 +1082,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/typeParameterClassLiteral.kt");
         }
 
+        @TestMetadata("unsignedIntegerLiterals.kt")
+        public void testUnsignedIntegerLiterals() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/unsignedIntegerLiterals.kt");
+        }
+
         @TestMetadata("useImportedMember.kt")
         public void testUseImportedMember() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/useImportedMember.kt");

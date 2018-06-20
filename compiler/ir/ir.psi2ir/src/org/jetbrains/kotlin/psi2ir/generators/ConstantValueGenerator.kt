@@ -45,14 +45,18 @@ class ConstantValueGenerator(
         return when (constantValue) {
             is StringValue -> IrConstImpl.string(startOffset, endOffset, constantType, constantValue.value)
             is IntValue -> IrConstImpl.int(startOffset, endOffset, constantType, constantValue.value)
+            is UIntValue -> IrConstImpl.int(startOffset, endOffset, constantType, constantValue.value)
             is NullValue -> IrConstImpl.constNull(startOffset, endOffset, constantType)
             is BooleanValue -> IrConstImpl.boolean(startOffset, endOffset, constantType, constantValue.value)
             is LongValue -> IrConstImpl.long(startOffset, endOffset, constantType, constantValue.value)
+            is ULongValue -> IrConstImpl.long(startOffset, endOffset, constantType, constantValue.value)
             is DoubleValue -> IrConstImpl.double(startOffset, endOffset, constantType, constantValue.value)
             is FloatValue -> IrConstImpl.float(startOffset, endOffset, constantType, constantValue.value)
             is CharValue -> IrConstImpl.char(startOffset, endOffset, constantType, constantValue.value)
             is ByteValue -> IrConstImpl.byte(startOffset, endOffset, constantType, constantValue.value)
+            is UByteValue -> IrConstImpl.byte(startOffset, endOffset, constantType, constantValue.value)
             is ShortValue -> IrConstImpl.short(startOffset, endOffset, constantType, constantValue.value)
+            is UShortValue -> IrConstImpl.short(startOffset, endOffset, constantType, constantValue.value)
 
             is ArrayValue -> {
                 val arrayElementType = varargElementType ?: constantType.getArrayElementType()
