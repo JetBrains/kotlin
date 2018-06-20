@@ -92,6 +92,13 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
             variantData.addJavaSourceFoldersToModel(javaSourceDirectory)
 
     override fun getResDirectories(variantData: BaseVariant): List<File> {
+        val getAllResourcesMethod =
+            variantData::class.java.methods.firstOrNull { it.name == "getAllRawAndroidResources" }
+        if (getAllResourcesMethod != null) {
+            val allResources = getAllResourcesMethod.invoke(variantData) as FileCollection
+            return allResources.files.toList()
+        }
+
         return variantData.mergeResources?.computeResourceSetList0() ?: emptyList()
     }
 
