@@ -42,8 +42,8 @@ class KotlinGradleMultiplatformWizardStep(
 
     private val hierarchyKindComponent = ComboBox(
         arrayOf(
-            "Root with common & platform children",
-            "Root with common child & platform grand-children"
+            "Flat, all created modules on the same level",
+            "Hierarchical, platform modules under common one"
         ), 400
     )
     private val rootModuleNameComponent = JTextField()
@@ -113,7 +113,7 @@ class KotlinGradleMultiplatformWizardStep(
         }
 
         this.panel = panel(LCFlags.fillY) {
-            row("Hierarchy kind:") { hierarchyKindComponent() }
+            row("Project structure:") { hierarchyKindComponent() }
             row("Root module name:") { rootModuleNameComponent() }
             row("Common module name:") { commonModuleNameComponent() }
             row("Create JVM module:") { jvmCheckBox() }
