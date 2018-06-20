@@ -26,6 +26,7 @@ class MutableCollectionTest {
         testOperation(emptyList(), data, true).let { assertAdd ->
             assertAdd { addAll(data) }
             assertAdd { addAll(data.toTypedArray()) }
+            assertAdd { addAll(*data.toTypedArray()) }
             assertAdd { addAll(data.toTypedArray().asIterable()) }
             assertAdd { addAll(data.asSequence()) }
         }
@@ -33,10 +34,13 @@ class MutableCollectionTest {
         testOperation(data, data, false, { it.toCollection(LinkedHashSet()) }).let { assertAdd ->
             assertAdd { addAll(data) }
             assertAdd { addAll(data.toTypedArray()) }
+            assertAdd { addAll(*data.toTypedArray()) }
             assertAdd { addAll(data.toTypedArray().asIterable()) }
             assertAdd { addAll(data.asSequence()) }
         }
     }
+
+
 
     @Test fun removeAll() {
         val content = listOf("foo", "bar", "bar")
