@@ -1559,6 +1559,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun addAll (Ljava/util/Collection;Ljava/lang/Iterable;)Z
 	public static final fun addAll (Ljava/util/Collection;Lkotlin/sequences/Sequence;)Z
 	public static final fun addAll (Ljava/util/Collection;[Ljava/lang/Object;)Z
+	public static final fun addAllV (Ljava/util/Collection;[Ljava/lang/Object;)Z
 	public static final fun all (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun any (Ljava/lang/Iterable;)Z
 	public static final fun any (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z

@@ -67,6 +67,15 @@ class Collections {
             val array = collection.toTypedArray()
             assertPrints(array.contentToString(), "[1, 2, 3]")
         }
+        
+        @Sample
+        fun collectionAddAllVararg() {
+            val mutableCollection = mutableListOf(1, 2, 3)
+            mutableCollection.addAll(4, 5, 6)
+            
+            assertPrints(mutableCollection.toString(), "[1, 2, 3, 4, 5, 6]")
+        }
+        
     }
 
     class Lists {

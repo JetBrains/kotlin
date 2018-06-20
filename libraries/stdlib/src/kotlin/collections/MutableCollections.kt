@@ -8,6 +8,8 @@
 
 package kotlin.collections
 
+import kotlin.jvm.JvmName
+
 /**
  * Removes a single instance of the specified element from this
  * collection, if it is present.
@@ -145,6 +147,15 @@ public fun <T> MutableCollection<in T>.addAll(elements: Sequence<T>): Boolean {
  */
 public fun <T> MutableCollection<in T>.addAll(elements: Array<out T>): Boolean {
     return addAll(elements.asList())
+}
+
+/**
+ * Adds all elements of the given [elements] array to this [MutableCollection].
+ * @sample samples.collections.Collections.Collections.collectionAddAllVararg
+ */
+@JvmName("addAllV") //Required so this method won't clash with addAll(elements: Array<out T>)
+public fun <T> MutableCollection<in T>.addAll(vararg elements: T) : Boolean {
+    return addAll(elements)
 }
 
 /**
