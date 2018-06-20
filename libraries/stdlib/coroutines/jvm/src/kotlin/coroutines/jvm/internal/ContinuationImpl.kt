@@ -17,20 +17,40 @@ internal abstract class RestrictedContinuationImpl protected constructor(
     @JvmField
     protected val completion: Continuation<Any?>?
 ) : Continuation<Any?>, Serializable {
+    init {
+        @Suppress("LeakingThis")
+        validateContext()
+    }
+
+    protected open fun validateContext() {
+        completion?.let {
+            require(it.context === EmptyCoroutineContext) { "Coroutines with restricted suspension must have EmptyCoroutineContext" }
+        }
+    }
+
     public override val context: CoroutineContext
         get() = EmptyCoroutineContext
 
     public override fun resumeWith(result: SuccessOrFailure<Any?>) {
+        val completion = completion!! // fail fast when trying to resume continuation without completion
         try {
             val outcome = invokeSuspend(result)
             if (outcome === CoroutineSingletons.COROUTINE_SUSPENDED) return
-            completion!!.resume(outcome)
+            completion.resume(outcome)
         } catch (exception: Throwable) {
-            completion!!.resumeWithException(exception)
+            completion.resumeWithException(exception)
         }
     }
 
     protected abstract fun invokeSuspend(result: SuccessOrFailure<Any?>): Any?
+
+    public open fun create(completion: Continuation<*>): Continuation<Unit> {
+        throw UnsupportedOperationException("create(Continuation) has not been overridden")
+    }
+
+    public open fun create(value: Any?, completion: Continuation<*>): Continuation<Unit> {
+        throw UnsupportedOperationException("create(Any?;Continuation) has not been overridden")
+    }
 }
 
 @SinceKotlin("1.3")
@@ -40,6 +60,10 @@ internal abstract class ContinuationImpl protected constructor(
     private val _context: CoroutineContext?
 ) : RestrictedContinuationImpl(completion) {
     protected constructor(completion: Continuation<Any?>?) : this(completion, completion?.context)
+
+    override fun validateContext() {
+        // nothing to do here -- supports any context
+    }
 
     override val context: CoroutineContext
         get() = _context!!
@@ -53,14 +77,15 @@ internal abstract class ContinuationImpl protected constructor(
                 .also { intercepted = this }
 
     public override fun resumeWith(result: SuccessOrFailure<Any?>) {
+        val completion = completion!! // fail fast when trying to resume continuation without completion
         try {
             val outcome = invokeSuspend(result)
             if (outcome === CoroutineSingletons.COROUTINE_SUSPENDED) return
             disposeIntercepted()
-            completion!!.resume(outcome)
+            completion.resume(outcome)
         } catch (exception: Throwable) {
             disposeIntercepted()
-            completion!!.resumeWithException(exception)
+            completion.resumeWithException(exception)
         }
     }
 
@@ -71,6 +96,11 @@ internal abstract class ContinuationImpl protected constructor(
         }
         this.intercepted = CompletedContinuation // just in case
     }
+
+    override fun toString(): String {
+        // todo: how continuation shall be rendered?
+        return "Continuation @ ${this::class.java.name}"
+    }
 }
 
 // todo: Do we really need it? 
@@ -80,7 +110,7 @@ internal object CompletedContinuation : Continuation<Any?> {
 
     override fun resumeWith(result: SuccessOrFailure<Any?>) {
         error("This continuation is already complete")
-    }    
+    }
 }
 
 internal abstract class RestrictedSuspendLambda protected constructor(
@@ -91,7 +121,11 @@ internal abstract class RestrictedSuspendLambda protected constructor(
 
     public override fun getArity(): Int = arity
 
-    public override fun toString(): String = Reflection.renderLambdaToString(this)
+    public override fun toString(): String =
+        if (completion == null)
+            Reflection.renderLambdaToString(this) // this is lambda
+        else
+            super.toString() // this is continuation
 }
 
 internal abstract class SuspendLambda protected constructor(
@@ -102,16 +136,9 @@ internal abstract class SuspendLambda protected constructor(
 
     public override fun getArity(): Int = arity
 
-    public override fun toString(): String = Reflection.renderLambdaToString(this)
+    public override fun toString(): String =
+        if (completion == null)
+            Reflection.renderLambdaToString(this) // this is lambda
+        else
+            super.toString() // this is continuation
 }
-
-@SinceKotlin("1.3")
-internal interface SuspendFunction0 : Function1<Continuation<Any?>, Any?> {
-    fun create(completion: Continuation<*>): Continuation<Unit>
-}
-
-@SinceKotlin("1.3")
-internal interface SuspendFunction1 : Function2<Any?, Continuation<Any?>, Any?> {
-    fun create(receiver: Any?, completion: Continuation<*>): Continuation<Unit>
-}
-
