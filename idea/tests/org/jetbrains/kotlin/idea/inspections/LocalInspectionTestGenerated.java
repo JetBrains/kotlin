@@ -2814,6 +2814,54 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class NestedLambdaShadowedImplicitParameter extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInNestedLambdaShadowedImplicitParameter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("explicit.kt")
+        public void testExplicit() throws Exception {
+            runTest("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter/explicit.kt");
+        }
+
+        @TestMetadata("explicitParent.kt")
+        public void testExplicitParent() throws Exception {
+            runTest("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter/explicitParent.kt");
+        }
+
+        @TestMetadata("implicit.kt")
+        public void testImplicit() throws Exception {
+            runTest("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter/implicit.kt");
+        }
+
+        @TestMetadata("implicit2.kt")
+        public void testImplicit2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter/implicit2.kt");
+        }
+
+        @TestMetadata("implicitGrandParent.kt")
+        public void testImplicitGrandParent() throws Exception {
+            runTest("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter/implicitGrandParent.kt");
+        }
+
+        @TestMetadata("receiver.kt")
+        public void testReceiver() throws Exception {
+            runTest("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter/receiver.kt");
+        }
+
+        @TestMetadata("receiverParent.kt")
+        public void testReceiverParent() throws Exception {
+            runTest("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter/receiverParent.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/nullChecksToSafeCall")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
