@@ -75,6 +75,14 @@ class Collections {
             
             assertPrints(mutableCollection.toString(), "[1, 2, 3, 4, 5, 6]")
         }
+
+        @Sample
+        fun collectionRemoveAllVararg() {
+            val mutableCollection = mutableListOf(1,2,3,4)
+            mutableCollection.removeAll(2, 3)
+
+            assertPrints(mutableCollection.toString(), "[1, 4]")
+        }
         
     }
 

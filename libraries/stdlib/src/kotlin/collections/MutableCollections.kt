@@ -159,6 +159,14 @@ public fun <T> MutableCollection<in T>.addAll(vararg elements: T) : Boolean {
 }
 
 /**
+ * Removes all [elements] from this [MutableCollection]
+ */
+@JvmName("removeAllV")  //Required so this method won't clash with removeAll(elements: Array<out T>)
+public fun <T> MutableCollection<in T>.removeAll(vararg elements: T): Boolean {
+    return removeAll(elements)
+}
+
+/**
  * Removes all elements from this [MutableIterable] that match the given [predicate].
  */
 public fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)

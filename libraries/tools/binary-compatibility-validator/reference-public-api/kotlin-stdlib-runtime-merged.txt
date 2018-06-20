@@ -1708,6 +1708,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun removeAll (Ljava/util/Collection;Lkotlin/sequences/Sequence;)Z
 	public static final fun removeAll (Ljava/util/Collection;[Ljava/lang/Object;)Z
 	public static final fun removeAll (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun removeAllV (Ljava/util/Collection;[Ljava/lang/Object;)Z
 	public static final fun requireNoNulls (Ljava/lang/Iterable;)Ljava/lang/Iterable;
 	public static final fun requireNoNulls (Ljava/util/List;)Ljava/util/List;
 	public static final fun retainAll (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
