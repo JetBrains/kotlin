@@ -132,11 +132,7 @@ class TypeDeserializer(
         isReleaseCoroutines: Boolean
     ): SimpleType {
         val result = when (functionTypeConstructor.parameters.size - arguments.size) {
-            0 -> {
-                val functionType = KotlinTypeFactory.simpleType(annotations, functionTypeConstructor, arguments, nullable)
-                functionType.takeIf { it.isFunctionType }
-                    ?.let { funType -> transformRuntimeFunctionTypeToSuspendFunction(funType, isReleaseCoroutines) }
-            }
+            0 -> createSuspendFunctionTypeForBasicCase(annotations, functionTypeConstructor, arguments, nullable, isReleaseCoroutines)
             // This case for types written by eap compiler 1.1
             1 -> {
                 val arity = arguments.size - 1
@@ -157,6 +153,18 @@ class TypeDeserializer(
             "Bad suspend function in metadata with constructor: $functionTypeConstructor",
             arguments
         )
+    }
+
+    private fun createSuspendFunctionTypeForBasicCase(
+        annotations: Annotations,
+        functionTypeConstructor: TypeConstructor,
+        arguments: List<TypeProjection>,
+        nullable: Boolean,
+        isReleaseCoroutines: Boolean
+    ): SimpleType? {
+        val functionType = KotlinTypeFactory.simpleType(annotations, functionTypeConstructor, arguments, nullable)
+        if (!functionType.isFunctionType) return null
+        return transformRuntimeFunctionTypeToSuspendFunction(functionType, isReleaseCoroutines)
     }
 
     private fun typeParameterTypeConstructor(typeParameterId: Int): TypeConstructor? =
