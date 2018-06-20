@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtQualifiedExpression
-import org.jetbrains.kotlin.psi.dotQualifiedExpressionVisitor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -29,10 +26,10 @@ import java.util.*
 class ReplaceStringFormatWithLiteralInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return dotQualifiedExpressionVisitor(fun(expression) {
-            if (!expression.receiverExpression.text.endsWith("String")) return
-            val callExpression = expression.callExpression ?: return
+        return callExpressionVisitor(fun(callExpression) {
             if (callExpression.calleeExpression?.text != "format") return
+            val qualifiedExpression = callExpression.parent as? KtQualifiedExpression
+            if (qualifiedExpression != null && !qualifiedExpression.receiverExpression.text.endsWith("String")) return
 
             val args = callExpression.valueArguments.mapNotNull { it.getArgumentExpression() }
             if (args.size <= 1) return
@@ -40,7 +37,7 @@ class ReplaceStringFormatWithLiteralInspection : AbstractKotlinInspection() {
             val format = args[0].text
             if (format.startsWith("\"\"\"")) return
 
-            val fqName = expression.getCallableDescriptor()?.importableFqName?.asString() ?: return
+            val fqName = callExpression.getCallableDescriptor()?.importableFqName?.asString() ?: return
             if (fqName != "kotlin.text.format" && fqName != "java.lang.String.format") return
 
             val placeHolders = placeHolder.findAll(format).toList()
@@ -51,11 +48,11 @@ class ReplaceStringFormatWithLiteralInspection : AbstractKotlinInspection() {
                 if (nextStr != "s") return
             }
 
-            val context = expression.analyze(BodyResolveMode.PARTIAL)
+            val context = callExpression.analyze(BodyResolveMode.PARTIAL)
             if (args.drop(1).any { it.isSubtypeOfFormattable(context) }) return
 
             holder.registerProblem(
-                expression,
+                qualifiedExpression ?: callExpression,
                 "String.format call can be replaced with string templates",
                 ProblemHighlightType.INFORMATION,
                 ReplaceWithStringLiteralFix()
@@ -72,12 +69,16 @@ class ReplaceStringFormatWithLiteralInspection : AbstractKotlinInspection() {
         override fun getFamilyName() = "Replace with string templates"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val expression = descriptor.psiElement as? KtQualifiedExpression ?: return
-            val args = expression.callExpression?.valueArguments?.mapNotNull { it.getArgumentExpression() } ?: return
+            val element = descriptor.psiElement
+            val qualifiedExpression = element as? KtQualifiedExpression
+            val callExpression = qualifiedExpression?.callExpression ?: element as? KtCallExpression ?: return
+
+            val args = callExpression.valueArguments.mapNotNull { it.getArgumentExpression() }
             val format = args[0].text.removePrefix("\"").removeSuffix("\"")
             val replaceArgs = args.drop(1).mapTo(LinkedList()) { ConvertToStringTemplateIntention.buildText(it, false) }
             val stringLiteral = stringPlaceHolder.replace(format) { replaceArgs.pop() }
-            expression.replace(KtPsiFactory(expression).createStringTemplate(stringLiteral))
+
+            (qualifiedExpression ?: callExpression).also { it.replace(KtPsiFactory(it).createStringTemplate(stringLiteral)) }
         }
     }
 }

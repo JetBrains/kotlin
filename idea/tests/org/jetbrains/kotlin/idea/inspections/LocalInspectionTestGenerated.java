@@ -3919,6 +3919,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/replaceStringFormatWithLiteral/javaStringFormat.kt");
         }
 
+        @TestMetadata("javaStringFormat2.kt")
+        public void testJavaStringFormat2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceStringFormatWithLiteral/javaStringFormat2.kt");
+        }
+
         @TestMetadata("noArgs.kt")
         public void testNoArgs() throws Exception {
             runTest("idea/testData/inspectionsLocal/replaceStringFormatWithLiteral/noArgs.kt");
