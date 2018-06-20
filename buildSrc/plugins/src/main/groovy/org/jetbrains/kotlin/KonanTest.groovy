@@ -647,6 +647,9 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
         def result = super.buildCompileList()
         for (String filePath : result) {
             def text = project.file(filePath).text
+            if (text.contains('COROUTINES_PACKAGE')) {
+                text.replaceAll('COROUTINES_PACKAGE', 'kotlin.coroutines.experimental')
+            }
             def pkg = null
             if (text =~ packagePattern) {
                 pkg = (text =~ packagePattern)[0][1]
@@ -778,6 +781,8 @@ fun runTest() {
             for (String s : ignoredBackends) {
                 if (s.contains("NATIVE")) { return false }
             }
+            // No ignored backends. Check if test is targeted to FULL_JDK
+            if (!findLinesWithPrefixesRemoved(text, "// FULL_JDK").isEmpty()) { return false }
             return true
         }
     }

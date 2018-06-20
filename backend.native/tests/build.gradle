@@ -113,17 +113,18 @@ task installTestLibrary(type: KlibInstall) {
     repo = rootProject.file("${project.property("konan.home")}/klib/common")
 }
 
-// TODO: use lastSuccessful teamcity build.
+// Gets tests from the same Kotlin compiler build
 task update_external_tests() {
     doLast {
         // Unzip.
         delete temporaryDir
         copy {
-            configurations.update_tests.asFileTree.each {
-                from(zipTree(it)) {
-                    include 'compiler/**'
+//            configurations.update_tests.asFileTree.each {
+//                from(zipTree(it)) {
+            from(zipTree(file('/Users/ppunegov/ws/kotlin/dist/kotlin-test-data.zip'))) {
+
+                include 'compiler/**'
                 }
-            }
             into(temporaryDir)
         }
 
