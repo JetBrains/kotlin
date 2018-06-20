@@ -23,7 +23,17 @@ import java.io.File
 class FindUsagesMultiModuleTest : AbstractFindUsagesMultiModuleTest() {
 
     @Test
+    fun testFindCommonClassFromActual() {
+        doTest()
+    }
+
+    @Test
     fun testFindCommonFromActual() {
+        doTest()
+    }
+
+    @Test
+    fun testFindCommonPropertyFromActual() {
         doTest()
     }
 

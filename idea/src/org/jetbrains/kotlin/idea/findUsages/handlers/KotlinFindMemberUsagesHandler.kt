@@ -83,7 +83,12 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
 
         override fun createKotlinReferencesSearchOptions(options: FindUsagesOptions): KotlinReferencesSearchOptions {
             val kotlinOptions = options as KotlinFunctionFindUsagesOptions
-            return KotlinReferencesSearchOptions(true, kotlinOptions.isIncludeOverloadUsages, kotlinOptions.isIncludeOverloadUsages)
+            return KotlinReferencesSearchOptions(
+                acceptCallableOverrides = true,
+                acceptOverloads = kotlinOptions.isIncludeOverloadUsages,
+                acceptExtensionsOfDeclarationClass = kotlinOptions.isIncludeOverloadUsages,
+                searchForExpectedUsages = kotlinOptions.searchExpected
+            )
         }
 
         override fun applyQueryFilters(element: PsiElement, options: FindUsagesOptions, query: Query<PsiReference>): Query<PsiReference> {
@@ -142,7 +147,13 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
         }
 
         override fun createKotlinReferencesSearchOptions(options: FindUsagesOptions): KotlinReferencesSearchOptions {
-            return KotlinReferencesSearchOptions(true, false, false)
+            val kotlinOptions = options as KotlinPropertyFindUsagesOptions
+            return KotlinReferencesSearchOptions(
+                acceptCallableOverrides = true,
+                acceptOverloads = false,
+                acceptExtensionsOfDeclarationClass = false,
+                searchForExpectedUsages = kotlinOptions.searchExpected
+            )
         }
     }
 

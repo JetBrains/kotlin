@@ -24,6 +24,7 @@ import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.util.containers.nullize
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
@@ -42,8 +43,11 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObj
 import org.jetbrains.kotlin.idea.search.usagesSearch.operators.OperatorReferenceSearcher
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.expectedDeclarationIfAny
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import java.util.*
 
@@ -54,7 +58,8 @@ data class KotlinReferencesSearchOptions(
     val acceptCompanionObjectMembers: Boolean = false,
     val searchForComponentConventions: Boolean = true,
     val searchForOperatorConventions: Boolean = true,
-    val searchNamedArguments: Boolean = true
+    val searchNamedArguments: Boolean = true,
+    val searchForExpectedUsages: Boolean = true
 ) {
     fun anyEnabled(): Boolean = acceptCallableOverrides || acceptOverloads || acceptExtensionsOfDeclarationClass
 
@@ -94,47 +99,55 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
             val unwrappedElement = element.namedUnwrappedElement ?: return
 
-            val effectiveSearchScope = run {
-                val elements = if (unwrappedElement is KtDeclaration && !isOnlyKotlinSearch(queryParameters.scopeDeterminedByUser)) {
-                    unwrappedElement.toLightElements()
+            val elementToSearch =
+                if (kotlinOptions.searchForExpectedUsages && unwrappedElement is KtDeclaration && unwrappedElement.hasActualModifier()) {
+                    unwrappedElement.expectedDeclarationIfAny() as? PsiNamedElement
                 } else {
-                    listOf(unwrappedElement)
-                }
+                    null
+                } ?: unwrappedElement
+
+            val effectiveSearchScope = run {
+                val elements = if (elementToSearch is KtDeclaration && !isOnlyKotlinSearch(queryParameters.scopeDeterminedByUser)) {
+                    elementToSearch.toLightElements().nullize()
+                } else {
+                    null
+                } ?: listOf(elementToSearch)
 
                 elements.fold(queryParameters.effectiveSearchScope) { scope, e ->
                     scope.unionSafe(queryParameters.effectiveSearchScope(e))
                 }
             }
 
-            val refFilter: (PsiReference) -> Boolean = when (unwrappedElement) {
+            val refFilter: (PsiReference) -> Boolean = when (elementToSearch) {
                 is KtParameter -> ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
                 else -> ({ true })
             }
 
-            val resultProcessor = KotlinRequestResultProcessor(unwrappedElement, filter = refFilter, options = kotlinOptions)
+            val resultProcessor = KotlinRequestResultProcessor(elementToSearch, filter = refFilter, options = kotlinOptions)
 
-            val name = unwrappedElement.name
-            if (kotlinOptions.anyEnabled()) {
+            val name = elementToSearch.name
+            if (kotlinOptions.anyEnabled() || elementToSearch is KtNamedDeclaration && elementToSearch.isExpectDeclaration()) {
                 if (name != null) {
+                    // Check difference with default scope
                     queryParameters.optimizer.searchWord(
-                        name, effectiveSearchScope, UsageSearchContext.IN_CODE, true, unwrappedElement, resultProcessor
+                        name, effectiveSearchScope, UsageSearchContext.IN_CODE, true, elementToSearch, resultProcessor
                     )
                 }
             }
 
 
-            val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
+            val classNameForCompanionObject = elementToSearch.getClassNameForCompanionObject()
             if (classNameForCompanionObject != null) {
                 queryParameters.optimizer.searchWord(
-                    classNameForCompanionObject, effectiveSearchScope, UsageSearchContext.ANY, true, unwrappedElement, resultProcessor
+                    classNameForCompanionObject, effectiveSearchScope, UsageSearchContext.ANY, true, elementToSearch, resultProcessor
                 )
             }
 
-            if (unwrappedElement is KtParameter && kotlinOptions.searchNamedArguments) {
-                searchNamedArguments(unwrappedElement)
+            if (elementToSearch is KtParameter && kotlinOptions.searchNamedArguments) {
+                searchNamedArguments(elementToSearch)
             }
 
-            if (!(unwrappedElement is KtElement && isOnlyKotlinSearch(effectiveSearchScope))) {
+            if (!(elementToSearch is KtElement && isOnlyKotlinSearch(effectiveSearchScope))) {
                 searchLightElements(element)
             }
 
