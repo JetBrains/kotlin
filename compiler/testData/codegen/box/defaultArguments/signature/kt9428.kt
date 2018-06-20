@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 open class Player(val name: String)
 open class SlashPlayer(name: String) : Player(name)
 

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 interface Id<T> {
     val id: T
 }

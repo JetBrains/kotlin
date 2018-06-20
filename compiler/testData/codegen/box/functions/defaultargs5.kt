@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 open abstract class B {
     abstract fun foo2(arg: Int = 239) : Int
 }

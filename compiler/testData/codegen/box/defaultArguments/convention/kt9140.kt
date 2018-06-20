@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class X {
     operator fun get(name: String, type: String = "none") = name + type
 }

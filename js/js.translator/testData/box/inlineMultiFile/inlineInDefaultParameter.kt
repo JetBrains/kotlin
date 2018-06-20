@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1109
 /*
  * Copy of JVM-backend test
