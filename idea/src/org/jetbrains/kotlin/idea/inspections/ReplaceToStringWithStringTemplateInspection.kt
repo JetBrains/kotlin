@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceToStringWithStringTemplateInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(
-        KtDotQualifiedExpression::class.java
+    KtDotQualifiedExpression::class.java
 ) {
     override fun isApplicable(element: KtDotQualifiedExpression): Boolean {
         if (element.receiverExpression !is KtReferenceExpression) return false
@@ -39,6 +39,9 @@ class ReplaceToStringWithStringTemplateInspection : AbstractApplicabilityBasedIn
     override val defaultFixText = "Replace 'toString' with string template"
 
     private fun KtDotQualifiedExpression.isToString(): Boolean {
+        val callExpression = selectorExpression as? KtCallExpression ?: return false
+        val referenceExpression = callExpression.calleeExpression as? KtNameReferenceExpression ?: return false
+        if (referenceExpression.getReferencedName() != "toString") return false
         val resolvedCall = toResolvedCall(BodyResolveMode.PARTIAL) ?: return false
         val callableDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return false
         return callableDescriptor.getDeepestSuperDeclarations().any { it.fqNameUnsafe.asString() == "kotlin.Any.toString" }
