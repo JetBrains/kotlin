@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.highlighter;
 
-import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -45,10 +44,7 @@ import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnvironment {
     private static final String DIAGNOSTICS_NUMBER_DIRECTIVE = "DIAGNOSTICS_NUMBER";
@@ -153,7 +149,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
     private Set<DiagnosticFactory<?>> getDiagnosticFactories(Map<String, String> directives) {
         String diagnosticsData = directives.get(DIAGNOSTICS_DIRECTIVE);
         assert diagnosticsData != null : DIAGNOSTICS_DIRECTIVE + " should be present.";
-        Set<DiagnosticFactory<?>> diagnosticFactories = Sets.newHashSet();
+        Set<DiagnosticFactory<?>> diagnosticFactories = new HashSet<>();
         String[] diagnostics = diagnosticsData.split(" ");
         for (String diagnosticName : diagnostics) {
             Object diagnostic = getDiagnostic(diagnosticName);

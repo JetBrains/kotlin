@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
@@ -133,7 +132,7 @@ public class BodyResolver {
             resolveSecondaryConstructorBody(c.getOuterDataFlowInfo(), trace, entry.getKey(), entry.getValue(), declaringScope);
         }
         if (c.getSecondaryConstructors().isEmpty()) return;
-        Set<ConstructorDescriptor> visitedConstructors = Sets.newHashSet();
+        Set<ConstructorDescriptor> visitedConstructors = new HashSet<>();
         for (Map.Entry<KtSecondaryConstructor, ClassConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
             checkCyclicConstructorDelegationCall(entry.getValue(), visitedConstructors);
         }
@@ -191,7 +190,7 @@ public class BodyResolver {
 
         // if visit constructor that is already in current chain
         // such constructor is on cycle
-        Set<ConstructorDescriptor> visitedInCurrentChain = Sets.newHashSet();
+        Set<ConstructorDescriptor> visitedInCurrentChain = new HashSet<>();
         ConstructorDescriptor currentConstructorDescriptor = constructorDescriptor;
         while (true) {
             visitedInCurrentChain.add(currentConstructorDescriptor);
@@ -520,7 +519,7 @@ public class BodyResolver {
             @NotNull KtClassOrObject ktClassOrObject
     ) {
         Set<TypeConstructor> allowedFinalSupertypes = getAllowedFinalSupertypes(supertypeOwner, supertypes, ktClassOrObject);
-        Set<TypeConstructor> typeConstructors = Sets.newHashSet();
+        Set<TypeConstructor> typeConstructors = new HashSet<>();
         boolean classAppeared = false;
         for (Map.Entry<KtTypeReference, KotlinType> entry : supertypes.entrySet()) {
             KtTypeReference typeReference = entry.getKey();
@@ -737,7 +736,7 @@ public class BodyResolver {
     private void resolvePropertyDeclarationBodies(@NotNull BodiesResolveContext c) {
 
         // Member properties
-        Set<KtProperty> processed = Sets.newHashSet();
+        Set<KtProperty> processed = new HashSet<>();
         for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             if (!(entry.getKey() instanceof KtClass)) continue;
             KtClass ktClass = (KtClass) entry.getKey();

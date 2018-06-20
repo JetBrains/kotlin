@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class A {
   companion object {
     fun Int.foo(a: Int = 1): Int {

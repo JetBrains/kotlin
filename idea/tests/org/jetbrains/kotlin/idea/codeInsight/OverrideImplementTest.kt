@@ -121,6 +121,10 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
         doOverrideFileTest()
     }
 
+    fun testOverrideExtensionFunction() {
+        doOverrideFileTest()
+    }
+
     fun testOverrideExtensionProperty() {
         doOverrideFileTest()
     }
@@ -284,5 +288,9 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testCopyExperimental() {
         configureLanguageAndApiVersion(project, module, "1.3", "1.3")
         doOverrideFileTest("targetFun")
+    }
+
+    fun testUnresolvedType() {
+        doOverrideFileTest()
     }
 }

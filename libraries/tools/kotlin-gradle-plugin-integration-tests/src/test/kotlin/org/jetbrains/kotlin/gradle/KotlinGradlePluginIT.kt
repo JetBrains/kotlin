@@ -92,64 +92,6 @@ class KotlinGradleIT : BaseGradleIT() {
         }
     }
 
-    // For corresponding documentation, see https://docs.gradle.org/current/userguide/gradle_daemon.html
-    // Setting user.variant to different value implies a new daemon process will be created.
-    // In order to stop daemon process, special exit task is used ( System.exit(0) ).
-    @Test
-    fun testKotlinOnlyDaemonMemory() {
-        val project = Project("kotlinProject")
-        val VARIANT_CONSTANT = "ForTest"
-        val userVariantArg = "-Duser.variant=$VARIANT_CONSTANT"
-        val MEMORY_MAX_GROWTH_LIMIT_KB = 500
-        val BUILD_COUNT = 15
-        val reportMemoryUsage = "-Dkotlin.gradle.test.report.memory.usage=true"
-        val options = BaseGradleIT.BuildOptions(withDaemon = true)
-
-        fun exitTestDaemon() {
-            project.build(userVariantArg, reportMemoryUsage, "exit", options = options) {
-                assertFailed()
-                assertContains("The daemon has exited normally or was terminated in response to a user interrupt.")
-            }
-        }
-
-        fun buildAndGetMemoryAfterBuild(): Int {
-            var reportedMemory: Int? = null
-
-            project.build(userVariantArg, reportMemoryUsage, "clean", "build", options = options) {
-                assertSuccessful()
-                val matches = "\\[KOTLIN\\]\\[PERF\\] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)"
-                    .toRegex().find(output)
-                assert(matches != null && matches.groups.size == 3) { "Used memory after build is not reported by plugin" }
-                reportedMemory = matches!!.groupValues[1].toInt()
-            }
-
-            return reportedMemory!!
-        }
-
-        exitTestDaemon()
-
-        try {
-            val usedMemory = (1..BUILD_COUNT).map { buildAndGetMemoryAfterBuild() }
-
-            // ensure that the maximum of the used memory established after several first builds doesn't raise significantly in the subsequent builds
-            val establishedMaximum = usedMemory.take(5).max()!!
-            val totalMaximum = usedMemory.max()!!
-
-            val maxGrowth = totalMaximum - establishedMaximum
-            assertTrue(
-                maxGrowth <= MEMORY_MAX_GROWTH_LIMIT_KB,
-                "Maximum used memory over series of builds growth $maxGrowth (from $establishedMaximum to $totalMaximum) kb > $MEMORY_MAX_GROWTH_LIMIT_KB kb"
-            )
-
-            // testing that nothing remains locked by daemon, see KT-9440
-            project.build(userVariantArg, "clean", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
-                assertSuccessful()
-            }
-        } finally {
-            exitTestDaemon()
-        }
-    }
-
     @Test
     fun testLogLevelForceGC() {
         val debugProject = Project("simpleProject", minLogLevel = LogLevel.LIFECYCLE)
@@ -804,6 +746,84 @@ class KotlinGradleIT : BaseGradleIT() {
 
             val metaInfDir = File(projectDir, kotlinClassesDir() + "META-INF")
             assertNotNull(metaInfDir.listFiles().singleOrNull { it.name.endsWith(".kotlin_module") })
+        }
+    }
+
+    @Test
+    fun testJavaIcCompatibility() {
+        val project = Project("kotlinJavaProject")
+        project.setupWorkingDir()
+
+        val buildScript = File(project.projectDir, "build.gradle")
+
+        buildScript.modify { "$it\n" + "compileJava.options.incremental = true" }
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        // Then modify a Java source and check that compileJava is incremental:
+        File(project.projectDir, "src/main/java/demo/HelloWorld.java").modify { "$it\n" + "class NewClass { }" }
+        project.build("build") {
+            assertSuccessful()
+            assertContains("Incremental compilation")
+            assertNotContains("not incremental")
+        }
+
+        // Then modify a Kotlin source and check that Gradle sees that Java is not up-to-date:
+        File(project.projectDir, "src/main/kotlin/helloWorld.kt").modify {
+            it.trim('\r', '\n').trimEnd('}') + "\nval z: Int = 0 }"
+        }
+        project.build("build") {
+            assertSuccessful()
+            assertTasksExecuted(":compileKotlin", ":compileJava")
+            assertNotContains("not incremental")
+            assertNotContains("None of the classes needs to be compiled!")
+        }
+    }
+
+    @Test
+    fun testApplyPluginFromBuildSrc() {
+        val project = Project("kotlinProjectWithBuildSrc")
+        project.setupWorkingDir()
+        File(project.projectDir, "buildSrc/build.gradle").modify { it.replace("\$kotlin_version", KOTLIN_VERSION) }
+        project.build("build") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testInternalTest() {
+        Project("internalTest").build("build") {
+            assertSuccessful()
+            assertReportExists()
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
+        }
+    }
+
+    @Test
+    fun testJavaLibraryCompatibility() {
+        val project = Project("javaLibraryProject")
+
+        val compileKotlinTasks = listOf(":libA:compileKotlin", ":libB:compileKotlin", ":app:compileKotlin")
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains("Could not register Kotlin output")
+            assertTasksExecuted(compileKotlinTasks)
+        }
+
+        // Modify a library source and its usage and re-build the project:
+        for (path in listOf("libA/src/main/kotlin/HelloA.kt", "libB/src/main/kotlin/HelloB.kt", "app/src/main/kotlin/App.kt")) {
+            File(project.projectDir, path).modify { original ->
+                original.replace("helloA", "helloA1")
+                    .replace("helloB", "helloB1")
+                    .apply { assert(!equals(original)) }
+            }
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertNotContains("Could not register Kotlin output")
+            assertTasksExecuted(compileKotlinTasks)
         }
     }
 }

@@ -975,7 +975,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             project.setTestingContext(TestingContext(LookupTracker.DO_NOTHING, object : BuildLogger {
                 override fun buildStarted(context: CompileContext, chunk: ModuleChunk) {
                     actual.append("Targets dependent on ${chunk.targets.joinToString() }:\n")
-                    actual.append(getDependentTargets(chunk, context).map { it.toString() }.sorted().joinToString("\n"))
+                    actual.append(getDependentTargets(chunk.targets, context).map { it.toString() }.sorted().joinToString("\n"))
                     actual.append("\n---------\n")
                 }
 

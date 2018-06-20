@@ -17,16 +17,20 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:plugin-api"))
+    compileOnly(project(":kotlin-annotation-processing-base"))
     compileOnly(project(":kotlin-annotation-processing-runtime"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all") }
 
     testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
+    testCompile(project(":kotlin-annotation-processing-base"))
+    testCompile(projectTests(":kotlin-annotation-processing-base"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-annotation-processing-runtime"))
 
     embeddedComponents(project(":kotlin-annotation-processing-runtime")) { isTransitive = false }
+    embeddedComponents(project(":kotlin-annotation-processing-base")) { isTransitive = false }
 }
 
 sourceSets {

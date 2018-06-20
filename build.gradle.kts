@@ -12,7 +12,7 @@ import proguard.gradle.ProGuardTask
 buildscript {
     extra["defaultSnapshotVersion"] = "1.2-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.60-dev-170", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.60-dev-544", onlySuccessBootstrap = false))
 
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
@@ -286,7 +286,7 @@ allprojects {
     // therefore it is disabled by default
     // buildDir = File(commonBuildDir, project.name)
 
-    val repos: List<String> by rootProject.extra
+    val repos = rootProject.extra["repos"] as List<String>
     repositories {
         intellijSdkRepo(project)
         androidDxJarRepo(project)
@@ -347,7 +347,7 @@ allprojects {
         fun FileCollection.printClassPath(role: String) =
                 println("${project.path} $role classpath:\n  ${joinToString("\n  ") { it.toProjectRootRelativePathOrSelf() } }")
 
-        try { the<JavaPluginConvention>() } catch (_: UnknownDomainObjectException) { null }?.let { javaConvention ->
+        try { javaPluginConvention() } catch (_: UnknownDomainObjectException) { null }?.let { javaConvention ->
             task("printCompileClasspath") { doFirst { javaConvention.sourceSets["main"].compileClasspath.printClassPath("compile") } }
             task("printRuntimeClasspath") { doFirst { javaConvention.sourceSets["main"].runtimeClasspath.printClassPath("runtime") } }
             task("printTestCompileClasspath") { doFirst { javaConvention.sourceSets["test"].compileClasspath.printClassPath("test compile") } }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val x: Any = 'A'
     var y = 0

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 val global = "OK"
 class A {
     val prop: String

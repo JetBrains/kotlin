@@ -151,7 +151,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test1 flags:val
-          TYPE_OP type=Test1 origin=CAST typeOperand=Test1
+          TYPE_OP type=Test1 origin=IMPLICIT_CAST typeOperand=Test1
             typeOperand: CLASS CLASS name:Test1 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -279,7 +279,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test2 flags:val
-          TYPE_OP type=Test2 origin=CAST typeOperand=Test2
+          TYPE_OP type=Test2 origin=IMPLICIT_CAST typeOperand=Test2
             typeOperand: CLASS CLASS name:Test2 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -503,7 +503,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test3 flags:val
-          TYPE_OP type=Test3 origin=CAST typeOperand=Test3
+          TYPE_OP type=Test3 origin=IMPLICIT_CAST typeOperand=Test3
             typeOperand: CLASS CLASS name:Test3 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null

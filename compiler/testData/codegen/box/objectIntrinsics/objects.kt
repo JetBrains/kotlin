@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 package foo
 
 fun box(): String {

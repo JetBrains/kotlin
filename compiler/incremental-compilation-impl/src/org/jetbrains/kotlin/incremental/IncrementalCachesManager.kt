@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import java.io.File
 
-abstract class IncrementalCachesManager<PlatformCache : IncrementalCacheCommon<*>>(
+abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache<*>>(
     protected val cachesRootDir: File,
     protected val reporter: ICReporter
 ) {

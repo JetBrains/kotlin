@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionInfo;
@@ -514,7 +513,7 @@ public class AsmUtil {
         });
     }
 
-    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget, boolean isInterface) {
+    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
         if (type.getSort() == Type.ARRAY) {
             Type elementType = correctElementType(type);
             if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
@@ -525,7 +524,7 @@ public class AsmUtil {
             }
         }
         else if (type.getSort() == Type.OBJECT) {
-            iv.invokevirtual((isInterface ? AsmTypes.OBJECT_TYPE : type).getInternalName(), "hashCode", "()I", false);
+            iv.invokevirtual("java/lang/Object", "hashCode", "()I", false);
         }
         else if (type.getSort() == Type.BOOLEAN) {
             Label end = new Label();

@@ -64,6 +64,7 @@ include ":kotlin-build-common",
         ":idea:idea-jvm",
         ":idea:idea-maven",
         ":idea:idea-gradle",
+        ":idea:idea-git",
         ":idea:idea-jps-common",
         ":idea:formatter",
         ":idea:ide-common",
@@ -147,6 +148,7 @@ include ":kotlin-build-common",
         ":examples:annotation-processor-example",
         ":kotlin-script-util",
         ":kotlin-annotation-processing",
+        ":kotlin-annotation-processing-base",
         ":kotlin-annotation-processing-runtime",
         ":kotlin-annotation-processing-gradle",
         ":kotlin-annotation-processing-embeddable",
@@ -166,6 +168,7 @@ include ":kotlin-build-common",
         ":examples:scripting-jvm-maven-deps",
         ":examples:scripting-jvm-maven-deps-host",
         ":pill:generate-all-tests",
+        ":libraries:kotlin-prepush-hook",
         ":include:kotlin-compiler",
 
         // plugin markers:
@@ -255,6 +258,7 @@ project(':kotlin-script-util').projectDir = "$rootDir/libraries/tools/kotlin-scr
 project(':kotlin-annotation-processing-gradle').projectDir = "$rootDir/libraries/tools/kotlin-annotation-processing" as File
 project(':kotlin-annotation-processing-embeddable').projectDir = "$rootDir/prepare/kotlin-annotation-processing-embeddable" as File
 project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt3/kapt3-compiler" as File
+project(':kotlin-annotation-processing-base').projectDir = "$rootDir/plugins/kapt3/kapt3-base" as File
 project(':kotlin-annotation-processing-runtime').projectDir = "$rootDir/plugins/kapt3/kapt3-runtime" as File
 project(':plugins:kapt3-idea').projectDir = "$rootDir/plugins/kapt3/kapt3-idea" as File
 project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-local-example" as File
@@ -274,6 +278,7 @@ project(':examples:scripting-jvm-maven-deps').projectDir = "$rootDir/libraries/e
 project(':examples:scripting-jvm-maven-deps-host').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps/host" as File
 project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate-all-tests" as File
 project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins/imports-dumper" as File
+project(':libraries:kotlin-prepush-hook').projectDir = "$rootDir/libraries/tools/kotlin-prepush-hook" as File
 
 // plugin markers:
 project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")

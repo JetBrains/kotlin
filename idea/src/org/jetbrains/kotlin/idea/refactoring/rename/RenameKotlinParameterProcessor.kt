@@ -53,7 +53,7 @@ class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
         result += collisions
     }
 
-    override fun renameElement(element: PsiElement, newName: String, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
+    override fun renameElement(element: PsiElement, newName: String, usages: Array<UsageInfo>, listener: RefactoringElementListener?) {
         super.renameElement(element, newName, usages, listener)
 
         usages.forEach { (it as? KtResolvableCollisionUsageInfo)?.apply() }

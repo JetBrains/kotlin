@@ -1586,6 +1586,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt15516.kt");
             }
 
+            @TestMetadata("nestedSuspendCallInsideLambda.kt")
+            public void testNestedSuspendCallInsideLambda() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/nestedSuspendCallInsideLambda.kt");
+            }
+
             @TestMetadata("recursiveGenerators.kt")
             public void testRecursiveGenerators() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/recursiveGenerators.kt");

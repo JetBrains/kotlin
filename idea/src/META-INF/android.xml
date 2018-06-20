@@ -26,6 +26,8 @@
 
         <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.android.KotlinAndroidLineMarkerProvider"/>
 
+        <externalProjectDataService implementation="org.jetbrains.kotlin.android.configure.KotlinGradleAndroidModuleModelProjectDataService"/>
+
         <intentionAction>
             <className>org.jetbrains.kotlin.android.intention.KotlinAndroidAddStringResource</className>
             <category>Kotlin Android</category>

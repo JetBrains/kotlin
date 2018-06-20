@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 //KT-3869 Loops and finally: outer finally block not run
 
 class MyString {

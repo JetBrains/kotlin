@@ -72,7 +72,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 startOffset, endOffset,
                 getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
                 referencedDescriptor,
-                typeArguments = null
+                resolvedCall.typeArguments
             ).also { irCallableReference ->
                 irCallableReference.dispatchReceiver = dispatchReceiverValue?.loadIfExists()
                 irCallableReference.extensionReceiver = extensionReceiverValue?.loadIfExists()
@@ -150,7 +150,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         )
     }
 
-    fun generateFunctionReference(
+    private fun generateFunctionReference(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 
 fun bar1(): String {

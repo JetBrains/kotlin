@@ -744,6 +744,7 @@ public interface Errors {
 
     DiagnosticFactory2<KtBinaryExpression, KotlinType, KotlinType> DEPRECATED_IDENTITY_EQUALS = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<KtBinaryExpression, KotlinType, KotlinType> IMPLICIT_BOXING_IN_IDENTITY_EQUALS = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<KtBinaryExpression, KotlinType, KotlinType> FORBIDDEN_IDENTITY_EQUALS = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory2<PsiElement, FunctionDescriptor, String> DEPRECATED_BINARY_MOD = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<PsiElement, FunctionDescriptor, String> DEPRECATED_BINARY_MOD_AS_REM = DiagnosticFactory2.create(WARNING);

@@ -87,7 +87,15 @@ class MetadataPackageFragment(
         }
     }
 
-    override fun computeMemberScope(): MemberScope {
+    private lateinit var components: DeserializationComponents
+
+    override fun initialize(components: DeserializationComponents) {
+        this.components = components
+    }
+
+    private val memberScope = storageManager.createLazyValue { computeMemberScope() }
+
+    private fun computeMemberScope(): MemberScope {
         // For each .kotlin_metadata file which represents a package part, add a separate deserialized scope
         // with top level callables and type aliases (but no classes) only from that part
         val packageParts = packagePartProvider.findMetadataPackageParts(fqName.asString())
@@ -114,6 +122,8 @@ class MetadataPackageFragment(
 
         return ChainedMemberScope.create("Metadata scope", scopes)
     }
+
+    override fun getMemberScope() = memberScope()
 
     override fun hasTopLevelClass(name: Name): Boolean {
         // TODO: check if the corresponding file exists

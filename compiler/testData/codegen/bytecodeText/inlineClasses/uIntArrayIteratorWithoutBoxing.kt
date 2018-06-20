@@ -8,7 +8,7 @@ inline class UIntArray(private val intArray: IntArray) {
 
 inline class UIntIterator(private val intIterator: IntIterator) : Iterator<UInt> {
     override fun next(): UInt {
-        return UInt(intIterator.next())
+        return UInt(intIterator.next()) // box inside bridge that returns java/lang/Object
     }
 
     override fun hasNext(): Boolean {
@@ -27,7 +27,7 @@ fun test() {
 
 fun takeUInt(u: UInt) {}
 
-// 0 INVOKESTATIC UInt\$Erased.box
+// 1 INVOKESTATIC UInt\$Erased.box
 // 0 INVOKEVIRTUAL UInt.unbox
 
 // 0 INVOKEVIRTUAL UIntIterator.iterator
@@ -35,5 +35,4 @@ fun takeUInt(u: UInt) {}
 
 // 0 intValue
 
-// inside wrong bridge
-// 1 valueOf
+// 0 valueOf

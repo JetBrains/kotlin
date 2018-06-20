@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Pair;
@@ -160,7 +159,7 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
     @NotNull
     private static List<String> readTestFunLineNumbers(@NotNull ClassReader cr) {
         List<Label> labels = Lists.newArrayList();
-        Map<Label, String> labels2LineNumbers = Maps.newHashMap();
+        Map<Label, String> labels2LineNumbers = new HashMap<>();
 
         ClassVisitor visitor = new ClassVisitor(Opcodes.ASM5) {
             @Override

@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test1<T> flags:val
-          TYPE_OP type=Test1<T> origin=CAST typeOperand=Test1<T>
+          TYPE_OP type=Test1<T> origin=IMPLICIT_CAST typeOperand=Test1<T>
             typeOperand: CLASS CLASS name:Test1 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -197,7 +197,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test2<T> flags:val
-          TYPE_OP type=Test2<T> origin=CAST typeOperand=Test2<T>
+          TYPE_OP type=Test2<T> origin=IMPLICIT_CAST typeOperand=Test2<T>
             typeOperand: CLASS CLASS name:Test2 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -298,7 +298,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test3<T> flags:val
-          TYPE_OP type=Test3<T> origin=CAST typeOperand=Test3<T>
+          TYPE_OP type=Test3<T> origin=IMPLICIT_CAST typeOperand=Test3<T>
             typeOperand: CLASS CLASS name:Test3 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -395,7 +395,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test4 flags:val
-          TYPE_OP type=Test4 origin=CAST typeOperand=Test4
+          TYPE_OP type=Test4 origin=IMPLICIT_CAST typeOperand=Test4
             typeOperand: CLASS CLASS name:Test4 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null

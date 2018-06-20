@@ -43,11 +43,13 @@ UFile (package = ) [public final class StringTemplateComplexKt {...]
         UAnnotationMethod (name = getCase5) [public static final fun getCase5() : java.lang.String = UastEmptyExpression]
         UAnnotationMethod (name = getLiteralInLiteral) [public static final fun getLiteralInLiteral() : java.lang.String = UastEmptyExpression]
         UAnnotationMethod (name = getLiteralInLiteral2) [public static final fun getLiteralInLiteral2() : java.lang.String = UastEmptyExpression]
-        UAnnotationMethod (name = simpleForTemplate) [public static final fun simpleForTemplate(i: int) : java.lang.String = i]
+        UAnnotationMethod (name = simpleForTemplate) [public static final fun simpleForTemplate(i: int) : java.lang.String {...}]
             UParameter (name = i) [var i: int = 0]
                 UAnnotation (fqName = null) [@null]
                 ULiteralExpression (value = 0) [0] : PsiType:int
-            USimpleNameReferenceExpression (identifier = i) [i] : PsiType:int
+            UBlockExpression [{...}]
+                UReturnExpression [return i]
+                    USimpleNameReferenceExpression (identifier = i) [i] : PsiType:int
         UAnnotationMethod (name = foo) [public static final fun foo() : void {...}]
             UBlockExpression [{...}] : PsiType:Unit
                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println(baz)] : PsiType:Unit

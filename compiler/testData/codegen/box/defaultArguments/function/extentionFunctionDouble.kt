@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun Double.foo(a: Double = 1.0): Double {
     return a
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 import kotlin.reflect.KProperty
 
 public open class TestDelegate<T: Any>(private val initializer: () -> T) {

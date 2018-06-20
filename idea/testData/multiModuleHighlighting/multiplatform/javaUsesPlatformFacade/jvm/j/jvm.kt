@@ -1,0 +1,3 @@
+package j
+
+fun j() {}

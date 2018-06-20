@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 data class A(val o: String, val k: String) {
     constructor() : this("O", "k")
 }

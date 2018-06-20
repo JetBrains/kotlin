@@ -199,7 +199,7 @@ class DebuggerClassNameProvider(
 
                         if (typeForAnonymousClass == null) {
                             val parentText = runReadAction { getRelevantElement(element.parent)?.text } ?: "<parent was null>"
-                            LOG.error("Can not get type for ${element.text}, parent: $parentText")
+                            LOG.error("Can not get type for ${runReadAction { element.text }}, parent: $parentText")
                             classNamesOfContainingDeclaration
                         } else {
                             classNamesOfContainingDeclaration + ComputedClassNames.Cached(typeForAnonymousClass.internalName.toJdiName())

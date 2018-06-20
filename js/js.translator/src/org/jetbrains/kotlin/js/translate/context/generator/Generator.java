@@ -17,17 +17,17 @@
 package org.jetbrains.kotlin.js.translate.context.generator;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Generator<V> {
     @NotNull
-    private final Map<DeclarationDescriptor, V> values = Maps.newHashMap();
+    private final Map<DeclarationDescriptor, V> values = new HashMap<>();
     @NotNull
     private final List<Rule<V>> rules = Lists.newArrayList();
 

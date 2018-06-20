@@ -197,8 +197,9 @@ class PropertyReferenceCodegen(
         fun generateCallableReferenceSignature(iv: InstructionAdapter, callable: CallableDescriptor, state: GenerationState) {
             if (callable is LocalVariableDescriptor) {
                 val asmType = state.bindingContext.get(CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER, callable)
-                val allDelegatedProperties = state.bindingContext.get(CodegenBinding.DELEGATED_PROPERTIES, asmType)
-                val index = allDelegatedProperties?.indexOf(callable) ?: -1
+                        ?: throw AssertionError("No delegated property metadata owner for $callable")
+                val localDelegatedProperties = CodegenBinding.getLocalDelegatedProperties(state.bindingContext, asmType)
+                val index = localDelegatedProperties?.indexOf(callable) ?: -1
                 if (index < 0) {
                     throw AssertionError("Local delegated property is not found in $asmType: $callable")
                 }

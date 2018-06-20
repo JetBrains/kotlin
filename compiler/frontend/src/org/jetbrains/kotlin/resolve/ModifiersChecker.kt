@@ -338,25 +338,28 @@ object ModifierCheckerCore {
 
         val dependencies = featureDependencies[modifier] ?: return true
         for (dependency in dependencies) {
+            val restrictedTargets = featureDependenciesTargets[dependency]
+            if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
+                continue
+            }
+
             val featureSupport = languageVersionSettings.getFeatureSupport(dependency)
 
             val diagnosticData = dependency to languageVersionSettings
-            if (featureSupport == LanguageFeature.State.ENABLED_WITH_ERROR || featureSupport == LanguageFeature.State.DISABLED) {
-                val restrictedTargets = featureDependenciesTargets[dependency]
-                if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
-                    continue
+            when (featureSupport) {
+                LanguageFeature.State.ENABLED_WITH_WARNING -> {
+                    trace.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(node.psi, diagnosticData))
                 }
-
-                if (featureSupport == LanguageFeature.State.DISABLED) {
-                    trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, diagnosticData))
-                } else {
+                LanguageFeature.State.ENABLED_WITH_ERROR -> {
                     trace.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(node.psi, diagnosticData))
+                    return false
                 }
-                return false
-            }
-
-            if (featureSupport == LanguageFeature.State.ENABLED_WITH_WARNING) {
-                trace.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(node.psi, diagnosticData))
+                LanguageFeature.State.DISABLED -> {
+                    trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, diagnosticData))
+                    return false
+                }
+                LanguageFeature.State.ENABLED -> {
+                }
             }
         }
 

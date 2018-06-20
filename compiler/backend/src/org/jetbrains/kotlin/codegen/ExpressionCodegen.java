@@ -127,7 +127,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
      * When we create a temporary variable to hold some value not to compute it many times
      * we put it into this map to emit access to that variable instead of evaluating the whole expression
      */
-    public final Map<KtElement, StackValue> tempVariables = Maps.newHashMap();
+    public final Map<KtElement, StackValue> tempVariables = new HashMap<>();
 
     private int myLastLineNumber = -1;
     private boolean shouldMarkLineNumbers = true;
@@ -491,12 +491,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             Label end = new Label();
 
-            gen(thenExpression, asmType);
+            gen(thenExpression, asmType, kotlinType);
 
             v.goTo(end);
             v.mark(elseLabel);
 
-            gen(elseExpression, asmType);
+            gen(elseExpression, asmType, kotlinType);
 
             markLineNumber(expression, isStatement);
             v.mark(end);

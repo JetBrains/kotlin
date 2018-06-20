@@ -113,7 +113,7 @@ jar.from("../idea/src") {
 projectTest {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
+    systemProperty("kotlin.test.script.classpath", javaPluginConvention().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
     doFirst {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")

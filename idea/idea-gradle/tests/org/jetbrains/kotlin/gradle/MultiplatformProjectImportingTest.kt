@@ -198,6 +198,12 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         )
 
         importProject()
+
+        TestCase.assertEquals(listOf("common_main"), facetSettings("jvm_main").implementedModuleNames)
+        TestCase.assertEquals(listOf("common_test"), facetSettings("jvm_test").implementedModuleNames)
+        TestCase.assertEquals(listOf("common_main"), facetSettings("js_main").implementedModuleNames)
+        TestCase.assertEquals(listOf("common_test"), facetSettings("js_test").implementedModuleNames)
+
         assertModuleModuleDepScope("jvm_main", "common_main", DependencyScope.COMPILE)
         assertModuleModuleDepScope("jvm_test", "common_test", DependencyScope.COMPILE)
         assertModuleModuleDepScope("js_main", "common_main", DependencyScope.COMPILE)
@@ -707,6 +713,91 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
             assertModuleModuleDepScope("project3", "project2", DependencyScope.COMPILE)
             assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
             TestCase.assertEquals(listOf("project1"), facetSettings("project2").implementedModuleNames)
+        } finally {
+            currentExternalProjectSettings.isResolveModulePerSourceSet = isResolveModulePerSourceSet
+        }
+    }
+
+    @Test
+    fun simpleAndroidAppWithCommonModule() {
+        createProjectSubFile(
+            "settings.gradle",
+            "include ':app', ':jvm', ':cmn'"
+        )
+
+        val kotlinVersion = "1.2.41"
+
+        createProjectSubFile(
+            "build.gradle", """
+            buildscript {
+                repositories {
+                    jcenter()
+                    maven { url 'https://maven.google.com' }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+                    classpath 'com.android.tools.build:gradle:2.3.3'
+                }
+            }
+
+            project('cmn') {
+                apply plugin: 'kotlin-platform-common'
+            }
+
+            project('jvm') {
+                apply plugin: 'kotlin-platform-jvm'
+
+                dependencies {
+                    expectedBy project(":cmn")
+                }
+            }
+
+            project('app') {
+                repositories {
+                    mavenCentral()
+                }
+
+                apply plugin: 'com.android.application'
+                apply plugin: 'kotlin-android'
+
+                android {
+                    compileSdkVersion 26
+                    buildToolsVersion "23.0.1"
+                    defaultConfig {
+                        applicationId "org.jetbrains.kotlin"
+                        minSdkVersion 18
+                        targetSdkVersion 26
+                        versionCode 1
+                        versionName "1.0"
+                    }
+                }
+
+                dependencies {
+                    compile project(":jvm")
+                }
+            }
+        """
+        )
+        createProjectSubFile(
+            "local.properties", """
+            sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
+        """
+        )
+
+        val isResolveModulePerSourceSet = getCurrentExternalProjectSettings().isResolveModulePerSourceSet
+        try {
+            currentExternalProjectSettings.isResolveModulePerSourceSet = true
+            importProject()
+
+            assertModuleModuleDepScope("app", "cmn", DependencyScope.COMPILE)
+            TestCase.assertEquals(listOf("cmn"), facetSettings("app").implementedModuleNames)
+
+            currentExternalProjectSettings.isResolveModulePerSourceSet = false
+            importProject()
+
+            assertModuleModuleDepScope("app", "cmn", DependencyScope.COMPILE)
+            TestCase.assertEquals(listOf("cmn"), facetSettings("app").implementedModuleNames)
         } finally {
             currentExternalProjectSettings.isResolveModulePerSourceSet = isResolveModulePerSourceSet
         }

@@ -84,6 +84,11 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         runTest("compiler/testData/multiplatform/incorrectImplInClass/");
     }
 
+    @TestMetadata("inlineClasses")
+    public void testInlineClasses() throws Exception {
+        runTest("compiler/testData/multiplatform/inlineClasses/");
+    }
+
     @TestMetadata("jsNameClash")
     public void testJsNameClash() throws Exception {
         runTest("compiler/testData/multiplatform/jsNameClash/");
@@ -537,6 +542,19 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
         public void testAllFilesPresentInIncorrectImplInClass() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/incorrectImplInClass"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+    }
+
+    @TestMetadata("compiler/testData/multiplatform/inlineClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineClasses extends AbstractMultiPlatformIntegrationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInlineClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/inlineClasses"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
     }
 

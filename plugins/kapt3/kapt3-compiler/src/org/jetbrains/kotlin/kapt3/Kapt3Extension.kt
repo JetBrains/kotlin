@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.kapt3
 
-import com.intellij.ide.ClassUtilCore
 import com.intellij.openapi.project.Project
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.Pretty
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
-import com.sun.tools.javac.util.Convert
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
@@ -39,34 +37,31 @@ import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.kapt3.AptMode.*
+import org.jetbrains.kotlin.kapt3.base.KaptContext
+import org.jetbrains.kotlin.kapt3.base.KaptPaths
+import org.jetbrains.kotlin.kapt3.base.ProcessorLoader
+import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
-import org.jetbrains.kotlin.kapt3.stubs.KaptLineMappingCollector.Companion.KAPT_METADATA_EXTENSION
-import org.jetbrains.kotlin.kapt3.util.KaptLogger
-import org.jetbrains.kotlin.kapt3.util.getPackageNameJava9Aware
+import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation.Companion.KAPT_METADATA_EXTENSION
+import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
+import org.jetbrains.kotlin.kapt3.base.util.info
+import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import java.io.File
-import java.io.IOException
 import java.io.StringWriter
 import java.io.Writer
-import java.net.URLClassLoader
-import java.util.*
 import javax.annotation.processing.Processor
 import com.sun.tools.javac.util.List as JavacList
 
 class ClasspathBasedKapt3Extension(
-        compileClasspath: List<File>,
-        annotationProcessingClasspath: List<File>,
-        javaSourceRoots: List<File>,
-        sourcesOutputDir: File,
-        classFilesOutputDir: File,
-        stubsOutputDir: File,
-        incrementalDataOutputDir: File?,
+        paths: KaptPaths,
         options: Map<String, String>,
         javacOptions: Map<String, String>,
         annotationProcessorFqNames: List<String>,
@@ -75,15 +70,18 @@ class ClasspathBasedKapt3Extension(
         correctErrorTypes: Boolean,
         mapDiagnosticLocations: Boolean,
         pluginInitializedTime: Long,
-        logger: KaptLogger,
+        logger: MessageCollectorBackedKaptLogger,
         compilerConfiguration: CompilerConfiguration
-) : AbstractKapt3Extension(compileClasspath, annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
-                           classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, javacOptions, annotationProcessorFqNames,
+) : AbstractKapt3Extension(paths, options, javacOptions, annotationProcessorFqNames,
                            aptMode, pluginInitializedTime, logger, correctErrorTypes, mapDiagnosticLocations, compilerConfiguration) {
     override val analyzePartially: Boolean
         get() = useLightAnalysis
 
-    private var annotationProcessingClassLoader: URLClassLoader? = null
+    private var processorLoader: ProcessorLoader? = null
+
+    override fun loadProcessors(): List<Processor> {
+        return ProcessorLoader(paths, annotationProcessorFqNames, logger).also { this.processorLoader = it }.loadProcessors()
+    }
 
     override fun analysisCompleted(
             project: Project,
@@ -94,79 +92,23 @@ class ClasspathBasedKapt3Extension(
         try {
             return super.analysisCompleted(project, module, bindingTrace, files)
         } finally {
-            annotationProcessingClassLoader?.close()
-            ClassUtilCore.clearJarURLCache()
-        }
-    }
-
-    override fun loadProcessors(): List<Processor> {
-        ClassUtilCore.clearJarURLCache()
-
-        val classpath = (annotationProcessingClasspath + compileClasspath).distinct()
-        val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray())
-        this.annotationProcessingClassLoader = classLoader
-
-        val processors = if (annotationProcessorFqNames.isNotEmpty()) {
-            logger.info("Annotation processor class names are set, skip AP discovery")
-            annotationProcessorFqNames.mapNotNull { tryLoadProcessor(it, classLoader) }
-        } else {
-            logger.info("Need to discovery annotation processors in the AP classpath")
-            ServiceLoader.load(Processor::class.java, classLoader).toList()
-        }
-
-        if (processors.isEmpty()) {
-            logger.info("No annotation processors available, aborting")
-        } else {
-            logger.info { "Annotation processors: " + processors.joinToString { it::class.java.canonicalName } }
-        }
-
-        return processors
-    }
-
-    private fun tryLoadProcessor(fqName: String, classLoader: ClassLoader): Processor? {
-        val annotationProcessorClass = try {
-            Class.forName(fqName, true, classLoader)
-        } catch (e: Throwable) {
-            logger.warn("Can't find annotation processor class $fqName: ${e.message}")
-            return null
-        }
-
-        try {
-            val annotationProcessorInstance = annotationProcessorClass.newInstance()
-            if (annotationProcessorInstance !is Processor) {
-                logger.warn("$fqName is not an instance of 'Processor'")
-                return null
-            }
-
-            return annotationProcessorInstance
-        } catch (e: Throwable) {
-            logger.warn("Can't load annotation processor class $fqName: ${e.message}")
-            return null
+            processorLoader?.close()
         }
     }
 }
 
 abstract class AbstractKapt3Extension(
-        compileClasspath: List<File>,
-        annotationProcessingClasspath: List<File>,
-        val javaSourceRoots: List<File>,
-        val sourcesOutputDir: File,
-        val classFilesOutputDir: File,
-        val stubsOutputDir: File,
-        val incrementalDataOutputDir: File?,
+        val paths: KaptPaths,
         val options: Map<String, String>,
         val javacOptions: Map<String, String>,
         val annotationProcessorFqNames: List<String>,
         val aptMode: AptMode,
         val pluginInitializedTime: Long,
-        val logger: KaptLogger,
+        val logger: MessageCollectorBackedKaptLogger,
         val correctErrorTypes: Boolean,
         val mapDiagnosticLocations: Boolean,
         val compilerConfiguration: CompilerConfiguration
 ) : PartialAnalysisHandlerExtension() {
-    val compileClasspath = compileClasspath.distinct()
-    val annotationProcessingClasspath = annotationProcessingClasspath.distinct()
-
     private var annotationProcessingComplete = false
 
     private fun setAnnotationProcessingComplete(): Boolean {
@@ -208,9 +150,7 @@ abstract class AbstractKapt3Extension(
 
         val kaptContext = generateStubs(project, module, bindingTrace.bindingContext, files)
 
-        try {
-            runAnnotationProcessing(kaptContext, processors)
-        } catch (error: KaptError) {
+        fun handleKaptError(error: KaptError): AnalysisResult {
             val cause = error.cause
 
             if (cause != null) {
@@ -218,6 +158,20 @@ abstract class AbstractKapt3Extension(
             }
 
             return AnalysisResult.compilationError(bindingTrace.bindingContext)
+        }
+
+        try {
+            runAnnotationProcessing(kaptContext, processors)
+        } catch (error: KaptBaseError) {
+            val kind = when (error.kind) {
+                KaptBaseError.Kind.EXCEPTION -> KaptError.Kind.EXCEPTION
+                KaptBaseError.Kind.ERROR_RAISED -> KaptError.Kind.ERROR_RAISED
+            }
+
+            val cause = error.cause
+            return handleKaptError(if (cause != null) KaptError(kind, cause) else KaptError(kind))
+        } catch (error: KaptError) {
+            return handleKaptError(error)
         } catch (thr: Throwable) {
             return AnalysisResult.internalError(bindingTrace.bindingContext, thr)
         } finally {
@@ -230,15 +184,19 @@ abstract class AbstractKapt3Extension(
             AnalysisResult.RetryWithAdditionalJavaRoots(
                     bindingTrace.bindingContext,
                     module,
-                    listOf(sourcesOutputDir),
+                    listOf(paths.sourcesOutputDir),
                     addToEnvironment = true)
         }
     }
 
-    private fun generateStubs(project: Project, module: ModuleDescriptor, context: BindingContext, files: Collection<KtFile>): KaptContext<*> {
+    private fun generateStubs(
+        project: Project,
+        module: ModuleDescriptor,
+        context: BindingContext,
+        files: Collection<KtFile>
+    ): KaptContext {
         if (!aptMode.generateStubs) {
-            return KaptContext(logger, project, BindingContext.EMPTY, emptyList(), emptyMap(), null,
-                               mapDiagnosticLocations, options, javacOptions)
+            return KaptContext(paths, false, logger, mapDiagnosticLocations, options, javacOptions)
         }
 
         logger.info { "Kotlin files to compile: " + files.map { it.virtualFile?.name ?: "<in memory ${it.hashCode()}>" } }
@@ -248,14 +206,14 @@ abstract class AbstractKapt3Extension(
         }
     }
 
-    private fun runAnnotationProcessing(kaptContext: KaptContext<*>, processors: List<Processor>) {
+    private fun runAnnotationProcessing(kaptContext: KaptContext, processors: List<Processor>) {
         if (!aptMode.runAnnotationProcessing) return
 
-        val javaSourceFiles = collectJavaSourceFiles()
+        val javaSourceFiles = paths.collectJavaSourceFiles()
+        logger.info { "Java source files: " + javaSourceFiles.joinToString { it.canonicalPath } }
 
         val (annotationProcessingTime) = measureTimeMillis {
-            kaptContext.doAnnotationProcessing(
-                javaSourceFiles, processors, compileClasspath, annotationProcessingClasspath, sourcesOutputDir, classFilesOutputDir)
+            kaptContext.doAnnotationProcessing(javaSourceFiles, processors)
         }
 
         logger.info { "Annotation processing took $annotationProcessingTime ms" }
@@ -266,7 +224,7 @@ abstract class AbstractKapt3Extension(
             module: ModuleDescriptor,
             bindingContext: BindingContext,
             files: List<KtFile>
-    ): KaptContext<GenerationState> {
+    ): KaptContextForStubGeneration {
         val builderFactory = Kapt3BuilderFactory()
 
         val targetId = TargetId(
@@ -292,11 +250,13 @@ abstract class AbstractKapt3Extension(
         logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
         logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
-        return KaptContext(logger, project, bindingContext, compiledClasses, origins, generationState,
-                           mapDiagnosticLocations, options, javacOptions)
+        return KaptContextForStubGeneration(
+            paths, false, logger, project, bindingContext, compiledClasses, origins, generationState,
+            mapDiagnosticLocations, options, javacOptions
+        )
     }
 
-    private fun generateKotlinSourceStubs(kaptContext: KaptContext<GenerationState>) {
+    private fun generateKotlinSourceStubs(kaptContext: KaptContextForStubGeneration) {
         val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass = true, correctErrorTypes = correctErrorTypes)
 
         val (stubGenerationTime, kaptStubs) = measureTimeMillis {
@@ -310,25 +270,16 @@ abstract class AbstractKapt3Extension(
         saveIncrementalData(kaptContext, logger.messageCollector, converter)
     }
 
-    private fun collectJavaSourceFiles(): List<File> {
-        val javaFilesFromJavaSourceRoots = (javaSourceRoots + stubsOutputDir).flatMap {
-            root -> root.walk().filter { it.isFile && it.extension == "java" }.toList()
-        }
-        logger.info { "Java source files: " + javaFilesFromJavaSourceRoots.joinToString { it.canonicalPath } }
-
-        return javaFilesFromJavaSourceRoots
-    }
-
-    protected open fun saveStubs(kaptContext: KaptContext<*>, stubs: List<KaptStub>) {
+    protected open fun saveStubs(kaptContext: KaptContext, stubs: List<KaptStub>) {
         for (kaptStub in stubs) {
             val stub = kaptStub.file
             val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
 
             val packageName = stub.getPackageNameJava9Aware()?.toString() ?: ""
-            val packageDir = if (packageName.isEmpty()) stubsOutputDir else File(stubsOutputDir, packageName.replace('.', '/'))
+            val packageDir = if (packageName.isEmpty()) paths.stubsOutputDir else File(paths.stubsOutputDir, packageName.replace('.', '/'))
             packageDir.mkdirs()
 
-            val sourceFile = File(packageDir, className + ".java")
+            val sourceFile = File(packageDir, "$className.java")
             sourceFile.writeText(stub.prettyPrint(kaptContext.context))
 
             kaptStub.writeMetadataIfNeeded(forSource = sourceFile)
@@ -336,10 +287,10 @@ abstract class AbstractKapt3Extension(
     }
 
     protected open fun saveIncrementalData(
-            kaptContext: KaptContext<GenerationState>,
+            kaptContext: KaptContextForStubGeneration,
             messageCollector: MessageCollector,
             converter: ClassFileToSourceStubConverter) {
-        val incrementalDataOutputDir = this.incrementalDataOutputDir ?: return
+        val incrementalDataOutputDir = paths.incrementalDataOutputDir ?: return
 
         val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
         kaptContext.generationState.factory.writeAll(
@@ -347,7 +298,7 @@ abstract class AbstractKapt3Extension(
                 if (!reportOutputFiles) null else fun(file: OutputFile, sources: List<File>, output: File) {
                     val stubFileObject = converter.bindings[file.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")]
                     if (stubFileObject != null) {
-                        val stubFile = File(stubsOutputDir, stubFileObject.name)
+                        val stubFile = File(paths.stubsOutputDir, stubFileObject.name)
                         val lineMappingsFile = File(stubFile.parentFile, stubFile.nameWithoutExtension + KAPT_METADATA_EXTENSION)
 
                         for (file in listOf(stubFile, lineMappingsFile)) {

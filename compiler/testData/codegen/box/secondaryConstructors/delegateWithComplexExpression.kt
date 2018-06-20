@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 var log = ""
 
 open class Base(val s: String)

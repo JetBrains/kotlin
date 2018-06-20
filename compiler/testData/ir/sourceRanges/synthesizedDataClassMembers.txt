@@ -139,7 +139,7 @@
             @0:0..4:1 RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               @0:0..4:1 CONST Boolean type=kotlin.Boolean value=false
         @0:0..4:1 VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:C flags:val
-          @0:0..4:1 TYPE_OP type=C origin=CAST typeOperand=C
+          @0:0..4:1 TYPE_OP type=C origin=IMPLICIT_CAST typeOperand=C
             @0:0..4:1 GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         @0:0..4:1 WHEN type=kotlin.Unit origin=null
           @0:0..4:1 BRANCH

@@ -21,23 +21,31 @@ import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper
 import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask
 import com.intellij.ide.util.MethodCellRenderer
 import com.intellij.ide.util.PsiElementListCellRenderer
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiModifier
+import com.intellij.psi.*
+import com.intellij.psi.presentation.java.ClassPresentationUtil
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.search.PsiElementProcessorAdapter
+import com.intellij.psi.search.searches.ClassInheritorsSearch
+import com.intellij.psi.search.searches.FunctionalExpressionSearch
 import com.intellij.util.CommonProcessors
 import gnu.trove.THashSet
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.isTraitFakeOverride
+import org.jetbrains.kotlin.idea.presentation.DeclarationByModuleRenderer
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachDeclaredMemberOverride
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.projectStructure.module
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.JComponent
@@ -64,6 +72,45 @@ internal fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiElement,
     }
 
     return overridden
+}
+
+// Module-specific version of MarkerType.getSubclassedClassTooltip
+fun getSubclassedClassTooltip(klass: PsiClass): String? {
+    val processor = PsiElementProcessor.CollectElementsWithLimit(5, THashSet<PsiClass>())
+    ClassInheritorsSearch.search(klass).forEach(PsiElementProcessorAdapter(processor))
+
+    if (processor.isOverflow) {
+        return DaemonBundle.message(if (klass.isInterface) "interface.is.implemented.too.many" else "class.is.subclassed.too.many")
+    }
+
+    val subclasses = processor.toArray(PsiClass.EMPTY_ARRAY)
+    if (subclasses.isEmpty()) {
+        val functionalImplementations = PsiElementProcessor.CollectElementsWithLimit(2, THashSet<PsiFunctionalExpression>())
+        FunctionalExpressionSearch.search(klass).forEach(PsiElementProcessorAdapter(functionalImplementations))
+        return if (functionalImplementations.collection.isNotEmpty()) "Has functional implementations" else null
+    }
+
+    val start = DaemonBundle.message(if (klass.isInterface) "interface.is.implemented.by.header" else "class.is.subclassed.by.header")
+    val shortcuts = ActionManager.getInstance().getAction(IdeActions.ACTION_GOTO_IMPLEMENTATION).shortcutSet.shortcuts
+    val shortcut = shortcuts.firstOrNull()
+    var postfix = "<br><div style='margin-top: 5px'><font size='2'>Click"
+    if (shortcut != null) postfix += " or press " + KeymapUtil.getShortcutText(shortcut)
+    postfix += " to navigate</font></div>"
+
+    val renderer = DeclarationByModuleRenderer()
+    val comparator = renderer.comparator
+    return subclasses.toList().sortedWith(comparator).joinToString(
+        prefix = "<html><body>$start", postfix = "$postfix</body</html>", separator = "<br>"
+    ) {
+        val moduleNameRequired = if (it is KtLightClass) {
+            val origin = it.kotlinOrigin
+            origin?.hasActualModifier() == true || origin?.isExpectDeclaration() == true
+        } else false
+        val moduleName = it.module?.name
+        val elementText = renderer.getElementText(it) + (moduleName?.takeIf { moduleNameRequired }?.let { " [$it]" } ?: "")
+        val refText = (moduleName?.let { "$it:" } ?: "") + ClassPresentationUtil.getNameForClass(it, /* qualified = */ true)
+        "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#kotlinClass/$refText\">$elementText</a>"
+    }
 }
 
 fun getOverriddenMethodTooltip(method: PsiMethod): String? {

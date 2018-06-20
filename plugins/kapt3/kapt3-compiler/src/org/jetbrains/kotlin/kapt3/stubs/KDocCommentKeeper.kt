@@ -26,7 +26,7 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeScanner
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.kapt3.KaptContext
+import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.*
@@ -35,7 +35,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-class KDocCommentKeeper(private val kaptContext: KaptContext<*>) {
+class KDocCommentKeeper(private val kaptContext: KaptContextForStubGeneration) {
     private val docCommentTable = KaptDocCommentTable()
 
     fun getDocTable(file: JCTree.JCCompilationUnit): DocCommentTable {

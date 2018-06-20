@@ -3,9 +3,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.builder.model.SourceProvider
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil.compareVersionNumbers
-import com.intellij.util.ReflectionUtil
 import groovy.lang.Closure
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
@@ -218,10 +215,8 @@ internal class Kotlin2JvmSourceSetProcessor(
 internal fun SourceSetOutput.tryAddClassesDir(
         classesDirProvider: () -> FileCollection
 ): Boolean {
-    val getClassesDirs = ReflectionUtil.findMethod(
-            javaClass.methods.asList(),
-            "getClassesDirs"
-    ) ?: return false
+    val getClassesDirs = javaClass.methods.firstOrNull { it.name == "getClassesDirs" && it.parameterCount == 0 }
+            ?: return false
 
     val classesDirs = getClassesDirs(this) as? ConfigurableFileCollection
             ?: return false
@@ -262,7 +257,7 @@ internal class Kotlin2JsSourceSetProcessor(
             kotlinTask.kotlinOptions.outputFile = kotlinTask.outputFile.absolutePath
             val outputDir = kotlinTask.outputFile.parentFile
 
-            if (FileUtil.isAncestor(outputDir, project.rootDir, false))
+            if (outputDir.isParentOf(project.rootDir))
                 throw InvalidUserDataException(
                         "The output directory '$outputDir' (defined by outputFile of $kotlinTask) contains or " +
                         "matches the project root directory '${project.rootDir}'.\n" +
@@ -478,12 +473,12 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     protected val logger = Logging.getLogger(this.javaClass)
 
     abstract fun forEachVariant(project: Project, action: (V) -> Unit): Unit
+    abstract fun getVariantName(variant: V): String
     abstract fun getTestedVariantData(variantData: V): V?
     abstract fun getResDirectories(variantData: V): List<File>
 
     protected abstract fun getSourceProviders(variantData: V): Iterable<SourceProvider>
     protected abstract fun getAllJavaSources(variantData: V): Iterable<File>
-    protected abstract fun getVariantName(variant: V): String
     protected abstract fun getJavaTask(variantData: V): AbstractCompile?
     protected abstract fun addJavaSourceDirectoryToVariantModel(variantData: V, javaSourceDirectory: File): Unit
 
@@ -594,20 +589,6 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 
 internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompile, logger: Logger) {
     kotlinTask.javaOutputDir = javaTask.destinationDir
-
-    // Gradle Java IC in older Gradle versions (before 2.14) cannot check .class directories updates.
-    // To make it work, reset the up-to-date status of compileJava with this flag.
-    kotlinTask.anyClassesCompiled = false
-    val gradleSupportsJavaIcWithClassesDirs = ParsedGradleVersion.parse(javaTask.project.gradle.gradleVersion)
-                                                      ?.let { it >= ParsedGradleVersion(2, 14) } ?: false
-    if (!gradleSupportsJavaIcWithClassesDirs) {
-        javaTask.outputs.upToDateWhen { task ->
-            if (kotlinTask.anyClassesCompiled) {
-                logger.info("Marking $task out of date, because kotlin classes are changed")
-                false
-            } else true
-        }
-    }
 
     // Make Gradle check if the javaTask is up-to-date based on the Kotlin classes
     javaTask.inputsCompatible.run {

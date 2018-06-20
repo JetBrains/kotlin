@@ -8,7 +8,7 @@ plugins {
 dependencies {
     testRuntime(intellijDep())
 
-    compile(projectDist(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-stdlib-jre8"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
@@ -41,7 +41,6 @@ dependencies {
     compile(commonDep("org.jetbrains", "markdown"))
 
     compileOnly(project(":kotlin-daemon-client"))
-
 
     compileOnly(intellijDep())
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
@@ -129,7 +128,7 @@ val performanceTestRuntime by configurations.creating {
 }
 
 val performanceTest by run {
-    val sourceSets = the<JavaPluginConvention>().sourceSets
+    val sourceSets = javaPluginConvention().sourceSets
     sourceSets.creating {
         compileClasspath += sourceSets["test"].output
         compileClasspath += sourceSets["main"].output
@@ -152,7 +151,7 @@ projectTest(taskName = "performanceTest") {
     classpath = performanceTest.runtimeClasspath
     workingDir = rootDir
 
-    jvmArgs.removeAll { it.startsWith("-Xmx") }
+    jvmArgs?.removeAll { it.startsWith("-Xmx") }
 
     maxHeapSize = "3g"
     jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")

@@ -1067,16 +1067,6 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/testData/debugger/tinyApp/src/stepping/custom/inlineInObjectSameFileDex.kt");
         }
 
-        @TestMetadata("inlineOnlyLambdas.kt")
-        public void testInlineOnlyLambdas() throws Exception {
-            runTest("idea/testData/debugger/tinyApp/src/stepping/custom/inlineOnlyLambdas.kt");
-        }
-
-        @TestMetadata("inlineOnlyLambdasStepping.kt")
-        public void testInlineOnlyLambdasStepping() throws Exception {
-            runTest("idea/testData/debugger/tinyApp/src/stepping/custom/inlineOnlyLambdasStepping.kt");
-        }
-
         @TestMetadata("inlineProperties.kt")
         public void testInlineProperties() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/stepping/custom/inlineProperties.kt");

@@ -16,14 +16,10 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
@@ -39,21 +35,6 @@ class KotlinUFunctionCallExpression(
         givenParent: UElement?,
         private val _resolvedCall: ResolvedCall<*>?
 ) : KotlinAbstractUExpression(givenParent), UCallExpressionEx, KotlinUElementWithType {
-    companion object {
-        fun resolveSource(descriptor: DeclarationDescriptor, source: PsiElement?): PsiMethod? {
-            if (descriptor is ConstructorDescriptor && descriptor.isPrimary
-                    && source is KtClassOrObject && source.primaryConstructor == null
-                    && source.secondaryConstructors.isEmpty()) {
-                return source.toLightClass()?.constructors?.firstOrNull()
-            }
-
-            return when (source) {
-                is KtFunction -> LightClassUtil.getLightClassMethod(source)
-                is PsiMethod -> source
-                else -> null
-            }
-        }
-    }
 
     constructor(psi: KtCallElement, uastParent: UElement?) : this(psi, uastParent, null)
 
@@ -124,8 +105,8 @@ class KotlinUFunctionCallExpression(
 
     override fun resolve(): PsiMethod? {
         val descriptor = resolvedCall?.resultingDescriptor ?: return null
-        val source = descriptor.toSource() ?: return null
-        return resolveSource(descriptor, source)
+        val source = descriptor.toSource()
+        return resolveSource(psi, descriptor, source)
     }
 
     override fun accept(visitor: UastVisitor) {

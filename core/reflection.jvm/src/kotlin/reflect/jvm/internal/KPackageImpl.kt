@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -103,8 +104,9 @@ internal class KPackageImpl(
 
     override fun getLocalProperty(index: Int): PropertyDescriptor? {
         return data().metadata?.let { (nameResolver, packageProto) ->
-            val proto = packageProto.getExtension(JvmProtoBuf.packageLocalVariable, index)
-            deserializeToDescriptor(jClass, proto, nameResolver, TypeTable(packageProto.typeTable), MemberDeserializer::loadProperty)
+            packageProto.getExtensionOrNull(JvmProtoBuf.packageLocalVariable, index)?.let { proto ->
+                deserializeToDescriptor(jClass, proto, nameResolver, TypeTable(packageProto.typeTable), MemberDeserializer::loadProperty)
+            }
         }
     }
 

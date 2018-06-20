@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun launch(f : () -> Unit) {
     f()
 }

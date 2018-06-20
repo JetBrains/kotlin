@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun box() : String {
   val fps  : Double = 1.toDouble()
   var mspf : Long

@@ -61,12 +61,18 @@ repositories {
     if (androidStudioRelease != null) {
         ivy {
             artifactPattern("https://dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$studioOs.zip")
+            metadataSources {
+                artifact()
+            }
         }
     }
     maven { setUrl("$intellijRepo/$intellijReleaseType") }
     maven { setUrl("https://plugins.jetbrains.com/maven") }
     ivy {
         artifactPattern("https://raw.github.com/JetBrains/intellij-community/[revision]/lib/src/[artifact].zip")
+        metadataSources {
+            artifact()
+        }
     }
 }
 

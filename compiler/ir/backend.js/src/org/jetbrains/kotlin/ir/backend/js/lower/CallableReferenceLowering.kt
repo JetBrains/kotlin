@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
+// TODO: generate $metadata$ property and fill it with corresponding KFunction/KProperty interface
 class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     private data class CallableReferenceKey(
@@ -256,12 +257,12 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             val cacheName = "${getterFunction.name}_${Namer.KCALLABLE_CACHE_SUFFIX}"
             val cacheVarSymbol =
                 JsSymbolBuilder.buildVar(getterFunction.descriptor.containingDeclaration, getterFunction.returnType, cacheName, true)
-            val irCacheNull = JsIrBuilder.buildNull(cacheVarSymbol.descriptor.type)
-            val irCacheDeclaration = JsIrBuilder.buildVar(cacheVarSymbol, irCacheNull)
+            val irNull = JsIrBuilder.buildNull(cacheVarSymbol.descriptor.type)
+            val irCacheDeclaration = JsIrBuilder.buildVar(cacheVarSymbol)
             val irCacheValue = JsIrBuilder.buildGetValue(cacheVarSymbol)
-            val irIfCondition = JsIrBuilder.buildCall(context.irBuiltIns.eqeqeqSymbol).apply {
+            val irIfCondition = JsIrBuilder.buildCall(context.irBuiltIns.eqeqSymbol).apply {
                 putValueArgument(0, irCacheValue)
-                putValueArgument(1, irCacheNull)
+                putValueArgument(1, irNull)
             }
             val irSetCache = JsIrBuilder.buildSetVariable(cacheVarSymbol, JsIrBuilder.buildGetValue(varSymbol))
             val thenStatements = mutableListOf<IrStatement>().apply {

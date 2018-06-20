@@ -801,6 +801,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addForLoopIndices/explicitParamType.kt");
         }
 
+        @TestMetadata("inapplicableDestructuringDeclaration.kt")
+        public void testInapplicableDestructuringDeclaration() throws Exception {
+            runTest("idea/testData/intentions/addForLoopIndices/inapplicableDestructuringDeclaration.kt");
+        }
+
         @TestMetadata("inapplicableExistingIndices.kt")
         public void testInapplicableExistingIndices() throws Exception {
             runTest("idea/testData/intentions/addForLoopIndices/inapplicableExistingIndices.kt");
@@ -5068,6 +5073,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("argumentWithReceiver.kt")
         public void testArgumentWithReceiver() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/argumentWithReceiver.kt");
+        }
+
+        @TestMetadata("classReference.kt")
+        public void testClassReference() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/classReference.kt");
+        }
+
+        @TestMetadata("classReference2.kt")
+        public void testClassReference2() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/classReference2.kt");
         }
 
         @TestMetadata("companion.kt")
@@ -9755,6 +9770,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("implicitParameterName.kt")
         public void testImplicitParameterName() throws Exception {
             runTest("idea/testData/intentions/lambdaToAnonymousFunction/implicitParameterName.kt");
+        }
+
+        @TestMetadata("inInlineFunction.kt")
+        public void testInInlineFunction() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/inInlineFunction.kt");
         }
 
         @TestMetadata("incorrectOffset.kt")

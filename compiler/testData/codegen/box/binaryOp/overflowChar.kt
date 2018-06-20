@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val c1: Char = 0.toChar()
     val c2 = c1 - 1

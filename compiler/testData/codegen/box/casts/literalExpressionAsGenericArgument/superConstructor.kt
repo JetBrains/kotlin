@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 open class Base<T>(val value: T)
 class Box(): Base<Long>(-1)
 

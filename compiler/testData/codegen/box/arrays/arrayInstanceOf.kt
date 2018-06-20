@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 //test [], get and iterator calls
 fun test(createIntNotLong: Boolean): String {
     val a = if (createIntNotLong) IntArray(5) else LongArray(5)

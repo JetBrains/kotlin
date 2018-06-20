@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 public inline fun <T> T.with(f: T.() -> Unit): T {
     this.f()
     return this

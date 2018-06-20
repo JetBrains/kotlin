@@ -42,11 +42,12 @@ class KotlinPropertyAccessorsReferenceSearcher : QueryExecutorBase<PsiReference,
         val propertyName = propertyName(method) ?: return
 
         queryParameters.optimizer!!.searchWord(
-                propertyName,
-                onlyKotlinFiles,
-                UsageSearchContext.IN_CODE,
-                true,
-                method)
+            propertyName,
+            onlyKotlinFiles,
+            UsageSearchContext.IN_CODE,
+            true,
+            method
+        )
     }
 
     private fun propertyName(method: PsiMethod): String? {

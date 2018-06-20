@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.incremental.isJavaFile
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.jps.incremental.withLookupStorage
-import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
+import org.jetbrains.kotlin.jps.platforms.kotlinBuildTargets
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.keysToMap
@@ -60,9 +60,9 @@ import java.util.concurrent.Future
 import kotlin.reflect.jvm.javaField
 
 abstract class AbstractIncrementalJpsTest(
-        private val allowNoFilesWithSuffixInTestData: Boolean = false,
-        private val checkDumpsCaseInsensitively: Boolean = false,
-        private val allowNoBuildLogFileInTestData: Boolean = false
+    private val allowNoFilesWithSuffixInTestData: Boolean = false,
+    private val checkDumpsCaseInsensitively: Boolean = false,
+    private val allowNoBuildLogFileInTestData: Boolean = false
 ) : BaseKotlinJpsBuildTestCase() {
     companion object {
         private val COMPILATION_FAILED = "COMPILATION FAILED"
@@ -151,21 +151,25 @@ abstract class AbstractIncrementalJpsTest(
             val builder = IncProjectBuilder(projectDescriptor, BuilderRegistry.getInstance(), myBuildParams, CanceledStatus.NULL, mockConstantSearch, true)
             val buildResult = BuildResult()
             builder.addMessageHandler(buildResult)
-            builder.build(scope.build(), false)
+            val finalScope = scope.build()
+            builder.build(finalScope, false)
 
             lookupTracker.lookups.mapTo(lookupsDuringTest) { LookupSymbol(it.name, it.scopeFqName) }
 
+            // for getting kotlin platform only
+            val dummyCompileContext = CompileContextImpl.createContextForTests(finalScope, projectDescriptor)
+
             if (!buildResult.isSuccessful) {
                 val errorMessages =
-                        buildResult
-                                .getMessages(BuildMessage.Kind.ERROR)
-                                .map { it.messageText }
-                                .map { it.replace("^.+:\\d+:\\s+".toRegex(), "").trim() }
-                                .joinToString("\n")
+                    buildResult
+                        .getMessages(BuildMessage.Kind.ERROR)
+                        .map { it.messageText }
+                        .map { it.replace("^.+:\\d+:\\s+".toRegex(), "").trim() }
+                        .joinToString("\n")
                 return MakeResult(logger.log + "$COMPILATION_FAILED\n" + errorMessages + "\n", true, null)
             }
             else {
-                return MakeResult(logger.log, false, createMappingsDump(projectDescriptor))
+                return MakeResult(logger.log, false, createMappingsDump(projectDescriptor, dummyCompileContext))
             }
         }
         finally {
@@ -250,13 +254,13 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     protected open fun createBuildLog(incrementalMakeResults: List<AbstractIncrementalJpsTest.MakeResult>): String =
-            buildString {
-                incrementalMakeResults.forEachIndexed { i, makeResult ->
-                    if (i > 0) append("\n")
-                    append("================ Step #${i + 1} =================\n\n")
-                    append(makeResult.log)
-                }
+        buildString {
+            incrementalMakeResults.forEachIndexed { i, makeResult ->
+                if (i > 0) append("\n")
+                append("================ Step #${i + 1} =================\n\n")
+                append(makeResult.log)
             }
+        }
 
     protected open fun doTest(testDataPath: String) {
         testDataDir = File(testDataPath)
@@ -282,18 +286,26 @@ abstract class AbstractIncrementalJpsTest(
         clearCachesRebuildAndCheckOutput(lastMakeResult)
     }
 
-    private fun createMappingsDump(project: ProjectDescriptor) =
-            createKotlinIncrementalCacheDump(project) + "\n\n\n" +
-            createLookupCacheDump(project) + "\n\n\n" +
-            createCommonMappingsDump(project) + "\n\n\n" +
-            createJavaMappingsDump(project)
+    private fun createMappingsDump(
+        project: ProjectDescriptor,
+        dummyCompileContext: CompileContext
+    ) = createKotlinIncrementalCacheDump(project, dummyCompileContext) + "\n\n\n" +
+                createLookupCacheDump(project) + "\n\n\n" +
+                createCommonMappingsDump(project) + "\n\n\n" +
+                createJavaMappingsDump(project)
 
-    private fun createKotlinIncrementalCacheDump(project: ProjectDescriptor): String {
+    private fun createKotlinIncrementalCacheDump(
+        project: ProjectDescriptor,
+        dummyCompileContext: CompileContext
+    ): String {
         return buildString {
             for (target in project.allModuleTargets.sortedBy { it.presentableName }) {
-                append("<target $target>\n")
-                append(project.dataManager.getKotlinCache(target).dump())
-                append("</target $target>\n\n\n")
+                val kotlinCache = project.dataManager.getKotlinCache(dummyCompileContext.kotlinBuildTargets[target])
+                if (kotlinCache != null) {
+                    append("<target $target>\n")
+                    append(kotlinCache.dump())
+                    append("</target $target>\n\n\n")
+                }
             }
         }
     }
@@ -399,7 +411,7 @@ abstract class AbstractIncrementalJpsTest(
         }
         else {
             val nameToModule = moduleDependencies.keys
-                    .keysToMap { addModule(it, arrayOf(getAbsolutePath("$it/src")), null, null, jdk)!! }
+                .keysToMap { addModule(it, arrayOf(getAbsolutePath("$it/src")), null, null, jdk)!! }
 
             for ((moduleName, dependencies) in moduleDependencies) {
                 val module = nameToModule[moduleName]!!
@@ -534,6 +546,6 @@ internal val ProjectDescriptor.allModuleTargets: Collection<ModuleBuildTarget>
 private class DependencyDescriptor(val name: String, val exported: Boolean)
 
 private fun parseDependency(dependency: String): DependencyDescriptor =
-        DependencyDescriptor(dependency.removeSuffix(EXPORTED_SUFFIX), dependency.endsWith(EXPORTED_SUFFIX))
+    DependencyDescriptor(dependency.removeSuffix(EXPORTED_SUFFIX), dependency.endsWith(EXPORTED_SUFFIX))
 
 private val EXPORTED_SUFFIX = "[exported]"

@@ -197,7 +197,7 @@ object ExpectedActualResolver {
 
             object ClassKind : Incompatible("class kinds are different (class, interface, object, enum, annotation)")
 
-            object ClassModifiers : Incompatible("modifiers are different (companion, inner)")
+            object ClassModifiers : Incompatible("modifiers are different (companion, inner, inline)")
 
             object Supertypes : Incompatible("some supertypes are missing in the actual declaration")
 
@@ -395,7 +395,7 @@ object ExpectedActualResolver {
 
         if (a.kind != b.kind) return Incompatible.ClassKind
 
-        if (!equalBy(a, b) { listOf(it.isCompanionObject, it.isInner) }) return Incompatible.ClassModifiers
+        if (!equalBy(a, b) { listOf(it.isCompanionObject, it.isInner, it.isInline) }) return Incompatible.ClassModifiers
 
         val aTypeParams = a.declaredTypeParameters
         val bTypeParams = b.declaredTypeParameters

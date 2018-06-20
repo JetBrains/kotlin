@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.completion.test.assertInstanceOf
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 
@@ -207,6 +208,32 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
                 /* FileReferences are injected in every string, so we use them as indicator that KtElement references are available there */
                 it is FileReference
             })
+    }
+
+    fun testClassLiteral() {
+        myFixture.addClass(
+            """
+            public @interface ClazzAnnotation {
+                  Class<?> cls();
+            }
+        """.trimIndent()
+        )
+
+        myFixture.configureByText(
+            "AnnotatedClass.kt", """
+            @ClazzAnnotation(cls = String::class)
+            class AnnotatedClass
+        """.trimIndent()
+        )
+        myFixture.testHighlighting("AnnotatedClass.kt")
+
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("cls") as PsiClassObjectAccessExpression
+        assertTextAndRange("String::class", annotationAttributeVal)
+        TestCase.assertEquals(
+            PsiType.getJavaLangString(myFixture.psiManager, myFixture.project.projectScope()),
+            annotationAttributeVal.operand.type
+        )
     }
 
     fun testAnnotationsInAnnotationsArrayDeclarations() {

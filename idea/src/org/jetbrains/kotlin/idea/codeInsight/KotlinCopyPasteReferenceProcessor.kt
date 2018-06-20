@@ -49,10 +49,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -170,9 +167,11 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
                 if (!reference.canBeResolvedViaImport(descriptor, bindingContext)) continue
 
                 val fqName = descriptor.importableFqName!!
-
                 val kind = KotlinReferenceData.Kind.fromDescriptor(descriptor) ?: continue
-                add(KotlinReferenceData(element.range.start - startOffset, element.range.end - startOffset, fqName.asString(), kind))
+                val isQualifiable = KotlinReferenceData.isQualifiable(element, descriptor)
+                val relativeStart = element.range.start - startOffset
+                val relativeEnd = element.range.end - startOffset
+                add(KotlinReferenceData(relativeStart, relativeEnd, fqName.asString(), isQualifiable, kind))
             }
         }
     }
@@ -261,14 +260,16 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
         val originalFqName = FqName(refData.fqName)
         val name = originalFqName.shortName()
 
-        if (refData.kind == KotlinReferenceData.Kind.EXTENSION_FUNCTION) {
-            if (fileResolutionScope.findFunction(name, NoLookupLocation.FROM_IDE) { it.importableFqName == originalFqName } != null) {
-                return null // already imported
+        if (!refData.isQualifiable) {
+            if (refData.kind == KotlinReferenceData.Kind.FUNCTION) {
+                if (fileResolutionScope.findFunction(name, NoLookupLocation.FROM_IDE) { it.importableFqName == originalFqName } != null) {
+                    return null // already imported
+                }
             }
-        }
-        else if (refData.kind == KotlinReferenceData.Kind.EXTENSION_PROPERTY) {
-            if (fileResolutionScope.findVariable(name, NoLookupLocation.FROM_IDE) { it.importableFqName == originalFqName } != null) {
-                return null // already imported
+            else if (refData.kind == KotlinReferenceData.Kind.PROPERTY) {
+                if (fileResolutionScope.findVariable(name, NoLookupLocation.FROM_IDE) { it.importableFqName == originalFqName } != null) {
+                    return null // already imported
+                }
             }
         }
 
@@ -312,7 +313,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
         for ((reference, refData) in referencesToRestore) {
             val fqName = FqName(refData.fqName)
 
-            if (!refData.kind.isExtension()) {
+            if (refData.isQualifiable) {
                 if (reference is KtSimpleNameReference) {
                     val pointer = smartPointerManager.createSmartPsiElementPointer(reference.element, file)
                     bindingRequests.add(BindingRequest(pointer, fqName))
@@ -320,9 +321,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
                 else if (reference is KDocReference) {
                     descriptorsToImport.addAll(findImportableDescriptors(fqName, file))
                 }
-            }
-
-            if (refData.kind.isExtension()) {
+            } else {
                 descriptorsToImport.addIfNotNull(findCallableToImport(fqName, file))
             }
         }
@@ -336,9 +335,6 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
         }
         performDelayedRefactoringRequests(file.project)
     }
-
-    private fun KotlinReferenceData.Kind.isExtension()
-            = this == KotlinReferenceData.Kind.EXTENSION_FUNCTION || this == KotlinReferenceData.Kind.EXTENSION_PROPERTY
 
     private fun findImportableDescriptors(fqName: FqName, file: KtFile): Collection<DeclarationDescriptor> {
         return file.resolveImportReference(fqName).filterNot {

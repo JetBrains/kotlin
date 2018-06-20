@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 var state: String = "Fail"
 
 class A private constructor(x: String = "OK") {

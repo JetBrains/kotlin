@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.checkers.*;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -253,7 +253,7 @@ public class ModifiersChecker {
                 @NotNull KtModifierList modifierList,
                 @NotNull Collection<KtModifierKeywordToken> possibleModifiers
         ) {
-            Map<KtModifierKeywordToken, PsiElement> tokens = Maps.newHashMap();
+            Map<KtModifierKeywordToken, PsiElement> tokens = new HashMap<>();
             for (KtModifierKeywordToken modifier : possibleModifiers) {
                 if (modifierList.hasModifier(modifier)) {
                     tokens.put(modifier, modifierList.getModifier(modifier));

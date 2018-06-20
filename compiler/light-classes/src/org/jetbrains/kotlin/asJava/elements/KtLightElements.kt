@@ -44,4 +44,6 @@ interface KtLightMethod : PsiAnnotationMethod, KtLightMember<PsiMethod> {
     val isDelegated: Boolean
         get() = lightMemberOrigin?.originKind == JvmDeclarationOriginKind.DELEGATION
                 || lightMemberOrigin?.originKind == JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL
+
+    val isMangled: Boolean
 }

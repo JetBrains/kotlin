@@ -49,7 +49,7 @@ val shadowJar = task<ShadowJar>("shadowJar") {
     callGroovy("manifestAttributes", manifest, project)
     manifest.attributes["Implementation-Version"] = version
 
-    from(the<JavaPluginConvention>().sourceSets["main"].output)
+    from(javaPluginConvention().sourceSets["main"].output)
     exclude("**/*.proto")
     configurations = listOf(shadows)
 

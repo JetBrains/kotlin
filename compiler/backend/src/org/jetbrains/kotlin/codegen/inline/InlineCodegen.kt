@@ -503,7 +503,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             val asmMethod = if (callDefault)
                 state.typeMapper.mapDefaultMethod(functionDescriptor, sourceCompilerForInline.contextKind)
             else
-                jvmSignature.asmMethod
+                mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
 
             val methodId = MethodId(DescriptorUtils.getFqNameSafe(functionDescriptor.containingDeclaration), asmMethod)
             val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
@@ -511,14 +511,24 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 return sourceCompilerForInline.doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, callDefault, asmMethod)
             }
 
-            val resultInCache = state.inlineCache.methodNodeById.getOrPut(
-                methodId
-            ) {
-                doCreateMethodNodeFromCompiled(directMember, state, asmMethod)
-                        ?: throw IllegalStateException("Couldn't obtain compiled function body for " + functionDescriptor)
+            val resultInCache = state.inlineCache.methodNodeById.getOrPut(methodId) {
+                val result = doCreateMethodNodeFromCompiled(directMember, state, asmMethod)
+                        ?: if (functionDescriptor.isSuspend)
+                            doCreateMethodNodeFromCompiled(directMember, state, jvmSignature.asmMethod)
+                        else
+                            null
+                result ?: throw IllegalStateException("Couldn't obtain compiled function body for $functionDescriptor")
             }
 
             return resultInCache.copyWithNewNode(cloneMethodNode(resultInCache.node))
+        }
+
+        // For suspend inline functions we generate two methods:
+        // 1) normal one: with state machine to call directly
+        // 2) for inliner: with mangled name and without state machine
+        private fun mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor: FunctionDescriptor, asmMethod: Method): Method {
+            if (!functionDescriptor.isSuspend) return asmMethod
+            return Method("${asmMethod.name}\$\$forInline", asmMethod.descriptor)
         }
 
         private fun getDirectMemberAndCallableFromObject(functionDescriptor: FunctionDescriptor): CallableMemberDescriptor {

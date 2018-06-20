@@ -60,6 +60,14 @@ val EAP_REPOSITORY = RepositoryDescription(
         "https://bintray.com/kotlin/kotlin-eap/kotlin/",
         isSnapshot = false)
 
+val DEFAULT_GRADLE_PLUGIN_REPOSITORY = RepositoryDescription(
+        "default.gradle.plugins",
+        "Default Gradle Plugin Repository",
+        "https://plugins.gradle.org/m2/",
+        null,
+        isSnapshot = false
+)
+
 fun devRepository(version: String) = RepositoryDescription(
         "teamcity.kotlin.dev",
         "Teamcity Repository of Kotlin Development Builds",

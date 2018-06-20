@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
@@ -52,7 +51,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -558,8 +556,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.store(2, OBJECT_TYPE);
 
             for (PropertyDescriptor propertyDescriptor : properties) {
-                KotlinType type = propertyDescriptor.getType();
-                Type asmType = typeMapper.mapType(type);
+                Type asmType = typeMapper.mapType(propertyDescriptor);
 
                 Type thisPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, ImplementationBodyCodegen.this.classAsmType, 0);
                 StackValue.coerce(thisPropertyType, asmType, iv);
@@ -576,26 +573,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifne(ne);
                 }
                 else {
-                    if (isPrimitive(asmType)) {
-                        StackValue value = StackValue.cmp(KtTokens.EQEQ, asmType, StackValue.onStack(asmType), StackValue.onStack(asmType));
-                        value.put(Type.BOOLEAN_TYPE, iv);
-                    }
-                    else {
-                        if (TypeUtils.isNullableType(type)) {
-                            StackValue value =
-                                    genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
-                            value.put(Type.BOOLEAN_TYPE, iv);
-                        }
-                        else {
-                            ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
-                            Type owner =
-                                    !(classifier instanceof ClassDescriptor) || DescriptorUtils.isInterface(classifier)
-                                    ? AsmTypes.OBJECT_TYPE
-                                    : asmType;
-                            iv.invokevirtual(owner.getInternalName(), "equals",
-                                             Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE), false);
-                        }
-                    }
+                    StackValue value =
+                            genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
+                    value.put(Type.BOOLEAN_TYPE, iv);
                     iv.ifeq(ne);
                 }
             }
@@ -636,8 +616,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifnull(ifNull);
                 }
 
-                genHashCode(mv, iv, asmType, state.getTarget(),
-                            DescriptorUtils.isInterface(propertyDescriptor.getType().getConstructor().getDeclarationDescriptor()));
+                genHashCode(mv, iv, asmType, state.getTarget());
 
                 if (ifNull != null) {
                     Label end = new Label();

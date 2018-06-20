@@ -6,44 +6,47 @@
 package kotlinx.metadata.impl.extensions
 
 import kotlinx.metadata.*
+import kotlinx.metadata.impl.ReadContext
+import kotlinx.metadata.impl.WriteContext
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.serialization.StringTable
 import java.util.*
 
 interface MetadataExtensions {
-    fun readClassExtensions(v: KmClassVisitor, proto: ProtoBuf.Class, strings: NameResolver, types: TypeTable)
+    fun readClassExtensions(v: KmClassVisitor, proto: ProtoBuf.Class, c: ReadContext)
 
-    fun readFunctionExtensions(v: KmFunctionVisitor, proto: ProtoBuf.Function, strings: NameResolver, types: TypeTable)
+    fun readPackageExtensions(v: KmPackageVisitor, proto: ProtoBuf.Package, c: ReadContext)
 
-    fun readPropertyExtensions(v: KmPropertyVisitor, proto: ProtoBuf.Property, strings: NameResolver, types: TypeTable)
+    fun readFunctionExtensions(v: KmFunctionVisitor, proto: ProtoBuf.Function, c: ReadContext)
 
-    fun readConstructorExtensions(v: KmConstructorVisitor, proto: ProtoBuf.Constructor, strings: NameResolver, types: TypeTable)
+    fun readPropertyExtensions(v: KmPropertyVisitor, proto: ProtoBuf.Property, c: ReadContext)
 
-    fun readTypeParameterExtensions(v: KmTypeParameterVisitor, proto: ProtoBuf.TypeParameter, strings: NameResolver)
+    fun readConstructorExtensions(v: KmConstructorVisitor, proto: ProtoBuf.Constructor, c: ReadContext)
 
-    fun readTypeExtensions(v: KmTypeVisitor, proto: ProtoBuf.Type, strings: NameResolver)
+    fun readTypeParameterExtensions(v: KmTypeParameterVisitor, proto: ProtoBuf.TypeParameter, c: ReadContext)
 
-    fun writeClassExtensions(type: KmExtensionType, proto: ProtoBuf.Class.Builder, strings: StringTable): KmClassExtensionVisitor?
+    fun readTypeExtensions(v: KmTypeVisitor, proto: ProtoBuf.Type, c: ReadContext)
 
-    fun writeFunctionExtensions(type: KmExtensionType, proto: ProtoBuf.Function.Builder, strings: StringTable): KmFunctionExtensionVisitor?
+    fun writeClassExtensions(type: KmExtensionType, proto: ProtoBuf.Class.Builder, c: WriteContext): KmClassExtensionVisitor?
 
-    fun writePropertyExtensions(type: KmExtensionType, proto: ProtoBuf.Property.Builder, strings: StringTable): KmPropertyExtensionVisitor?
+    fun writePackageExtensions(type: KmExtensionType, proto: ProtoBuf.Package.Builder, c: WriteContext): KmPackageExtensionVisitor?
+
+    fun writeFunctionExtensions(type: KmExtensionType, proto: ProtoBuf.Function.Builder, c: WriteContext): KmFunctionExtensionVisitor?
+
+    fun writePropertyExtensions(type: KmExtensionType, proto: ProtoBuf.Property.Builder, c: WriteContext): KmPropertyExtensionVisitor?
 
     fun writeConstructorExtensions(
-        type: KmExtensionType, proto: ProtoBuf.Constructor.Builder, strings: StringTable
+        type: KmExtensionType, proto: ProtoBuf.Constructor.Builder, c: WriteContext
     ): KmConstructorExtensionVisitor?
 
     fun writeTypeParameterExtensions(
-        type: KmExtensionType, proto: ProtoBuf.TypeParameter.Builder, strings: StringTable
+        type: KmExtensionType, proto: ProtoBuf.TypeParameter.Builder, c: WriteContext
     ): KmTypeParameterExtensionVisitor?
 
-    fun writeTypeExtensions(type: KmExtensionType, proto: ProtoBuf.Type.Builder, strings: StringTable): KmTypeExtensionVisitor?
+    fun writeTypeExtensions(type: KmExtensionType, proto: ProtoBuf.Type.Builder, c: WriteContext): KmTypeExtensionVisitor?
 
     companion object {
         val INSTANCES: List<MetadataExtensions> by lazy {
-            ServiceLoader.load(MetadataExtensions::class.java).toList().also {
+            ServiceLoader.load(MetadataExtensions::class.java, MetadataExtensions::class.java.classLoader).toList().also {
                 if (it.isEmpty()) error(
                     "No MetadataExtensions instances found in the classpath. Please ensure that the META-INF/services/ " +
                             "is not stripped from your application and that the Java virtual machine is not running " +

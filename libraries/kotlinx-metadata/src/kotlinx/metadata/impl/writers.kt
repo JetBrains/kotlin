@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTabl
 import org.jetbrains.kotlin.metadata.serialization.StringTable
 
 class WriteContext(val strings: StringTable) {
-    internal val extensions = MetadataExtensions.INSTANCES
+    private val extensions = MetadataExtensions.INSTANCES
     val versionRequirements: MutableVersionRequirementTable = MutableVersionRequirementTable()
 
     operator fun get(string: String): Int =
@@ -47,7 +47,7 @@ private fun writeTypeParameter(
 
         override fun visitExtensions(type: KmExtensionType): KmTypeParameterExtensionVisitor? =
             c.applySingleExtension(type) {
-                writeTypeParameterExtensions(type, t, c.strings)
+                writeTypeParameterExtensions(type, t, c)
             }
 
         override fun visitEnd() {
@@ -116,7 +116,7 @@ private fun writeType(c: WriteContext, flags: Flags, output: (ProtoBuf.Type.Buil
 
         override fun visitExtensions(type: KmExtensionType): KmTypeExtensionVisitor? =
             c.applySingleExtension(type) {
-                writeTypeExtensions(type, t, c.strings)
+                writeTypeExtensions(type, t, c)
             }
 
         override fun visitEnd() {
@@ -143,7 +143,7 @@ private fun writeConstructor(c: WriteContext, flags: Flags, output: (ProtoBuf.Co
 
         override fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? =
             c.applySingleExtension(type) {
-                writeConstructorExtensions(type, t, c.strings)
+                writeConstructorExtensions(type, t, c)
             }
 
         override fun visitEnd() {
@@ -178,7 +178,7 @@ private fun writeFunction(c: WriteContext, flags: Flags, name: String, output: (
 
         override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? =
             c.applySingleExtension(type) {
-                writeFunctionExtensions(type, t, c.strings)
+                writeFunctionExtensions(type, t, c)
             }
 
         override fun visitEnd() {
@@ -190,7 +190,7 @@ private fun writeFunction(c: WriteContext, flags: Flags, name: String, output: (
         }
     }
 
-private fun writeProperty(
+fun writeProperty(
     c: WriteContext, flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags, output: (ProtoBuf.Property.Builder) -> Unit
 ): KmPropertyVisitor = object : KmPropertyVisitor() {
     val t = ProtoBuf.Property.newBuilder()
@@ -212,7 +212,7 @@ private fun writeProperty(
 
     override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? =
         c.applySingleExtension(type) {
-            writePropertyExtensions(type, t, c.strings)
+            writePropertyExtensions(type, t, c)
         }
 
     override fun visitEnd() {
@@ -406,8 +406,8 @@ private fun writeEffectExpression(c: WriteContext, output: (ProtoBuf.Expression.
     }
 
 open class ClassWriter(stringTable: StringTable) : KmClassVisitor() {
-    val t = ProtoBuf.Class.newBuilder()!!
-    val c = WriteContext(stringTable)
+    protected val t = ProtoBuf.Class.newBuilder()!!
+    protected val c = WriteContext(stringTable)
 
     override fun visit(flags: Flags, name: ClassName) {
         if (flags != ProtoBuf.Class.getDefaultInstance().flags) {
@@ -457,7 +457,7 @@ open class ClassWriter(stringTable: StringTable) : KmClassVisitor() {
 
     override fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor? =
         c.applySingleExtension(type) {
-            writeClassExtensions(type, t, c.strings)
+            writeClassExtensions(type, t, c)
         }
 
     override fun visitEnd() {
@@ -468,8 +468,8 @@ open class ClassWriter(stringTable: StringTable) : KmClassVisitor() {
 }
 
 open class PackageWriter(stringTable: StringTable) : KmPackageVisitor() {
-    val t = ProtoBuf.Package.newBuilder()!!
-    val c = WriteContext(stringTable)
+    protected val t = ProtoBuf.Package.newBuilder()!!
+    protected val c = WriteContext(stringTable)
 
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
         writeFunction(c, flags, name) { t.addFunction(it) }
@@ -480,6 +480,11 @@ open class PackageWriter(stringTable: StringTable) : KmPackageVisitor() {
     override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? =
         writeTypeAlias(c, flags, name) { t.addTypeAlias(it) }
 
+    override fun visitExtensions(type: KmExtensionType): KmPackageExtensionVisitor? =
+        c.applySingleExtension(type) {
+            writePackageExtensions(type, t, c)
+        }
+
     override fun visitEnd() {
         c.versionRequirements.serialize()?.let {
             t.versionRequirementTable = it
@@ -488,8 +493,8 @@ open class PackageWriter(stringTable: StringTable) : KmPackageVisitor() {
 }
 
 open class LambdaWriter(stringTable: StringTable) : KmLambdaVisitor() {
-    var t: ProtoBuf.Function.Builder? = null
-    val c = WriteContext(stringTable)
+    protected var t: ProtoBuf.Function.Builder? = null
+    protected val c = WriteContext(stringTable)
 
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
         writeFunction(c, flags, name) { t = it }

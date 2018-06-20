@@ -24,7 +24,6 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
@@ -78,9 +77,10 @@ abstract class GradleKotlinFrameworkSupportProvider(
             if (additionalRepository != null) {
                 val oneLineRepository = additionalRepository.toGroovyRepositorySnippet().replace('\n', ' ')
                 updateSettingsScript(module) {
-                    with(KotlinWithGradleConfigurator.getManipulator(it)) {
+                    with(it) {
                         addPluginRepository(additionalRepository)
                         addMavenCentralPluginRepository()
+                        addPluginRepository(DEFAULT_GRADLE_PLUGIN_REPOSITORY)
                     }
                 }
                 buildScriptData.addRepositoriesDefinition("mavenCentral()")
@@ -126,7 +126,7 @@ abstract class GradleKotlinFrameworkSupportProvider(
         }
     }
 
-    protected open fun updateSettingsScript(settingsScript: PsiFile, specifyPluginVersionIfNeeded: Boolean) { }
+    protected open fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) { }
 
     protected abstract fun getDependencies(sdk: Sdk?): List<String>
     protected open fun getTestDependencies(): List<String> = listOf()
@@ -172,9 +172,9 @@ open class GradleKotlinJSFrameworkSupportProvider(
 
     override fun getTestDependencies() = listOf(MAVEN_JS_TEST_ID)
 
-    override fun updateSettingsScript(settingsScript: PsiFile, specifyPluginVersionIfNeeded: Boolean) {
+    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
         if (specifyPluginVersionIfNeeded) {
-            KotlinWithGradleConfigurator.getManipulator(settingsScript).addResolutionStrategy("kotlin2js")
+            settingsBuilder.addResolutionStrategy("kotlin2js")
         }
     }
 
@@ -189,9 +189,9 @@ open class GradleKotlinMPPCommonFrameworkSupportProvider :
     override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_COMMON_STDLIB_ID)
     override fun getTestDependencies() = listOf(MAVEN_COMMON_TEST_ID, MAVEN_COMMON_TEST_ANNOTATIONS_ID)
 
-    override fun updateSettingsScript(settingsScript: PsiFile, specifyPluginVersionIfNeeded: Boolean) {
+    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
         if (specifyPluginVersionIfNeeded) {
-            KotlinWithGradleConfigurator.getManipulator(settingsScript).addResolutionStrategy("kotlin-platform-common")
+            settingsBuilder.addResolutionStrategy("kotlin-platform-common")
         }
     }
 
@@ -216,9 +216,9 @@ class GradleKotlinMPPJavaFrameworkSupportProvider
         }
     }
 
-    override fun updateSettingsScript(settingsScript: PsiFile, specifyPluginVersionIfNeeded: Boolean) {
+    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
         if (specifyPluginVersionIfNeeded) {
-            KotlinWithGradleConfigurator.getManipulator(settingsScript).addResolutionStrategy("kotlin-platform-jvm")
+            settingsBuilder.addResolutionStrategy("kotlin-platform-jvm")
         }
     }
 }
@@ -229,9 +229,9 @@ class GradleKotlinMPPJSFrameworkSupportProvider
     override fun getPluginId() = "kotlin-platform-js"
     override fun getPluginExpression() = "id 'kotlin-platform-js'"
 
-    override fun updateSettingsScript(settingsScript: PsiFile, specifyPluginVersionIfNeeded: Boolean) {
+    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
         if (specifyPluginVersionIfNeeded) {
-            KotlinWithGradleConfigurator.getManipulator(settingsScript).addResolutionStrategy("kotlin-platform-js")
+            settingsBuilder.addResolutionStrategy("kotlin-platform-js")
         }
     }
 

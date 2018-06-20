@@ -265,7 +265,10 @@ class DeclarationsChecker(
             trace.report(EXPECTED_ENUM_CONSTRUCTOR.on(declaration))
         }
 
-        if (declaration is KtPrimaryConstructor && !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass)) {
+        if (declaration is KtPrimaryConstructor &&
+            !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass) &&
+            !constructorDescriptor.constructedClass.isInline
+        ) {
             for (parameter in declaration.valueParameters) {
                 if (parameter.hasValOrVar()) {
                     trace.report(EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.on(parameter))

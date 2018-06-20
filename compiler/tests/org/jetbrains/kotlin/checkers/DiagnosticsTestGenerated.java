@@ -9565,6 +9565,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/equalityConstraintOnNullableType.kt");
                 }
 
+                @TestMetadata("errorUpperBoundConstraint.kt")
+                public void testErrorUpperBoundConstraint() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/constraints/errorUpperBoundConstraint.kt");
+                }
+
                 @TestMetadata("ignoreConstraintFromImplicitInNothing.kt")
                 public void testIgnoreConstraintFromImplicitInNothing() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/ignoreConstraintFromImplicitInNothing.kt");
@@ -10701,9 +10706,19 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/basicInlineClassDeclarationDisabled.kt");
             }
 
+            @TestMetadata("identityComparisonWithInlineClasses.kt")
+            public void testIdentityComparisonWithInlineClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/identityComparisonWithInlineClasses.kt");
+            }
+
             @TestMetadata("inlineClassDeclarationCheck.kt")
             public void testInlineClassDeclarationCheck() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassDeclarationCheck.kt");
+            }
+
+            @TestMetadata("inlineClassImplementsCollection.kt")
+            public void testInlineClassImplementsCollection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassImplementsCollection.kt");
             }
 
             @TestMetadata("inlineClassesInsideAnnotations.kt")
@@ -13007,6 +13022,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("superClass.kt")
                 public void testSuperClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/superClass.kt");
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/inlineClasses")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class InlineClasses extends AbstractDiagnosticsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInInlineClasses() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("expectActualInlineClass.kt")
+                public void testExpectActualInlineClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/inlineClasses/expectActualInlineClass.kt");
                 }
             }
 

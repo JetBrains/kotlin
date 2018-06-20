@@ -1,0 +1,65 @@
+UFile (package = ) [public final class MyColor {...]
+    UClass (name = MyColor) [public final class MyColor {...}]
+        UField (name = x) [private final var x: int]
+            UAnnotation (fqName = null) [@null]
+        UField (name = y) [private final var y: int]
+            UAnnotation (fqName = null) [@null]
+        UField (name = z) [private final var z: int]
+            UAnnotation (fqName = null) [@null]
+        UAnnotationMethod (name = getX) [public final fun getX() : int = UastEmptyExpression]
+        UAnnotationMethod (name = getY) [public final fun getY() : int = UastEmptyExpression]
+        UAnnotationMethod (name = getZ) [public final fun getZ() : int = UastEmptyExpression]
+        UAnnotationMethod (name = MyColor) [public fun MyColor(x: int, y: int, z: int) = UastEmptyExpression]
+            UParameter (name = x) [var x: int]
+                UAnnotation (fqName = null) [@null]
+            UParameter (name = y) [var y: int]
+                UAnnotation (fqName = null) [@null]
+            UParameter (name = z) [var z: int]
+                UAnnotation (fqName = null) [@null]
+    UClass (name = Some) [public final class Some {...}]
+        UField (name = delegate$delegate) [private final var delegate$delegate: kotlin.Lazy]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [lazy({ ...})] = external lazy({
+    <init>(18, 2, 3)
+})(Undetermined)
+                UIdentifier (Identifier (lazy)) [UIdentifier (Identifier (lazy))]
+                USimpleNameReferenceExpression (identifier = lazy) [lazy] = external lazy({
+    <init>(18, 2, 3)
+})(Undetermined)
+                ULambdaExpression [{ ...}] = Undetermined
+                    UBlockExpression [{...}] = external <init>(18, 2, 3)(18, 2, 3)
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 3)) [<init>(18, 2, 3)] = external <init>(18, 2, 3)(18, 2, 3)
+                            UIdentifier (Identifier (MyColor)) [UIdentifier (Identifier (MyColor))]
+                            USimpleNameReferenceExpression (identifier = <init>) [<init>] = external <init>(18, 2, 3)(18, 2, 3)
+                            ULiteralExpression (value = 18) [18] = 18
+                            ULiteralExpression (value = 2) [2] = 2
+                            ULiteralExpression (value = 3) [3] = 3
+        UField (name = lambda) [private final var lambda: kotlin.Lazy<MyColor> = lazy({ ...})]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [lazy({ ...})] = external lazy({
+    <init>(1, 2, 3)
+})(Undetermined)
+                UIdentifier (Identifier (lazy)) [UIdentifier (Identifier (lazy))]
+                USimpleNameReferenceExpression (identifier = lazy) [lazy] = external lazy({
+    <init>(1, 2, 3)
+})(Undetermined)
+                ULambdaExpression [{ ...}] = Undetermined
+                    UBlockExpression [{...}] = external <init>(1, 2, 3)(1, 2, 3)
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 3)) [<init>(1, 2, 3)] = external <init>(1, 2, 3)(1, 2, 3)
+                            UIdentifier (Identifier (MyColor)) [UIdentifier (Identifier (MyColor))]
+                            USimpleNameReferenceExpression (identifier = <init>) [<init>] = external <init>(1, 2, 3)(1, 2, 3)
+                            ULiteralExpression (value = 1) [1] = 1
+                            ULiteralExpression (value = 2) [2] = 2
+                            ULiteralExpression (value = 3) [3] = 3
+        UField (name = nonLazy) [private final var nonLazy: MyColor = <init>(1, 2, 3)]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 3)) [<init>(1, 2, 3)] = external <init>(1, 2, 3)(1, 2, 3)
+                UIdentifier (Identifier (MyColor)) [UIdentifier (Identifier (MyColor))]
+                USimpleNameReferenceExpression (identifier = <init>) [<init>] = external <init>(1, 2, 3)(1, 2, 3)
+                ULiteralExpression (value = 1) [1] = 1
+                ULiteralExpression (value = 2) [2] = 2
+                ULiteralExpression (value = 3) [3] = 3
+        UAnnotationMethod (name = getDelegate) [public final fun getDelegate() : MyColor = UastEmptyExpression]
+        UAnnotationMethod (name = getLambda) [public final fun getLambda() : kotlin.Lazy<MyColor> = UastEmptyExpression]
+        UAnnotationMethod (name = getNonLazy) [public final fun getNonLazy() : MyColor = UastEmptyExpression]
+        UAnnotationMethod (name = Some) [public fun Some() = UastEmptyExpression]

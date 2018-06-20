@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgu
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.facet.getLibraryLanguageLevel
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.Jsr305State
 
@@ -45,6 +47,8 @@ val KtElement.platform: TargetPlatform
 
 val KtElement.builtIns: KotlinBuiltIns
     get() = getResolutionFacade().moduleDescriptor.builtIns
+
+var KtFile.forcedTargetPlatform: TargetPlatform? by UserDataProperty(Key.create("FORCED_TARGET_PLATFORM"))
 
 fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)

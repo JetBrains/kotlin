@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 data class Box(val value: String)
 
 val foo = Box("lol")

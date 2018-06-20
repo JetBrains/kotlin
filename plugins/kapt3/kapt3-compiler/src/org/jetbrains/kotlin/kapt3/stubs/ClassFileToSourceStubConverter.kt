@@ -24,14 +24,19 @@ import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
-import org.jetbrains.kotlin.kapt3.javac.kaptError
+import org.jetbrains.kotlin.kapt3.base.plus
+import org.jetbrains.kotlin.kapt3.base.javac.kaptError
+import org.jetbrains.kotlin.kapt3.base.mapJList
+import org.jetbrains.kotlin.kapt3.base.mapJListIndexed
+import org.jetbrains.kotlin.kapt3.base.pairedListToMap
+import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
+import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
@@ -55,7 +60,7 @@ import javax.lang.model.element.ElementKind
 import com.sun.tools.javac.util.List as JavacList
 
 class ClassFileToSourceStubConverter(
-        val kaptContext: KaptContext<GenerationState>,
+        val kaptContext: KaptContextForStubGeneration,
         val generateNonExistentClass: Boolean,
         val correctErrorTypes: Boolean
 ) {
@@ -146,7 +151,7 @@ class ClassFileToSourceStubConverter(
 
             val metadataFile = File(
                 forSource.parentFile,
-                forSource.nameWithoutExtension + KaptLineMappingCollector.KAPT_METADATA_EXTENSION
+                forSource.nameWithoutExtension + KaptStubLineInformation.KAPT_METADATA_EXTENSION
             )
 
             metadataFile.writeBytes(kaptMetadata)

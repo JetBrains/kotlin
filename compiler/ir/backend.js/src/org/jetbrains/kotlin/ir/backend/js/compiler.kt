@@ -9,13 +9,13 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.lower.BlockDecomposerLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.IntrinsicifyCallsLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.SecondaryCtorLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.*
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -36,7 +36,7 @@ fun compile(
     val psi2IrTranslator = Psi2IrTranslator()
     val psi2IrContext = psi2IrTranslator.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext)
 
-    val moduleFragment = psi2IrTranslator.generateModuleFragment(psi2IrContext, files)
+    val moduleFragment = psi2IrTranslator.generateModuleFragment(psi2IrContext, files).removeDuplicates()
 
     val context = JsIrBackendContext(
         analysisResult.moduleDescriptor,
@@ -47,6 +47,8 @@ fun compile(
 
     ExternalDependenciesGenerator(psi2IrContext.symbolTable, psi2IrContext.irBuiltIns).generateUnboundSymbolsAsDependencies(moduleFragment)
 
+    context.performInlining(moduleFragment)
+
     moduleFragment.files.forEach { context.lower(it) }
     val transformer = SecondaryCtorLowering.CallsiteRedirectionTransformer(context)
     moduleFragment.files.forEach { it.accept(transformer, null) }
@@ -56,17 +58,53 @@ fun compile(
     return program.toString()
 }
 
+fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment) {
+    FunctionInlining(this).inline(moduleFragment)
+
+    moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
+
+    do {
+        @Suppress("DEPRECATION")
+        moduleFragment.replaceUnboundSymbols(this)
+        moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
+    } while (symbolTable.unboundClasses.isNotEmpty())
+
+    moduleFragment.patchDeclarationParents()
+
+    moduleFragment.files.forEach { file ->
+        RemoveInlineFunctionsWithReifiedTypeParametersLowering.runOnFilePostfix(file)
+    }
+}
+
 fun JsIrBackendContext.lower(file: IrFile) {
     LateinitLowering(this, true).lower(file)
     DefaultArgumentStubGenerator(this).runOnFilePostfix(file)
     SharedVariablesLowering(this).runOnFilePostfix(file)
+    ReturnableBlockLowering(this).lower(file)
     LocalDeclarationsLowering(this).runOnFilePostfix(file)
     InnerClassesLowering(this).runOnFilePostfix(file)
     InnerClassConstructorCallsLowering(this).runOnFilePostfix(file)
     PropertiesLowering().lower(file)
     InitializersLowering(this, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).runOnFilePostfix(file)
+    MultipleCatchesLowering(this).lower(file)
+    TypeOperatorLowering(this).lower(file)
     BlockDecomposerLowering(this).runOnFilePostfix(file)
     SecondaryCtorLowering(this).runOnFilePostfix(file)
     CallableReferenceLowering(this).lower(file)
     IntrinsicifyCallsLowering(this).lower(file)
+}
+
+// TODO find out why duplicates occur
+private fun IrModuleFragment.removeDuplicates(): IrModuleFragment {
+
+    fun <T> MutableList<T>.removeDuplicates() {
+        val tmp = toSet()
+        clear()
+        addAll(tmp)
+    }
+
+    dependencyModules.removeDuplicates()
+    dependencyModules.forEach { it.externalPackageFragments.removeDuplicates() }
+
+    return this
 }

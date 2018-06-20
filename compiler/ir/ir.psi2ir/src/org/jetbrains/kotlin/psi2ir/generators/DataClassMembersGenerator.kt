@@ -142,7 +142,7 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
             buildMember(function, declaration) {
                 +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
                 +irIfThenReturnFalse(irNotIs(irOther(), classDescriptor.defaultType, irClass.symbol))
-                val otherWithCast = irTemporary(irAs(irOther(), classDescriptor.defaultType, irClass.symbol), "other_with_cast")
+                val otherWithCast = irTemporary(irImplicitCast(irOther(), classDescriptor.defaultType, irClass.symbol), "other_with_cast")
                 for (property in properties) {
                     val arg1 = irGet(irThis(), getPropertyGetterSymbol(property))
                     val arg2 = irGet(irGet(otherWithCast.symbol), getPropertyGetterSymbol(property))
