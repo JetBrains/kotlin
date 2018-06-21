@@ -16,17 +16,22 @@ import org.gradle.api.plugins.InvalidPluginException
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.CompileClasspathNormalizer
+import org.gradle.api.tasks.Delete
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
+import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.KaptVariantData
+import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
+import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -722,6 +727,8 @@ internal fun Task.registerSubpluginOptionsAsInputs(subpluginId: String, subplugi
         optionsGroup.forEachIndexed { index, option ->
             val indexSuffix = if (optionsGroup.size > 1) ".$index" else ""
             when (option) {
+                is InternalSubpluginOption -> Unit
+
                 is CompositeSubpluginOption -> {
                     val subpluginIdWithWrapperKey = "$subpluginId.${optionKey}$indexSuffix"
                     registerSubpluginOptionsAsInputs(subpluginIdWithWrapperKey, option.originalOptions)

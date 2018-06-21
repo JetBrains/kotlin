@@ -26,17 +26,20 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtL
             apply plugin: 'kotlin-kapt'
 
             class MyNested implements org.gradle.process.CommandLineArgumentProvider {
-                String value = ""
 
                 @InputFile
                 File inputFile = null
 
                 @Override
-                Iterable<String> asArguments() { return [value] }
+                @Internal
+                Iterable<String> asArguments() {
+                    // Read the arguments from a file, because changing them in a build script is treated as an
+                    // implementation change by Gradle:
+                    return [new File('args.txt').text]
+                }
             }
 
             def nested = new MyNested()
-            nested.value = '123'
             nested.inputFile = file("${'$'}projectDir/in.txt")
 
             android.applicationVariants.all {
@@ -46,6 +49,7 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtL
         )
 
         File(projectDir, "Android/in.txt").appendText("1234")
+        File(projectDir, "args.txt").appendText("1234")
 
         val kaptTasks = listOf(":Android:kaptFlavor1DebugKotlin")
         val javacTasks = listOf(":Android:compileFlavor1DebugJavaWithJavac")
@@ -65,14 +69,13 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtL
             assertTasksUpToDate(javacTasks)
         }
 
-        gradleBuildScript(subproject = "Android").modify {
-            it.replace("nested.value = '123'", "nested.value = '456'")
-        }
+        // Changing only the annotation provider arguments should not trigger the tasks to run, as the arguments may be outputs,
+        // internals or neither:
+        File(projectDir, "args.txt").appendText("5678")
 
         build(*buildTasks) {
             assertSuccessful()
-            assertTasksExecuted(kaptTasks)
-            assertTasksUpToDate(javacTasks)
+            assertTasksUpToDate(javacTasks + kaptTasks)
         }
     }
 }

@@ -45,6 +45,9 @@ enum class FilesOptionKind {
     // such as output directories, inputs or classpath options.
 }
 
+/** Defines a subplugin option that should be excluded from Gradle input/output checks */
+open class InternalSubpluginOption(key: String, value: String) : SubpluginOption(key, value)
+
 interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
     fun isApplicable(project: Project, task: AbstractCompile): Boolean
 
