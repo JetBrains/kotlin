@@ -64,7 +64,7 @@ fun legacyCalcTypeForIeee754ArithmeticIfNeeded(
     }
 
     // NB. Using DataFlowValueFactoryImpl is a hack, but it is ok for 'legacy'
-    val dataFlow = DataFlowValueFactoryImpl().createDataFlowValue(
+    val dataFlow = DataFlowValueFactoryImpl(languageVersionSettings).createDataFlowValue(
         expression,
         ktType,
         bindingContext,

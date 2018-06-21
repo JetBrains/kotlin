@@ -76,6 +76,7 @@ enum class LanguageFeature(
     VariableDeclarationInWhenSubject(KOTLIN_1_3),
     AllowContractsForCustomFunctions(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
     ProhibitLocalAnnotations(KOTLIN_1_3, kind = BUG_FIX),
+    ProhibitSmartcastsOnLocalDelegatedProperty(KOTLIN_1_3, kind = BUG_FIX),
 
     StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
     ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED),

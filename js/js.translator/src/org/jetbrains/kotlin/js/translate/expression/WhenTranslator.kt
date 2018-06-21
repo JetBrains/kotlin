@@ -53,7 +53,7 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
     private val type: KotlinType?
     private val uniqueConstants = mutableSetOf<Any>()
     private val uniqueEnumNames = mutableSetOf<String>()
-    private val dataFlowValueFactory: DataFlowValueFactory = DataFlowValueFactoryImpl()
+    private val dataFlowValueFactory: DataFlowValueFactory = DataFlowValueFactoryImpl(context.languageVersionSettings)
 
     private val isExhaustive: Boolean
         get() {

@@ -18893,6 +18893,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/localClassChanges.kt");
             }
 
+            @TestMetadata("localDelegatedPropertyAfter.kt")
+            public void testLocalDelegatedPropertyAfter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/localDelegatedPropertyAfter.kt");
+            }
+
+            @TestMetadata("localDelegatedPropertyBefore.kt")
+            public void testLocalDelegatedPropertyBefore() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/localDelegatedPropertyBefore.kt");
+            }
+
             @TestMetadata("localFunBetween.kt")
             public void testLocalFunBetween() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/localFunBetween.kt");

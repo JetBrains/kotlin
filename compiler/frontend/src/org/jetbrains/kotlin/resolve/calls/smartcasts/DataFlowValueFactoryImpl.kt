@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -24,8 +25,8 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isError
 
 class DataFlowValueFactoryImpl
-@Deprecated("Please, avoid to use that implementation explicitly. If you need DataFlowValueFactory, use injection") constructor() :
-    DataFlowValueFactory {
+@Deprecated("Please, avoid to use that implementation explicitly. If you need DataFlowValueFactory, use injection")
+constructor(private val languageVersionSettings: LanguageVersionSettings) : DataFlowValueFactory {
 
     // Receivers
     override fun createDataFlowValue(
@@ -61,7 +62,7 @@ class DataFlowValueFactoryImpl
     ): DataFlowValue {
         val identifierInfo = IdentifierInfo.Variable(
             variableDescriptor,
-            variableDescriptor.variableKind(usageContainingModule, bindingContext, property),
+            variableDescriptor.variableKind(usageContainingModule, bindingContext, property, languageVersionSettings),
             bindingContext[BindingContext.BOUND_INITIALIZER_VALUE, variableDescriptor]
         )
         return DataFlowValue(identifierInfo, variableDescriptor.type)
@@ -102,7 +103,7 @@ class DataFlowValueFactoryImpl
                 DataFlowValue(IdentifierInfo.Expression(expression, stableComplex = true), type)
 
             else -> {
-                val result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule)
+                val result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule, languageVersionSettings)
                 DataFlowValue(if (result === IdentifierInfo.NO) IdentifierInfo.Expression(expression) else result, type)
             }
         }
