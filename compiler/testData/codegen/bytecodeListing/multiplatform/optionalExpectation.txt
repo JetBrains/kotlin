@@ -1,3 +1,10 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+@kotlin.OptionalExpectation
+annotation class Anno {
+    public abstract method s(): java.lang.String
+}
+
 @kotlin.Metadata
 public interface Foo$Nested {
     inner class Foo$Nested

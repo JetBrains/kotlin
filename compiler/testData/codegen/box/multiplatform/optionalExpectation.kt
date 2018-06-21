@@ -1,49 +1,34 @@
 // !LANGUAGE: +MultiPlatformProjects
 // !USE_EXPERIMENTAL: kotlin.ExperimentalMultiplatform
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
-// FILE: common.kt
+// MODULE: library
+// FILE: expected.kt
+
+package a
 
 @OptionalExpectation
-expect annotation class Anno(val s: String)
+expect annotation class A(val x: Int)
 
-// FILE: jvm.kt
+@OptionalExpectation
+expect annotation class B(val s: String)
 
-import java.lang.reflect.AnnotatedElement
+// FILE: actual.kt
 
-@Anno("Foo")
-class Foo @Anno("<init>") constructor(@Anno("x") x: Int) {
-    @Anno("bar")
-    fun bar() {}
+package a
 
-    @Anno("getX")
-    var x = x
-        @Anno("setX")
-        set
+actual annotation class A(actual val x: Int)
 
-    @Anno("Nested")
-    interface Nested
-}
+// MODULE: main(library)
+// FILE: main.kt
 
-private fun check(element: AnnotatedElement) {
-    check(element.annotations)
-}
+package usage
 
-private fun check(annotations: Array<Annotation>) {
-    val filtered = annotations.filterNot { it.annotationClass.java.name == "kotlin.Metadata" }
-    if (filtered.isNotEmpty()) {
-        throw AssertionError("Annotations should be empty: $filtered")
-    }
-}
+import a.A
+import a.B
 
+@A(42)
+@B("OK")
 fun box(): String {
-    val foo = Foo::class.java
-    check(foo)
-    check(Foo.Nested::class.java)
-    check(foo.declaredMethods.single { it.name == "bar" })
-    check(foo.declaredMethods.single { it.name == "getX" })
-    check(foo.declaredMethods.single { it.name == "setX" })
-    check(foo.constructors.single())
-    check(foo.constructors.single().parameterAnnotations.single())
     return "OK"
 }
