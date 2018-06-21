@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKBodyStub
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.j2k.tree.impl.modality
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
-import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
 
@@ -37,11 +36,6 @@ class NewCodeBuilder {
         JKClass.ClassKind.CLASS -> "class"
         JKClass.ClassKind.ENUM -> "enum class"
         JKClass.ClassKind.INTERFACE -> "interface"
-    }
-
-    private fun operatorString(operator: JKOperator): String {
-        return (operator.token as? KtSingleValueToken)?.value ?: "TODO: $operator"
-
     }
 
     inner class Visitor : JKVisitorVoid {
@@ -144,23 +138,23 @@ class NewCodeBuilder {
         override fun visitBinaryExpression(binaryExpression: JKBinaryExpression) {
             binaryExpression.left.accept(this)
             printer.printWithNoIndent(" ")
-            printer.printWithNoIndent(operatorString(binaryExpression.operator))
+            printer.printWithNoIndent(binaryExpression.operator.operatorText)
             printer.printWithNoIndent(" ")
             binaryExpression.right.accept(this)
         }
 
-        override fun visitKtLiteralExpression(ktLiteralExpression: JKKtLiteralExpression) {
-            printer.printWithNoIndent(ktLiteralExpression.literal)
+        override fun visitLiteralExpression(literalExpression: JKLiteralExpression) {
+            printer.printWithNoIndent(literalExpression.literal)
         }
 
         override fun visitPrefixExpression(prefixExpression: JKPrefixExpression) {
-            printer.printWithNoIndent(operatorString(prefixExpression.operator))
+            printer.printWithNoIndent(prefixExpression.operator.operatorText)
             prefixExpression.expression.accept(this)
         }
 
         override fun visitPostfixExpression(postfixExpression: JKPostfixExpression) {
             postfixExpression.expression.accept(this)
-            printer.printWithNoIndent(operatorString(postfixExpression.operator))
+            printer.printWithNoIndent(postfixExpression.operator.operatorText)
         }
 
         override fun visitQualifiedExpression(qualifiedExpression: JKQualifiedExpression) {

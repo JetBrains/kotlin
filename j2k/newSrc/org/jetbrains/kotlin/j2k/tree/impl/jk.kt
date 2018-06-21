@@ -192,6 +192,8 @@ class JKBooleanLiteral(val value: Boolean) : JKLiteralExpression, JKElementBase(
         get() = value.toString()
     override val type: LiteralType
         get() = BOOLEAN
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLiteralExpression(this, data)
 }
 
 class JKLocalVariableImpl(modifierList: JKModifierList, type: JKTypeElement, name: JKNameIdentifier, initializer: JKExpression) :
