@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -16,35 +15,29 @@ import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-
-private typealias VisitData = Nothing?
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationContainerLoweringPass {
     private lateinit var function: IrFunction
     private var tmpVarCounter: Int = 0
 
-    private val statementVisitor = StatementVisitor()
-    private val expressionVisitor = ExpressionVisitor()
+    private val statementTransformer = StatementTransformer()
+    private val expressionTransformer = ExpressionTransformer()
 
     private val constTrue = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
     private val constFalse = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false)
-    private val nothingType get() = context.irBuiltIns.nothingType
-    private val unitType get() = context.irBuiltIns.unitType
+    private val nothingType = context.irBuiltIns.nothingNType
 
+    private val unitType = context.irBuiltIns.unitType
     private val unitValue = JsIrBuilder.buildGetObjectValue(unitType, context.symbolTable.referenceClass(context.builtIns.unit))
 
-    private val unreachableFunction = JsIrBuilder.buildFunction(
-        JsSymbolBuilder.buildSimpleFunction(
-            context.module,
-            Namer.UNREACHABLE_NAME
-        ).initialize(returnType = nothingType),
-        nothingType
-    )
+    private val unreachableFunction =
+        JsSymbolBuilder.buildSimpleFunction(context.module, Namer.UNREACHABLE_NAME).initialize(returnType = nothingType)
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat { declaration ->
@@ -62,30 +55,31 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
     fun lower(irFunction: IrFunction) {
         function = irFunction
         tmpVarCounter = 0
-        irFunction.body?.accept(statementVisitor, null)
+        irFunction.transformChildrenVoid(statementTransformer)
     }
 
     fun lower(irField: IrField, container: IrDeclarationContainer): List<IrDeclaration> {
         irField.initializer?.apply {
-            val returnType = expression.type
             val initFnSymbol = JsSymbolBuilder.buildSimpleFunction(
                 (container as IrSymbolOwner).symbol.descriptor,
                 irField.name.asString() + "\$init\$"
-            ).initialize(returnType = returnType)
+            ).initialize(returnType = expression.type)
 
 
+            val returnStatement = JsIrBuilder.buildReturn(initFnSymbol, expression, nothingType)
             val newBody = IrBlockBodyImpl(expression.startOffset, expression.endOffset).apply {
-                statements += JsIrBuilder.buildReturn(initFnSymbol, expression, context)
+                statements += returnStatement
             }
 
-            val initFn = JsIrBuilder.buildFunction(initFnSymbol, returnType).apply {
+            val initFn = JsIrBuilder.buildFunction(initFnSymbol, expression.type).apply {
                 body = newBody
             }
 
             lower(initFn)
 
-            if (newBody.statements.size > 1) {
-                expression = JsIrBuilder.buildCall(initFnSymbol)
+            val lastStatement = newBody.statements.last()
+            if (lastStatement != returnStatement || (lastStatement as IrReturn).value != expression) {
+                expression = JsIrBuilder.buildCall(initFnSymbol, expression.type)
                 return listOf(initFn, irField)
             }
         }
@@ -93,138 +87,141 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
         return listOf(irField)
     }
 
-    enum class VisitStatus {
-        DECOMPOSED,
-        TERMINATED,
-        KEPT
+    private fun processStatements(statements: MutableList<IrStatement>) {
+        statements.transformFlat {
+            destructureComposite(it.transform(statementTransformer, null))
+        }
     }
 
-    abstract class VisitResult(val status: VisitStatus) {
-        open val statements: MutableList<IrStatement> get() = error("No statement is possible here")
-        open val resultValue: IrExpression get() = error("This result has no value")
+    private fun makeTempVar(type: IrType) =
+        JsSymbolBuilder.buildTempVar(function.symbol, type, "tmp\$dcms\$${tmpVarCounter++}", true)
 
-        abstract fun runIfChanged(action: VisitResult.() -> VisitResult): VisitResult
-        abstract fun <T> runIfChangedOrDefault(default: T, action: VisitResult.(d: T) -> T): T
-        abstract fun applyIfChanged(action: VisitResult.() -> Unit): VisitResult
+    private fun makeLoopLabel() = "\$l\$${tmpVarCounter++}"
 
+    private fun IrStatement.asExpression(last: IrExpression): IrExpression {
+        val composite = JsIrBuilder.buildComposite(last.type)
+        composite.statements += transform(statementTransformer, null)
+        composite.statements += last
+        return composite
     }
 
-    object KeptResult : VisitResult(VisitStatus.KEPT) {
-        override fun runIfChanged(action: VisitResult.() -> VisitResult) = this
-        override fun <T> runIfChangedOrDefault(default: T, action: VisitResult.(d: T) -> T) = default
-        override fun applyIfChanged(action: VisitResult.() -> Unit) = this
+    private fun materializeLastExpression(composite: IrComposite, block: (IrExpression) -> IrStatement): IrComposite {
+        val statements = composite.statements
+        val expression = statements.lastOrNull() as? IrExpression ?: return composite
+        statements[statements.lastIndex] = block(expression)
+        return composite
     }
 
-    abstract class ChangedResult(
-        override val statements: MutableList<IrStatement>,
-        override val resultValue: IrExpression,
-        status: VisitStatus
-    ) :
-        VisitResult(status) {
-        override fun runIfChanged(action: VisitResult.() -> VisitResult) = run { action() }
-        override fun <T> runIfChangedOrDefault(default: T, action: VisitResult.(d: T) -> T) = run { action(default) }
-        override fun applyIfChanged(action: VisitResult.() -> Unit) = apply { action() }
-    }
+    private fun destructureComposite(expression: IrStatement) = (expression as? IrComposite)?.statements ?: listOf(expression)
 
-    class DecomposedResult(statements: MutableList<IrStatement>, resultValue: IrExpression) :
-        ChangedResult(statements, resultValue, VisitStatus.DECOMPOSED) {
-
-        constructor(statement: IrStatement, resultValue: IrExpression) : this(mutableListOf(statement), resultValue)
-    }
-
-    class TerminatedResult(statements: MutableList<IrStatement>, resultValue: IrExpression) :
-        ChangedResult(statements, resultValue, VisitStatus.TERMINATED)
-
-    abstract inner class DecomposerVisitor : IrElementVisitor<VisitResult, VisitData> {
-        override fun visitElement(element: IrElement, data: VisitData) = KeptResult
-    }
-
-    inner class StatementVisitor : DecomposerVisitor() {
-        override fun visitBlockBody(body: IrBlockBody, data: VisitData): VisitResult {
-            body.statements.transformFlat {
-                processStatement(it, data)
-            }
-
-            return KeptResult
+    private inner class BreakContinueUpdater(val breakLoop: IrLoop, val continueLoop: IrLoop) : IrElementTransformer<IrLoop> {
+        override fun visitBreak(jump: IrBreak, data: IrLoop) = jump.apply {
+            if (loop == data) loop = breakLoop
         }
 
-        override fun visitContainerExpression(expression: IrContainerExpression, data: VisitData): VisitResult {
-            expression.statements.transformFlat {
-                processStatement(it, data)
-            }
-
-            return KeptResult
+        override fun visitContinue(jump: IrContinue, data: IrLoop) = jump.apply {
+            if (loop == data) loop = continueLoop
         }
+    }
 
-        private fun processStatement(statement: IrStatement, data: VisitData): List<IrStatement>? {
-            val result = statement.accept(this, data)
+    private inner class StatementTransformer : IrElementTransformerVoid() {
+        override fun visitBlockBody(body: IrBlockBody) = body.apply { processStatements(statements) }
 
-            if (result == KeptResult) {
-                return if (statement is IrComposite) statement.statements else null
-            }
-            return result.statements
-        }
+        override fun visitContainerExpression(expression: IrContainerExpression) = expression.apply { processStatements(statements) }
 
-        override fun visitExpression(expression: IrExpression, data: VisitData): VisitResult = expression.accept(expressionVisitor, data)
+        override fun visitExpression(expression: IrExpression) = expression.transform(expressionTransformer, null)
 
-        override fun visitReturn(expression: IrReturn, data: VisitData): VisitResult {
-            val expressionResult = expression.value.accept(expressionVisitor, data)
+        override fun visitReturn(expression: IrReturn): IrExpression {
+            expression.transformChildrenVoid(expressionTransformer)
 
-            return expressionResult.runIfChanged {
-                val returnValue = expressionResult.resultValue
-                expressionResult.statements += IrReturnImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    expression.type,
-                    expression.returnTargetSymbol,
-                    returnValue
-                )
-                DecomposedResult(expressionResult.statements, unitValue)
+            val composite = expression.value as? IrComposite ?: return expression
+            return materializeLastExpression(composite) {
+                IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, expression.returnTargetSymbol, it)
             }
         }
 
-        override fun visitBreakContinue(jump: IrBreakContinue, data: VisitData) = KeptResult as VisitResult
+        override fun visitThrow(expression: IrThrow): IrExpression {
+            expression.transformChildrenVoid(expressionTransformer)
 
-        override fun visitThrow(expression: IrThrow, data: VisitData): VisitResult {
-            val expressionResult = expression.value.accept(expressionVisitor, data)
-
-            return expressionResult.runIfChanged {
-                val returnValue = expressionResult.resultValue
-                expressionResult.statements += IrThrowImpl(expression.startOffset, expression.endOffset, expression.type, returnValue)
-                DecomposedResult(expressionResult.statements, unitValue)
+            val composite = expression.value as? IrComposite ?: return expression
+            return materializeLastExpression(composite) {
+                IrThrowImpl(expression.startOffset, expression.endOffset, expression.type, it)
             }
         }
 
-        override fun visitVariable(declaration: IrVariable, data: VisitData): VisitResult {
-            declaration.initializer?.let {
-                val initResult = it.accept(expressionVisitor, data)
-                return initResult.runIfChanged {
-                    statements += declaration.apply { initializer = resultValue }
-                    DecomposedResult(statements, unitValue)
+        override fun visitBreakContinue(jump: IrBreakContinue) = jump
+
+        override fun visitVariable(declaration: IrVariable): IrStatement {
+            declaration.transformChildrenVoid(expressionTransformer)
+
+            val composite = declaration.initializer as? IrComposite ?: return declaration
+            return materializeLastExpression(composite) {
+                declaration.apply { initializer = it }
+            }
+        }
+
+        override fun visitSetField(expression: IrSetField): IrExpression {
+            expression.transformChildrenVoid(expressionTransformer)
+
+            val receiverResult = expression.receiver as? IrComposite
+            val valueResult = expression.value as? IrComposite
+            if (receiverResult == null && valueResult == null) return expression
+
+            if (receiverResult != null && valueResult != null) {
+                val result = IrCompositeImpl(receiverResult.startOffset, expression.endOffset, unitType)
+                val receiverValue = receiverResult.statements.last() as IrExpression
+                val tmp = makeTempVar(receiverResult.type)
+                val irVar = JsIrBuilder.buildVar(tmp, receiverValue)
+                val setValue = valueResult.statements.last() as IrExpression
+                result.statements += receiverResult.statements.run { subList(0, lastIndex) }
+                result.statements += irVar
+                result.statements += valueResult.statements.run { subList(0, lastIndex) }
+                result.statements += expression.run {
+                    IrSetFieldImpl(
+                        startOffset,
+                        endOffset,
+                        symbol,
+                        JsIrBuilder.buildGetValue(tmp),
+                        setValue,
+                        type,
+                        origin,
+                        superQualifierSymbol
+                    )
+                }
+                return result
+            }
+
+            if (receiverResult != null) {
+                return materializeLastExpression(receiverResult) {
+                    expression.run {
+                        IrSetFieldImpl(startOffset, endOffset, symbol, it, value, type, origin, superQualifierSymbol)
+                    }
                 }
             }
 
-            return KeptResult
+            assert(valueResult != null)
+
+            val receiver = expression.receiver?.let {
+                val tmp = makeTempVar(it.type)
+                val irVar = JsIrBuilder.buildVar(tmp, it, it.type)
+                valueResult!!.statements.add(0, irVar)
+                JsIrBuilder.buildGetValue(tmp)
+            }
+
+            return materializeLastExpression(valueResult!!) {
+                expression.run {
+                    IrSetFieldImpl(startOffset, endOffset, symbol, receiver, it, type, origin, superQualifierSymbol)
+                }
+            }
         }
 
-        override fun visitWhen(expression: IrWhen, data: VisitData): VisitResult {
-            val newWhen = processWhen(expression, data, expressionVisitor, this) { visitResult, original ->
-                visitResult.runIfChangedOrDefault(listOf(original)) { statements }
-            }
+        override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+            expression.transformChildrenVoid(expressionTransformer)
 
-            if (newWhen != expression) {
-                return DecomposedResult(newWhen, unitValue)
-            }
-            return KeptResult
-        }
+            val composite = expression.value as? IrComposite ?: return expression
 
-        private inner class BreakContinueUpdater(val breakLoop: IrLoop, val continueLoop: IrLoop) : IrElementTransformer<IrLoop> {
-            override fun visitBreak(jump: IrBreak, data: IrLoop) = jump.apply {
-                if (loop == data) loop = breakLoop
-            }
-
-            override fun visitContinue(jump: IrContinue, data: IrLoop) = jump.apply {
-                if (loop == data) loop = continueLoop
+            return materializeLastExpression(composite) {
+                expression.run { IrSetVariableImpl(startOffset, endOffset, type, symbol, it, origin) }
             }
         }
 
@@ -240,35 +237,34 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
         //   body {}
         // }
         //
-        override fun visitWhileLoop(loop: IrWhileLoop, data: VisitData): VisitResult {
+        override fun visitWhileLoop(loop: IrWhileLoop): IrExpression {
+            val newBody = loop.body?.transform(statementTransformer, null)
+            val newCondition = loop.condition.transform(expressionTransformer, null)
 
-            val conditionResult = loop.condition.accept(expressionVisitor, data)
-            val bodyResult = loop.body?.accept(this, data)
+            if (newCondition is IrComposite) {
+                val newLoopBody = IrBlockImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin)
 
-            return conditionResult.runIfChanged {
-                bodyResult?.run { assert(status == VisitStatus.KEPT) }
-
-                val condVariable = conditionResult.resultValue
+                newLoopBody.statements += newCondition.statements.run { subList(0, lastIndex) }
                 val thenBlock = JsIrBuilder.buildBlock(unitType, listOf(JsIrBuilder.buildBreak(unitType, loop)))
+
+                val newLoopCondition = newCondition.statements.last() as IrExpression
+
                 val breakCond = JsIrBuilder.buildCall(context.irBuiltIns.booleanNotSymbol).apply {
-                    putValueArgument(0, condVariable)
+                    putValueArgument(0, newLoopCondition)
                 }
 
-                statements.add(JsIrBuilder.buildIfElse(unitType, breakCond, thenBlock))
+                newLoopBody.statements += JsIrBuilder.buildIfElse(unitType, breakCond, thenBlock)
+                newLoopBody.statements += newBody!!
 
-                val oldBody = loop.body!!
-
-                val newBody = statements + oldBody
-
-                val newLoop = IrWhileLoopImpl(loop.startOffset, loop.endOffset, loop.type, loop.origin).apply {
-                    label = loop.label
+                return loop.apply {
                     condition = constTrue
-                    body = oldBody.run { IrBlockImpl(startOffset, endOffset, type, origin, newBody) }
+                    body = newLoopBody
                 }
+            }
 
-                newLoop.body?.transform(BreakContinueUpdater(newLoop, newLoop), loop)
-
-                DecomposedResult(newLoop, unitValue)
+            return loop.apply {
+                body = newBody
+                condition = newCondition
             }
         }
 
@@ -285,213 +281,202 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
         //   cond = c_block {}
         // } while (cond)
         //
-        override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: VisitData): VisitResult {
+        override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrExpression {
+            val newBody = loop.body?.transform(statementTransformer, null)!!
+            val newCondition = loop.condition.transform(expressionTransformer, null)
 
-            val bodyResult = loop.body?.accept(this, data)
-            val conditionResult = loop.condition.accept(expressionVisitor, data)
-
-            return conditionResult.runIfChanged {
-                bodyResult?.run { assert(status == VisitStatus.KEPT) }
-
-                val body = loop.body!!
-
-                val innerLoop = IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, unitType, loop.origin, body, constFalse).apply {
+            if (newCondition is IrComposite) {
+                val innerLoop = IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, unitType, loop.origin, newBody, constFalse).apply {
                     label = makeLoopLabel()
                 }
 
-                val condVariable = conditionResult.resultValue
-                val newBody = JsIrBuilder.buildBlock(body.type, listOf(innerLoop) + statements)
-                val newLoop = IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, unitType, loop.origin, newBody, condVariable).apply {
+                val newLoopCondition = newCondition.statements.last() as IrExpression
+                val newLoopBody = IrBlockImpl(newCondition.startOffset, newBody.endOffset, newBody.type).apply {
+                    statements += innerLoop
+                    statements += newCondition.statements.run { subList(0, lastIndex) }
+                }
+
+                val newLoop = IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, unitType, loop.origin)
+
+                return newLoop.apply {
+                    condition = newLoopCondition
+                    body = newLoopBody.transform(BreakContinueUpdater(newLoop, innerLoop), loop)
                     label = loop.label ?: makeLoopLabel()
                 }
+            }
 
-                body.transform(BreakContinueUpdater(newLoop, innerLoop), loop)
-
-                DecomposedResult(newLoop, unitValue)
+            return loop.apply {
+                body = newBody
+                condition = newCondition
             }
         }
 
-        override fun visitTypeOperator(expression: IrTypeOperatorCall, data: VisitData): VisitResult {
-            val argumentResult = expression.argument.accept(expressionVisitor, data)
+        // when {
+        //  c1_block {} -> b1_block {}
+        //  ....
+        //  cn_block {} -> bn_block {}
+        //  else -> else_block {}
+        // }
+        //
+        // transformed into if-else chain
+        // c1 = c1_block {}
+        // if (c1) {
+        //   b1_block {}
+        // } else {
+        //   c2 = c2_block {}
+        //   if (c2) {
+        //     b2_block{}
+        //   } else {
+        //         ...
+        //           else {
+        //              else_block {}
+        //           }
+        // }
+        override fun visitWhen(expression: IrWhen): IrExpression {
 
-            return argumentResult.runIfChanged {
-                val newOperator = IrTypeOperatorCallImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    expression.type,
-                    expression.operator,
-                    expression.typeOperand,
-                    expression.typeOperandClassifier,
-                    resultValue
-                )
+            var compositeCount = 0
 
-                val resValue: IrExpression
+            val results = expression.branches.map {
+                val cond = it.condition.transform(expressionTransformer, null)
+                val res = it.result.transform(statementTransformer, null)
+                if (cond is IrComposite) compositeCount++
+                Triple(cond, res, it)
+            }
 
-                if (!expression.type.isUnit()) {
-                    val resVar = makeTempVar(expression.type)
-                    statements += JsIrBuilder.buildVar(resVar, newOperator, type = expression.type)
-                    resValue = JsIrBuilder.buildGetValue(resVar)
-                } else {
-                    statements += newOperator
-                    resValue = unitValue
+            if (compositeCount == 0) {
+                val branches = results.map { (cond, res, orig) ->
+                    when (orig) {
+                        is IrElseBranch -> IrElseBranchImpl(orig.startOffset, orig.endOffset, cond, res)
+                        else /* IrBranch */ -> IrBranchImpl(orig.startOffset, orig.endOffset, cond, res)
+                    }
                 }
-
-                DecomposedResult(statements, resValue)
+                return expression.run { IrWhenImpl(startOffset, endOffset, type, origin, branches) }
             }
+
+            val block = IrBlockImpl(expression.startOffset, expression.endOffset, unitType, expression.origin)
+
+            // TODO: consider decomposing only when it is really required
+            results.fold(block) { appendBlock, (cond, res, orig) ->
+                val condStatements = destructureComposite(cond)
+                val condValue = condStatements.last() as IrExpression
+
+                appendBlock.statements += condStatements.run { subList(0, lastIndex) }
+
+                JsIrBuilder.buildBlock(unitType).also {
+                    val elseBlock = if (orig is IrElseBranch) null else it
+                    val ifElseNode =
+                        JsIrBuilder.buildIfElse(orig.startOffset, orig.endOffset, unitType, condValue, res, elseBlock, expression.origin)
+                    appendBlock.statements += ifElseNode
+                }
+            }
+
+            return block
         }
 
-        override fun visitField(declaration: IrField, data: VisitData): VisitResult {
-            if (declaration.initializer == null) return KeptResult
-
-            val result = declaration.initializer!!.accept(expressionVisitor, data)
-
-            return result.runIfChanged {
-                TODO()
-            }
-        }
-
-        override fun visitSetField(expression: IrSetField, data: VisitData): VisitResult {
-            var needNew = false
-
-            val receiverResult = expression.receiver?.accept(expressionVisitor, data)
-            val valueResult = expression.value.accept(expressionVisitor, data)
-
-            val newStatements = mutableListOf<IrStatement>()
-
-            val newReceiver = receiverResult?.runIfChangedOrDefault(expression.receiver) {
-                newStatements += statements
-                needNew = true
-                resultValue
-            }
-
-            val newValue = valueResult.runIfChangedOrDefault(expression.value) {
-                newStatements += statements
-                needNew = true
-                resultValue
-            }
-
-            if (needNew) {
-                newStatements += JsIrBuilder.buildSetField(expression.symbol, newReceiver, newValue, unitType, expression.superQualifierSymbol)
-                return DecomposedResult(newStatements, unitValue)
-            }
-
-            return KeptResult
-        }
-
-        override fun visitSetVariable(expression: IrSetVariable, data: VisitData): VisitResult {
-            val valueResult = expression.value.accept(expressionVisitor, data)
-
-            return valueResult.runIfChanged {
-                statements += JsIrBuilder.buildSetVariable(expression.symbol, resultValue, unitType)
-                DecomposedResult(statements, unitValue)
-            }
-        }
+        override fun visitTry(aTry: IrTry) = aTry.also { it.transformChildrenVoid(this); }
     }
 
-    inner class ExpressionVisitor : DecomposerVisitor() {
-        override fun visitExpression(expression: IrExpression, data: VisitData) = KeptResult
+    private inner class ExpressionTransformer : IrElementTransformerVoid() {
 
-        //
-        // val x = block {
-        //   ...
-        //   expr
-        // }
-        //
-        // is transformed into
-        //
-        // val x_tmp
-        // block {
-        //   ...
-        //   x_tmp = expr
-        // }
-        // val x = x_tmp
-        override fun visitContainerExpression(expression: IrContainerExpression, data: VisitData): VisitResult {
-            val variable = makeTempVar(expression.type)
-            val varDeclaration = JsIrBuilder.buildVar(variable, type = expression.type)
+        override fun visitExpression(expression: IrExpression) = expression.transformChildren()
 
-            val blockStatements = expression.statements
-            val lastStatement: IrStatement? = blockStatements.lastOrNull()
+        override fun visitGetField(expression: IrGetField): IrExpression {
+            expression.transformChildrenVoid(expressionTransformer)
 
-            val body = when (expression) {
-                is IrBlock -> IrBlockImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    unitType,
-                    expression.origin
-                )
-                is IrComposite -> IrCompositeImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    unitType,
-                    expression.origin
-                )
-                else -> error("Unsupported block type")
-            }
+            val composite = expression.receiver as? IrComposite ?: return expression
 
-            val collectingList = body.statements
-
-            for (i in 0 until blockStatements.size - 1) {
-                val statement = blockStatements[i]
-                val tempResult = statement.accept(statementVisitor, data)
-                collectingList += tempResult.runIfChangedOrDefault(listOf(statement)) { statements }
-            }
-
-            return if (lastStatement != null) {
-                val result = lastStatement.accept(expressionVisitor, data).runIfChangedOrDefault(lastStatement as IrExpression) {
-                    collectingList += statements
-                    resultValue
-                }
-                collectingList += JsIrBuilder.buildSetVariable(variable, result, unitType)
-                if (body is IrComposite) {
-                    DecomposedResult(mutableListOf(varDeclaration, *collectingList.toTypedArray()) , JsIrBuilder.buildGetValue(variable))
-                } else {
-                    DecomposedResult(mutableListOf(varDeclaration, body as IrStatement), JsIrBuilder.buildGetValue(variable))
-                }
-            } else {
-                // do not allow variable to be uninitialized
-                DecomposedResult(mutableListOf(), unitValue)
+            return materializeLastExpression(composite) {
+                expression.run { IrGetFieldImpl(startOffset, endOffset, symbol, type, it, origin, superQualifierSymbol) }
             }
         }
 
-        override fun visitGetClass(expression: IrGetClass, data: VisitData): VisitResult {
-            val res = super.visitGetClass(expression, data)
+        override fun visitGetClass(expression: IrGetClass): IrExpression {
+            expression.transformChildrenVoid(expressionTransformer)
 
-            return res.runIfChanged { DecomposedResult(statements, JsIrBuilder.buildGetClass(resultValue, expression.type)) }
-        }
+            val composite = expression.argument as? IrComposite ?: return expression
 
-        override fun visitGetField(expression: IrGetField, data: VisitData): VisitResult {
-            val res = super.visitGetField(expression, data)
-
-            return res.runIfChanged {
-                DecomposedResult(statements, JsIrBuilder.buildGetField(expression.symbol, resultValue, expression.superQualifierSymbol))
+            return materializeLastExpression(composite) {
+                expression.run { IrGetClassImpl(startOffset, endOffset, type, it) }
             }
         }
 
-        private fun prepareArgument(arg: IrExpression, needWrap: Boolean, statements: MutableList<IrStatement>): IrExpression {
-            return if (needWrap) {
-                val wrapVar = makeTempVar(arg.type)
-                statements += JsIrBuilder.buildVar(wrapVar, arg, type = arg.type)
-                JsIrBuilder.buildGetValue(wrapVar)
-            } else arg
+        override fun visitLoop(loop: IrLoop) = loop.asExpression(unitValue)
+
+        override fun visitSetVariable(expression: IrSetVariable) = expression.asExpression(unitValue)
+
+        override fun visitSetField(expression: IrSetField) = expression.asExpression(unitValue)
+
+        override fun visitBreakContinue(jump: IrBreakContinue) = jump.asExpression(JsIrBuilder.buildCall(unreachableFunction, nothingType))
+
+        override fun visitThrow(expression: IrThrow) = expression.asExpression(JsIrBuilder.buildCall(unreachableFunction, nothingType))
+
+        override fun visitReturn(expression: IrReturn) = expression.asExpression(JsIrBuilder.buildCall(unreachableFunction, nothingType))
+
+        override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
+            expression.transformChildrenVoid(expressionTransformer)
+
+            val compositeCount = expression.arguments.count { it is IrComposite }
+
+            if (compositeCount == 0) return expression
+
+            val newStatements = mutableListOf<IrStatement>()
+            val arguments = mapArguments(expression.arguments, compositeCount, newStatements)
+
+            newStatements += expression.run { IrStringConcatenationImpl(startOffset, endOffset, type, arguments.map { it!! }) }
+            return JsIrBuilder.buildComposite(expression.type, newStatements)
         }
 
         private fun mapArguments(
-            argResults: List<Pair<IrExpression?, VisitResult?>>,
-            toDecompose: Int,
+            oldArguments: Collection<IrExpression?>,
+            compositeCount: Int,
             newStatements: MutableList<IrStatement>
         ): List<IrExpression?> {
-            var decomposed = 0
-            return argResults.map { (original, result) ->
-                val needWrap = decomposed < toDecompose
-                original?.let {
-                    val evaluated = result!!.runIfChangedOrDefault(it) {
-                        newStatements += statements
-                        decomposed++
-                        resultValue
-                    }
-                    prepareArgument(evaluated, needWrap, newStatements)
-                }
+            var compositesLeft = compositeCount
+            val arguments = mutableListOf<IrExpression?>()
+
+            for (arg in oldArguments) {
+                val value = if (arg is IrComposite) {
+                    compositesLeft--
+                    newStatements += arg.statements.run { subList(0, lastIndex) }
+                    arg.statements.last() as IrExpression
+                } else arg
+
+                val newArg = if (compositesLeft != 0) {
+                    if (value != null) {
+                        // TODO: do not wrap if value is pure (const, variable, etc)
+                        val tmp = makeTempVar(value.type)
+                        newStatements += JsIrBuilder.buildVar(tmp, value, value.type)
+                        JsIrBuilder.buildGetValue(tmp)
+                    } else value
+                } else value
+
+                arguments += newArg
             }
+            return arguments
+        }
+
+        // TODO: remove this when vararg is lowered
+        override fun visitVararg(expression: IrVararg): IrExpression {
+            expression.transformChildrenVoid(expressionTransformer)
+
+            val compositeCount = expression.elements.count { it is IrComposite }
+
+            if (compositeCount == 0) return expression
+
+            val newStatements = mutableListOf<IrStatement>()
+            val argumentsExpressions = mapArguments(
+                expression.elements.map { (it as? IrSpreadElement)?.expression ?: it as IrExpression },
+                compositeCount,
+                newStatements
+            )
+
+            val arguments = expression.elements.withIndex().map { (i, v) ->
+                val expr = argumentsExpressions[i]!!
+                (v as? IrSpreadElement)?.run { IrSpreadElementImpl(startOffset, endOffset, expr) } ?: expr
+            }
+
+            newStatements += expression.run { IrVarargImpl(startOffset, endOffset, type, varargElementType, arguments) }
+            return expression.run { IrCompositeImpl(startOffset, endOffset, type, null, newStatements) }
         }
 
         // The point here is to keep original evaluation order so (there is the same story for StringConcat)
@@ -506,340 +491,143 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
         // var p4_tmp = p4
         // var p5_tmp = block {}
         // d_tmp.foo(p1_tmp, p2_tmp, p3_tmp, p4_tmp, p5_tmp, p6, p7)
-        override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: VisitData): VisitResult {
-            var argsCounter = 0
+        override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression {
+            expression.transformChildrenVoid(expressionTransformer)
 
-            val dispatchResult = expression.dispatchReceiver?.accept(this, data)?.applyIfChanged { argsCounter++ }
-            val extensionResult = expression.extensionReceiver?.accept(this, data)?.applyIfChanged { argsCounter++ }
+            val oldArguments = mutableListOf(expression.dispatchReceiver, expression.extensionReceiver)
+            for (i in 0 until expression.valueArgumentsCount) oldArguments += expression.getValueArgument(i)
+            val compositeCount = oldArguments.count { it is IrComposite }
 
-            val argumentResults = mutableListOf<Pair<IrExpression?, VisitResult?>>().also {
-                for (i in 0 until expression.valueArgumentsCount) {
-                    val arg = expression.getValueArgument(i)
-                    val result = arg?.accept(this, data)?.applyIfChanged { argsCounter++ }
-                    it += Pair(arg, result)
-                }
+            if (compositeCount == 0) return expression
+
+            val newStatements = mutableListOf<IrStatement>()
+            val newArguments = mapArguments(oldArguments, compositeCount, newStatements)
+
+            expression.dispatchReceiver = newArguments[0]
+            expression.extensionReceiver = newArguments[1]
+
+            for (i in 0 until expression.valueArgumentsCount) {
+                expression.putValueArgument(i, newArguments[i + 2])
             }
 
-            if (argsCounter == 0) return KeptResult
+            newStatements += expression
+
+            return expression.run { IrCompositeImpl(startOffset, endOffset, type, origin, newStatements) }
+        }
+
+        override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
+
+            expression.run { if (statements.isEmpty()) return IrCompositeImpl(startOffset, endOffset, type, origin, emptyList()) }
 
             val newStatements = mutableListOf<IrStatement>()
 
-            val needWrapDR = 0 != argsCounter
-            val newDispatchReceiverValue = dispatchResult?.runIfChangedOrDefault(expression.dispatchReceiver) {
-                newStatements += statements
-                argsCounter--
-                resultValue
-            }
-            val newDispatchReceiver = newDispatchReceiverValue?.let { prepareArgument(it, needWrapDR, newStatements) }
-
-            val needWrapER = 0 != argsCounter
-            val newExtensionReceiverValue = extensionResult?.runIfChangedOrDefault(expression.extensionReceiver) {
-                newStatements += statements
-                argsCounter--
-                resultValue
-            }
-            val newExtensionReceiver = newExtensionReceiverValue?.let { prepareArgument(it, needWrapER, newStatements) }
-
-            val newArguments = mapArguments(argumentResults, argsCounter, newStatements)
-
-            expression.dispatchReceiver = newDispatchReceiver
-            expression.extensionReceiver = newExtensionReceiver
-
-            newArguments.forEachIndexed { i, v -> expression.putValueArgument(i, v) }
-
-            val resultVar = makeTempVar(expression.type)
-
-            // TODO: get rid of temporary variable
-            newStatements += JsIrBuilder.buildVar(resultVar, expression, type = expression.type)
-
-            return DecomposedResult(newStatements, JsIrBuilder.buildGetValue(resultVar))
-        }
-
-        override fun visitWhen(expression: IrWhen, data: VisitData): VisitResult {
-            val collectiveVar = makeTempVar(expression.type)
-            val varDeclaration = JsIrBuilder.buildVar(collectiveVar, type = expression.type)
-            val newWhen = processWhen(expression, data, this, this) { visitResult, original ->
-                val resultList = mutableListOf<IrStatement>()
-                val newResult = visitResult.runIfChangedOrDefault(original as IrExpression) {
-                    resultList += statements
-                    resultValue
-                }
-                resultList.apply { add(JsIrBuilder.buildSetVariable(collectiveVar, newResult, unitType)) }
+            for (i in 0 until expression.statements.lastIndex) {
+                newStatements += destructureComposite(expression.statements[i].transform(statementTransformer, null))
             }
 
-            if (newWhen != expression) {
-                return DecomposedResult(mutableListOf(varDeclaration, newWhen), JsIrBuilder.buildGetValue(collectiveVar))
-            }
-            return KeptResult
+            newStatements += destructureComposite(expression.statements.last().transform(expressionTransformer, null))
+
+            return JsIrBuilder.buildComposite(expression.type, newStatements)
         }
 
-        override fun visitVararg(expression: IrVararg, data: VisitData): VisitResult {
-            var decomposed = 0
+        private fun wrap(expression: IrExpression) =
+            expression as? IrBlock ?: expression.let { IrBlockImpl(it.startOffset, it.endOffset, it.type, null, listOf(it)) }
 
-            val arguments = expression.elements.map {
-                val expr = (it as? IrSpreadElement)?.expression ?: it as IrExpression
-                Pair(it, expr.accept(this, data).applyIfChanged { decomposed++ })
-            }
+        private fun wrap(expression: IrExpression, variable: IrVariableSymbol) =
+            wrap(JsIrBuilder.buildSetVariable(variable, expression, unitType))
 
-            if (decomposed == 0) return KeptResult
+        // try {
+        //   try_block {}
+        // } catch () {
+        //   catch_block {}
+        // } finally {}
+        //
+        // transformed into if-else chain
+        //
+        // Composite [
+        //   var tmp
+        //   try {
+        //     tmp = try_block {}
+        //   } catch () {
+        //     tmp = catch_block {}
+        //   } finally {}
+        //   tmp
+        // ]
+        override fun visitTry(aTry: IrTry): IrExpression {
+            val tmp = makeTempVar(aTry.type)
 
-            val newStatements = mutableListOf<IrStatement>()
-            val newArguments = arguments.map { (original, result) ->
-                if (decomposed == 0) original
-                else {
-                    val originalExpression = (original as? IrSpreadElement)?.expression ?: original as IrExpression
-                    val newExpression = result.runIfChangedOrDefault(originalExpression) {
-                        newStatements += statements
-                        decomposed--
-                        resultValue
-                    }
-                    val wrapVar = makeTempVar(expression.varargElementType)
-                    newStatements += JsIrBuilder.buildVar(wrapVar, type = expression.type).apply { initializer = newExpression }
-                    val newValue = JsIrBuilder.buildGetValue(wrapVar)
-                    if (original is IrSpreadElement) {
-                        IrSpreadElementImpl(original.startOffset, original.endOffset, newValue)
-                    } else {
-                        newValue
-                    }
-                }
-            }
-
-            val newExpression = IrVarargImpl(
-                expression.startOffset,
-                expression.endOffset,
-                expression.type,
-                expression.varargElementType,
-                newArguments
-            )
-
-            return DecomposedResult(newStatements, newExpression)
-        }
-
-        override fun visitStringConcatenation(expression: IrStringConcatenation, data: VisitData): VisitResult {
-            var decomposed = 0
-
-            val arguments = expression.arguments.map {
-                Pair(it, it.accept(this, data).applyIfChanged { decomposed++ })
+            val newTryResult = wrap(aTry.tryResult, tmp)
+            val newCatches = aTry.catches.map {
+                val newCatchBody = wrap(it.result, tmp)
+                IrCatchImpl(it.startOffset, it.endOffset, it.catchParameter, newCatchBody)
             }
 
-            if (decomposed == 0) return KeptResult
+            val newTry = aTry.run { IrTryImpl(startOffset, endOffset, unitType, newTryResult, newCatches, finallyExpression) }
+            newTry.transformChildrenVoid(statementTransformer)
 
-            val newStatements = mutableListOf<IrStatement>()
-            val newArguments = mapArguments(arguments, decomposed, newStatements)
-            val newExpression =
-                IrStringConcatenationImpl(expression.startOffset, expression.endOffset, expression.type, newArguments.map { it!! })
-
-            // Unlike to IrCall string concatenation has no side effects itself so it is possible to pass it as return value
-            return DecomposedResult(newStatements, newExpression)
+            val newStatements = listOf(JsIrBuilder.buildVar(tmp, type = aTry.type), newTry, JsIrBuilder.buildGetValue(tmp))
+            return JsIrBuilder.buildComposite(aTry.type, newStatements)
         }
 
-        private fun <T : IrStatement> transformTermination(
-            value: IrExpression,
-            instantiater: (value: IrExpression) -> T,
-            data: VisitData
-        ): TerminatedResult {
-            val valueResult = value.accept(this, data)
-            val newStatements = mutableListOf<IrStatement>()
-
-            val returnValue = valueResult.runIfChangedOrDefault(value) {
-                newStatements += statements
-                resultValue
-            }
-
-            newStatements += instantiater(returnValue)
-
-            return TerminatedResult(newStatements, JsIrBuilder.buildCall(unreachableFunction.symbol))
-        }
-
-
-        override fun visitReturn(expression: IrReturn, data: VisitData) = transformTermination(
-            expression.value,
-            { v -> IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, expression.returnTargetSymbol, v) },
-            data
-        )
-
-        override fun visitThrow(expression: IrThrow, data: VisitData) = transformTermination(
-            expression.value,
-            { v -> IrThrowImpl(expression.startOffset, expression.endOffset, expression.type, v) },
-            data
-        )
-
-        override fun visitBreakContinue(jump: IrBreakContinue, data: VisitData): VisitResult {
-            return DecomposedResult(jump, JsIrBuilder.buildCall(unreachableFunction.symbol))
-        }
-
-        override fun visitTry(aTry: IrTry, data: VisitData): VisitResult {
-            val tryResult = aTry.tryResult.accept(expressionVisitor, data)
-            val catchResults = aTry.catches.map { Pair(it, it.result.accept(expressionVisitor, data)) }
-            val finallyResult = aTry.finallyExpression?.accept(statementVisitor, data)
-
-            finallyResult?.run { assert(status == VisitStatus.KEPT) }
-
-            val resultSymbol = makeTempVar(aTry.type)
-            val resultDeclaration = JsIrBuilder.buildVar(resultSymbol, type = aTry.type)
-
-            val newTryValue = tryResult.runIfChangedOrDefault(aTry.tryResult) { resultValue }
-            val trySetResult = JsIrBuilder.buildSetVariable(resultSymbol, newTryValue, unitType) as IrStatement
-
-            val tryBlock = IrBlockImpl(aTry.tryResult.startOffset, aTry.tryResult.endOffset, unitType).apply {
-                statements += tryResult.runIfChangedOrDefault(listOf(trySetResult)) { statements + trySetResult }
-            }
-
-            val catchBlocks = catchResults.map { (original, result) ->
-                val newCatchResult = result.runIfChangedOrDefault(original.result) { resultValue }
-                val catchSetResult = JsIrBuilder.buildSetVariable(resultSymbol, newCatchResult, unitType) as IrStatement
-                val catchBlock = IrBlockImpl(original.result.startOffset, original.result.endOffset, unitType)
-                catchBlock.statements += result.runIfChangedOrDefault(listOf(catchSetResult)) { statements + catchSetResult }
-                IrCatchImpl(original.startOffset, original.endOffset, original.catchParameter, catchBlock)
-            }
-
-            val newTry = aTry.run { IrTryImpl(startOffset, endOffset, unitType, tryBlock, catchBlocks, finallyExpression) }
-
-            return DecomposedResult(mutableListOf(resultDeclaration, newTry), JsIrBuilder.buildGetValue(resultSymbol))
-        }
-
-        override fun visitSetVariable(expression: IrSetVariable, data: VisitData): VisitResult {
-            val result = expression.accept(statementVisitor, data)
-            return if (result.status == VisitStatus.KEPT) {
-                DecomposedResult(expression, unitValue)
-            } else result
-        }
-
-        override fun visitLoop(loop: IrLoop, data: VisitData): VisitResult {
-            val result = loop.accept(statementVisitor, data)
-            return if (result.status == VisitStatus.KEPT) {
-                DecomposedResult(loop, unitValue)
-            } else result
-        }
-
-        override fun visitSetField(expression: IrSetField, data: VisitData): VisitResult {
-            val result = expression.accept(statementVisitor, data)
-            return if (result.status == VisitStatus.KEPT) {
-                DecomposedResult(expression, unitValue)
-            } else result
-        }
-    }
-
-    fun makeTempVar(type: IrType) =
-        JsSymbolBuilder.buildTempVar(function.symbol, type, "tmp\$dcms\$${tmpVarCounter++}", true)
-
-    fun makeLoopLabel() = "\$l\$${tmpVarCounter++}"
-
-    private fun processWhen(
-        expression: IrWhen,
-        data: VisitData,
-        expressionVisitor: DecomposerVisitor,
-        statementVisitor: DecomposerVisitor,
-        bodyBuilder: (VisitResult, IrStatement) -> List<IrStatement>
-    ): IrStatement {
-        var needNewConds = false
-        var needNewBodies = false
-
-        val branches = expression.branches.map {
-            val conditionResult = it.condition.accept(expressionVisitor, data).applyIfChanged { needNewConds = true }
-            val bodyResult = it.result.accept(statementVisitor, data).applyIfChanged { needNewBodies = true }
-            Pair(conditionResult, bodyResult)
-        }
-
-        // keep it as is
-        if (!(needNewConds || needNewBodies)) return expression
-
-        if (needNewConds) {
-
-            // [val x = ] when {
-            //  c1_block {} -> b1_block {}
-            //  ....
-            //  cn_block {} -> bn_block {}
-            //  else -> else_block {}
-            // }
-            //
-            // transformed into if-else chain
-            // [var x_tmp]
-            // val c1 = c1_block {}
-            // if (c1) {
-            //   [x_tmp =] b1_block {}
-            // } else {
-            //   val c2 = c2_block {}
-            //   if (c2) {
-            //     [x_tmp =] b2_block{}
-            //   } else {
-            //         ...
-            //           else {
-            //              [x_tmp =] else_block {}
-            //           }
-            // }
-            // [val x = x_tmp]
-            //
-            val block = IrBlockImpl(expression.startOffset, expression.endOffset, unitType, expression.origin)
-
-            branches.foldIndexed(block) { i, appendBlock, (condResult, bodyResult) ->
-                val originalBranch = expression.branches[i]
-                val originalCondition = originalBranch.condition
-                val originalResult = originalBranch.result
-
-                val irCondition = condResult.runIfChangedOrDefault(originalCondition) {
-                    appendBlock.statements += statements
-                    resultValue
-                }
-
-                val thenBlock = IrBlockImpl(originalResult.startOffset, originalResult.endOffset, unitType).apply {
-                    statements += bodyBuilder(bodyResult, originalResult)
-                }
-
-                JsIrBuilder.buildBlock(unitType).also {
-                    val elseBlock = if (originalBranch is IrElseBranch) null else it
-
-                    val ifElseNode = JsIrBuilder.buildIfElse(
-                        originalBranch.startOffset,
-                        originalBranch.endOffset,
-                        unitType,
-                        irCondition,
-                        thenBlock,
-                        elseBlock,
-                        expression.origin
-                    )
-                    appendBlock.statements += ifElseNode
-                }
-            }
-
-            return block
-        }
-
-        // [val x = ] when {
+        // when {
         //  c1 -> b1_block {}
         //  ....
         //  cn -> bn_block {}
         //  else -> else_block {}
         // }
         //
-        // transformed into if-else chain
+        // transformed into if-else chain if anything should be decomposed
         //
-        // [var x_tmp]
-        // when {
-        //   c1 -> [x_tmp =] b1_block {}
-        //   ...
-        //   cn -> [x_tmp =] bn_block {}
-        //   else -> [x_tmp =] else_block {}
-        // }
-        // [val x = x_tmp]
+        // Composite [
+        //   var tmp
+        //   when {
+        //     c1 -> tmp = b1_block {}
+        //     ...
+        //     cn -> tmp = bn_block {}
+        //     else -> tmp = else_block {}
+        //   }
+        //   tmp
+        // ]
+        //
+        // kept `as is` otherwise
 
-        val newWhen = IrWhenImpl(expression.startOffset, expression.endOffset, unitType, expression.origin)
+        override fun visitWhen(expression: IrWhen): IrExpression {
 
-        branches.forEachIndexed { i, (_, bodyResult) ->
-            val originalBranch = expression.branches[i]
-            val condition = originalBranch.condition
-            val originalResult = originalBranch.result
-
-            val body = IrBlockImpl(originalResult.startOffset, originalResult.endOffset, unitType).apply {
-                statements += bodyBuilder(bodyResult, originalResult)
+            var hasComposites = false
+            val decomposedResults = expression.branches.map {
+                val transformedCondition = it.condition.transform(expressionTransformer, null)
+                val transformedResult = it.result.transform(expressionTransformer, null)
+                hasComposites = hasComposites || transformedCondition is IrComposite || transformedResult is IrComposite
+                Triple(it, transformedCondition, transformedResult)
             }
 
-            newWhen.branches += when (originalBranch) {
-                is IrElseBranch -> IrElseBranchImpl(originalBranch.startOffset, originalBranch.endOffset, condition, body)
-                else /* IrBranch */ -> IrBranchImpl(originalBranch.startOffset, originalBranch.endOffset, condition, body)
+            if (hasComposites) {
+                val tmp = makeTempVar(expression.type)
+
+                val newBranches = decomposedResults.map { (branch, condition, result) ->
+                    val newResult = wrap(result, tmp)
+                    when (branch) {
+                        is IrElseBranch -> IrElseBranchImpl(branch.startOffset, branch.endOffset, condition, newResult)
+                        else /* IrBranch */ -> IrBranchImpl(branch.startOffset, branch.endOffset, condition, newResult)
+                    }
+                }
+
+                val irVar = JsIrBuilder.buildVar(tmp, type = expression.type)
+                val newWhen =
+                    expression.run { IrWhenImpl(startOffset, endOffset, unitType, origin, newBranches) }
+                        .transform(statementTransformer, null)  // deconstruct into `if-else` chain
+
+                return JsIrBuilder.buildComposite(expression.type, listOf(irVar, newWhen, JsIrBuilder.buildGetValue(tmp)))
+            } else {
+                val newBranches = decomposedResults.map { (branch, condition, result) ->
+                    when (branch) {
+                        is IrElseBranch -> IrElseBranchImpl(branch.startOffset, branch.endOffset, condition, result)
+                        else /* IrBranch */ -> IrBranchImpl(branch.startOffset, branch.endOffset, condition, result)
+                    }
+                }
+
+                return expression.run { IrWhenImpl(startOffset, endOffset, type, origin, newBranches) }
             }
         }
-
-        return newWhen
     }
 }

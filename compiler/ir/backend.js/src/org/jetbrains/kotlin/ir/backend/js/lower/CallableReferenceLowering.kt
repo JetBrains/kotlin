@@ -290,7 +290,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             returnStatements = emptyList()
         }
 
-        statements += JsIrBuilder.buildReturn(getterFunction.symbol, returnValue, context)
+        statements += JsIrBuilder.buildReturn(getterFunction.symbol, returnValue, context.irBuiltIns.nothingType)
 
         getterFunction.body = JsIrBuilder.buildBlockBody(statements)
         return returnStatements
@@ -421,7 +421,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             irCall.putValueArgument(j++, JsIrBuilder.buildGetValue(closureParamSymbols[i]))
         }
 
-        val irClosureReturn = JsIrBuilder.buildReturn(closureFunction.symbol, irCall, context)
+        val irClosureReturn = JsIrBuilder.buildReturn(closureFunction.symbol, irCall, context.irBuiltIns.nothingType)
 
         closureFunction.body = JsIrBuilder.buildBlockBody(listOf(irClosureReturn))
 

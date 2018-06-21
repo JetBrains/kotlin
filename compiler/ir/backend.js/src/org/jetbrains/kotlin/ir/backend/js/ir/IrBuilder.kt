@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ir
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
@@ -29,7 +28,7 @@ object JsIrBuilder {
             type ?: target.owner.returnType,
             target,
             target.descriptor,
-            target.owner.typeParameters.size,
+            target.descriptor.typeParametersCount,
             SYNTHESIZED_STATEMENT
         ).apply {
             typeArguments?.let {
@@ -38,8 +37,8 @@ object JsIrBuilder {
             }
         }
 
-    fun buildReturn(targetSymbol: IrFunctionSymbol, value: IrExpression, context: BackendContext) =
-        IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingType, targetSymbol, value)
+    fun buildReturn(targetSymbol: IrFunctionSymbol, value: IrExpression, type: IrType) =
+        IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, targetSymbol, value)
 
     fun buildThrow(type: IrType, value: IrExpression) = IrThrowImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, value)
 
@@ -72,11 +71,15 @@ object JsIrBuilder {
     fun buildBlock(type: IrType, statements: List<IrStatement>) =
         IrBlockImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, SYNTHESIZED_STATEMENT, statements)
 
+    fun buildComposite(type: IrType, statements: List<IrStatement> = emptyList()) =
+        IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, SYNTHESIZED_STATEMENT, statements)
+
     fun buildFunctionReference(type: IrType, symbol: IrFunctionSymbol) =
         IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, symbol.descriptor, 0, null)
 
-    fun buildVar(symbol: IrVariableSymbol, initializer: IrExpression? = null, type: IrType?) =
-        IrVariableImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SYNTHESIZED_DECLARATION, symbol, type ?: symbol.owner.type).apply { this.initializer = initializer }
+    fun buildVar(symbol: IrVariableSymbol, initializer: IrExpression? = null, type: IrType? = null) =
+        IrVariableImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SYNTHESIZED_DECLARATION, symbol, type ?: symbol.owner.type)
+            .apply { this.initializer = initializer }
 
     fun buildBreak(type: IrType, loop: IrLoop) = IrBreakImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, loop)
     fun buildContinue(type: IrType, loop: IrLoop) = IrContinueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, loop)
