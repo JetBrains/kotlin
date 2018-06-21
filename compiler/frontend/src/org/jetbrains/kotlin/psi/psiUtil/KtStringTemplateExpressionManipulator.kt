@@ -20,6 +20,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.AbstractElementManipulator
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
 class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStringTemplateExpression>() {
@@ -29,11 +30,31 @@ class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStrin
         newContent: String
     ): KtStringTemplateExpression? {
         val node = element.node
-        val content = if (element.isSingleQuoted()) StringUtil.escapeStringCharacters(newContent) else newContent
         val oldText = node.text
-        val newText = oldText.substring(0, range.startOffset) + content + oldText.substring(range.endOffset)
-        val expression = KtPsiFactory(element.project).createExpression(newText)
-        node.replaceAllChildrenToChildrenOf(expression.node)
+
+        fun wrapAsInOld(content: String) = oldText.substring(0, range.startOffset) + content + oldText.substring(range.endOffset)
+
+        fun makeKtStringTemplateExpressionFromText(text: String) =
+            KtPsiFactory(element.project).createExpression(text) as? KtStringTemplateExpression
+                    ?: error("can't create a `KtStringTemplateExpression` from '$text'")
+
+        if (element.isSingleQuoted()) {
+            val templateFromNewContent = makeKtStringTemplateExpressionFromText("\"\"\"" + newContent + "\"\"\"")
+
+            val escapedText = templateFromNewContent.entries.joinToString("") { entry ->
+                when (entry) {
+                    is KtStringTemplateEntryWithExpression -> entry.text
+                    else -> StringUtil.escapeStringCharacters(entry.text)
+                }
+            }
+
+            val escaped = makeKtStringTemplateExpressionFromText(wrapAsInOld(escapedText))
+            node.replaceAllChildrenToChildrenOf(escaped.node)
+        } else {
+            val templateFromNewContent = makeKtStringTemplateExpressionFromText(wrapAsInOld(newContent))
+            node.replaceAllChildrenToChildrenOf(templateFromNewContent.node)
+        }
+
         return node.getPsi(KtStringTemplateExpression::class.java)
     }
 

@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.psi
 
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.ElementManipulators
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
-import com.intellij.psi.ElementManipulators
-import org.junit.Assert.*
-import com.intellij.openapi.util.TextRange
 
 class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testSingleQuoted() {
@@ -58,6 +57,15 @@ class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFixtureTes
     fun testReplaceRange() {
         doTestContentChange("\"abc\"", "x", range = TextRange(2,3), expected = "\"axc\"")
         doTestContentChange("\"\"\"abc\"\"\"", "x", range = TextRange(4,5), expected = "\"\"\"axc\"\"\"")
+    }
+
+    fun testTemplateWithInterpolation() {
+        doTestContentChange("\"<div>\${foo(\"\")}</div>\"", "<p>\${foo(\"\")}</p>", "\"<p>\${foo(\"\")}</p>\"")
+        doTestContentChange(
+            "\"<div style = \\\"default\\\">\${foo(\"\")}</div>\"",
+            "<p style = \"custom\">\${foo(\"\")}</p>",
+            "\"<p style = \\\"custom\\\">\${foo(\"\")}</p>\""
+        )
     }
 
     private fun doTestContentChange(original: String, newContent: String, expected: String, range: TextRange? = null) {
