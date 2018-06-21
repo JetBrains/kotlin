@@ -19,7 +19,7 @@ public final class cases/companions/PublicClasses {
 }
 
 public abstract class cases/companions/PublicClasses$AbstractProtectedCompanion {
-	public static final field Companion Lcases/companions/PublicClasses$AbstractProtectedCompanion$Companion;
+	protected static final field Companion Lcases/companions/PublicClasses$AbstractProtectedCompanion$Companion;
 	public fun <init> ()V
 }
 
@@ -32,12 +32,10 @@ public final class cases/companions/PublicClasses$InternalCompanion {
 }
 
 public final class cases/companions/PublicClasses$PrivateCompanion {
-	public static final field Companion Lcases/companions/PublicClasses$PrivateCompanion$Companion;
 	public fun <init> ()V
 }
 
 public final class cases/companions/PublicClasses$ProtectedCompanion {
-	public static final field Companion Lcases/companions/PublicClasses$ProtectedCompanion$Companion;
 	public fun <init> ()V
 }
 
@@ -54,7 +52,6 @@ public final class cases/companions/PublicInterfaces {
 }
 
 public abstract interface class cases/companions/PublicInterfaces$PrivateCompanion {
-	public static final field Companion Lcases/companions/PublicInterfaces$PrivateCompanion$Companion;
 }
 
 public abstract interface class cases/companions/PublicInterfaces$PublicCompanion {
