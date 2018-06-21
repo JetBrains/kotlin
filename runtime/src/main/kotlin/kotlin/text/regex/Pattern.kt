@@ -71,10 +71,6 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
         if (flags != 0 && flags or flagsBitMask != flagsBitMask) {
             throw IllegalArgumentException()
         }
-
-        // It's for debug purposes.
-        AbstractSet.counter = 1
-
         startNode = processExpression(-1, this.flags, null)
 
         if (!lexemes.isEmpty()) {

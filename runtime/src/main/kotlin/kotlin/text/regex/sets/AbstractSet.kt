@@ -54,9 +54,6 @@ internal abstract class AbstractSet(val type: Int = 0) {
         const val TYPE_QUANT = 1 shl 3
         const val TYPE_DOTSET = 0x80000000.toInt() or '.'.toInt()
 
-        /** Counter for debugging purposes, represent unique node index. */
-        var counter = 1
-
         val dummyNext = object : AbstractSet() {
             override var next: AbstractSet
                 get() = throw AssertionError("This method is not expected to be called.")
@@ -72,11 +69,8 @@ internal abstract class AbstractSet(val type: Int = 0) {
     var secondPassVisited = false
     abstract var next: AbstractSet
 
-    // These properties and toString() method are for debug purposes.
-    protected var debugIndex = AbstractSet.counter++.toString()
     protected open val name: String
-            get() = ""
-    override fun toString(): String = "<$debugIndex:$name>"
+        get() = ""
 
     /**
      * Checks if this node matches in given position and recursively call
