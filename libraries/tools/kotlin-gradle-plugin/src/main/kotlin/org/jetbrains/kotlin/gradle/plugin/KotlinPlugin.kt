@@ -20,7 +20,10 @@ import org.gradle.api.plugins.InvalidPluginException
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.CompileClasspathNormalizer
+import org.gradle.api.tasks.Delete
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
@@ -830,6 +833,8 @@ internal fun Task.registerSubpluginOptionsAsInputs(subpluginId: String, subplugi
         optionsGroup.forEachIndexed { index, option ->
             val indexSuffix = if (optionsGroup.size > 1) ".$index" else ""
             when (option) {
+                is InternalSubpluginOption -> Unit
+
                 is CompositeSubpluginOption -> {
                     val subpluginIdWithWrapperKey = "$subpluginId.${optionKey}$indexSuffix"
                     registerSubpluginOptionsAsInputs(subpluginIdWithWrapperKey, option.originalOptions)
