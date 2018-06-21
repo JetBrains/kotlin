@@ -10,14 +10,18 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.symbols.JsSymbolBuilder
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 /**
  * Replaces returnable blocks and `return`'s with loops and `break`'s correspondingly.
@@ -93,7 +97,7 @@ private class ReturnableBlockTransformer(
         return super.visitDeclaration(declaration, data)
     }
 
-    private val constFalse = JsIrBuilder.buildBoolean(context.builtIns.booleanType, false)
+    private val constFalse = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false)
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: ReturnableBlockLoweringContext): IrExpression {
         if (expression !is IrReturnableBlock) return super.visitContainerExpression(expression, data)
@@ -111,7 +115,7 @@ private class ReturnableBlockTransformer(
             IrDoWhileLoopImpl(
                 expression.startOffset,
                 expression.endOffset,
-                context.builtIns.unitType,
+                context.irBuiltIns.unitType,
                 expression.origin
             ).apply {
                 label = "l\$ret\$${data.labelCnt++}"
@@ -127,10 +131,10 @@ private class ReturnableBlockTransformer(
             IrCompositeImpl(
                 returnExpression.startOffset,
                 returnExpression.endOffset,
-                context.builtIns.unitType
+                context.irBuiltIns.unitType
             ).apply {
-                statements += JsIrBuilder.buildSetVariable(variable, returnExpression.value)
-                statements += JsIrBuilder.buildBreak(context.builtIns.unitType, loop)
+                statements += JsIrBuilder.buildSetVariable(variable, returnExpression.value, context.irBuiltIns.unitType)
+                statements += JsIrBuilder.buildBreak(context.irBuiltIns.unitType, loop)
             }
         }
 
@@ -138,7 +142,7 @@ private class ReturnableBlockTransformer(
             if (i == expression.statements.lastIndex && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
                 s.transformChildren(this, data)
                 if (!hasReturned) s.value else {
-                    JsIrBuilder.buildSetVariable(variable, s.value)
+                    JsIrBuilder.buildSetVariable(variable, s.value, context.irBuiltIns.unitType)
                 }
             } else {
                 s.transform(this, data)
@@ -159,7 +163,7 @@ private class ReturnableBlockTransformer(
             loop.body = IrBlockImpl(
                 expression.startOffset,
                 expression.endOffset,
-                context.builtIns.unitType,
+                context.irBuiltIns.unitType,
                 expression.origin,
                 newStatements
             )
@@ -170,7 +174,7 @@ private class ReturnableBlockTransformer(
                 expression.type,
                 expression.origin
             ).apply {
-                statements += JsIrBuilder.buildVar(variable)
+                statements += JsIrBuilder.buildVar(variable, type = expression.type)
                 statements += loop
                 statements += JsIrBuilder.buildGetValue(variable)
             }

@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.backend.common.utils.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
@@ -158,7 +158,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val arguments = translateCallArguments(expression, context)
 
         if (dispatchReceiver != null &&
-            dispatchReceiver.type.isFunctionTypeOrSubtype && symbol.owner.name == OperatorNameConventions.INVOKE
+            dispatchReceiver.type.isFunctionTypeOrSubtype() && symbol.owner.name == OperatorNameConventions.INVOKE
         ) {
             return JsInvocation(jsDispatchReceiver!!, arguments)
         }

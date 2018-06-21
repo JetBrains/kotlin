@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.getTypeArgumentOrDefault
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -41,6 +43,10 @@ fun IrModuleFragment.referenceAllTypeExternalClassifiers(symbolTable: SymbolTabl
         this.constructor.supertypes.forEach {
             it.referenceAllClassifiers()
         }
+    }
+
+    fun IrType.referenceAllClassifiers() {
+        this.toKotlinType().referenceAllClassifiers()
     }
 
     val visitor = object : IrElementVisitorVoid {

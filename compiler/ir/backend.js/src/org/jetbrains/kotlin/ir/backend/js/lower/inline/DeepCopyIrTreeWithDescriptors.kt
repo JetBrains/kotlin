@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.createClassSymbolOrNull
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 
 // backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/DeepCopyIrTreeWithDescriptors.kt
@@ -479,7 +479,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
             return IrCallImpl(
                 startOffset    = expression.startOffset,
                 endOffset      = expression.endOffset,
-                type           = newDescriptor.returnType!!,
+                type           = newDescriptor.returnType?.toIrType()!!,
                 descriptor     = newDescriptor,
                 typeArgumentsCount = expression.typeArgumentsCount,
                 origin         = expression.origin,
@@ -517,7 +517,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
         //---------------------------------------------------------------------//
 
-        fun getTypeOperatorReturnType(operator: IrTypeOperator, type: KotlinType) : KotlinType {
+        fun getTypeOperatorReturnType(operator: IrTypeOperator, type: IrType) : IrType {
             return when (operator) {
                 IrTypeOperator.CAST,
                 IrTypeOperator.IMPLICIT_CAST,
@@ -526,7 +526,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                 IrTypeOperator.IMPLICIT_INTEGER_COERCION    -> type
                 IrTypeOperator.SAFE_CAST                    -> type.makeNullable()
                 IrTypeOperator.INSTANCEOF,
-                IrTypeOperator.NOT_INSTANCEOF               -> context.builtIns.booleanType
+                IrTypeOperator.NOT_INSTANCEOF               -> context.irBuiltIns.booleanType
             }
         }
 
@@ -541,7 +541,8 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                 type        = returnType,
                 operator    = expression.operator,
                 typeOperand = typeOperand,
-                argument    = expression.argument.transform(this, null)
+                argument    = expression.argument.transform(this, null),
+                typeOperandClassifier = typeOperand.classifierOrFail
             )
         }
 
@@ -609,6 +610,8 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
     }
 
     //-------------------------------------------------------------------------//
+
+    private fun substituteType(oldType: IrType?): IrType? = substituteType(oldType?.toKotlinType())?.toIrType()
 
     private fun substituteType(oldType: KotlinType?): KotlinType? {
         if (typeSubstitutor == null) return oldType
@@ -699,7 +702,8 @@ class DescriptorSubstitutorForExternalScope(val globalSubstituteMap: MutableMap<
             endOffset   = declaration.endOffset,
             origin      = declaration.origin,
             descriptor  = newDescriptor,
-            initializer = declaration.initializer
+            initializer = declaration.initializer,
+            type        = declaration.type
         )
     }
 
@@ -715,7 +719,8 @@ class DescriptorSubstitutorForExternalScope(val globalSubstituteMap: MutableMap<
             startOffset = expression.startOffset,
             endOffset   = expression.endOffset,
             origin      = expression.origin,
-            symbol      = createValueSymbol(newDescriptor)
+            symbol      = createValueSymbol(newDescriptor),
+            type        = expression.type
         )
     }
 
@@ -732,7 +737,7 @@ class DescriptorSubstitutorForExternalScope(val globalSubstituteMap: MutableMap<
         return IrCallImpl(
             startOffset              = oldExpression.startOffset,
             endOffset                = oldExpression.endOffset,
-            type                     = newDescriptor.returnType!!,
+            type                     = oldExpression.type,
             symbol                   = createFunctionSymbol(newDescriptor),
             descriptor               = newDescriptor,
             typeArgumentsCount       = oldExpression.typeArgumentsCount,
@@ -763,4 +768,3 @@ class DescriptorSubstitutorForExternalScope(val globalSubstituteMap: MutableMap<
         return oldExpression.shallowCopy(oldExpression.origin, createFunctionSymbol(newDescriptor), oldExpression.superQualifierSymbol)
     }
 }
-

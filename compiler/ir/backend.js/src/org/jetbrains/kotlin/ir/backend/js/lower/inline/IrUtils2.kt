@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -18,21 +19,6 @@ fun IrSimpleFunction.setOverrides(symbolTable: SymbolTable) {
 
     this.descriptor.overriddenDescriptors.mapTo(this.overriddenSymbols) {
         symbolTable.referenceSimpleFunction(it.original)
-    }
-
-    this.typeParameters.forEach { it.setSupers(symbolTable) }
-}
-
-fun IrTypeParameter.setSupers(symbolTable: SymbolTable) {
-    assert(this.superClassifiers.isEmpty())
-    this.descriptor.upperBounds.mapNotNullTo(this.superClassifiers) {
-        it.constructor.declarationDescriptor?.let {
-            if (it is TypeParameterDescriptor) {
-                IrTypeParameterSymbolImpl(it) // Workaround for deserialized inline functions
-            } else {
-                symbolTable.referenceClassifier(it)
-            }
-        }
     }
 }
 

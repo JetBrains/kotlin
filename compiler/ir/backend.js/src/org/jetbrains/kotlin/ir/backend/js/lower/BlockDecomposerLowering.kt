@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -17,9 +16,11 @@ import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.transformFlat
-import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 private typealias VisitData = Nothing?
 
@@ -30,15 +31,20 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
     private val statementVisitor = StatementVisitor()
     private val expressionVisitor = ExpressionVisitor()
 
-    private val constTrue = JsIrBuilder.buildBoolean(context.builtIns.booleanType, true)
-    private val constFalse = JsIrBuilder.buildBoolean(context.builtIns.booleanType, false)
-    private val nothingType = context.builtIns.nullableNothingType
+    private val constTrue = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
+    private val constFalse = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false)
+    private val nothingType get() = context.irBuiltIns.nothingType
+    private val unitType get() = context.irBuiltIns.unitType
 
-    private val unitType = context.builtIns.unitType
     private val unitValue = JsIrBuilder.buildGetObjectValue(unitType, context.symbolTable.referenceClass(context.builtIns.unit))
 
-    private val unreachableFunction =
-        JsSymbolBuilder.buildSimpleFunction(context.module, Namer.UNREACHABLE_NAME).initialize(type = nothingType)
+    private val unreachableFunction = JsIrBuilder.buildFunction(
+        JsSymbolBuilder.buildSimpleFunction(
+            context.module,
+            Namer.UNREACHABLE_NAME
+        ).initialize(returnType = nothingType),
+        nothingType
+    )
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat { declaration ->
@@ -61,17 +67,18 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
 
     fun lower(irField: IrField, container: IrDeclarationContainer): List<IrDeclaration> {
         irField.initializer?.apply {
+            val returnType = expression.type
             val initFnSymbol = JsSymbolBuilder.buildSimpleFunction(
                 (container as IrSymbolOwner).symbol.descriptor,
                 irField.name.asString() + "\$init\$"
-            ).initialize(type = expression.type)
+            ).initialize(returnType = returnType)
 
 
             val newBody = IrBlockBodyImpl(expression.startOffset, expression.endOffset).apply {
-                statements += JsIrBuilder.buildReturn(initFnSymbol, expression)
+                statements += JsIrBuilder.buildReturn(initFnSymbol, expression, context)
             }
 
-            val initFn = JsIrBuilder.buildFunction(initFnSymbol).apply {
+            val initFn = JsIrBuilder.buildFunction(initFnSymbol, returnType).apply {
                 body = newBody
             }
 
@@ -314,15 +321,15 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
                     expression.type,
                     expression.operator,
                     expression.typeOperand,
-                    resultValue,
-                    expression.typeOperandClassifier
+                    expression.typeOperandClassifier,
+                    resultValue
                 )
 
                 val resValue: IrExpression
 
-                if (!KotlinBuiltIns.isUnit(expression.type)) {
+                if (!expression.type.isUnit()) {
                     val resVar = makeTempVar(expression.type)
-                    statements += JsIrBuilder.buildVar(resVar, newOperator)
+                    statements += JsIrBuilder.buildVar(resVar, newOperator, type = expression.type)
                     resValue = JsIrBuilder.buildGetValue(resVar)
                 } else {
                     statements += newOperator
@@ -364,7 +371,7 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
             }
 
             if (needNew) {
-                newStatements += JsIrBuilder.buildSetField(expression.symbol, newReceiver, newValue, expression.superQualifierSymbol)
+                newStatements += JsIrBuilder.buildSetField(expression.symbol, newReceiver, newValue, unitType, expression.superQualifierSymbol)
                 return DecomposedResult(newStatements, unitValue)
             }
 
@@ -375,7 +382,7 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
             val valueResult = expression.value.accept(expressionVisitor, data)
 
             return valueResult.runIfChanged {
-                statements += JsIrBuilder.buildSetVariable(expression.symbol, resultValue)
+                statements += JsIrBuilder.buildSetVariable(expression.symbol, resultValue, unitType)
                 DecomposedResult(statements, unitValue)
             }
         }
@@ -400,7 +407,7 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
         // val x = x_tmp
         override fun visitContainerExpression(expression: IrContainerExpression, data: VisitData): VisitResult {
             val variable = makeTempVar(expression.type)
-            val varDeclaration = JsIrBuilder.buildVar(variable)
+            val varDeclaration = JsIrBuilder.buildVar(variable, type = expression.type)
 
             val blockStatements = expression.statements
             val lastStatement: IrStatement? = blockStatements.lastOrNull()
@@ -434,7 +441,7 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
                     collectingList += statements
                     resultValue
                 }
-                collectingList += JsIrBuilder.buildSetVariable(variable, result)
+                collectingList += JsIrBuilder.buildSetVariable(variable, result, unitType)
                 if (body is IrComposite) {
                     DecomposedResult(mutableListOf(varDeclaration, *collectingList.toTypedArray()) , JsIrBuilder.buildGetValue(variable))
                 } else {
@@ -463,7 +470,7 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
         private fun prepareArgument(arg: IrExpression, needWrap: Boolean, statements: MutableList<IrStatement>): IrExpression {
             return if (needWrap) {
                 val wrapVar = makeTempVar(arg.type)
-                statements += JsIrBuilder.buildVar(wrapVar, arg)
+                statements += JsIrBuilder.buildVar(wrapVar, arg, type = arg.type)
                 JsIrBuilder.buildGetValue(wrapVar)
             } else arg
         }
@@ -543,21 +550,21 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
             val resultVar = makeTempVar(expression.type)
 
             // TODO: get rid of temporary variable
-            newStatements += JsIrBuilder.buildVar(resultVar, expression)
+            newStatements += JsIrBuilder.buildVar(resultVar, expression, type = expression.type)
 
             return DecomposedResult(newStatements, JsIrBuilder.buildGetValue(resultVar))
         }
 
         override fun visitWhen(expression: IrWhen, data: VisitData): VisitResult {
             val collectiveVar = makeTempVar(expression.type)
-            val varDeclaration = JsIrBuilder.buildVar(collectiveVar)
+            val varDeclaration = JsIrBuilder.buildVar(collectiveVar, type = expression.type)
             val newWhen = processWhen(expression, data, this, this) { visitResult, original ->
                 val resultList = mutableListOf<IrStatement>()
                 val newResult = visitResult.runIfChangedOrDefault(original as IrExpression) {
                     resultList += statements
                     resultValue
                 }
-                resultList.apply { add(JsIrBuilder.buildSetVariable(collectiveVar, newResult)) }
+                resultList.apply { add(JsIrBuilder.buildSetVariable(collectiveVar, newResult, unitType)) }
             }
 
             if (newWhen != expression) {
@@ -587,7 +594,7 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
                         resultValue
                     }
                     val wrapVar = makeTempVar(expression.varargElementType)
-                    newStatements += JsIrBuilder.buildVar(wrapVar).apply { initializer = newExpression }
+                    newStatements += JsIrBuilder.buildVar(wrapVar, type = expression.type).apply { initializer = newExpression }
                     val newValue = JsIrBuilder.buildGetValue(wrapVar)
                     if (original is IrSpreadElement) {
                         IrSpreadElementImpl(original.startOffset, original.endOffset, newValue)
@@ -641,7 +648,7 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
 
             newStatements += instantiater(returnValue)
 
-            return TerminatedResult(newStatements, JsIrBuilder.buildCall(unreachableFunction))
+            return TerminatedResult(newStatements, JsIrBuilder.buildCall(unreachableFunction.symbol))
         }
 
 
@@ -658,7 +665,7 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
         )
 
         override fun visitBreakContinue(jump: IrBreakContinue, data: VisitData): VisitResult {
-            return DecomposedResult(jump, JsIrBuilder.buildCall(unreachableFunction))
+            return DecomposedResult(jump, JsIrBuilder.buildCall(unreachableFunction.symbol))
         }
 
         override fun visitTry(aTry: IrTry, data: VisitData): VisitResult {
@@ -669,10 +676,10 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
             finallyResult?.run { assert(status == VisitStatus.KEPT) }
 
             val resultSymbol = makeTempVar(aTry.type)
-            val resultDeclaration = JsIrBuilder.buildVar(resultSymbol)
+            val resultDeclaration = JsIrBuilder.buildVar(resultSymbol, type = aTry.type)
 
             val newTryValue = tryResult.runIfChangedOrDefault(aTry.tryResult) { resultValue }
-            val trySetResult = JsIrBuilder.buildSetVariable(resultSymbol, newTryValue) as IrStatement
+            val trySetResult = JsIrBuilder.buildSetVariable(resultSymbol, newTryValue, unitType) as IrStatement
 
             val tryBlock = IrBlockImpl(aTry.tryResult.startOffset, aTry.tryResult.endOffset, unitType).apply {
                 statements += tryResult.runIfChangedOrDefault(listOf(trySetResult)) { statements + trySetResult }
@@ -680,7 +687,7 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
 
             val catchBlocks = catchResults.map { (original, result) ->
                 val newCatchResult = result.runIfChangedOrDefault(original.result) { resultValue }
-                val catchSetResult = JsIrBuilder.buildSetVariable(resultSymbol, newCatchResult) as IrStatement
+                val catchSetResult = JsIrBuilder.buildSetVariable(resultSymbol, newCatchResult, unitType) as IrStatement
                 val catchBlock = IrBlockImpl(original.result.startOffset, original.result.endOffset, unitType)
                 catchBlock.statements += result.runIfChangedOrDefault(listOf(catchSetResult)) { statements + catchSetResult }
                 IrCatchImpl(original.startOffset, original.endOffset, original.catchParameter, catchBlock)
@@ -713,7 +720,7 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
         }
     }
 
-    fun makeTempVar(type: KotlinType) =
+    fun makeTempVar(type: IrType) =
         JsSymbolBuilder.buildTempVar(function.symbol, type, "tmp\$dcms\$${tmpVarCounter++}", true)
 
     fun makeLoopLabel() = "\$l\$${tmpVarCounter++}"
@@ -782,7 +789,7 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
                 JsIrBuilder.buildBlock(unitType).also {
                     val elseBlock = if (originalBranch is IrElseBranch) null else it
 
-                    val ifElseNode = IrIfThenElseImpl(
+                    val ifElseNode = JsIrBuilder.buildIfElse(
                         originalBranch.startOffset,
                         originalBranch.endOffset,
                         unitType,
