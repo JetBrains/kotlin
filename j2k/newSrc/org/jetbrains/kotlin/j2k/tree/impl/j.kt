@@ -62,7 +62,10 @@ class JKJavaModifierImpl(override val type: JKJavaModifier.JavaModifierType) : J
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaModifier(this, data)
 }
 
-class JKJavaOperatorImpl private constructor(override val token: IElementType) : JKOperator {
+class JKJavaOperatorImpl private constructor(val token: IElementType) : JKOperator {
+    override val operatorText: String
+        get() = TODO(token.toString())
+
     companion object {
         val tokenToOperator = OPERATION_BIT_SET.types.associate {
             it to JKJavaOperatorImpl(it)

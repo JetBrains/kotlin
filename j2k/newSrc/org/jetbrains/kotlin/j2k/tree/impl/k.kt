@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.j2k.tree.impl
 
 import com.intellij.psi.JavaTokenType
-import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 
 class JKKtPropertyImpl(
@@ -82,10 +82,13 @@ class JKKtLiteralExpressionImpl(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtLiteralExpression(this, data)
 }
 
-class JKKtOperatorImpl private constructor(override val token: IElementType) : JKOperator, JKElementBase() {
+class JKKtOperatorImpl private constructor(val token: KtSingleValueToken) : JKOperator, JKElementBase() {
+    override val operatorText: String
+        get() = token.value
+
     companion object {
-        val tokenToOperator = KtTokens.OPERATIONS.types.associate {
-            it to JKKtOperatorImpl(it)
+        val tokenToOperator = KtTokens.OPERATIONS.types.filter { it is KtSingleValueToken }.associate {
+            it to JKKtOperatorImpl(it as KtSingleValueToken)
         }
 
         val javaToKotlinOperator = mutableMapOf<JKOperator, JKOperator>()
@@ -97,12 +100,24 @@ class JKKtOperatorImpl private constructor(override val token: IElementType) : J
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.ANDAND]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.ANDAND]!!
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.OROR]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.OROR]!!
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.PLUS]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.PLUS]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.ASTERISK]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.MUL]!!
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GT]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.GT]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GE]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.GTEQ]!!
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.LT]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.LT]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.LE]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.LTEQ]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.PERC]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.PERC]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.AND]!!] = JKKtWordOperatorImpl("and")
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.OR]!!] = JKKtWordOperatorImpl("or")
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.XOR]!!] = JKKtWordOperatorImpl("xor")
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GTGTGT]!!] = JKKtWordOperatorImpl("ushr")
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GTGT]!!] = JKKtWordOperatorImpl("shr")
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.LTLT]!!] = JKKtWordOperatorImpl("shl")
             }
         }
     }
 }
+
+class JKKtWordOperatorImpl constructor(override val operatorText: String) : JKOperator, JKElementBase()
 
 class JKKtModifierImpl(override val type: JKKtModifier.KtModifierType) : JKKtModifier, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtModifier(this, data)

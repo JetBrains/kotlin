@@ -103,5 +103,4 @@ class LiteralConversion : RecursiveApplicableConversionBase() {
             element.type
         )
     }
-
 }
