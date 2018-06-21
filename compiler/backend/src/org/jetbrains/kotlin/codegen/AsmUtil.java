@@ -400,6 +400,10 @@ public class AsmUtil {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
 
+        if (memberDescriptor instanceof AccessorForCompanionObjectInstanceFieldDescriptor) {
+            return NO_FLAG_PACKAGE_PRIVATE;
+        }
+
         // the following code is only for PRIVATE visibility of member
         if (memberDescriptor instanceof ConstructorDescriptor) {
             if (isEnumEntry(containingDeclaration)) {

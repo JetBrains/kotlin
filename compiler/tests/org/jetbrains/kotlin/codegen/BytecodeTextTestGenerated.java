@@ -274,6 +274,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/noSuperCheckInDefaultConstuctor.kt");
     }
 
+    @TestMetadata("noSyntheticAccessorForPrivateCompanionObjectWhenNotRequired.kt")
+    public void testNoSyntheticAccessorForPrivateCompanionObjectWhenNotRequired() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/noSyntheticAccessorForPrivateCompanionObjectWhenNotRequired.kt");
+    }
+
     @TestMetadata("noWrapperForMethodReturningPrimitive.kt")
     public void testNoWrapperForMethodReturningPrimitive() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/noWrapperForMethodReturningPrimitive.kt");

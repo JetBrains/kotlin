@@ -948,7 +948,8 @@ public class KotlinTypeMapper {
     }
 
     public static boolean isAccessor(@Nullable CallableMemberDescriptor descriptor) {
-        return descriptor instanceof AccessorForCallableDescriptor<?>;
+        return descriptor instanceof AccessorForCallableDescriptor<?> ||
+                descriptor instanceof AccessorForCompanionObjectInstanceFieldDescriptor;
     }
 
     public static boolean isStaticAccessor(@Nullable CallableMemberDescriptor descriptor) {

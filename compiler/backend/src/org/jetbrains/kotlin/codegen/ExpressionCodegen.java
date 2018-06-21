@@ -1756,6 +1756,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (shouldGenerateSingletonAsThisOrOuterFromContext(classDescriptor)) {
                 return generateThisOrOuterFromContext(classDescriptor, false, false);
             }
+            if (isCompanionObject(classDescriptor) && !couldUseDirectAccessToCompanionObject(classDescriptor, context)) {
+                return generateAccessorCallForCompanionObject(classDescriptor);
+            }
             if (isObject(classDescriptor)) {
                 return StackValue.singleton(classDescriptor, typeMapper);
             }
@@ -2612,8 +2615,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 else if (isPossiblyUninitializedSingleton(receiverDescriptor) && isInsideSingleton(receiverDescriptor)) {
                     return generateThisOrOuterFromContext(receiverDescriptor, false, false);
                 }
-                else {
+                else if (couldUseDirectAccessToCompanionObject(receiverDescriptor, context)) {
                     return StackValue.singleton(receiverDescriptor, typeMapper);
+                }
+                else {
+                    return generateAccessorCallForCompanionObject(receiverDescriptor);
                 }
             }
             else if (receiverDescriptor instanceof ScriptDescriptor) {
@@ -2640,6 +2646,41 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         else {
             throw new UnsupportedOperationException("Unsupported receiver value: " + receiverValue);
         }
+    }
+
+    @NotNull
+    private StackValue generateAccessorCallForCompanionObject(@NotNull ClassDescriptor companionObjectDescriptor) {
+        DeclarationDescriptor hostClassDescriptor = companionObjectDescriptor.getContainingDeclaration();
+        assert hostClassDescriptor instanceof ClassDescriptor :
+                "Containing declaration of the companion object " + companionObjectDescriptor +
+                ": expected a class, actual: " + hostClassDescriptor;
+
+        CodegenContext hostClassContext = context;
+        while (hostClassContext.getContextDescriptor() != hostClassDescriptor) {
+            hostClassContext = hostClassContext.getParentContext();
+            assert hostClassContext != null :
+                    "Host class context for " + hostClassDescriptor + " not found in context hierarchy for " + context;
+        }
+
+        hostClassContext.markCompanionObjectDescriptorWithAccessorRequired(companionObjectDescriptor);
+
+        Type hostClassType = typeMapper.mapClass((ClassifierDescriptor) hostClassDescriptor);
+        Type companionObjectType = typeMapper.mapClass(companionObjectDescriptor);
+
+        // TODO given that we actually have corresponding AccessorForCompanionObjectInstanceFieldDescriptor,
+        // it might be a better idea to use general method call generation
+        return StackValue.operation(
+                companionObjectType,
+                companionObjectDescriptor.getDefaultType(),
+                v -> {
+                    v.invokestatic(
+                            hostClassType.getInternalName(),
+                            getCompanionObjectAccessorName(companionObjectDescriptor),
+                            Type.getMethodDescriptor(companionObjectType),
+                            /* itf */ false
+                    );
+                    return null;
+                });
     }
 
     @NotNull

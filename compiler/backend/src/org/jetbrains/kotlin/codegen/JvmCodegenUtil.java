@@ -22,9 +22,6 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
-import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.psi.Call;
@@ -151,6 +148,29 @@ public class JvmCodegenUtil {
 
     public static boolean isConstOrHasJvmFieldAnnotation(@NotNull PropertyDescriptor propertyDescriptor) {
         return propertyDescriptor.isConst() || hasJvmFieldAnnotation(propertyDescriptor);
+    }
+
+    public static boolean couldUseDirectAccessToCompanionObject(
+            @NotNull ClassDescriptor companionObjectDescriptor,
+            @NotNull MethodContext contextBeforeInline
+    ) {
+        if (!Visibilities.isPrivate(companionObjectDescriptor.getVisibility())) {
+            // Non-private companion object can be directly accessed anywhere it's allowed by the front-end.
+            return true;
+        }
+
+        CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
+        if (context.isInlineMethodContext()) {
+            // Inline method can be called from a nested class.
+            return false;
+        }
+
+        // Private companion object is directly accessible only from the corresponding class
+        return context.getContextDescriptor().getContainingDeclaration() == companionObjectDescriptor.getContainingDeclaration();
+    }
+
+    public static String getCompanionObjectAccessorName(@NotNull ClassDescriptor companionObjectDescriptor) {
+        return "access$" + companionObjectDescriptor.getName();
     }
 
     public static boolean couldUseDirectAccessToProperty(
