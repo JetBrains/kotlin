@@ -19,24 +19,24 @@ import org.jetbrains.kotlin.types.*
 import java.util.*
 
 class TypeDeserializer(
-        private val c: DeserializationContext,
-        private val parent: TypeDeserializer?,
-        typeParameterProtos: List<ProtoBuf.TypeParameter>,
-        private val debugName: String
+    private val c: DeserializationContext,
+    private val parent: TypeDeserializer?,
+    typeParameterProtos: List<ProtoBuf.TypeParameter>,
+    private val debugName: String
 ) {
-    private val classDescriptors: (Int) -> ClassDescriptor? = c.storageManager.createMemoizedFunctionWithNullableValues {
-        fqNameIndex -> computeClassDescriptor(fqNameIndex)
+    private val classDescriptors: (Int) -> ClassDescriptor? = c.storageManager.createMemoizedFunctionWithNullableValues { fqNameIndex ->
+        computeClassDescriptor(fqNameIndex)
     }
 
-    private val typeAliasDescriptors: (Int) -> ClassifierDescriptor? = c.storageManager.createMemoizedFunctionWithNullableValues {
-        fqNameIndex -> computeTypeAliasDescriptor(fqNameIndex)
-    }
+    private val typeAliasDescriptors: (Int) -> ClassifierDescriptor? =
+        c.storageManager.createMemoizedFunctionWithNullableValues { fqNameIndex ->
+            computeTypeAliasDescriptor(fqNameIndex)
+        }
 
     private val typeParameterDescriptors =
         if (typeParameterProtos.isEmpty()) {
             mapOf<Int, TypeParameterDescriptor>()
-        }
-        else {
+        } else {
             val result = LinkedHashMap<Int, TypeParameterDescriptor>()
             for ((index, proto) in typeParameterProtos.withIndex()) {
                 result[proto.id] = DeserializedTypeParameterDescriptor(c, proto, index)
@@ -45,7 +45,7 @@ class TypeDeserializer(
         }
 
     val ownTypeParameters: List<TypeParameterDescriptor>
-            get() = typeParameterDescriptors.values.toList()
+        get() = typeParameterDescriptors.values.toList()
 
     // TODO: don't load identical types from TypeTable more than once
     fun type(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY): KotlinType {
@@ -75,13 +75,13 @@ class TypeDeserializer(
 
         val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
             c.components.annotationAndConstantLoader.loadTypeAnnotations(proto, c.nameResolver)
-                    .map { AnnotationWithTarget(it, null) }
-                    .plus(additionalAnnotations.getAllAnnotations())
-                    .toList()
+                .map { AnnotationWithTarget(it, null) }
+                .plus(additionalAnnotations.getAllAnnotations())
+                .toList()
         }
 
         fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =
-                argumentList + outerType(c.typeTable)?.collectAllArguments().orEmpty()
+            argumentList + outerType(c.typeTable)?.collectAllArguments().orEmpty()
 
         val arguments = proto.collectAllArguments().mapIndexed { index, proto ->
             typeArgument(constructor.parameters.getOrNull(index), proto)
@@ -89,8 +89,7 @@ class TypeDeserializer(
 
         val simpleType = if (Flags.SUSPEND_TYPE.get(proto.flags)) {
             createSuspendFunctionType(annotations, constructor, arguments, proto.nullable, c.components.configuration.releaseCoroutines)
-        }
-        else {
+        } else {
             KotlinTypeFactory.simpleType(annotations, constructor, arguments, proto.nullable)
         }
 
@@ -113,7 +112,7 @@ class TypeDeserializer(
             proto.hasClassName() -> (classDescriptors(proto.className) ?: notFoundClass(proto.className)).typeConstructor
             proto.hasTypeParameter() ->
                 typeParameterTypeConstructor(proto.typeParameter)
-                ?: ErrorUtils.createErrorTypeConstructor("Unknown type parameter ${proto.typeParameter}")
+                        ?: ErrorUtils.createErrorTypeConstructor("Unknown type parameter ${proto.typeParameter}")
             proto.hasTypeParameterName() -> {
                 val container = c.containingDeclaration
                 val name = c.nameResolver.getString(proto.typeParameterName)
@@ -142,20 +141,26 @@ class TypeDeserializer(
             1 -> {
                 val arity = arguments.size - 1
                 if (arity >= 0) {
-                    KotlinTypeFactory.simpleType(annotations, functionTypeConstructor.builtIns.getSuspendFunction(arity).typeConstructor, arguments, nullable)
-                }
-                else {
+                    KotlinTypeFactory.simpleType(
+                        annotations,
+                        functionTypeConstructor.builtIns.getSuspendFunction(arity).typeConstructor,
+                        arguments,
+                        nullable
+                    )
+                } else {
                     null
                 }
             }
             else -> null
         }
-        return result ?: ErrorUtils.createErrorTypeWithArguments("Bad suspend function in metadata with constructor: $functionTypeConstructor", arguments)
+        return result ?: ErrorUtils.createErrorTypeWithArguments(
+            "Bad suspend function in metadata with constructor: $functionTypeConstructor",
+            arguments
+        )
     }
 
     private fun typeParameterTypeConstructor(typeParameterId: Int): TypeConstructor? =
-            typeParameterDescriptors.get(typeParameterId)?.typeConstructor ?:
-            parent?.typeParameterTypeConstructor(typeParameterId)
+        typeParameterDescriptors.get(typeParameterId)?.typeConstructor ?: parent?.typeParameterTypeConstructor(typeParameterId)
 
     private fun computeClassDescriptor(fqNameIndex: Int): ClassDescriptor? {
         val id = c.nameResolver.getClassId(fqNameIndex)
@@ -178,8 +183,7 @@ class TypeDeserializer(
         return if (id.isLocal) {
             // TODO: support deserialization of local type aliases (see KT-13692)
             return null
-        }
-        else {
+        } else {
             c.components.moduleDescriptor.findTypeAliasAcrossModuleDependencies(id)
         }
     }
@@ -193,8 +197,7 @@ class TypeDeserializer(
         }
 
         val projection = ProtoEnumFlags.variance(typeArgumentProto.projection)
-        val type = typeArgumentProto.type(c.typeTable) ?:
-                return TypeProjectionImpl(ErrorUtils.createErrorType("No type recorded"))
+        val type = typeArgumentProto.type(c.typeTable) ?: return TypeProjectionImpl(ErrorUtils.createErrorType("No type recorded"))
 
         return TypeProjectionImpl(projection, type(type))
     }
