@@ -25,7 +25,6 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.plugin.base.KotlinOnlyPlugin
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
@@ -151,9 +150,8 @@ internal class Kotlin2JvmSourceSetProcessor(
     kotlinSourceSet: KotlinBaseSourceSet,
     tasksProvider: KotlinTasksProvider,
     kotlinSourceSetProvider: KotlinSourceSetProvider,
-    private val kotlinPluginVersion: String,
-    private val kotlinGradleBuildServices: KotlinGradleBuildServices,
-    kotlinPlatformExtension: KotlinPlatformExtension
+    kotlinPlatformExtension: KotlinPlatformExtension,
+    private val kotlinPluginVersion: String
 ) : KotlinJavaSourceSetProcessor<KotlinCompile>(
     project, kotlinSourceSet, tasksProvider, kotlinSourceSetProvider,
     taskDescription = "Compiles the $kotlinSourceSet.kotlin.",
@@ -257,7 +255,7 @@ internal class Kotlin2JsSourceSetProcessor(
     sourceSet: KotlinBaseSourceSet,
     tasksProvider: KotlinTasksProvider,
     kotlinSourceSetProvider: KotlinSourceSetProvider,
-    kotlinPlatformExtension: KotlinPlatformExtension
+    kotlinPlatformExtension: KotlinPlatformExtension,
     private val kotlinPluginVersion: String
 ) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
         project, sourceSet, tasksProvider, kotlinSourceSetProvider,
@@ -319,7 +317,7 @@ internal class KotlinCommonSourceSetProcessor(
     sourceSet: KotlinBaseSourceSet,
     tasksProvider: KotlinTasksProvider,
     kotlinSourceSetProvider: KotlinSourceSetProvider,
-    kotlinPlatformExtension: KotlinPlatformExtension
+    kotlinPlatformExtension: KotlinPlatformExtension,
     private val kotlinPluginVersion: String
 ) : KotlinSourceSetProcessor<KotlinCompileCommon>(
         project, sourceSet, tasksProvider, kotlinSourceSetProvider,
@@ -375,27 +373,6 @@ internal abstract class AbstractKotlinPlugin(
             buildSourceSetProcessor(project, sourceSet, kotlinPluginVersion).run()
         }
     }
-}
-
-internal fun configureDefaultVersionsResolutionStrategy(project: Project, kotlinPluginVersion: String) {
-    project.configurations.all { configuration ->
-        if (isGradleVersionAtLeast(4, 4)) {
-            // Use the API introduced in Gradle 4.4 to modify the dependencies directly before they are resolved:
-            configuration.withDependencies { dependencySet ->
-                dependencySet.filterIsInstance<ExternalDependency>()
-                    .filter { it.group == "org.jetbrains.kotlin" && it.version.isNullOrEmpty() }
-                    .forEach { it.version { constraint -> constraint.prefer(kotlinPluginVersion) } }
-            }
-        }
-        else {
-            configuration.resolutionStrategy.eachDependency { details ->
-                val requested = details.requested
-                if (requested.group == "org.jetbrains.kotlin" && requested.version.isEmpty()) {
-                    details.useVersion(kotlinPluginVersion)
-                }
-            }
-        }
-    }
 
     private fun configureClassInspectionForIC(project: Project) {
         val classesTask = project.tasks.findByName(JavaPlugin.CLASSES_TASK_NAME)
@@ -417,6 +394,26 @@ internal fun configureDefaultVersionsResolutionStrategy(project: Project, kotlin
     }
 }
 
+internal fun configureDefaultVersionsResolutionStrategy(project: Project, kotlinPluginVersion: String) {
+    project.configurations.all { configuration ->
+        if (isGradleVersionAtLeast(4, 4)) {
+            // Use the API introduced in Gradle 4.4 to modify the dependencies directly before they are resolved:
+            configuration.withDependencies { dependencySet ->
+                dependencySet.filterIsInstance<ExternalDependency>()
+                    .filter { it.group == "org.jetbrains.kotlin" && it.version.isNullOrEmpty() }
+                    .forEach { it.version { constraint -> constraint.prefer(kotlinPluginVersion) } }
+            }
+        } else {
+            configuration.resolutionStrategy.eachDependency { details ->
+                val requested = details.requested
+                if (requested.group == "org.jetbrains.kotlin" && requested.version.isEmpty()) {
+                    details.useVersion(kotlinPluginVersion)
+                }
+            }
+        }
+    }
+}
+
 internal fun registerKotlinSourceSetsIfAbsent(
     kotlinSourceSetContainer: KotlinSourceSetContainer<*>,
     kotlinPlatformExtension: KotlinPlatformExtension
@@ -435,7 +432,7 @@ internal fun registerKotlinSourceSetsIfAbsent(
 internal open class KotlinPlugin(
     tasksProvider: KotlinTasksProvider,
     val kotlinJavaSourceSetProvider: KotlinJavaSourceSetContainer,
-    kotlinPluginVersion: String,
+    kotlinPluginVersion: String
 ) : AbstractKotlinPlugin(tasksProvider, kotlinJavaSourceSetProvider, kotlinPluginVersion) {
     override fun buildSourceSetProcessor(project: Project, sourceSet: KotlinSourceSet, kotlinPluginVersion: String) =
             Kotlin2JvmSourceSetProcessor(
@@ -466,7 +463,8 @@ internal open class KotlinCommonPlugin(
     override fun buildSourceSetProcessor(project: Project, sourceSet: KotlinSourceSet, kotlinPluginVersion: String) =
             KotlinCommonSourceSetProcessor(
                 project, sourceSet as KotlinBaseSourceSet, tasksProvider, kotlinSourceSetContainer,
-                project.kotlinExtension
+                project.kotlinExtension,
+                kotlinPluginVersion
             )
 
     override fun apply(project: Project) {
@@ -513,7 +511,7 @@ internal open class KotlinAndroidPlugin(
 
         applyToExtension(
             project, kotlinPlatformExtension, kotlinSourceSetProvider,
-            tasksProvider, kotlinPluginVersion, kotlinGradleBuildServices
+            tasksProvider, kotlinPluginVersion
         )
     }
 
@@ -523,8 +521,7 @@ internal open class KotlinAndroidPlugin(
             kotlinPlatformExtension: KotlinAndroidPlatformExtension,
             kotlinSourceSetProvider: KotlinSourceSetProvider,
             tasksProvider: KotlinTasksProvider,
-            kotlinPluginVersion: String,
-            kotlinGradleBuildServices: KotlinGradleBuildServices
+            kotlinPluginVersion: String
         ) {
 
             val version = loadAndroidPluginVersion()

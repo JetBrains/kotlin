@@ -74,7 +74,7 @@ internal class KotlinMultiplatformProjectConfigurator(
 
         val tasksProvider = KotlinCommonTasksProvider()
         configureSourceSetDefaults(extension) { sourceSet: KotlinOnlySourceSet ->
-            KotlinCommonSourceSetProcessor(project, sourceSet, tasksProvider, sourceSets, extension)
+            KotlinCommonSourceSetProcessor(project, sourceSet, tasksProvider, sourceSets, extension, kotlinPluginVersion)
         }
 
         return extension
@@ -95,7 +95,7 @@ internal class KotlinMultiplatformProjectConfigurator(
         val tasksProvider = KotlinTasksProvider()
         configureSourceSetDefaults(extension) { sourceSet: KotlinOnlySourceSet ->
             Kotlin2JvmSourceSetProcessor(
-                project, sourceSet, tasksProvider, sourceSets, kotlinPluginVersion, kotlinGradleBuildServices, extension
+                project, sourceSet, tasksProvider, sourceSets, extension, kotlinPluginVersion
             )
         }
 
@@ -106,7 +106,6 @@ internal class KotlinMultiplatformProjectConfigurator(
 
     fun createJvmWithJavaExtension(): KotlinWithJavaPlatformExtension {
         project.plugins.apply(JavaPlugin::class.java)
-        project.createKaptExtension()
 
         val sourceSets = KotlinJavaSourceSetContainer(instantiator, project, fileResolver)
         val platformClassifier = "jvmWithJava"
@@ -126,7 +125,7 @@ internal class KotlinMultiplatformProjectConfigurator(
 
         configureSourceSetDefaults(extension) { sourceSet: KotlinJavaSourceSet ->
             Kotlin2JvmSourceSetProcessor(
-                project, sourceSet, tasksProvider, sourceSets, kotlinPluginVersion, kotlinGradleBuildServices, extension
+                project, sourceSet, tasksProvider, sourceSets, extension, kotlinPluginVersion
             )
         }
 
@@ -151,7 +150,7 @@ internal class KotlinMultiplatformProjectConfigurator(
 
         val tasksProvider = AndroidTasksProvider()
 
-        KotlinAndroidPlugin.applyToExtension(project, extension, sourceSets, tasksProvider, kotlinPluginVersion, kotlinGradleBuildServices)
+        KotlinAndroidPlugin.applyToExtension(project, extension, sourceSets, tasksProvider, kotlinPluginVersion)
 
         linkCommonAndPlatformExtensions(project.multiplatformExtension.common, extension)
 
@@ -185,7 +184,7 @@ internal class KotlinMultiplatformProjectConfigurator(
 
         val tasksProvider = Kotlin2JsTasksProvider()
         configureSourceSetDefaults(extension) { sourceSet: KotlinOnlySourceSet ->
-            Kotlin2JsSourceSetProcessor(project, sourceSet, tasksProvider, sourceSets, extension)
+            Kotlin2JsSourceSetProcessor(project, sourceSet, tasksProvider, sourceSets, extension, kotlinPluginVersion)
         }
 
         linkCommonAndPlatformExtensions(project.multiplatformExtension.common , extension)

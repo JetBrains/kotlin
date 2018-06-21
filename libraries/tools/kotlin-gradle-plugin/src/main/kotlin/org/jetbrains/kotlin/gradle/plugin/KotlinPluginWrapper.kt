@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinAndroidSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinJavaSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinOnlySourceSetContainer
-import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.KotlinCommonTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.FileNotFoundException
 import java.util.*
 import javax.inject.Inject
@@ -72,8 +69,7 @@ abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver)
 open class KotlinPluginWrapper @Inject constructor(fileResolver: FileResolver, private val instantiator: Instantiator): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
             KotlinPlugin(
-                KotlinTasksProvider(), KotlinJavaSourceSetContainer(instantiator, project, fileResolver), kotlinPluginVersion,
-                kotlinGradleBuildServices
+                KotlinTasksProvider(), KotlinJavaSourceSetContainer(instantiator, project, fileResolver), kotlinPluginVersion
             )
 
     override val projectExtensionClass: KClass<out KotlinWithJavaPlatformExtension>

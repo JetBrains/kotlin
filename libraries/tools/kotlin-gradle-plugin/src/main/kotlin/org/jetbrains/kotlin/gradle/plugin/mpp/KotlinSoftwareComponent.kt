@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
+import org.gradle.api.capabilities.Capability
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformExtension
@@ -53,7 +54,7 @@ internal class KotlinPlatformSoftwareComponent(
             configuration.outgoing.attributes
 
         // FIXME this is a stub for a function that is not present in the Gradle API that we compile against
-        fun getCapabilities(): Set<Any> = emptySet()
+        override fun getCapabilities(): Set<Capability> = emptySet()
 
         // FIXME this is a stub for a function that is not present in the Gradle API that we compile against
         fun getGlobalExcludes(): Set<Any> = emptySet()
