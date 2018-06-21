@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.FakeCallResolver
@@ -46,4 +47,5 @@ class ContainerForTests(container: StorageComponentContainer) {
     val typeResolver: TypeResolver by container
     val fakeCallResolver: FakeCallResolver by container
     val expressionTypingServices: ExpressionTypingServices by container
+    val dataFlowValueFactory: DataFlowValueFactory by container
 }
