@@ -122,6 +122,7 @@ internal val int1Type = LLVMInt1Type()!!
 internal val int8Type = LLVMInt8Type()!!
 internal val int16Type = LLVMInt16Type()!!
 internal val int32Type = LLVMInt32Type()!!
+internal val int64Type = LLVMInt64Type()!!
 internal val int8TypePtr = pointerType(int8Type)
 
 internal val voidType = LLVMVoidType()!!
@@ -142,7 +143,6 @@ internal val RuntimeAware.kTypeInfoPtr: LLVMTypeRef
     get() = pointerType(kTypeInfo)
 internal val kInt1         = LLVMInt1Type()!!
 internal val kBoolean      = kInt1
-internal val kInt64        = LLVMInt64Type()!!
 internal val kInt8Ptr      = pointerType(int8Type)
 internal val kInt8PtrPtr   = pointerType(kInt8Ptr)
 internal val kNullInt8Ptr  = LLVMConstNull(kInt8Ptr)!!

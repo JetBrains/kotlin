@@ -450,7 +450,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
         methodBridge: MethodBridge,
         genBody: FunctionGenerationContext.() -> Unit
 ): LLVMValueRef {
-    val result = LLVMAddFunction(context.llvmModule, "", objCFunctionType(methodBridge))!!
+    val result = LLVMAddFunction(context.llvmModule, "", objCFunctionType(context, methodBridge))!!
 
     generateFunction(codegen, result) {
         genBody()
@@ -579,8 +579,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
     tailrec fun genReturnValueOnSuccess(returnBridge: MethodBridge.ReturnValue): LLVMValueRef? = when (returnBridge) {
         MethodBridge.ReturnValue.Void -> null
         MethodBridge.ReturnValue.HashCode -> {
-            assert(codegen.context.is64Bit())
-            zext(targetResult!!, kInt64)
+            zext(targetResult!!, if (codegen.context.is64Bit()) int64Type else int32Type)
         }
         is MethodBridge.ReturnValue.Mapped -> kotlinToObjC(targetResult!!, returnBridge.bridge)
         MethodBridge.ReturnValue.WithError.Success -> Int8(1).llvm // true
@@ -618,7 +617,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
     val parameterToBase = descriptor.allParameters.zip(baseMethod.allParameters).toMap()
 
-    val objcMsgSend = msgSender(objCFunctionType(methodBridge))
+    val objcMsgSend = msgSender(objCFunctionType(context, methodBridge))
 
     val functionType = codegen.getLlvmFunctionType(context.ir.get(descriptor))
 
@@ -679,10 +678,13 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
             MethodBridge.ReturnValue.Void -> null
 
             MethodBridge.ReturnValue.HashCode -> {
-                assert(codegen.context.is64Bit())
-                val low = trunc(targetResult, int32Type)
-                val high = trunc(shr(targetResult, 32, signed = false), int32Type)
-                xor(low, high)
+                if (codegen.context.is64Bit()) {
+                    val low = trunc(targetResult, int32Type)
+                    val high = trunc(shr(targetResult, 32, signed = false), int32Type)
+                    xor(low, high)
+                } else {
+                    trunc(targetResult, int32Type)
+                }
             }
 
             is MethodBridge.ReturnValue.Mapped -> {
@@ -1013,7 +1015,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCToKotlinSyntheticGetter(
     )
 
     val encoding = getEncoding(methodBridge)
-    val imp = generateFunction(codegen, objCFunctionType(methodBridge), "") {
+    val imp = generateFunction(codegen, objCFunctionType(context, methodBridge), "") {
         block()
     }
 
@@ -1070,10 +1072,10 @@ private fun List<CallableMemberDescriptor>.toMethods(): List<FunctionDescriptor>
     }
 }
 
-private fun objCFunctionType(methodBridge: MethodBridge): LLVMTypeRef {
+private fun objCFunctionType(context: Context, methodBridge: MethodBridge): LLVMTypeRef {
     val paramTypes = methodBridge.paramBridges.map { it.objCType }
 
-    val returnType = methodBridge.returnBridge.objCType
+    val returnType = methodBridge.returnBridge.objCType(context)
 
     return functionType(returnType, false, *(paramTypes.toTypedArray()))
 }
@@ -1084,7 +1086,7 @@ private val ObjCValueType.llvmType: LLVMTypeRef get() = when (this) {
     ObjCValueType.UNSIGNED_SHORT -> int16Type
     ObjCValueType.SHORT -> int16Type
     ObjCValueType.INT -> int32Type
-    ObjCValueType.LONG_LONG -> kInt64
+    ObjCValueType.LONG_LONG -> int64Type
     ObjCValueType.FLOAT -> LLVMFloatType()!!
     ObjCValueType.DOUBLE -> LLVMDoubleType()!!
 }
@@ -1097,15 +1099,17 @@ private val MethodBridgeParameter.objCType: LLVMTypeRef get() = when (this) {
     is MethodBridgeValueParameter.KotlinResultOutParameter -> pointerType(this.bridge.objCType)
 }
 
-private val MethodBridge.ReturnValue.objCType: LLVMTypeRef get() = when (this) {
-    MethodBridge.ReturnValue.Void -> voidType
-    MethodBridge.ReturnValue.HashCode -> kInt64 // TODO: only for 64-bit platforms
-    is MethodBridge.ReturnValue.Mapped -> this.bridge.objCType
-    MethodBridge.ReturnValue.WithError.Success -> ObjCValueType.BOOL.llvmType
+private fun MethodBridge.ReturnValue.objCType(context: Context): LLVMTypeRef {
+    return when (this) {
+        MethodBridge.ReturnValue.Void -> voidType
+        MethodBridge.ReturnValue.HashCode -> if (context.is64Bit()) int64Type else int32Type
+        is MethodBridge.ReturnValue.Mapped -> this.bridge.objCType
+        MethodBridge.ReturnValue.WithError.Success -> ObjCValueType.BOOL.llvmType
 
-    MethodBridge.ReturnValue.Instance.InitResult,
-    MethodBridge.ReturnValue.Instance.FactoryResult,
-    is MethodBridge.ReturnValue.WithError.RefOrNull -> ReferenceBridge.objCType
+        MethodBridge.ReturnValue.Instance.InitResult,
+        MethodBridge.ReturnValue.Instance.FactoryResult,
+        is MethodBridge.ReturnValue.WithError.RefOrNull -> ReferenceBridge.objCType
+    }
 }
 
 private val TypeBridge.objCType: LLVMTypeRef get() = when (this) {

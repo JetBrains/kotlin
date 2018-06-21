@@ -126,7 +126,7 @@ open class KonanFramework(name: String,
         get() = project.konanBinBaseDir
 
     override fun targetIsSupported(target: KonanTarget): Boolean =
-        target == MACOS_X64 || target == IOS_ARM64 || target == IOS_X64
+        target == MACOS_X64 || target == IOS_ARM32 || target == IOS_ARM64 || target == IOS_X64
 }
 
 open class KonanLibrary(name: String,

@@ -43,6 +43,7 @@ enum class Architecture(val bitness: Int) {
 sealed class KonanTarget(override val name: String, val family: Family, val architecture: Architecture) : Named {
     object ANDROID_ARM32 :  KonanTarget( "android_arm32",   Family.ANDROID, Architecture.ARM32)
     object ANDROID_ARM64 :  KonanTarget( "android_arm64",   Family.ANDROID, Architecture.ARM64)
+    object IOS_ARM32 :      KonanTarget( "ios_arm32",       Family.IOS,     Architecture.ARM32)
     object IOS_ARM64 :      KonanTarget( "ios_arm64",       Family.IOS,     Architecture.ARM64)
     object IOS_X64 :        KonanTarget( "ios_x64",         Family.IOS,     Architecture.X64)
     object LINUX_X64 :      KonanTarget( "linux_x64",       Family.LINUX,   Architecture.X64)
@@ -127,7 +128,13 @@ open class HostManager(protected val distribution: Distribution = Distribution()
     fun targetManager(userRequest: String? = null): TargetManager = TargetManagerImpl(userRequest, this)
 
     // TODO: need a better way to enumerated predefined targets.
-    private val predefinedTargets = listOf(ANDROID_ARM32, ANDROID_ARM64, IOS_ARM64, IOS_X64, LINUX_X64, MINGW_X64, MACOS_X64, LINUX_ARM32_HFP, LINUX_MIPS32, LINUX_MIPSEL32, WASM32)
+    private val predefinedTargets = listOf(
+            ANDROID_ARM32, ANDROID_ARM64,
+            IOS_ARM32, IOS_ARM64, IOS_X64,
+            LINUX_X64, LINUX_ARM32_HFP, LINUX_MIPS32, LINUX_MIPSEL32,
+            MINGW_X64,
+            MACOS_X64,
+            WASM32)
 
     private val zephyrSubtargets = distribution.availableSubTarget("zephyr").map { ZEPHYR(it) }
 
@@ -177,6 +184,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
                 ) + zephyrSubtargets
                 KonanTarget.MACOS_X64 -> listOf(
                     KonanTarget.MACOS_X64,
+                    KonanTarget.IOS_ARM32,
                     KonanTarget.IOS_ARM64,
                     KonanTarget.IOS_X64,
                     KonanTarget.ANDROID_ARM32,
@@ -248,6 +256,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
                 "macos"       to "macos_x64",
                 "imac"        to "macos_x64",
                 "raspberrypi" to "linux_arm32_hfp",
+                "iphone32"    to "ios_arm32",
                 "iphone"      to "ios_arm64",
                 "ipad"        to "ios_arm64",
                 "ios"         to "ios_arm64",

@@ -388,7 +388,7 @@ fun linker(configurables: Configurables): LinkerFlags =
                 LinuxBasedLinker(configurables as LinuxConfigurables)
             KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32 ->
                 LinuxBasedLinker(configurables as LinuxMIPSConfigurables)
-            KonanTarget.MACOS_X64, KonanTarget.IOS_ARM64, KonanTarget.IOS_X64 ->
+            KonanTarget.MACOS_X64, KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64, KonanTarget.IOS_X64 ->
                 MacOSBasedLinker(configurables as AppleConfigurables)
             KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64 ->
                 AndroidLinker(configurables as AndroidConfigurables)

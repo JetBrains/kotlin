@@ -96,7 +96,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     }
 
     val objCDataGenerator = when (context.config.target) {
-        KonanTarget.IOS_ARM64, KonanTarget.IOS_X64, KonanTarget.MACOS_X64 -> ObjCDataGenerator(this)
+        KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64,
+        KonanTarget.IOS_X64, KonanTarget.MACOS_X64 -> ObjCDataGenerator(this)
         else -> null
     }
 

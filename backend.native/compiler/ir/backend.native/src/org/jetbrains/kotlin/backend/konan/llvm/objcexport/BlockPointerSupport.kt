@@ -100,6 +100,9 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
         LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
     }
 
+    fun org.jetbrains.kotlin.backend.konan.Context.LongInt(value: Long) =
+            if (is64Bit()) Int64(value) else Int32(value.toInt())
+
     private fun generateDescriptorForBlockAdapterToFunction(numberOfParameters: Int): ConstValue {
         val signature = buildString {
             append('@')
@@ -116,17 +119,17 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
             }
         }
 
-        assert(codegen.context.is64Bit())
-
         return Struct(blockDescriptorType,
-                Int64(0),
-                Int64(LLVMStoreSizeOfType(codegen.runtime.targetData, blockLiteralType)),
+                codegen.context.LongInt(0L),
+                codegen.context.LongInt(LLVMStoreSizeOfType(codegen.runtime.targetData, blockLiteralType)),
                 constPointer(copyHelper),
                 constPointer(disposeHelper),
                 codegen.staticData.cStringLiteral(signature),
                 NullPointer(int8Type)
         )
     }
+
+
 
     private fun FunctionGenerationContext.storeRefUnsafe(value: LLVMValueRef, slot: LLVMValueRef) {
         assert(value.type == kObjHeaderPtr)

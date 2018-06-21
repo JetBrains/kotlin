@@ -2253,9 +2253,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return if (bitsWithPaddingNum == 64) {
                 bits
             } else if (bitsWithPaddingNum > 64) {
-                trunc(bits, kInt64)
+                trunc(bits, int64Type)
             } else {
-                ext(bits, kInt64, signed)
+                ext(bits, int64Type, signed)
             }
         }
     }
@@ -2268,7 +2268,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val size = extractConstUnsignedInt(args[2]).toInt()
 
         val value = args[3]
-        assert(value.type == kInt64)
+        assert(value.type == int64Type)
 
         val bitsType = LLVMIntType(size)!!
 
@@ -2350,6 +2350,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val isStret = when (context.config.target) {
             KonanTarget.MACOS_X64, KonanTarget.IOS_X64 -> isLU // x86_64
             KonanTarget.IOS_ARM64 -> false // aarch64
+            // TODO: what is the correct value?
+            KonanTarget.IOS_ARM32 -> false // armv7
             else -> TODO()
         }
 

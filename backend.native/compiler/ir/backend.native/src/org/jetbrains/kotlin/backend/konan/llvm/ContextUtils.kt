@@ -451,6 +451,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     }
 
     private val personalityFunctionName = when (target) {
+        KonanTarget.IOS_ARM32 -> "__gxx_personality_sj0"
         KonanTarget.MINGW_X64 -> "__gxx_personality_seh0"
         else -> "__gxx_personality_v0"
     }
