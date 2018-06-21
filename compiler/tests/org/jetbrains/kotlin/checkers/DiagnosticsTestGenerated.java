@@ -19822,6 +19822,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 public void testWhileTrueWithBreakInIfCondition() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/loops/WhileTrueWithBreakInIfCondition.kt");
                 }
+
+                @TestMetadata("whileWithAssertInConditionAndBreakAfter.kt")
+                public void testWhileWithAssertInConditionAndBreakAfter() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileWithAssertInConditionAndBreakAfter.kt");
+                }
+
+                @TestMetadata("whileWithAssertInConditionAndBreakBefore.kt")
+                public void testWhileWithAssertInConditionAndBreakBefore() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileWithAssertInConditionAndBreakBefore.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/smartCasts/objectLiterals")
