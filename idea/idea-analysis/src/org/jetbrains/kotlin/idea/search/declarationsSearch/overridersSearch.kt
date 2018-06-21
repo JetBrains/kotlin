@@ -75,7 +75,6 @@ object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOve
                     DirectClassInheritorsSearch.search(
                             current,
                             current.project.allScope(),
-                            /* checkInheritance = */ true,
                             /* includeAnonymous = */ true
                     )
 
