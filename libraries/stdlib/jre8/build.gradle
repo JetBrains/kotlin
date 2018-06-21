@@ -61,7 +61,7 @@ compileKotlin {
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable", "-Xmulti-platform"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable", "-Xmulti-platform", "-XXLanguage:-ReleaseCoroutines"]
 }
 
 kotlin.experimental.coroutines 'enable'
