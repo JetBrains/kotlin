@@ -660,8 +660,9 @@ private val INDENT_RULES = arrayOf(
         .within(KtNodeTypes.BODY).notForType(KtNodeTypes.BLOCK)
         .set(Indent.getNormalIndent()),
 
-    strategy("For the entry in when")
-        .forType(KtNodeTypes.WHEN_ENTRY)
+    strategy("For WHEN content")
+        .within(KtNodeTypes.WHEN)
+        .notForType(RBRACE, LBRACE, WHEN_KEYWORD)
         .set(Indent.getNormalIndent()),
 
     strategy("For single statement in THEN and ELSE")

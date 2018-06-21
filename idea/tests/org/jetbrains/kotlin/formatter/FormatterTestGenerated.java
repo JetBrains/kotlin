@@ -741,6 +741,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/WhenBlockBlankLines.after.kt");
         }
 
+        @TestMetadata("WhenComment.after.kt")
+        public void testWhenComment() throws Exception {
+            runTest("idea/testData/formatter/WhenComment.after.kt");
+        }
+
         @TestMetadata("WhenEntryExpr.after.kt")
         public void testWhenEntryExpr() throws Exception {
             runTest("idea/testData/formatter/WhenEntryExpr.after.kt");
