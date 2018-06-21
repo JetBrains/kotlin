@@ -12,7 +12,6 @@ import com.intellij.psi.search.searches.DirectClassInheritorsSearch
 import com.intellij.psi.search.searches.FunctionalExpressionSearch
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.psi.util.MethodSignatureUtil
-import com.intellij.psi.util.PsiUtil
 import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.EmptyQuery
 import com.intellij.util.MergeQuery
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.isOverridable
+import org.jetbrains.kotlin.idea.core.util.compat.psi.canBeOverridden
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.excludeKotlinSources
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import java.util.*
 
 fun PsiElement.isOverridableElement(): Boolean = when (this) {
-    is PsiMethod -> PsiUtil.canBeOverriden(this)
+    is PsiMethod -> canBeOverridden(this)
     is KtDeclaration -> isOverridable()
     else -> false
 }
@@ -104,7 +104,7 @@ object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOve
 
 object PsiMethodOverridingHierarchyTraverser: HierarchyTraverser<PsiMethod> {
     override fun nextElements(current: PsiMethod): Iterable<PsiMethod> = KotlinPsiMethodOverridersSearch.searchDirectOverriders(current)
-    override fun shouldDescend(element: PsiMethod): Boolean = PsiUtil.canBeOverriden(element)
+    override fun shouldDescend(element: PsiMethod): Boolean = canBeOverridden(element)
 }
 
 fun PsiElement.toPossiblyFakeLightMethods(): List<PsiMethod> {
