@@ -99,13 +99,13 @@ abstract class KotlinAndroid3GradleIT(
 
         // Check that Kotlin tasks were created for both lib and feature variants:
         val kotlinTaskNames =
-            listOf("Debug", "Release").flatMap { buildType ->
+            listOf("Debug").flatMap { buildType ->
                 listOf("Flavor1", "Flavor2").flatMap { flavor ->
                     listOf("", "Feature").map { isFeature -> ":Lib:compile$flavor$buildType${isFeature}Kotlin" }
                 }
             }
 
-        project.build(":Lib:assemble") {
+        project.build(":Lib:assembleDebug") {
             assertSuccessful()
             assertTasksExecuted(*kotlinTaskNames.toTypedArray())
         }
