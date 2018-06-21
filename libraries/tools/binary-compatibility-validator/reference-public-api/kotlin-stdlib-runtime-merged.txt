@@ -34,6 +34,9 @@ public final class kotlin/Experimental$Level : java/lang/Enum {
 public abstract interface annotation class kotlin/ExperimentalMultiplatform : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/ExperimentalUnsignedTypes : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ExtensionFunctionType : java/lang/annotation/Annotation {
 }
 
@@ -131,6 +134,43 @@ public abstract interface annotation class kotlin/SinceKotlin : java/lang/annota
 	public abstract fun version ()Ljava/lang/String;
 }
 
+public final class kotlin/SuccessOrFailure : java/io/Serializable {
+	public static final field Companion Lkotlin/SuccessOrFailure$Companion;
+	public fun <init> (Ljava/lang/Object;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun exceptionOrNull ()Ljava/lang/Throwable;
+	public final fun getOrNull ()Ljava/lang/Object;
+	public final fun getOrThrow ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public final fun isFailure ()Z
+	public final fun isSuccess ()Z
+	public fun toString ()Ljava/lang/String;
+	public final fun unbox ()Ljava/lang/Object;
+}
+
+public final class kotlin/SuccessOrFailure$Companion {
+}
+
+public final class kotlin/SuccessOrFailure$Erased {
+	public static final fun box (Ljava/lang/Object;)Lkotlin/SuccessOrFailure;
+	public static fun equals (Ljava/lang/Object;Ljava/lang/Object;)Z
+	public static final fun exceptionOrNull (Ljava/lang/Object;)Ljava/lang/Throwable;
+	public static final fun getOrNull (Ljava/lang/Object;)Ljava/lang/Object;
+	public static final fun getOrThrow (Ljava/lang/Object;)Ljava/lang/Object;
+	public static fun hashCode (Ljava/lang/Object;)I
+	public static final fun isFailure (Ljava/lang/Object;)Z
+	public static final fun isSuccess (Ljava/lang/Object;)Z
+	public static fun toString (Ljava/lang/Object;)Ljava/lang/String;
+}
+
+public final class kotlin/SuccessOrFailure$Failure : java/io/Serializable {
+	public final field exception Ljava/lang/Throwable;
+	public fun <init> (Ljava/lang/Throwable;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface annotation class kotlin/Suppress : java/lang/annotation/Annotation {
 	public abstract fun names ()[Ljava/lang/String;
 }
@@ -159,6 +199,582 @@ public final class kotlin/TuplesKt {
 public class kotlin/TypeCastException : java/lang/ClassCastException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class kotlin/UByte : java/lang/Comparable {
+	public static final field Companion Lkotlin/UByte$Companion;
+	public static final field MAX_VALUE B
+	public static final field MIN_VALUE B
+	public final fun and (B)B
+	public fun compareTo (B)I
+	public final fun compareTo (I)I
+	public final fun compareTo (J)I
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public final fun compareTo (S)I
+	public final fun dec ()B
+	public final fun div (B)I
+	public final fun div (I)I
+	public final fun div (J)J
+	public final fun div (S)I
+	public final fun inc ()B
+	public final fun inv ()B
+	public final fun minus (B)I
+	public final fun minus (I)I
+	public final fun minus (J)J
+	public final fun minus (S)I
+	public final fun or (B)B
+	public final fun plus (B)I
+	public final fun plus (I)I
+	public final fun plus (J)J
+	public final fun plus (S)I
+	public final fun rangeTo (B)Lkotlin/ranges/UIntRange;
+	public final fun rem (B)I
+	public final fun rem (I)I
+	public final fun rem (J)J
+	public final fun rem (S)I
+	public final fun times (B)I
+	public final fun times (I)I
+	public final fun times (J)J
+	public final fun times (S)I
+	public final fun toByte ()B
+	public final fun toInt ()I
+	public final fun toLong ()J
+	public final fun toShort ()S
+	public fun toString ()Ljava/lang/String;
+	public final fun toUByte ()B
+	public final fun toUInt ()I
+	public final fun toULong ()J
+	public final fun toUShort ()S
+	public final fun unbox ()B
+	public final fun xor (B)B
+}
+
+public final class kotlin/UByte$Companion {
+}
+
+public final class kotlin/UByte$Erased {
+	public static final fun and (BB)B
+	public static final fun box (B)Lkotlin/UByte;
+	public static fun compareTo (BB)I
+	public static final fun compareTo (BI)I
+	public static final fun compareTo (BJ)I
+	public static final fun compareTo (BS)I
+	public static final fun dec (B)B
+	public static final fun div (BB)I
+	public static final fun div (BI)I
+	public static final fun div (BJ)J
+	public static final fun div (BS)I
+	public static final fun inc (B)B
+	public static final fun inv (B)B
+	public static final fun minus (BB)I
+	public static final fun minus (BI)I
+	public static final fun minus (BJ)J
+	public static final fun minus (BS)I
+	public static final fun or (BB)B
+	public static final fun plus (BB)I
+	public static final fun plus (BI)I
+	public static final fun plus (BJ)J
+	public static final fun plus (BS)I
+	public static final fun rangeTo (BB)Lkotlin/ranges/UIntRange;
+	public static final fun rem (BB)I
+	public static final fun rem (BI)I
+	public static final fun rem (BJ)J
+	public static final fun rem (BS)I
+	public static final fun times (BB)I
+	public static final fun times (BI)I
+	public static final fun times (BJ)J
+	public static final fun times (BS)I
+	public static final fun toByte (B)B
+	public static final fun toInt (B)I
+	public static final fun toLong (B)J
+	public static final fun toShort (B)S
+	public static fun toString (B)Ljava/lang/String;
+	public static final fun toUByte (B)B
+	public static final fun toUInt (B)I
+	public static final fun toULong (B)J
+	public static final fun toUShort (B)S
+	public static final fun xor (BB)B
+}
+
+public final class kotlin/UByteArray : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> ([B)V
+	public fun add (B)Z
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (B)Z
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public final fun get (I)B
+	public fun getSize ()I
+	public fun isEmpty ()Z
+	public synthetic fun iterator ()Ljava/util/Iterator;
+	public fun iterator ()Lkotlin/collections/UByteIterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun set (IB)V
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+	public final fun unbox ()[B
+}
+
+public final class kotlin/UByteArray$Erased {
+	public static final fun box ([B)Lkotlin/UByteArray;
+	public static fun contains ([BB)Z
+	public static fun containsAll ([BLjava/util/Collection;)Z
+	public static final fun get ([BI)B
+	public static fun getSize ([B)I
+	public static fun isEmpty ([B)Z
+	public static fun iterator ([B)Lkotlin/collections/UByteIterator;
+	public static final fun set ([BIB)V
+}
+
+public final class kotlin/UByteArrayKt {
+	public static final fun UByteArray (ILkotlin/jvm/functions/Function1;)[B
+	public static final fun ubyteArrayOf ([B)[B
+}
+
+public final class kotlin/UByteKt {
+	public static final fun toUByte (B)B
+	public static final fun toUByte (I)B
+	public static final fun toUByte (J)B
+	public static final fun toUByte (S)B
+}
+
+public final class kotlin/UInt : java/lang/Comparable {
+	public static final field Companion Lkotlin/UInt$Companion;
+	public static final field MAX_VALUE I
+	public static final field MIN_VALUE I
+	public final fun and (I)I
+	public final fun compareTo (B)I
+	public fun compareTo (I)I
+	public final fun compareTo (J)I
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public final fun compareTo (S)I
+	public final fun dec ()I
+	public final fun div (B)I
+	public final fun div (I)I
+	public final fun div (J)J
+	public final fun div (S)I
+	public final fun inc ()I
+	public final fun inv ()I
+	public final fun minus (B)I
+	public final fun minus (I)I
+	public final fun minus (J)J
+	public final fun minus (S)I
+	public final fun or (I)I
+	public final fun plus (B)I
+	public final fun plus (I)I
+	public final fun plus (J)J
+	public final fun plus (S)I
+	public final fun rangeTo (I)Lkotlin/ranges/UIntRange;
+	public final fun rem (B)I
+	public final fun rem (I)I
+	public final fun rem (J)J
+	public final fun rem (S)I
+	public final fun shl (I)I
+	public final fun shr (I)I
+	public final fun times (B)I
+	public final fun times (I)I
+	public final fun times (J)J
+	public final fun times (S)I
+	public final fun toByte ()B
+	public final fun toInt ()I
+	public final fun toLong ()J
+	public final fun toShort ()S
+	public fun toString ()Ljava/lang/String;
+	public final fun toUByte ()B
+	public final fun toUInt ()I
+	public final fun toULong ()J
+	public final fun toUShort ()S
+	public final fun unbox ()I
+	public final fun xor (I)I
+}
+
+public final class kotlin/UInt$Companion {
+}
+
+public final class kotlin/UInt$Erased {
+	public static final fun and (II)I
+	public static final fun box (I)Lkotlin/UInt;
+	public static final fun compareTo (IB)I
+	public static fun compareTo (II)I
+	public static final fun compareTo (IJ)I
+	public static final fun compareTo (IS)I
+	public static final fun dec (I)I
+	public static final fun div (IB)I
+	public static final fun div (II)I
+	public static final fun div (IJ)J
+	public static final fun div (IS)I
+	public static final fun inc (I)I
+	public static final fun inv (I)I
+	public static final fun minus (IB)I
+	public static final fun minus (II)I
+	public static final fun minus (IJ)J
+	public static final fun minus (IS)I
+	public static final fun or (II)I
+	public static final fun plus (IB)I
+	public static final fun plus (II)I
+	public static final fun plus (IJ)J
+	public static final fun plus (IS)I
+	public static final fun rangeTo (II)Lkotlin/ranges/UIntRange;
+	public static final fun rem (IB)I
+	public static final fun rem (II)I
+	public static final fun rem (IJ)J
+	public static final fun rem (IS)I
+	public static final fun shl (II)I
+	public static final fun shr (II)I
+	public static final fun times (IB)I
+	public static final fun times (II)I
+	public static final fun times (IJ)J
+	public static final fun times (IS)I
+	public static final fun toByte (I)B
+	public static final fun toInt (I)I
+	public static final fun toLong (I)J
+	public static final fun toShort (I)S
+	public static fun toString (I)Ljava/lang/String;
+	public static final fun toUByte (I)B
+	public static final fun toUInt (I)I
+	public static final fun toULong (I)J
+	public static final fun toUShort (I)S
+	public static final fun xor (II)I
+}
+
+public final class kotlin/UIntArray : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> ([I)V
+	public fun add (I)Z
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (I)Z
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public final fun get (I)I
+	public fun getSize ()I
+	public fun isEmpty ()Z
+	public synthetic fun iterator ()Ljava/util/Iterator;
+	public fun iterator ()Lkotlin/collections/UIntIterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun set (II)V
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+	public final fun unbox ()[I
+}
+
+public final class kotlin/UIntArray$Erased {
+	public static final fun box ([I)Lkotlin/UIntArray;
+	public static fun contains ([II)Z
+	public static fun containsAll ([ILjava/util/Collection;)Z
+	public static final fun get ([II)I
+	public static fun getSize ([I)I
+	public static fun isEmpty ([I)Z
+	public static fun iterator ([I)Lkotlin/collections/UIntIterator;
+	public static final fun set ([III)V
+}
+
+public final class kotlin/UIntArrayKt {
+	public static final fun UIntArray (ILkotlin/jvm/functions/Function1;)[I
+	public static final fun uintArrayOf ([I)[I
+}
+
+public final class kotlin/UIntKt {
+	public static final fun toUInt (B)I
+	public static final fun toUInt (I)I
+	public static final fun toUInt (J)I
+	public static final fun toUInt (S)I
+}
+
+public final class kotlin/ULong : java/lang/Comparable {
+	public static final field Companion Lkotlin/ULong$Companion;
+	public static final field MAX_VALUE J
+	public static final field MIN_VALUE J
+	public final fun and (J)J
+	public final fun compareTo (B)I
+	public final fun compareTo (I)I
+	public fun compareTo (J)I
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public final fun compareTo (S)I
+	public final fun dec ()J
+	public final fun div (B)J
+	public final fun div (I)J
+	public final fun div (J)J
+	public final fun div (S)J
+	public final fun inc ()J
+	public final fun inv ()J
+	public final fun minus (B)J
+	public final fun minus (I)J
+	public final fun minus (J)J
+	public final fun minus (S)J
+	public final fun or (J)J
+	public final fun plus (B)J
+	public final fun plus (I)J
+	public final fun plus (J)J
+	public final fun plus (S)J
+	public final fun rangeTo (J)Lkotlin/ranges/ULongRange;
+	public final fun rem (B)J
+	public final fun rem (I)J
+	public final fun rem (J)J
+	public final fun rem (S)J
+	public final fun shl (I)J
+	public final fun shr (I)J
+	public final fun times (B)J
+	public final fun times (I)J
+	public final fun times (J)J
+	public final fun times (S)J
+	public final fun toByte ()B
+	public final fun toInt ()I
+	public final fun toLong ()J
+	public final fun toShort ()S
+	public fun toString ()Ljava/lang/String;
+	public final fun toUByte ()B
+	public final fun toUInt ()I
+	public final fun toULong ()J
+	public final fun toUShort ()S
+	public final fun unbox ()J
+	public final fun xor (J)J
+}
+
+public final class kotlin/ULong$Companion {
+}
+
+public final class kotlin/ULong$Erased {
+	public static final fun and (JJ)J
+	public static final fun box (J)Lkotlin/ULong;
+	public static final fun compareTo (JB)I
+	public static final fun compareTo (JI)I
+	public static fun compareTo (JJ)I
+	public static final fun compareTo (JS)I
+	public static final fun dec (J)J
+	public static final fun div (JB)J
+	public static final fun div (JI)J
+	public static final fun div (JJ)J
+	public static final fun div (JS)J
+	public static final fun inc (J)J
+	public static final fun inv (J)J
+	public static final fun minus (JB)J
+	public static final fun minus (JI)J
+	public static final fun minus (JJ)J
+	public static final fun minus (JS)J
+	public static final fun or (JJ)J
+	public static final fun plus (JB)J
+	public static final fun plus (JI)J
+	public static final fun plus (JJ)J
+	public static final fun plus (JS)J
+	public static final fun rangeTo (JJ)Lkotlin/ranges/ULongRange;
+	public static final fun rem (JB)J
+	public static final fun rem (JI)J
+	public static final fun rem (JJ)J
+	public static final fun rem (JS)J
+	public static final fun shl (JI)J
+	public static final fun shr (JI)J
+	public static final fun times (JB)J
+	public static final fun times (JI)J
+	public static final fun times (JJ)J
+	public static final fun times (JS)J
+	public static final fun toByte (J)B
+	public static final fun toInt (J)I
+	public static final fun toLong (J)J
+	public static final fun toShort (J)S
+	public static fun toString (J)Ljava/lang/String;
+	public static final fun toUByte (J)B
+	public static final fun toUInt (J)I
+	public static final fun toULong (J)J
+	public static final fun toUShort (J)S
+	public static final fun xor (JJ)J
+}
+
+public final class kotlin/ULongArray : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> ([J)V
+	public fun add (J)Z
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (J)Z
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public final fun get (I)J
+	public fun getSize ()I
+	public fun isEmpty ()Z
+	public synthetic fun iterator ()Ljava/util/Iterator;
+	public fun iterator ()Lkotlin/collections/ULongIterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun set (IJ)V
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+	public final fun unbox ()[J
+}
+
+public final class kotlin/ULongArray$Erased {
+	public static final fun box ([J)Lkotlin/ULongArray;
+	public static fun contains ([JJ)Z
+	public static fun containsAll ([JLjava/util/Collection;)Z
+	public static final fun get ([JI)J
+	public static fun getSize ([J)I
+	public static fun isEmpty ([J)Z
+	public static fun iterator ([J)Lkotlin/collections/ULongIterator;
+	public static final fun set ([JIJ)V
+}
+
+public final class kotlin/ULongArrayKt {
+	public static final fun ULongArray (ILkotlin/jvm/functions/Function1;)[J
+	public static final fun ulongArrayOf ([J)[J
+}
+
+public final class kotlin/ULongKt {
+	public static final fun toULong (B)J
+	public static final fun toULong (I)J
+	public static final fun toULong (J)J
+	public static final fun toULong (S)J
+}
+
+public final class kotlin/UShort : java/lang/Comparable {
+	public static final field Companion Lkotlin/UShort$Companion;
+	public static final field MAX_VALUE S
+	public static final field MIN_VALUE S
+	public final fun and (S)S
+	public final fun compareTo (B)I
+	public final fun compareTo (I)I
+	public final fun compareTo (J)I
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (S)I
+	public final fun dec ()S
+	public final fun div (B)I
+	public final fun div (I)I
+	public final fun div (J)J
+	public final fun div (S)I
+	public final fun inc ()S
+	public final fun inv ()S
+	public final fun minus (B)I
+	public final fun minus (I)I
+	public final fun minus (J)J
+	public final fun minus (S)I
+	public final fun or (S)S
+	public final fun plus (B)I
+	public final fun plus (I)I
+	public final fun plus (J)J
+	public final fun plus (S)I
+	public final fun rangeTo (S)Lkotlin/ranges/UIntRange;
+	public final fun rem (B)I
+	public final fun rem (I)I
+	public final fun rem (J)J
+	public final fun rem (S)I
+	public final fun times (B)I
+	public final fun times (I)I
+	public final fun times (J)J
+	public final fun times (S)I
+	public final fun toByte ()B
+	public final fun toInt ()I
+	public final fun toLong ()J
+	public final fun toShort ()S
+	public fun toString ()Ljava/lang/String;
+	public final fun toUByte ()B
+	public final fun toUInt ()I
+	public final fun toULong ()J
+	public final fun toUShort ()S
+	public final fun unbox ()S
+	public final fun xor (S)S
+}
+
+public final class kotlin/UShort$Companion {
+}
+
+public final class kotlin/UShort$Erased {
+	public static final fun and (SS)S
+	public static final fun box (S)Lkotlin/UShort;
+	public static final fun compareTo (SB)I
+	public static final fun compareTo (SI)I
+	public static final fun compareTo (SJ)I
+	public static fun compareTo (SS)I
+	public static final fun dec (S)S
+	public static final fun div (SB)I
+	public static final fun div (SI)I
+	public static final fun div (SJ)J
+	public static final fun div (SS)I
+	public static final fun inc (S)S
+	public static final fun inv (S)S
+	public static final fun minus (SB)I
+	public static final fun minus (SI)I
+	public static final fun minus (SJ)J
+	public static final fun minus (SS)I
+	public static final fun or (SS)S
+	public static final fun plus (SB)I
+	public static final fun plus (SI)I
+	public static final fun plus (SJ)J
+	public static final fun plus (SS)I
+	public static final fun rangeTo (SS)Lkotlin/ranges/UIntRange;
+	public static final fun rem (SB)I
+	public static final fun rem (SI)I
+	public static final fun rem (SJ)J
+	public static final fun rem (SS)I
+	public static final fun times (SB)I
+	public static final fun times (SI)I
+	public static final fun times (SJ)J
+	public static final fun times (SS)I
+	public static final fun toByte (S)B
+	public static final fun toInt (S)I
+	public static final fun toLong (S)J
+	public static final fun toShort (S)S
+	public static fun toString (S)Ljava/lang/String;
+	public static final fun toUByte (S)B
+	public static final fun toUInt (S)I
+	public static final fun toULong (S)J
+	public static final fun toUShort (S)S
+	public static final fun xor (SS)S
+}
+
+public final class kotlin/UShortArray : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> ([S)V
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun add (S)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun contains (S)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public final fun get (I)S
+	public fun getSize ()I
+	public fun isEmpty ()Z
+	public synthetic fun iterator ()Ljava/util/Iterator;
+	public fun iterator ()Lkotlin/collections/UShortIterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun set (IS)V
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+	public final fun unbox ()[S
+}
+
+public final class kotlin/UShortArray$Erased {
+	public static final fun box ([S)Lkotlin/UShortArray;
+	public static fun contains ([SS)Z
+	public static fun containsAll ([SLjava/util/Collection;)Z
+	public static final fun get ([SI)S
+	public static fun getSize ([S)I
+	public static fun isEmpty ([S)Z
+	public static fun iterator ([S)Lkotlin/collections/UShortIterator;
+	public static final fun set ([SIS)V
+}
+
+public final class kotlin/UShortArrayKt {
+	public static final fun UShortArray (ILkotlin/jvm/functions/Function1;)[S
+	public static final fun ushortArrayOf ([S)[S
+}
+
+public final class kotlin/UShortKt {
+	public static final fun toUShort (B)S
+	public static final fun toUShort (I)S
+	public static final fun toUShort (J)S
+	public static final fun toUShort (S)S
 }
 
 public final class kotlin/UninitializedPropertyAccessException : java/lang/RuntimeException {
@@ -1940,6 +2556,38 @@ public abstract class kotlin/collections/ShortIterator : java/util/Iterator, kot
 	public fun remove ()V
 }
 
+public abstract class kotlin/collections/UByteIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> ()V
+	public final fun next ()B
+	public synthetic fun next ()Ljava/lang/Object;
+	public abstract fun nextUByte ()B
+	public fun remove ()V
+}
+
+public abstract class kotlin/collections/UIntIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> ()V
+	public final fun next ()I
+	public synthetic fun next ()Ljava/lang/Object;
+	public abstract fun nextUInt ()I
+	public fun remove ()V
+}
+
+public abstract class kotlin/collections/ULongIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> ()V
+	public final fun next ()J
+	public synthetic fun next ()Ljava/lang/Object;
+	public abstract fun nextULong ()J
+	public fun remove ()V
+}
+
+public abstract class kotlin/collections/UShortIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> ()V
+	public synthetic fun next ()Ljava/lang/Object;
+	public final fun next ()S
+	public abstract fun nextUShort ()S
+	public fun remove ()V
+}
+
 public final class kotlin/comparisons/ComparisonsKt {
 	public static final fun compareBy ([Lkotlin/jvm/functions/Function1;)Ljava/util/Comparator;
 	public static final fun compareValues (Ljava/lang/Comparable;Ljava/lang/Comparable;)I
@@ -1968,6 +2616,92 @@ public final class kotlin/concurrent/ThreadsKt {
 
 public final class kotlin/concurrent/TimersKt {
 	public static final fun timer (Ljava/lang/String;Z)Ljava/util/Timer;
+}
+
+public abstract class kotlin/coroutines/AbstractCoroutineContextElement : kotlin/coroutines/CoroutineContext$Element {
+	public fun <init> (Lkotlin/coroutines/CoroutineContext$Key;)V
+	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public fun get (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+	public fun getKey ()Lkotlin/coroutines/CoroutineContext$Key;
+	public fun minusKey (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
+	public fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+}
+
+public abstract interface class kotlin/coroutines/Continuation {
+	public abstract fun getContext ()Lkotlin/coroutines/CoroutineContext;
+	public abstract fun resumeWith (Ljava/lang/Object;)V
+}
+
+public abstract interface class kotlin/coroutines/ContinuationInterceptor : kotlin/coroutines/CoroutineContext$Element {
+	public static final field Key Lkotlin/coroutines/ContinuationInterceptor$Key;
+	public abstract fun interceptContinuation (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public abstract fun releaseInterceptedContinuation (Lkotlin/coroutines/Continuation;)V
+}
+
+public final class kotlin/coroutines/ContinuationInterceptor$DefaultImpls {
+	public static fun fold (Lkotlin/coroutines/ContinuationInterceptor;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public static fun get (Lkotlin/coroutines/ContinuationInterceptor;Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+	public static fun minusKey (Lkotlin/coroutines/ContinuationInterceptor;Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
+	public static fun plus (Lkotlin/coroutines/ContinuationInterceptor;Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+	public static fun releaseInterceptedContinuation (Lkotlin/coroutines/ContinuationInterceptor;Lkotlin/coroutines/Continuation;)V
+}
+
+public final class kotlin/coroutines/ContinuationInterceptor$Key : kotlin/coroutines/CoroutineContext$Key {
+}
+
+public final class kotlin/coroutines/ContinuationKt {
+	public static final fun createCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public static final fun createCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public static final fun startCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)V
+	public static final fun startCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)V
+}
+
+public abstract interface class kotlin/coroutines/CoroutineContext {
+	public abstract fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public abstract fun get (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+	public abstract fun minusKey (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
+	public abstract fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+}
+
+public final class kotlin/coroutines/CoroutineContext$DefaultImpls {
+	public static fun plus (Lkotlin/coroutines/CoroutineContext;Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+}
+
+public abstract interface class kotlin/coroutines/CoroutineContext$Element : kotlin/coroutines/CoroutineContext {
+	public abstract fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public abstract fun get (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+	public abstract fun getKey ()Lkotlin/coroutines/CoroutineContext$Key;
+	public abstract fun minusKey (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
+}
+
+public final class kotlin/coroutines/CoroutineContext$Element$DefaultImpls {
+	public static fun fold (Lkotlin/coroutines/CoroutineContext$Element;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public static fun get (Lkotlin/coroutines/CoroutineContext$Element;Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+	public static fun minusKey (Lkotlin/coroutines/CoroutineContext$Element;Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
+	public static fun plus (Lkotlin/coroutines/CoroutineContext$Element;Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+}
+
+public abstract interface class kotlin/coroutines/CoroutineContext$Key {
+}
+
+public final class kotlin/coroutines/EmptyCoroutineContext : java/io/Serializable, kotlin/coroutines/CoroutineContext {
+	public static final field INSTANCE Lkotlin/coroutines/EmptyCoroutineContext;
+	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public fun get (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+	public fun hashCode ()I
+	public fun minusKey (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
+	public fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface annotation class kotlin/coroutines/RestrictsSuspension : java/lang/annotation/Annotation {
+}
+
+public final class kotlin/coroutines/SafeContinuation : kotlin/coroutines/Continuation {
+	public fun <init> (Lkotlin/coroutines/Continuation;)V
+	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
+	public final fun getOrThrow ()Ljava/lang/Object;
+	public fun resumeWith (Ljava/lang/Object;)V
 }
 
 public abstract class kotlin/coroutines/experimental/AbstractCoroutineContextElement : kotlin/coroutines/experimental/CoroutineContext$Element {
@@ -2095,11 +2829,40 @@ public final class kotlin/coroutines/experimental/jvm/internal/CoroutineIntrinsi
 	public static final fun normalizeContinuation (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 }
 
+public final class kotlin/coroutines/experimental/migration/CoroutinesMigrationKt {
+	public static final fun toContinuation (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/Continuation;
+	public static final fun toContinuationInterceptor (Lkotlin/coroutines/experimental/ContinuationInterceptor;)Lkotlin/coroutines/ContinuationInterceptor;
+	public static final fun toCoroutineContext (Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+	public static final fun toExperimentalContinuation (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/experimental/Continuation;
+	public static final fun toExperimentalContinuationInterceptor (Lkotlin/coroutines/ContinuationInterceptor;)Lkotlin/coroutines/experimental/ContinuationInterceptor;
+	public static final fun toExperimentalCoroutineContext (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
+}
+
+public final class kotlin/coroutines/intrinsics/CoroutineSingletons : java/lang/Enum {
+	public static final field COROUTINE_SUSPENDED Lkotlin/coroutines/intrinsics/CoroutineSingletons;
+	public static final field RESUMED Lkotlin/coroutines/intrinsics/CoroutineSingletons;
+	public static final field UNDECIDED Lkotlin/coroutines/intrinsics/CoroutineSingletons;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/coroutines/intrinsics/CoroutineSingletons;
+	public static fun values ()[Lkotlin/coroutines/intrinsics/CoroutineSingletons;
+}
+
+public final class kotlin/coroutines/intrinsics/IntrinsicsKt {
+	public static final fun createCoroutineUnintercepted (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public static final fun createCoroutineUnintercepted (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public static final fun getCOROUTINE_SUSPENDED ()Ljava/lang/Object;
+	public static final fun intercepted (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+}
+
 public final class kotlin/internal/PlatformImplementationsKt {
 	public static final fun apiVersionIsAtLeast (III)Z
 }
 
 public final class kotlin/internal/ProgressionUtilKt {
+	public static final fun getProgressionLastElement (III)I
+	public static final fun getProgressionLastElement (JJJ)J
+}
+
+public final class kotlin/internal/UProgressionUtilKt {
 	public static final fun getProgressionLastElement (III)I
 	public static final fun getProgressionLastElement (JJJ)J
 }
@@ -3322,6 +4085,78 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun until (SS)Lkotlin/ranges/IntRange;
 }
 
+public class kotlin/ranges/UIntProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
+	public static final field Companion Lkotlin/ranges/UIntProgression$Companion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFirst ()I
+	public final fun getLast ()I
+	public final fun getStep ()I
+	public fun hashCode ()I
+	public fun isEmpty ()Z
+	public synthetic fun iterator ()Ljava/util/Iterator;
+	public fun iterator ()Lkotlin/collections/UIntIterator;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/ranges/UIntProgression$Companion {
+	public final fun fromClosedRange (III)Lkotlin/ranges/UIntProgression;
+}
+
+public final class kotlin/ranges/UIntRange : kotlin/ranges/UIntProgression, kotlin/ranges/ClosedRange {
+	public static final field Companion Lkotlin/ranges/UIntRange$Companion;
+	public fun <init> (II)V
+	public fun contains (I)Z
+	public synthetic fun contains (Ljava/lang/Comparable;)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getEndInclusive ()I
+	public synthetic fun getEndInclusive ()Ljava/lang/Comparable;
+	public fun getStart ()I
+	public synthetic fun getStart ()Ljava/lang/Comparable;
+	public fun hashCode ()I
+	public fun isEmpty ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/ranges/UIntRange$Companion {
+	public final fun getEMPTY ()Lkotlin/ranges/UIntRange;
+}
+
+public class kotlin/ranges/ULongProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
+	public static final field Companion Lkotlin/ranges/ULongProgression$Companion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFirst ()J
+	public final fun getLast ()J
+	public final fun getStep ()J
+	public fun hashCode ()I
+	public fun isEmpty ()Z
+	public synthetic fun iterator ()Ljava/util/Iterator;
+	public fun iterator ()Lkotlin/collections/ULongIterator;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/ranges/ULongProgression$Companion {
+	public final fun fromClosedRange (JJJ)Lkotlin/ranges/ULongProgression;
+}
+
+public final class kotlin/ranges/ULongRange : kotlin/ranges/ULongProgression, kotlin/ranges/ClosedRange {
+	public static final field Companion Lkotlin/ranges/ULongRange$Companion;
+	public fun <init> (JJ)V
+	public fun contains (J)Z
+	public synthetic fun contains (Ljava/lang/Comparable;)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getEndInclusive ()J
+	public synthetic fun getEndInclusive ()Ljava/lang/Comparable;
+	public fun getStart ()J
+	public synthetic fun getStart ()Ljava/lang/Comparable;
+	public fun hashCode ()I
+	public fun isEmpty ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/ranges/ULongRange$Companion {
+	public final fun getEMPTY ()Lkotlin/ranges/ULongRange;
+}
+
 public abstract interface class kotlin/reflect/KAnnotatedElement {
 	public abstract fun getAnnotations ()Ljava/util/List;
 }
@@ -3517,6 +4352,18 @@ public final class kotlin/reflect/KVisibility : java/lang/Enum {
 
 public abstract interface class kotlin/sequences/Sequence {
 	public abstract fun iterator ()Ljava/util/Iterator;
+}
+
+public abstract class kotlin/sequences/SequenceBuilder {
+	public abstract fun yield (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun yieldAll (Ljava/lang/Iterable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun yieldAll (Ljava/util/Iterator;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun yieldAll (Lkotlin/sequences/Sequence;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class kotlin/sequences/SequenceBuilderKt {
+	public static final fun buildIterator (Lkotlin/jvm/functions/Function2;)Ljava/util/Iterator;
+	public static final fun buildSequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 }
 
 public final class kotlin/sequences/SequencesKt {
