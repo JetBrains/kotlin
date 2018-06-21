@@ -387,6 +387,7 @@ internal abstract class AbstractKotlinPlugin(
             return
         }
         val inspectTask = project.tasks.create("inspectClassesForKotlinIC", InspectClassesForMultiModuleIC::class.java)
+        inspectTask.sourceSetName = SourceSet.MAIN_SOURCE_SET_NAME
         inspectTask.jarTask = jarTask
         inspectTask.dependsOn(classesTask)
         jarTask.dependsOn(inspectTask)

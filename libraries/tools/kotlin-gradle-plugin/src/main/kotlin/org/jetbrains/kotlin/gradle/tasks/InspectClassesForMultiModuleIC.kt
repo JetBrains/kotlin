@@ -7,15 +7,18 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.utils.inputsCompatible
 import org.jetbrains.kotlin.gradle.utils.isClassFile
 import java.io.File
 
 internal open class InspectClassesForMultiModuleIC : DefaultTask() {
     @get:Internal
     lateinit var jarTask: Jar
+
+    @get:Input
+    lateinit var sourceSetName: String
 
     @Suppress("MemberVisibilityCanBePrivate")
     @get:OutputFile
@@ -25,7 +28,9 @@ internal open class InspectClassesForMultiModuleIC : DefaultTask() {
     @Suppress("MemberVisibilityCanBePrivate")
     @get:InputFiles
     internal val classFiles: FileCollection
-        get() = jarTask.inputsCompatible.files.filter { it.isClassFile() }
+        get() = project.convention.findPlugin(JavaPluginConvention::class.java)?.let {
+            it.sourceSets.findByName(sourceSetName)?.output?.asFileTree?.filter { it.isClassFile() }
+        } ?: project.files()
 
     @get:Input
     internal val archivePath: String
@@ -34,8 +39,7 @@ internal open class InspectClassesForMultiModuleIC : DefaultTask() {
     @TaskAction
     fun run() {
         classesListFile.parentFile.mkdirs()
-        val paths = classFiles.map { it.canonicalPath }.sorted()
-        val text = paths.joinToString(File.pathSeparator)
+        val text = classFiles.map { it.absolutePath }.sorted().joinToString(File.pathSeparator)
         classesListFile.writeText(text)
     }
 
