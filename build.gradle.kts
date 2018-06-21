@@ -307,7 +307,7 @@ allprojects {
 
     configureJvmProject(javaHome!!, jvmTarget!!)
 
-    val commonCompilerArgs = listOfNotNull("-Xallow-kotlin-package", "-Xread-deserialized-contracts", "-Xprogressive".takeIf { hasProperty("test.progressive.mode") })
+    val commonCompilerArgs = listOfNotNull("-Xallow-kotlin-package", "-Xread-deserialized-contracts", "-Xprogressive".takeIf { hasProperty("test.progressive.mode") }, "-XXLanguage:-ReleaseCoroutines")
 
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
         kotlinOptions {
