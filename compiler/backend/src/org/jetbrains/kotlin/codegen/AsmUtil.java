@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
@@ -277,6 +278,9 @@ public class AsmUtil {
     public static int getVisibilityAccessFlagForClass(@NotNull ClassDescriptor descriptor) {
         if (descriptor instanceof SyntheticClassDescriptorForLambda) {
             return getVisibilityAccessFlagForAnonymous(descriptor);
+        }
+        if (ExpectedActualDeclarationChecker.isOptionalAnnotationClass(descriptor)) {
+            return NO_FLAG_PACKAGE_PRIVATE;
         }
         if (descriptor.getVisibility() == Visibilities.PUBLIC ||
             descriptor.getVisibility() == Visibilities.PROTECTED ||

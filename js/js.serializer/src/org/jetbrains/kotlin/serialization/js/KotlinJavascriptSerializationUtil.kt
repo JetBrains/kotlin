@@ -26,9 +26,10 @@ import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.filterOutSourceAnnotations
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
@@ -190,9 +191,15 @@ object KotlinJavascriptSerializationUtil {
     ): ProtoBuf.PackageFragment {
         val builder = ProtoBuf.PackageFragment.newBuilder()
 
-        // TODO: ModuleDescriptor should be able to return the package only with the contents of that module, without dependencies
-        val skip: (DeclarationDescriptor) -> Boolean = {
-            DescriptorUtils.getContainingModule(it) != module || (it is MemberDescriptor && it.isExpect)
+        val skip = fun(descriptor: DeclarationDescriptor): Boolean {
+            // TODO: ModuleDescriptor should be able to return the package only with the contents of that module, without dependencies
+            if (descriptor.module != module) return true
+
+            if (descriptor is MemberDescriptor && descriptor.isExpect) {
+                return !(descriptor is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor))
+            }
+
+            return false
         }
 
         val fileRegistry = KotlinFileRegistry()

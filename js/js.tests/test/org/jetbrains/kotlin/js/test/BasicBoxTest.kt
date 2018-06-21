@@ -132,7 +132,7 @@ abstract class BasicBoxTest(
             }
 
             val mainModuleName = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
-            val mainModule = modules[mainModuleName]!!
+            val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
 
             val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
                     TEST_DATA_DIR_PATH + COMMON_FILES_DIR, JavaScript.EXTENSION)
