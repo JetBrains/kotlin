@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.completion.test.assertInstanceOf
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
-import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 
@@ -85,7 +84,10 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
                 .expectAnnotations(2).single { it.qualifiedName == "Qualifier" }
         val annotationAttributeVal = annotation.findAttributeValue("value") as PsiExpression
         assertTextRangeAndValue("\"foo\"", "foo", annotationAttributeVal)
-        TestCase.assertEquals(PsiType.getJavaLangString(psiManager, GlobalSearchScope.projectScope(project)), annotationAttributeVal.type)
+        TestCase.assertEquals(
+            PsiType.getJavaLangString(psiManager, GlobalSearchScope.everythingScope(project)),
+            annotationAttributeVal.type
+        )
     }
 
     fun testAnnotationsInAnnotationsDeclarations() {
@@ -139,7 +141,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         assertTextAndRange("Constants.MY_CONSTANT", annotationAttributeVal)
         TestCase.assertEquals("67", annotationAttributeVal.value)
         TestCase.assertEquals(
-            PsiType.getJavaLangString(psiManager, GlobalSearchScope.projectScope(project)),
+            PsiType.getJavaLangString(psiManager, GlobalSearchScope.everythingScope(project)),
             (annotationAttributeVal as PsiExpression).type
         )
     }
@@ -230,7 +232,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         val annotationAttributeVal = annotations.first().findAttributeValue("cls") as PsiClassObjectAccessExpression
         assertTextAndRange("String::class", annotationAttributeVal)
         TestCase.assertEquals(
-            PsiType.getJavaLangString(myFixture.psiManager, myFixture.project.projectScope()),
+            PsiType.getJavaLangString(myFixture.psiManager, GlobalSearchScope.everythingScope(project)),
             annotationAttributeVal.operand.type
         )
     }

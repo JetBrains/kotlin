@@ -24,7 +24,6 @@ import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
@@ -181,7 +180,7 @@ internal fun KotlinType.toPsiType(lightDeclaration: PsiModifierListOwner?, conte
             "kotlin.Char" -> PsiType.CHAR.orBoxed()
             "kotlin.Double" -> PsiType.DOUBLE.orBoxed()
             "kotlin.Float" -> PsiType.FLOAT.orBoxed()
-            "kotlin.String" -> PsiType.getJavaLangString(context.manager, GlobalSearchScope.projectScope(context.project))
+            "kotlin.String" -> PsiType.getJavaLangString(context.manager, context.resolveScope)
             else -> {
                 val typeConstructor = this.constructor
                 if (typeConstructor is IntegerValueTypeConstructor) {
