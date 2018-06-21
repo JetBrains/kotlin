@@ -1,5 +1,5 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// IGNORE_BACKEND: JS, JS_IR
+// IGNORE_BACKEND: JS
 
 val dz = -0.0
 val fz = -0.0f
