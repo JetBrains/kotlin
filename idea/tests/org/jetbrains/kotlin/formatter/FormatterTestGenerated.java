@@ -216,6 +216,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/Elvis.after.kt");
         }
 
+        @TestMetadata("ElvisContinuationIndentOptions.after.kt")
+        public void testElvisContinuationIndentOptions() throws Exception {
+            runTest("idea/testData/formatter/ElvisContinuationIndentOptions.after.kt");
+        }
+
         @TestMetadata("ElvisIndent.after.kt")
         public void testElvisIndent() throws Exception {
             runTest("idea/testData/formatter/ElvisIndent.after.kt");
@@ -1134,6 +1139,16 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("Elvis.after.inv.kt")
         public void testElvis() throws Exception {
             runTest("idea/testData/formatter/Elvis.after.inv.kt");
+        }
+
+        @TestMetadata("ElvisContinuationIndentOptions.after.inv.kt")
+        public void testElvisContinuationIndentOptions() throws Exception {
+            runTest("idea/testData/formatter/ElvisContinuationIndentOptions.after.inv.kt");
+        }
+
+        @TestMetadata("ElvisIndent.after.inv.kt")
+        public void testElvisIndent() throws Exception {
+            runTest("idea/testData/formatter/ElvisIndent.after.inv.kt");
         }
 
         @TestMetadata("EmptyBlocks.after.inv.kt")

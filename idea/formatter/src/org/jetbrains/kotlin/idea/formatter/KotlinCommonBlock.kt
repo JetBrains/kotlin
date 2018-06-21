@@ -193,9 +193,15 @@ abstract class KotlinCommonBlock(
     private fun splitSubBlocksOnElvis(nodeSubBlocks: List<ASTBlock>): List<ASTBlock> {
         val elvisIndex = nodeSubBlocks.indexOfBlockWithType(ELVIS_SET)
         if (elvisIndex >= 0) {
+            val indent = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_ELVIS) {
+                Indent.getContinuationIndent()
+            } else {
+                Indent.getNormalIndent()
+            }
+
             return nodeSubBlocks.splitAtIndex(
                 elvisIndex,
-                Indent.getContinuationIndent(),
+                indent,
                 null
             )
         }
