@@ -121,7 +121,6 @@ public class ClassFileFactory implements OutputFileCollection {
         }
 
         JvmModuleProtoBuf.Module moduleProto = builder.build();
-        if (moduleProto.getSerializedSize() == 0) return;
 
         generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(packagePartSourceFiles)) {
             @Override
