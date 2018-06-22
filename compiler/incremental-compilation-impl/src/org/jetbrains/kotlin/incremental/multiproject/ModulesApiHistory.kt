@@ -96,7 +96,7 @@ open class ModulesApiHistoryJvm(protected val modulesInfo: IncrementalModuleInfo
             return Either.Error("Could not read class list for $jar from $classListFile: $t")
         }
 
-        val classFileDirs = classFiles.groupBy { it.parentFile }
+        val classFileDirs = classFiles.filter { it.exists() && it.parentFile != null }.groupBy { it.parentFile }
         val result = HashSet<File>()
         for ((dir, files) in classFileDirs) {
             val historyEither = getBuildHistoryForDir(dir)
