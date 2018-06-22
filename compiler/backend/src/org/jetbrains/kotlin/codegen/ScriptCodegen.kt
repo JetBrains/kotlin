@@ -75,9 +75,7 @@ class ScriptCodegen private constructor(
 
         val jvmSignature = typeMapper.mapScriptSignature(
             scriptDescriptor,
-            scriptContext.earlierScripts,
-            scriptDefinition.implicitReceivers,
-            scriptDefinition.environmentVariables
+            scriptContext.earlierScripts
         )
 
         if (state.replSpecific.shouldGenerateScriptResultValue) {
@@ -104,37 +102,6 @@ class ScriptCodegen private constructor(
             val superclass = scriptDescriptor.getSuperClassNotAny()
             // TODO: throw if class is not found)
 
-            if (superclass == null) {
-                iv.load(0, classType)
-                iv.invokespecial("java/lang/Object", "<init>", "()V", false)
-            }
-            else {
-                val ctorDesc = superclass.unsubstitutedPrimaryConstructor
-                               ?: throw RuntimeException("Primary constructor not found for script template " + superclass.toString())
-
-                iv.load(0, classType)
-
-                fun Int.incrementIf(cond: Boolean): Int = if (cond) plus(1) else this
-                val valueParamStart = 1
-                    .incrementIf(scriptContext.earlierScripts.isNotEmpty())
-                    .incrementIf(scriptDefinition.implicitReceivers.isNotEmpty())
-                    .incrementIf(scriptDefinition.environmentVariables.isNotEmpty())
-
-                val valueParameters = scriptDescriptor.unsubstitutedPrimaryConstructor.valueParameters
-                for (superclassParam in ctorDesc.valueParameters) {
-                    val valueParam = valueParameters.first { it.name == superclassParam.name }
-                    iv.load(valueParam!!.index + valueParamStart, typeMapper.mapType(valueParam.type))
-                }
-
-                val ctorMethod = typeMapper.mapToCallableMethod(ctorDesc, false)
-                val sig = ctorMethod.getAsmMethod().descriptor
-
-                iv.invokespecial(
-                        typeMapper.mapSupertype(superclass.defaultType, null).internalName,
-                        "<init>", sig, false)
-            }
-            iv.load(0, classType)
-
             val frameMap = FrameMap()
             frameMap.enterTemp(OBJECT_TYPE)
 
@@ -156,6 +123,37 @@ class ScriptCodegen private constructor(
                     genFieldFromArrayElement(earlierScript, scriptsParamIndex, earlierScriptIndex, name)
                 }
             }
+
+            if (superclass == null) {
+                iv.load(0, classType)
+                iv.invokespecial("java/lang/Object", "<init>", "()V", false)
+            } else {
+                val ctorDesc = superclass.unsubstitutedPrimaryConstructor
+                        ?: throw RuntimeException("Primary constructor not found for script template " + superclass.toString())
+
+                iv.load(0, classType)
+
+                fun Int.incrementIf(cond: Boolean): Int = if (cond) plus(1) else this
+                val valueParamStart = 1
+                    .incrementIf(scriptContext.earlierScripts.isNotEmpty())
+
+                val valueParameters = scriptDescriptor.unsubstitutedPrimaryConstructor.valueParameters
+                for (superclassParam in ctorDesc.valueParameters) {
+                    val valueParam = valueParameters.first { it.name == superclassParam.name }
+                    val paramType = typeMapper.mapType(valueParam.type)
+                    iv.load(valueParam!!.index + valueParamStart, paramType)
+                    frameMap.enterTemp(paramType)
+                }
+
+                val ctorMethod = typeMapper.mapToCallableMethod(ctorDesc, false)
+                val sig = ctorMethod.getAsmMethod().descriptor
+
+                iv.invokespecial(
+                    typeMapper.mapSupertype(superclass.defaultType, null).internalName,
+                    "<init>", sig, false
+                )
+            }
+            iv.load(0, classType)
 
             if (scriptDefinition.implicitReceivers.isNotEmpty()) {
                 val receiversParamIndex = frameMap.enterTemp(AsmUtil.getArrayType(OBJECT_TYPE))

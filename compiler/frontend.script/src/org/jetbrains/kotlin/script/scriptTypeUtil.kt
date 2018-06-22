@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.script
 
-import org.jetbrains.kotlin.descriptors.NotFoundClasses
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.findNonGenericClassAcrossDependencies
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.lazy.descriptors.script.classId
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import kotlin.reflect.KClass
@@ -33,19 +31,27 @@ import kotlin.reflect.KVariance
 import kotlin.reflect.full.primaryConstructor
 
 fun KotlinScriptDefinition.getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
-        template.primaryConstructor?.parameters
-                ?.map { ScriptParameter(Name.identifier(it.name!!), getKotlinTypeByKType(scriptDescriptor, it.type)) }
-        ?: emptyList()
+    template.primaryConstructor?.parameters
+        ?.map { ScriptParameter(Name.identifier(it.name!!), getKotlinTypeByKType(scriptDescriptor, it.type)) }
+            ?: emptyList()
 
 fun getKotlinTypeByKClass(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): KotlinType =
-        getKotlinTypeByFqName(scriptDescriptor,
-                              kClass.qualifiedName ?: throw RuntimeException("Cannot get FQN from $kClass"))
+    getClassDescriptorByKClassOrMock(scriptDescriptor, kClass).defaultType
 
-private fun getKotlinTypeByFqName(scriptDescriptor: ScriptDescriptor, fqName: String): KotlinType =
-        scriptDescriptor.module.findNonGenericClassAcrossDependencies(
-                ClassId.topLevel(FqName(fqName)),
-                NotFoundClasses(LockBasedStorageManager.NO_LOCKS, scriptDescriptor.module)
-        ).defaultType
+fun getClassDescriptorByKClass(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): ClassDescriptor? =
+    scriptDescriptor.module.findClassAcrossModuleDependencies(kClass.classId)
+
+fun getMockClassDescriptor(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): ClassDescriptor {
+    val classId = kClass.classId
+    val typeParametersCount = generateSequence(classId, ClassId::getOuterClassId).map { 0 }.toList()
+    return NotFoundClasses(LockBasedStorageManager.NO_LOCKS, scriptDescriptor.module).getClass(classId, typeParametersCount)
+}
+
+fun getClassDescriptorByKClassOrMock(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): ClassDescriptor =
+    scriptDescriptor.module.findNonGenericClassAcrossDependencies(
+        kClass.classId,
+        NotFoundClasses(LockBasedStorageManager.NO_LOCKS, scriptDescriptor.module)
+    )
 
 // TODO: support star projections
 // TODO: support annotations on types and type parameters

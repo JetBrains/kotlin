@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -31,14 +30,15 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptEnvironmentDescriptor
-import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.lazy.descriptors.script.classId
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptHelper
 import org.jetbrains.kotlin.script.ScriptPriorities
 import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.utils.ifEmpty
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
@@ -66,11 +66,10 @@ class LazyScriptDescriptor(
 
     override fun getPriority() = priority
 
-    val scriptDefinition: KotlinScriptDefinition
-            by lazy {
-                val file = scriptInfo.script.containingKtFile
-                getScriptDefinition(file) ?: throw RuntimeException("file ${file.name} is not a script")
-            }
+    val scriptDefinition: () -> KotlinScriptDefinition = resolveSession.storageManager.createLazyValue {
+        val file = scriptInfo.script.containingKtFile
+        getScriptDefinition(file) ?: throw RuntimeException("file ${file.name} is not a script")
+    }
 
     override fun substitute(substitutor: TypeSubstitutor) = this
 
@@ -88,28 +87,39 @@ class LazyScriptDescriptor(
 
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 
-    override fun computeSupertypes() =
-        listOf(ScriptHelper.getInstance().getKotlinType(this, scriptDefinition.template)).ifEmpty { listOf(builtIns.anyType) }
+    internal val baseClassDescriptor: () -> ClassDescriptor? = resolveSession.storageManager.createNullableLazyValue {
+        findTypeDescriptor(scriptDefinition().template, Errors.MISSING_SCRIPT_BASE_CLASS)
+    }
+
+    override fun computeSupertypes() = listOf(baseClassDescriptor()?.defaultType ?: builtIns.anyType)
 
     private val scriptImplicitReceivers: () -> List<ClassDescriptor> = resolveSession.storageManager.createLazyValue {
-        scriptDefinition.implicitReceivers.mapNotNull { receiver ->
+        scriptDefinition().implicitReceivers.mapNotNull { receiver ->
             findTypeDescriptor(receiver, Errors.MISSING_SCRIPT_RECEIVER_CLASS)
         }
     }
 
-    internal fun findTypeDescriptor(type: KType, errorDiagnostic: DiagnosticFactory1<PsiElement, String>): ClassDescriptor? {
-        val receiverClassId = type.classId
-        return receiverClassId?.let {
-            module.findClassAcrossModuleDependencies(it)
-        } ?: also {
+    internal fun findTypeDescriptor(kClass: KClass<*>, errorDiagnostic: DiagnosticFactory1<PsiElement, String>): ClassDescriptor? =
+        findTypeDescriptor(kClass.classId, kClass.toString(), errorDiagnostic)
+
+    internal fun findTypeDescriptor(type: KType, errorDiagnostic: DiagnosticFactory1<PsiElement, String>): ClassDescriptor? =
+        findTypeDescriptor(type.classId, type.toString(), errorDiagnostic)
+
+    internal fun findTypeDescriptor(
+        classId: ClassId?, typeName: String,
+        errorDiagnostic: DiagnosticFactory1<PsiElement, String>
+    ): ClassDescriptor? {
+        val typeDescriptor = classId?.let { module.findClassAcrossModuleDependencies(it) }
+        if (typeDescriptor == null) {
             // TODO: use PositioningStrategies to highlight some specific place in case of error, instead of treating the whole file as invalid
             resolveSession.trace.report(
                 errorDiagnostic.on(
                     scriptInfo.script,
-                    receiverClassId?.asSingleFqName()?.toString() ?: type.toString()
+                    classId?.asSingleFqName()?.toString() ?: typeName
                 )
             )
         }
+        return typeDescriptor
     }
 
     override fun getImplicitReceivers(): List<ClassDescriptor> = scriptImplicitReceivers()
@@ -123,7 +133,7 @@ class LazyScriptDescriptor(
     private val scriptOuterScope: () -> LexicalScope = resolveSession.storageManager.createLazyValue {
         var outerScope = super.getOuterScope()
         val outerScopeReceivers = implicitReceivers.let {
-            if (scriptDefinition.environmentVariables.isEmpty()) {
+            if (scriptDefinition().environmentVariables.isEmpty()) {
                 it
             } else {
                 it + ScriptEnvironmentDescriptor(this)
@@ -143,11 +153,3 @@ class LazyScriptDescriptor(
 
     override fun getOuterScope(): LexicalScope = scriptOuterScope()
 }
-
-private val KClass<*>.classId: ClassId
-    get() = this.java.enclosingClass?.kotlin?.classId?.createNestedClassId(Name.identifier(simpleName!!))
-            ?: ClassId.topLevel(FqName(qualifiedName!!))
-
-private val KType.classId: ClassId?
-    get() = classifier?.let { it as? KClass<*> }?.classId
-
