@@ -89,6 +89,17 @@ public final class kotlin/LazyThreadSafetyMode : java/lang/Enum {
 	public static fun values ()[Lkotlin/LazyThreadSafetyMode;
 }
 
+public abstract interface annotation class kotlin/Metadata : java/lang/annotation/Annotation {
+	public abstract fun bv ()[I
+	public abstract fun d1 ()[Ljava/lang/String;
+	public abstract fun d2 ()[Ljava/lang/String;
+	public abstract fun k ()I
+	public abstract fun mv ()[I
+	public abstract fun pn ()Ljava/lang/String;
+	public abstract fun xi ()I
+	public abstract fun xs ()Ljava/lang/String;
+}
+
 public class kotlin/NoWhenBranchMatchedException : java/lang/RuntimeException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V

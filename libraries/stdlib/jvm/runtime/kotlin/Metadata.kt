@@ -11,7 +11,8 @@ package kotlin
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
-internal annotation class Metadata(
+@SinceKotlin("1.3")
+public annotation class Metadata(
     /**
      * A kind of the metadata this annotation encodes. Kotlin compiler recognizes the following kinds (see KotlinClassHeader.Kind):
      *
