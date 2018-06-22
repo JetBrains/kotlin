@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
+import com.intellij.psi.JavaTokenType
 import com.intellij.psi.impl.source.tree.ElementType.OPERATION_BIT_SET
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 class JKJavaFieldImpl(modifierList: JKModifierList, type: JKTypeElement, name: JKNameIdentifier, initializer: JKExpression) : JKJavaField,
@@ -65,6 +67,19 @@ class JKJavaModifierImpl(override val type: JKJavaModifier.JavaModifierType) : J
 class JKJavaOperatorImpl private constructor(val token: IElementType) : JKOperator {
     override val operatorText: String
         get() = TODO(token.toString())
+
+    override val precedence: Int
+        get() = when (token) {
+            JavaTokenType.ASTERISK, JavaTokenType.DIV, JavaTokenType.PERC -> 3
+            JavaTokenType.PLUS, JavaTokenType.MINUS -> 4
+            KtTokens.ELVIS -> 7
+            JavaTokenType.GT, JavaTokenType.LT, JavaTokenType.GE, JavaTokenType.LE -> 9
+            JavaTokenType.EQEQ, JavaTokenType.NE, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ -> 10
+            JavaTokenType.ANDAND -> 11
+            JavaTokenType.OROR -> 12
+            JavaTokenType.GTGTGT, JavaTokenType.GTGT, JavaTokenType.LTLT -> 7
+            else -> 6 /* simple name */
+        }
 
     companion object {
         val tokenToOperator = OPERATION_BIT_SET.types.associate {
