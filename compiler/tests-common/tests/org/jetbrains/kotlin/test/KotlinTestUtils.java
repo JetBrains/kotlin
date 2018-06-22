@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.kotlin.CoroutineTestUtilKt;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -787,31 +788,7 @@ public class KotlinTestUtils {
             }
             testFiles.add(factory.createFile(supportModule,
                                              "CoroutineUtil.kt",
-                                             "package helpers\n" +
-                                             "import " + coroutinesPackage + ".*\n" +
-                                             "fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {\n" +
-                                             "    override val context = EmptyCoroutineContext\n" +
-                                             "    override fun resumeWithException(exception: Throwable) {\n" +
-                                             "        throw exception\n" +
-                                             "    }\n" +
-                                             "\n" +
-                                             "    override fun resume(data: T) = x(data)\n" +
-                                             "}\n" +
-                                             "\n" +
-                                             "fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = object: Continuation<Any?> {\n" +
-                                             "    override val context = EmptyCoroutineContext\n" +
-                                             "    override fun resumeWithException(exception: Throwable) {\n" +
-                                             "        x(exception)\n" +
-                                             "    }\n" +
-                                             "\n" +
-                                             "    override fun resume(data: Any?) { }\n" +
-                                             "}\n" +
-                                             "\n" +
-                                             "open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {\n" +
-                                             "    companion object : EmptyContinuation()\n" +
-                                             "    override fun resume(data: Any?) {}\n" +
-                                             "    override fun resumeWithException(exception: Throwable) { throw exception }\n" +
-                                             "}",
+                                             CoroutineTestUtilKt.createTextForHelpers(coroutinesPackage),
                                              directives
             ));
         }
