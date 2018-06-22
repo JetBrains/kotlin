@@ -93,6 +93,10 @@ public fun isArray(obj: Any): Boolean {
     return js("Array.isArray(obj)").unsafeCast<Boolean>()
 }
 
+public fun isArrayish(o: dynamic) =
+    isArray(o) || js("ArrayBuffer.isView(o)").unsafeCast<Boolean>()
+
+
 public fun isChar(c: Any): Boolean {
     return js("throw Error(\"isChar is not implemented\")").unsafeCast<Boolean>()
 }

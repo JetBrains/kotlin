@@ -30,19 +30,10 @@ fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     """).unsafeCast<Boolean>()
 }
 
-fun isArrayish(o: dynamic) =
-    isArray(o) || js("ArrayBuffer.isView(o)").unsafeCast<Boolean>()
-
-fun toString(o: dynamic): String {
-    if (o == null) {
-        return "null";
-    }
-    else if (isArrayish(o)) {
-        return "[...]";
-    }
-    else {
-        return js("o.toString()").unsafeCast<String>()
-    }
+fun toString(o: dynamic): String = when {
+    o == null -> "null"
+    isArrayish(o) -> "[...]"
+    else -> js("o.toString()").unsafeCast<String>()
 }
 
 // TODO: Simplify, extract kotlin declarations for inner helper functions

@@ -15,9 +15,9 @@ fun numberToInt(a: dynamic): Int = doubleToInt(a)
 
 fun numberToShort(a: dynamic): Short = toShort(numberToInt(a))
 
-fun toByte(a: dynamic): Byte = js("(a & 0xFF) << 24 >> 24").unsafeCast<Byte>()
-
-fun toShort(a: dynamic): Short = js("(a & 0xFFFF) << 16 >> 16").unsafeCast<Short>()
+// << and >> shifts are used to preserve sign of the number
+fun toByte(a: dynamic): Byte = js("a << 24 >> 24").unsafeCast<Byte>()
+fun toShort(a: dynamic): Short = js("a << 16 >> 16").unsafeCast<Short>()
 
 fun doubleToInt(a: dynamic) = js("""
     if (a > 2147483647) return 2147483647;
