@@ -17,6 +17,7 @@
 package kotlin.collections
 
 import kotlin.comparisons.*
+import kotlin.random.*
 
 // Copies typed varargs array to an array of objects
 internal actual fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
@@ -229,13 +230,10 @@ public actual fun <T> MutableList<T>.fill(value: T): Unit {
  *
  * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
  */
-@FixmeRandom
 @SinceKotlin("1.2")
 public actual fun <T> MutableList<T>.shuffle(): Unit {
     for (i in lastIndex downTo 1) {
-        // FIXME: implement a good random
-        //val j = rand(i + 1)
-        val j = i / 2
+        val j = Random.nextInt(i + 1)
         val copy = this[i]
         this[i] = this[j]
         this[j] = copy

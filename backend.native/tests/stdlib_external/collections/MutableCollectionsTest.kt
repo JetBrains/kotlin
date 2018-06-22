@@ -94,17 +94,12 @@ class MutableCollectionTest {
         }
     }
 
-/*
-    // Kotlin/JVM only: java.util.Collections.fill(this, value)
     @Test fun listFill() {
         val list = MutableList(3) { it }
         list.fill(42)
         assertEquals(listOf(42, 42, 42), list)
     }
-*/
 
-/*
-    // shuffle is Kotlin/JVM only method
     @Test fun shuffled() {
         val list = MutableList(100) { it }
         val shuffled = list.shuffled()
@@ -113,5 +108,4 @@ class MutableCollectionTest {
         assertEquals(list.toSet(), shuffled.toSet())
         assertEquals(list.size, shuffled.distinct().size)
     }
-*/
 }

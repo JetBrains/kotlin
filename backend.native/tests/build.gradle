@@ -493,6 +493,15 @@ task runtime_basic_exit(type: RunStandaloneKonanTest) {
     expectedExitStatus = 42
 }
 
+task runtime_random(type: RunKonanTest) {
+    source = "runtime/basic/random.kt"
+}
+
+task runtime_worker_random(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32')
+    source = "runtime/basic/worker_random.kt"
+}
+
 task hello0(type: RunKonanTest) {
     goldValue = "Hello, world!\n"
     source = "runtime/basic/hello0.kt"
