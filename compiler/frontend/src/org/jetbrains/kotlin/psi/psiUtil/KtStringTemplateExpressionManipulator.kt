@@ -59,8 +59,8 @@ class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStrin
                 } else newContent
             } else newContent
 
-        val escaped = makeKtExpressionFromText(wrapAsInOld(newContentPreprocessed))
-        node.replaceAllChildrenToChildrenOf(escaped.node)
+        val newKtExpression = makeKtExpressionFromText(wrapAsInOld(newContentPreprocessed))
+        node.replaceAllChildrenToChildrenOf(newKtExpression.node)
 
         return node.getPsi(KtStringTemplateExpression::class.java)
     }
