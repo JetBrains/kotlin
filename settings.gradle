@@ -123,6 +123,7 @@ include ":kotlin-build-common",
         ":prepare:ide-lazy-resolver",
         ":prepare:idea-plugin",
         ":prepare:cidr-plugin",
+        ":android-lint",
         ":kotlin-compiler",
         ":kotlin-compiler-embeddable",
         ":kotlin-compiler-client-embeddable",
@@ -234,6 +235,7 @@ project(':kotlin-android-extensions').projectDir = "$rootDir/prepare/android-ext
 project(':kotlin-android-extensions-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-runtime" as File
 project(':plugins:android-extensions-ide').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
 project(':plugins:android-extensions-jps').projectDir = "$rootDir/plugins/android-extensions/android-extensions-jps" as File
+project(':android-lint').projectDir = "$rootDir/prepare/android-lint" as File
 project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allopen/allopen-cli" as File
 project(':allopen-ide-plugin').projectDir = "$rootDir/plugins/allopen/allopen-ide" as File
 project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg/noarg-cli" as File

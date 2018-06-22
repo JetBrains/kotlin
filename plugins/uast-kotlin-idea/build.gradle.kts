@@ -19,8 +19,3 @@ sourceSets {
     "test" {}
 }
 
-runtimeJar {
-    archiveName = "uast-kotlin-ide.jar"
-}
-
-ideaPlugin()

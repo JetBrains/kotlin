@@ -48,5 +48,3 @@ testsJar {}
 projectTest {
     workingDir = rootDir
 }
-
-ideaPlugin()
