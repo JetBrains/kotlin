@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 
 interface ObjCExportNamer {
     fun getPackageName(fqName: FqName): String
@@ -25,6 +22,15 @@ interface ObjCExportNamer {
     fun getPropertyName(property: PropertyDescriptor): String
     fun getObjectInstanceSelector(descriptor: ClassDescriptor): String
     fun getEnumEntrySelector(descriptor: ClassDescriptor): String
+}
+
+fun createNamer(moduleDescriptor: ModuleDescriptor,
+                topLevelNamePrefix: String = moduleDescriptor.namePrefix): ObjCExportNamer {
+    val generator = object : ObjCExportHeaderGenerator(moduleDescriptor, moduleDescriptor.builtIns, topLevelNamePrefix) {
+        override fun reportWarning(text: String) {}
+        override fun reportWarning(method: FunctionDescriptor, text: String) {}
+    }
+    return generator.namer
 }
 
 internal class ObjCExportNamerImpl(
