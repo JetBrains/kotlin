@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.ElementManipulators
+import com.intellij.testFramework.LoggedErrorProcessor
+import org.apache.log4j.Logger
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 
@@ -57,6 +59,18 @@ class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFixtureTes
     fun testReplaceRange() {
         doTestContentChange("\"abc\"", "x", range = TextRange(2,3), expected = "\"axc\"")
         doTestContentChange("\"\"\"abc\"\"\"", "x", range = TextRange(4,5), expected = "\"\"\"axc\"\"\"")
+        doTestContentChange(
+            "\"<div style = \\\"default\\\">\${foo(\"\")}</div>\"",
+            "custom", range = TextRange(16, 23),
+            expected = "\"<div style = \\\"custom\\\">\${foo(\"\")}</div>\""
+        )
+    }
+
+
+    fun testHackyReplaceRange() {
+        suppressFallingOnLogError {
+            doTestContentChange("\"a\\\"bc\"", "'", range = TextRange(0, 4), expected = "'bc\"")
+        }
     }
 
     fun testTemplateWithInterpolation() {
@@ -76,4 +90,18 @@ class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFixtureTes
     }
 
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
+}
+
+private fun <T> suppressFallingOnLogError(call: () -> T) {
+    val loggedErrorProcessor = LoggedErrorProcessor.getInstance()
+    try {
+        LoggedErrorProcessor.setNewInstance(object : LoggedErrorProcessor() {
+            override fun processError(message: String?, t: Throwable?, details: Array<out String>?, logger: Logger) {
+                t?.printStackTrace()
+            }
+        })
+        call()
+    } finally {
+        LoggedErrorProcessor.setNewInstance(loggedErrorProcessor)
+    }
 }

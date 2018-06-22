@@ -16,12 +16,16 @@
 
 package org.jetbrains.kotlin.psi.psiUtil
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.AbstractElementManipulator
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+
+private val LOG = Logger.getInstance(KtStringTemplateExpressionManipulator::class.java)
 
 class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStringTemplateExpression>() {
     override fun handleContentChange(
@@ -34,20 +38,26 @@ class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStrin
 
         fun wrapAsInOld(content: String) = oldText.substring(0, range.startOffset) + content + oldText.substring(range.endOffset)
 
-        fun makeKtStringTemplateExpressionFromText(text: String) =
-            KtPsiFactory(element.project).createExpression(text) as? KtStringTemplateExpression
-                    ?: error("can't create a `KtStringTemplateExpression` from '$text'")
+        fun makeKtExpressionFromText(text: String): KtExpression {
+            val ktExpression = KtPsiFactory(element.project).createExpression(text)
+            if (ktExpression is KtStringTemplateExpression) return ktExpression
+            LOG.error("can't create a `KtStringTemplateExpression` from '$text'")
+            return ktExpression
+        }
 
         val newContentPreprocessed = if (element.isSingleQuoted()) {
-            makeKtStringTemplateExpressionFromText("\"\"\"" + newContent + "\"\"\"").entries.joinToString("") { entry ->
-                when (entry) {
-                    is KtStringTemplateEntryWithExpression -> entry.text
-                    else -> StringUtil.escapeStringCharacters(entry.text)
+            val expressionFromText = makeKtExpressionFromText("\"\"\"" + newContent + "\"\"\"")
+            if (expressionFromText is KtStringTemplateExpression)
+                expressionFromText.entries.joinToString("") { entry ->
+                    when (entry) {
+                        is KtStringTemplateEntryWithExpression -> entry.text
+                        else -> StringUtil.escapeStringCharacters(entry.text)
+                    }
                 }
-            }
+            else newContent
         } else newContent
 
-        val escaped = makeKtStringTemplateExpressionFromText(wrapAsInOld(newContentPreprocessed))
+        val escaped = makeKtExpressionFromText(wrapAsInOld(newContentPreprocessed))
         node.replaceAllChildrenToChildrenOf(escaped.node)
 
         return node.getPsi(KtStringTemplateExpression::class.java)
