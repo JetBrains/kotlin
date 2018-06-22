@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+fun test(): Int {
+    return listOf(1, 2, 3)
+            .asSequence()
+            .filter { it > 1 }
+            .map { it * 2 }
+            .toList()
+            .binarySearch(4)
+}
