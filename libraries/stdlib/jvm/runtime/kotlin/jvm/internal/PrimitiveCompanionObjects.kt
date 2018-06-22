@@ -51,6 +51,8 @@ internal object ByteCompanionObject {
 
 
 internal object CharCompanionObject {
+    const val MIN_VALUE: Char = '\u0000'
+    const val MAX_VALUE: Char = '\uFFFF'
     const val MIN_HIGH_SURROGATE: Char = '\uD800'
     const val MAX_HIGH_SURROGATE: Char = '\uDBFF'
     const val MIN_LOW_SURROGATE: Char = '\uDC00'
