@@ -40,8 +40,9 @@ class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStrin
 
         fun makeKtExpressionFromText(text: String): KtExpression {
             val ktExpression = KtPsiFactory(element.project).createExpression(text)
-            if (ktExpression is KtStringTemplateExpression) return ktExpression
-            LOG.error("can't create a `KtStringTemplateExpression` from '$text'")
+            if (ktExpression !is KtStringTemplateExpression) {
+                LOG.error("can't create a `KtStringTemplateExpression` from '$text'")
+            }
             return ktExpression
         }
 
