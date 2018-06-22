@@ -46,17 +46,18 @@ class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStrin
             return ktExpression
         }
 
-        val newContentPreprocessed = if (element.isSingleQuoted()) {
-            val expressionFromText = makeKtExpressionFromText("\"\"\"" + newContent + "\"\"\"")
-            if (expressionFromText is KtStringTemplateExpression)
-                expressionFromText.entries.joinToString("") { entry ->
-                    when (entry) {
-                        is KtStringTemplateEntryWithExpression -> entry.text
-                        else -> StringUtil.escapeStringCharacters(entry.text)
+        val newContentPreprocessed: String =
+            if (element.isSingleQuoted()) {
+                val expressionFromText = makeKtExpressionFromText("\"\"\"$newContent\"\"\"")
+                if (expressionFromText is KtStringTemplateExpression) {
+                    expressionFromText.entries.joinToString("") { entry ->
+                        when (entry) {
+                            is KtStringTemplateEntryWithExpression -> entry.text
+                            else -> StringUtil.escapeStringCharacters(entry.text)
+                        }
                     }
-                }
-            else newContent
-        } else newContent
+                } else newContent
+            } else newContent
 
         val escaped = makeKtExpressionFromText(wrapAsInOld(newContentPreprocessed))
         node.replaceAllChildrenToChildrenOf(escaped.node)

@@ -96,9 +96,7 @@ private fun <T> suppressFallingOnLogError(call: () -> T) {
     val loggedErrorProcessor = LoggedErrorProcessor.getInstance()
     try {
         LoggedErrorProcessor.setNewInstance(object : LoggedErrorProcessor() {
-            override fun processError(message: String?, t: Throwable?, details: Array<out String>?, logger: Logger) {
-                t?.printStackTrace()
-            }
+            override fun processError(message: String?, t: Throwable?, details: Array<out String>?, logger: Logger) {}
         })
         call()
     } finally {
