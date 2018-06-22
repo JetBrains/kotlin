@@ -375,12 +375,6 @@ val ideaPlugin by task<Task> {
     dependsOn(copyCompilerToIdeaPlugin)
     val childIdeaPluginTasks = getTasksByName("ideaPlugin", true) - this@task
     dependsOn(childIdeaPluginTasks)
-
-    doLast {
-        delete("$ideaPluginDir/lib/android-ide.jar")
-        delete("$ideaPluginDir/lib/android-output-parser-ide.jar")
-        delete("$ideaPluginDir/lib/android-extensions-ide.jar")
-    }
 }
 
 tasks {
