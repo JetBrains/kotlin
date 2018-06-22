@@ -55,6 +55,8 @@ class BuiltinCompanionJVMTest {
 
     @Test fun charTest() {
         val ch = Char
+        assertEquals(java.lang.Character.MIN_VALUE, ch.MIN_VALUE)
+        assertEquals(java.lang.Character.MAX_VALUE, ch.MAX_VALUE)
         assertEquals(java.lang.Character.MIN_SURROGATE, ch.MIN_SURROGATE)
         assertEquals(java.lang.Character.MAX_SURROGATE, ch.MAX_SURROGATE)
         assertEquals(java.lang.Character.MIN_LOW_SURROGATE, ch.MIN_LOW_SURROGATE)
