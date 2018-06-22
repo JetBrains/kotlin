@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class ObjCExportCodeGenerator(
         codegen: CodeGenerator,
-        val namer: ObjCExportNamer,
+        val namer: ObjCExportNamerImpl,
         val mapper: ObjCExportMapper
 ) : ObjCCodeGenerator(codegen) {
 

@@ -40,7 +40,7 @@ abstract class ObjCExportHeaderGenerator(
         }
     }
 
-    internal val namer = ObjCExportNamer(moduleDescriptor, builtIns, mapper, topLevelNamePrefix)
+    internal val namer = ObjCExportNamerImpl(moduleDescriptor, builtIns, mapper, topLevelNamePrefix)
 
     internal val generatedClasses = mutableSetOf<ClassDescriptor>()
     internal val topLevel = mutableMapOf<FqName, MutableList<CallableMemberDescriptor>>()

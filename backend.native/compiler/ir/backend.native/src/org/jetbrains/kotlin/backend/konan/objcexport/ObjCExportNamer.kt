@@ -17,11 +17,23 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 
-internal class ObjCExportNamer(val moduleDescriptor: ModuleDescriptor,
-        val builtIns: KotlinBuiltIns,
+interface ObjCExportNamer {
+    fun getPackageName(fqName: FqName): String
+    fun getClassOrProtocolName(descriptor: ClassDescriptor): String
+    fun getSelector(method: FunctionDescriptor): String
+    fun getSwiftName(method: FunctionDescriptor): String
+    fun getPropertyName(property: PropertyDescriptor): String
+    fun getObjectInstanceSelector(descriptor: ClassDescriptor): String
+    fun getEnumEntrySelector(descriptor: ClassDescriptor): String
+}
+
+internal class ObjCExportNamerImpl(
+        val moduleDescriptor: ModuleDescriptor,
+        builtIns: KotlinBuiltIns,
         val mapper: ObjCExportMapper,
         private val topLevelNamePrefix: String = moduleDescriptor.namePrefix
-    ) {
+) : ObjCExportNamer {
+
     val kotlinAnyName = "KotlinBase"
 
     private val commonPackageSegments = moduleDescriptor.guessMainPackage().pathSegments()
@@ -91,7 +103,7 @@ internal class ObjCExportNamer(val moduleDescriptor: ModuleDescriptor,
                 first.containingDeclaration == second.containingDeclaration
     }
 
-    fun getPackageName(fqName: FqName): String = classNames.getOrPut(fqName) {
+    override fun getPackageName(fqName: FqName): String = classNames.getOrPut(fqName) {
         StringBuilder().apply {
             append(topLevelNamePrefix)
             fqName.pathSegments().forEachIndexed { index, segment ->
@@ -104,7 +116,7 @@ internal class ObjCExportNamer(val moduleDescriptor: ModuleDescriptor,
         }.mangledSequence { append("_") }
     }
 
-    fun getClassOrProtocolName(descriptor: ClassDescriptor): String {
+    override fun getClassOrProtocolName(descriptor: ClassDescriptor): String {
         val mapping = if (descriptor.isInterface) protocolNames else classNames
 
         return mapping.getOrPut(descriptor) {
@@ -122,7 +134,7 @@ internal class ObjCExportNamer(val moduleDescriptor: ModuleDescriptor,
         }
     }
 
-    fun getSelector(method: FunctionDescriptor): String = methodSelectors.getOrPut(method) {
+    override fun getSelector(method: FunctionDescriptor): String = methodSelectors.getOrPut(method) {
         assert(mapper.isBaseMethod(method))
 
         val parameters = mapper.bridgeMethod(method).valueParametersAssociated(method)
@@ -170,7 +182,7 @@ internal class ObjCExportNamer(val moduleDescriptor: ModuleDescriptor,
         }
     }
 
-    fun getSwiftName(method: FunctionDescriptor): String = methodSwiftNames.getOrPut(method) {
+    override fun getSwiftName(method: FunctionDescriptor): String = methodSwiftNames.getOrPut(method) {
         assert(mapper.isBaseMethod(method))
 
         val parameters = mapper.bridgeMethod(method).valueParametersAssociated(method)
@@ -205,7 +217,7 @@ internal class ObjCExportNamer(val moduleDescriptor: ModuleDescriptor,
         }
     }
 
-    fun getPropertyName(property: PropertyDescriptor): String = propertyNames.getOrPut(property) {
+    override fun getPropertyName(property: PropertyDescriptor): String = propertyNames.getOrPut(property) {
         assert(mapper.isBaseProperty(property))
         assert(mapper.isObjCProperty(property))
 
@@ -216,7 +228,7 @@ internal class ObjCExportNamer(val moduleDescriptor: ModuleDescriptor,
         }
     }
 
-    fun getObjectInstanceSelector(descriptor: ClassDescriptor): String {
+    override fun getObjectInstanceSelector(descriptor: ClassDescriptor): String {
         assert(descriptor.kind == ClassKind.OBJECT)
 
         return objectInstanceSelectors.getOrPut(descriptor) {
@@ -226,7 +238,7 @@ internal class ObjCExportNamer(val moduleDescriptor: ModuleDescriptor,
         }
     }
 
-    fun getEnumEntrySelector(descriptor: ClassDescriptor): String {
+    override fun getEnumEntrySelector(descriptor: ClassDescriptor): String {
         assert(descriptor.kind == ClassKind.ENUM_ENTRY)
 
         return enumEntrySelectors.getOrPut(descriptor) {
