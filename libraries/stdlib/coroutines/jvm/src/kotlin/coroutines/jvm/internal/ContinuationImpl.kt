@@ -81,18 +81,18 @@ internal abstract class ContinuationImpl protected constructor(
         try {
             val outcome = invokeSuspend(result)
             if (outcome === CoroutineSingletons.COROUTINE_SUSPENDED) return
-            disposeIntercepted()
+            releaseIntercepted()
             completion.resume(outcome)
         } catch (exception: Throwable) {
-            disposeIntercepted()
+            releaseIntercepted()
             completion.resumeWithException(exception)
         }
     }
 
-    private fun disposeIntercepted() {
+    private fun releaseIntercepted() {
         val intercepted = intercepted
         if (intercepted != null && intercepted != this) {
-            context[ContinuationInterceptor]!!.disposeContinuation(intercepted)
+            context[ContinuationInterceptor]!!.releaseInterceptedContinuation(intercepted)
         }
         this.intercepted = CompletedContinuation // just in case
     }
@@ -113,6 +113,8 @@ internal object CompletedContinuation : Continuation<Any?> {
     }
 }
 
+@SinceKotlin("1.3")
+// Restricted suspension lambdas inherit from this class
 internal abstract class RestrictedSuspendLambda protected constructor(
     private val arity: Int,
     completion: Continuation<Any?>?
@@ -128,6 +130,8 @@ internal abstract class RestrictedSuspendLambda protected constructor(
             super.toString() // this is continuation
 }
 
+@SinceKotlin("1.3")
+// Suspension lambdas inherit from this class
 internal abstract class SuspendLambda protected constructor(
     private val arity: Int,
     completion: Continuation<Any?>?
