@@ -145,7 +145,7 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
         CopyBuilder<D> setDropOriginalInContainingParts();
 
         @NotNull
-        CopyBuilder<D> setDropSuspend();
+        CopyBuilder<D> setIsSuspend(boolean isSuspend);
 
         @NotNull
         CopyBuilder<D> setHiddenToOvercomeSignatureClash();

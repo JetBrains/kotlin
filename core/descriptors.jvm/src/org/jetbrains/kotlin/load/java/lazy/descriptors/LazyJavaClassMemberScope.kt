@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isContinuation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.NotNullLazyValue
@@ -54,6 +56,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
@@ -108,7 +111,9 @@ class LazyJavaClassMemberScope(
                 }
             }) return false
 
-        return !function.doesOverrideRenamedBuiltins() && !function.shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters()
+        return !function.doesOverrideRenamedBuiltins() &&
+                !function.shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters() &&
+                !function.doesOverrideSuspendFunction()
     }
 
     /**
@@ -151,6 +156,29 @@ class LazyJavaClassMemberScope(
 
             builtinSpecialFromSuperTypes.any { doesOverrideRenamedDescriptor(it, methodDescriptor) }
         }
+    }
+
+    private fun SimpleFunctionDescriptor.doesOverrideSuspendFunction(): Boolean {
+        val suspendView = this.createSuspendView() ?: return false
+
+        return getFunctionsFromSupertypes(name).any { overriddenCandidate ->
+            overriddenCandidate.isSuspend && suspendView.doesOverride(overriddenCandidate)
+        }
+    }
+
+    private fun SimpleFunctionDescriptor.createSuspendView(): SimpleFunctionDescriptor? {
+        val continuationParameter = valueParameters.lastOrNull()?.takeIf {
+            isContinuation(
+                it.type.constructor.declarationDescriptor?.fqNameUnsafe?.takeIf { it.isSafe }?.toSafe(),
+                c.components.settings.isReleaseCoroutines
+            )
+        } ?: return null
+
+        return newCopyBuilder()
+            .setIsSuspend(true)
+            .setValueParameters(valueParameters.dropLast(1))
+            .setReturnType(continuationParameter.type.arguments[0].type)
+            .build()
     }
 
     private fun SimpleFunctionDescriptor.createRenamedCopy(builtinName: Name): SimpleFunctionDescriptor =
@@ -233,7 +261,9 @@ class LazyJavaClassMemberScope(
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         val functionsFromSupertypes = getFunctionsFromSupertypes(name)
 
-        if (!name.sameAsRenamedInJvmBuiltin && !name.sameAsBuiltinMethodWithErasedValueParameters) {
+        if (!name.sameAsRenamedInJvmBuiltin && !name.sameAsBuiltinMethodWithErasedValueParameters
+            && functionsFromSupertypes.none(FunctionDescriptor::isSuspend)
+        ) {
             // Simple fast path in case of name is not suspicious (i.e. name is not one of builtins that have different signature in Java)
             addFunctionFromSupertypes(
                 result, name,
@@ -251,13 +281,13 @@ class LazyJavaClassMemberScope(
         )
 
         // add declarations
-        addOverriddenBuiltinMethods(
+        addOverriddenSpecialMethods(
             name, result, mergedFunctionFromSuperTypes, result,
             this::searchMethodsByNameWithoutBuiltinMagic
         )
 
         // add from super types
-        addOverriddenBuiltinMethods(
+        addOverriddenSpecialMethods(
             name, result, mergedFunctionFromSuperTypes, specialBuiltinsFromSuperTypes,
             this::searchMethodsInSupertypesWithoutBuiltinMagic
         )
@@ -293,7 +323,9 @@ class LazyJavaClassMemberScope(
         }
     }
 
-    private fun addOverriddenBuiltinMethods(
+    // - Built-in (collections) methods with different signature in JDK
+    // - Suspend functions
+    private fun addOverriddenSpecialMethods(
         name: Name,
         alreadyDeclaredFunctions: Collection<SimpleFunctionDescriptor>,
         candidatesForOverride: Collection<SimpleFunctionDescriptor>,
@@ -301,31 +333,59 @@ class LazyJavaClassMemberScope(
         functions: (Name) -> Collection<SimpleFunctionDescriptor>
     ) {
         for (descriptor in candidatesForOverride) {
-            val overriddenBuiltin = descriptor.getOverriddenBuiltinWithDifferentJvmName() ?: continue
+            result.addIfNotNull(
+                obtainOverrideForBuiltinWithDifferentJvmName(descriptor, functions, name, alreadyDeclaredFunctions)
+            )
+            result.addIfNotNull(
+                obtainOverrideForBuiltInWithErasedValueParametersInJava(descriptor, functions, alreadyDeclaredFunctions)
+            )
 
-            val nameInJava = getJvmMethodNameIfSpecial(overriddenBuiltin)!!
-            for (method in functions(Name.identifier(nameInJava))) {
-                val renamedCopy = method.createRenamedCopy(name)
+            result.addIfNotNull(obtainOverrideForSuspend(descriptor, functions))
+        }
+    }
 
-                if (doesOverrideRenamedDescriptor(overriddenBuiltin, renamedCopy)) {
-                    result.add(
-                        renamedCopy.createHiddenCopyIfBuiltinAlreadyAccidentallyOverridden(overriddenBuiltin, alreadyDeclaredFunctions)
-                    )
-                    break
-                }
+    private fun obtainOverrideForBuiltInWithErasedValueParametersInJava(
+        descriptor: SimpleFunctionDescriptor,
+        functions: (Name) -> Collection<SimpleFunctionDescriptor>,
+        alreadyDeclaredFunctions: Collection<SimpleFunctionDescriptor>
+    ): SimpleFunctionDescriptor? {
+        val overriddenBuiltin =
+            BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor)
+                    ?: return null
+
+        return createOverrideForBuiltinFunctionWithErasedParameterIfNeeded(overriddenBuiltin, functions)
+            ?.takeIf(this::isVisibleAsFunctionInCurrentClass)
+            ?.createHiddenCopyIfBuiltinAlreadyAccidentallyOverridden(overriddenBuiltin, alreadyDeclaredFunctions)
+    }
+
+    private fun obtainOverrideForBuiltinWithDifferentJvmName(
+        descriptor: SimpleFunctionDescriptor,
+        functions: (Name) -> Collection<SimpleFunctionDescriptor>,
+        name: Name,
+        alreadyDeclaredFunctions: Collection<SimpleFunctionDescriptor>
+    ): SimpleFunctionDescriptor? {
+        val overriddenBuiltin = descriptor.getOverriddenBuiltinWithDifferentJvmName() ?: return null
+
+        val nameInJava = getJvmMethodNameIfSpecial(overriddenBuiltin)!!
+        for (method in functions(Name.identifier(nameInJava))) {
+            val renamedCopy = method.createRenamedCopy(name)
+
+            if (doesOverrideRenamedDescriptor(overriddenBuiltin, renamedCopy)) {
+                return renamedCopy.createHiddenCopyIfBuiltinAlreadyAccidentallyOverridden(overriddenBuiltin, alreadyDeclaredFunctions)
             }
         }
 
-        for (descriptor in candidatesForOverride) {
-            val overriddenBuiltin =
-                BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor)
-                        ?: continue
+        return null
+    }
 
-            createOverrideForBuiltinFunctionWithErasedParameterIfNeeded(overriddenBuiltin, functions)?.let { override ->
-                if (isVisibleAsFunctionInCurrentClass(override)) {
-                    result.add(override.createHiddenCopyIfBuiltinAlreadyAccidentallyOverridden(overriddenBuiltin, alreadyDeclaredFunctions))
-                }
-            }
+    private fun obtainOverrideForSuspend(
+        descriptor: SimpleFunctionDescriptor,
+        functions: (Name) -> Collection<SimpleFunctionDescriptor>
+    ): SimpleFunctionDescriptor? {
+        if (!descriptor.isSuspend) return null
+
+        return functions(descriptor.name).firstNotNullResult { overrideCandidate ->
+            overrideCandidate.createSuspendView()?.takeIf { suspendView -> suspendView.doesOverride(descriptor) }
         }
     }
 

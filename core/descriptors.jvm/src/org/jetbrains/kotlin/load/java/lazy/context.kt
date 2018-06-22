@@ -59,7 +59,8 @@ class JavaResolverComponents(
         val reflectionTypes: ReflectionTypes,
         val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver,
         val signatureEnhancement: SignatureEnhancement,
-        val javaClassesTracker: JavaClassesTracker
+        val javaClassesTracker: JavaClassesTracker,
+        val settings: JavaResolverSettings
 ) {
     fun replace(
             javaResolverCache: JavaResolverCache = this.javaResolverCache
@@ -68,8 +69,25 @@ class JavaResolverComponents(
             signaturePropagator, errorReporter, javaResolverCache,
             javaPropertyInitializerEvaluator, samConversionResolver, sourceElementFactory,
             moduleClassResolver, packageMapper, supertypeLoopChecker, lookupTracker, module, reflectionTypes,
-            annotationTypeQualifierResolver, signatureEnhancement, javaClassesTracker
+            annotationTypeQualifierResolver, signatureEnhancement, javaClassesTracker,
+            settings
     )
+}
+
+interface JavaResolverSettings {
+    val isReleaseCoroutines: Boolean
+
+    object Default : JavaResolverSettings {
+        override val isReleaseCoroutines: Boolean
+            get() = false
+    }
+
+    companion object {
+        fun create(isReleaseCoroutines: Boolean): JavaResolverSettings =
+            object : JavaResolverSettings {
+                override val isReleaseCoroutines get() = isReleaseCoroutines
+            }
+    }
 }
 
 private typealias QualifierByApplicabilityType = EnumMap<AnnotationTypeQualifierResolver.QualifierApplicabilityType, NullabilityQualifierWithMigrationStatus?>

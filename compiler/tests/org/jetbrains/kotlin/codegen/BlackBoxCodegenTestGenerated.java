@@ -5975,6 +5975,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
         }
 
+        @TestMetadata("suspendCovariantJavaOverrides.kt")
+        public void testSuspendCovariantJavaOverrides_1_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendCovariantJavaOverrides.kt");
+            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("suspendCovariantJavaOverrides.kt")
+        public void testSuspendCovariantJavaOverrides_1_3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendCovariantJavaOverrides.kt");
+            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+        }
+
         @TestMetadata("suspendDefaultImpl.kt")
         public void testSuspendDefaultImpl_1_2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendDefaultImpl.kt");
@@ -6068,6 +6080,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("suspendInTheMiddleOfObjectConstruction.kt")
         public void testSuspendInTheMiddleOfObjectConstruction_1_3() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstruction.kt");
+            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+        }
+
+        @TestMetadata("suspendJavaOverrides.kt")
+        public void testSuspendJavaOverrides_1_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendJavaOverrides.kt");
+            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("suspendJavaOverrides.kt")
+        public void testSuspendJavaOverrides_1_3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendJavaOverrides.kt");
             doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
         }
 

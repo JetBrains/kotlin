@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.components.*
+import org.jetbrains.kotlin.load.java.lazy.JavaResolverSettings
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -115,6 +116,9 @@ fun createContainerForLazyResolveWithJava(
     }
 
     useInstance(javaClassTracker ?: JavaClassesTracker.Default)
+    useInstance(
+        JavaResolverSettings.create(isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines))
+    )
 
     targetEnvironment.configure(this)
 

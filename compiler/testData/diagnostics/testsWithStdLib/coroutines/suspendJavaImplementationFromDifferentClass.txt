@@ -1,0 +1,52 @@
+package
+
+public fun builder(/*0*/ block: suspend () -> kotlin.Unit): kotlin.Unit
+public fun main(/*0*/ x: COROUTINES_PACKAGE.Continuation<kotlin.String>): kotlin.Unit
+
+public open class BaseJavaClass {
+    public constructor BaseJavaClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ x: kotlin.Int, /*1*/ continuation: COROUTINES_PACKAGE.Continuation<kotlin.String!>!): kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract suspend fun foo(/*0*/ x: kotlin.Int): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class JavaClass : BaseJavaClass, I {
+    public constructor JavaClass()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ suspend /*fake_override*/ fun foo(/*0*/ x: kotlin.Int): kotlin.String
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class K1 : JavaClass {
+    public constructor K1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ suspend /*fake_override*/ fun foo(/*0*/ x: kotlin.Int): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class K2 : JavaClass {
+    public constructor K2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ suspend fun foo(/*0*/ x: kotlin.Int): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class K3 : JavaClass {
+    public constructor K3()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ suspend /*fake_override*/ fun foo(/*0*/ x: kotlin.Int): kotlin.String
+    public open fun foo(/*0*/ x: kotlin.Int, /*1*/ y: COROUTINES_PACKAGE.Continuation<kotlin.String>): kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
