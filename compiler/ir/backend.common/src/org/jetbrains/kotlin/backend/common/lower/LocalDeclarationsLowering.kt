@@ -289,7 +289,8 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
                     expression.startOffset, expression.endOffset,
                     context.irBuiltIns.unitType,
                     newCallee.symbol,
-                    newCallee.descriptor
+                    newCallee.descriptor,
+                    expression.typeArgumentsCount
                 ).also {
                     it.fillArguments(expression)
                     it.copyTypeArgumentsFrom(expression)
@@ -440,6 +441,7 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
                     newCallee.returnType,
                     newCallee.symbol,
                     newCallee.descriptor,
+                    oldCall.typeArgumentsCount,
                     oldCall.origin, oldCall.superQualifierSymbol
                 ).also {
                     it.copyTypeArgumentsFrom(oldCall)
