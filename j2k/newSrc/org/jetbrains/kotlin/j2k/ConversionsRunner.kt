@@ -31,6 +31,7 @@ object ConversionsRunner {
             JavaMethodToKotlinFunctionConversion().runConversion(it, context)
             LiteralConversion().runConversion(it, context)
             ModifiersConversion().runConversion(it, context)
+            PolyadicExpressionConversion().runConversion(it, context)
             BinaryExpressionConversion().runConversion(it, context)
         }
     }

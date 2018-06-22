@@ -83,6 +83,8 @@ class JKKtLiteralExpressionImpl(
 }
 
 class JKKtOperatorImpl private constructor(val token: KtSingleValueToken) : JKOperator, JKElementBase() {
+    override val precedence: Int
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val operatorText: String
         get() = token.value
 
@@ -117,7 +119,10 @@ class JKKtOperatorImpl private constructor(val token: KtSingleValueToken) : JKOp
     }
 }
 
-class JKKtWordOperatorImpl constructor(override val operatorText: String) : JKOperator, JKElementBase()
+class JKKtWordOperatorImpl constructor(override val operatorText: String) : JKOperator, JKElementBase() {
+    override val precedence: Int
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+}
 
 class JKKtModifierImpl(override val type: JKKtModifier.KtModifierType) : JKKtModifier, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtModifier(this, data)

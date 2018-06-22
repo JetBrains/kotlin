@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKKtOperatorImpl
 
 class BinaryExpressionConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        return if (element is JKBinaryExpression) element.also {
+        if (element is JKBinaryExpression) element.also {
             element.operator = JKKtOperatorImpl.javaToKotlinOperator[element.operator] ?: element.operator
-        } else recurse(element)
+        }
+        return recurse(element)
     }
 }
