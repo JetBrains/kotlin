@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -15,7 +14,10 @@ import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
@@ -173,6 +175,9 @@ fun IrBuilderWithScope.irGet(type: IrType, receiver: IrExpression, getterSymbol:
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType): IrCall =
     IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor)
+
+fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrCall =
+    IrCallImpl(startOffset, endOffset, callee.owner.returnType, callee, callee.descriptor)
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDescriptor, type: IrType): IrCall =
     IrCallImpl(startOffset, endOffset, type, callee, descriptor)
