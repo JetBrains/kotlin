@@ -84,7 +84,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     override fun getPresentableName() = KOTLIN_BUILDER_NAME
 
-    override fun getCompilableFileExtensions() = arrayListOf("kt")
+    override fun getCompilableFileExtensions() = arrayListOf("kt", "kts")
 
     override fun buildStarted(context: CompileContext) {
         LOG.debug("==========================================")
