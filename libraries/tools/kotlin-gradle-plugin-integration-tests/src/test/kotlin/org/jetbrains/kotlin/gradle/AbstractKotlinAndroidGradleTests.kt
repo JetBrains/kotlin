@@ -236,6 +236,32 @@ fun getSomething() = 10
     }
 
     @Test
+    fun testMultiModuleICNonAndroidModuleIsChanged() {
+        val project = Project("AndroidIncrementalMultiModule", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = true, kotlinDaemonDebugPort = null)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+        }
+
+        val libAndroidUtilKt = project.projectDir.getFileByName("libAndroidUtil.kt")
+        libAndroidUtilKt.modify { it.replace("fun libAndroidUtil(): String", "fun libAndroidUtil(): CharSequence") }
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("libAndroidUtil.kt", "useLibAndroidUtil.kt")
+            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+        }
+
+        val libJvmUtilKt = project.projectDir.getFileByName("LibJvmUtil.kt")
+        libJvmUtilKt.modify { it.replace("fun libJvmUtil(): String", "fun libJvmUtil(): CharSequence") }
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("LibJvmUtil.kt", "useLibJvmUtil.kt")
+            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+        }
+    }
+
+    @Test
     fun testIncrementalBuildWithNoChanges() {
         val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val tasksToExecute = listOf(
