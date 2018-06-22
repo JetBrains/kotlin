@@ -154,6 +154,7 @@ public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
 
 // INTERNAL DEFINITIONS
 
+@SinceKotlin("1.3")
 private inline fun <T> createCoroutineFromSuspendFunction(
     completion: Continuation<T>,
     crossinline block: () -> Any?
