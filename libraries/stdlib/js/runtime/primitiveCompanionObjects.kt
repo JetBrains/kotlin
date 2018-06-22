@@ -103,6 +103,12 @@ private object ByteCompanionObject {
 
 @JsName("CharCompanionObject")
 private object CharCompanionObject {
+    @JsName("MIN_VALUE")
+    public const val MIN_VALUE: Char = '\u0000'
+
+    @JsName("MAX_VALUE")
+    public const val MAX_VALUE: Char = '\uFFFF'
+
     @JsName("MIN_HIGH_SURROGATE")
     public const val MIN_HIGH_SURROGATE: Char = '\uD800'
 
