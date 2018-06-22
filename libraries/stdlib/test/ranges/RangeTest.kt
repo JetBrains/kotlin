@@ -172,7 +172,7 @@ public class RangeTest {
         assertTrue('Y' in openRange)
         assertFalse('Z' in openRange)
 
-        assertTrue(('A' until '\u0000').isEmpty())
+        assertTrue(('A' until Char.MIN_VALUE).isEmpty())
     }
 
     @Test fun doubleRange() {
