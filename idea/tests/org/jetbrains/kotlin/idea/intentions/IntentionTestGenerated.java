@@ -1685,6 +1685,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithDifferentClassArgument4.kt");
         }
 
+        @TestMetadata("hasThrowsWithDifferentClassArgument5.kt")
+        public void testHasThrowsWithDifferentClassArgument5() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithDifferentClassArgument5.kt");
+        }
+
         @TestMetadata("hasThrowsWithEmptyArgument.kt")
         public void testHasThrowsWithEmptyArgument() throws Exception {
             runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithEmptyArgument.kt");

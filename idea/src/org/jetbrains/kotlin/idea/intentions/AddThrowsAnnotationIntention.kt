@@ -14,14 +14,15 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.addAnnotation
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.getAbbreviatedType
 
 class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
@@ -29,28 +30,24 @@ class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
 ) {
 
     override fun isApplicableTo(element: KtThrowExpression, caretOffset: Int): Boolean {
-        if (element.platform == JsPlatform) return false
+        if (element.platform != JvmPlatform) return false
         val containingDeclaration = element.getContainingDeclaration() ?: return false
 
         val type = element.thrownExpression?.resolveToCall()?.resultingDescriptor?.returnType ?: return false
         if ((type.constructor.declarationDescriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.LOCAL) return false
 
-        val annotationEntry = containingDeclaration.findThrowsAnnotation() ?: return true
+        val context = element.analyze(BodyResolveMode.PARTIAL)
+
+        val annotationEntry = containingDeclaration.findThrowsAnnotation(context) ?: return true
         val valueArguments = annotationEntry.valueArguments
         if (valueArguments.isEmpty()) return true
 
-        val context = element.analyze(BodyResolveMode.PARTIAL)
-        return valueArguments.none { arg ->
-            val expression = arg.getArgumentExpression()
-            when (expression) {
-                is KtClassLiteralExpression -> listOf(expression)
-                is KtCollectionLiteralExpression -> expression.getInnerExpressions().mapNotNull { it as? KtClassLiteralExpression }
-                is KtCallExpression -> expression.valueArguments.mapNotNull { it.getArgumentExpression() as? KtClassLiteralExpression }
-                else -> emptyList()
-            }.any {
-                it.getType(context)?.arguments?.firstOrNull()?.type == type
-            }
-        }
+        val argumentExpression = valueArguments.firstOrNull()?.getArgumentExpression()
+        if (argumentExpression is KtCallExpression
+            && argumentExpression.calleeExpression?.getCallableDescriptor()?.fqNameSafe != FqName("kotlin.arrayOf")
+        ) return false
+
+        return valueArguments.none { it.hasType(type, context) }
     }
 
     override fun applyTo(element: KtThrowExpression, editor: Editor?) {
@@ -62,7 +59,8 @@ class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
         else
             type.constructor.declarationDescriptor?.fqNameSafe?.let { "$it::class" } ?: return
 
-        val annotationEntry = containingDeclaration.findThrowsAnnotation()
+        val context = element.analyze(BodyResolveMode.PARTIAL)
+        val annotationEntry = containingDeclaration.findThrowsAnnotation(context)
         if (annotationEntry == null || annotationEntry.valueArguments.isEmpty()) {
             annotationEntry?.delete()
             val whiteSpaceText = if (containingDeclaration is KtPropertyAccessor) " " else "\n"
@@ -108,13 +106,23 @@ private fun KtThrowExpression.getContainingDeclaration(): KtDeclaration? {
     return parent as? KtDeclaration
 }
 
-private fun KtDeclaration.findThrowsAnnotation(): KtAnnotationEntry? {
+private fun KtDeclaration.findThrowsAnnotation(context: BindingContext): KtAnnotationEntry? {
     val annotationEntries = this.annotationEntries + (parent as? KtProperty)?.annotationEntries.orEmpty()
-    val context = analyze(BodyResolveMode.PARTIAL)
     return annotationEntries.find {
         val typeReference = it.typeReference ?: return@find false
         context[BindingContext.TYPE, typeReference]?.constructor?.declarationDescriptor?.fqNameSafe == throwsAnnotationFqName
     }
+}
+
+private fun ValueArgument.hasType(type: KotlinType, context: BindingContext): Boolean {
+    val argumentExpression = getArgumentExpression()
+    val expressions = when (argumentExpression) {
+        is KtClassLiteralExpression -> listOf(argumentExpression)
+        is KtCollectionLiteralExpression -> argumentExpression.getInnerExpressions().filterIsInstance(KtClassLiteralExpression::class.java)
+        is KtCallExpression -> argumentExpression.valueArguments.mapNotNull { it.getArgumentExpression() as? KtClassLiteralExpression }
+        else -> emptyList()
+    }
+    return expressions.any { it.getType(context)?.arguments?.firstOrNull()?.type == type }
 }
 
 private fun KtPsiFactory.createCollectionLiteral(expressions: List<KtExpression>, lastExpression: String): KtCollectionLiteralExpression {
