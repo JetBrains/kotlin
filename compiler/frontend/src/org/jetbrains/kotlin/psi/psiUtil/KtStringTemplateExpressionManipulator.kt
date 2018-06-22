@@ -38,22 +38,17 @@ class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStrin
             KtPsiFactory(element.project).createExpression(text) as? KtStringTemplateExpression
                     ?: error("can't create a `KtStringTemplateExpression` from '$text'")
 
-        if (element.isSingleQuoted()) {
-            val templateFromNewContent = makeKtStringTemplateExpressionFromText("\"\"\"" + newContent + "\"\"\"")
-
-            val escapedText = templateFromNewContent.entries.joinToString("") { entry ->
+        val newContentPreprocessed = if (element.isSingleQuoted()) {
+            makeKtStringTemplateExpressionFromText("\"\"\"" + newContent + "\"\"\"").entries.joinToString("") { entry ->
                 when (entry) {
                     is KtStringTemplateEntryWithExpression -> entry.text
                     else -> StringUtil.escapeStringCharacters(entry.text)
                 }
             }
+        } else newContent
 
-            val escaped = makeKtStringTemplateExpressionFromText(wrapAsInOld(escapedText))
-            node.replaceAllChildrenToChildrenOf(escaped.node)
-        } else {
-            val templateFromNewContent = makeKtStringTemplateExpressionFromText(wrapAsInOld(newContent))
-            node.replaceAllChildrenToChildrenOf(templateFromNewContent.node)
-        }
+        val escaped = makeKtStringTemplateExpressionFromText(wrapAsInOld(newContentPreprocessed))
+        node.replaceAllChildrenToChildrenOf(escaped.node)
 
         return node.getPsi(KtStringTemplateExpression::class.java)
     }
