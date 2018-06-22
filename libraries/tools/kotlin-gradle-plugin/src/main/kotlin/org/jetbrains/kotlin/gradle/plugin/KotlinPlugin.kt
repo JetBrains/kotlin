@@ -695,7 +695,8 @@ internal class SubpluginEnvironment(
             project.logger.kotlinDebug { "Loading subplugin $pluginId" }
 
             val artifact = subplugin.getPluginArtifact()
-            val mavenCoordinate = "${artifact.groupId}:${artifact.artifactId}:$kotlinPluginVersion"
+            val artifactVersion = artifact.version ?: kotlinPluginVersion
+            val mavenCoordinate = "${artifact.groupId}:${artifact.artifactId}:$artifactVersion"
             project.logger.kotlinDebug { "Adding '$mavenCoordinate' to '$PLUGIN_CLASSPATH_CONFIGURATION_NAME' configuration" }
             project.dependencies.add(PLUGIN_CLASSPATH_CONFIGURATION_NAME, mavenCoordinate)
 
