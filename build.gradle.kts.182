@@ -597,8 +597,7 @@ val cidrPlugin by task<Copy> {
     from(ideaPluginDir) {
         exclude("lib/kotlin-plugin.jar")
 
-        exclude("lib/uast-kotlin.jar")
-        exclude("lib/uast-kotlin-ide.jar")
+        exclude("lib/android-lint.jar")
         exclude("lib/android-ide.jar")
         exclude("lib/android-output-parser-ide.jar")
         exclude("lib/android-extensions-ide.jar")
