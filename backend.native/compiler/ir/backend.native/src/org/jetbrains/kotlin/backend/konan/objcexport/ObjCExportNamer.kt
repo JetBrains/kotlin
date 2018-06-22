@@ -205,7 +205,7 @@ internal class ObjCExportNamer(val moduleDescriptor: ModuleDescriptor,
         }
     }
 
-    fun getName(property: PropertyDescriptor): String = propertyNames.getOrPut(property) {
+    fun getPropertyName(property: PropertyDescriptor): String = propertyNames.getOrPut(property) {
         assert(mapper.isBaseProperty(property))
         assert(mapper.isObjCProperty(property))
 

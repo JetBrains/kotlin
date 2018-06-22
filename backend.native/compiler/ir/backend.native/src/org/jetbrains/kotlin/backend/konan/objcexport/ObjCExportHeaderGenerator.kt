@@ -500,7 +500,7 @@ abstract class ObjCExportHeaderGenerator(
     private fun buildProperties(property: PropertyDescriptor): Set<RenderedStub<ObjCProperty>> = propertyToSignatures.getOrPut(property) {
         mapper.getBaseProperties(property)
                 .asSequence()
-                .distinctBy { namer.getName(it) }
+                .distinctBy { namer.getPropertyName(it) }
                 .map { base -> buildProperty(property, base) }
                 .map { property -> RenderedStub(property) }
                 .toSet()
@@ -518,7 +518,7 @@ abstract class ObjCExportHeaderGenerator(
 
         val getterBridge = mapper.bridgeMethod(baseProperty.getter!!)
         val type = mapReturnType(getterBridge.returnBridge, property.getter!!)
-        val name = namer.getName(baseProperty)
+        val name = namer.getPropertyName(baseProperty)
 
         val attributes = mutableListOf<String>()
 
