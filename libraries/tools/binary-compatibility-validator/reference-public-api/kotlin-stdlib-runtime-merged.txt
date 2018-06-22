@@ -3242,9 +3242,11 @@ public final class kotlin/jvm/internal/CharCompanionObject {
 	public static final field MAX_HIGH_SURROGATE C
 	public static final field MAX_LOW_SURROGATE C
 	public static final field MAX_SURROGATE C
+	public static final field MAX_VALUE C
 	public static final field MIN_HIGH_SURROGATE C
 	public static final field MIN_LOW_SURROGATE C
 	public static final field MIN_SURROGATE C
+	public static final field MIN_VALUE C
 	public static final field SIZE_BITS I
 	public static final field SIZE_BYTES I
 }
