@@ -120,6 +120,7 @@ public class SlicedMapImpl implements MutableSlicedMap {
 
     @NotNull
     @Override
+    @SuppressWarnings("unchecked")
     public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
         if (map == null) return ImmutableMap.of();
 
@@ -129,7 +130,6 @@ public class SlicedMapImpl implements MutableSlicedMap {
             V value = holder.get(slice.getKey());
 
             if (value != null) {
-                //noinspection unchecked
                 builder.put((K) key, value);
             }
         });

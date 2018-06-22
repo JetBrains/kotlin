@@ -5,9 +5,9 @@
 
 package kotlin.jvm.internal;
 
-import java.lang.Object;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class SpreadBuilder {
@@ -18,6 +18,7 @@ public class SpreadBuilder {
         list = new ArrayList<Object>(size);
     }
 
+    @SuppressWarnings("unchecked")
     public void addSpread(Object container) {
         if (container == null) return;
 
@@ -25,9 +26,7 @@ public class SpreadBuilder {
             Object[] array = (Object[]) container;
             if (array.length > 0) {
                 list.ensureCapacity(list.size() + array.length);
-                for (Object element : array) {
-                    list.add(element);
-                }
+                Collections.addAll(list, array);
             }
         }
         else if (container instanceof Collection) {

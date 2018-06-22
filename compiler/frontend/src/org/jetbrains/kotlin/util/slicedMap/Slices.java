@@ -112,7 +112,8 @@ public class Slices {
             this.rewritePolicy = rewritePolicy;
         }
 
-        public SliceBuilder<K, V> setFurtherLookupSlices(ReadOnlySlice<K, V>... furtherLookupSlices) {
+        @SafeVarargs
+        public final SliceBuilder<K, V> setFurtherLookupSlices(ReadOnlySlice<K, V>... furtherLookupSlices) {
             this.furtherLookupSlices = Arrays.asList(furtherLookupSlices);
             return this;
         }

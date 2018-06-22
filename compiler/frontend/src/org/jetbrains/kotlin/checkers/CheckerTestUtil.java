@@ -870,13 +870,13 @@ public class CheckerTestUtil {
         }
 
         @NotNull
+        @SuppressWarnings("unchecked")
         public static TextDiagnostic asTextDiagnostic(@NotNull ActualDiagnostic actualDiagnostic) {
             Diagnostic diagnostic = actualDiagnostic.diagnostic;
             //noinspection TestOnlyProblems
             DiagnosticRenderer renderer = DefaultErrorMessages.getRendererForDiagnostic(diagnostic);
             String diagnosticName = actualDiagnostic.getName();
             if (renderer instanceof AbstractDiagnosticWithParametersRenderer) {
-                //noinspection unchecked
                 Object[] renderParameters = ((AbstractDiagnosticWithParametersRenderer) renderer).renderParameters(diagnostic);
                 List<String> parameters = ContainerUtil.map(renderParameters, Object::toString);
                 return new TextDiagnostic(diagnosticName, actualDiagnostic.platform, parameters, actualDiagnostic.inferenceCompatibility);

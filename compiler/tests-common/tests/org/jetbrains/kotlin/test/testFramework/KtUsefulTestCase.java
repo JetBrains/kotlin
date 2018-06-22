@@ -180,6 +180,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+        @SuppressWarnings("unchecked")
         Set<String> files = ReflectionUtil.getStaticFieldValue(aClass, Set.class, "files");
         DELETE_ON_EXIT_HOOK_CLASS = aClass;
         DELETE_ON_EXIT_HOOK_DOT_FILES = files;
@@ -307,7 +308,9 @@ public abstract class KtUsefulTestCase extends TestCase {
         StringBuilder builder = new StringBuilder();
         for (Object o : collection) {
             if (o instanceof THashSet) {
-                builder.append(new TreeSet<Object>((THashSet)o));
+                @SuppressWarnings("unchecked")
+                Set<Object> set = new TreeSet<Object>((THashSet) o);
+                builder.append(set);
             }
             else {
                 builder.append(o);
@@ -317,6 +320,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         return builder.toString();
     }
 
+    @SafeVarargs
     private static <T> void assertOrderedEquals(String errorMsg, @NotNull Iterable<T> actual, @NotNull T... expected) {
         Assert.assertNotNull(actual);
         Assert.assertNotNull(expected);
@@ -339,10 +343,12 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
     }
 
+    @SafeVarargs
     public static <T> void assertSameElements(T[] collection, T... expected) {
         assertSameElements(Arrays.asList(collection), expected);
     }
 
+    @SafeVarargs
     public static <T> void assertSameElements(Collection<? extends T> collection, T... expected) {
         assertSameElements(collection, Arrays.asList(expected));
     }
@@ -388,7 +394,6 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     protected static <T> void assertEmpty(String errorMsg, Collection<T> collection) {
-        //noinspection unchecked
         assertOrderedEquals(errorMsg, collection);
     }
 
