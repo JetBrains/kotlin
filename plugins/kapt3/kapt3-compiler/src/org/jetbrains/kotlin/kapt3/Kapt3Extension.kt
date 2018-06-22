@@ -145,10 +145,20 @@ abstract class AbstractKapt3Extension(
 
         logger.info { "Initial analysis took ${System.currentTimeMillis() - pluginInitializedTime} ms" }
 
+        val bindingContext = bindingTrace.bindingContext
+        if (aptMode.generateStubs) {
+            logger.info { "Kotlin files to compile: " + files.map { it.virtualFile?.name ?: "<in memory ${it.hashCode()}>" } }
+
+            val kaptContext = compileStubs(project, module, bindingContext, files.toList())
+            generateKotlinSourceStubs(kaptContext)
+        }
+
+        if (!aptMode.runAnnotationProcessing) return doNotGenerateCode()
+
         val processors = loadProcessors()
         if (processors.isEmpty()) return if (aptMode != WITH_COMPILATION) doNotGenerateCode() else null
 
-        val kaptContext = generateStubs(project, module, bindingTrace.bindingContext, files)
+        val kaptContext = KaptContext(paths, false, logger, mapDiagnosticLocations, options, javacOptions)
 
         fun handleKaptError(error: KaptError): AnalysisResult {
             val cause = error.cause
@@ -186,23 +196,6 @@ abstract class AbstractKapt3Extension(
                     module,
                     listOf(paths.sourcesOutputDir),
                     addToEnvironment = true)
-        }
-    }
-
-    private fun generateStubs(
-        project: Project,
-        module: ModuleDescriptor,
-        context: BindingContext,
-        files: Collection<KtFile>
-    ): KaptContext {
-        if (!aptMode.generateStubs) {
-            return KaptContext(paths, false, logger, mapDiagnosticLocations, options, javacOptions)
-        }
-
-        logger.info { "Kotlin files to compile: " + files.map { it.virtualFile?.name ?: "<in memory ${it.hashCode()}>" } }
-
-        return compileStubs(project, module, context, files.toList()).apply {
-            generateKotlinSourceStubs(this)
         }
     }
 
