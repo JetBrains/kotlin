@@ -1309,6 +1309,16 @@ task coroutines_returnsUnit1(type: RunKonanTest) {
     source = "codegen/coroutines/returnsUnit1.kt"
 }
 
+task coroutines_coroutineContext1(type: RunKonanTest) {
+    goldValue = "EmptyCoroutineContext\n"
+    source = "codegen/coroutines/coroutineContext1.kt"
+}
+
+task coroutines_coroutineContext2(type: RunKonanTest) {
+    goldValue = "EmptyCoroutineContext\n"
+    source = "codegen/coroutines/coroutineContext2.kt"
+}
+
 task AbstractMutableCollection(type: RunKonanTest) {
     expectedExitStatus = 0
     source = "runtime/collections/AbstractMutableCollection.kt"

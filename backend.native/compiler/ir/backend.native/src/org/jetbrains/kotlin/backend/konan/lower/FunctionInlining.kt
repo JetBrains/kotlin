@@ -94,18 +94,26 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
     //-------------------------------------------------------------------------//
 
-    private fun getFunctionDeclaration(descriptor: FunctionDescriptor): IrFunction? {
-        val originalDescriptor = descriptor.resolveFakeOverride().original
-        if (originalDescriptor == context.ir.symbols.intercepted)
-            return getFunctionDeclaration(context.ir.symbols.konanIntercepted.descriptor)
-        if (originalDescriptor == context.ir.symbols.suspendCoroutineUninterceptedOrReturn) {
-            return getFunctionDeclaration(context.ir.symbols.konanSuspendCoroutineUninterceptedOrReturn.descriptor)
-        }
-        val functionDeclaration =
-            context.ir.originalModuleIndex.functions[originalDescriptor] ?:                 // If function is declared in the current module.
-                deserializer.deserializeInlineBody(originalDescriptor)                      // Function is declared in another module.
-        return functionDeclaration as IrFunction?
-    }
+    private fun getFunctionDeclaration(descriptor: FunctionDescriptor): IrFunction? =
+            descriptor.resolveFakeOverride().original.let {
+                when (it) {
+                    context.ir.symbols.intercepted ->
+                        getFunctionDeclaration(context.ir.symbols.konanIntercepted.descriptor)
+
+                    context.ir.symbols.suspendCoroutineUninterceptedOrReturn ->
+                        getFunctionDeclaration(context.ir.symbols.konanSuspendCoroutineUninterceptedOrReturn.descriptor)
+
+                    context.ir.symbols.coroutineContextGetter ->
+                        getFunctionDeclaration(context.ir.symbols.konanCoroutineContextGetter.descriptor)
+
+                    else -> {
+                        val functionDeclaration =
+                                context.ir.originalModuleIndex.functions[it] ?:             // If function is declared in the current module.
+                                deserializer.deserializeInlineBody(it)                      // Function is declared in another module.
+                        functionDeclaration as IrFunction?
+                    }
+                }
+            }
 
     //-------------------------------------------------------------------------//
 

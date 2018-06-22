@@ -33,6 +33,11 @@ internal inline fun <T> Continuation<T>.intercepted(): Continuation<T> =
 @PublishedApi
 internal external fun <T> getContinuation(): Continuation<T>
 
+@kotlin.internal.InlineOnly
+@PublishedApi
+internal inline suspend fun getCoroutineContext(): CoroutineContext =
+        getContinuation<Any?>().context
+
 @Intrinsic
 @PublishedApi
 internal external suspend fun <T> returnIfSuspended(@Suppress("UNUSED_PARAMETER") argument: Any?): T

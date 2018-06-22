@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
+import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -326,21 +327,32 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val konanSuspendCoroutineUninterceptedOrReturn = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("suspendCoroutineUninterceptedOrReturn").single())
 
-    private val coroutinesPackage = context.builtIns.builtInsModule.getPackage(
+    val konanCoroutineContextGetter = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("getCoroutineContext").single())
+
+    private val coroutinesIntrinsicsPackage = context.builtIns.builtInsModule.getPackage(
         context.config.configuration.languageVersionSettings.coroutinesIntrinsicsPackageFqName()).memberScope
 
-    val intercepted = coroutinesPackage
+    private val coroutinesPackage = context.builtIns.builtInsModule.getPackage(
+            context.config.configuration.languageVersionSettings.coroutinesPackageFqName()).memberScope
+
+    val intercepted = coroutinesIntrinsicsPackage
             .getContributedFunctions(INTERCEPTED_NAME, NoLookupLocation.FROM_BACKEND)
             .single()
 
-    val suspendCoroutineUninterceptedOrReturn = coroutinesPackage
+    val suspendCoroutineUninterceptedOrReturn = coroutinesIntrinsicsPackage
             .getContributedFunctions(SUSPEND_COROUTINE_UNINTERCEPTED_OR_RETURN_NAME, NoLookupLocation.FROM_BACKEND)
             .single()
+
+    val coroutineContextGetter = coroutinesPackage
+            .getContributedVariables(Name.identifier("coroutineContext"), NoLookupLocation.FROM_BACKEND)
+            .single()
+            .getter!!
 
     override val coroutineImpl = symbolTable.referenceClass(context.getInternalClass("CoroutineImpl"))
 
     override val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
-            coroutinesPackage
+            coroutinesIntrinsicsPackage
                     .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND)
                     .single().getter!!
     )
