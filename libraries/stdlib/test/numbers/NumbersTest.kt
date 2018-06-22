@@ -94,6 +94,15 @@ class NumbersTest {
         expect(Float.NEGATIVE_INFINITY) { -Float.MAX_VALUE * 2 }
         expect(0.0F) { Float.MIN_VALUE / 2.0F }
     }
+
+    @Test fun charMinMaxValues() {
+        assertTrue(Char.MIN_VALUE.toInt() == 0)
+        assertTrue(Char.MAX_VALUE.toInt() > 0)
+
+        // overflow behavior
+        expect(Char.MIN_VALUE) { Char.MAX_VALUE + one }
+        expect(Char.MAX_VALUE) { Char.MIN_VALUE - one }
+    }
     
     @Test fun doubleProperties() {
         for (value in listOf(1.0, 0.0, Double.MIN_VALUE, Double.MAX_VALUE))
