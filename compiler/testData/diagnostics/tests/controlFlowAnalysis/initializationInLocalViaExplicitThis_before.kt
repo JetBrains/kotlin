@@ -1,3 +1,4 @@
+// !LANGUAGE: -ReadDeserializedContracts -UseCallsInPlaceEffect
 // See KT-17479
 
 class Test {

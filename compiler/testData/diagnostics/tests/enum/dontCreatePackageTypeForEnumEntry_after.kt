@@ -1,7 +1,9 @@
+// !LANGUAGE: +NestedClassesInEnumEntryShouldBeInner
+
 enum class E {
     FIRST,
     SECOND {
-        <!NESTED_CLASS_DEPRECATED!>class A<!>
+        <!NESTED_CLASS_NOT_ALLOWED!>class A<!>
     };
 }
 

@@ -1,3 +1,4 @@
+// !LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
 // See KT-18698
 
 val s = mutableListOf<String>()

@@ -1,15 +1,17 @@
+// !LANGUAGE: +NestedClassesInEnumEntryShouldBeInner
+
 package a
 
 
 enum class C {
     E1, E2, E3 {
-        <!NESTED_CLASS_DEPRECATED!>object O_O<!>
+        <!NESTED_CLASS_NOT_ALLOWED!>object O_O<!>
 
         fun b() {
             O_O
         }
 
-        <!NESTED_CLASS_DEPRECATED!>class G<!>
+        <!NESTED_CLASS_NOT_ALLOWED!>class G<!>
     },
 
     E4 {

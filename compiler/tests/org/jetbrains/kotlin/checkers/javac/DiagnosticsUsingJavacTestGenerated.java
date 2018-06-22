@@ -1568,14 +1568,14 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/backingField/FieldOnVar.kt");
             }
 
-            @TestMetadata("FieldReassignment.kt")
-            public void testFieldReassignment() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/backingField/FieldReassignment.kt");
+            @TestMetadata("FieldReassignment_after.kt")
+            public void testFieldReassignment_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/FieldReassignment_after.kt");
             }
 
-            @TestMetadata("FieldReassignmentError.kt")
-            public void testFieldReassignmentError() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/backingField/FieldReassignmentError.kt");
+            @TestMetadata("FieldReassignment_before.kt")
+            public void testFieldReassignment_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/FieldReassignment_before.kt");
             }
 
             @TestMetadata("FieldShadow.kt")
@@ -3044,9 +3044,14 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/classObjects/InnerClassAccessThroughClassObject.kt");
             }
 
-            @TestMetadata("InnerClassAccessThroughEnum.kt")
-            public void testInnerClassAccessThroughEnum() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/classObjects/InnerClassAccessThroughEnum.kt");
+            @TestMetadata("InnerClassAccessThroughEnum_after.kt")
+            public void testInnerClassAccessThroughEnum_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/classObjects/InnerClassAccessThroughEnum_after.kt");
+            }
+
+            @TestMetadata("InnerClassAccessThroughEnum_before.kt")
+            public void testInnerClassAccessThroughEnum_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/classObjects/InnerClassAccessThroughEnum_before.kt");
             }
 
             @TestMetadata("InnerClassClassObject.kt")
@@ -3313,9 +3318,14 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignmentInLocalsInConstructor.kt");
             }
 
-            @TestMetadata("backingFieldInsideGetter.kt")
-            public void testBackingFieldInsideGetter() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter.kt");
+            @TestMetadata("backingFieldInsideGetter_after.kt")
+            public void testBackingFieldInsideGetter_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter_after.kt");
+            }
+
+            @TestMetadata("backingFieldInsideGetter_before.kt")
+            public void testBackingFieldInsideGetter_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter_before.kt");
             }
 
             @TestMetadata("breakContinueInTryFinally.kt")
@@ -3408,9 +3418,14 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLocalFun.kt");
             }
 
-            @TestMetadata("initializationInLocalViaExplicitThis.kt")
-            public void testInitializationInLocalViaExplicitThis() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLocalViaExplicitThis.kt");
+            @TestMetadata("initializationInLocalViaExplicitThis_after.kt")
+            public void testInitializationInLocalViaExplicitThis_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLocalViaExplicitThis_after.kt");
+            }
+
+            @TestMetadata("initializationInLocalViaExplicitThis_before.kt")
+            public void testInitializationInLocalViaExplicitThis_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLocalViaExplicitThis_before.kt");
             }
 
             @TestMetadata("kt1001.kt")
@@ -4250,19 +4265,34 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
-                @TestMetadata("everythingInOneScope.kt")
-                public void testEverythingInOneScope() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/everythingInOneScope.kt");
+                @TestMetadata("everythingInOneScope_after.kt")
+                public void testEverythingInOneScope_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/everythingInOneScope_after.kt");
                 }
 
-                @TestMetadata("noMembers.kt")
-                public void testNoMembers() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/noMembers.kt");
+                @TestMetadata("everythingInOneScope_before.kt")
+                public void testEverythingInOneScope_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/everythingInOneScope_before.kt");
                 }
 
-                @TestMetadata("onlyInterfaces.kt")
-                public void testOnlyInterfaces() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/onlyInterfaces.kt");
+                @TestMetadata("noMembers_after.kt")
+                public void testNoMembers_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/noMembers_after.kt");
+                }
+
+                @TestMetadata("noMembers_before.kt")
+                public void testNoMembers_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/noMembers_before.kt");
+                }
+
+                @TestMetadata("onlyInterfaces_after.kt")
+                public void testOnlyInterfaces_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/onlyInterfaces_after.kt");
+                }
+
+                @TestMetadata("onlyInterfaces_before.kt")
+                public void testOnlyInterfaces_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/onlyInterfaces_before.kt");
                 }
 
                 @TestMetadata("typeIsLowEnough.kt")
@@ -4270,14 +4300,24 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/typeIsLowEnough.kt");
                 }
 
-                @TestMetadata("withIrrelevantInterface.kt")
-                public void testWithIrrelevantInterface() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withIrrelevantInterface.kt");
+                @TestMetadata("withIrrelevantInterface_after.kt")
+                public void testWithIrrelevantInterface_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withIrrelevantInterface_after.kt");
                 }
 
-                @TestMetadata("withMembers.kt")
-                public void testWithMembers() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withMembers.kt");
+                @TestMetadata("withIrrelevantInterface_before.kt")
+                public void testWithIrrelevantInterface_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withIrrelevantInterface_before.kt");
+                }
+
+                @TestMetadata("withMembers_after.kt")
+                public void testWithMembers_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withMembers_after.kt");
+                }
+
+                @TestMetadata("withMembers_before.kt")
+                public void testWithMembers_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withMembers_before.kt");
                 }
 
                 @TestMetadata("withoutTypeReference.kt")
@@ -6647,9 +6687,14 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/enum/constructorWithDefaultParametersOnly.kt");
             }
 
-            @TestMetadata("dontCreatePackageTypeForEnumEntry.kt")
-            public void testDontCreatePackageTypeForEnumEntry() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/enum/dontCreatePackageTypeForEnumEntry.kt");
+            @TestMetadata("dontCreatePackageTypeForEnumEntry_after.kt")
+            public void testDontCreatePackageTypeForEnumEntry_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/dontCreatePackageTypeForEnumEntry_after.kt");
+            }
+
+            @TestMetadata("dontCreatePackageTypeForEnumEntry_before.kt")
+            public void testDontCreatePackageTypeForEnumEntry_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/dontCreatePackageTypeForEnumEntry_before.kt");
             }
 
             @TestMetadata("emptyConstructor.kt")
@@ -6904,9 +6949,14 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/enum/inner/insideEnum.kt");
                 }
 
-                @TestMetadata("insideEnumEntry.kt")
-                public void testInsideEnumEntry() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/enum/inner/insideEnumEntry.kt");
+                @TestMetadata("insideEnumEntry_after.kt")
+                public void testInsideEnumEntry_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/inner/insideEnumEntry_after.kt");
+                }
+
+                @TestMetadata("insideEnumEntry_before.kt")
+                public void testInsideEnumEntry_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/inner/insideEnumEntry_before.kt");
                 }
 
                 @TestMetadata("insideInnerClassNotAllowed.kt")
@@ -8127,9 +8177,14 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
 
-                    @TestMetadata("fromCompanionObject.kt")
-                    public void testFromCompanionObject() throws Exception {
-                        runTest("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments/fromCompanionObject.kt");
+                    @TestMetadata("fromCompanionObject_after.kt")
+                    public void testFromCompanionObject_after() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments/fromCompanionObject_after.kt");
+                    }
+
+                    @TestMetadata("fromCompanionObject_before.kt")
+                    public void testFromCompanionObject_before() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments/fromCompanionObject_before.kt");
                     }
 
                     @TestMetadata("fromOuterClassInObjectLiteral.kt")
@@ -10964,9 +11019,14 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inner/nestedClassInObject.kt");
             }
 
-            @TestMetadata("nestedClassNotAllowed.kt")
-            public void testNestedClassNotAllowed() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inner/nestedClassNotAllowed.kt");
+            @TestMetadata("nestedClassNotAllowed_after.kt")
+            public void testNestedClassNotAllowed_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inner/nestedClassNotAllowed_after.kt");
+            }
+
+            @TestMetadata("nestedClassNotAllowed_before.kt")
+            public void testNestedClassNotAllowed_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inner/nestedClassNotAllowed_before.kt");
             }
 
             @TestMetadata("nestedObject.kt")
