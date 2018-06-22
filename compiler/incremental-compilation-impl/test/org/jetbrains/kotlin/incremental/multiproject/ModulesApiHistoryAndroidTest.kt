@@ -24,8 +24,10 @@ class ModulesApiHistoryAndroidTest {
     val tmpFolder = TemporaryFolder()
 
     private lateinit var appRoot: File
+    private lateinit var appKotlinDestination: File
     private lateinit var appHistory: File
     private lateinit var libRoot: File
+    private lateinit var libKotlinDestination: File
     private lateinit var libHistory: File
 
     private lateinit var androidHistory: ModulesApiHistoryAndroid
@@ -36,23 +38,25 @@ class ModulesApiHistoryAndroidTest {
 
         appRoot = projectRoot.resolve("app")
         appHistory = appRoot.resolve("build/tmp/kotlin/app_history.bin")
+        appKotlinDestination = appRoot.resolve("build/tmp/kotlin-classes").apply { mkdirs() }
         val appEntry = IncrementalModuleEntry(":app", "app", appRoot.resolve("build"), appHistory)
         appRoot.resolve("build/intermediates/classes/meta-inf/").apply {
-            mkdirs();
+            mkdirs()
             resolve("app.kotlin_module").createNewFile()
         }
 
         libRoot = projectRoot.resolve("lib")
         libHistory = libRoot.resolve("lib/build/tmp/kotlin/lib_history.bin")
+        libKotlinDestination = libRoot.resolve("build/tmp/kotlin-classes").apply { mkdirs() }
         val libEntry = IncrementalModuleEntry(":lib", "lib", libRoot.resolve("build"), libHistory)
         libRoot.resolve("build/intermediates/classes/meta-inf/").apply {
-            mkdirs();
+            mkdirs()
             resolve("lib.kotlin_module").createNewFile()
         }
 
         val info = IncrementalModuleInfo(
             projectRoot = projectRoot,
-            dirToModule = mapOf(appRoot to appEntry, libRoot to libEntry),
+            dirToModule = mapOf(appKotlinDestination to appEntry, libKotlinDestination to libEntry),
             nameToModules = mapOf("app" to setOf(appEntry), "lib" to setOf(libEntry)),
             jarToClassListFile = mapOf()
         )
