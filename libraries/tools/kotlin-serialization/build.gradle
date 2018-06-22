@@ -37,6 +37,10 @@ dependencies {
 
 evaluationDependsOn(":kotlinx-serialization-compiler-plugin")
 
+processResources {
+    expand(project.properties)
+}
+
 jar {
     from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.classesDirs)
     from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.resourcesDir)

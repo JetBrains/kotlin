@@ -18,12 +18,15 @@ package org.jetbrains.kotlinx.serialization.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ResolvedArtifact
-import org.gradle.api.internal.AbstractTask
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
+import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import java.io.FileNotFoundException
+import java.util.*
 
 class SerializationGradleSubplugin : Plugin<Project> {
     companion object {
@@ -37,22 +40,51 @@ class SerializationGradleSubplugin : Plugin<Project> {
 
 class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     companion object {
-        val SERIALIZATION_GROUP_NAME = "org.jetbrains.kotlinx"
-        val SERIALIZATION_ARTIFACT_NAME = "kotlinx-gradle-serialization-plugin"
+        const val SERIALIZATION_GROUP_NAME = "org.jetbrains.kotlinx"
+        const val SERIALIZATION_ARTIFACT_NAME = "kotlinx-gradle-serialization-plugin"
     }
+
+    private val log = Logging.getLogger(this.javaClass)
+    private val pluginVersion = findPluginVersion(log)
 
     override fun isApplicable(project: Project, task: AbstractCompile) = SerializationGradleSubplugin.isEnabled(project)
 
     override fun apply(
-            project: Project, kotlinCompile: AbstractCompile, javaCompile: AbstractCompile, variantData: Any?, androidProjectHandler: Any?, javaSourceSet: SourceSet?)
+        project: Project,
+        kotlinCompile: AbstractCompile,
+        javaCompile: AbstractCompile,
+        variantData: Any?,
+        androidProjectHandler: Any?,
+        javaSourceSet: SourceSet?
+    )
             : List<SubpluginOption> {
-        if (!SerializationGradleSubplugin.isEnabled(project)) return emptyList()
-        val options = mutableListOf<SubpluginOption>()
-        // nothing here
-        return options
+        return emptyList()
     }
 
-    override fun getGroupName() = SERIALIZATION_GROUP_NAME
-    override fun getArtifactName() = SERIALIZATION_ARTIFACT_NAME
+
+    override fun getPluginArtifact(): SubpluginArtifact {
+        return SubpluginArtifact(SERIALIZATION_GROUP_NAME, SERIALIZATION_ARTIFACT_NAME, pluginVersion)
+    }
+
     override fun getCompilerPluginId() = "org.jetbrains.kotlinx.serialization"
+}
+
+// taken from KotlinPluginWrapper.kt
+internal fun Logger.kotlinDebug(message: String) {
+    this.debug("[KOTLIN] $message")
+}
+
+private fun Any.findPluginVersion(log: Logger): String {
+    log.kotlinDebug("Loading version information about kotlinx.serialization")
+    val props = Properties()
+    val propFileName = "plugin.properties"
+    val loader = javaClass.classLoader!!
+    val inputStream = loader.getResourceAsStream(propFileName)
+            ?: throw FileNotFoundException("property file '$propFileName' not found in the classpath")
+
+    props.load(inputStream)
+
+    val pluginVersion = props["plugin.version"] as String
+    log.kotlinDebug("Found plugin version [$pluginVersion]")
+    return pluginVersion
 }
