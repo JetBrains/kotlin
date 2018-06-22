@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -41,48 +44,48 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 
 
 abstract class AbstractCoroutineCodegen(
-        outerExpressionCodegen: ExpressionCodegen,
-        element: KtElement,
-        closureContext: ClosureContext,
-        classBuilder: ClassBuilder,
-        userDataForDoResume: Map<out FunctionDescriptor.UserDataKey<*>, *>? = null
+    outerExpressionCodegen: ExpressionCodegen,
+    element: KtElement,
+    closureContext: ClosureContext,
+    classBuilder: ClassBuilder,
+    userDataForDoResume: Map<out FunctionDescriptor.UserDataKey<*>, *>? = null
 ) : ClosureCodegen(
-        outerExpressionCodegen.state,
-        element, null, closureContext, null,
-        FailingFunctionGenerationStrategy,
-        outerExpressionCodegen.parentCodegen, classBuilder
+    outerExpressionCodegen.state,
+    element, null, closureContext, null,
+    FailingFunctionGenerationStrategy,
+    outerExpressionCodegen.parentCodegen, classBuilder
 ) {
     protected val classDescriptor = closureContext.contextDescriptor
     protected val languageVersionSettings = outerExpressionCodegen.state.languageVersionSettings
 
     protected val doResumeDescriptor =
-            SimpleFunctionDescriptorImpl.create(
-                    classDescriptor, Annotations.EMPTY, Name.identifier(DO_RESUME_METHOD_NAME), CallableMemberDescriptor.Kind.DECLARATION,
-                    funDescriptor.source
-            ).apply doResume@{
-                initialize(
-                      null,
-                      classDescriptor.thisAsReceiverParameter,
-                      emptyList(),
-                      listOf(
-                              createValueParameterForDoResume(Name.identifier("data"), builtIns.nullableAnyType, 0),
-                              createValueParameterForDoResume(Name.identifier("throwable"), builtIns.throwable.defaultType.makeNullable(), 1)
-                      ),
-                      builtIns.nullableAnyType,
-                      Modality.FINAL,
-                      Visibilities.PUBLIC,
-                      userDataForDoResume
-                )
-            }
+        SimpleFunctionDescriptorImpl.create(
+            classDescriptor, Annotations.EMPTY, Name.identifier(DO_RESUME_METHOD_NAME), CallableMemberDescriptor.Kind.DECLARATION,
+            funDescriptor.source
+        ).apply doResume@{
+            initialize(
+                null,
+                classDescriptor.thisAsReceiverParameter,
+                emptyList(),
+                listOf(
+                    createValueParameterForDoResume(Name.identifier("data"), builtIns.nullableAnyType, 0),
+                    createValueParameterForDoResume(Name.identifier("throwable"), builtIns.throwable.defaultType.makeNullable(), 1)
+                ),
+                builtIns.nullableAnyType,
+                Modality.FINAL,
+                Visibilities.PUBLIC,
+                userDataForDoResume
+            )
+        }
 
     private fun FunctionDescriptor.createValueParameterForDoResume(name: Name, type: KotlinType, index: Int) =
-            ValueParameterDescriptorImpl(
-                    this, null, index, Annotations.EMPTY, name,
-                    type,
-                    false, false,
-                    false,
-                    null, SourceElement.NO_SOURCE
-            )
+        ValueParameterDescriptorImpl(
+            this, null, index, Annotations.EMPTY, name,
+            type,
+            false, false,
+            false,
+            null, SourceElement.NO_SOURCE
+        )
 
     override fun generateConstructor(): Method {
         val args = calculateConstructorParameters(typeMapper, closure, asmType)
@@ -90,8 +93,8 @@ abstract class AbstractCoroutineCodegen(
 
         val constructor = Method("<init>", Type.VOID_TYPE, argTypes)
         val mv = v.newMethod(
-                OtherOrigin(element, funDescriptor), visibilityFlag, "<init>", constructor.descriptor, null,
-                ArrayUtil.EMPTY_STRING_ARRAY
+            OtherOrigin(element, funDescriptor), visibilityFlag, "<init>", constructor.descriptor, null,
+            ArrayUtil.EMPTY_STRING_ARRAY
         )
 
         if (state.classBuilderMode.generateBodies) {
@@ -123,15 +126,15 @@ abstract class AbstractCoroutineCodegen(
 }
 
 class CoroutineCodegenForLambda private constructor(
-        outerExpressionCodegen: ExpressionCodegen,
-        element: KtElement,
-        private val closureContext: ClosureContext,
-        classBuilder: ClassBuilder,
-        private val originalSuspendFunctionDescriptor: FunctionDescriptor,
-        private val forInline: Boolean
+    outerExpressionCodegen: ExpressionCodegen,
+    element: KtElement,
+    private val closureContext: ClosureContext,
+    classBuilder: ClassBuilder,
+    private val originalSuspendFunctionDescriptor: FunctionDescriptor,
+    private val forInline: Boolean
 ) : AbstractCoroutineCodegen(
-        outerExpressionCodegen, element, closureContext, classBuilder,
-        userDataForDoResume = mapOf(INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME to originalSuspendFunctionDescriptor)
+    outerExpressionCodegen, element, closureContext, classBuilder,
+    userDataForDoResume = mapOf(INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME to originalSuspendFunctionDescriptor)
 ) {
     private val builtIns = funDescriptor.builtIns
 
@@ -164,10 +167,10 @@ class CoroutineCodegenForLambda private constructor(
         for (parameter in allFunctionParameters()) {
             val fieldInfo = parameter.getFieldInfoForCoroutineLambdaParameter()
             v.newField(
-                    OtherOrigin(parameter),
-                    Opcodes.ACC_PRIVATE,
-                    fieldInfo.fieldName,
-                    fieldInfo.fieldType.descriptor, null, null
+                OtherOrigin(parameter),
+                Opcodes.ACC_PRIVATE,
+                fieldInfo.fieldName,
+                fieldInfo.fieldType.descriptor, null, null
             )
         }
 
@@ -207,19 +210,19 @@ class CoroutineCodegenForLambda private constructor(
         // this
         load(0, AsmTypes.OBJECT_TYPE)
         val parameterTypes = signature.valueParameters.map { it.asmType }
-        parameterTypes.withVariableIndices().forEach {
-            (index, type) -> load(index + 1, type)
+        parameterTypes.withVariableIndices().forEach { (index, type) ->
+            load(index + 1, type)
         }
 
         // this.create(..)
         invokevirtual(
-                v.thisName,
-                createCoroutineDescriptor.name.identifier,
-                Type.getMethodDescriptor(
-                    languageVersionSettings.continuationAsmType(),
-                    *parameterTypes.toTypedArray()
-                ),
-                false
+            v.thisName,
+            createCoroutineDescriptor.name.identifier,
+            Type.getMethodDescriptor(
+                languageVersionSettings.continuationAsmType(),
+                *parameterTypes.toTypedArray()
+            ),
+            false
         )
         checkcast(Type.getObjectType(v.thisName))
 
@@ -276,9 +279,9 @@ class CoroutineCodegenForLambda private constructor(
     private fun ExpressionCodegen.initializeCoroutineParameters() {
         for (parameter in allFunctionParameters()) {
             val fieldStackValue =
-                    StackValue.field(
-                            parameter.getFieldInfoForCoroutineLambdaParameter(), generateThisOrOuter(context.thisDescriptor, false)
-                    )
+                StackValue.field(
+                    parameter.getFieldInfoForCoroutineLambdaParameter(), generateThisOrOuter(context.thisDescriptor, false)
+                )
 
             val mappedType = typeMapper.mapType(parameter.type)
             fieldStackValue.put(mappedType, v)
@@ -291,78 +294,81 @@ class CoroutineCodegenForLambda private constructor(
     }
 
     private fun allFunctionParameters() =
-            originalSuspendFunctionDescriptor.extensionReceiverParameter.let(::listOfNotNull) +
-            originalSuspendFunctionDescriptor.valueParameters
+        originalSuspendFunctionDescriptor.extensionReceiverParameter.let(::listOfNotNull) +
+                originalSuspendFunctionDescriptor.valueParameters
 
     private fun ParameterDescriptor.getFieldInfoForCoroutineLambdaParameter() =
-            createHiddenFieldInfo(type, COROUTINE_LAMBDA_PARAMETER_PREFIX + (this.safeAs<ValueParameterDescriptor>()?.index ?: ""))
+        createHiddenFieldInfo(type, COROUTINE_LAMBDA_PARAMETER_PREFIX + (this.safeAs<ValueParameterDescriptor>()?.index ?: ""))
 
     private fun createHiddenFieldInfo(type: KotlinType, name: String) =
-            FieldInfo.createForHiddenField(
-                    typeMapper.mapClass(closureContext.thisDescriptor),
-                    typeMapper.mapType(type),
-                    name
-            )
+        FieldInfo.createForHiddenField(
+            typeMapper.mapClass(closureContext.thisDescriptor),
+            typeMapper.mapType(type),
+            name
+        )
 
     private fun generateDoResume() {
         functionCodegen.generateMethod(
-                OtherOrigin(element),
-                doResumeDescriptor,
-                object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
+            OtherOrigin(element),
+            doResumeDescriptor,
+            object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
 
-                    override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
-                        if (forInline) return super.wrapMethodVisitor(mv, access, name, desc)
-                        return CoroutineTransformerMethodVisitor(
-                            mv, access, name, desc, null, null,
-                            obtainClassBuilderForCoroutineState = { v },
-                            lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
-                            shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
-                            containingClassInternalName = v.thisName,
-                            isForNamedFunction = false,
-                            languageVersionSettings = languageVersionSettings
-                        )
-                    }
-
-                    override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
-                        codegen.initializeCoroutineParameters()
-                        super.doGenerateBody(codegen, signature)
-                    }
+                override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
+                    if (forInline) return super.wrapMethodVisitor(mv, access, name, desc)
+                    return CoroutineTransformerMethodVisitor(
+                        mv, access, name, desc, null, null,
+                        obtainClassBuilderForCoroutineState = { v },
+                        lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
+                        shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
+                        containingClassInternalName = v.thisName,
+                        isForNamedFunction = false,
+                        languageVersionSettings = languageVersionSettings
+                    )
                 }
+
+                override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                    codegen.initializeCoroutineParameters()
+                    super.doGenerateBody(codegen, signature)
+                }
+            }
         )
     }
 
     companion object {
         @JvmStatic
         fun create(
-                expressionCodegen: ExpressionCodegen,
-                originalSuspendLambdaDescriptor: FunctionDescriptor,
-                declaration: KtElement,
-                classBuilder: ClassBuilder
+            expressionCodegen: ExpressionCodegen,
+            originalSuspendLambdaDescriptor: FunctionDescriptor,
+            declaration: KtElement,
+            classBuilder: ClassBuilder
         ): ClosureCodegen? {
             if (!originalSuspendLambdaDescriptor.isSuspendLambdaOrLocalFunction() || declaration is KtCallableReferenceExpression) return null
 
             return CoroutineCodegenForLambda(
-                    expressionCodegen,
-                    declaration,
-                    expressionCodegen.context.intoCoroutineClosure(
-                        getOrCreateJvmSuspendFunctionView(originalSuspendLambdaDescriptor, expressionCodegen.state),
-                        originalSuspendLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
+                expressionCodegen,
+                declaration,
+                expressionCodegen.context.intoCoroutineClosure(
+                    getOrCreateJvmSuspendFunctionView(
+                        originalSuspendLambdaDescriptor,
+                        expressionCodegen.state
                     ),
-                    classBuilder,
-                    originalSuspendLambdaDescriptor,
-                    // Local suspend lambdas, which call crossinline suspend parameters of containing functions must be generated after inlining
-                    expressionCodegen.bindingContext[CAPTURES_CROSSINLINE_SUSPEND_LAMBDA, originalSuspendLambdaDescriptor] == true
+                    originalSuspendLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
+                ),
+                classBuilder,
+                originalSuspendLambdaDescriptor,
+                // Local suspend lambdas, which call crossinline suspend parameters of containing functions must be generated after inlining
+                expressionCodegen.bindingContext[CAPTURES_CROSSINLINE_SUSPEND_LAMBDA, originalSuspendLambdaDescriptor] == true
             )
         }
     }
 }
 
 class CoroutineCodegenForNamedFunction private constructor(
-        outerExpressionCodegen: ExpressionCodegen,
-        element: KtElement,
-        closureContext: ClosureContext,
-        classBuilder: ClassBuilder,
-        originalSuspendFunctionDescriptor: FunctionDescriptor
+    outerExpressionCodegen: ExpressionCodegen,
+    element: KtElement,
+    closureContext: ClosureContext,
+    classBuilder: ClassBuilder,
+    originalSuspendFunctionDescriptor: FunctionDescriptor
 ) : AbstractCoroutineCodegen(outerExpressionCodegen, element, closureContext, classBuilder) {
     private val labelFieldStackValue = StackValue.field(
         FieldInfo.createForHiddenField(
@@ -373,7 +379,7 @@ class CoroutineCodegenForNamedFunction private constructor(
         StackValue.LOCAL_0
     )
     private val suspendFunctionJvmView =
-            bindingContext[CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, originalSuspendFunctionDescriptor]!!
+        bindingContext[CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, originalSuspendFunctionDescriptor]!!
 
     override val passArityToSuperClass get() = false
 
@@ -388,85 +394,84 @@ class CoroutineCodegenForNamedFunction private constructor(
         generateSetLabelMethod()
 
         v.newField(
-                JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_SYNTHETIC or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-                DATA_FIELD_NAME, AsmTypes.OBJECT_TYPE.descriptor, null, null
+            JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_SYNTHETIC or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
+            DATA_FIELD_NAME, AsmTypes.OBJECT_TYPE.descriptor, null, null
         )
         v.newField(
-                JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_SYNTHETIC or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-                EXCEPTION_FIELD_NAME, AsmTypes.JAVA_THROWABLE_TYPE.descriptor, null, null
+            JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_SYNTHETIC or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
+            EXCEPTION_FIELD_NAME, AsmTypes.JAVA_THROWABLE_TYPE.descriptor, null, null
         )
     }
 
     private fun generateDoResume() {
         functionCodegen.generateMethod(
-                OtherOrigin(element),
-                doResumeDescriptor,
-                object : FunctionGenerationStrategy.CodegenBased(state) {
-                    override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
-                        StackValue.field(
-                                AsmTypes.OBJECT_TYPE, Type.getObjectType(v.thisName), DATA_FIELD_NAME, false,
-                                StackValue.LOCAL_0
-                        ).store(StackValue.local(1, AsmTypes.OBJECT_TYPE), codegen.v)
+            OtherOrigin(element),
+            doResumeDescriptor,
+            object : FunctionGenerationStrategy.CodegenBased(state) {
+                override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                    StackValue.field(
+                        AsmTypes.OBJECT_TYPE, Type.getObjectType(v.thisName), DATA_FIELD_NAME, false,
+                        StackValue.LOCAL_0
+                    ).store(StackValue.local(1, AsmTypes.OBJECT_TYPE), codegen.v)
 
-                        StackValue.field(
-                                AsmTypes.JAVA_THROWABLE_TYPE, Type.getObjectType(v.thisName), EXCEPTION_FIELD_NAME, false,
-                                StackValue.LOCAL_0
-                        ).store(StackValue.local(2, AsmTypes.JAVA_THROWABLE_TYPE), codegen.v)
+                    StackValue.field(
+                        AsmTypes.JAVA_THROWABLE_TYPE, Type.getObjectType(v.thisName), EXCEPTION_FIELD_NAME, false,
+                        StackValue.LOCAL_0
+                    ).store(StackValue.local(2, AsmTypes.JAVA_THROWABLE_TYPE), codegen.v)
 
-                        labelFieldStackValue.store(
-                            StackValue.operation(Type.INT_TYPE) {
-                                labelFieldStackValue.put(Type.INT_TYPE, it)
-                                it.iconst(1 shl 31)
-                                it.or(Type.INT_TYPE)
-                            },
-                            codegen.v
+                    labelFieldStackValue.store(
+                        StackValue.operation(Type.INT_TYPE) {
+                            labelFieldStackValue.put(Type.INT_TYPE, it)
+                            it.iconst(1 shl 31)
+                            it.or(Type.INT_TYPE)
+                        },
+                        codegen.v
+                    )
+
+                    val captureThisType = closure.captureThis?.let(typeMapper::mapType)
+                    if (captureThisType != null) {
+                        StackValue.field(
+                            captureThisType, Type.getObjectType(v.thisName), AsmUtil.CAPTURED_THIS_FIELD,
+                            false, StackValue.LOCAL_0
+                        ).put(captureThisType, codegen.v)
+                    }
+
+                    val isInterfaceMethod = DescriptorUtils.isInterface(suspendFunctionJvmView.containingDeclaration)
+                    val callableMethod =
+                        typeMapper.mapToCallableMethod(
+                            suspendFunctionJvmView,
+                            // Obtain default impls method for interfaces
+                            isInterfaceMethod
                         )
 
-                        val captureThisType = closure.captureThis?.let(typeMapper::mapType)
-                        if (captureThisType != null) {
-                            StackValue.field(
-                                    captureThisType, Type.getObjectType(v.thisName), AsmUtil.CAPTURED_THIS_FIELD,
-                                    false, StackValue.LOCAL_0
-                            ).put(captureThisType, codegen.v)
-                        }
-
-                        val isInterfaceMethod = DescriptorUtils.isInterface(suspendFunctionJvmView.containingDeclaration)
-                        val callableMethod =
-                                typeMapper.mapToCallableMethod(
-                                        suspendFunctionJvmView,
-                                        // Obtain default impls method for interfaces
-                                        isInterfaceMethod
-                                )
-
-                        for (argumentType in callableMethod.getAsmMethod().argumentTypes.dropLast(1)) {
-                            AsmUtil.pushDefaultValueOnStack(argumentType, codegen.v)
-                        }
-
-                        codegen.v.load(0, AsmTypes.OBJECT_TYPE)
-
-                        if (suspendFunctionJvmView.isOverridable && !isInterfaceMethod && captureThisType != null) {
-                            val owner = captureThisType.internalName
-                            val impl = callableMethod.getAsmMethod().getImplForOpenMethod(owner)
-                            codegen.v.invokestatic(owner, impl.name, impl.descriptor, false)
-                        }
-                        else {
-                            callableMethod.genInvokeInstruction(codegen.v)
-                        }
-
-                        codegen.v.visitInsn(Opcodes.ARETURN)
+                    for (argumentType in callableMethod.getAsmMethod().argumentTypes.dropLast(1)) {
+                        AsmUtil.pushDefaultValueOnStack(argumentType, codegen.v)
                     }
+
+                    codegen.v.load(0, AsmTypes.OBJECT_TYPE)
+
+                    if (suspendFunctionJvmView.isOverridable && !isInterfaceMethod && captureThisType != null) {
+                        val owner = captureThisType.internalName
+                        val impl = callableMethod.getAsmMethod().getImplForOpenMethod(owner)
+                        codegen.v.invokestatic(owner, impl.name, impl.descriptor, false)
+                    } else {
+                        callableMethod.genInvokeInstruction(codegen.v)
+                    }
+
+                    codegen.v.visitInsn(Opcodes.ARETURN)
                 }
+            }
         )
     }
 
     private fun generateGetLabelMethod() {
         val mv = v.newMethod(
-                JvmDeclarationOrigin.NO_ORIGIN,
-                Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-                "getLabel",
-                Type.getMethodDescriptor(Type.INT_TYPE),
-                null,
-                null
+            JvmDeclarationOrigin.NO_ORIGIN,
+            Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
+            "getLabel",
+            Type.getMethodDescriptor(Type.INT_TYPE),
+            null,
+            null
         )
 
         mv.visitCode()
@@ -477,12 +482,12 @@ class CoroutineCodegenForNamedFunction private constructor(
 
     private fun generateSetLabelMethod() {
         val mv = v.newMethod(
-                JvmDeclarationOrigin.NO_ORIGIN,
-                Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-                "setLabel",
-                Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE),
-                null,
-                null
+            JvmDeclarationOrigin.NO_ORIGIN,
+            Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
+            "setLabel",
+            Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE),
+            null,
+            null
         )
 
         mv.visitCode()
@@ -498,36 +503,37 @@ class CoroutineCodegenForNamedFunction private constructor(
             AsmUtil.writeAnnotationData(av, serializer, functionProto)
         }
     }
+
     companion object {
         fun create(
-                cv: ClassBuilder,
-                expressionCodegen: ExpressionCodegen,
-                originalSuspendDescriptor: FunctionDescriptor,
-                declaration: KtFunction
+            cv: ClassBuilder,
+            expressionCodegen: ExpressionCodegen,
+            originalSuspendDescriptor: FunctionDescriptor,
+            declaration: KtFunction
         ): CoroutineCodegenForNamedFunction {
             val bindingContext = expressionCodegen.state.bindingContext
             val closure =
-                    bindingContext[
-                            CodegenBinding.CLOSURE,
-                            bindingContext[CodegenBinding.CLASS_FOR_CALLABLE, originalSuspendDescriptor]
-                    ].sure { "There must be a closure defined for $originalSuspendDescriptor" }
+                bindingContext[
+                        CodegenBinding.CLOSURE,
+                        bindingContext[CodegenBinding.CLASS_FOR_CALLABLE, originalSuspendDescriptor]
+                ].sure { "There must be a closure defined for $originalSuspendDescriptor" }
 
             val suspendFunctionView =
-                    bindingContext[
-                            CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, originalSuspendDescriptor
-                    ].sure { "There must be a jvm view defined for $originalSuspendDescriptor" }
+                bindingContext[
+                        CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, originalSuspendDescriptor
+                ].sure { "There must be a jvm view defined for $originalSuspendDescriptor" }
 
             if (suspendFunctionView.dispatchReceiverParameter != null) {
                 closure.setCaptureThis()
             }
 
             return CoroutineCodegenForNamedFunction(
-                    expressionCodegen, declaration,
-                    expressionCodegen.context.intoClosure(
-                            originalSuspendDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
-                    ),
-                    cv,
-                    originalSuspendDescriptor
+                expressionCodegen, declaration,
+                expressionCodegen.context.intoClosure(
+                    originalSuspendDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
+                ),
+                cv,
+                originalSuspendDescriptor
             )
         }
     }
@@ -541,11 +547,11 @@ private object FailingFunctionGenerationStrategy : FunctionGenerationStrategy() 
     }
 
     override fun generateBody(
-            mv: MethodVisitor,
-            frameMap: FrameMap,
-            signature: JvmMethodSignature,
-            context: MethodContext,
-            parentCodegen: MemberCodegen<*>
+        mv: MethodVisitor,
+        frameMap: FrameMap,
+        signature: JvmMethodSignature,
+        context: MethodContext,
+        parentCodegen: MemberCodegen<*>
     ) {
         error("This functions must not be called")
     }
