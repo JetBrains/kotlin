@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -19,12 +17,12 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.types.KotlinType
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
@@ -144,33 +142,35 @@ fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.
 fun IrMemberAccessExpression.usesDefaultArguments(): Boolean =
     this.descriptor.valueParameters.any { this.getValueArgument(it) == null }
 
-//fun IrFunction.createParameterDeclarations() {
-//    fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(
-//        innerStartOffset(this), innerEndOffset(this),
-//        IrDeclarationOrigin.DEFINED,
-//        this
-//    ).also {
-//        it.parent = this@createParameterDeclarations
-//    }
-//
-//    dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.irValueParameter()
-//    extensionReceiverParameter = descriptor.extensionReceiverParameter?.irValueParameter()
-//
-//    assert(valueParameters.isEmpty())
-//    descriptor.valueParameters.mapTo(valueParameters) { it.irValueParameter() }
-//
-//    assert(typeParameters.isEmpty())
-//    descriptor.typeParameters.mapTo(typeParameters) {
-//        IrTypeParameterImpl(
-//            innerStartOffset(it), innerEndOffset(it),
-//            IrDeclarationOrigin.DEFINED,
-//            it
-//        ).also { typeParameter ->
-//            typeParameter.parent = this
-//        }
-//    }
-//}
-//
+fun IrFunction.createParameterDeclarations() {
+    fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(
+        innerStartOffset(this), innerEndOffset(this),
+        IrDeclarationOrigin.DEFINED,
+        this,
+        type.toIrType()!!,
+        (this as? ValueParameterDescriptor)?.varargElementType?.toIrType()
+    ).also {
+        it.parent = this@createParameterDeclarations
+    }
+
+    dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.irValueParameter()
+    extensionReceiverParameter = descriptor.extensionReceiverParameter?.irValueParameter()
+
+    assert(valueParameters.isEmpty())
+    descriptor.valueParameters.mapTo(valueParameters) { it.irValueParameter() }
+
+    assert(typeParameters.isEmpty())
+    descriptor.typeParameters.mapTo(typeParameters) {
+        IrTypeParameterImpl(
+            innerStartOffset(it), innerEndOffset(it),
+            IrDeclarationOrigin.DEFINED,
+            it
+        ).also { typeParameter ->
+            typeParameter.parent = this
+        }
+    }
+}
+
 //fun IrClass.createParameterDeclarations() {
 //    descriptor.thisAsReceiverParameter.let {
 //        thisReceiver = IrValueParameterImpl(
