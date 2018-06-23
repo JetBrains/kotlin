@@ -69,8 +69,8 @@
    Freezing is a runtime operation making given object subgraph immutable, by modifying the object header
   so that future mutation attempts lead to throwing an `InvalidMutabilityException`. It is deep, so
   if an object has a pointer to another objects - transitive closure of such objects will be frozen.
-  Freezing is the one way transformation, frozen objects cannot be unfrozen. Frozen objects has a nice
-  property that due to their immutability, they could freely shared between multiple workers/threads
+  Freezing is the one way transformation, frozen objects cannot be unfrozen. Frozen objects have a nice
+  property that due to their immutability, they can be freely shared between multiple workers/threads
   not breaking the "mutable XOR shared" invariant.
 
    If object is frozen could be checked with an extension property `isFrozen`, and if it is, object sharing
