@@ -55,18 +55,24 @@ fun IrType.makeNullable() =
     else
         this
 
-fun IrType.toKotlinType(): KotlinType = when (this) {
-    is IrSimpleType -> {
-        val classifier = this.classifier.descriptor
-        val arguments = this.arguments.mapIndexed { index, it ->
-            when (it) {
-                is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toKotlinType())
-                is IrStarProjection -> StarProjectionImpl((classifier as ClassDescriptor).declaredTypeParameters[index])
-                else -> error(it)
-            }
-        }
-
-        classifier.defaultType.replace(newArguments = arguments).makeNullableAsSpecified(this.hasQuestionMark)
+fun IrType.toKotlinType(): KotlinType {
+    originalKotlinType?.let {
+        return it
     }
-    else -> TODO(this.toString())
+
+    return when (this) {
+        is IrSimpleType -> {
+            val classifier = classifier.descriptor
+            val arguments = arguments.mapIndexed { index, it ->
+                when (it) {
+                    is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toKotlinType())
+                    is IrStarProjection -> StarProjectionImpl((classifier as ClassDescriptor).declaredTypeParameters[index])
+                    else -> error(it)
+                }
+            }
+
+            classifier.defaultType.replace(newArguments = arguments).makeNullableAsSpecified(hasQuestionMark)
+        }
+        else -> TODO(toString())
+    }
 }
