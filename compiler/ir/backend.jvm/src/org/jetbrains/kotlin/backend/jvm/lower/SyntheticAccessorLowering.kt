@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
@@ -44,7 +33,9 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
@@ -182,13 +173,16 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
                             IrDelegatingConstructorCallImpl(
                                 expression.startOffset,
                                 expression.endOffset,
-                                accessorForIr as ClassConstructorDescriptor
+                                expression.type,
+                                accessorForIr as ClassConstructorDescriptor,
+                                0
                             )
                         else IrCallImpl(
                             expression.startOffset,
                             expression.endOffset,
+                            expression.type,
                             accessorForIr,
-                            emptyMap(),
+                            0,
                             expression.origin/*TODO super*/
                         )
                     //copyAllArgsToValueParams(call, expression)
@@ -202,7 +196,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
                             IrConstImpl.constNull(
                                 UNDEFINED_OFFSET,
                                 UNDEFINED_OFFSET,
-                                context.ir.symbols.defaultConstructorMarker.descriptor.defaultType
+                                context.ir.symbols.defaultConstructorMarker.owner.defaultType
                             )
                         )
                     }
@@ -251,18 +245,23 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
             val calleeDescriptor = accessor.calleeDescriptor as FunctionDescriptor
             val delegationCall =
                 if (!isConstructor)
-                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, calleeDescriptor)
-                else IrDelegatingConstructorCallImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    createFunctionSymbol(accessor.calleeDescriptor) as IrConstructorSymbol,
-                    accessor.calleeDescriptor as ClassConstructorDescriptor
-                )
+                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, calleeDescriptor.returnType!!.toIrType()!!, calleeDescriptor, 0)
+                else {
+                    val delegationConstructor = createFunctionSymbol(accessor.calleeDescriptor)
+                    IrDelegatingConstructorCallImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        delegationConstructor.owner.returnType,
+                        delegationConstructor as IrConstructorSymbol,
+                        accessor.calleeDescriptor as ClassConstructorDescriptor
+                    )
+                }
             copyAllArgsToValueParams(delegationCall, syntheticFunction)
 
             body.statements.add(
                 if (isConstructor) delegationCall else IrReturnImpl(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
+                    syntheticFunction.returnType,
                     syntheticFunction.symbol,
                     delegationCall
                 )
