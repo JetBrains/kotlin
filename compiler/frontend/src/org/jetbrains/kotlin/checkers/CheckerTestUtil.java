@@ -432,6 +432,14 @@ public class CheckerTestUtil {
                 opened.pop();
             }
             while (currentDescriptor != null && i == currentDescriptor.start) {
+                while (!opened.isEmpty()) {
+                    if (currentDescriptor.getEnd() > opened.peek().end) {
+                        closeDiagnosticString(result);
+                        opened.pop();
+                    } else {
+                        break;
+                    }
+                }
                 openDiagnosticsString(result, currentDescriptor, diagnosticToExpectedDiagnostic, withNewInferenceDirective);
                 if (currentDescriptor.getEnd() == i) {
                     closeDiagnosticString(result);
