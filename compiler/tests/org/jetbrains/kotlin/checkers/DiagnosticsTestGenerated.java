@@ -8765,6 +8765,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/imports/InaccessiblePrivateClass.kt");
             }
 
+            @TestMetadata("invisibleFakeReferenceInImport.kt")
+            public void testInvisibleFakeReferenceInImport() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/invisibleFakeReferenceInImport.kt");
+            }
+
             @TestMetadata("JavaPackageLocalClassNotImported.kt")
             public void testJavaPackageLocalClassNotImported() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/imports/JavaPackageLocalClassNotImported.kt");
