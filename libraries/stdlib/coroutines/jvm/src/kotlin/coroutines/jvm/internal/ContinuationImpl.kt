@@ -31,18 +31,41 @@ internal abstract class RestrictedContinuationImpl protected constructor(
     public override val context: CoroutineContext
         get() = EmptyCoroutineContext
 
-    public override fun resumeWith(result: SuccessOrFailure<Any?>) {
-        val completion = completion!! // fail fast when trying to resume continuation without completion
-        try {
-            val outcome = invokeSuspend(result)
-            if (outcome === CoroutineSingletons.COROUTINE_SUSPENDED) return
-            completion.resume(outcome)
-        } catch (exception: Throwable) {
-            completion.resumeWithException(exception)
+    // This implementation is final that it is fundamentally used to unroll resumeWith recursion
+    public final override fun resumeWith(result: SuccessOrFailure<Any?>) {
+        var current = this
+        var param = result
+        // This loop unrolls recursion in current.resumeWith(param) to make saner and shorter stack traces on resume
+        while (true) {
+            with(current) {
+                val completion = completion!! // fail fast when trying to resume continuation without completion
+                val outcome: SuccessOrFailure<Any?> =
+                    try {
+                        val outcome = invokeSuspend(param)
+                        if (outcome === CoroutineSingletons.COROUTINE_SUSPENDED) return
+                        SuccessOrFailure.success(outcome)
+                    } catch (exception: Throwable) {
+                        SuccessOrFailure.failure(exception)
+                    }
+                releaseIntercepted() // this state machine instance is terminating
+                if (completion is RestrictedContinuationImpl) {
+                    // unrolling recursion via loop
+                    current = completion
+                    param = outcome
+                } else {
+                    // top-level completion reached -- invoke and return
+                    completion.resumeWith(outcome)
+                    return
+                }
+            }
         }
     }
 
     protected abstract fun invokeSuspend(result: SuccessOrFailure<Any?>): Any?
+
+    protected open fun releaseIntercepted() {
+        // does nothing here, overridden in ContinuationImpl
+    }
 
     public open fun create(completion: Continuation<*>): Continuation<Unit> {
         throw UnsupportedOperationException("create(Continuation) has not been overridden")
@@ -61,11 +84,11 @@ internal abstract class ContinuationImpl protected constructor(
 ) : RestrictedContinuationImpl(completion) {
     protected constructor(completion: Continuation<Any?>?) : this(completion, completion?.context)
 
-    override fun validateContext() {
+    protected override fun validateContext() {
         // nothing to do here -- supports any context
     }
 
-    override val context: CoroutineContext
+    public override val context: CoroutineContext
         get() = _context!!
 
     @Transient
@@ -76,20 +99,7 @@ internal abstract class ContinuationImpl protected constructor(
             ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
                 .also { intercepted = this }
 
-    public override fun resumeWith(result: SuccessOrFailure<Any?>) {
-        val completion = completion!! // fail fast when trying to resume continuation without completion
-        try {
-            val outcome = invokeSuspend(result)
-            if (outcome === CoroutineSingletons.COROUTINE_SUSPENDED) return
-            releaseIntercepted()
-            completion.resume(outcome)
-        } catch (exception: Throwable) {
-            releaseIntercepted()
-            completion.resumeWithException(exception)
-        }
-    }
-
-    private fun releaseIntercepted() {
+    protected override fun releaseIntercepted() {
         val intercepted = intercepted
         if (intercepted != null && intercepted != this) {
             context[ContinuationInterceptor]!!.releaseInterceptedContinuation(intercepted)
@@ -97,13 +107,12 @@ internal abstract class ContinuationImpl protected constructor(
         this.intercepted = CompletedContinuation // just in case
     }
 
-    override fun toString(): String {
+    public override fun toString(): String {
         // todo: how continuation shall be rendered?
         return "Continuation @ ${this::class.java.name}"
     }
 }
 
-// todo: Do we really need it? 
 internal object CompletedContinuation : Continuation<Any?> {
     override val context: CoroutineContext
         get() = error("This continuation is already complete")
@@ -111,6 +120,8 @@ internal object CompletedContinuation : Continuation<Any?> {
     override fun resumeWith(result: SuccessOrFailure<Any?>) {
         error("This continuation is already complete")
     }
+
+    override fun toString(): String = "This continuation is already complete"
 }
 
 @SinceKotlin("1.3")
