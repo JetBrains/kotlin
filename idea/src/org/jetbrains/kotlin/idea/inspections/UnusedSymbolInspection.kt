@@ -76,7 +76,14 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     companion object {
         private val javaInspection = UnusedDeclarationInspection()
 
+        private val KOTLIN_ADDITIONAL_ANNOTATIONS = listOf("kotlin.test.*")
+
+        private fun KtDeclaration.hasKotlinAdditionalAnnotation() =
+            this is KtNamedDeclaration && checkAnnotatedUsingPatterns(this, KOTLIN_ADDITIONAL_ANNOTATIONS)
+
         fun isEntryPoint(declaration: KtNamedDeclaration): Boolean {
+            if (declaration.hasKotlinAdditionalAnnotation()) return true
+            if (declaration is KtClass && declaration.declarations.any { it.hasKotlinAdditionalAnnotation() }) return true
             val lightElement: PsiElement? = when (declaration) {
                 is KtClassOrObject -> declaration.toLightClass()
                 is KtNamedFunction, is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as KtFunction)
@@ -111,6 +118,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             declaration: KtNamedDeclaration,
             annotationPatterns: Collection<String>
         ): Boolean {
+            if (declaration.annotationEntries.isEmpty()) return false
             val context = declaration.analyze()
             val annotationsPresent = declaration.annotationEntries.mapNotNull {
                 context[BindingContext.ANNOTATION, it]?.fqName?.asString()
