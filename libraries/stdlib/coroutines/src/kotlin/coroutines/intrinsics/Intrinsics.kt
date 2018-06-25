@@ -68,7 +68,14 @@ public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline 
  * This value is used as a return value of [suspendCoroutineOrReturn] `block` argument to state that
  * the execution was suspended and will not return any result immediately.
  */
+// It is implemented as property with getter to avoid ProGuard <clinit> problem with multifile IntrinsicsKt class
 @SinceKotlin("1.3")
-public val COROUTINE_SUSPENDED: Any = CoroutineSingletons.COROUTINE_SUSPENDED
+public val COROUTINE_SUSPENDED: Any
+    get() = CoroutineSingletons.COROUTINE_SUSPENDED
 
+// Using enum here ensures two important properties:
+//  1. It makes SafeContinuation serializable with all kinds of serialization frameworks (since all of them natively support enums)
+//  2. It improves debugging experience, since you clearly see toString() value of those objects and what package they come from
+@SinceKotlin("1.3")
+@PublishedApi // This class is Published API via serialized representation of SafeContinuation, don't rename/move
 internal enum class CoroutineSingletons { COROUTINE_SUSPENDED, UNDECIDED, RESUMED }
