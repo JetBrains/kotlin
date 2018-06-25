@@ -41,6 +41,7 @@ public annotation class RestrictsSuspension
 /**
  * Resumes the execution of the corresponding coroutine passing [value] as the return value of the last suspension point.
  */
+@SinceKotlin("1.3")
 @InlineOnly public inline fun <T> Continuation<T>.resume(value: T): Unit =
     resumeWith(SuccessOrFailure.success(value))
 
@@ -48,6 +49,7 @@ public annotation class RestrictsSuspension
  * Resumes the execution of the corresponding coroutine so that the [exception] is re-thrown right after the
  * last suspension point.
  */
+@SinceKotlin("1.3")
 @InlineOnly public inline fun <T> Continuation<T>.resumeWithException(exception: Throwable): Unit =
     resumeWith(SuccessOrFailure.failure(exception))
 
