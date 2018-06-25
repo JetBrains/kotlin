@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isFakeOverriddenFromAny
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -83,7 +81,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
             }
 
             // Conversion rules are ported from NumberAndCharConversionFIF
-            // TODO: Add Char, Long and Number conversions
+            // TODO: Add Char and Number conversions
 
             irBuiltIns.byteType.let {
                 op(it, ConversionNames.TO_BYTE, intrinsics.jsAsIs)
@@ -91,6 +89,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 op(it, ConversionNames.TO_FLOAT, intrinsics.jsAsIs)
                 op(it, ConversionNames.TO_INT, intrinsics.jsAsIs)
                 op(it, ConversionNames.TO_SHORT, intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
             }
 
             for (type in listOf(irBuiltIns.floatType, irBuiltIns.doubleType)) {
@@ -99,6 +98,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 op(type, ConversionNames.TO_FLOAT, intrinsics.jsAsIs)
                 op(type, ConversionNames.TO_INT, intrinsics.jsNumberToInt)
                 op(type, ConversionNames.TO_SHORT, intrinsics.jsNumberToShort)
+                op(type, ConversionNames.TO_LONG, intrinsics.jsNumberToLong)
             }
 
             irBuiltIns.intType.let {
@@ -107,6 +107,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 op(it, ConversionNames.TO_FLOAT, intrinsics.jsAsIs)
                 op(it, ConversionNames.TO_INT, intrinsics.jsAsIs)
                 op(it, ConversionNames.TO_SHORT, intrinsics.jsToShort)
+                op(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
             }
 
             irBuiltIns.shortType.let {
@@ -115,13 +116,14 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 op(it, ConversionNames.TO_FLOAT, intrinsics.jsAsIs)
                 op(it, ConversionNames.TO_INT, intrinsics.jsAsIs)
                 op(it, ConversionNames.TO_SHORT, intrinsics.jsAsIs)
+                op(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
             }
         }
 
         symbolToIrFunction.run {
             add(irBuiltIns.eqeqeqSymbol, intrinsics.jsEqeqeq)
             // TODO: implement it a right way
-            add(irBuiltIns.eqeqSymbol, intrinsics.jsEqeq)
+            add(irBuiltIns.eqeqSymbol, intrinsics.jsEquals.owner)
             // TODO: implement it a right way
             add(irBuiltIns.ieee754equalsFunByOperandType, intrinsics.jsEqeqeq)
 
@@ -189,11 +191,39 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
     override fun lower(irFile: IrFile) {
         irFile.transform(object : IrElementTransformerVoid() {
+            override fun <T> visitConst(expression: IrConst<T>): IrExpression {
+                if (expression.kind is IrConstKind.Long) {
+                    val value = IrConstKind.Long.valueOf(expression)
+                    val high = (value shr 32).toInt()
+                    val low = value.toInt()
+                    return IrCallImpl(
+                        expression.startOffset,
+                        expression.endOffset,
+                        context.intrinsics.longConstructor
+                    ).apply {
+                        putValueArgument(0, JsIrBuilder.buildInt(context.irBuiltIns.int, low))
+                        putValueArgument(1, JsIrBuilder.buildInt(context.irBuiltIns.int, high))
+                    }
+                }
+                return super.visitConst(expression)
+            }
+
             override fun visitCall(expression: IrCall): IrExpression {
                 val call = super.visitCall(expression)
 
                 if (call is IrCall) {
                     val symbol = call.symbol
+
+                    if (symbol == irBuiltIns.eqeqSymbol) {
+                        val lhs = call.getValueArgument(0)!!
+                        val rhs = call.getValueArgument(1)!!
+
+                        return when (translateEquals(lhs.type, rhs.type)) {
+                            is IdentityOperator -> irCall(call, intrinsics.jsEqeqeq.symbol)
+                            is EqualityOperator -> irCall(call, intrinsics.jsEqeq.symbol)
+                            else -> irCall(call, intrinsics.jsEquals)
+                        }
+                    }
 
                     symbolToIrFunction[symbol]?.let {
                         return irCall(call, it.symbol)
@@ -210,6 +240,43 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                                     return call.dispatchReceiver!!
                                 }
                                 // TODO: don't apply intrinsics when type of receiver or argument is Long
+                                if (call.valueArgumentsCount == 1) {
+                                    call.getValueArgument(0)?.let { arg ->
+                                        if (arg.type.isLong()) {
+                                            call.dispatchReceiver?.type?.let {
+                                                if (it.isDouble()) {
+                                                    call.putValueArgument(0, IrCallImpl(
+                                                        call.startOffset,
+                                                        call.endOffset,
+                                                        context.intrinsics.longToDouble
+                                                    ).apply {
+                                                        dispatchReceiver = arg
+                                                    })
+                                                } else if (it.isFloat()) {
+                                                    call.putValueArgument(0, IrCallImpl(
+                                                        call.startOffset,
+                                                        call.endOffset,
+                                                        context.intrinsics.longToFloat
+                                                    ).apply {
+                                                        dispatchReceiver = arg
+                                                    })
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+
+                                if (call.valueArgumentsCount == 1 && call.getValueArgument(0)!!.type.isLong()) {
+                                    call.dispatchReceiver = IrCallImpl(
+                                        call.startOffset,
+                                        call.endOffset,
+                                        intrinsics.jsNumberToLong
+                                    ).apply {
+                                        putValueArgument(0, call.dispatchReceiver)
+                                    }
+                                    return call
+                                }
                                 return irCall(call, it, dispatchReceiverAsFirstArgument = true)
                             }
 
@@ -309,6 +376,7 @@ class RuntimeFunctionCall : EqualityLoweringType()
 class RuntimeOrMethodCall : EqualityLoweringType()
 
 fun translateEquals(lhs: IrType, rhs: IrType): EqualityLoweringType = when {
+    lhs.isNullableNothing() || lhs.isDynamic() -> EqualityOperator()
     lhs.isJsNumber() -> translateEqualsForJsNumber(rhs)
     lhs.isNullableJsNumber() -> translateEqualsForNullableJsNumber(rhs)
     lhs.isLong() -> translateEqualsForLong(rhs)
@@ -434,7 +502,11 @@ private fun <V> MutableMap<IrFunctionSymbol, V>.add(from: IrFunctionSymbol, to: 
     put(from, to)
 }
 
-private fun <K> MutableMap<K, (IrCall) -> IrExpression>.addWithPredicate(from: K, predicate: (IrCall) -> Boolean, action: (IrCall) -> IrExpression) {
+private fun <K> MutableMap<K, (IrCall) -> IrExpression>.addWithPredicate(
+    from: K,
+    predicate: (IrCall) -> Boolean,
+    action: (IrCall) -> IrExpression
+) {
     put(from) { call: IrCall -> select({ predicate(call) }, { action(call) }, { call }) }
 }
 

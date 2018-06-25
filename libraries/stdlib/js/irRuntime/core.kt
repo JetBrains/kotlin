@@ -6,17 +6,18 @@
 package kotlin.js
 
 fun equals(obj1: dynamic, obj2: dynamic): Boolean {
-    if (obj1 == null) {
-        return obj2 == null
-    }
 
+    if (obj1 == null) {
+        return obj2 == null;
+    }
     if (obj2 == null) {
-        return false
+        return false;
     }
 
     return js("""
-    if (typeof obj1 === "object" && typeof obj1.equals === "function") {
-        return obj1.equals(obj2);
+
+    if (typeof obj1 === "object" && typeof obj1.equals_Any_ === "function") {
+        return obj1.equals_Any_(obj2);
     }
 
     if (obj1 !== obj1) {
@@ -31,7 +32,7 @@ fun equals(obj1: dynamic, obj2: dynamic): Boolean {
 }
 
 fun toString(o: dynamic): String = when {
-    o == null -> "null"
+    o === null -> "null"
     isArrayish(o) -> "[...]"
     else -> js("o.toString()").unsafeCast<String>()
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun foo(): Long {
     var n = 2L
     if (n > 0L) {
