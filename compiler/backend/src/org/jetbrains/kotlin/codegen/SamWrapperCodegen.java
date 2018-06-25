@@ -193,8 +193,10 @@ public class SamWrapperCodegen {
             @NotNull KtFile containingFile,
             CallableMemberDescriptor contextDescriptor
     ) {
-        boolean hasPackagePartClass =
-                CollectionsKt.any(CodegenUtil.getActualDeclarations(containingFile), PackageCodegenImpl::isFilePartDeclaration);
+        boolean hasPackagePartClass = CollectionsKt.any(
+                CodegenUtil.getDeclarationsToGenerate(containingFile, state.getBindingContext()),
+                PackageCodegenImpl::isFilePartDeclaration
+        );
         FqName filePartFqName = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile).getFileClassFqName();
 
         FqName outermostOwner;

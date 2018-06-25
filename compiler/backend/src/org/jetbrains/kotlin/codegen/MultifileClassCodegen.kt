@@ -85,7 +85,7 @@ class MultifileClassCodegenImpl(
     private val partInternalNamesSorted = run {
         val partInternalNamesSet = hashSetOf<String>()
         for (file in files) {
-            if (file.hasDeclarationsForPartClass()) {
+            if (file.hasDeclarationsForPartClass(state.bindingContext)) {
                 partInternalNamesSet.add(JvmFileClassUtil.getFileClassInternalName(file))
             }
         }
@@ -122,7 +122,7 @@ class MultifileClassCodegenImpl(
 
         val singleSourceFile =
                 if (previouslyCompiledCallables.isEmpty())
-                    files.singleOrNull { it.hasDeclarationsForPartClass() }
+                    files.singleOrNull { it.hasDeclarationsForPartClass(state.bindingContext) }
                 else
                     null
 
@@ -209,7 +209,9 @@ class MultifileClassCodegenImpl(
 
         generateNonPartClassDeclarations(file, partContext)
 
-        if (!state.generateDeclaredClassFilter.shouldGeneratePackagePart(file) || !file.hasDeclarationsForPartClass()) return
+        if (!state.generateDeclaredClassFilter.shouldGeneratePackagePart(file) ||
+            !file.hasDeclarationsForPartClass(state.bindingContext)
+        ) return
 
         packagePartRegistry.addPart(partType.internalName, facadeClassType.internalName)
 
@@ -243,7 +245,7 @@ class MultifileClassCodegenImpl(
     private fun addDelegateGenerationTasksForDeclarationsInFile(file: KtFile, packageFragment: PackageFragmentDescriptor, partType: Type) {
         val facadeContext = state.rootContext.intoMultifileClass(packageFragment, facadeClassType, partType)
         val memberCodegen = createCodegenForDelegatesInMultifileFacade(facadeContext)
-        for (declaration in CodegenUtil.getActualDeclarations(file)) {
+        for (declaration in CodegenUtil.getDeclarationsToGenerate(file, state.bindingContext)) {
             if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtTypeAlias) {
                 val descriptor = state.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
                 if (descriptor !is MemberDescriptor) {
@@ -375,8 +377,8 @@ class MultifileClassCodegenImpl(
             return fragments.firstOrNull()
         }
 
-        private fun KtFile.hasDeclarationsForPartClass() =
-                CodegenUtil.getActualDeclarations(this).any { it is KtProperty || it is KtFunction || it is KtTypeAlias }
+        private fun KtFile.hasDeclarationsForPartClass(bindingContext: BindingContext) =
+            CodegenUtil.getDeclarationsToGenerate(this, bindingContext).any { it is KtProperty || it is KtFunction || it is KtTypeAlias }
 
         private fun getCompiledPackageFragment(
                 facadeFqName: FqName, state: GenerationState
