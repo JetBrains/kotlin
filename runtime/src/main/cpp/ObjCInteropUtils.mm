@@ -77,19 +77,6 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
   RETURN_OBJ(result->obj());
 }
 
-OBJ_GETTER(Kotlin_Interop_ObjCToString, id <NSObject> ptr) {
-  RETURN_RESULT_OF(Kotlin_Interop_CreateKStringFromNSString, ptr.description);
-}
-
-KInt Kotlin_Interop_ObjCHashCode(id <NSObject> ptr) {
-  uint64_t hash = ptr.hash;
-  return (KInt)(hash ^ (hash >> 32));
-}
-
-KBoolean Kotlin_Interop_ObjCEquals(id <NSObject> ptr, id otherPtr) {
-  return [ptr isEqual:otherPtr];
-}
-
 // Note: this body is used for init methods with signatures differing from this;
 // it is correct on arm64 and x86_64, because the body uses only the first two arguments which are fixed,
 // and returns pointers.
@@ -221,21 +208,6 @@ void* Kotlin_Interop_CreateNSStringFromKString(const ArrayHeader* str) {
 OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, void* str) {
   RuntimeAssert(false, "Objective-C interop is disabled");
   RETURN_OBJ(nullptr);
-}
-
-OBJ_GETTER(Kotlin_Interop_ObjCToString, KNativePtr ptr) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  RETURN_OBJ(nullptr);
-}
-
-KInt Kotlin_Interop_ObjCHashCode(KNativePtr ptr) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return 0;
-}
-
-KBoolean Kotlin_Interop_ObjCEquals(KNativePtr ptr, KNativePtr otherPtr) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
-  return 0;
 }
 
 void* Kotlin_Interop_createKotlinObjectHolder(KRef any) {

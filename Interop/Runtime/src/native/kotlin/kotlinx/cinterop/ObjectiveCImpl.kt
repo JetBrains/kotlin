@@ -174,16 +174,6 @@ external fun CreateNSStringFromKString(str: String?): NativePtr
 @SymbolName("Kotlin_Interop_CreateKStringFromNSString")
 external fun CreateKStringFromNSString(ptr: NativePtr): String?
 
-@SymbolName("Kotlin_Interop_ObjCToString")
-private external fun ObjCToString(ptr: NativePtr): String
-
-@SymbolName("Kotlin_Interop_ObjCHashCode")
-private external fun ObjCHashCode(ptr: NativePtr): Int
-
-@SymbolName("Kotlin_Interop_ObjCEquals")
-private external fun ObjCEquals(ptr: NativePtr, otherPtr: NativePtr): Boolean
-
-
 // Objective-C runtime:
 
 @SymbolName("objc_retainAutoreleaseReturnValue")
