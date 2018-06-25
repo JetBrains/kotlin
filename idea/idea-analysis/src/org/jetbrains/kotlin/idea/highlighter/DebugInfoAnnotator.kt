@@ -22,7 +22,8 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.checkers.DebugInfoUtil
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
@@ -73,6 +74,6 @@ class DebugInfoAnnotator : Annotator {
 
     companion object {
         val isDebugInfoEnabled: Boolean
-            get() = ApplicationManager.getApplication().isInternal
+            get() = ApplicationManager.getApplication().isInternal && (KotlinPluginUtil.isSnapshotVersion() || KotlinPluginUtil.isDevVersion())
     }
 }
