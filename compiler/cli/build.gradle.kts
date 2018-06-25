@@ -42,6 +42,14 @@ sourceSets {
     "test" { }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        languageVersion = "1.2"
+        apiVersion = "1.2"
+        freeCompilerArgs += "-Xskip-metadata-version-check"
+    }
+}
+
 testsJar {}
 
 projectTest {
