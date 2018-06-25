@@ -148,7 +148,7 @@ private fun allocObjCObject(clazz: NativePtr): NativePtr {
 private external fun <T : ObjCObject> getObjCClass(): NativePtr
 
 @konan.internal.Intrinsic external fun getMessenger(superClass: NativePtr): COpaquePointer?
-@konan.internal.Intrinsic external fun getMessengerLU(superClass: NativePtr): COpaquePointer?
+@konan.internal.Intrinsic external fun getMessengerStret(superClass: NativePtr): COpaquePointer?
 
 internal class ObjCWeakReferenceImpl : konan.ref.WeakReferenceImpl() {
     @SymbolName("Konan_ObjCInterop_getWeakReference")

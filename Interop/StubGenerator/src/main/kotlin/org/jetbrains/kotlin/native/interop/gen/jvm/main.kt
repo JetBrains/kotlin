@@ -277,7 +277,8 @@ private fun processCLib(args: Array<String>): Array<String>? {
             nonStrictEnums = def.config.nonStrictEnums.toSet(),
             noStringConversion = def.config.noStringConversion.toSet(),
             exportForwardDeclarations = def.config.exportForwardDeclarations,
-            disableDesignatedInitializerChecks = def.config.disableDesignatedInitializerChecks
+            disableDesignatedInitializerChecks = def.config.disableDesignatedInitializerChecks,
+            target = tool.target
     )
 
     val nativeIndex = buildNativeIndex(library)

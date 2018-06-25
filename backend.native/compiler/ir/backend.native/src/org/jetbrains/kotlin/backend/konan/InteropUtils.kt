@@ -173,7 +173,7 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
     val getObjCReceiverOrSuper = packageScope.getContributedFunctions("getReceiverOrSuper").single()
 
     val getObjCMessenger = packageScope.getContributedFunctions("getMessenger").single()
-    val getObjCMessengerLU = packageScope.getContributedFunctions("getMessengerLU").single()
+    val getObjCMessengerStret = packageScope.getContributedFunctions("getMessengerStret").single()
 
     val interpretObjCPointerOrNull = packageScope.getContributedFunctions("interpretObjCPointerOrNull").single()
     val interpretObjCPointer = packageScope.getContributedFunctions("interpretObjCPointer").single()

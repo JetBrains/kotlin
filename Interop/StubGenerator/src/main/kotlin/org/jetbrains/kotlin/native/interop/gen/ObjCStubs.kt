@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.native.interop.gen.jvm.StubGenerator
 import org.jetbrains.kotlin.native.interop.indexer.*
 
@@ -155,7 +156,8 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
 
         val returnType = method.getReturnType(container.classOrProtocol)
 
-        val messengerGetter = if (returnType.isLargeOrUnaligned()) "getMessengerLU" else "getMessenger"
+        val messengerGetter =
+                if (returnType.isStret(stubGenerator.configuration.target)) "getMessengerStret" else "getMessenger"
 
         kotlinObjCBridgeParameters.add(KotlinParameter(kniSuperClassParameter, KotlinTypes.nativePtr))
         nativeBridgeArguments.add(TypedKotlinValue(voidPtr, "$messengerGetter($kniSuperClassParameter)"))
@@ -277,12 +279,50 @@ private val ObjCContainer.classOrProtocol: ObjCClassOrProtocol
         is ObjCCategory -> this.clazz
     }
 
-private fun Type.isLargeOrUnaligned(): Boolean {
+/**
+ * objc_msgSend*_stret functions must be used when return value is returned through memory
+ * pointed by implicit argument, which is passed on the register that would otherwise be used for receiver.
+ *
+ * The entire implementation is just the real ABI approximation which is enough for practical cases.
+ */
+private fun Type.isStret(target: KonanTarget): Boolean {
     val unwrappedType = this.unwrapTypedefs()
-    return when (unwrappedType) {
-        is RecordType -> unwrappedType.decl.def!!.size > 16 || this.hasUnalignedMembers()
-        else -> false
+    return when (target) {
+        KonanTarget.IOS_ARM64 ->
+            false // On aarch64 stret is never the case, since an implicit argument gets passed on x8.
+
+        KonanTarget.IOS_X64, KonanTarget.MACOS_X64 -> when (unwrappedType) {
+            is RecordType -> unwrappedType.decl.def!!.size > 16 || this.hasUnalignedMembers()
+            else -> false
+        }
+        KonanTarget.IOS_ARM32 -> {
+            when (unwrappedType) {
+                is RecordType -> !this.isIntegerLikeType()
+                else -> false
+            }
+        }
+
+        else -> error(target)
     }
+}
+
+private fun Type.isIntegerLikeType(): Boolean = when (this) {
+    is RecordType -> {
+        val def = this.decl.def
+        if (def == null) {
+            false
+        } else {
+            def.size <= 4 &&
+                    def.bitFields.all { it.type.isIntegerLikeType() } &&
+                    def.fields.all { it.offset == 0L && it.type.isIntegerLikeType() }
+        }
+    }
+    is ObjCPointer, is PointerType, CharType, BoolType -> true
+    is IntegerType -> this.size <= 4
+    is Typedef -> this.def.aliased.isIntegerLikeType()
+    is EnumType -> this.def.baseType.isIntegerLikeType()
+
+    else -> false
 }
 
 private fun Type.hasUnalignedMembers(): Boolean = when (this) {

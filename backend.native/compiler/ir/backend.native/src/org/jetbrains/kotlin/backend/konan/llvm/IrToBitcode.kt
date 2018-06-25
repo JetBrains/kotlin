@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 val IrClassSymbol.objectIsShared get() = owner.origin == DECLARATION_ORIGIN_ENUM
@@ -2165,10 +2164,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             }
 
             interop.getObjCMessenger -> {
-                genGetObjCMessenger(args, isLU = false)
+                genGetObjCMessenger(args, isStret = false)
             }
-            interop.getObjCMessengerLU -> {
-                genGetObjCMessenger(args, isLU = true)
+            interop.getObjCMessengerStret -> {
+                genGetObjCMessenger(args, isStret = true)
             }
 
             interop.readBits -> genReadBits(args)
@@ -2327,24 +2326,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return call(protocolGetter, emptyList())
     }
 
-    private fun genGetObjCMessenger(args: List<LLVMValueRef>, isLU: Boolean): LLVMValueRef {
+    private fun genGetObjCMessenger(args: List<LLVMValueRef>, isStret: Boolean): LLVMValueRef {
         val gen = functionGenerationContext
-
-        // 'LU' means "large or unaligned".
-
-        // objc_msgSend*_stret functions must be used when return value is returned through memory
-        // pointed by implicit argument, which is passed on the register that would otherwise be used for receiver.
-        // On aarch64 it is never the case, since such implicit argument gets passed on x8.
-        // On x86_64 it is the case if the return value takes more than 16 bytes or is the structure with
-        // unaligned fields (there are some complicated exceptions currently ignored). The latter condition
-        // is "encoded" by stub generator by emitting either `getMessenger` or `getMessengerLU` intrinsic call.
-        val isStret = when (context.config.target) {
-            KonanTarget.MACOS_X64, KonanTarget.IOS_X64 -> isLU // x86_64
-            KonanTarget.IOS_ARM64 -> false // aarch64
-            // TODO: what is the correct value?
-            KonanTarget.IOS_ARM32 -> false // armv7
-            else -> TODO()
-        }
 
         val messengerNameSuffix = if (isStret) "_stret" else ""
 

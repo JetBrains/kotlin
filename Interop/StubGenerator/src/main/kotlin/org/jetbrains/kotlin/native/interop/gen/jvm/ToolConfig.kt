@@ -30,7 +30,7 @@ class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform) {
     private val platformManager = PlatformManager(distribution)
     private val targetManager = platformManager.targetManager(userProvidedTargetName)
     private val host = HostManager.host
-    private val target = targetManager.target
+    val target = targetManager.target
 
     private val platform = platformManager.platform(target)
 
