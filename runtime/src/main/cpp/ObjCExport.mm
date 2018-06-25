@@ -376,19 +376,11 @@ static ALWAYS_INLINE OBJ_GETTER(convertUnmappedObjCObject, id obj) {
 static OBJ_GETTER(blockToKotlinImp, id self, SEL cmd);
 static OBJ_GETTER(boxedBooleanToKotlinImp, NSNumber* self, SEL cmd);
 
-@interface NSObject (NSObjectToKotlin) <ConvertibleToKotlin>
-@end;
+static void checkLoadedOnce();
 
-@implementation NSObject (NSObjectToKotlin)
--(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
-  RETURN_RESULT_OF(convertUnmappedObjCObject, self);
-}
+static void initializeObjCExport() {
+  checkLoadedOnce();
 
--(void)releaseAsAssociatedObject {
-  objc_release(self);
-}
-
-+(void)load {
   SEL toKotlinSelector = @selector(toKotlin:);
   Method toKotlinMethod = class_getClassMethod([NSObject class], toKotlinSelector);
   RuntimeAssert(toKotlinMethod != nullptr, "");
@@ -407,6 +399,25 @@ static OBJ_GETTER(boxedBooleanToKotlinImp, NSNumber* self, SEL cmd);
 
   added = class_addMethod(booleanClass, toKotlinSelector, (IMP)boxedBooleanToKotlinImp, toKotlinTypeEncoding);
   RuntimeAssert(added, "Unable to add 'toKotlin:' method to __NSCFBoolean class");
+}
+
+@interface NSObject (NSObjectToKotlin) <ConvertibleToKotlin>
+@end;
+
+@implementation NSObject (NSObjectToKotlin)
+-(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+  RETURN_RESULT_OF(convertUnmappedObjCObject, self);
+}
+
+-(void)releaseAsAssociatedObject {
+  objc_release(self);
+}
+
++(void)load {
+  static dispatch_once_t onceToken = 0;
+  dispatch_once(&onceToken, ^{
+    initializeObjCExport();
+  });
 }
 @end;
 
@@ -988,7 +999,6 @@ extern "C" void Kotlin_ObjCExport_AbstractMethodCalled(id self, SEL selector) {
         class_getName(object_getClass(self)), sel_getName(selector)];
 }
 
-__attribute__((constructor))
 static void checkLoadedOnce() {
   Class marker = objc_allocateClassPair([NSObject class], "KotlinFrameworkLoadedOnceMarker", 0);
   if (marker == nullptr) {
