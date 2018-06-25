@@ -579,7 +579,8 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
     tailrec fun genReturnValueOnSuccess(returnBridge: MethodBridge.ReturnValue): LLVMValueRef? = when (returnBridge) {
         MethodBridge.ReturnValue.Void -> null
         MethodBridge.ReturnValue.HashCode -> {
-            zext(targetResult!!, if (codegen.context.is64Bit()) int64Type else int32Type)
+            val kotlinHashCode = targetResult!!
+            if (codegen.context.is64Bit()) zext(kotlinHashCode, int64Type) else kotlinHashCode
         }
         is MethodBridge.ReturnValue.Mapped -> kotlinToObjC(targetResult!!, returnBridge.bridge)
         MethodBridge.ReturnValue.WithError.Success -> Int8(1).llvm // true
@@ -683,7 +684,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                     val high = trunc(shr(targetResult, 32, signed = false), int32Type)
                     xor(low, high)
                 } else {
-                    trunc(targetResult, int32Type)
+                    targetResult
                 }
             }
 

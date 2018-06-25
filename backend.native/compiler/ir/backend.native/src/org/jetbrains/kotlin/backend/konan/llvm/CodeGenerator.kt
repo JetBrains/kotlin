@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
@@ -97,9 +98,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         return LLVMCreateLocation(LLVMGetModuleContext(context.llvmModule), locationInfo.line, locationInfo.line, locationInfo.scope)
     }
 
-    val objCDataGenerator = when (context.config.target) {
-        KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64,
-        KonanTarget.IOS_X64, KonanTarget.MACOS_X64 -> ObjCDataGenerator(this)
+    val objCDataGenerator = when (context.config.target.family) {
+        Family.IOS, Family.OSX -> ObjCDataGenerator(this)
         else -> null
     }
 

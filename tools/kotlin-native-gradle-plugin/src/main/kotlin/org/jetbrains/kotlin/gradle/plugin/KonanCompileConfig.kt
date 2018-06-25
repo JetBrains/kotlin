@@ -22,6 +22,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import java.io.File
@@ -126,7 +127,7 @@ open class KonanFramework(name: String,
         get() = project.konanBinBaseDir
 
     override fun targetIsSupported(target: KonanTarget): Boolean =
-        target == MACOS_X64 || target == IOS_ARM32 || target == IOS_ARM64 || target == IOS_X64
+        target.family == Family.OSX || target.family == Family.IOS
 }
 
 open class KonanLibrary(name: String,

@@ -164,10 +164,8 @@ internal class ObjCExport(val codegen: CodeGenerator) {
         """.trimIndent())
 
 
-        contents.append(when (target) {
-            KonanTarget.IOS_ARM32,
-            KonanTarget.IOS_ARM64,
-            KonanTarget.IOS_X64 -> """
+        contents.append(when (target.family) {
+            Family.IOS -> """
                 |    <key>MinimumOSVersion</key>
                 |    <string>$minimumOsVersion</string>
                 |    <key>UIDeviceFamily</key>
@@ -177,7 +175,7 @@ internal class ObjCExport(val codegen: CodeGenerator) {
                 |    </array>
 
                 """.trimMargin()
-            KonanTarget.MACOS_X64 -> ""
+            Family.OSX -> ""
             else -> error(target)
         })
 

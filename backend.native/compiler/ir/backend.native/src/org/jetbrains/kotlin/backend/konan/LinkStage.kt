@@ -186,9 +186,9 @@ internal class LinkStage(val context: Context) {
         } else {
             val framework = File(context.config.outputFile)
             val dylibName = framework.name.removeSuffix(".framework")
-            val dylibRelativePath = when (target) {
-                KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64, KonanTarget.IOS_X64 -> dylibName
-                KonanTarget.MACOS_X64 -> "Versions/A/$dylibName"
+            val dylibRelativePath = when (target.family) {
+                Family.IOS -> dylibName
+                Family.OSX -> "Versions/A/$dylibName"
                 else -> error(target)
             }
             frameworkLinkerArgs = listOf("-install_name", "@rpath/${framework.name}/$dylibRelativePath")
