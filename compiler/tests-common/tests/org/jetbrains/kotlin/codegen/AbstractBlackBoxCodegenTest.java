@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
@@ -87,7 +88,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         // If there are many files, the first 'box(): String' function will be executed.
         GeneratedClassLoader generatedClassLoader = generateAndCreateClassLoader();
         for (KtFile firstFile : myFiles.getPsiFiles()) {
-            String className = getFacadeFqName(firstFile);
+            String className = getFacadeFqName(firstFile, classFileFactory.getGenerationState().getBindingContext());
             if (className == null) continue;
             Class<?> aClass = getGeneratedClass(generatedClassLoader, className);
             try {
@@ -108,10 +109,9 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         fail("Can't find box method!");
     }
 
-
     @Nullable
-    private static String getFacadeFqName(@NotNull KtFile firstFile) {
-        for (KtDeclaration declaration : CodegenUtil.getActualDeclarations(firstFile)) {
+    private static String getFacadeFqName(@NotNull KtFile firstFile, @NotNull BindingContext bindingContext) {
+        for (KtDeclaration declaration : CodegenUtil.getDeclarationsToGenerate(firstFile, bindingContext)) {
             if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
                 return JvmFileClassUtil.getFileClassInfoNoResolve(firstFile).getFacadeClassFqName().asString();
             }
