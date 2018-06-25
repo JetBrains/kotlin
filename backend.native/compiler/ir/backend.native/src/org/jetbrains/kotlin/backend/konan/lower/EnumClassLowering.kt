@@ -271,6 +271,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                         val loweredArgument = loweredEnumConstructor.valueParameters[argument.loweredIndex()]
                         val body = irConstructor.getDefault(loweredArgument)!!.deepCopyWithVariables()
                         body.transformChildrenVoid(ParameterMapper(constructor))
+                        body.accept(SetDeclarationsParentVisitor, irConstructor)
                         constructor.putDefault(constructorDescriptor.valueParameters[loweredArgument.index], body)
                     }
                 }

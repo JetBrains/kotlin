@@ -774,6 +774,11 @@ task switchLowering(type: RunKonanTest) {
     source = "codegen/enum/switchLowering.kt"
 }
 
+task enum_lambdaInDefault(type: RunKonanTest) {
+    goldValue = "Q\n"
+    source = "codegen/enum/lambdaInDefault.kt"
+}
+
 task mangling(type: LinkKonanTest) {
     goldValue = 
         "Int direct [1, 2, 3, 4]\n" +
