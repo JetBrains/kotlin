@@ -25,4 +25,6 @@ class KotlinPlatformNativePlugin : KotlinPlatformImplementationPluginBase("nativ
             """.trimIndent())
         }
     }
+
+    override fun namedSourceSetsContainer(project: Project) = project.kotlinNativeSourceSets
 }
