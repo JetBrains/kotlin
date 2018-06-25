@@ -232,6 +232,7 @@ internal class IrSerializer(val context: Context,
             IrConstKind.Null        -> proto.`null` = true
             IrConstKind.Boolean     -> proto.boolean = value.value as Boolean
             IrConstKind.Byte        -> proto.byte = (value.value as Byte).toInt()
+            IrConstKind.Char        -> proto.char = (value.value as Char).toInt()
             IrConstKind.Short       -> proto.short = (value.value as Short).toInt()
             IrConstKind.Int         -> proto.int = value.value as Int
             IrConstKind.Long        -> proto.long = value.value as Long
@@ -1103,6 +1104,8 @@ internal class IrDeserializer(val context: Context,
                 -> IrConstImpl.boolean(start, end, type.ir, proto.boolean)
             BYTE
                 -> IrConstImpl.byte(start, end, type.ir, proto.byte.toByte())
+            CHAR
+                -> IrConstImpl.char(start, end, type.ir, proto.char.toChar())
             SHORT
                 -> IrConstImpl.short(start, end, type.ir, proto.short.toShort())
             INT
