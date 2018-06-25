@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class A {
     fun foo() {}
     fun bar(f: A.() -> Unit = {}) {}

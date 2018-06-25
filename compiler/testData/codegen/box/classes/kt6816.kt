@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 public class CalculatorConstants(
         val id: Long = 0,
         val detour: Double = 0.0,

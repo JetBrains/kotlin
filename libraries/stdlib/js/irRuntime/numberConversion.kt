@@ -19,6 +19,10 @@ fun numberToShort(a: dynamic): Short = toShort(numberToInt(a))
 fun toByte(a: dynamic): Byte = js("a << 24 >> 24").unsafeCast<Byte>()
 fun toShort(a: dynamic): Short = js("a << 16 >> 16").unsafeCast<Short>()
 
+fun numberToLong(a: dynamic): Long = fromNumber(a)
+
+fun toLong(a: dynamic): Long = fromInt(a)
+
 fun doubleToInt(a: dynamic) = js("""
     if (a > 2147483647) return 2147483647;
     if (a < -2147483648) return -2147483648;

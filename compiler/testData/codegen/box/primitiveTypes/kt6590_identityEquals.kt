@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val i: Int = 10000
     if (!(i === i)) return "Fail int ==="

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun Int.foo() = 239
 fun Long.bar() = 239.toLong()
 

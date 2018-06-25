@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class AByte(var value: Byte) {
     operator fun get(i: Int) = value
 
