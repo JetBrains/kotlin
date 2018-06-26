@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.quickfix.KotlinAddRequiredModuleFix
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.findFirstPsiJavaModule
+import org.jetbrains.kotlin.idea.util.isDev
+import org.jetbrains.kotlin.idea.util.isEap
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.util.projectStructure.version
@@ -282,14 +284,6 @@ fun hasKotlinFilesOnlyInTests(module: Module): Boolean {
 
 fun hasKotlinFilesInSources(module: Module): Boolean {
     return FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(false))
-}
-
-fun isEap(version: String): Boolean {
-    return version.contains("rc") || version.contains("eap") || version.contains("-M")
-}
-
-fun isDev(version: String): Boolean {
-    return version.contains("dev")
 }
 
 private class LibraryKindSearchScope(val module: Module,
