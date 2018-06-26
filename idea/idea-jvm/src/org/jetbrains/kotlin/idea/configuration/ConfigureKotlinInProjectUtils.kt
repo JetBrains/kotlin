@@ -49,33 +49,35 @@ data class RepositoryDescription(val id: String, val name: String, val url: Stri
 const val LAST_SNAPSHOT_VERSION = "1.2-SNAPSHOT"
 
 val SNAPSHOT_REPOSITORY = RepositoryDescription(
-        "sonatype.oss.snapshots",
-        "Sonatype OSS Snapshot Repository",
-        "http://oss.sonatype.org/content/repositories/snapshots",
-        null,
-        isSnapshot = true)
+    "sonatype.oss.snapshots",
+    "Sonatype OSS Snapshot Repository",
+    "http://oss.sonatype.org/content/repositories/snapshots",
+    null,
+    isSnapshot = true
+)
 
 val EAP_REPOSITORY = RepositoryDescription(
-        "bintray.kotlin.eap",
-        "Bintray Kotlin EAP Repository",
-        "http://dl.bintray.com/kotlin/kotlin-eap",
-        "https://bintray.com/kotlin/kotlin-eap/kotlin/",
-        isSnapshot = false)
+    "bintray.kotlin.eap",
+    "Bintray Kotlin EAP Repository",
+    "http://dl.bintray.com/kotlin/kotlin-eap",
+    "https://bintray.com/kotlin/kotlin-eap/kotlin/",
+    isSnapshot = false
+)
 
 val DEFAULT_GRADLE_PLUGIN_REPOSITORY = RepositoryDescription(
-        "default.gradle.plugins",
-        "Default Gradle Plugin Repository",
-        "https://plugins.gradle.org/m2/",
-        null,
-        isSnapshot = false
+    "default.gradle.plugins",
+    "Default Gradle Plugin Repository",
+    "https://plugins.gradle.org/m2/",
+    null,
+    isSnapshot = false
 )
 
 fun devRepository(version: String) = RepositoryDescription(
-        "teamcity.kotlin.dev",
-        "Teamcity Repository of Kotlin Development Builds",
-        "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:$version,branch:default:any/artifacts/content/maven/",
-        null,
-        isSnapshot = false
+    "teamcity.kotlin.dev",
+    "Teamcity Repository of Kotlin Development Builds",
+    "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:$version,branch:default:any/artifacts/content/maven/",
+    null,
+    isSnapshot = false
 )
 
 val MAVEN_CENTRAL = "mavenCentral()"
@@ -85,7 +87,7 @@ val JCENTER = "jcenter()"
 val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
 
 fun isRepositoryConfigured(repositoriesBlockText: String): Boolean =
-        repositoriesBlockText.contains(MAVEN_CENTRAL) || repositoriesBlockText.contains(JCENTER)
+    repositoriesBlockText.contains(MAVEN_CENTRAL) || repositoriesBlockText.contains(JCENTER)
 
 fun DependencyScope.toGradleCompileScope(isAndroidModule: Boolean) = when (this) {
     DependencyScope.COMPILE -> "compile"
@@ -119,17 +121,19 @@ fun isModuleConfigured(moduleSourceRootGroup: ModuleSourceRootGroup): Boolean {
  */
 fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
     if (!runReadAction {
-        !project.isDisposed && FileTypeIndex.containsFileOfType (KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))
-    }) {
+            !project.isDisposed &&
+                    FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))
+        }) {
         return emptyList()
     }
 
     return project.allModules()
-            .filter { module ->
-                runReadAction {
-                    !project.isDisposed && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
-                }
+        .filter { module ->
+            runReadAction {
+                !project.isDisposed &&
+                        FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
             }
+        }
 }
 
 /**
@@ -195,13 +199,13 @@ fun allConfigurators() = Extensions.getExtensions(KotlinProjectConfigurator.EP_N
 
 fun getCanBeConfiguredModules(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
     return ModuleSourceRootMap(project).groupByBaseModules(project.allModules())
-            .filter { configurator.canConfigure(it) }
-            .map { it.baseModule }
+        .filter { configurator.canConfigure(it) }
+        .map { it.baseModule }
 }
 
 private fun KotlinProjectConfigurator.canConfigure(moduleSourceRootGroup: ModuleSourceRootGroup) =
-        getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED &&
-        (allConfigurators().toList() - this).none { it.getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CONFIGURED }
+    getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED &&
+            (allConfigurators().toList() - this).none { it.getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CONFIGURED }
 
 /**
  * Returns a list of modules which contain sources in Kotlin and for which it's possible to run the given configurator.
@@ -238,7 +242,10 @@ fun getConfigurationPossibilitiesForConfigureNotification(
                 ConfigureKotlinStatus.CONFIGURED -> moduleAlreadyConfigured = true
             }
         }
-        if (moduleCanBeConfigured && !moduleAlreadyConfigured && !SuppressNotificationState.isKotlinNotConfiguredSuppressed(moduleSourceRootGroup))
+        if (moduleCanBeConfigured && !moduleAlreadyConfigured && !SuppressNotificationState.isKotlinNotConfiguredSuppressed(
+                moduleSourceRootGroup
+            )
+        )
             configurableModules.add(moduleSourceRootGroup)
     }
 
@@ -248,15 +255,15 @@ fun getConfigurationPossibilitiesForConfigureNotification(
 fun findApplicableConfigurator(module: Module): KotlinProjectConfigurator {
     val moduleGroup = module.toModuleGroup()
     return allConfigurators().find { it.getStatus(moduleGroup) != ConfigureKotlinStatus.NON_APPLICABLE }
-           ?: KotlinJavaModuleConfigurator.instance
+        ?: KotlinJavaModuleConfigurator.instance
 }
 
 fun hasAnyKotlinRuntimeInScope(module: Module): Boolean {
     return runReadAction {
         val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
         getKotlinJvmRuntimeMarkerClass(module.project, scope) != null ||
-        hasKotlinJsKjsmFile(module.project, LibraryKindSearchScope(module, scope, JSLibraryKind) ) ||
-        hasKotlinCommonRuntimeInScope(scope)
+                hasKotlinJsKjsmFile(module.project, LibraryKindSearchScope(module, scope, JSLibraryKind)) ||
+                hasKotlinCommonRuntimeInScope(scope)
     }
 }
 
@@ -286,9 +293,10 @@ fun hasKotlinFilesInSources(module: Module): Boolean {
     return FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(false))
 }
 
-private class LibraryKindSearchScope(val module: Module,
-                                     val baseScope: GlobalSearchScope,
-                                     val libraryKind: PersistentLibraryKind<*>
+private class LibraryKindSearchScope(
+    val module: Module,
+    val baseScope: GlobalSearchScope,
+    val libraryKind: PersistentLibraryKind<*>
 ) : DelegatingGlobalSearchScope(baseScope) {
     override fun contains(file: VirtualFile): Boolean {
         if (!super.contains(file)) return false
