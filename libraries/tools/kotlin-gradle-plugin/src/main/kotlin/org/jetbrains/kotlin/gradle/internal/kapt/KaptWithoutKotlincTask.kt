@@ -25,10 +25,6 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
     val kaptJars: Collection<File>
         get() = project.configurations.getByName(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).resolve()
 
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    lateinit var projectDir: File
-
     @get:Input
     var isVerbose: Boolean = false
 
@@ -51,7 +47,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
         clearOutputDirectories()
 
         val paths = KaptPathsForWorker(
-            projectDir,
+            project.projectDir,
             classpath.files.toList(),
             kaptClasspath.files.toList(),
             javaSourceRoots.toList(),
