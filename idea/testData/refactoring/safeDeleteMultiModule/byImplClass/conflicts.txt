@@ -1,1 +1,1 @@
-class test.Foo has 1 usage that is not safe to delete.
+class test.Foo has 3 usages that are not safe to delete.
