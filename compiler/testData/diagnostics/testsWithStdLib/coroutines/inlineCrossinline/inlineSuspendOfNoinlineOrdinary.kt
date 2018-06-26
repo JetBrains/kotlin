@@ -1,14 +1,10 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE
 // COMMON_COROUTINES_TEST
 // SKIP_TXT
+// WITH_COROUTINES
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
-
-open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
-    companion object : EmptyContinuation()
-    override fun resume(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>data<!>: Any?) {}
-    override fun resumeWithException(exception: Throwable) { throw exception }
-}
+import helpers.*
 
 // Function is suspend
 // parameter is noinline

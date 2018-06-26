@@ -1,8 +1,10 @@
 // FILE: test.kt
 // COMMON_COROUTINES_TEST
 // WITH_RUNTIME
+// WITH_COROUTINES
 
 import COROUTINES_PACKAGE.*
+import helpers.*
 
 // Block is allowed to be called from nested classes/lambdas (as common crossinlines)
 // Are suspend calls possible inside lambda matching to the parameter
@@ -14,17 +16,6 @@ suspend inline fun test1(noinline c: suspend () -> Unit)  {
     builder { l() }
 }
 
-object EmptyContinuation: Continuation<Unit> {
-    override val context: CoroutineContext
-        get() = EmptyCoroutineContext
-
-    override fun resume(value: Unit) {
-    }
-
-    override fun resumeWithException(exception: Throwable) {
-        throw exception
-    }
-}
 
 suspend inline fun test2(noinline c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
@@ -55,6 +46,7 @@ suspend inline fun test4(noinline c: suspend () -> Unit) {
 // COMMON_COROUTINES_TEST
 
 import COROUTINES_PACKAGE.*
+import helpers.*
 
 suspend fun calculate() = "OK"
 
