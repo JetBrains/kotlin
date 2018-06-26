@@ -969,7 +969,7 @@ private class ConstantExpressionEvaluatorVisitor(
 }
 
 private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
-private fun hasUnsignedSuffix(text: String) = text.endsWith('u')
+private fun hasUnsignedSuffix(text: String) = text.endsWith('u') || text.endsWith('U')
 
 private fun parseNumericLiteral(text: String, type: IElementType): Any? {
     val canonicalText = LiteralFormatUtil.removeUnderscores(text)

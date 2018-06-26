@@ -105,5 +105,75 @@ KtFile: UnsignedLiteral.kt
               PsiElement(IDENTIFIER)('u')
             PsiErrorElement:Expecting an element
               <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1U')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('0xFU')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1u')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('U')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1U')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1L')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('u')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1L')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('U')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1u')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('L')
+            PsiErrorElement:Expecting an element
+              <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1U')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('L')
+            PsiErrorElement:Expecting an element
+              <empty list>
         PsiWhiteSpace('\n')
         PsiElement(RPAR)(')')

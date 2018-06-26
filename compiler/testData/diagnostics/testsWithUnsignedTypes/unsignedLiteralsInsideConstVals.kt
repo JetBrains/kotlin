@@ -6,3 +6,6 @@ const val u1: UByte = 2u
 const val u2: UShort = 3u
 const val u3: UInt = 3u
 const val u4: ULong = 4u
+
+const val u5 = 1U
+const val u6: UByte = 0xFFU
