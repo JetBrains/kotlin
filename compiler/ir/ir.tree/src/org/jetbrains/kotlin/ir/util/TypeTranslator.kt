@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
@@ -21,12 +20,11 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 
 class TypeTranslator(
-    moduleDescriptor: ModuleDescriptor,
     private val symbolTable: SymbolTable
 ) {
 
     private val typeParametersResolver = ScopedTypeParametersResolver()
-    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, typeParametersResolver)
+    lateinit var constantValueGenerator: ConstantValueGenerator
 
     fun enterScope(irElement: IrTypeParametersContainer) {
         typeParametersResolver.enterTypeParameterScope(irElement)

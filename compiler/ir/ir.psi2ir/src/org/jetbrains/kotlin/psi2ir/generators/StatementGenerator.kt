@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -56,7 +54,7 @@ class StatementGenerator(
 
     val scopeOwner: DeclarationDescriptor get() = bodyGenerator.scopeOwner
 
-    private val typeTranslator = TypeTranslator(context.moduleDescriptor, context.symbolTable)
+    private val typeTranslator = context.typeTranslator
 
     fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
@@ -222,7 +220,7 @@ class StatementGenerator(
         )
 
     fun generateConstantExpression(expression: KtExpression, constant: CompileTimeConstant<*>): IrExpression =
-        ConstantValueGenerator(context.moduleDescriptor, context.symbolTable, null).generateConstantValueAsExpression(
+        context.constantValueGenerator.generateConstantValueAsExpression(
             expression.startOffset,
             expression.endOffset,
             constant.toConstantValue(getInferredTypeWithImplicitCastsOrFail(expression))

@@ -3,9 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.util
+package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
@@ -13,16 +12,13 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.types.KotlinType
 
 class AnnotationGenerator(
-    moduleDescriptor: ModuleDescriptor,
-    symbolTable: SymbolTable
+    context: GeneratorContext
 ) : IrElementVisitorVoid {
 
-    private val typeTranslator = TypeTranslator(moduleDescriptor, symbolTable)
-    private val scopedTypeParameterResolver = ScopedTypeParametersResolver()
-    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, scopedTypeParameterResolver)
+    private val typeTranslator = context.typeTranslator
+    private val constantValueGenerator = context.constantValueGenerator
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -30,12 +26,12 @@ class AnnotationGenerator(
 
     override fun visitDeclaration(declaration: IrDeclaration) {
         if (declaration is IrTypeParametersContainer) {
-            scopedTypeParameterResolver.enterTypeParameterScope(declaration)
+            typeTranslator.enterScope(declaration)
         }
         generateAnnotationsForDeclaration(declaration)
         visitElement(declaration)
         if (declaration is IrTypeParametersContainer) {
-            scopedTypeParameterResolver.leaveTypeParameterScope()
+            typeTranslator.leaveScope()
         }
     }
 
@@ -67,8 +63,6 @@ class AnnotationGenerator(
             constantValueGenerator.generateAnnotationConstructorCall(it.annotation)
         }
     }
-
-    private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     private fun isAnnotationTargetMatchingDeclaration(target: AnnotationUseSiteTarget?, element: IrElement): Boolean =
         when (element) {

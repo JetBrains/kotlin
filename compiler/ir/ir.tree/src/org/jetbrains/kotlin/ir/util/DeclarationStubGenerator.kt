@@ -36,7 +36,13 @@ class DeclarationStubGenerator(
     val symbolTable: SymbolTable,
     val origin: IrDeclarationOrigin
 ) {
-    private val typeTranslator = TypeTranslator(moduleDescriptor, symbolTable)
+    private val typeTranslator = TypeTranslator(symbolTable)
+    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
+
+    init {
+        typeTranslator.constantValueGenerator = constantValueGenerator
+        constantValueGenerator.typeTranslator = typeTranslator
+    }
 
     fun generateEmptyModuleFragmentStub(descriptor: ModuleDescriptor, irBuiltIns: IrBuiltIns): IrModuleFragment =
         IrModuleFragmentImpl(descriptor, irBuiltIns)

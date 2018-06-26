@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -40,7 +39,7 @@ class BodyGenerator(
 
     val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
 
-    private val typeTranslator = TypeTranslator(context.moduleDescriptor, context.symbolTable)
+    private val typeTranslator = context.typeTranslator
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     override val scope = Scope(scopeOwnerSymbol)

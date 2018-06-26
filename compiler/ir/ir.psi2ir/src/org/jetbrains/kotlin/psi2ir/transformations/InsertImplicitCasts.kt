@@ -19,13 +19,15 @@ package org.jetbrains.kotlin.psi2ir.transformations
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
@@ -45,9 +47,8 @@ class InsertImplicitCasts(context: GeneratorContext) : IrElementTransformerVoid(
 
     private val builtIns = context.builtIns
     private val irBuiltIns = context.irBuiltIns
-    private val symbolTable = context.symbolTable
 
-    private val typeTranslator = TypeTranslator(context.moduleDescriptor, symbolTable)
+    private val typeTranslator = context.typeTranslator
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     override fun visitCallableReference(expression: IrCallableReference): IrExpression =

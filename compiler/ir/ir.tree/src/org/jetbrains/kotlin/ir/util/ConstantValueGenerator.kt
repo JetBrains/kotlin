@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.*
@@ -24,11 +24,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ConstantValueGenerator(
     private val moduleDescriptor: ModuleDescriptor,
-    private val symbolTable: SymbolTable,
-    private val scopedTypeParameterResolver: ScopedTypeParametersResolver?
+    private val symbolTable: SymbolTable
 ) {
 
-    private val typeTranslator = TypeTranslator(moduleDescriptor, symbolTable)
+    lateinit var typeTranslator: TypeTranslator
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
@@ -90,14 +89,10 @@ class ConstantValueGenerator(
                 val classifierDescriptor = classifierKtType.constructor.declarationDescriptor
                         ?: throw AssertionError("Unexpected KClassValue: $classifierKtType")
 
-                val typeParameterSymbol = classifierDescriptor.safeAs<TypeParameterDescriptor>()?.let {
-                    scopedTypeParameterResolver?.resolveScopedTypeParameter(it)
-                }
-
                 IrClassReferenceImpl(
                     startOffset, endOffset,
                     constantValue.getType(moduleDescriptor).toIrType(),
-                    typeParameterSymbol ?: symbolTable.referenceClassifier(classifierDescriptor),
+                    classifierDescriptor.defaultType.toIrType().classifierOrFail,
                     classifierKtType.toIrType()
                 )
             }

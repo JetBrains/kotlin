@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -32,7 +34,18 @@ class GeneratorContext(
     val moduleDescriptor: ModuleDescriptor,
     val bindingContext: BindingContext,
     val symbolTable: SymbolTable = SymbolTable()
-) : IrGeneratorContext(IrBuiltIns(moduleDescriptor.builtIns, symbolTable)) {
+) : IrGeneratorContext() {
+
+    val constantValueGenerator: ConstantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
+    val typeTranslator: TypeTranslator = TypeTranslator(symbolTable)
+
+    init {
+        typeTranslator.constantValueGenerator = constantValueGenerator
+        constantValueGenerator.typeTranslator = typeTranslator
+    }
+
+    override val irBuiltIns: IrBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+
     val sourceManager = PsiSourceManager()
 
     // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
