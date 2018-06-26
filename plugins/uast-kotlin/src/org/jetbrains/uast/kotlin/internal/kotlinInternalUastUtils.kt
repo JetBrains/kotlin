@@ -18,6 +18,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.TypeInfo
@@ -58,7 +59,7 @@ import java.text.StringCharacterIterator
 internal val KOTLIN_CACHED_UELEMENT_KEY = Key.create<WeakReference<UElement>>("cached-kotlin-uelement")
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun String?.orAnonymous(kind: String = ""): String = this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
+internal inline fun String?.orAnonymous(kind: String = ""): String = this ?: "<anonymous"+(if (kind.isNotBlank()) " $kind" else "")+">"
 
 internal fun DeclarationDescriptor.toSource(): PsiElement? {
     return try {
@@ -66,8 +67,9 @@ internal fun DeclarationDescriptor.toSource(): PsiElement? {
             .asSequence()
             .mapNotNull { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
             .firstOrNull()
-    }
-    catch (e: Exception) {
+    } catch (e: ProcessCanceledException) {
+        throw e
+    } catch (e: Exception) {
         Logger.getInstance("DeclarationDescriptor.toSource").error(e)
         null
     }
@@ -116,15 +118,15 @@ private fun resolveDeserialized(context: KtElement, descriptor: DeclarationDescr
     return when (proto) {
         is ProtoBuf.Function -> {
             val signature = JvmProtoBufUtil.getJvmMethodSignature(proto, nameResolver, typeTable)
-                    ?: getMethodSignatureFromDescriptor(context, descriptor)
-                    ?: return null
+                ?: getMethodSignatureFromDescriptor(context, descriptor)
+                ?: return null
 
             psiClass.methods.firstOrNull { it.name == signature.name && it.matchesDesc(signature.desc) }
         }
         is ProtoBuf.Constructor -> {
             val signature = JvmProtoBufUtil.getJvmConstructorSignature(proto, nameResolver, typeTable)
-                    ?: getMethodSignatureFromDescriptor(context, descriptor)
-                    ?: return null
+                ?: getMethodSignatureFromDescriptor(context, descriptor)
+                ?: return null
 
             psiClass.constructors.firstOrNull { it.matchesDesc(signature.desc) }
         }
@@ -274,7 +276,7 @@ internal fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
 }
 
 internal fun KtElement.analyze(): BindingContext {
-    if(containingFile !is KtFile) return BindingContext.EMPTY // EA-114080, EA-113475
+    if (containingFile !is KtFile) return BindingContext.EMPTY // EA-114080, EA-113475
     return ServiceManager.getService(project, KotlinUastBindingContextProviderService::class.java)
         ?.getBindingContext(this) ?: BindingContext.EMPTY
 }
@@ -294,7 +296,7 @@ internal fun KotlinType.getFunctionalInterfaceType(source: UElement, element: Kt
 
 internal fun KotlinULambdaExpression.getFunctionalInterfaceType(): PsiType? {
     val parent = psi.parent
-    return when(parent) {
+    return when (parent) {
         is KtBinaryExpressionWithTypeRHS -> parent.right?.getType()?.getFunctionalInterfaceType(this, psi)
         else -> psi.getExpectedType()?.getFunctionalInterfaceType(this, psi)
     }
