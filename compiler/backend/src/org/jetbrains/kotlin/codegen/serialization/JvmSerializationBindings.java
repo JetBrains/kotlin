@@ -38,7 +38,7 @@ public final class JvmSerializationBindings {
     public static final SerializationMappingSlice<PropertyDescriptor, Boolean> FIELD_MOVED_FROM_INTERFACE_COMPANION =
             SerializationMappingSlice.create();
 
-    private static final class SerializationMappingSlice<K, V> extends BasicWritableSlice<K, V> {
+    static final class SerializationMappingSlice<K, V> extends BasicWritableSlice<K, V> {
         public SerializationMappingSlice() {
             super(Slices.ONLY_REWRITE_TO_EQUAL, false);
         }
