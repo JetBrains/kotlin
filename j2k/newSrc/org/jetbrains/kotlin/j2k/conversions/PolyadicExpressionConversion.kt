@@ -18,7 +18,7 @@ class PolyadicExpressionConversion : RecursiveApplicableConversionBase() {
             convertPolyadic(element.operands.also { element.operands = emptyList() }, element.tokens)
         else
             element).also {
-            recurse(element)
+            recurse(it)
         }
     }
 
