@@ -1,6 +1,7 @@
 // FILE: inlined.kt
 // COMMON_COROUTINES_TEST
 // WITH_RUNTIME
+// WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 
 interface SuspendRunnable {
@@ -26,19 +27,10 @@ suspend inline fun crossinlineMe(crossinline c1: suspend () -> Unit, crossinline
 
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
+import helpers.*
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(object: Continuation<Unit> {
-        override val context: CoroutineContext
-            get() = EmptyCoroutineContext
-
-        override fun resume(value: Unit) {
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            throw exception
-        }
-    })
+    c.startCoroutine(EmptyContinuation)
 }
 
 var i = 0;
