@@ -1,8 +1,10 @@
 // FILE: test.kt
 // COMMON_COROUTINES_TEST
 // WITH_RUNTIME
+// WITH_COROUTINES
 
 import COROUTINES_PACKAGE.*
+import helpers.*
 
 // Block is allowed to be called inside the body of owner inline function
 // Block is allowed to be called from nested classes/lambdas (as common crossinlines)
@@ -30,23 +32,14 @@ inline fun transform(crossinline c: suspend () -> Unit) {
 }
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(object: Continuation<Unit> {
-        override val context: CoroutineContext
-            get() = EmptyCoroutineContext
-
-        override fun resume(value: Unit) {
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            throw exception
-        }
-    })
+    c.startCoroutine(EmptyContinuation)
 }
 
 // FILE: box.kt
 // COMMON_COROUTINES_TEST
 
 import COROUTINES_PACKAGE.*
+import helpers.*
 
 fun box() : String {
     var res = "FAIL 1"

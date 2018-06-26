@@ -1,8 +1,10 @@
 // FILE: test.kt
 // COMMON_COROUTINES_TEST
 // WITH_RUNTIME
+// WITH_COROUTINES
 
 import COROUTINES_PACKAGE.*
+import helpers.*
 
 inline suspend fun foo(crossinline a: suspend () -> Unit, crossinline b: suspend () -> Unit) {
     var x = "OK"
@@ -15,17 +17,7 @@ inline suspend fun bar(crossinline l: suspend () -> Unit) {
 }
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(object: Continuation<Unit> {
-        override val context: CoroutineContext
-            get() = EmptyCoroutineContext
-
-        override fun resume(value: Unit) {
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            throw exception
-        }
-    })
+    c.startCoroutine(EmptyContinuation)
 }
 
 // FILE: box.kt
