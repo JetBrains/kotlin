@@ -28,52 +28,52 @@ import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 import org.jetbrains.uast.*
 
 class KotlinUObjectLiteralExpression(
-        override val psi: KtObjectLiteralExpression,
-        givenParent: UElement?
+    override val psi: KtObjectLiteralExpression,
+    givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UObjectLiteralExpression, KotlinUElementWithType {
     override val declaration: UClass by lz {
         val lightClass: KtLightClass? = psi.objectDeclaration.toLightClass()
         if (lightClass != null) {
             getLanguagePlugin().convert<UClass>(lightClass, this)
-        }
-        else {
+        } else {
             logger.error(
-                    "Failed to create light class for object declaration",
-                    Attachment(psi.containingFile.virtualFile?.path ?: "<no path>", psi.containingFile.text))
+                "Failed to create light class for object declaration",
+                Attachment(psi.containingFile.virtualFile?.path ?: "<no path>", psi.containingFile.text)
+            )
 
             getLanguagePlugin().convert(LightPsiClassBuilder(psi, "<unnamed>"), this)
         }
     }
-    
+
     override fun getExpressionType() = psi.objectDeclaration.toPsiType()
 
     private val superClassConstructorCall by lz {
         psi.objectDeclaration.superTypeListEntries.firstOrNull { it is KtSuperTypeCallEntry } as? KtSuperTypeCallEntry
     }
-    
+
     override val classReference: UReferenceExpression? by lz { superClassConstructorCall?.let { ObjectLiteralClassReference(it, this) } }
-    
+
     override val valueArgumentCount: Int
         get() = superClassConstructorCall?.valueArguments?.size ?: 0
 
     override val valueArguments by lz {
         val psi = superClassConstructorCall ?: return@lz emptyList<UExpression>()
-        psi.valueArguments.map { KotlinConverter.convertOrEmpty(it.getArgumentExpression(), this) } 
+        psi.valueArguments.map { KotlinConverter.convertOrEmpty(it.getArgumentExpression(), this) }
     }
-    
+
     override val typeArgumentCount: Int
         get() = superClassConstructorCall?.typeArguments?.size ?: 0
 
     override val typeArguments by lz {
         val psi = superClassConstructorCall ?: return@lz emptyList<PsiType>()
-        psi.typeArguments.map { it.typeReference.toPsiType(this, boxed = true) } 
+        psi.typeArguments.map { it.typeReference.toPsiType(this, boxed = true) }
     }
 
     override fun resolve() = superClassConstructorCall?.resolveCallToDeclaration(this) as? PsiMethod
-    
+
     private class ObjectLiteralClassReference(
-            override val psi: KtSuperTypeCallEntry,
-            givenParent: UElement?
+        override val psi: KtSuperTypeCallEntry,
+        givenParent: UElement?
     ) : KotlinAbstractUElement(givenParent), USimpleNameReferenceExpression {
 
         override val javaPsi = null
@@ -86,7 +86,7 @@ class KotlinUObjectLiteralExpression(
 
         override val resolvedName: String?
             get() = identifier
-        
+
         override val identifier: String
             get() = psi.name ?: "<error>"
     }
