@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 import org.jetbrains.kotlin.idea.configuration.RepositoryDescription;
+import org.jetbrains.kotlin.idea.util.VersioningKt;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
 
 import javax.swing.*;
@@ -222,7 +223,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
         Collections.sort(versions, VersionComparatorUtil.COMPARATOR.reversed());
 
         // Handle the case when the new version has just been released and the Maven search index hasn't been updated yet
-        if (!ConfigureKotlinInProjectUtilsKt.isEap(bundledRuntimeVersion) && !KotlinPluginUtil.isSnapshotVersion() &&
+        if (!VersioningKt.isEap(bundledRuntimeVersion) && !KotlinPluginUtil.isSnapshotVersion() &&
             !bundledRuntimeVersion.contains("dev") && !versions.contains(bundledRuntimeVersion)) {
             versions.add(0, bundledRuntimeVersion);
         }
