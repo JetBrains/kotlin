@@ -1,5 +1,6 @@
 // FILE: inlined.kt
 // WITH_RUNTIME
+// WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 
 import kotlin.coroutines.experimental.*
@@ -32,7 +33,7 @@ import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
-    val continuation = object: Continuation<Unit> {
+    val continuation = object: ContinuationAdapter<Unit> {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 

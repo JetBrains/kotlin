@@ -32,7 +32,7 @@ abstract class ContinuationDispatcher : AbstractCoroutineContextElement(Continua
 private class DispatchedContinuation<T>(
         val dispatcher: ContinuationDispatcher,
         val continuation: Continuation<T>
-): Continuation<T> {
+): ContinuationAdapter() {
     override val context: CoroutineContext = continuation.context
 
     override fun resume(value: T) {
