@@ -13369,6 +13369,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/objects/companionObjectAccess/privateCompanionObjectAccessedFromAnonymousObjectInNestedClass.kt");
             }
 
+            @TestMetadata("privateCompanionObjectAccessedFromInitBlock.kt")
+            public void testPrivateCompanionObjectAccessedFromInitBlock() throws Exception {
+                runTest("compiler/testData/codegen/box/objects/companionObjectAccess/privateCompanionObjectAccessedFromInitBlock.kt");
+            }
+
+            @TestMetadata("privateCompanionObjectAccessedFromInitBlockOfNestedClass.kt")
+            public void testPrivateCompanionObjectAccessedFromInitBlockOfNestedClass() throws Exception {
+                runTest("compiler/testData/codegen/box/objects/companionObjectAccess/privateCompanionObjectAccessedFromInitBlockOfNestedClass.kt");
+            }
+
             @TestMetadata("privateCompanionObjectAccessedFromInlineLambdaInNestedClass.kt")
             public void testPrivateCompanionObjectAccessedFromInlineLambdaInNestedClass() throws Exception {
                 runTest("compiler/testData/codegen/box/objects/companionObjectAccess/privateCompanionObjectAccessedFromInlineLambdaInNestedClass.kt");

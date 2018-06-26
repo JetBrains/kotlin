@@ -2651,12 +2651,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 "Containing declaration of the companion object " + companionObjectDescriptor +
                 ": expected a class, actual: " + hostClassDescriptor;
 
-        CodegenContext hostClassContext = context;
-        while (hostClassContext.getContextDescriptor() != hostClassDescriptor) {
-            hostClassContext = hostClassContext.getParentContext();
-            assert hostClassContext != null :
-                    "Host class context for " + hostClassDescriptor + " not found in context hierarchy for " + context;
-        }
+        CodegenContext hostClassContext = context.findParentContextWithDescriptor(hostClassDescriptor);
+        assert hostClassContext != null :
+                "Host class context for " + hostClassDescriptor + " not found in context hierarchy for " + context;
 
         hostClassContext.markCompanionObjectDescriptorWithAccessorRequired(companionObjectDescriptor);
 

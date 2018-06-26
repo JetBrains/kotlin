@@ -159,6 +159,10 @@ public class JvmCodegenUtil {
             return true;
         }
 
+        if (isDebuggerContext(contextBeforeInline)) {
+            return true;
+        }
+
         CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
         if (context.isInlineMethodContext()) {
             // Inline method can be called from a nested class.
