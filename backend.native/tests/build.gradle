@@ -2463,6 +2463,12 @@ task serialized_enum_ordinal(type: LinkKonanTest) {
     goldValue = "0\n1\n2\nb\n"
 }
 
+task serialized_char_constant(type: LinkKonanTest) {
+    source = "serialization/use_char_const.kt"
+    lib = "serialization/char_const.kt"
+    goldValue = "Ы\n"
+}
+
 task testing_annotations(type: RunStandaloneKonanTest) {
     source = "testing/annotations.kt"
     flags = ['-tr']
