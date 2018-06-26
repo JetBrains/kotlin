@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir2cfg.graph.ControlFlowGraph
@@ -66,7 +67,8 @@ class FunctionGenerator(val function: IrFunction) {
             return result
         }
 
-        private fun IrElement?.isNothing() = this is IrExpression && KotlinBuiltIns.isNothing(type)
+        private fun IrElement?.isNothing() =
+            this is IrExpression && KotlinBuiltIns.isNothing(type.originalKotlinType!!) // TODO
 
         override fun visitBlockBody(body: IrBlockBody, data: Boolean): IrStatement? {
             return body.process()
@@ -81,8 +83,7 @@ class FunctionGenerator(val function: IrFunction) {
             return if (data) {
                 builder.add(declaration)
                 declaration
-            }
-            else null
+            } else null
         }
 
         override fun visitReturn(expression: IrReturn, data: Boolean): IrStatement? {
@@ -121,8 +122,7 @@ class FunctionGenerator(val function: IrFunction) {
                 builder.move(branch.condition)
                 if (!result.process().isNothing()) {
                     builder.jump(whenExit)
-                }
-                else {
+                } else {
                     builder.move(branch.condition)
                 }
             }
