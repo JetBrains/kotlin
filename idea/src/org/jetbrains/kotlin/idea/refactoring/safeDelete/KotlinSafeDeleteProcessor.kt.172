@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.idea.refactoring.isTrueJavaMethod
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
+import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.liftToExpected
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -92,7 +94,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             return elementsToSearch.asSequence().flatMap {
                 val searchParameters = KotlinReferencesSearchParameters(
                         it,
-                        it.useScope,
+                        if (it.hasActualModifier()) it.project.projectScope() else it.useScope,
                         kotlinOptions = KotlinReferencesSearchOptions(acceptCallableOverrides = true)
                 )
                 ReferencesSearch.search(searchParameters)
@@ -251,14 +253,18 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             }
 
             is KtSecondaryConstructor -> {
-                element.getRepresentativeLightMethod()?.let { method ->
-                    findDelegationCallUsages(method)
-                    findUsagesByJavaProcessor(method, false)
-                } ?: findKotlinDeclarationUsages(element)
+                if (element.hasActualModifier()) {
+                    findKotlinDeclarationUsages(element)
+                } else {
+                    element.getRepresentativeLightMethod()?.let { method ->
+                        findDelegationCallUsages(method)
+                        findUsagesByJavaProcessor(method, false)
+                    } ?: findKotlinDeclarationUsages(element)
+                }
             }
 
             is KtNamedFunction -> {
-                if (element.isLocal) {
+                if (element.isLocal || element.hasActualModifier()) {
                     findKotlinDeclarationUsages(element)
                 }
                 else {
@@ -281,7 +287,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             }
 
             is KtProperty -> {
-                if (element.isLocal) {
+                if (element.isLocal || element.hasActualModifier()) {
                     findKotlinDeclarationUsages(element)
                 }
                 else {

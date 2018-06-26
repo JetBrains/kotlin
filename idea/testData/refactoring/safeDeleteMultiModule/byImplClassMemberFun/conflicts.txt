@@ -1,1 +1,1 @@
-function Foo.foo(Int) has 2 usages that are not safe to delete.
+function Foo.foo(Int) has 3 usages that are not safe to delete.
