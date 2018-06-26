@@ -146,7 +146,7 @@ internal class KonanLower(val context: Context) {
             CompileTimeEvaluateLowering(context).lower(irFile)
         }
         phaser.phase(KonanPhase.LOWER_COROUTINES) {
-            SuspendFunctionsLowering(context).runOnFilePostfix(irFile)
+            SuspendFunctionsLowering(context).lower(irFile)
         }
         phaser.phase(KonanPhase.LOWER_TYPE_OPERATORS) {
             TypeOperatorLowering(context).runOnFilePostfix(irFile)

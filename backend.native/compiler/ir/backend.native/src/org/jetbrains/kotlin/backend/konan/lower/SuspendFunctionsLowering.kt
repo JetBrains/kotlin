@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-internal class SuspendFunctionsLowering(val context: Context): DeclarationContainerLoweringPass {
+internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass {
 
     private object STATEMENT_ORIGIN_COROUTINE_IMPL : IrStatementOriginImpl("COROUTINE_IMPL")
     private object DECLARATION_ORIGIN_COROUTINE_IMPL : IrDeclarationOriginImpl("COROUTINE_IMPL")
@@ -60,60 +60,72 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
     private val builtCoroutines = mutableMapOf<FunctionDescriptor, BuiltCoroutine>()
     private val suspendLambdas = mutableMapOf<FunctionDescriptor, IrFunctionReference>()
 
-    override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-        markSuspendLambdas(irDeclarationContainer)
-        irDeclarationContainer.declarations.transformFlat {
-            if (it is IrFunction && it.descriptor.isSuspend && it.descriptor.modality != Modality.ABSTRACT)
-                transformSuspendFunction(it, suspendLambdas[it.descriptor])
+    override fun lower(irFile: IrFile) {
+        markSuspendLambdas(irFile)
+        buildCoroutines(irFile)
+        transformCallableReferencesToSuspendLambdas(irFile)
+    }
+
+    private fun buildCoroutines(irFile: IrFile) {
+        irFile.declarations.transformFlat(::tryTransformSuspendFunction)
+        irFile.acceptVoid(object: IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                declaration.acceptChildrenVoid(this)
+                declaration.declarations.transformFlat(::tryTransformSuspendFunction)
+            }
+        })
+    }
+
+    private fun tryTransformSuspendFunction(element: IrElement) =
+            if (element is IrFunction && element.descriptor.isSuspend && element.descriptor.modality != Modality.ABSTRACT)
+                transformSuspendFunction(element, suspendLambdas[element.descriptor])
             else null
-        }
-        transformCallableReferencesToSuspendLambdas(irDeclarationContainer)
+
+    private fun markSuspendLambdas(irElement: IrElement) {
+        irElement.acceptChildrenVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitFunctionReference(expression: IrFunctionReference) {
+                expression.acceptChildrenVoid(this)
+
+                val descriptor = expression.descriptor
+                if (descriptor.isSuspend)
+                    suspendLambdas.put(descriptor, expression)
+            }
+        })
     }
 
-    private fun markSuspendLambdas(irDeclarationContainer: IrDeclarationContainer) {
-        irDeclarationContainer.declarations.forEach {
-            it.acceptChildrenVoid(object: IrElementVisitorVoid {
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
+    private fun transformCallableReferencesToSuspendLambdas(irElement: IrElement) {
+        irElement.transformChildrenVoid(object : IrElementTransformerVoid() {
 
-                override fun visitFunctionReference(expression: IrFunctionReference) {
-                    expression.acceptChildrenVoid(this)
+            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+                expression.transformChildrenVoid(this)
 
-                    val descriptor = expression.descriptor
-                    if (descriptor.isSuspend)
-                        suspendLambdas.put(descriptor, expression)
-                }
-            })
-        }
-    }
-
-    private fun transformCallableReferencesToSuspendLambdas(irDeclarationContainer: IrDeclarationContainer) {
-        irDeclarationContainer.declarations.forEach {
-            it.transformChildrenVoid(object: IrElementTransformerVoid() {
-
-                override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-                    expression.transformChildrenVoid(this)
-
-                    val descriptor = expression.descriptor
-                    if (!descriptor.isSuspend)
-                        return expression
-                    val coroutine = builtCoroutines[descriptor]
-                            ?: throw Error("Non-local callable reference to suspend lambda: $descriptor")
-                    val constructorParameters = coroutine.coroutineConstructor.valueParameters
-                    val expressionArguments = expression.getArguments().map { it.second }
-                    assert (constructorParameters.size == expressionArguments.size,
-                            { "Inconsistency between callable reference to suspend lambda and the corresponding coroutine" })
-                    val irBuilder = context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset)
-                    irBuilder.run {
-                        return irCall(coroutine.coroutineConstructor.symbol).apply {
-                            expressionArguments.forEachIndexed { index, argument ->
-                                putValueArgument(index, argument) }
+                val descriptor = expression.descriptor
+                if (!descriptor.isSuspend)
+                    return expression
+                val coroutine = builtCoroutines[descriptor]
+                        ?: throw Error("The coroutine for $descriptor has not been built")
+                val constructorParameters = coroutine.coroutineConstructor.valueParameters
+                val expressionArguments = expression.getArguments().map { it.second }
+                assert(constructorParameters.size == expressionArguments.size,
+                        { "Inconsistency between callable reference to suspend lambda and the corresponding coroutine" })
+                val irBuilder = context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset)
+                irBuilder.run {
+                    return irCall(coroutine.coroutineConstructor.symbol).apply {
+                        expressionArguments.forEachIndexed { index, argument ->
+                            putValueArgument(index, argument)
                         }
                     }
                 }
-            })
-        }
+            }
+        })
     }
 
     private sealed class SuspendFunctionKind {

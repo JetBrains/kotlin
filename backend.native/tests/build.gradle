@@ -1324,6 +1324,11 @@ task coroutines_coroutineContext2(type: RunKonanTest) {
     source = "codegen/coroutines/coroutineContext2.kt"
 }
 
+task coroutines_anonymousObject(type: RunKonanTest) {
+    goldValue = "zzz\n"
+    source = "codegen/coroutines/anonymousObject.kt"
+}
+
 task AbstractMutableCollection(type: RunKonanTest) {
     expectedExitStatus = 0
     source = "runtime/collections/AbstractMutableCollection.kt"
