@@ -29,7 +29,7 @@ class B(<warning descr="[PLUGIN_WARNING] '@IgnoredOnParcel' is inapplicable to p
     var <warning descr="[PLUGIN_WARNING] Property would not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning">b</warning>: String = ""
 
     @get:IgnoredOnParcel
-    var <warning descr="[PLUGIN_WARNING] Property would not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning">c</warning>: String = ""
+    var c: String = ""
 
     @set:IgnoredOnParcel
     var <warning descr="[PLUGIN_WARNING] Property would not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning">d</warning>: String = ""
