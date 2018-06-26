@@ -549,5 +549,20 @@ public class SequenceTest {
         assertEquals("(0, 0), (1, 2), (1, 2), (2, 4), (3, 6), (5, 10), (8, 16), (13, 26), (21, 42), (34, 68), ...", pairStr)
     }
 */
+    @Test fun overcyclingThrowsException() {
+        val cycle = sequenceOf(1, 2, 3).cycle(3)
+        val iterator = cycle.iterator()
+        repeat(9) { iterator.next() }
+        assertFails { iterator.next() }
+    }
 
+    @Test fun cycleNTimes() {
+        val cycle = sequenceOf(1, 2, 3).cycle(3)
+        assertEquals(listOf(1, 2, 3, 1, 2, 3, 1, 2, 3), cycle.toList())
+    }
+
+    @Test fun cycleInfinitely() {
+        val infinite = sequenceOf(1, 2, 3).cycle()
+        assertEquals(listOf(1, 2, 3, 1, 2, 3, 1, 2, 3), infinite.take(9).toList())
+    }
 }

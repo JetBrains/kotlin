@@ -158,6 +158,25 @@ class Sequences {
 
     }
 
+    class Cycling {
+        @Sample
+        fun cycleNTimes() {
+            val cycle = listOf(1, 2, 3).cycle(3).toList()
+            assertPrints(cycle, "[1, 2, 3, 1, 2, 3, 1, 2, 3]")
+            val iterator = cycle.iterator()
+            repeat(8) { iterator.next() }
+            assertFails { iterator.next() } //cycle count exceeded
+        }
+
+        @Sample
+        fun cycleInfinitely() {
+            val seq = listOf(1, 2, 3)
+            val cycle = seq.cycle()
+            assertFails { cycle.toList() } //out of memory
+            assertPrints(seq.take(9).toList(), "[1, 2, 3, 1, 2, 3, 1, 2, 3]")
+        }
+    }
+
 
     class Transformations {
 
