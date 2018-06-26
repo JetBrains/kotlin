@@ -130,7 +130,7 @@ fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
     return project.allModules()
         .filter { module ->
             runReadAction {
-                !project.isDisposed &&
+                !project.isDisposed && !module.isDisposed
                         FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
             }
         }
