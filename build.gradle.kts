@@ -377,6 +377,7 @@ if (!isTeamcityBuild) {
             for (task in project.tasks) {
                  when (task) {
                      is AbstractKotlinCompile<*> -> task.incremental = true
+                     is JavaCompile -> task.options.isIncremental = true
                  }
             }
         }
