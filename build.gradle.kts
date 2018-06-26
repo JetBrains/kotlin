@@ -378,6 +378,7 @@ if (!isTeamcityBuild) {
                  when (task) {
                      is AbstractKotlinCompile<*> -> task.incremental = true
                      is JavaCompile -> task.options.isIncremental = true
+                     is org.gradle.jvm.tasks.Jar -> task.entryCompression = ZipEntryCompression.STORED
                  }
             }
         }
