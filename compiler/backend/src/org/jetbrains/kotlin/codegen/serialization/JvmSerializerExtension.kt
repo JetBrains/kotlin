@@ -19,12 +19,16 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
+import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.DescriptorSerializer.Companion.writeVersionRequirement
 import org.jetbrains.kotlin.serialization.SerializerExtension
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
@@ -45,7 +49,11 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         return useTypeTable
     }
 
-    override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
+    override fun serializeClass(
+        descriptor: ClassDescriptor,
+        proto: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable
+    ) {
         if (moduleName != JvmAbi.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
         }
@@ -53,6 +61,26 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         val containerAsmType =
             if (DescriptorUtils.isInterface(descriptor)) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
         writeLocalProperties(proto, containerAsmType, JvmProtoBuf.classLocalVariable)
+        writeVersionRequirementForJvmDefaultIfNeeded(descriptor, proto, versionRequirementTable)
+    }
+
+    // Interfaces which have @JvmDefault members somewhere in the hierarchy need the compiler 1.2.40+
+    // so that the generated bridges in subclasses would call the super members correctly
+    private fun writeVersionRequirementForJvmDefaultIfNeeded(
+        classDescriptor: ClassDescriptor,
+        builder: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable
+    ) {
+        if (
+            isInterface(classDescriptor) &&
+            classDescriptor.unsubstitutedMemberScope.getContributedDescriptors().any {
+                it is CallableMemberDescriptor && it.hasJvmDefaultAnnotation()
+            }
+        ) {
+            assert(!builder.hasVersionRequirement()) { "VersionRequirement should be empty for $classDescriptor" }
+            builder.versionRequirement =
+                    writeVersionRequirement(1, 2, 40, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+        }
     }
 
     override fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {

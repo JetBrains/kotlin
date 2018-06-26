@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
@@ -27,7 +28,11 @@ abstract class SerializerExtension {
         get() = null
 
 
-    open fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
+    open fun serializeClass(
+        descriptor: ClassDescriptor,
+        proto: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable
+    ) {
     }
 
     open fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
