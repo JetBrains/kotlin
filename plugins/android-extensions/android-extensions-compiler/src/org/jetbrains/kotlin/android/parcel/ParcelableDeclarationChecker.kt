@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -83,9 +86,18 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
+        fun hasIgnoredOnParcel(): Boolean {
+            fun AnnotationDescriptor.isIgnoredOnParcel() = fqName == IGNORED_ON_PARCEL_FQNAME
+
+            fun Annotations.hasIgnoredOnParcel() = getAllAnnotations()
+                .any { (it.target == null || it.target == AnnotationUseSiteTarget.PROPERTY_GETTER) && it.annotation.isIgnoredOnParcel() }
+
+            return property.annotations.hasIgnoredOnParcel() || (property.getter?.annotations?.hasIgnoredOnParcel() ?: false)
+        }
+
         if (containingClass.isParcelize
-                && (declaration.hasDelegate() || bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property] == true)
-                && !property.annotations.hasAnnotation(IGNORED_ON_PARCEL_FQNAME)
+            && (declaration.hasDelegate() || bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property] == true)
+            && !hasIgnoredOnParcel()
         ) {
             val reportElement = declaration.nameIdentifier ?: declaration
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED.on(reportElement), DefaultErrorMessagesAndroid)
