@@ -312,7 +312,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext, pr
                     )
                 } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
                     params += realDescriptor.valueParameters.last() to
-                            IrConstImpl.constNull(irBody.startOffset, irBody.endOffset, context.irBuiltIns.anyType)
+                            IrConstImpl.constNull(irBody.startOffset, irBody.endOffset, context.irBuiltIns.nothingNType)
                 }
                 params.forEach {
                     log { "descriptor::${realDescriptor.name.asString()}#${it.first.index}: ${it.first.name.asString()}" }
