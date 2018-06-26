@@ -241,6 +241,13 @@ class NewCodeBuilder {
         override fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression) {
             printer.printWithNoIndent(FqName(fieldAccessExpression.identifier.fqName).shortName().asString())
         }
+
+        override fun visitArrayAccessExpression(arrayAccessExpression: JKArrayAccessExpression) {
+            arrayAccessExpression.expression.accept(this)
+            printer.printWithNoIndent("[")
+            arrayAccessExpression.indexExpression.accept(this)
+            printer.printWithNoIndent("]")
+        }
     }
 
     fun printCodeOut(root: JKTreeElement): String {
