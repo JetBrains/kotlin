@@ -34,6 +34,11 @@ public class DiagnosticsWithUnsignedTypesGenerated extends AbstractDiagnosticsWi
         runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/allowedVarargsOfUnsignedTypes.kt");
     }
 
+    @TestMetadata("explicitUnsignedLongTypeCheck.kt")
+    public void testExplicitUnsignedLongTypeCheck() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/explicitUnsignedLongTypeCheck.kt");
+    }
+
     @TestMetadata("forbiddenEqualsOnUnsignedTypes.kt")
     public void testForbiddenEqualsOnUnsignedTypes() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/forbiddenEqualsOnUnsignedTypes.kt");
@@ -62,5 +67,10 @@ public class DiagnosticsWithUnsignedTypesGenerated extends AbstractDiagnosticsWi
     @TestMetadata("varargTypeToArrayTypeCheck.kt")
     public void testVarargTypeToArrayTypeCheck() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/varargTypeToArrayTypeCheck.kt");
+    }
+
+    @TestMetadata("wrongLongSuffixForULong.kt")
+    public void testWrongLongSuffixForULong() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/wrongLongSuffixForULong.kt");
     }
 }

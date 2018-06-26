@@ -47,6 +47,8 @@ interface CompileTimeConstant<out T> {
         val isPure: Boolean,
         // `isUnsignedNumberLiteral` means that this constant represents simple number literal with `u` suffix (123u, 0xFEu)
         val isUnsignedNumberLiteral: Boolean,
+        // `isUnsignedLongNumberLiteral` means that this constant represents simple number literal with `{uU}{lL}` suffix (123uL, 0xFEUL)
+        val isUnsignedLongNumberLiteral: Boolean,
         val usesVariableAsConstant: Boolean,
         val usesNonConstValAsConstant: Boolean
     )

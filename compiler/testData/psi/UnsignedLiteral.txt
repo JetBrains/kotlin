@@ -158,22 +158,17 @@ KtFile: UnsignedLiteral.kt
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_ARGUMENT
-          BINARY_EXPRESSION
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1u')
-            OPERATION_REFERENCE
-              PsiElement(IDENTIFIER)('L')
-            PsiErrorElement:Expecting an element
-              <empty list>
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1uL')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
         VALUE_ARGUMENT
-          BINARY_EXPRESSION
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1U')
-            OPERATION_REFERENCE
-              PsiElement(IDENTIFIER)('L')
-            PsiErrorElement:Expecting an element
-              <empty list>
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1UL')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('3Ul')
         PsiWhiteSpace('\n')
         PsiElement(RPAR)(')')

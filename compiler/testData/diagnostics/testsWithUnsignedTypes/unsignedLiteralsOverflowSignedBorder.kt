@@ -13,6 +13,8 @@ const val u7 = 18446744073709551615u
 
 val u8: Comparable<*> = 0xFFFF_FFFF_FFFF_FFFFu
 
+const val u9 = 0xFFFF_FFFF_FFFF_FFFFUL
+
 fun takeUByte(ubyte: UByte) {}
 
 fun test() {

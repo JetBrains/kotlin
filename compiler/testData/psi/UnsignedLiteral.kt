@@ -17,5 +17,6 @@ val array = array<Any>(
     1Lu,
     1LU,
     1uL,
-    1UL
+    1UL,
+    3Ul
 )
