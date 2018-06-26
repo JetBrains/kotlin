@@ -21,10 +21,11 @@ import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
+import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.tasks.isWorkerAPISupported
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.isWorkerAPISupported
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -51,6 +52,15 @@ class Kapt3GradleSubplugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.extensions.create("kapt", KaptExtension::class.java)
+
+        Kapt3KotlinGradleSubplugin().run {
+            project.configurations.create(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
+                project.getKotlinPluginVersion()?.let { kotlinPluginVersion ->
+                    val kaptDependency = getPluginArtifact().run { "$groupId:$artifactId:$kotlinPluginVersion" }
+                    dependencies.add(project.dependencies.create(kaptDependency))
+                } ?: project.logger.error("Kotlin plugin should be enabled before 'kotlin-kapt'")
+            }
+        }
     }
 }
 
@@ -367,13 +377,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         if (kaptTask is KaptWithoutKotlincTask) {
-            project.configurations.maybeCreate(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
-                project.getKotlinPluginVersion()?.let { kotlinPluginVersion ->
-                    val kaptDependency = getPluginArtifact().run { "$groupId:$artifactId:$kotlinPluginVersion" }
-                    dependencies.add(project.dependencies.create(kaptDependency))
-                } ?: project.logger.error("Kotlin plugin should be enabled before 'kotlin-kapt'")
-            }
-
             with(kaptTask) {
                 projectDir = project.projectDir
 
