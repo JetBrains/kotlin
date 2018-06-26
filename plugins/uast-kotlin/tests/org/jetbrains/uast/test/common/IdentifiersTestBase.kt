@@ -14,6 +14,7 @@ import org.jetbrains.uast.test.env.assertEqualsToFile
 import org.jetbrains.uast.visitor.AbstractUastVisitor
 import org.junit.ComparisonFailure
 import java.io.File
+import kotlin.test.fail
 
 interface IdentifiersTestBase {
     fun getIdentifiersFile(testName: String): File
@@ -42,22 +43,28 @@ interface IdentifiersTestBase {
     private fun UFile.testIdentifiersParents() {
         accept(object : AbstractUastVisitor() {
             override fun visitElement(node: UElement): Boolean {
-                if (node is UAnchorOwner) {
-                    val uastAnchor = node.uastAnchor ?: return false
-                    assertParents(node, uastAnchor)
-                    val uastAnchorFromSource = (uastAnchor.sourcePsi ?: return false).toUElementOfType<UIdentifier>()
-                    assertParents(node, uastAnchorFromSource)
+                val uIdentifier = when (node) {
+                    is UAnchorOwner -> node.uastAnchor ?: return false
+                    is UBinaryExpression -> node.operatorIdentifier ?: return false
+                    else -> return false
                 }
+
+                assertParents(node, uIdentifier)
+                val identifierSourcePsi = uIdentifier.sourcePsi ?: return false
+                val operatorIdentifierFromSource = identifierSourcePsi.toUElementOfType<UIdentifier>()
+                    ?: fail("$identifierSourcePsi of ${identifierSourcePsi.javaClass} should be convertable to UIdentifier")
+                assertParents(node, operatorIdentifierFromSource)
+
                 return false
             }
         })
     }
 
-    fun assertParents(node: UAnchorOwner, uastAnchor: UIdentifier?) {
+    fun assertParents(node: UElement, uastAnchor: UIdentifier?) {
         //skipping such elements because they are ambiguous (properties and getters for instance)
         if (node.sourcePsi.toUElement() != node) return
         if (uastAnchor == null)
-            throw AssertionError("no uast anchor for ${node.uastAnchor?.sourcePsi}(${node.uastAnchor?.sourcePsi?.javaClass}) for node = $node")
+            throw AssertionError("no uast anchor for node = $node")
         val nodeParents = node.withContainingElements.log()
         val anchorParentParents = uastAnchor.uastParent?.withContainingElements?.log() ?: ""
         // dropping node itself because we allow children to share identifiers with parents (primary constructor for instance)

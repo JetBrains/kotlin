@@ -361,6 +361,8 @@ internal object KotlinConverter {
                         if (element.elementType != KtTokens.OBJECT_KEYWORD || element.getParentOfType<KtObjectDeclaration>(false)?.nameIdentifier == null)
                             el<UIdentifier>(build(::KotlinUIdentifier))
                         else null
+                    else if (element.elementType in KtTokens.OPERATIONS && element.parent is KtOperationReferenceExpression)
+                        el<UIdentifier>(build(::KotlinUIdentifier))
                     else if (element.elementType == KtTokens.LBRACKET && element.parent is KtCollectionLiteralExpression)
                         el<UIdentifier> {
                             UIdentifier(
