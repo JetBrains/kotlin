@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
 import org.jetbrains.kotlin.idea.search.projectScope
@@ -281,7 +282,11 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             return false
         }
 
-        val searchParameters = KotlinReferencesSearchParameters(declaration, useScope)
+        val searchParameters = KotlinReferencesSearchParameters(
+            declaration,
+            useScope,
+            kotlinOptions = KotlinReferencesSearchOptions(acceptCallableOverrides = declaration.hasActualModifier())
+        )
         val referenceUsed: Boolean by lazy { !ReferencesSearch.search(searchParameters).forEach(::checkReference) }
 
         if (descriptor is FunctionDescriptor &&
