@@ -38,9 +38,11 @@ import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
-class IrBuiltIns(val builtIns: KotlinBuiltIns, outerSymbolTable: SymbolTable?) {
-
-    constructor(builtIns: KotlinBuiltIns) : this(builtIns, null)
+class IrBuiltIns(
+    val builtIns: KotlinBuiltIns,
+    private val typeTranslator: TypeTranslator,
+    outerSymbolTable: SymbolTable? = null
+) {
 
     private val builtInsModule = builtIns.builtInsModule
 
@@ -49,7 +51,6 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns, outerSymbolTable: SymbolTable?) {
 
     private val symbolTable = outerSymbolTable ?: SymbolTable()
     private val stubBuilder = DeclarationStubGenerator(builtInsModule, symbolTable, IrDeclarationOrigin.IR_BUILTINS_STUB)
-    private val typeTranslator = TypeTranslator(builtInsModule, symbolTable)
 
     private fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)

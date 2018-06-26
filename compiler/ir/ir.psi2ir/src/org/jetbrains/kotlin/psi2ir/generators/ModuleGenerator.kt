@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 
 class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
-    private val constantValueGenerator = ConstantValueGenerator(context.moduleDescriptor, context.symbolTable, null)
+    private val constantValueGenerator = context.constantValueGenerator
 
     fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
         generateModuleFragmentWithoutDependencies(ktFiles).also { irModule ->
