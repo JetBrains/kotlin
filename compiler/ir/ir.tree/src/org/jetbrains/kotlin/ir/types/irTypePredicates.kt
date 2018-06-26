@@ -31,6 +31,7 @@ private fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean): 
 private fun classFqNameEquals(descriptor: ClassDescriptor, fqName: FqNameUnsafe): Boolean =
     descriptor.name == fqName.shortName() && fqName == getFqName(descriptor)
 
+fun IrType.isAny(): Boolean = isBuiltInClassType(KotlinBuiltIns::isAny, hasQuestionMark = false)
 fun IrType.isNullableAny(): Boolean = isBuiltInClassType(KotlinBuiltIns::isAny, hasQuestionMark = true)
 
 fun IrType.isString(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.string)
@@ -41,6 +42,8 @@ fun IrType.isPrimitiveType(): Boolean =
 
 fun IrType.isNullablePrimitiveType(): Boolean =
     isBuiltInClassType(KotlinBuiltIns::isPrimitiveClass, hasQuestionMark = true)
+
+fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.hasQuestionMark ?: false
 
 fun IrType.isUnit() = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.unit)
 fun IrType.isNullableUnit() = isNullableClassType(KotlinBuiltIns.FQ_NAMES.unit)
@@ -54,3 +57,4 @@ fun IrType.isInt(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._int)
 fun IrType.isLong(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._long)
 fun IrType.isFloat(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._float)
 fun IrType.isDouble(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._double)
+fun IrType.isNumber(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.number)
