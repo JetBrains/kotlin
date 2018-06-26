@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
@@ -44,7 +45,7 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
                 "-d", tmpdir.path,
                 "-module-name", moduleName,
                 "-language-version", compileWith.versionString
-        ) + extraOptions)
+        ) + extraOptions + listOfNotNull("-Xskip-metadata-version-check".takeIf { KotlinCompilerVersion.isPreRelease() }))
 
         val mapping = ModuleMapping.loadModuleMapping(
                 File(tmpdir, "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}").readBytes(), "test",
