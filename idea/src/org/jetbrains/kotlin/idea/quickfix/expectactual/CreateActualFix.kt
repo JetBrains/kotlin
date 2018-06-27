@@ -230,6 +230,7 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
             name == it.name && when (this) {
                 is KtConstructor<*> -> it is KtConstructor<*> && areCompatible(this, it)
                 is KtNamedFunction -> it is KtNamedFunction && areCompatible(this, it)
+                is KtProperty -> it is KtProperty || it is KtParameter && it.hasValOrVar()
                 else -> this.javaClass == it.javaClass
             }
         }
