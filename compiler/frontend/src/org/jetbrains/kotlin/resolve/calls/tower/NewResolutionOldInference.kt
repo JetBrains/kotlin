@@ -163,11 +163,8 @@ class NewResolutionOldInference(
         kind: ResolutionKind,
         tracing: TracingStrategy
     ): OverloadResolutionResultsImpl<D> {
-        val explicitReceiver = context.call.explicitReceiver
-        val detailedReceiver = if (explicitReceiver is QualifierReceiver?) {
-            explicitReceiver
-        } else {
-            context.transformToReceiverWithSmartCastInfo(explicitReceiver as ReceiverValue)
+        val detailedReceiver = context.call.explicitReceiver.let {
+            if (it is QualifierReceiver?) it else context.transformToReceiverWithSmartCastInfo(it as ReceiverValue)
         }
 
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
