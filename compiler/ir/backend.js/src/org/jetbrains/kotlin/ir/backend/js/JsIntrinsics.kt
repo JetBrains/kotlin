@@ -25,7 +25,7 @@ class JsIntrinsics(
     context: JsIrBackendContext
 ) {
 
-    private val stubBuilder = DeclarationStubGenerator(module, context.module, context.symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB)
+    private val stubBuilder = DeclarationStubGenerator(module, context.symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB)
 
     // Equality operations:
 
