@@ -27,6 +27,7 @@ A: As Kotlin/Native need to download platform specific toolchain, you need to sp
 or set it via `JAVA_OPTS` environment variable.
 
 Q: How do I specify custom Objective-C prefix/name for my Kotlin framework?
+
 A: Use `-module_name` compiler option or matching Gradle DSL statement, i.e.
 ```
 framework("MyCustomFramework") {
