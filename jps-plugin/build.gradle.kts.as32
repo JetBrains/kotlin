@@ -34,19 +34,18 @@ dependencies {
     }
     testRuntime(intellijDep())
     testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(projectDist(":kotlin-compiler"))
+    testRuntime(projectDist(":kotlin-script-runtime"))
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" {
-        /*java.srcDirs("jps-tests/test"
-                     /*, "kannotator-jps-plugin-test/test"*/ // Obsolete
-        )*/
+        java.srcDirs("jps-tests/test")
     }
 }
 
 projectTest {
-    dependsOn(":kotlin-compiler:dist")
     workingDir = rootDir
 }
 
