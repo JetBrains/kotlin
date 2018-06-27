@@ -259,6 +259,9 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
                     it.delete()
                 } else {
                     it.addModifier(KtTokens.ACTUAL_KEYWORD)
+                    if (it is KtFunction) {
+                        it.removeParameterDefaultValues()
+                    }
                 }
             }
         }
@@ -342,6 +345,17 @@ private fun KtPsiFactory.generateFunction(
         replaceExpectModifier(actualNeeded)
         if (returnType != null && KotlinBuiltIns.isUnit(returnType)) {
             typeReference = null
+        }
+        removeParameterDefaultValues()
+    }
+}
+
+private fun KtFunction.removeParameterDefaultValues() {
+    for (valueParameter in valueParameters) {
+        val defaultValue = valueParameter.defaultValue
+        if (defaultValue != null) {
+            val equalsToken = valueParameter.equalsToken
+            valueParameter.deleteChildRange(equalsToken, defaultValue)
         }
     }
 }
