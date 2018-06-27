@@ -327,7 +327,9 @@ private fun KtPsiFactory.generateFunction(
 ): KtFunction {
     val returnType = descriptor.returnType
     val body = run {
-        if (returnType != null && !KotlinBuiltIns.isUnit(returnType)) {
+        if (expectedFunction.hasBody()) {
+            ""
+        } else if (returnType != null && !KotlinBuiltIns.isUnit(returnType)) {
             val delegation = getFunctionBodyTextFromTemplate(
                 project,
                 TemplateKind.FUNCTION,

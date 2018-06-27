@@ -109,6 +109,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/classSomeProperties/");
     }
 
+    @TestMetadata("classWithIncompilableFunction")
+    public void testClassWithIncompilableFunction() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/classWithIncompilableFunction/");
+    }
+
     @TestMetadata("companionAbsence")
     public void testCompanionAbsence() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/companionAbsence/");
