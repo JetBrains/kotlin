@@ -2,6 +2,7 @@
 
 Building module1, module2, module3
 Cleaning output files:
+  out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/foo/A.class
 End of files
 Compiling files:
@@ -16,8 +17,11 @@ Marked as dirty by Kotlin:
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
+  out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/foo/D.class
+  out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/foo/B.class
+  out/production/module3/META-INF/module3.kotlin_module
   out/production/module3/foo/C.class
 End of files
 Compiling files:
@@ -59,6 +63,7 @@ Exit code: NOTHING_DONE
 ------------------------------------------
 Building module4
 Cleaning output files:
+  out/production/module4/META-INF/module4.kotlin_module
   out/production/module4/foo/E.class
 End of files
 Compiling files:
@@ -68,6 +73,7 @@ Exit code: OK
 ------------------------------------------
 Building module5
 Cleaning output files:
+  out/production/module5/META-INF/module5.kotlin_module
   out/production/module5/foo/F.class
 End of files
 Compiling files:

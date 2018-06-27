@@ -4,6 +4,7 @@ Cleaning output files:
   out/production/module/Base.class
   out/production/module/Impl1.class
   out/production/module/Intermediate.class
+  out/production/module/META-INF/module.kotlin_module
 End of files
 Compiling files:
   src/Base.kt

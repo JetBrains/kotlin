@@ -2,6 +2,7 @@
 
 Building module1
 Cleaning output files:
+  out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/foo/A.class
 End of files
 Compiling files:

@@ -62,7 +62,7 @@ public class ClassFileFactory implements OutputFileCollection {
 
     private boolean isDone = false;
 
-    private final Set<File> packagePartSourceFiles = new HashSet<>();
+    private final Set<File> sourceFiles = new HashSet<>();
     private final Map<String, PackageParts> partsGroupedByPackage = new LinkedHashMap<>();
 
     public ClassFileFactory(@NotNull GenerationState state, @NotNull ClassBuilderFactory builderFactory) {
@@ -122,7 +122,7 @@ public class ClassFileFactory implements OutputFileCollection {
 
         JvmModuleProtoBuf.Module moduleProto = builder.build();
 
-        generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(packagePartSourceFiles)) {
+        generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
             @Override
             public byte[] asBytes(ClassBuilderFactory factory) {
                 return ModuleMappingKt.serializeToByteArray(moduleProto, JvmMetadataVersion.INSTANCE.toArray());
@@ -233,14 +233,14 @@ public class ClassFileFactory implements OutputFileCollection {
     @NotNull
     public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
-        registerPackagePartSourceFiles(files);
+        registerSourceFiles(files);
         return state.getCodegenFactory().createPackageCodegen(state, files, fqName, buildNewPackagePartRegistry(fqName));
     }
 
     @NotNull
     public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
-        registerPackagePartSourceFiles(files);
+        registerSourceFiles(files);
         return state.getCodegenFactory().createMultifileClassCodegen(state, files, facadeFqName, buildNewPackagePartRegistry(facadeFqName.parent()));
     }
 
@@ -252,8 +252,8 @@ public class ClassFileFactory implements OutputFileCollection {
         };
     }
 
-    private void registerPackagePartSourceFiles(Collection<KtFile> files) {
-        packagePartSourceFiles.addAll(toIoFilesIgnoringNonPhysical(PackagePartClassUtils.getFilesWithCallables(files)));
+    private void registerSourceFiles(Collection<KtFile> files) {
+        sourceFiles.addAll(toIoFilesIgnoringNonPhysical(files));
     }
 
     @NotNull
