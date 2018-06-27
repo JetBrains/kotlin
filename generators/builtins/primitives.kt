@@ -59,10 +59,10 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             generateDoc(kind)
             out.println("public class $className private constructor() : Number(), Comparable<$className> {")
 
-            out.print("    companion object ")
+            out.print("    companion object {")
             if (kind == PrimitiveType.FLOAT || kind == PrimitiveType.DOUBLE) {
                 //val (minValue, maxValue, posInf, negInf, nan) = primitiveConstants(kind)
-                out.println("""{
+                out.println("""
         /**
          * A constant holding the smallest *positive* nonzero value of $className.
          */
@@ -86,12 +86,11 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         /**
          * A constant holding the "not a number" value of $className.
          */
-        public val NaN: $className
-    }""")
+        public val NaN: $className""")
             }
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG || kind == PrimitiveType.SHORT || kind == PrimitiveType.BYTE) {
                 val (minValue, maxValue) = primitiveConstants(kind)
-                out.println("""{
+                out.println("""
         /**
          * A constant holding the minimum value an instance of $className can have.
          */
@@ -100,9 +99,23 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         /**
          * A constant holding the maximum value an instance of $className can have.
          */
-        public const val MAX_VALUE: $className = $maxValue
-    }""")
+        public const val MAX_VALUE: $className = $maxValue""")
             }
+            if (kind.byteSize != null) {
+                out.println("""
+        /**
+         * The number of bytes used to represent an instance of $className in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = ${kind.byteSize}
+
+        /**
+         * The number of bits used to represent an instance of $className in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = ${kind.byteSize * 8}""")
+            }
+            out.println("""    }""")
 
             generateCompareTo(kind)
 

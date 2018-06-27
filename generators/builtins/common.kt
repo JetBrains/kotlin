@@ -19,17 +19,18 @@ package org.jetbrains.kotlin.generators.builtins
 import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
 import kotlin.properties.Delegates
 
-enum class PrimitiveType {
-    BYTE,
-    CHAR,
-    SHORT,
-    INT,
-    LONG,
-    FLOAT,
-    DOUBLE,
-    BOOLEAN;
+enum class PrimitiveType(val byteSize: Int?) {
+    BYTE(1),
+    CHAR(2),
+    SHORT(2),
+    INT(4),
+    LONG(8),
+    FLOAT(null),
+    DOUBLE(null),
+    BOOLEAN(null);
 
     val capitalized: String get() = name.toLowerCase().capitalize()
+
     companion object {
         val exceptBoolean = PrimitiveType.values().filterNot { it == BOOLEAN }
         val onlyNumeric = PrimitiveType.values().filterNot { it == BOOLEAN || it == CHAR }
