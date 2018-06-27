@@ -421,7 +421,10 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesExistInOutput(module, "Foo.class")
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
-        checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
+        checkWhen(
+            touch("src/foo.kt"), null,
+            arrayOf(klass("kotlinProject", "Foo"), module("kotlinProject"))
+        )
     }
 
     fun testExcludeModuleFolderInSourceRootOfAnotherModule() {
@@ -431,8 +434,14 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             assertFilesExistInOutput(module, "Foo.class")
         }
 
-        checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
-        checkWhen(touch("src/module2/src/foo.kt"), null, arrayOf(klass("module2", "Foo")))
+        checkWhen(
+            touch("src/foo.kt"), null,
+            arrayOf(klass("kotlinProject", "Foo"), module("kotlinProject"))
+        )
+        checkWhen(
+            touch("src/module2/src/foo.kt"), null,
+            arrayOf(klass("module2", "Foo"), module("module2"))
+        )
     }
 
     fun testExcludeFileUsingCompilerSettings() {
@@ -443,7 +452,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
         if (IncrementalCompilation.isEnabled()) {
-            checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
+            checkWhen(touch("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
         }
         else {
             val allClasses = myProject.outputPaths()
@@ -462,8 +471,8 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
         if (IncrementalCompilation.isEnabled()) {
-            checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
-            checkWhen(touch("src/dir/subdir/bar.kt"), null, arrayOf(klass("kotlinProject", "Bar")))
+            checkWhen(touch("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
+            checkWhen(touch("src/dir/subdir/bar.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Bar")))
         }
         else {
             val allClasses = myProject.outputPaths()
@@ -483,7 +492,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
         if (IncrementalCompilation.isEnabled()) {
-            checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
+            checkWhen(touch("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
         }
         else {
             val allClasses = myProject.outputPaths()

@@ -42,6 +42,7 @@ Exit code: OK
 Building module4
 Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
+  out/production/module4/META-INF/module4.kotlin_module
   out/production/module4/module4/D.class
 End of files
 Compiling files:

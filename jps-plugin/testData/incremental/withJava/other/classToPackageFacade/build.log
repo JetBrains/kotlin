@@ -3,6 +3,7 @@
 Cleaning output files:
   out/production/module/A$Companion.class
   out/production/module/A.class
+  out/production/module/META-INF/module.kotlin_module
 End of files
 Marked as dirty by Kotlin:
   src/AChild.kt
@@ -16,7 +17,6 @@ Cleaning output files:
   out/production/module/AChild.class
   out/production/module/GetAChildKt.class
   out/production/module/GetAKt.class
-  out/production/module/META-INF/module.kotlin_module
   out/production/module/UseFKt.class
   out/production/module/UseGKt.class
   out/production/module/UseHKt.class

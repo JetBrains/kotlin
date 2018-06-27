@@ -4,6 +4,7 @@ Building module1
 Exit code: NOTHING_DONE
 ------------------------------------------
 Cleaning output files:
+  out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/foo/A.class
 End of files
 Building module2
@@ -14,7 +15,6 @@ Marked as dirty by Kotlin:
   module2/src/useAfoo.kt
   module2/src/useBbar.kt
 Cleaning output files:
-  out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/foo/B.class
   out/production/module2/use/CreateAKt.class
   out/production/module2/use/CreateBKt.class

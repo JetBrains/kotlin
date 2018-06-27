@@ -2,6 +2,7 @@
 
 Building module1, module2
 Cleaning output files:
+  out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/b/B.class
   out/production/module2/b/BB.class
 End of files
@@ -13,6 +14,7 @@ Marked as dirty by Kotlin:
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
+  out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/a/A.class
   out/production/module1/a/AA.class
 End of files
