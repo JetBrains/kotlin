@@ -24,6 +24,16 @@ public inline class UInt internal constructor(private val data: Int) : Comparabl
          * A constant holding the maximum value an instance of UInt can have.
          */
         public const val MAX_VALUE: UInt = UInt(-1)
+
+        /**
+         * The number of bytes used to represent an instance of UInt in a binary form.
+         */
+        public const val SIZE_BYTES: Int = 4
+
+        /**
+         * The number of bits used to represent an instance of UInt in a binary form.
+         */
+        public const val SIZE_BITS: Int = 32
     }
 
     /**

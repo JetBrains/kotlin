@@ -123,6 +123,10 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte>, java.io
             public final fun <get-MAX_VALUE>(): kotlin.Byte
         public const final val MIN_VALUE: kotlin.Byte
             public final fun <get-MIN_VALUE>(): kotlin.Byte
+        @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BITS: kotlin.Int
+            public final fun <get-SIZE_BITS>(): kotlin.Int
+        @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BYTES: kotlin.Int
+            public final fun <get-SIZE_BYTES>(): kotlin.Int
     }
 }
 
@@ -168,6 +172,10 @@ public final class Char : kotlin.Comparable<kotlin.Char>, java.io.Serializable {
             public final fun <get-MIN_LOW_SURROGATE>(): kotlin.Char
         public const final val MIN_SURROGATE: kotlin.Char
             public final fun <get-MIN_SURROGATE>(): kotlin.Char
+        @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BITS: kotlin.Int
+            public final fun <get-SIZE_BITS>(): kotlin.Int
+        @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BYTES: kotlin.Int
+            public final fun <get-SIZE_BYTES>(): kotlin.Int
     }
 }
 
@@ -495,6 +503,10 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int>, java.io.S
             public final fun <get-MAX_VALUE>(): kotlin.Int
         public const final val MIN_VALUE: kotlin.Int
             public final fun <get-MIN_VALUE>(): kotlin.Int
+        @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BITS: kotlin.Int
+            public final fun <get-SIZE_BITS>(): kotlin.Int
+        @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BYTES: kotlin.Int
+            public final fun <get-SIZE_BYTES>(): kotlin.Int
     }
 }
 
@@ -582,6 +594,10 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long>, java.io
             public final fun <get-MAX_VALUE>(): kotlin.Long
         public const final val MIN_VALUE: kotlin.Long
             public final fun <get-MIN_VALUE>(): kotlin.Long
+        @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BITS: kotlin.Int
+            public final fun <get-SIZE_BITS>(): kotlin.Int
+        @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BYTES: kotlin.Int
+            public final fun <get-SIZE_BYTES>(): kotlin.Int
     }
 }
 
@@ -695,6 +711,10 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short>, java.
             public final fun <get-MAX_VALUE>(): kotlin.Short
         public const final val MIN_VALUE: kotlin.Short
             public final fun <get-MIN_VALUE>(): kotlin.Short
+        @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BITS: kotlin.Int
+            public final fun <get-SIZE_BITS>(): kotlin.Int
+        @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BYTES: kotlin.Int
+            public final fun <get-SIZE_BYTES>(): kotlin.Int
     }
 }
 

@@ -24,6 +24,16 @@ public inline class UShort internal constructor(private val data: Short) : Compa
          * A constant holding the maximum value an instance of UShort can have.
          */
         public const val MAX_VALUE: UShort = UShort(-1)
+
+        /**
+         * The number of bytes used to represent an instance of UShort in a binary form.
+         */
+        public const val SIZE_BYTES: Int = 2
+
+        /**
+         * The number of bits used to represent an instance of UShort in a binary form.
+         */
+        public const val SIZE_BITS: Int = 16
     }
 
     /**
