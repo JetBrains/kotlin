@@ -1537,6 +1537,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithSmartCast.kt");
         }
 
+        @TestMetadata("addFunctionParameterWithSmartcastedArgument.kt")
+        public void testAddFunctionParameterWithSmartcastedArgument() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithSmartcastedArgument.kt");
+        }
+
         @TestMetadata("addNothingReturnType.kt")
         public void testAddNothingReturnType() throws Exception {
             runTest("idea/testData/quickfix/changeSignature/addNothingReturnType.kt");
