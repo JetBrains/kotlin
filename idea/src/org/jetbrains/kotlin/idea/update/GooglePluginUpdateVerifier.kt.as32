@@ -41,12 +41,13 @@ class GooglePluginUpdateVerifier : PluginUpdateVerifier() {
             val unmarshaller = context.createUnmarshaller()
             val pluginCompatibility = unmarshaller.unmarshal(stream) as PluginCompatibility
 
-            val release = getRelease(pluginCompatibility) ?: return PluginVerifyResult.decline("no verified versions for this build")
+            val release = getRelease(pluginCompatibility)
+                    ?: return PluginVerifyResult.decline("No verified versions for this build.")
 
             return if (release.plugins().any { KOTLIN_PLUGIN_ID == it.id && version == it.version })
                 PluginVerifyResult.accept()
             else
-                PluginVerifyResult.decline("version to be verified")
+                PluginVerifyResult.decline("Version to be verified.")
         } catch (e: Exception) {
             LOG.info("Exception when verifying plugin ${pluginDescriptor.pluginId.idString} version $version", e)
             return when (e) {
