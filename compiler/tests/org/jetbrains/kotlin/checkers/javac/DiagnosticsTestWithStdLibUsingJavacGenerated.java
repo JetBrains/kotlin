@@ -171,6 +171,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/defaultValueMustBeConstant.kt");
         }
 
+        @TestMetadata("explicitMetadata.kt")
+        public void testExplicitMetadata() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/explicitMetadata.kt");
+        }
+
         @TestMetadata("JvmSyntheticOnDelegate.kt")
         public void testJvmSyntheticOnDelegate() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/JvmSyntheticOnDelegate.kt");
