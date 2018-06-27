@@ -214,8 +214,8 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             type, // TODO
             varargElementType, // TODO
             defaultValue?.transform()
-        ).apply {
-            transformAnnotations(this)
+        ).also { irValueParameter ->
+            irValueParameter.transformAnnotations(this)
         }
 
     // TODO visitTypeParameter
