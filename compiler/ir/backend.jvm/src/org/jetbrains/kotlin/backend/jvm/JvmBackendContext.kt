@@ -62,8 +62,8 @@ class JvmBackendContext(
                     context.getInternalFunctions("ThrowTypeCastException").single()
                 )
 
-            override val ThrowUninitializedPropertyAccessException
-                get () = symbolTable.referenceSimpleFunction(
+            override val ThrowUninitializedPropertyAccessException =
+                symbolTable.referenceSimpleFunction(
                     context.getInternalFunctions("ThrowUninitializedPropertyAccessException").single()
                 )
 
