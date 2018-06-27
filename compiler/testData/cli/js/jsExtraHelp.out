@@ -26,7 +26,7 @@ where advanced options include:
   -Xreport-output-files      Report source to output files mapping
   -Xreport-perf              Report detailed performance statistics
   -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
-  -Xuse-experimental=<fq.name> Enable usages of COMPILATION-affecting experimental API for marker annotation with the given fully qualified name
+  -Xuse-experimental=<fq.name> Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

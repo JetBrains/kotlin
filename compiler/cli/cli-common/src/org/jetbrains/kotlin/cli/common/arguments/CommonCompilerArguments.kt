@@ -144,7 +144,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-Xuse-experimental",
         valueDescription = "<fq.name>",
-        description = "Enable usages of COMPILATION-affecting experimental API for marker annotation with the given fully qualified name"
+        description = "Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name"
     )
     var useExperimental: Array<String>? by FreezableVar(null)
 
