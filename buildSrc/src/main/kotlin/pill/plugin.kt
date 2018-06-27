@@ -103,7 +103,8 @@ class JpsCompatiblePlugin : Plugin<Project> {
         projectDir = project.projectDir
         platformVersion = project.extensions.extraProperties.get("versions.intellijSdk").toString()
         platformBaseNumber = platformVersion.substringBefore(".", "").takeIf { it.isNotEmpty() }
-                ?: error("Invalid platform version: $platformVersion")
+            ?: platformVersion.substringBefore("-", "").takeIf { it.isNotEmpty() }
+            ?: error("Invalid platform version: $platformVersion")
         platformDir = IntellijRootUtils.getIntellijRootDir(project)
         isAndroidStudioPlatform = project.extensions.extraProperties.has("versions.androidStudioRelease")
     }
