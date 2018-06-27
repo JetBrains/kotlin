@@ -57,10 +57,7 @@ import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
-import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.SmartSet
@@ -388,11 +385,17 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     override fun prepareForDeletion(element: PsiElement) {
         if (element is KtDeclaration) {
             element.actualsForExpected().forEach {
-                if (it is KtParameter) {
-                    (it.parent as? KtParameterList)?.removeParameter(it)
-                } else {
-                    it.removeModifier(KtTokens.IMPL_KEYWORD)
-                    it.removeModifier(KtTokens.ACTUAL_KEYWORD)
+                when (it) {
+                    is KtParameter -> {
+                        (it.parent as? KtParameterList)?.removeParameter(it)
+                    }
+                    is KtCallableDeclaration, is KtClassOrObject, is KtTypeAlias -> {
+                        it.delete()
+                    }
+                    else -> {
+                        it.removeModifier(KtTokens.IMPL_KEYWORD)
+                        it.removeModifier(KtTokens.ACTUAL_KEYWORD)
+                    }
                 }
             }
         }

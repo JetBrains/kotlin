@@ -387,12 +387,17 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     override fun prepareForDeletion(element: PsiElement) {
         if (element is KtDeclaration) {
             element.actualsForExpected().forEach {
-                if (it is KtParameter) {
-                    (it.parent as? KtParameterList)?.removeParameter(it)
-                }
-                else {
-                    it.removeModifier(KtTokens.IMPL_KEYWORD)
-                    it.removeModifier(KtTokens.ACTUAL_KEYWORD)
+                when (it) {
+                    is KtParameter -> {
+                        (it.parent as? KtParameterList)?.removeParameter(it)
+                    }
+                    is KtCallableDeclaration, is KtClassOrObject, is KtTypeAlias -> {
+                        it.delete()
+                    }
+                    else -> {
+                        it.removeModifier(KtTokens.IMPL_KEYWORD)
+                        it.removeModifier(KtTokens.ACTUAL_KEYWORD)
+                    }
                 }
             }
         }
