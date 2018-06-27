@@ -20,17 +20,24 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.intentions.ReplaceSingleLineLetIntention
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimpleExpression
+import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedExpression>(KtSafeQualifiedExpression::class.java, "Replace safe access expression with 'if' expression"), LowPriorityAction {
+class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedExpression>(
+    KtSafeQualifiedExpression::class.java,
+    "Replace safe access expression with 'if' expression"
+), LowPriorityAction {
     override fun applicabilityRange(element: KtSafeQualifiedExpression): TextRange? {
         if (element.selectorExpression == null) return null
         return element.operationTokenNode.textRange
@@ -57,11 +64,24 @@ class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedE
             isAssignment = true
         }
 
+        val replacedReference = (ifExpression.then as? KtQualifiedExpression)?.callExpression?.let {
+            val replaceSingleLineLetIntention = ReplaceSingleLineLetIntention()
+            if (replaceSingleLineLetIntention.isApplicableTo(it)) {
+                replaceSingleLineLetIntention.applyTo(it, editor)
+                val descriptor = (ifExpression.condition as? KtBinaryExpression)?.left?.resolveToCall()?.resultingDescriptor
+                ifExpression.then?.collectDescendantsOfType<KtNameReferenceExpression>()?.firstOrNull {
+                    it.resolveToCall()?.resultingDescriptor == descriptor
+                }
+            } else {
+                null
+            }
+        }
+
         if (!receiverIsStable) {
             val valueToExtract = if (isAssignment)
                 ((ifExpression.then as? KtBinaryExpression)?.left as? KtDotQualifiedExpression)?.receiverExpression
             else
-                (ifExpression.then as? KtDotQualifiedExpression)?.receiverExpression
+                replacedReference ?: (ifExpression.then as? KtDotQualifiedExpression)?.receiverExpression
 
             if (valueToExtract != null) ifExpression.introduceValueForCondition(valueToExtract, editor)
         }

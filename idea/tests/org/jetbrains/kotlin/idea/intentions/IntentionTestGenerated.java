@@ -2791,6 +2791,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/branched/safeAccessToIfThen/equality.kt");
             }
 
+            @TestMetadata("let.kt")
+            public void testLet() throws Exception {
+                runTest("idea/testData/intentions/branched/safeAccessToIfThen/let.kt");
+            }
+
+            @TestMetadata("letTopLevelVar.kt")
+            public void testLetTopLevelVar() throws Exception {
+                runTest("idea/testData/intentions/branched/safeAccessToIfThen/letTopLevelVar.kt");
+            }
+
             @TestMetadata("localValAsReceiver.kt")
             public void testLocalValAsReceiver() throws Exception {
                 runTest("idea/testData/intentions/branched/safeAccessToIfThen/localValAsReceiver.kt");
