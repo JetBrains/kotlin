@@ -1,17 +1,13 @@
 FILE fqName:<root> fileName:/localFun.kt
-  FUN name:outer visibility:public modality:FINAL <TT> () returnType:Unit flags:
-    TYPE_PARAMETER name:TT index:0 variance: upperBounds:[kotlin.Any?]
-      superClassifiers:
-        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+  FUN name:outer visibility:public modality:FINAL <TT> () returnType:kotlin.Unit flags:
+    TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?]
     BLOCK_BODY
-      FUN name:test1 visibility:local modality:FINAL <T> (i:kotlin.Int, j:T) returnType:Unit flags:
-        TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
-          superClassifiers:
-            CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      FUN name:test1 visibility:local modality:FINAL <T> (i:kotlin.Int, j:T) returnType:kotlin.Unit flags:
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
         VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
         VALUE_PARAMETER name:j index:1 type:T flags:
         BLOCK_BODY
-      FUN name:test2 visibility:local modality:FINAL <> (i:kotlin.Int, j:kotlin.String) returnType:Unit flags:
+      FUN name:test2 visibility:local modality:FINAL <> (i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit flags:
         VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
           EXPRESSION_BODY
             CONST Int type=kotlin.Int value=0
@@ -19,10 +15,10 @@ FILE fqName:<root> fileName:/localFun.kt
           EXPRESSION_BODY
             CONST String type=kotlin.String value=
         BLOCK_BODY
-      FUN name:test3 visibility:local modality:FINAL <> (args:kotlin.Array<out kotlin.String>) returnType:Unit flags:
+      FUN name:test3 visibility:local modality:FINAL <> (args:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit flags:
         VALUE_PARAMETER name:args index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String flags:vararg
         BLOCK_BODY
-      FUN name:textExt1 visibility:local modality:FINAL <> ($receiver:kotlin.String, i:kotlin.Int, j:TT) returnType:Unit flags:
+      FUN name:textExt1 visibility:local modality:FINAL <> ($receiver:kotlin.String, i:kotlin.Int, j:TT) returnType:kotlin.Unit flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
         VALUE_PARAMETER name:j index:1 type:TT flags:

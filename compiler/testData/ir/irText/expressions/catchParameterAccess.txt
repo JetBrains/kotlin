@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/catchParameterAccess.kt
-  FUN name:test visibility:public modality:FINAL <> (f:() -> kotlin.Unit) returnType:Unit flags:
+  FUN name:test visibility:public modality:FINAL <> (f:() -> kotlin.Unit) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:f index:0 type:() -> kotlin.Unit flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(() -> Unit): Unit'

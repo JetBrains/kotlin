@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
 fun IrType.render() =
     originalKotlinType?.let {
-        DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.renderType(it)
-    } ?: "UNBOUND IrType"
+        RenderIrElementVisitor.DECLARATION_RENDERER.renderType(it)
+    } ?: "IrType without originalKotlinType: $this"

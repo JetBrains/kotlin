@@ -1,26 +1,24 @@
 FILE fqName:<root> fileName:/when.kt
-  CLASS OBJECT name:A modality:FINAL visibility:public flags:
+  CLASS OBJECT name:A modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
-    superClasses:
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:private <> () returnType:A flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  FUN name:testWithSubject visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:String flags:
+  FUN name:testWithSubject visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='testWithSubject(Any?): String'
@@ -40,20 +38,20 @@ FILE fqName:<root> fileName:/when.kt
               then: CONST String type=kotlin.String value=A
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags:
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
                 GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value=String
             BRANCH
               if: CALL 'contains(Any) on Iterable<Any>: Boolean' type=kotlin.Boolean origin=IN
-                <T>: Any
+                <T>: kotlin.Any
                 $receiver: CALL 'setOf(): Set<Nothing>' type=kotlin.collections.Set<kotlin.Nothing> origin=null
-                  <T>: Nothing
+                  <T>: kotlin.Nothing
                 element: GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value=nothingness?
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST String type=kotlin.String value=something
-  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:String flags:
+  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(Any?): String'
@@ -70,20 +68,20 @@ FILE fqName:<root> fileName:/when.kt
             then: CONST String type=kotlin.String value=A
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags:
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
               GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value=String
           BRANCH
             if: CALL 'contains(Any) on Iterable<Any>: Boolean' type=kotlin.Boolean origin=IN
-              <T>: Any
+              <T>: kotlin.Any
               $receiver: CALL 'setOf(): Set<Nothing>' type=kotlin.collections.Set<kotlin.Nothing> origin=null
-                <T>: Nothing
+                <T>: kotlin.Nothing
               element: GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value=nothingness?
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST String type=kotlin.String value=something
-  FUN name:testComma visibility:public modality:FINAL <> (x:kotlin.Int) returnType:String flags:
+  FUN name:testComma visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='testComma(Int): String'

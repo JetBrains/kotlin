@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/booleanOperators.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:Boolean flags:
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Boolean flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Boolean flags:
     BLOCK_BODY
@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/booleanOperators.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:Boolean flags:
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Boolean flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Boolean flags:
     BLOCK_BODY
@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/booleanOperators.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
-  FUN name:test1x visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:Boolean flags:
+  FUN name:test1x visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Boolean flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Boolean flags:
     BLOCK_BODY
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/booleanOperators.kt
         CALL 'and(Boolean): Boolean' type=kotlin.Boolean origin=null
           $this: GET_VAR 'value-parameter a: Boolean' type=kotlin.Boolean origin=null
           other: GET_VAR 'value-parameter b: Boolean' type=kotlin.Boolean origin=null
-  FUN name:test2x visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:Boolean flags:
+  FUN name:test2x visibility:public modality:FINAL <> (a:kotlin.Boolean, b:kotlin.Boolean) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Boolean flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Boolean flags:
     BLOCK_BODY

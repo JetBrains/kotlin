@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/stringComparisons.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:Boolean flags:
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.String flags:
     BLOCK_BODY
@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/stringComparisons.kt
             $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
             other: GET_VAR 'value-parameter b: String' type=kotlin.String origin=null
           arg1: CONST Int type=kotlin.Int value=0
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:Boolean flags:
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.String flags:
     BLOCK_BODY
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/stringComparisons.kt
             $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
             other: GET_VAR 'value-parameter b: String' type=kotlin.String origin=null
           arg1: CONST Int type=kotlin.Int value=0
-  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:Boolean flags:
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.String flags:
     BLOCK_BODY
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/stringComparisons.kt
             $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
             other: GET_VAR 'value-parameter b: String' type=kotlin.String origin=null
           arg1: CONST Int type=kotlin.Int value=0
-  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:Boolean flags:
+  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.String flags:
     BLOCK_BODY

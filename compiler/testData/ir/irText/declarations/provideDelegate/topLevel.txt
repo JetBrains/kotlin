@@ -1,25 +1,23 @@
 FILE fqName:<root> fileName:/topLevel.kt
-  CLASS CLASS name:Delegate modality:FINAL visibility:public flags:
+  CLASS CLASS name:Delegate modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Delegate flags:
-    superClasses:
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:Delegate flags:primary
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Delegate'
-    PROPERTY name:value type:kotlin.String visibility:public modality:FINAL flags:val
+    PROPERTY name:value visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Delegate) returnType:String flags:
-        correspondingProperty: PROPERTY name:value type:kotlin.String visibility:public modality:FINAL flags:val
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Delegate) returnType:kotlin.String flags:
+        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Delegate flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): String'
             GET_FIELD 'value: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@Delegate: Delegate' type=Delegate origin=null
-    FUN name:getValue visibility:public modality:FINAL <> ($this:Delegate, thisRef:kotlin.Any?, property:kotlin.Any?) returnType:String flags:
+    FUN name:getValue visibility:public modality:FINAL <> ($this:Delegate, thisRef:kotlin.Any?, property:kotlin.Any?) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:Delegate flags:
       VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any? flags:
       VALUE_PARAMETER name:property index:1 type:kotlin.Any? flags:
@@ -27,34 +25,32 @@ FILE fqName:<root> fileName:/topLevel.kt
         RETURN type=kotlin.Nothing from='getValue(Any?, Any?): String'
           CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR 'this@Delegate: Delegate' type=Delegate origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  CLASS CLASS name:DelegateProvider modality:FINAL visibility:public flags:
+  CLASS CLASS name:DelegateProvider modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:DelegateProvider flags:
-    superClasses:
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:DelegateProvider flags:primary
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='DelegateProvider'
-    PROPERTY name:value type:kotlin.String visibility:public modality:FINAL flags:val
+    PROPERTY name:value visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:DelegateProvider) returnType:String flags:
-        correspondingProperty: PROPERTY name:value type:kotlin.String visibility:public modality:FINAL flags:val
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:DelegateProvider) returnType:kotlin.String flags:
+        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:DelegateProvider flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): String'
@@ -69,20 +65,20 @@ FILE fqName:<root> fileName:/topLevel.kt
           CALL 'constructor Delegate(String)' type=Delegate origin=null
             value: CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR 'this@DelegateProvider: DelegateProvider' type=DelegateProvider origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  PROPERTY name:testTopLevel type:kotlin.String visibility:public modality:FINAL flags:delegated,val
+  PROPERTY name:testTopLevel visibility:public modality:FINAL flags:delegated,val
     FIELD DELEGATE name:testTopLevel$delegate type:Delegate visibility:private flags:final
       EXPRESSION_BODY
         CALL 'provideDelegate(Any?, Any?): Delegate' type=Delegate origin=null
@@ -90,8 +86,8 @@ FILE fqName:<root> fileName:/topLevel.kt
             value: CONST String type=kotlin.String value=OK
           thisRef: CONST Null type=kotlin.Nothing? value=null
           property: PROPERTY_REFERENCE 'testTopLevel: String' field=null getter='<get-testTopLevel>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testTopLevel> visibility:public modality:FINAL <> () returnType:String flags:
-      correspondingProperty: PROPERTY name:testTopLevel type:kotlin.String visibility:public modality:FINAL flags:delegated,val
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testTopLevel> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
+      correspondingProperty: PROPERTY name:testTopLevel visibility:public modality:FINAL flags:delegated,val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testTopLevel>(): String'
           CALL 'getValue(Any?, Any?): String' type=kotlin.String origin=null

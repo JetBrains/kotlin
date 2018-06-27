@@ -1,33 +1,33 @@
 FILE fqName:<root> fileName:/incrementDecrement.kt
-  PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
+  PROPERTY name:p visibility:public modality:FINAL flags:var
     FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Int flags:
-      correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>(): Int'
           GET_FIELD 'p: Int' type=kotlin.Int origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-p> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:Unit flags:
-      correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-p> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit flags:
+      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
       BLOCK_BODY
         SET_FIELD 'p: Int' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
-  PROPERTY name:arr type:kotlin.IntArray visibility:public modality:FINAL flags:val
+  PROPERTY name:arr visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:arr type:kotlin.IntArray visibility:public flags:final
       EXPRESSION_BODY
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
-          elements: VARARG type=IntArray varargElementType=Int
+          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
             CONST Int type=kotlin.Int value=1
             CONST Int type=kotlin.Int value=2
             CONST Int type=kotlin.Int value=3
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arr> visibility:public modality:FINAL <> () returnType:IntArray flags:
-      correspondingProperty: PROPERTY name:arr type:kotlin.IntArray visibility:public modality:FINAL flags:val
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arr> visibility:public modality:FINAL <> () returnType:kotlin.IntArray flags:
+      correspondingProperty: PROPERTY name:arr visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-arr>(): IntArray'
           GET_FIELD 'arr: IntArray' type=kotlin.IntArray origin=null
-  FUN name:testVarPrefix visibility:public modality:FINAL <> () returnType:Unit flags:
+  FUN name:testVarPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
       VAR name:x type:kotlin.Int flags:var
         CONST Int type=kotlin.Int value=0
@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
             CALL 'dec(): Int' type=kotlin.Int origin=PREFIX_DECR
               $this: GET_VAR 'x: Int' type=kotlin.Int origin=PREFIX_DECR
           GET_VAR 'x: Int' type=kotlin.Int origin=PREFIX_DECR
-  FUN name:testVarPostfix visibility:public modality:FINAL <> () returnType:Unit flags:
+  FUN name:testVarPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
       VAR name:x type:kotlin.Int flags:var
         CONST Int type=kotlin.Int value=0
@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
             CALL 'dec(): Int' type=kotlin.Int origin=POSTFIX_DECR
               $this: GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
           GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
-  FUN name:testPropPrefix visibility:public modality:FINAL <> () returnType:Unit flags:
+  FUN name:testPropPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=PREFIX_INCR
@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
               <set-?>: CALL 'dec(): Int' type=kotlin.Int origin=PREFIX_DECR
                 $this: CALL '<get-p>(): Int' type=kotlin.Int origin=PREFIX_DECR
             CALL '<get-p>(): Int' type=kotlin.Int origin=PREFIX_DECR
-  FUN name:testPropPostfix visibility:public modality:FINAL <> () returnType:Unit flags:
+  FUN name:testPropPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
@@ -97,7 +97,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
               <set-?>: CALL 'dec(): Int' type=kotlin.Int origin=PREFIX_DECR
                 $this: CALL '<get-p>(): Int' type=kotlin.Int origin=PREFIX_DECR
             CALL '<get-p>(): Int' type=kotlin.Int origin=PREFIX_DECR
-  FUN name:testArrayPrefix visibility:public modality:FINAL <> () returnType:Unit flags:
+  FUN name:testArrayPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
       VAR name:a1 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=PREFIX_INCR
@@ -131,7 +131,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
           CALL 'get(Int): Int' type=kotlin.Int origin=PREFIX_DECR
             $this: GET_VAR 'tmp2_array: IntArray' type=kotlin.IntArray origin=null
             index: GET_VAR 'tmp3_index0: Int' type=kotlin.Int origin=null
-  FUN name:testArrayPostfix visibility:public modality:FINAL <> () returnType:Unit flags:
+  FUN name:testArrayPostfix visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
       VAR name:a1 type:kotlin.Int flags:val
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
