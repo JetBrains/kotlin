@@ -279,7 +279,7 @@ class ClassGenerator(
         else {
             val substitutor =
                 TypeSubstitutor.create(
-                    overridden.original.typeParameters.associate {
+                    overridden.typeParameters.associate {
                         val delegatedDefaultType = delegated.typeParameters[it.index].defaultType
                         it.typeConstructor to TypeProjectionImpl(delegatedDefaultType)
                     }
