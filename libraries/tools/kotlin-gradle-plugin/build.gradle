@@ -106,7 +106,9 @@ sourceSets {
 compileAgp25Kotlin.dependsOn compileGroovy
 
 processResources {
-    expand(project.properties)
+    def props = ["projectVersion" : project.version]
+    inputs.properties(props)
+    expand(props)
 }
 
 jar.dependsOn agp25Classes
