@@ -16,12 +16,8 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.openapi.diagnostic.Attachment
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
-import com.intellij.psi.impl.light.LightPsiClassBuilder
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
@@ -34,17 +30,9 @@ class KotlinUObjectLiteralExpression(
 ) : KotlinAbstractUExpression(givenParent), UObjectLiteralExpression, UCallExpressionEx, KotlinUElementWithType {
 
     override val declaration: UClass by lz {
-        val lightClass: KtLightClass? = psi.objectDeclaration.toLightClass()
-        if (lightClass != null) {
-            getLanguagePlugin().convert<UClass>(lightClass, this)
-        } else {
-            logger.error(
-                "Failed to create light class for object declaration",
-                Attachment(psi.containingFile.virtualFile?.path ?: "<no path>", psi.containingFile.text)
-            )
-
-            getLanguagePlugin().convert(LightPsiClassBuilder(psi, "<unnamed>"), this)
-        }
+        psi.objectDeclaration.toLightClass()
+            ?.let { getLanguagePlugin().convert<UClass>(it, this) }
+            ?: KotlinInvalidUClass("<invalid object code>", psi, this)
     }
 
     override fun getExpressionType() = psi.objectDeclaration.toPsiType()
@@ -96,7 +84,4 @@ class KotlinUObjectLiteralExpression(
             get() = psi.name ?: "<error>"
     }
 
-    companion object {
-        val logger by lz { Logger.getInstance(KotlinUObjectLiteralExpression::class.java) }
-    }
 }
