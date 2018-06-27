@@ -122,12 +122,6 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceField"/>
     </action>
 
-    <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
-            text="Copy Current File As Diagnostic Test">
-      <keyboard-shortcut keymap="$default" first-keystroke="control alt shift T"/>
-      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
-    </action>
-
     <group id="InternalKotlin" text="IDEA Internal Actions" internal="true">
       <separator/>
       <group id="KotlinInternalGroup" text="Kotlin" popup="true">
@@ -160,6 +154,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
         <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
                 text="Throw cached PCE"/>
+
+        <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
+                text="Copy Current File As Diagnostic Test"/>
       </group>
       <separator/>
 
