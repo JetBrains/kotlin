@@ -99,6 +99,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/classOverloadedFunction/");
     }
 
+    @TestMetadata("classPropertyInConstructor")
+    public void testClassPropertyInConstructor() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/classPropertyInConstructor/");
+    }
+
     @TestMetadata("classSomeProperties")
     public void testClassSomeProperties() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/classSomeProperties/");
