@@ -369,7 +369,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 IrCallImpl(
                     startOffset,
                     endOffset,
-                    loweredConstructor.symbol.owner.returnType,
+                    loweredConstructor.symbol.owner.parentAsClass.defaultType,
                     loweredConstructor.symbol
                 )
         }
