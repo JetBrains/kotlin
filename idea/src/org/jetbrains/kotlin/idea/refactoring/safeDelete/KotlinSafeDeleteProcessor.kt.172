@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchPar
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -445,6 +446,16 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         ) == Messages.YES
     }
 
+    private fun shouldAllowPropagationToExpected(): Boolean {
+        if (ApplicationManager.getApplication().isUnitTestMode) return true
+
+        return Messages.showYesNoDialog(
+            "Do you want to delete expected declaration together with all related actual ones?",
+            RefactoringBundle.message("safe.delete.title"),
+            Messages.getQuestionIcon()
+        ) == Messages.YES
+    }
+
     override fun getElementsToSearch(
             element: PsiElement, module: Module?, allElementsToDelete: Collection<PsiElement>
     ): Collection<PsiElement>? {
@@ -463,6 +474,14 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 return element.toPsiParameters().flatMap { psiParameter ->
                     checkParametersInMethodHierarchy(psiParameter) ?: emptyList()
                 }.ifEmpty { listOf(element) }
+            }
+
+            is KtDeclaration -> {
+                if (element.hasActualModifier() || element.isExpectDeclaration()) {
+                    if (!shouldAllowPropagationToExpected()) {
+                        return null
+                    }
+                }
             }
 
             is PsiParameter ->
