@@ -74,7 +74,7 @@ internal abstract class ContinuationImpl protected constructor(
     public fun intercepted(): Continuation<Any?> =
         intercepted
             ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
-                .also { intercepted = this }
+                .also { intercepted = it }
 
     public override fun resumeWith(result: SuccessOrFailure<Any?>) {
         val completion = completion!! // fail fast when trying to resume continuation without completion
