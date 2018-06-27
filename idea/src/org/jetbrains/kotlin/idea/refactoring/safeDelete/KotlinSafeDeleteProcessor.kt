@@ -382,20 +382,34 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         return result.toTypedArray()
     }
 
+    private fun KtDeclaration.removeOrClean() {
+        when (this) {
+            is KtParameter -> {
+                (parent as? KtParameterList)?.removeParameter(this)
+            }
+            is KtCallableDeclaration, is KtClassOrObject, is KtTypeAlias -> {
+                delete()
+            }
+            else -> {
+                removeModifier(KtTokens.IMPL_KEYWORD)
+                removeModifier(KtTokens.ACTUAL_KEYWORD)
+            }
+        }
+    }
+
     override fun prepareForDeletion(element: PsiElement) {
         if (element is KtDeclaration) {
-            element.actualsForExpected().forEach {
-                when (it) {
-                    is KtParameter -> {
-                        (it.parent as? KtParameterList)?.removeParameter(it)
+            if (element.hasActualModifier()) {
+                val expectElement = element.liftToExpected()
+                expectElement?.actualsForExpected()?.forEach {
+                    if (it !== element) {
+                        it.removeOrClean()
                     }
-                    is KtCallableDeclaration, is KtClassOrObject, is KtTypeAlias -> {
-                        it.delete()
-                    }
-                    else -> {
-                        it.removeModifier(KtTokens.IMPL_KEYWORD)
-                        it.removeModifier(KtTokens.ACTUAL_KEYWORD)
-                    }
+                }
+                expectElement?.removeOrClean()
+            } else {
+                element.actualsForExpected().forEach {
+                    it.removeOrClean()
                 }
             }
         }
