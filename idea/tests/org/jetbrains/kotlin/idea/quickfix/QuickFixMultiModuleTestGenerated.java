@@ -129,6 +129,16 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/createVarInExpectClass/");
     }
 
+    @TestMetadata("defaultParameterInExpected")
+    public void testDefaultParameterInExpected() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/defaultParameterInExpected/");
+    }
+
+    @TestMetadata("defaultParameterInExpectedClass")
+    public void testDefaultParameterInExpectedClass() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/defaultParameterInExpectedClass/");
+    }
+
     @TestMetadata("deprecatedHeader")
     public void testDeprecatedHeader() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/deprecatedHeader/");
