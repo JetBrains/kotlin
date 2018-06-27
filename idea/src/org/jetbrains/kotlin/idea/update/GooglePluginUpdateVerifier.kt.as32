@@ -9,8 +9,9 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.plugins.PluginNode
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.idea.util.isDev
+import org.jetbrains.kotlin.idea.util.isEap
 import java.io.IOException
-import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 import javax.xml.bind.JAXBContext
@@ -29,6 +30,10 @@ class GooglePluginUpdateVerifier : PluginUpdateVerifier() {
         }
 
         val version = pluginDescriptor.version
+        if (isEap(version) || isDev(version)) {
+            return PluginVerifyResult.accept()
+        }
+
         try {
             val url = URL(METADATA_FILE_URL)
             val stream = url.openStream()
@@ -144,4 +149,3 @@ class GooglePluginUpdateVerifier : PluginUpdateVerifier() {
         }
     }
 }
-
