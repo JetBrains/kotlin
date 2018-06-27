@@ -15,6 +15,7 @@ import java.io.File
 import java.io.IOException
 import java.net.URLClassLoader
 import java.util.jar.JarFile
+import kotlin.coroutines.experimental.SequenceBuilder
 import kotlin.coroutines.experimental.buildSequence
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.KotlinType
@@ -55,6 +56,27 @@ internal fun discoverScriptTemplatesInClasspath(
     val classLoader by lazy(LazyThreadSafetyMode.PUBLICATION) {
         URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), baseClassLoader)
     }
+
+    suspend fun SequenceBuilder<KotlinScriptDefinition>.yieldAllDirDepDefinitions(
+        directoryBasedDependency: File,
+        foundDefinitionClasses: List<Pair<String, ByteArray>>
+    ) {
+        val dependencyClasspath = listOf(directoryBasedDependency) + defaultScriptDefinitionClasspath
+        val dependencyClassLoader =
+            URLClassLoader(dependencyClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassLoader)
+        foundDefinitionClasses.forEach { (definitionName, definitionClassBytes) ->
+            loadScriptDefinition(
+                definitionClassBytes, definitionName, dependencyClasspath, { dependencyClassLoader }, scriptResolverEnv, messageCollector
+            )?.also {
+                yield(it)
+            }
+        }
+    }
+
+    // for jar files the definition class is expected in the same jar as the discovery file
+    // in case of directories, the class output may come separate from the resources, so some candidates should be deffered and processed later
+    val defferedDirDependencies = ArrayList<File>()
+    val defferedDefinitionCandidates = ArrayList<String>()
     for (dep in classpath) {
         try {
             when {
@@ -74,11 +96,7 @@ internal fun discoverScriptTemplatesInClasspath(
                                     loadScriptDefinition(
                                         jar.getInputStream(templateClass).readBytes(),
                                         templateClassName, classpath, { classLoader }, scriptResolverEnv, messageCollector
-                                    )?.let {
-                                        messageCollector.report(
-                                            CompilerMessageSeverity.LOGGING,
-                                            "Configure scripting: Added template $templateClassName from $dep"
-                                        )
+                                    )?.also {
                                         yield(it)
                                     }
                                 }
@@ -87,51 +105,60 @@ internal fun discoverScriptTemplatesInClasspath(
                     }
                 }
                 dep.isDirectory -> {
-                    val dir = File(dep, SCRIPT_DEFINITION_MARKERS_PATH)
-                    if (dir.isDirectory) {
-                        val templateClasspath by lazy(LazyThreadSafetyMode.PUBLICATION) {
-                            listOf(dep) + defaultScriptDefinitionClasspath
-                        }
-                        val classLoader by lazy(LazyThreadSafetyMode.PUBLICATION) {
-                            URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassLoader)
-                        }
-                        dir.listFiles().forEach { templateClassNmae ->
-                            val templateClassFile = File(dep, "${templateClassNmae.name.replace('.', '/')}.class")
-                            if (!templateClassFile.exists() || !templateClassFile.isFile) {
-                                messageCollector.report(
-                                    CompilerMessageSeverity.WARNING,
-                                    "Configure scripting: class not found ${templateClassNmae.name}"
-                                )
-                            } else {
-                                loadScriptDefinition(
-                                    templateClassFile.readBytes(),
-                                    templateClassNmae.name, templateClasspath, { classLoader }, scriptResolverEnv, messageCollector
-                                )?.let {
-                                    messageCollector.report(
-                                        CompilerMessageSeverity.LOGGING,
-                                        "Configure scripting: Added template ${templateClassNmae.name} from $dep"
-                                    )
-                                    yield(it)
-                                }
-                            }
+                    defferedDirDependencies.add(dep) // there is no way to know that the dependency is fully "used" so we add it to the list anyway
+                    val discoveryDir = File(dep, SCRIPT_DEFINITION_MARKERS_PATH)
+                    if (discoveryDir.isDirectory) {
+                        val foundDefinitionClasses = discoveryDir.listFiles().map { it.name }.partitionIntoExistingDefinitions(dep, defferedDefinitionCandidates)
+                        if (foundDefinitionClasses.isNotEmpty()) {
+                            yieldAllDirDepDefinitions(dep, foundDefinitionClasses)
                         }
                     }
                 }
                 else -> {
                     // assuming that invalid classpath entries will be reported elsewhere anyway, so do not spam user with additional warnings here
-                    messageCollector.report(
-                        CompilerMessageSeverity.LOGGING,
-                        "Configure scripting: Unknown classpath entry $dep"
-                    )
+                    messageCollector.report(CompilerMessageSeverity.LOGGING, "Configure scripting: Unknown classpath entry $dep")
                 }
             }
         } catch (e: IOException) {
-            messageCollector.report(
-                CompilerMessageSeverity.WARNING,
-                "Configure scripting: unable to process classpath entry $dep: $e"
-            )
+            messageCollector.report(CompilerMessageSeverity.WARNING, "Configure scripting: unable to process classpath entry $dep: $e")
         }
     }
+    var remainingDefinitionCandidates = defferedDefinitionCandidates
+    for (dir in defferedDirDependencies) {
+        if (remainingDefinitionCandidates.isEmpty()) break
+        try {
+            val notFoundDefinitionCandidates = ArrayList<String>()
+            val foundDefinitionClasses = remainingDefinitionCandidates.partitionIntoExistingDefinitions(dir, notFoundDefinitionCandidates)
+            if (foundDefinitionClasses.isNotEmpty()) {
+                remainingDefinitionCandidates = notFoundDefinitionCandidates
+                yieldAllDirDepDefinitions(dir, foundDefinitionClasses)
+            }
+        } catch (e: IOException) {
+            messageCollector.report(CompilerMessageSeverity.WARNING, "Configure scripting: unable to process classpath entry $dir: $e")
+        }
+    }
+    if (remainingDefinitionCandidates.isNotEmpty()) {
+        messageCollector.report(
+            CompilerMessageSeverity.WARNING,
+            "The following script definitions are not found in the classpath: [${remainingDefinitionCandidates.joinToString()}]"
+        )
+    }
+}
+
+private fun List<String>.partitionIntoExistingDefinitions(
+    directoryBasedDependency: File,
+    notFoundDefinitionCandidates: ArrayList<String>
+): List<Pair<String, ByteArray>> {
+    val foundDefinitionClasses = ArrayList<Pair<String, ByteArray>>() // fqn -> file contents
+    for (discoveryFileCandidate in this) {
+        val file = File(directoryBasedDependency, "${discoveryFileCandidate.replace('.', '/')}.class")
+        if (file.exists() && file.isFile) {
+            foundDefinitionClasses.add(discoveryFileCandidate to file.readBytes())
+        } else {
+            notFoundDefinitionCandidates.add(discoveryFileCandidate)
+        }
+    }
+    return foundDefinitionClasses
 }
 
 internal fun loadScriptTemplatesFromClasspath(
