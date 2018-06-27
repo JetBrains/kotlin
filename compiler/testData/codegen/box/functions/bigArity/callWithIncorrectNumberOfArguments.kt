@@ -1,3 +1,4 @@
+// !LANGUAGE: +FunctionTypesWithBigArity
 // WITH_RUNTIME
 // TARGET_BACKEND: JVM
 // FILE: J.java

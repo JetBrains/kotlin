@@ -1,3 +1,5 @@
+// !LANGUAGE: +FunctionTypesWithBigArity
+
 // Implementing function interface is prohibited in JavaScript
 // IGNORE_BACKEND: JS_IR, JS
 

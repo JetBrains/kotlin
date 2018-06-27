@@ -10317,6 +10317,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/functions/bigArity/javaLambda.kt");
             }
 
+            @TestMetadata("noBigFunctionTypes.kt")
+            public void testNoBigFunctionTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/noBigFunctionTypes.kt");
+            }
+
             @TestMetadata("subclass.kt")
             public void testSubclass() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/bigArity/subclass.kt");
