@@ -391,13 +391,13 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private fun getFacadeToAnalyzeFiles(files: Collection<KtFile>): ResolutionFacade {
         val file = files.first()
         val moduleInfo = file.getModuleInfo()
-        val scripts = files.filterScripts()
+        val specialFiles = files.filterNotInProjectSource(moduleInfo)
+        val scripts = specialFiles.filterScripts()
         if (scripts.isNotEmpty()) {
             val projectFacade = getFacadeForScripts(scripts)
             return ModuleResolutionFacadeImpl(projectFacade, moduleInfo)
         }
 
-        val specialFiles = files.filterNotInProjectSource(moduleInfo)
         if (specialFiles.isNotEmpty()) {
             val projectFacade = getFacadeForSpecialFiles(specialFiles)
             return ModuleResolutionFacadeImpl(projectFacade, moduleInfo)

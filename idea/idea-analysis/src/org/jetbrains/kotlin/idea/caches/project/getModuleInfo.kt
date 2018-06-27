@@ -205,17 +205,18 @@ private inline fun <T> collectInfosByVirtualFile(
     isScript: Boolean = getScriptDefinition(virtualFile, project) != null,
     onOccurrence: (IdeaModuleInfo?) -> T
 ): T {
-    if (isScript) {
-        getScriptDefinition(virtualFile, project)?.let {
-            onOccurrence(ScriptModuleInfo(project, virtualFile, it))
-        }
-    }
 
     val projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
 
     val moduleRelatedModuleInfo = getModuleRelatedModuleInfo(projectFileIndex, virtualFile)
     if (moduleRelatedModuleInfo != null) {
         onOccurrence(moduleRelatedModuleInfo)
+    }
+
+    if (moduleRelatedModuleInfo == null && isScript) {
+        getScriptDefinition(virtualFile, project)?.let {
+            onOccurrence(ScriptModuleInfo(project, virtualFile, it))
+        }
     }
 
     projectFileIndex.getOrderEntriesForFile(virtualFile).forEach {
