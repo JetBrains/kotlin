@@ -216,6 +216,8 @@ public final class kotlin/UByte : java/lang/Comparable {
 	public static final field Companion Lkotlin/UByte$Companion;
 	public static final field MAX_VALUE B
 	public static final field MIN_VALUE B
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 	public final fun and (B)B
 	public fun compareTo (B)I
 	public final fun compareTo (I)I
@@ -358,6 +360,8 @@ public final class kotlin/UInt : java/lang/Comparable {
 	public static final field Companion Lkotlin/UInt$Companion;
 	public static final field MAX_VALUE I
 	public static final field MIN_VALUE I
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 	public final fun and (I)I
 	public final fun compareTo (B)I
 	public fun compareTo (I)I
@@ -504,6 +508,8 @@ public final class kotlin/ULong : java/lang/Comparable {
 	public static final field Companion Lkotlin/ULong$Companion;
 	public static final field MAX_VALUE J
 	public static final field MIN_VALUE J
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 	public final fun and (J)J
 	public final fun compareTo (B)I
 	public final fun compareTo (I)I
@@ -650,6 +656,8 @@ public final class kotlin/UShort : java/lang/Comparable {
 	public static final field Companion Lkotlin/UShort$Companion;
 	public static final field MAX_VALUE S
 	public static final field MIN_VALUE S
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 	public final fun and (S)S
 	public final fun compareTo (B)I
 	public final fun compareTo (I)I
@@ -3194,6 +3202,8 @@ public final class kotlin/jvm/internal/ByteCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/ByteCompanionObject;
 	public static final field MAX_VALUE B
 	public static final field MIN_VALUE B
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/ByteSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -3235,6 +3245,8 @@ public final class kotlin/jvm/internal/CharCompanionObject {
 	public static final field MIN_HIGH_SURROGATE C
 	public static final field MIN_LOW_SURROGATE C
 	public static final field MIN_SURROGATE C
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/CharSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -3386,6 +3398,8 @@ public final class kotlin/jvm/internal/IntCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/IntCompanionObject;
 	public static final field MAX_VALUE I
 	public static final field MIN_VALUE I
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/IntSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -3452,6 +3466,8 @@ public final class kotlin/jvm/internal/LongCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/LongCompanionObject;
 	public static final field MAX_VALUE J
 	public static final field MIN_VALUE J
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/LongSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -3735,6 +3751,8 @@ public final class kotlin/jvm/internal/ShortCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/ShortCompanionObject;
 	public static final field MAX_VALUE S
 	public static final field MIN_VALUE S
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/ShortSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {

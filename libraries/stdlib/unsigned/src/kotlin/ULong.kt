@@ -24,6 +24,16 @@ public inline class ULong internal constructor(private val data: Long) : Compara
          * A constant holding the maximum value an instance of ULong can have.
          */
         public const val MAX_VALUE: ULong = ULong(-1)
+
+        /**
+         * The number of bytes used to represent an instance of ULong in a binary form.
+         */
+        public const val SIZE_BYTES: Int = 8
+
+        /**
+         * The number of bits used to represent an instance of ULong in a binary form.
+         */
+        public const val SIZE_BITS: Int = 64
     }
 
     /**
