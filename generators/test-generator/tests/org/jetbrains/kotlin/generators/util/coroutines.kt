@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.util
 
 import org.jetbrains.kotlin.generators.tests.generator.MethodModel
 import org.jetbrains.kotlin.generators.tests.generator.SimpleTestMethodModel
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
@@ -60,7 +61,7 @@ class CoroutinesTestModel(
 }
 
 fun isCommonCoroutineTest(file: File): Boolean {
-    return file.readLines().any { it.startsWith("// COMMON_COROUTINES_TEST") }
+    return InTextDirectivesUtils.isDirectiveDefined(file.readText(), "COMMON_COROUTINES_TEST")
 }
 
 fun createCommonCoroutinesTestMethodModels(

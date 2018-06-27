@@ -49,6 +49,8 @@ public class DescriptorUtils {
     public static final FqName CONTINUATION_INTERFACE_FQ_NAME_RELEASE =
             COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("Continuation"));
 
+    public static final FqName SUCCESS_OR_FAILURE_FQ_NAME = new FqName("kotlin.SuccessOrFailure");
+
     private DescriptorUtils() {
     }
 

@@ -54,7 +54,12 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     private void doBytecodeListingTest(@NotNull File wholeFile) throws Exception {
         if (!InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "CHECK_BYTECODE_LISTING")) return;
 
-        File expectedFile = new File(wholeFile.getParent(), FilesKt.getNameWithoutExtension(wholeFile) + ".txt");
+        String suffix =
+                (coroutinesPackage.contains("experimental") || coroutinesPackage.isEmpty())
+                && InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "COMMON_COROUTINES_TEST")
+                ? "_1_2" : "";
+        File expectedFile = new File(wholeFile.getParent(), FilesKt.getNameWithoutExtension(wholeFile) + suffix + ".txt");
+
         String text =
                 BytecodeListingTextCollectingVisitor.Companion.getText(
                         classFileFactory,

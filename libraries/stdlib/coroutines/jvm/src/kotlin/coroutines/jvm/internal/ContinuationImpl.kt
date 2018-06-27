@@ -74,7 +74,7 @@ internal abstract class ContinuationImpl protected constructor(
     public fun intercepted(): Continuation<Any?> =
         intercepted
             ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
-                .also { intercepted = this }
+                .also { intercepted = it }
 
     public override fun resumeWith(result: SuccessOrFailure<Any?>) {
         val completion = completion!! // fail fast when trying to resume continuation without completion
@@ -103,7 +103,7 @@ internal abstract class ContinuationImpl protected constructor(
     }
 }
 
-// todo: Do we really need it? 
+// todo: Do we really need it?
 internal object CompletedContinuation : Continuation<Any?> {
     override val context: CoroutineContext
         get() = error("This continuation is already complete")
