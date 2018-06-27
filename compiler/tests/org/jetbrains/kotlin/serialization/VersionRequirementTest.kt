@@ -188,4 +188,11 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
             )
         )
     }
+
+    fun testJvmFieldInInterfaceCompanion() {
+        doTest(
+            VersionRequirement.Version(1, 2, 70), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
+            fqNames = listOf("test.Base.Companion.foo")
+        )
+    }
 }

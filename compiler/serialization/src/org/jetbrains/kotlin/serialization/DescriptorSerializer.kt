@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.RequireKotlinNames
-import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithAnyExpectedDefault
 import org.jetbrains.kotlin.resolve.checkers.KotlinVersionStringAnnotationValueChecker
 import org.jetbrains.kotlin.resolve.constants.EnumValue
@@ -241,7 +240,7 @@ class DescriptorSerializer private constructor(
             builder.versionRequirement = writeVersionRequirementDependingOnCoroutinesVersion()
         }
 
-        extension.serializeProperty(descriptor, builder)
+        extension.serializeProperty(descriptor, builder, versionRequirementTable)
 
         return builder
     }

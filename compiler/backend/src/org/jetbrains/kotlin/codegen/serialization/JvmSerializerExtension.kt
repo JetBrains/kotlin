@@ -155,7 +155,11 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         }
     }
 
-    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
+    override fun serializeProperty(
+        descriptor: PropertyDescriptor,
+        proto: ProtoBuf.Property.Builder,
+        versionRequirementTable: MutableVersionRequirementTable
+    ) {
         val signatureSerializer = SignatureSerializer()
 
         val getter = descriptor.getter
@@ -181,6 +185,11 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
             proto.setExtension(JvmProtoBuf.isMovedFromInterfaceCompanion, 1)
         }
 
+        if (JvmAbi.isInterfaceCompanionWithBackingFieldsInOuter(descriptor.containingDeclaration)) {
+            assert(!proto.hasVersionRequirement()) { "VersionRequirement should be empty for $descriptor" }
+            proto.versionRequirement =
+                    writeVersionRequirement(1, 2, 70, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+        }
     }
 
     override fun serializeErrorType(type: KotlinType, builder: ProtoBuf.Type.Builder) {

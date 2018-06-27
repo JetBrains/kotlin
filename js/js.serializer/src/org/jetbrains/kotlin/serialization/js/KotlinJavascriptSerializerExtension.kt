@@ -54,12 +54,16 @@ class KotlinJavascriptSerializerExtension(
         super.serializeClass(descriptor, proto, versionRequirementTable)
     }
 
-    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
+    override fun serializeProperty(
+        descriptor: PropertyDescriptor,
+        proto: ProtoBuf.Property.Builder,
+        versionRequirementTable: MutableVersionRequirementTable
+    ) {
         val id = getFileId(descriptor)
         if (id != null) {
             proto.setExtension(JsProtoBuf.propertyContainingFileId, id)
         }
-        super.serializeProperty(descriptor, proto)
+        super.serializeProperty(descriptor, proto, versionRequirementTable)
     }
 
     override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
