@@ -4,19 +4,22 @@ import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
+import java.io.File
 
-class Kapt3Android30IT : Kapt3AndroidIT() {
+class Kapt3Android32IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: String
-        get() = "3.2.0-alpha18"
+        get() = "3.2.0-beta01"
+
+    override val gradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("4.6")
 }
 
 open class Kapt3AndroidIT : Kapt3BaseIT() {
-    companion object {
-        private val GRADLE_VERSION = GradleVersionRequired.AtLeast("4.6")
-    }
-
     protected open val androidGradlePluginVersion: String
         get() = "2.3.0"
+
+    protected open val gradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("4.1")
 
     private fun androidBuildOptions() =
         BuildOptions(
@@ -30,7 +33,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     @Test
     fun testButterKnife() {
-        val project = Project("android-butterknife", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("android-butterknife", gradleVersion, directoryPrefix = "kapt2")
         val options = androidBuildOptions()
 
         project.build("assembleDebug", options = options) {
@@ -62,7 +65,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     @Test
     fun testDagger() {
-        val project = Project("android-dagger", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("android-dagger", gradleVersion, directoryPrefix = "kapt2")
         val options = androidBuildOptions()
 
         project.build("assembleDebug", options = options) {
@@ -89,7 +92,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     @Test
     fun testKt15001() {
-        val project = Project("kt15001", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("kt15001", gradleVersion, directoryPrefix = "kapt2")
         val options = androidBuildOptions()
 
         project.build("assembleDebug", options = options) {
@@ -100,7 +103,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     @Test
     fun testDbFlow() {
-        val project = Project("android-dbflow", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("android-dbflow", gradleVersion, directoryPrefix = "kapt2")
         val options = androidBuildOptions()
 
         project.build("assembleDebug", options = options) {
@@ -115,7 +118,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     @Test
     fun testRealm() {
-        val project = Project("android-realm", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("android-realm", gradleVersion, directoryPrefix = "kapt2")
         val options = androidBuildOptions()
 
         project.build("assembleDebug", options = options) {
@@ -130,9 +133,8 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     @Test
     open fun testDatabinding() {
-        val project = Project("android-databinding", GRADLE_VERSION, directoryPrefix = "kapt2")
+        val project = Project("android-databinding", gradleVersion, directoryPrefix = "kapt2")
         val options = androidBuildOptions()
-
 
         if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
             project.setupWorkingDir()
