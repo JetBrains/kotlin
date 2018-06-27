@@ -47,7 +47,8 @@ class AddActualFix(
         val expectedClass = expectedClassPointer.element ?: return
         val factory = KtPsiFactory(element)
         val pureActualClass = factory.generateClassOrObjectByExpectedClass(
-            project, expectedClass, actualNeeded = true, existingDeclarations = element.declarations
+            project, expectedClass, actualNeeded = true,
+            existingDeclarations = element.declarations + listOfNotNull(element.primaryConstructor)
         )
         for (declaration in pureActualClass.declarations) {
             element.addDeclaration(declaration)

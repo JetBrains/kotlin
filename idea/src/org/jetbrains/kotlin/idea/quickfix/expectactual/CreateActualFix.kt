@@ -219,19 +219,18 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
     actualNeeded: Boolean,
     existingDeclarations: List<KtDeclaration> = emptyList()
 ): KtClassOrObject {
+    fun areCompatible(first: KtFunction, second: KtFunction) =
+        first.valueParameters.size == second.valueParameters.size &&
+                first.valueParameters.zip(second.valueParameters).all { (firstParam, secondParam) ->
+                    firstParam.name == secondParam.name && firstParam.typeReference?.text == secondParam.typeReference?.text
+                }
+
     fun KtDeclaration.exists() =
         existingDeclarations.any {
-            name == it.name && this.javaClass == it.javaClass && when (this) {
-                is KtClassOrObject, is KtProperty, is KtEnumEntry -> true
-                is KtFunction -> {
-                    it as KtFunction
-                    valueParameters.size == it.valueParameters.size &&
-                            valueParameters.zip(it.valueParameters).all { (parameter, existingParameter) ->
-                                parameter.name == existingParameter.name &&
-                                        parameter.typeReference?.text == existingParameter.typeReference?.text
-                            }
-                }
-                else -> true
+            name == it.name && when (this) {
+                is KtConstructor<*> -> it is KtConstructor<*> && areCompatible(this, it)
+                is KtNamedFunction -> it is KtNamedFunction && areCompatible(this, it)
+                else -> this.javaClass == it.javaClass
             }
         }
 
@@ -265,6 +264,10 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
                 }
             }
         }
+    }
+    val primaryConstructor = actualClass.primaryConstructor
+    if (primaryConstructor != null && primaryConstructor.exists()) {
+        primaryConstructor.delete()
     }
 
     val context = expectedClass.analyze()
