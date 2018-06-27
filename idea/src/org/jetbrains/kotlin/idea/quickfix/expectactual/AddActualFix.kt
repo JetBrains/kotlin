@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class AddActualFix(
-        actualClassOrObject: KtClassOrObject,
-        expectedClassOrObject: KtClassOrObject
+    actualClassOrObject: KtClassOrObject,
+    expectedClassOrObject: KtClassOrObject
 ) : KotlinQuickFixAction<KtClassOrObject>(actualClassOrObject) {
 
     private val expectedClassPointer = expectedClassOrObject.createSmartPointer()
@@ -47,7 +47,7 @@ class AddActualFix(
         val expectedClass = expectedClassPointer.element ?: return
         val factory = KtPsiFactory(element)
         val pureActualClass = factory.generateClassOrObjectByExpectedClass(
-                project, expectedClass, actualNeeded = true, existingDeclarations = element.declarations
+            project, expectedClass, actualNeeded = true, existingDeclarations = element.declarations
         )
         for (declaration in pureActualClass.declarations) {
             element.addDeclaration(declaration)
@@ -62,9 +62,9 @@ class AddActualFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val incompatibleMap = DiagnosticFactory.cast(diagnostic, Errors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS).b
             val expectedClassDescriptor = incompatibleMap.firstOrNull()?.first?.containingDeclaration as? ClassDescriptor
-                                          ?: return null
+                ?: return null
             val expectedClassOrObject = DescriptorToSourceUtils.descriptorToDeclaration(expectedClassDescriptor) as? KtClassOrObject
-                                        ?: return null
+                ?: return null
             return (diagnostic.psiElement as? KtClassOrObject)?.let { AddActualFix(it, expectedClassOrObject) }
         }
     }
