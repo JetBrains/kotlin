@@ -20432,6 +20432,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/sourceCompatibility/inlineFunctionAlways.kt");
             }
 
+            @TestMetadata("noBigFunctionTypes.kt")
+            public void testNoBigFunctionTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sourceCompatibility/noBigFunctionTypes.kt");
+            }
+
             @TestMetadata("noCallableReferencesWithEmptyLHS.kt")
             public void testNoCallableReferencesWithEmptyLHS() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sourceCompatibility/noCallableReferencesWithEmptyLHS.kt");
