@@ -380,6 +380,8 @@ public final class kotlin/jvm/internal/ByteCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/ByteCompanionObject;
 	public static final field MAX_VALUE B
 	public static final field MIN_VALUE B
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/ByteSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -421,6 +423,8 @@ public final class kotlin/jvm/internal/CharCompanionObject {
 	public static final field MIN_HIGH_SURROGATE C
 	public static final field MIN_LOW_SURROGATE C
 	public static final field MIN_SURROGATE C
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/CharSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -572,6 +576,8 @@ public final class kotlin/jvm/internal/IntCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/IntCompanionObject;
 	public static final field MAX_VALUE I
 	public static final field MIN_VALUE I
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/IntSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -638,6 +644,8 @@ public final class kotlin/jvm/internal/LongCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/LongCompanionObject;
 	public static final field MAX_VALUE J
 	public static final field MIN_VALUE J
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/LongSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -921,6 +929,8 @@ public final class kotlin/jvm/internal/ShortCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/ShortCompanionObject;
 	public static final field MAX_VALUE S
 	public static final field MIN_VALUE S
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/ShortSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
