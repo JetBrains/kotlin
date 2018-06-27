@@ -16,6 +16,7 @@ Exit code: NOTHING_DONE
 ------------------------------------------
 Building module2
 Cleaning output files:
+  out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/usage/Usage.class
 End of files
 Compiling files:

@@ -2,6 +2,7 @@
 
 Building module1
 Cleaning output files:
+  out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/foo/A.class
 End of files
 Compiling files:
@@ -17,6 +18,7 @@ Exit code: NOTHING_DONE
 ------------------------------------------
 Building module2
 Cleaning output files:
+  out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/foo/AChild.class
 End of files
 Compiling files:
@@ -34,6 +36,7 @@ Cannot access 'A': it is private in file
 
 Building module1
 Cleaning output files:
+  out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/foo/A.class
 End of files
 Compiling files:
@@ -55,6 +58,9 @@ End of files
 Exit code: OK
 ------------------------------------------
 Building module3
+Cleaning output files:
+  out/production/module3/META-INF/module3.kotlin_module
+End of files
 Compiling files:
   module3/src/importAChild.kt
 End of files

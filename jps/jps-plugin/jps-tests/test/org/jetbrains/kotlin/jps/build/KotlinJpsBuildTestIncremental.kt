@@ -87,7 +87,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
 
         checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar")))
+        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
 
         checkWhen(del("src/main.kt"),
                   pathsToCompile = null,
@@ -96,7 +96,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         assertFilesNotExistInOutput(module, "foo/MainKt.class")
 
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar")))
+        checkWhen(touch("src/Bar.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
     }
 
     fun testManyFilesForPackage() {
