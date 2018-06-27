@@ -126,7 +126,8 @@ class KotlinAndroidLineMarkerProvider : LineMarkerProvider {
         private val CLASSES_WITH_LAYOUT_XML = arrayOf(
                 SdkConstants.CLASS_ACTIVITY,
                 SdkConstants.CLASS_FRAGMENT,
-                SdkConstants.CLASS_V4_FRAGMENT,
+                SdkConstants.CLASS_V4_FRAGMENT.oldName(),
+                SdkConstants.CLASS_V4_FRAGMENT.newName(),
                 "android.widget.Adapter")
 
         private fun KtClass.isClassWithLayoutXml(): Boolean {

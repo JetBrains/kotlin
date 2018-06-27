@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.light.LightJavaModule
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -91,22 +92,22 @@ class ClasspathRootsResolver(
 
         for ((root, packagePrefix) in javaSourceRoots) {
             val modularRoot = modularSourceRoot(root, hasOutputDirectoryInClasspath)
-            if (modularRoot != null) {
-                modules += modularRoot
-            }
-            else {
-                result += JavaRoot(root, JavaRoot.RootType.SOURCE, packagePrefix?.let { prefix ->
-                    if (isValidJavaFqName(prefix)) FqName(prefix)
-                    else null.also {
-                        report(STRONG_WARNING, "Invalid package prefix name is ignored: $prefix")
+                    if (modularRoot != null) {
+                        modules += modularRoot
                     }
-                })
-            }
-        }
+                    else {
+                result += JavaRoot(root, JavaRoot.RootType.SOURCE, packagePrefix?.let { prefix ->
+                            if (isValidJavaFqName(prefix)) FqName(prefix)
+                            else null.also {
+                                report(STRONG_WARNING, "Invalid package prefix name is ignored: $prefix")
+                            }
+                        })
+                    }
+                }
 
         for (root in jvmClasspathRoots) {
-            result += JavaRoot(root, JavaRoot.RootType.BINARY)
-        }
+                    result += JavaRoot(root, JavaRoot.RootType.BINARY)
+                }
 
         val outputDirectoryAddedAsPartOfModule = modules.any { module -> module.moduleRoots.any { it.file == outputDirectory } }
 
@@ -116,16 +117,17 @@ class ClasspathRootsResolver(
             if (outputDirectoryAddedAsPartOfModule && root == outputDirectory) continue
 
             val module = modularBinaryRoot(root)
-            if (module != null) {
-                modules += module
-            }
-        }
+                    if (module != null) {
+                        modules += module
+                    }
+                }
 
         addModularRoots(modules, result)
 
         return RootsAndModules(result, modules)
     }
 
+/*
     private fun findSourceModuleInfo(root: VirtualFile): Pair<VirtualFile, PsiJavaModule>? {
         val moduleInfoFile =
                 when {
@@ -139,8 +141,10 @@ class ClasspathRootsResolver(
 
         return moduleInfoFile to psiJavaModule
     }
+    */
 
     private fun modularSourceRoot(root: VirtualFile, hasOutputDirectoryInClasspath: Boolean): JavaModule.Explicit? {
+        /*
         val (moduleInfoFile, psiJavaModule) = findSourceModuleInfo(root) ?: return null
         val sourceRoot = JavaModule.Root(root, isBinary = false)
         val roots =
@@ -148,12 +152,15 @@ class ClasspathRootsResolver(
                     listOf(sourceRoot, JavaModule.Root(outputDirectory!!, isBinary = true))
                 else listOf(sourceRoot)
         return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), roots, moduleInfoFile)
+        */
+        return null
     }
 
     private fun modularBinaryRoot(root: VirtualFile): JavaModule? {
         val isJar = root.fileSystem.protocol == StandardFileSystems.JAR_PROTOCOL
         val manifest: Attributes? by lazy(NONE) { readManifestAttributes(root) }
 
+        /*
         val moduleInfoFile =
                 root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
                 ?: root.takeIf { isJar }?.findFileByRelativePath(MULTI_RELEASE_MODULE_INFO_CLS_FILE)?.takeIf {
@@ -164,6 +171,7 @@ class ClasspathRootsResolver(
             val moduleInfo = JavaModuleInfo.read(moduleInfoFile) ?: return null
             return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
         }
+        */
 
         // Only .jar files can be automatic modules
         if (isJar) {
