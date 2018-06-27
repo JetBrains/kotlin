@@ -1,1 +1,1 @@
-include ':app', ':libAndroid', ':libJvmClassesOnly'
+include ':app', ':libAndroid', ':libAndroidClassesOnly', ':libJvmClassesOnly'

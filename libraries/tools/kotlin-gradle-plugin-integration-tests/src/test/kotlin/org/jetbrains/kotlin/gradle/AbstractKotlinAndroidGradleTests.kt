@@ -236,6 +236,14 @@ fun getSomething() = 10
             assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
         }
 
+        val libAndroidClassesOnlyUtilKt = project.projectDir.getFileByName("LibAndroidClassesOnlyUtil.kt")
+        libAndroidClassesOnlyUtilKt.modify { it.replace("fun libAndroidClassesOnlyUtil(): String", "fun libAndroidClassesOnlyUtil(): CharSequence") }
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("LibAndroidClassesOnlyUtil.kt", "useLibAndroidClassesOnlyUtil.kt")
+            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+        }
+
         val libJvmUtilKt = project.projectDir.getFileByName("LibJvmUtil.kt")
         libJvmUtilKt.modify { it.replace("fun libJvmUtil(): String", "fun libJvmUtil(): CharSequence") }
         project.build("assembleDebug", options = options) {
