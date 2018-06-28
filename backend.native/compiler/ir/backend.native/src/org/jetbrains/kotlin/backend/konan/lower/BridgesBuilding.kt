@@ -261,10 +261,7 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
             }
         }
 
-        if (bridge.returnType.isUnit())
-            +delegatingCall
-        else
-            +irReturn(delegatingCall)
+        +irReturn(delegatingCall)
     }
     return bridge
 }
