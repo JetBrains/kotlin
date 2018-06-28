@@ -4,9 +4,13 @@ import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
-import java.io.File
 
-class Kapt3Android32IT : Kapt3AndroidIT() {
+class Kapt3WorkersAndroid32IT : Kapt3Android32IT() {
+    override fun kaptOptions(): KaptOptions =
+        super.kaptOptions().copy(useWorkers = true)
+}
+
+open class Kapt3Android32IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: String
         get() = "3.2.0-beta01"
 
@@ -21,22 +25,17 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     protected open val gradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("4.1")
 
-    private fun androidBuildOptions() =
-        BuildOptions(
-            withDaemon = true,
+    override fun defaultBuildOptions() =
+        super.defaultBuildOptions().copy(
             androidHome = KotlinTestUtils.findAndroidSdk(),
-            androidGradlePluginVersion = androidGradlePluginVersion,
-            freeCommandLineArgs = listOf("-Pkapt.verbose=true")
+            androidGradlePluginVersion = androidGradlePluginVersion
         )
-
-    override fun defaultBuildOptions() = androidBuildOptions()
 
     @Test
     fun testButterKnife() {
         val project = Project("android-butterknife", gradleVersion, directoryPrefix = "kapt2")
-        val options = androidBuildOptions()
 
-        project.build("assembleDebug", options = options) {
+        project.build("assembleDebug") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/debug/org/example/kotlin/butterknife/SimpleActivity\$\$ViewBinder.java")
@@ -57,7 +56,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             }
         }
 
-        project.build("assembleDebug", options = options) {
+        project.build("assembleDebug") {
             assertSuccessful()
             assertTasksUpToDate(":compileDebugKotlin", ":compileDebugJavaWithJavac")
         }
@@ -66,9 +65,8 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     @Test
     fun testDagger() {
         val project = Project("android-dagger", gradleVersion, directoryPrefix = "kapt2")
-        val options = androidBuildOptions()
 
-        project.build("assembleDebug", options = options) {
+        project.build("assembleDebug") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/debug/com/example/dagger/kotlin/DaggerApplicationComponent.java")
@@ -93,9 +91,8 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     @Test
     fun testKt15001() {
         val project = Project("kt15001", gradleVersion, directoryPrefix = "kapt2")
-        val options = androidBuildOptions()
 
-        project.build("assembleDebug", options = options) {
+        project.build("assembleDebug") {
             assertSuccessful()
             assertKaptSuccessful()
         }
@@ -104,9 +101,8 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     @Test
     fun testDbFlow() {
         val project = Project("android-dbflow", gradleVersion, directoryPrefix = "kapt2")
-        val options = androidBuildOptions()
 
-        project.build("assembleDebug", options = options) {
+        project.build("assembleDebug") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/debug/com/raizlabs/android/dbflow/config/GeneratedDatabaseHolder.java")
@@ -119,9 +115,8 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     @Test
     fun testRealm() {
         val project = Project("android-realm", gradleVersion, directoryPrefix = "kapt2")
-        val options = androidBuildOptions()
 
-        project.build("assembleDebug", options = options) {
+        project.build("assembleDebug") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("build/generated/source/kapt/debug/io/realm/CatRealmProxy.java")
@@ -134,7 +129,6 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     @Test
     open fun testDatabinding() {
         val project = Project("android-databinding", gradleVersion, directoryPrefix = "kapt2")
-        val options = androidBuildOptions()
 
         if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
             project.setupWorkingDir()
@@ -156,7 +150,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             )
         }
 
-        project.build("assembleDebug", options = options) {
+        project.build("assembleDebug") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/BR.java")
