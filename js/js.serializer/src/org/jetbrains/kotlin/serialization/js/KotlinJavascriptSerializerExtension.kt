@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
@@ -30,7 +32,8 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.types.FlexibleType
 
 class KotlinJavascriptSerializerExtension(
-        private val fileRegistry: KotlinFileRegistry
+        private val fileRegistry: KotlinFileRegistry,
+        private val languageVersionSettings: LanguageVersionSettings
 ) : KotlinSerializerExtensionBase(JsSerializerProtocol) {
     override val stringTable = JavaScriptStringTable()
 
@@ -77,6 +80,8 @@ class KotlinJavascriptSerializerExtension(
         val psiFile = file.psiFile
         return (psiFile as? KtFile)?.let { fileRegistry.lookup(KotlinPsiFileMetadata(it)) }
     }
+
+    override fun releaseCoroutines() = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 }
 
 object JsSerializerProtocol : SerializerExtensionProtocol(

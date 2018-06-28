@@ -386,7 +386,10 @@ public final class TranslationUtils {
                 .child(Name.identifier("CoroutineImpl"));
         ClassDescriptor descriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(
                 context.getCurrentModule(), ClassId.topLevel(className));
-        assert descriptor != null;
+        //assert descriptor != null;
+        if (descriptor == null) {
+            throw new RuntimeException("CoroutineImpl class not found! " + className.asString());
+        }
         return descriptor;
     }
 
