@@ -94,3 +94,9 @@ class JKUnresolvedField(override val target: PsiReference) : JKFieldSymbol {
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String = target.canonicalText
 }
+
+class JKUnresolvedMethod(override val target: PsiReference) : JKMethodSymbol {
+    override val declaredIn: JKSymbol
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val fqName: String = target.canonicalText
+}

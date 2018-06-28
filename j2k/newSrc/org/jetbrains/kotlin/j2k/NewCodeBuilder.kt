@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.impl.JKBodyStub
-import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
-import org.jetbrains.kotlin.j2k.tree.impl.modality
+import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
@@ -159,7 +157,13 @@ class NewCodeBuilder {
 
         override fun visitQualifiedExpression(qualifiedExpression: JKQualifiedExpression) {
             qualifiedExpression.receiver.accept(this)
-            printer.printWithNoIndent(qualifiedExpression.operator)
+            printer.printWithNoIndent(
+                when (qualifiedExpression.operator) {
+                    is JKJavaQualifierImpl.DOT /*<-remove this TODO!*/, is JKKtQualifierImpl.DOT -> "."
+                    is JKKtQualifierImpl.SAFE -> "?."
+                    else -> TODO()
+                }
+            )
             qualifiedExpression.selector.accept(this)
         }
 
@@ -172,7 +176,7 @@ class NewCodeBuilder {
         }
 
         override fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression) {
-            printer.printWithNoIndent(printer.printWithNoIndent(FqName(methodCallExpression.identifier.fqName).shortName().asString()))
+            printer.printWithNoIndent(FqName(methodCallExpression.identifier.fqName).shortName().asString())
             printer.printWithNoIndent("(")
             methodCallExpression.arguments.accept(this)
             printer.printWithNoIndent(")")

@@ -111,9 +111,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         fun PsiMethodCallExpression.toJK(): JKExpression {
             val method = methodExpression as PsiReferenceExpressionImpl
 
-            val call = JKJavaMethodCallExpressionImpl(
-                symbolProvider.provideSymbol(method) as JKMethodSymbol, argumentList.toJK()
-            )
+            val call = JKJavaMethodCallExpressionImpl(symbolProvider.provideSymbol(method), argumentList.toJK())
             return if (method.findChildByRole(ChildRole.DOT) != null) {
                 JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, call)
             } else {
@@ -223,13 +221,12 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 isInterface -> JKClass.ClassKind.INTERFACE
                 else -> JKClass.ClassKind.CLASS
             }
-            val psi = this
-            return JKClassImpl(with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name!!), classKind).also {
-                it.declarationList = psi.children.mapNotNull {
+            return JKClassImpl(with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name!!), classKind).also { jkClassImpl ->
+                jkClassImpl.declarationList = children.mapNotNull {
                     ElementVisitor().apply { it.accept(this) }.resultElement as? JKDeclaration
                 }
-                backAnnotation[it] = this
-                (symbolProvider.provideDirectSymbol(psi) as? JKUniverseClassSymbol)?.run { target = it }
+                backAnnotation[jkClassImpl] = this
+                symbolProvider.provideUniverseSymbol(this, jkClassImpl)
             }
         }
 
@@ -240,7 +237,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 JKNameIdentifierImpl(name),
                 with(expressionTreeMapper) { initializer.toJK() }
             ).also {
-                (symbolProvider.provideDirectSymbol(this) as? JKUniverseFieldSymbol)?.run { target = it }
+                symbolProvider.provideUniverseSymbol(this, it)
             }
         }
 
@@ -256,7 +253,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 parameterList.parameters.map { it.toJK() },
                 body?.toJK() ?: JKBodyStub
             ).also {
-                (symbolProvider.provideDirectSymbol(this) as? JKUniverseMethodSymbol)?.run { target = it }
+                symbolProvider.provideUniverseSymbol(this, it)
             }
         }
 
@@ -270,7 +267,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             return JKParameterImpl(with(expressionTreeMapper) { typeElement?.toJK() } ?: TODO(),
                                    JKNameIdentifierImpl(name!!),
                                    with(modifierMapper) { modifierList.toJK() }).also {
-                symbolProvider.provideParameterSymbol(this, it)
+                symbolProvider.provideUniverseSymbol(this, it)
             }
         }
 
@@ -286,7 +283,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                         with(expressionTreeMapper) { it.typeElement.toJK() },
                         JKNameIdentifierImpl(it.name ?: TODO()),
                         with(expressionTreeMapper) { it.initializer.toJK() }
-                    ).also { i -> symbolProvider.provideLocalVarSymbol(it, i) }
+                    ).also { i -> symbolProvider.provideUniverseSymbol(it, i) }
                 } else TODO()
             }
         }
