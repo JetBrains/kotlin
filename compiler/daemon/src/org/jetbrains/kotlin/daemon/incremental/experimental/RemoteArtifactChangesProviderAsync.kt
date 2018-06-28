@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.daemon.incremental.experimental
 
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
-import org.jetbrains.kotlin.daemon.common.experimental.IncrementalCompilerServicesFacadeAsync
+import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacadeAsync
 import org.jetbrains.kotlin.daemon.incremental.toDirtyData
 import org.jetbrains.kotlin.incremental.DirtyData
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider

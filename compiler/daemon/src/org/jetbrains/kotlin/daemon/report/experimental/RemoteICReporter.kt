@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.daemon.report.experimental
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
-import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
-import org.jetbrains.kotlin.daemon.common.ReportCategory
-import org.jetbrains.kotlin.daemon.common.ReportSeverity
-import org.jetbrains.kotlin.daemon.common.experimental.CompilationResultsClientSide
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseAsync
-import org.jetbrains.kotlin.daemon.common.experimental.report
+import org.jetbrains.kotlin.daemon.common.CompilationResultsAsync
+import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBaseAsync
+import org.jetbrains.kotlin.daemon.common.impls.CompilationResultCategory
+import org.jetbrains.kotlin.daemon.common.impls.ReportCategory
+import org.jetbrains.kotlin.daemon.common.impls.ReportSeverity
+import org.jetbrains.kotlin.daemon.common.report
 import org.jetbrains.kotlin.incremental.ICReporter
 import java.io.File
 import java.io.Serializable
 
 internal class RemoteICReporterAsync(
     private val servicesFacade: CompilerServicesFacadeBaseAsync,
-    private val compilationResults: CompilationResultsClientSide?,
+    private val compilationResults: CompilationResultsAsync?,
     compilationOptions: CompilationOptions
 ) : ICReporter {
     private val shouldReportMessages = ReportCategory.IC_MESSAGE.code in compilationOptions.reportCategories

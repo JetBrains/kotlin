@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.daemon.client.experimental
 
 import io.ktor.network.sockets.Socket
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.reportFromDaemon
-import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerSocketWrapper
 
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.experimental.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.isProcessCanceledException
 import java.io.Serializable
-import java.util.logging.Logger
 
 open class CompilerCallbackServicesFacadeServerServerSide(
     val incrementalCompilationComponents: IncrementalCompilationComponents? = null,

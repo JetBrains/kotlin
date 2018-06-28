@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.daemon.experimental
 
 import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
+import org.jetbrains.kotlin.daemon.common.impls.ensureServerHostnameIsSetUp
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream

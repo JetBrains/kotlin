@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
-import org.jetbrains.kotlin.daemon.common.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.Profiler
-import org.jetbrains.kotlin.daemon.common.RmiFriendlyCompilationCanceledException
+import org.jetbrains.kotlin.daemon.common.impls.CompilerCallbackServicesFacade
+import org.jetbrains.kotlin.daemon.common.impls.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.impls.Profiler
+import org.jetbrains.kotlin.daemon.common.impls.RmiFriendlyCompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger

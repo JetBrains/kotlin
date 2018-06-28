@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.daemon
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
-import org.jetbrains.kotlin.daemon.common.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.impls.CompilerCallbackServicesFacade
+import org.jetbrains.kotlin.daemon.common.impls.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.impls.Profiler
 
 class RemoteIncrementalCompilationComponentsClient(val facade: CompilerCallbackServicesFacade, eventManager: EventManager, val profiler: Profiler = DummyProfiler()) : IncrementalCompilationComponents {
     override fun getIncrementalCache(target: TargetId): IncrementalCache = RemoteIncrementalCacheClient(facade, target, profiler)

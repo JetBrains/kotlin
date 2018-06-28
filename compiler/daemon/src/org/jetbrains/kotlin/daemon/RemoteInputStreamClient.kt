@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.daemon
 
-import org.jetbrains.kotlin.daemon.common.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.Profiler
-import org.jetbrains.kotlin.daemon.common.RemoteInputStream
+import org.jetbrains.kotlin.daemon.common.impls.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.impls.Profiler
+import org.jetbrains.kotlin.daemon.common.impls.RemoteInputStream
 import java.io.InputStream
 
 class RemoteInputStreamClient(val remote: RemoteInputStream, val profiler: Profiler = DummyProfiler()): InputStream() {

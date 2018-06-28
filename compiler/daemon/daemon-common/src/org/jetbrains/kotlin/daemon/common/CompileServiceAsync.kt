@@ -2,16 +2,12 @@
  * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
-
 package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
-import org.jetbrains.kotlin.daemon.common.experimental.CompilationResultsClientSide
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSide
-import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacadeClientSide
-import java.io.File
+
 
 interface CompileServiceAsync {
 
@@ -43,8 +39,8 @@ interface CompileServiceAsync {
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBaseClientSide,
-        compilationResults: CompilationResultsClientSide?
+        servicesFacade: CompilerServicesFacadeBaseAsync,
+        compilationResults: CompilationResultsAsync?
     ): CompileService.CallResult<Int>
 
     suspend fun clearJarCache()
@@ -55,12 +51,12 @@ interface CompileServiceAsync {
         aliveFlagPath: String?,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBaseClientSide,
-        templateClasspath: List<File>,
+        servicesFacade: CompilerServicesFacadeBaseAsync,
+        templateClasspath: List<java.io.File>,
         templateClassName: String
     ): CompileService.CallResult<Int>
 
-    suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeClientSide>
+    suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeAsync>
 
     suspend fun replCheck(
         sessionId: Int,
@@ -73,5 +69,8 @@ interface CompileServiceAsync {
         replStateId: Int,
         codeLine: ReplCodeLine
     ): CompileService.CallResult<ReplCompileResult>
+
+    val serverPort: Int
+        get() = 0
 
 }

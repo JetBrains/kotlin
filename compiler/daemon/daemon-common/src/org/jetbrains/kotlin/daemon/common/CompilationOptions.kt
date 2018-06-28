@@ -21,13 +21,13 @@ import java.io.Serializable
 import java.util.*
 
 open class CompilationOptions(
-        val compilerMode: CompilerMode,
-        val targetPlatform: CompileService.TargetPlatform,
-        /** @See [ReportCategory] */
+    val compilerMode: CompilerMode,
+    val targetPlatform: CompileService.TargetPlatform,
+    /** @See [ReportCategory] */
         val reportCategories: Array<Int>,
-        /** @See [ReportSeverity] */
+    /** @See [ReportSeverity] */
         val reportSeverity: Int,
-        /** @See [CompilationResultCategory]] */
+    /** @See [CompilationResultCategory]] */
         val requestedCompilationResults: Array<Int>
 ) : Serializable {
     companion object {
@@ -46,18 +46,18 @@ open class CompilationOptions(
 }
 
 class IncrementalCompilationOptions(
-        val areFileChangesKnown: Boolean,
-        val modifiedFiles: List<File>?,
-        val deletedFiles: List<File>?,
-        val workingDir: File,
-        compilerMode: CompilerMode,
-        targetPlatform: CompileService.TargetPlatform,
-        /** @See [ReportCategory] */
-        reportCategories: Array<Int>,
-        /** @See [ReportSeverity] */
-        reportSeverity: Int,
-        /** @See [CompilationResultCategory]] */
-        requestedCompilationResults: Array<Int>,
+    val areFileChangesKnown: Boolean,
+    val modifiedFiles: List<File>?,
+    val deletedFiles: List<File>?,
+    val workingDir: File,
+    compilerMode: CompilerMode,
+    targetPlatform: CompileService.TargetPlatform,
+    /** @See [ReportCategory] */
+    reportCategories: Array<Int>,
+    /** @See [ReportSeverity] */
+    reportSeverity: Int,
+    /** @See [CompilationResultCategory]] */
+    requestedCompilationResults: Array<Int>,
         val usePreciseJavaTracking: Boolean,
         /**
          * Directories that should be cleared when IC decides to rebuild

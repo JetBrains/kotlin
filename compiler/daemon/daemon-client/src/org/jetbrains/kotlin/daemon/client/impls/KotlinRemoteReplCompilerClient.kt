@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.client.RemoteReplCompilerState
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.impls.ReportCategory
+import org.jetbrains.kotlin.daemon.common.impls.ReportSeverity
+import org.jetbrains.kotlin.daemon.common.impls.SOCKET_ANY_FREE_PORT
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 

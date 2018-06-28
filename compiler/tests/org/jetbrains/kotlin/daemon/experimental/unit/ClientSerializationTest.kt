@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Defa
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerBase
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openIO
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.runWithTimeout
-import org.jetbrains.kotlin.daemon.common.experimental.toRMI
+import org.jetbrains.kotlin.daemon.common.toRMI
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream

@@ -13,10 +13,9 @@ import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.common.repl.experimental.ReplCompiler
 import org.jetbrains.kotlin.daemon.client.impls.KotlinRemoteReplCompilerClientImpl
 import org.jetbrains.kotlin.daemon.common.CompileService
-import org.jetbrains.kotlin.daemon.common.CompileServiceClientSide
-import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
-import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceClientSideImpl
-import org.jetbrains.kotlin.daemon.common.experimental.toRMI
+import org.jetbrains.kotlin.daemon.common.CompileServiceAsync
+import org.jetbrains.kotlin.daemon.common.impls.SOCKET_ANY_FREE_PORT
+import org.jetbrains.kotlin.daemon.common.toRMI
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
@@ -38,7 +37,7 @@ interface KotlinRemoteReplCompilerClient : ReplCompiler {
 
     companion object {
         fun instantiate(
-            compileService: CompileServiceClientSide,
+            compileService: CompileServiceAsync,
             clientAliveFlagFile: File?,
             targetPlatform: CompileService.TargetPlatform,
             args: Array<out String>,
@@ -47,13 +46,13 @@ interface KotlinRemoteReplCompilerClient : ReplCompiler {
             templateClassName: String,
             port: Int = SOCKET_ANY_FREE_PORT
         ): KotlinRemoteReplCompilerClient =
-            when (compileService) {
-                is CompileServiceClientSideImpl ->
+            when (compileService::class.java.simpleName) {
+                "CompileServiceClientSideImpl" ->
                     ClassLoader
                         .getSystemClassLoader()
                         .loadClass("org.jetbrains.kotlin.daemon.client.experimental.KotlinRemoteReplCompilerClientAsync")
                         .getDeclaredConstructor(
-                            CompileServiceClientSide::class.java,
+                            CompileServiceAsync::class.java,
                             File::class.java,
                             CompileService.TargetPlatform::class.java,
                             Array<out String>::class.java,

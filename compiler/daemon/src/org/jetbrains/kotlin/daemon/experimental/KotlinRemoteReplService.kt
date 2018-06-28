@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.daemon.common.CompileService
-import org.jetbrains.kotlin.daemon.common.experimental.ServerSocketWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerSocketWrapper
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.impls.makeAutodeletingFlagFile
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock

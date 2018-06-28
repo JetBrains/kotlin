@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
 import org.jetbrains.kotlin.daemon.client.experimental.BasicCompilerServicesWithResultsFacadeServerServerSide
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.impls.*
 import org.jetbrains.kotlin.daemon.experimental.CompileServiceServerSideImpl
 import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
@@ -34,7 +35,7 @@ import kotlin.concurrent.schedule
 
 class ConnectionsTest : KotlinIntegrationTestBase() {
 
-    val kotlinCompilerClient = KotlinCompilerDaemonClient.instantiate(KotlinCompilerDaemonClient.Version.SOCKETS)
+    val kotlinCompilerClient = KotlinCompilerDaemonClient.instantiate(Version.SOCKETS)
 
     private val logFile = createTempFile("/Users/jetbrains/Documents/kotlin/my_fork/kotlin", ".txt").also {
         println("client log file path : ${it.loggerCompatiblePath}")
@@ -219,7 +220,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         OLD(1), NEW(2), ANY(null)
     }
 
-    private fun expectNewDaemon(serverType: ServerType, extraAction: (CompileServiceClientSide) -> Unit = {}) = expectDaemon(
+    private fun expectNewDaemon(serverType: ServerType, extraAction: (CompileServiceAsync) -> Unit = {}) = expectDaemon(
         getDaemons = ::getNewDaemonsOrAsyncWrappers,
         chooseDaemon = { daemons -> daemons.maxWith(comparator)!!.daemon },
         getInfo = { d -> runBlocking { d.getDaemonInfo() } },

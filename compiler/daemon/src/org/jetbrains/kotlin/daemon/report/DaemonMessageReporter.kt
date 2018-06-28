@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.daemon.report
 
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.impls.CompilerServicesFacadeBase
+import org.jetbrains.kotlin.daemon.common.impls.ReportCategory
+import org.jetbrains.kotlin.daemon.common.impls.ReportSeverity
 import java.io.PrintStream
 
 internal interface DaemonMessageReporter {
@@ -24,8 +27,8 @@ internal interface DaemonMessageReporter {
 }
 
 internal fun DaemonMessageReporter(
-        servicesFacade: CompilerServicesFacadeBase,
-        compilationOptions: CompilationOptions
+    servicesFacade: CompilerServicesFacadeBase,
+    compilationOptions: CompilationOptions
 ): DaemonMessageReporter =
         if (ReportCategory.DAEMON_MESSAGE.code in compilationOptions.reportCategories) {
             val mySeverity = ReportSeverity.fromCode(compilationOptions.reportSeverity)!!
@@ -42,8 +45,8 @@ internal class DaemonMessageReporterPrintStreamAdapter(private val out: PrintStr
 }
 
 private class DaemonMessageReporterImpl(
-        private val servicesFacade: CompilerServicesFacadeBase,
-        private val mySeverity: ReportSeverity
+    private val servicesFacade: CompilerServicesFacadeBase,
+    private val mySeverity: ReportSeverity
 ): DaemonMessageReporter {
     override fun report(severity: ReportSeverity, message: String) {
         if (severity.code <= mySeverity.code) {

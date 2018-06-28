@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
-import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
-import org.jetbrains.kotlin.daemon.common.ReplStateFacade
-import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
+import org.jetbrains.kotlin.daemon.common.impls.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.impls.ReplStateFacade
+import org.jetbrains.kotlin.daemon.common.impls.SOCKET_ANY_FREE_PORT
 import java.rmi.server.UnicastRemoteObject
 
 class RemoteReplStateFacadeServer(val _id: Int,

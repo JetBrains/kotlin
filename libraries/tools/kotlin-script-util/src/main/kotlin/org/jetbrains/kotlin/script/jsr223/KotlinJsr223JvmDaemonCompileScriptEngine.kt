@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.client.impls.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.impls.makeAutodeletingFlagFile
 import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
@@ -50,13 +51,13 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
     override val replCompiler by lazy {
         daemon.let {
             KotlinRemoteReplCompilerClient(
-                    it,
-                    makeAutodeletingFlagFile("jsr223-repl-session"),
-                    CompileService.TargetPlatform.JVM,
-                    emptyArray(),
-                    PrintingMessageCollector(PrintStream(compilerOut), MessageRenderer.WITHOUT_PATHS, false),
-                    templateClasspath,
-                    templateClassName)
+                it,
+                makeAutodeletingFlagFile("jsr223-repl-session"),
+                CompileService.TargetPlatform.JVM,
+                emptyArray(),
+                PrintingMessageCollector(PrintStream(compilerOut), MessageRenderer.WITHOUT_PATHS, false),
+                templateClasspath,
+                templateClassName)
         }
     }
 

@@ -9,7 +9,7 @@
 2018-03-19 18:42:26.189 [compiler] INFO: found daemon on socketPort 13130 (0 ms old), trying to connect
 2018-03-19 18:42:26.189 [client utils] INFO: found daemon on socketPort 13130 (0 ms old), trying to connect
 2018-03-19 18:42:26.190 [client utils] INFO: tryConnectToDaemonBySockets(port = 13130)
-2018-03-19 18:42:26.197 [client utils] INFO: daemon(13130) = org.jetbrains.kotlin.daemon.common.experimental.CompileServiceClientSideImpl@57daa409
+2018-03-19 18:42:26.197 [client utils] INFO: daemon(13130) = CompileServiceClientSideImpl@57daa409
 2018-03-19 18:42:26.198 [client utils] INFO: daemon(13130) connecting to server...
 2018-03-19 18:42:26.199 [default client] INFO: connectToServer(port =13130 | host = 127.0.0.1)
 2018-03-19 18:42:26.200 [ConnectionsTest] INFO: found daemon on socketPort 13130 (-1521474146000 ms old), trying to connect

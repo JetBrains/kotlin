@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.daemon
 
 import com.intellij.util.containers.StringInterner
-import gnu.trove.THashMap
-import gnu.trove.THashSet
-import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.Profiler
+import gnu.trove.THashMap
+import gnu.trove.THashSet
+import org.jetbrains.kotlin.daemon.common.impls.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position

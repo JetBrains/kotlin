@@ -22,10 +22,14 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.daemon.KotlinCompileDaemon.log
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.impls.CompilerServicesFacadeBase
+import org.jetbrains.kotlin.daemon.common.impls.ReportCategory
+import org.jetbrains.kotlin.daemon.common.impls.ReportSeverity
+import org.jetbrains.kotlin.daemon.common.impls.report
 
 internal class CompileServicesFacadeMessageCollector(
-        private val servicesFacade: CompilerServicesFacadeBase,
-        compilationOptions: CompilationOptions
+    private val servicesFacade: CompilerServicesFacadeBase,
+    compilationOptions: CompilationOptions
 ) : MessageCollector {
     private val mySeverity = compilationOptions.reportSeverity
     private var hasErrors = false
