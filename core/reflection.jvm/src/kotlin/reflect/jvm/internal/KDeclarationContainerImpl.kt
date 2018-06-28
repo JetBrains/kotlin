@@ -50,21 +50,20 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     protected fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Collection<KCallableImpl<*>> {
         val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>, Unit>() {
             override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallableImpl<*> =
-                    createProperty(descriptor)
+                createProperty(descriptor)
 
             override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallableImpl<*> =
-                    KFunctionImpl(this@KDeclarationContainerImpl, descriptor)
+                KFunctionImpl(this@KDeclarationContainerImpl, descriptor)
 
             override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): KCallableImpl<*> =
-                    throw IllegalStateException("No constructors should appear in this scope: $descriptor")
+                throw IllegalStateException("No constructors should appear in this scope: $descriptor")
         }
 
         return scope.getContributedDescriptors().mapNotNull { descriptor ->
             if (descriptor is CallableMemberDescriptor &&
                 descriptor.visibility != Visibilities.INVISIBLE_FAKE &&
-                belonginess.accept(descriptor))
-                descriptor.accept(visitor, Unit)
-            else null
+                belonginess.accept(descriptor)
+            ) descriptor.accept(visitor, Unit) else null
         }.toList()
     }
 
@@ -73,12 +72,12 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         INHERITED;
 
         fun accept(member: CallableMemberDescriptor): Boolean =
-                member.kind.isReal == (this == DECLARED)
+            member.kind.isReal == (this == DECLARED)
     }
 
     private fun createProperty(descriptor: PropertyDescriptor): KPropertyImpl<*> {
         val receiverCount = (descriptor.dispatchReceiverParameter?.let { 1 } ?: 0) +
-                            (descriptor.extensionReceiverParameter?.let { 1 } ?: 0)
+                (descriptor.extensionReceiverParameter?.let { 1 } ?: 0)
 
         when {
             descriptor.isVar -> when (receiverCount) {
@@ -101,13 +100,13 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         if (match != null) {
             val (number) = match.destructured
             return getLocalProperty(number.toInt())
-                   ?: throw KotlinReflectionInternalError("Local property #$number not found in $jClass")
+                    ?: throw KotlinReflectionInternalError("Local property #$number not found in $jClass")
         }
 
         val properties = getProperties(Name.identifier(name))
-                .filter { descriptor ->
-                    RuntimeTypeMapper.mapPropertySignature(descriptor).asString() == signature
-                }
+            .filter { descriptor ->
+                RuntimeTypeMapper.mapPropertySignature(descriptor).asString() == signature
+            }
 
         if (properties.isEmpty()) {
             throw KotlinReflectionInternalError("Property '$name' (JVM signature: $signature) not resolved in $this")
@@ -125,16 +124,16 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             // TODO: consider writing additional info (besides signature) to property reference objects to distinguish them in this case
 
             val mostVisibleProperties = properties
-                    .groupBy { it.visibility }
-                    .toSortedMap(Comparator { first, second ->
-                        Visibilities.compare(first, second) ?: 0
-                    }).values.last()
+                .groupBy { it.visibility }
+                .toSortedMap(Comparator { first, second ->
+                    Visibilities.compare(first, second) ?: 0
+                }).values.last()
             if (mostVisibleProperties.size == 1) {
                 return mostVisibleProperties.first()
             }
 
             throw KotlinReflectionInternalError(
-                    "${properties.size} properties '$name' (JVM signature: $signature) resolved in $this: $properties"
+                "${properties.size} properties '$name' (JVM signature: $signature) resolved in $this: $properties"
             )
         }
 
@@ -143,15 +142,15 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     fun findFunctionDescriptor(name: String, signature: String): FunctionDescriptor {
         val functions = (if (name == "<init>") constructorDescriptors.toList() else getFunctions(Name.identifier(name)))
-                .filter { descriptor ->
-                    RuntimeTypeMapper.mapSignature(descriptor).asString() == signature
-                }
+            .filter { descriptor ->
+                RuntimeTypeMapper.mapSignature(descriptor).asString() == signature
+            }
 
         if (functions.size != 1) {
             val debugText = "'$name' (JVM signature: $signature)"
             throw KotlinReflectionInternalError(
-                    if (functions.isEmpty()) "Function $debugText not resolved in $this"
-                    else "${functions.size} functions $debugText resolved in $this: $functions"
+                if (functions.isEmpty()) "Function $debugText not resolved in $this"
+                else "${functions.size} functions $debugText resolved in $this: $functions"
             )
         }
 
@@ -178,35 +177,33 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     private fun Class<*>.tryGetMethod(name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>, declared: Boolean): Method? =
-            try {
-                val result = if (declared) getDeclaredMethod(name, *parameterTypes) else getMethod(name, *parameterTypes)
+        try {
+            val result = if (declared) getDeclaredMethod(name, *parameterTypes) else getMethod(name, *parameterTypes)
 
-                if (result.returnType == returnType) result
-                else {
-                    // If we've found a method with an unexpected return type, it's likely that there are several methods in this class
-                    // with the given parameter types and Java reflection API has returned not the one we're looking for.
-                    // Falling back to enumerating all methods in the class in this (rather rare) case.
-                    // Example: class A(val x: Int) { fun getX(): String = ... }
-                    val allMethods = if (declared) declaredMethods else methods
-                    allMethods.firstOrNull { method ->
-                        method.name == name &&
-                        method.returnType == returnType &&
-                        method.parameterTypes.contentEquals(parameterTypes)
-                    }
+            if (result.returnType == returnType) result
+            else {
+                // If we've found a method with an unexpected return type, it's likely that there are several methods in this class
+                // with the given parameter types and Java reflection API has returned not the one we're looking for.
+                // Falling back to enumerating all methods in the class in this (rather rare) case.
+                // Example: class A(val x: Int) { fun getX(): String = ... }
+                val allMethods = if (declared) declaredMethods else methods
+                allMethods.firstOrNull { method ->
+                    method.name == name &&
+                            method.returnType == returnType &&
+                            method.parameterTypes!!.contentEquals(parameterTypes)
                 }
             }
-            catch (e: NoSuchMethodException) {
-                null
-            }
+        } catch (e: NoSuchMethodException) {
+            null
+        }
 
     private fun Class<*>.tryGetConstructor(parameterTypes: List<Class<*>>, declared: Boolean): Constructor<*>? =
-            try {
-                if (declared) getDeclaredConstructor(*parameterTypes.toTypedArray())
-                else getConstructor(*parameterTypes.toTypedArray())
-            }
-            catch (e: NoSuchMethodException) {
-                null
-            }
+        try {
+            if (declared) getDeclaredConstructor(*parameterTypes.toTypedArray())
+            else getConstructor(*parameterTypes.toTypedArray())
+        } catch (e: NoSuchMethodException) {
+            null
+        }
 
     fun findMethodBySignature(name: String, desc: String, isPublic: Boolean): Method? {
         if (name == "<init>") return null
@@ -267,23 +264,23 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     private fun parseType(desc: String, begin: Int, end: Int): Class<*> =
-            when (desc[begin]) {
-                'L' -> jClass.safeClassLoader.loadClass(desc.substring(begin + 1, end - 1).replace('/', '.'))
-                '[' -> parseType(desc, begin + 1, end).createArrayType()
-                'V' -> Void.TYPE
-                'Z' -> Boolean::class.java
-                'C' -> Char::class.java
-                'B' -> Byte::class.java
-                'S' -> Short::class.java
-                'I' -> Int::class.java
-                'F' -> Float::class.java
-                'J' -> Long::class.java
-                'D' -> Double::class.java
-                else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
-            }
+        when (desc[begin]) {
+            'L' -> jClass.safeClassLoader.loadClass(desc.substring(begin + 1, end - 1).replace('/', '.'))
+            '[' -> parseType(desc, begin + 1, end).createArrayType()
+            'V' -> Void.TYPE
+            'Z' -> Boolean::class.java
+            'C' -> Char::class.java
+            'B' -> Byte::class.java
+            'S' -> Short::class.java
+            'I' -> Int::class.java
+            'F' -> Float::class.java
+            'J' -> Long::class.java
+            'D' -> Double::class.java
+            else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
+        }
 
     private fun loadReturnType(desc: String): Class<*> =
-            parseType(desc, desc.indexOf(')') + 1, desc.length)
+        parseType(desc, desc.indexOf(')') + 1, desc.length)
 
     companion object {
         private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
