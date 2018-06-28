@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.incremental
 
-import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacade
+import org.jetbrains.kotlin.daemon.common.impls.IncrementalCompilerServicesFacade
 import org.jetbrains.kotlin.incremental.DirtyData
 import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
 

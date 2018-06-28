@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.daemon.client.experimental
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.daemon.client.RemoteReplCompilerStateHistory
+import org.jetbrains.kotlin.daemon.common.ReplStateFacadeAsync
 import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacadeClientSide
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -47,7 +48,7 @@ class RemoteReplCompilerStateHistoryAsync(private val state: RemoteReplCompilerS
 }
 
 class RemoteReplCompilerStateAsync(
-    internal val replStateFacade: ReplStateFacadeClientSide,
+    internal val replStateFacade: ReplStateFacadeAsync,
     override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
 ) : IReplStageState<Unit> {
 

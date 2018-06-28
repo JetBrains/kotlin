@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.daemon.KotlinCompileDaemon.log
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
-import org.jetbrains.kotlin.daemon.common.ReportCategory
-import org.jetbrains.kotlin.daemon.common.ReportSeverity
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseAsync
-import org.jetbrains.kotlin.daemon.common.experimental.report
+import org.jetbrains.kotlin.daemon.common.impls.ReportCategory
+import org.jetbrains.kotlin.daemon.common.impls.ReportSeverity
+import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBaseAsync
+import org.jetbrains.kotlin.daemon.common.report
 
 internal class CompileServicesFacadeMessageCollector(
-        private val servicesFacade: CompilerServicesFacadeBaseAsync,
-        compilationOptions: CompilationOptions
+    private val servicesFacade: CompilerServicesFacadeBaseAsync,
+    compilationOptions: CompilationOptions
 ) : MessageCollector {
     private val mySeverity = compilationOptions.reportSeverity
     private var hasErrors = false

@@ -22,9 +22,10 @@ import org.jetbrains.kotlin.daemon.client.experimental.CompilerCallbackServicesF
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
 import org.jetbrains.kotlin.daemon.client.experimental.KotlinRemoteReplCompilerClientAsync
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceAsyncWrapper
-import org.jetbrains.kotlin.daemon.common.CompileServiceClientSide
+import org.jetbrains.kotlin.daemon.common.CompileServiceAsyncWrapper
+import org.jetbrains.kotlin.daemon.common.CompileServiceAsync
 import org.jetbrains.kotlin.daemon.common.experimental.findCallbackServerSocket
+import org.jetbrains.kotlin.daemon.common.impls.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.progress.experimental.CompilationCanceledStatus
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -59,7 +60,7 @@ val TIMEOUT_DAEMON_RUNNER_EXIT_MS = 10000L
 
 class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
-    val kotlinCompilerClientInstance = KotlinCompilerDaemonClient.instantiate(KotlinCompilerDaemonClient.Version.SOCKETS)
+    val kotlinCompilerClientInstance = KotlinCompilerDaemonClient.instantiate(Version.SOCKETS)
 
     private fun createNewLogFile(): File {
         println("creating logFile")
@@ -707,6 +708,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             assertFalse("process.waitFor() hangs:\n$resOutput", waitThread.isAlive)
             assertEquals("Compilation failed:\n$resOutput", 0, resCode)
+            println("OK")
         } finally {
             if (clientAliveFile.exists())
                 clientAliveFile.delete()
@@ -717,7 +719,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     private val PARALLEL_WAIT_TIMEOUT_S = 60L
 
     private fun runCompile(
-        daemon: CompileServiceClientSide,
+        daemon: CompileServiceAsync,
         resultCodes: Array<Int?>,
         localEndSignal: CountDownLatch,
         outStreams: Array<ByteArrayOutputStream>,
@@ -983,7 +985,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 withLogFile("kotlin-daemon-test") { logFile ->
                     val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
 
-                    val daemon: CompileServiceClientSide? = kotlinCompilerClientInstance.connectToCompileService(
+                    val daemon: CompileServiceAsync? = kotlinCompilerClientInstance.connectToCompileService(
                         compilerId,
                         flagFile,
                         daemonJVMOptions,
@@ -1191,13 +1193,13 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    internal fun withDaemon(body: suspend (CompileServiceClientSide) -> Unit) {
+    internal fun withDaemon(body: suspend (CompileServiceAsync) -> Unit) {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = makeTestDaemonOptions(getTestName(true))
             withLogFile("kotlin-daemon-test") { logFile ->
                 runBlocking {
                     val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
-                    val daemon: CompileServiceClientSide? = kotlinCompilerClientInstance.connectToCompileService(
+                    val daemon: CompileServiceAsync? = kotlinCompilerClientInstance.connectToCompileService(
                         compilerId,
                         flagFile,
                         daemonJVMOptions,
@@ -1215,14 +1217,14 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    internal fun withOldDaemon(body: suspend (CompileServiceClientSide) -> Unit) {
+    internal fun withOldDaemon(body: suspend (CompileServiceAsync) -> Unit) {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = makeTestDaemonOptions(getTestName(true))
             withLogFile("kotlin-daemon-test") { logFile ->
                 runBlocking {
                     val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
                     runOldServer(daemonOptions, daemonJVMOptions)
-                    val daemon: CompileServiceClientSide? = kotlinCompilerClientInstance.connectToCompileService(
+                    val daemon: CompileServiceAsync? = kotlinCompilerClientInstance.connectToCompileService(
                         compilerId,
                         flagFile,
                         daemonJVMOptions,

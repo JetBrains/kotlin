@@ -13,6 +13,7 @@ dependencies {
     compileOnly(project(":kotlin-preloader"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:daemon-common"))
+    compileOnly(project(":compiler:daemon-common-new"))
     compile(project(":kotlin-daemon-client"))
     compileOnly(project(":compiler:util"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }

@@ -18,14 +18,15 @@ package org.jetbrains.kotlin.daemon.report
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.impls.*
 import org.jetbrains.kotlin.incremental.ICReporter
 import java.io.File
 import java.io.Serializable
 
 internal class RemoteICReporter(
-        private val servicesFacade: CompilerServicesFacadeBase,
-        private val compilationResults: CompilationResults,
-        compilationOptions: CompilationOptions
+    private val servicesFacade: CompilerServicesFacadeBase,
+    private val compilationResults: CompilationResults,
+    compilationOptions: CompilationOptions
 ) : ICReporter {
     private val shouldReportMessages = ReportCategory.IC_MESSAGE.code in compilationOptions.reportCategories
     private val isVerbose = compilationOptions.reportSeverity == ReportSeverity.DEBUG.code

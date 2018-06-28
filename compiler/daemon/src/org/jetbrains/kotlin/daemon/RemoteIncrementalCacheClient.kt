@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.daemon
 
-import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
-import org.jetbrains.kotlin.daemon.common.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.impls.CompilerCallbackServicesFacade
+import org.jetbrains.kotlin.daemon.common.impls.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.impls.Profiler
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId

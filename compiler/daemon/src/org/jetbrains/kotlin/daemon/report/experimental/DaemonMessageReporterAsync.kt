@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.daemon.report.experimental
 
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
-import org.jetbrains.kotlin.daemon.common.ReportCategory
-import org.jetbrains.kotlin.daemon.common.ReportSeverity
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseAsync
+import org.jetbrains.kotlin.daemon.common.impls.ReportCategory
+import org.jetbrains.kotlin.daemon.common.impls.ReportSeverity
+import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBaseAsync
 import java.io.PrintStream
 
 internal interface DaemonMessageReporterAsync {

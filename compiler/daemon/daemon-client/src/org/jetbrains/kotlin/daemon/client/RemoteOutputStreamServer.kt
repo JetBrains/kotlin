@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.daemon.client
 
-import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
-import org.jetbrains.kotlin.daemon.common.RemoteOutputStream
-import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
+import org.jetbrains.kotlin.daemon.common.impls.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.impls.RemoteOutputStream
+import org.jetbrains.kotlin.daemon.common.impls.SOCKET_ANY_FREE_PORT
 import java.io.OutputStream
 import java.rmi.server.UnicastRemoteObject
 

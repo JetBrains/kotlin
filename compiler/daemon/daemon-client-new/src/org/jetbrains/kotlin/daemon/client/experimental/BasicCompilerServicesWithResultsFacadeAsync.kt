@@ -6,15 +6,11 @@
 package org.jetbrains.kotlin.daemon.client.experimental
 
 import io.ktor.network.sockets.Socket
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.daemon.client.reportFromDaemon
-import org.jetbrains.kotlin.daemon.common.ReportCategory
-import org.jetbrains.kotlin.daemon.common.ReportSeverity
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerSocketWrapper
 import java.io.File
 import java.io.Serializable
 

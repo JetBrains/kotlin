@@ -37,11 +37,12 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.LazyClasspathWatcher
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
-import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.experimental.Profiler
-import org.jetbrains.kotlin.daemon.common.experimental.WallAndThreadAndMemoryTotalProfiler
-import org.jetbrains.kotlin.daemon.common.experimental.WallAndThreadTotalProfiler
+import org.jetbrains.kotlin.daemon.common.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.WallAndThreadAndMemoryTotalProfiler
+import org.jetbrains.kotlin.daemon.common.WallAndThreadTotalProfiler
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
+import org.jetbrains.kotlin.daemon.common.impls.*
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteAnnotationsFileUpdaterAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteArtifactChangesProviderAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteChangesRegistryAsync
@@ -97,6 +98,9 @@ class CompileServiceServerSideImpl(
     val timer: Timer,
     val onShutdown: () -> Unit
 ) : CompileServiceServerSide {
+
+    override val serverPort: Int
+        get() = serverSocketWithPort.port
 
     override val clients = hashMapOf<Socket, Server.ClientInfo>()
 
@@ -480,8 +484,8 @@ class CompileServiceServerSideImpl(
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBaseClientSide,
-        compilationResults: CompilationResultsClientSide?
+        servicesFacade: CompilerServicesFacadeBaseAsync,
+        compilationResults: CompilationResultsAsync?
     ): CompileService.CallResult<Int> = ifAlive(info = "compile") {
         log.info("servicesFacade : $servicesFacade")
         servicesFacade.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.INFO, "abacaba")
@@ -566,7 +570,7 @@ class CompileServiceServerSideImpl(
         args: K2JSCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         servicesFacade: IncrementalCompilerServicesFacadeAsync,
-        compilationResults: CompilationResultsClientSide?,
+        compilationResults: CompilationResultsAsync?,
         compilerMessageCollector: MessageCollector
     ): ExitCode {
         val allKotlinFiles = arrayListOf<File>()
@@ -605,7 +609,7 @@ class CompileServiceServerSideImpl(
         k2jvmArgs: K2JVMCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         servicesFacade: IncrementalCompilerServicesFacadeAsync,
-        compilationResults: CompilationResultsClientSide?,
+        compilationResults: CompilationResultsAsync?,
         compilerMessageCollector: MessageCollector,
         daemonMessageReporterAsync: DaemonMessageReporterAsync
     ): ExitCode {
@@ -675,7 +679,7 @@ class CompileServiceServerSideImpl(
         aliveFlagPath: String?,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
-        servicesFacade: CompilerServicesFacadeBaseClientSide,
+        servicesFacade: CompilerServicesFacadeBaseAsync,
         templateClasspath: List<File>,
         templateClassName: String
     ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive, info = "leaseReplSession") {
@@ -882,7 +886,7 @@ class CompileServiceServerSideImpl(
                         ) < 0
                     ) {
                         // all others are smaller that me, take overs' clients and shut them down
-                        log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
+                        log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                         aliveWithOpts.forEach { (daemon, runFile, _) ->
                             try {
                                 log.info("other : $daemon")
@@ -920,14 +924,14 @@ class CompileServiceServerSideImpl(
                         ) > 0
                     ) {
                         // there is at least one bigger, handover my clients to it and shutdown
-                        log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
+                        log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                         getClientsImpl().takeIf { it.isGood }?.let {
                             it.get().forEach { bestDaemonWithMetadata.daemon.registerClient(it) }
                         }
                         scheduleShutdownImpl(true)
                     } else {
                         // undecided, do nothing
-                        log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} equal prio, continue: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
+                        log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE equal prio, continue: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                         // TODO: implement some behaviour here, e.g.:
                         //   - shutdown/takeover smaller daemon
                         //   - runServer (or better persuade client to runServer) a bigger daemon (in fact may be even simple shutdown will do, because of client's daemon choosing logic)

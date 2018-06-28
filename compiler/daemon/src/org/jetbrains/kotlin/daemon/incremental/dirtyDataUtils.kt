@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.incremental
 
-import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
+import org.jetbrains.kotlin.daemon.common.impls.SimpleDirtyData
 import org.jetbrains.kotlin.incremental.DirtyData
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.name.FqName
@@ -31,5 +31,5 @@ fun SimpleDirtyData.toDirtyData(): DirtyData {
 
 fun DirtyData.toSimpleDirtyData(): SimpleDirtyData {
     return SimpleDirtyData(dirtyClassesFqNames = dirtyClassesFqNames.map(FqName::asString),
-                           dirtyLookupSymbols = dirtyLookupSymbols.map { "${it.scope}.${it.name}" })
+                                                                    dirtyLookupSymbols = dirtyLookupSymbols.map { "${it.scope}.${it.name}" })
 }

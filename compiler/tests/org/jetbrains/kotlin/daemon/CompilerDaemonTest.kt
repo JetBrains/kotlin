@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.daemon.client.*
 import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.CompileServiceClientSide
+import org.jetbrains.kotlin.daemon.common.CompileServiceAsync
+import org.jetbrains.kotlin.daemon.common.impls.*
 import org.jetbrains.kotlin.daemon.experimental.integration.TestMessageCollector
 import org.jetbrains.kotlin.daemon.experimental.integration.assertHasMessage
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
@@ -54,7 +55,7 @@ val TIMEOUT_DAEMON_RUNNER_EXIT_MS = 10000L
 class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     val kotlinCompilerClient = KotlinCompilerDaemonClient
-        .instantiate(KotlinCompilerDaemonClient.Version.RMI)
+        .instantiate(Version.RMI)
 
     data class CompilerResults(val resultCode: Int, val out: String)
 
@@ -632,6 +633,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             assertFalse("process.waitFor() hangs:\n$resOutput", waitThread.isAlive)
             assertEquals("Compilation failed:\n$resOutput", 0, resCode)
+            println("OK")
         } finally {
             if (clientAliveFile.exists())
                 clientAliveFile.delete()
@@ -1019,12 +1021,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    internal fun withDaemon(body: (CompileServiceClientSide) -> Unit) {
+    internal fun withDaemon(body: (CompileServiceAsync) -> Unit) {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = makeTestDaemonOptions(getTestName(true))
             withLogFile("kotlin-daemon-test") { logFile ->
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
-                val daemon: CompileServiceClientSide? = kotlinCompilerClient.connectToCompileService(
+                val daemon: CompileServiceAsync? = kotlinCompilerClient.connectToCompileService(
                     compilerId, flagFile, daemonJVMOptions, daemonOptions,
                     DaemonReportingTargets(
                         out = System.err

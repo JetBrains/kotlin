@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
-import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.experimental.Profiler
+import org.jetbrains.kotlin.daemon.common.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerCallbackServicesFacadeClientSide
-import org.jetbrains.kotlin.daemon.common.experimental.withMeasureBlocking
+import org.jetbrains.kotlin.daemon.common.withMeasureBlocking
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId

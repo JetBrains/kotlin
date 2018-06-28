@@ -26,6 +26,10 @@ import org.jetbrains.kotlin.daemon.client.impls.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.impls.DaemonReportCategory
+import org.jetbrains.kotlin.daemon.common.impls.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.impls.Profiler
+import org.jetbrains.kotlin.daemon.common.impls.WallAndThreadAndMemoryTotalProfiler
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.File

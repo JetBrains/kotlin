@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient.Companion.instantiate
 import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.CompilationResultsServerSide
-import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.experimental.Profiler
+import org.jetbrains.kotlin.daemon.common.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.impls.ReportSeverity
 import java.io.File
 
 interface KotlinCompilerDaemonClient {
@@ -22,7 +22,7 @@ interface KotlinCompilerDaemonClient {
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean = true,
         checkId: Boolean = true
-    ): CompileServiceClientSide?
+    ): CompileServiceAsync?
 
     suspend fun connectToCompileService(
         compilerId: CompilerId,
@@ -31,7 +31,7 @@ interface KotlinCompilerDaemonClient {
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean = true
-    ): CompileServiceClientSide?
+    ): CompileServiceAsync?
 
     suspend fun connectAndLease(
         compilerId: CompilerId,
@@ -46,10 +46,10 @@ interface KotlinCompilerDaemonClient {
 
     suspend fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions)
 
-    suspend fun leaseCompileSession(compilerService: CompileServiceClientSide, aliveFlagPath: String?): Int
-    suspend fun releaseCompileSession(compilerService: CompileServiceClientSide, sessionId: Int): CompileService.CallResult<Unit>
+    suspend fun leaseCompileSession(compilerService: CompileServiceAsync, aliveFlagPath: String?): Int
+    suspend fun releaseCompileSession(compilerService: CompileServiceAsync, sessionId: Int): CompileService.CallResult<Unit>
     suspend fun compile(
-        compilerService: CompileServiceClientSide,
+        compilerService: CompileServiceAsync,
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
         args: Array<out String>,
@@ -60,11 +60,7 @@ interface KotlinCompilerDaemonClient {
         profiler: Profiler = DummyProfiler()
     ): Int
 
-    fun createCompResults(): CompilationResultsServerSide
-
-    enum class Version {
-        RMI, SOCKETS
-    }
+    fun createCompResults(): CompilationResultsAsync
 
     fun main(vararg args: String)
 
@@ -96,9 +92,9 @@ object KotlinCompilerClientInstance {
     fun main(vararg args: String) {
         val clientInstance: KotlinCompilerDaemonClient? = when (args.last()) {
             SOCKETS_FLAG ->
-                instantiate(KotlinCompilerDaemonClient.Version.SOCKETS)
+                instantiate(Version.SOCKETS)
             else ->
-                instantiate(KotlinCompilerDaemonClient.Version.RMI)
+                instantiate(Version.RMI)
         }
         clientInstance?.main(*args.sliceArray(0..args.lastIndex))
     }

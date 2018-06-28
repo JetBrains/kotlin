@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.config.additionalArgumentsAsList
 import org.jetbrains.kotlin.daemon.client.impls.CompileServiceSession
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.impls.ReportCategory
+import org.jetbrains.kotlin.daemon.common.impls.ReportSeverity
+import org.jetbrains.kotlin.daemon.common.impls.makeAutodeletingFlagFile
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -253,7 +256,10 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
                 val daemonOptions = configureDaemonOptions()
 
                 val clientFlagFile = KotlinCompilerClient.getOrCreateClientFlagFile(daemonOptions)
-                val sessionFlagFile = makeAutodeletingFlagFile("compiler-jps-session-", File(daemonOptions.runFilesPathOrDefault))
+                val sessionFlagFile = makeAutodeletingFlagFile(
+                    "compiler-jps-session-",
+                    File(daemonOptions.runFilesPathOrDefault)
+                )
                 newDaemonConnection(compilerId, clientFlagFile, sessionFlagFile, environment, daemonOptions)
             }
 }

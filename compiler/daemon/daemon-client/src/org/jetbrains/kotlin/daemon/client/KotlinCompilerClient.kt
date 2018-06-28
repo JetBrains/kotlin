@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.daemon.client
 
-import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.*
-import org.jetbrains.kotlin.daemon.common.experimental.Profiler
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.common.impls.CompilationResults
+import org.jetbrains.kotlin.daemon.common.impls.ReportSeverity
+import org.jetbrains.kotlin.daemon.common.impls.SOCKET_ANY_FREE_PORT
 import java.io.File
 import java.io.Serializable
 
-data class CompileServiceSession(val compileService: CompileServiceClientSide, val sessionId: Int)
+data class CompileServiceSession(val compileService: CompileServiceAsync, val sessionId: Int)
 
 fun org.jetbrains.kotlin.daemon.client.impls.CompileServiceSession.toWrapper() =
     CompileServiceSession(this.compileService.toClient(), this.sessionId)
@@ -32,7 +31,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean,
         checkId: Boolean
-    ): CompileServiceClientSide? = oldKotlinCompilerClient.connectToCompileService(
+    ): CompileServiceAsync? = oldKotlinCompilerClient.connectToCompileService(
         compilerId,
         daemonJVMOptions,
         daemonOptions,
@@ -48,7 +47,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean
-    ): CompileServiceClientSide? = oldKotlinCompilerClient.connectToCompileService(
+    ): CompileServiceAsync? = oldKotlinCompilerClient.connectToCompileService(
         compilerId,
         clientAliveFlagFile,
         daemonJVMOptions,
@@ -80,18 +79,18 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
     override suspend fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions) =
         oldKotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
 
-    override suspend fun leaseCompileSession(compilerService: CompileServiceClientSide, aliveFlagPath: String?): Int =
+    override suspend fun leaseCompileSession(compilerService: CompileServiceAsync, aliveFlagPath: String?): Int =
         oldKotlinCompilerClient.leaseCompileSession(compilerService.toRMI(), aliveFlagPath)
 
     override suspend fun releaseCompileSession(
-        compilerService: CompileServiceClientSide,
+        compilerService: CompileServiceAsync,
         sessionId: Int
     ) = runBlocking {
         oldKotlinCompilerClient.releaseCompileSession(compilerService.toRMI(), sessionId)
         CompileService.CallResult.Ok() // TODO
     }
 
-    fun Profiler.toRMI() = object : org.jetbrains.kotlin.daemon.common.Profiler {
+    fun Profiler.toRMI() = object : org.jetbrains.kotlin.daemon.common.impls.Profiler {
 
         override fun getCounters() = this@toRMI.getCounters()
 
@@ -106,7 +105,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
     }
 
     override suspend fun compile(
-        compilerService: CompileServiceClientSide,
+        compilerService: CompileServiceAsync,
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
         args: Array<out String>,
@@ -131,31 +130,20 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
     }
 
     interface CompilationResultsServSideCompatible : CompilationResults {
-        val clients: HashMap<Socket, Server.ClientInfo>
+
     }
 
-    private fun CompilationResultsServSideCompatible.toServer() = object : CompilationResultsServerSide {
+    private fun CompilationResultsServSideCompatible.toServer() =
+        object : CompilationResultsAsync {
+            override val clientSide: CompilationResultsAsync
+                get() = this
 
-        override suspend fun add(compilationResultCategory: Int, value: Serializable) =
-            this@toServer.add(compilationResultCategory, value)
+            override suspend fun add(compilationResultCategory: Int, value: Serializable) =
+                this@toServer.add(compilationResultCategory, value)
+        }
 
-        override val clientSide: CompilationResultsClientSide
-            get() = this@toServer.toClient()
-        override val serverSocketWithPort: ServerSocketWrapper
-            get() = TODO("not implemented")
-        override val clients: HashMap<Socket, Server.ClientInfo>
-            get() = this@toServer.clients
-    }
-
-    override fun createCompResults(): CompilationResultsServerSide {
+    override fun createCompResults(): CompilationResultsAsync {
         val oldCompResults = object : CompilationResultsServSideCompatible {
-            override val clients = hashMapOf<Socket, Server.ClientInfo>()
-
-            private val resultsPort = findPortForSocket(
-                COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
-                RESULTS_SERVER_PORTS_RANGE_START,
-                RESULTS_SERVER_PORTS_RANGE_END
-            )
 
             private val resultsMap = hashMapOf<Int, MutableList<Serializable>>()
 

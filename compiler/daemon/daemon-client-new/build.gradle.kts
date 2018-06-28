@@ -13,12 +13,13 @@ val fatJarContents by configurations.creating
 dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-common"))
-    compileOnly(project(":compiler:daemon-common"))
+    compileOnly(project(":compiler:daemon-common-new"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":kotlin-daemon-client"))
     fatJarContents(project(":kotlin-daemon-client"))
     compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
     compileOnly(project(":compiler:daemon-common")) { isTransitive = false }
+    compileOnly(project(":compiler:daemon-common-new")) { isTransitive = false }
     fatJarContents(commonDep("net.rubygrapefruit", "native-platform"))
     nativePlatformVariants.forEach {
         fatJarContents(commonDep("net.rubygrapefruit", "native-platform", "-$it"))

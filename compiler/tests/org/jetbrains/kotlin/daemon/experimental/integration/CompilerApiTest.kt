@@ -14,11 +14,10 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.daemon.KotlinCompileDaemon
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
 import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
-import org.jetbrains.kotlin.daemon.client.experimental.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.impls.ReportSeverity
 import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.scripts.captureOut
@@ -35,7 +34,7 @@ private val logFiles = arrayListOf<String>()
 class CompilerApiTest : KotlinIntegrationTestBase() {
 
     val kotlinCompilerClient = KotlinCompilerDaemonClient
-        .instantiate(KotlinCompilerDaemonClient.Version.SOCKETS)
+        .instantiate(Version.SOCKETS)
 
     private val compilerLibDir = getCompilerLib()
 

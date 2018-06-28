@@ -13,13 +13,15 @@ import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
 import org.jetbrains.kotlin.daemon.client.impls.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
-import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.experimental.*
-import org.jetbrains.kotlin.daemon.common.experimental.Profiler
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerSocketWrapper
+import org.jetbrains.kotlin.daemon.common.impls.*
 import java.io.File
 import java.io.Serializable
 import java.net.SocketException
@@ -63,7 +65,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean,
         checkId: Boolean
-    ): CompileServiceClientSide? {
+    ): CompileServiceAsync? {
         log.info("in connectToCompileService")
         val flagFile = getOrCreateClientFlagFile(daemonOptions)
         return connectToCompileService(
@@ -83,7 +85,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean
-    ): CompileServiceClientSide? {
+    ): CompileServiceAsync? {
         log.info("connectToCompileService")
         return connectAndLease(
             compilerId,
@@ -115,7 +117,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
 
             log.info("connectAndLease")
 
-            fun CompileServiceClientSide.leaseImpl(): Deferred<CompileServiceSession?> =
+            fun CompileServiceAsync.leaseImpl(): Deferred<CompileServiceSession?> =
                 async {
                     // the newJVMOptions could be checked here for additional parameters, if needed
                     log.info("trying registerClient")
@@ -179,14 +181,14 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         )?.shutdown()
     }
 
-    override suspend fun leaseCompileSession(compilerService: CompileServiceClientSide, aliveFlagPath: String?): Int =
+    override suspend fun leaseCompileSession(compilerService: CompileServiceAsync, aliveFlagPath: String?): Int =
         compilerService.leaseCompileSession(aliveFlagPath).get()
 
-    override suspend fun releaseCompileSession(compilerService: CompileServiceClientSide, sessionId: Int) =
+    override suspend fun releaseCompileSession(compilerService: CompileServiceAsync, sessionId: Int) =
         compilerService.releaseCompileSession(sessionId)
 
     override suspend fun compile(
-        compilerService: CompileServiceClientSide,
+        compilerService: CompileServiceAsync,
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
         args: Array<out String>,
@@ -440,7 +442,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         compilerId: CompilerId,
         daemonJVMOptions: DaemonJVMOptions,
         report: (DaemonReportCategory, String) -> Unit
-    ): Deferred<Pair<CompileServiceClientSide?, DaemonJVMOptions>> = async {
+    ): Deferred<Pair<CompileServiceAsync?, DaemonJVMOptions>> = async {
         log.info("tryFindSuitableDaemonOrNewOpts")
 
         registryDir.mkdirs()

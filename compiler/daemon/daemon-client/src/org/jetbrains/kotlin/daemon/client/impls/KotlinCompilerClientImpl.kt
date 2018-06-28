@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.daemon.client.CompilerCallbackServicesFacadeServer
 import org.jetbrains.kotlin.daemon.client.RemoteOutputStreamServer
 import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.impls.*
+import org.jetbrains.kotlin.daemon.common.impls.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.impls.Profiler
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus

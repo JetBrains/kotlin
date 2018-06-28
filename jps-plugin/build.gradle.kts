@@ -9,6 +9,7 @@ dependencies {
     compile(project(":core:descriptors.jvm"))
     compile(project(":kotlin-compiler-runner"))
     compile(project(":compiler:daemon-common"))
+    compile(project(":compiler:daemon-common-new"))
     compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(project(":compiler:frontend.java"))
     compile(projectRuntimeJar(":kotlin-preloader"))
