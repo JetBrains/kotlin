@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class A {
     operator fun component1() = 1
     operator fun component2() = 2

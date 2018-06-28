@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 
 inline fun calc(s: (Int) -> Int, noinline p: (Int) -> Int) : Int {

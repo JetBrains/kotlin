@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 var field: Int = 0
 
 fun next(): Int {

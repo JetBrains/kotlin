@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class IntentionsBundle {
     companion object {
         fun message(key: String): String {

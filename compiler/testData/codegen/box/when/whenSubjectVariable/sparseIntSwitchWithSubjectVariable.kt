@@ -1,4 +1,5 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // IGNORE_BACKEND: JS, JS_IR
 

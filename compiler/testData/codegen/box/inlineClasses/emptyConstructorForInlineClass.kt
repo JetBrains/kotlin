@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 
 inline class Foo(val s: String) {
     fun asResult(): String = s

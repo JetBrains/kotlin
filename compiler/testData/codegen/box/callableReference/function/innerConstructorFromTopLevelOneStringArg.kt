@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 class A {
     inner class Inner(val result: Int)

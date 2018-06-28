@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class A {
     val x: Any get() {
         return object : Inner() {

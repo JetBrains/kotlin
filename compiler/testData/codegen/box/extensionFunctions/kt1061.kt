@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 //KT-1061 Can't call function defined as a val
 
 object X {

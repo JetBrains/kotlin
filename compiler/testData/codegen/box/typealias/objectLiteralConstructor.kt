@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 open class LockFreeLinkedListNode(val s: String)
 private class SendBuffered(s: String) : LockFreeLinkedListNode(s)
 open class AddLastDesc2<out T : LockFreeLinkedListNode>(val node: T)

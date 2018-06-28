@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class Foo(
         var state : Int,
         val f : (Int) -> Int){

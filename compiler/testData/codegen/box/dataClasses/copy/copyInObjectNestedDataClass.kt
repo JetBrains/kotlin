@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class Bar(val name: String)
 
 abstract class Foo {

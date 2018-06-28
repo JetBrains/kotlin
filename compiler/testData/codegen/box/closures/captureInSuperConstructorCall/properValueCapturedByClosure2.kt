@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 open class Outer(val fn: (() -> String)?) {
     companion object {
         val ok = "OK"

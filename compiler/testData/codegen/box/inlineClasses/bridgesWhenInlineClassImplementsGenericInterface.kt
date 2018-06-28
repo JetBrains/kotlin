@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 
 inline class InlinedComparable(val x: Int) : Comparable<InlinedComparable> {

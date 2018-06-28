@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class A
 
 fun A.foo(result: String) = result

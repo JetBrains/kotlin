@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 interface Intf {
     val aValue: String
 }

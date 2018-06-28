@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 abstract class A {
     inner class InnerInA {
         fun returnOk() = "OK"

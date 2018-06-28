@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 open class A(val s: Int) {
 
 }

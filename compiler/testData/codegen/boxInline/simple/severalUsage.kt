@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 
 public inline fun <R> runTest(f: () -> R): R {

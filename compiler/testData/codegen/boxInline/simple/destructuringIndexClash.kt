@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // for android
 // FILE: 1.kt
 package test
