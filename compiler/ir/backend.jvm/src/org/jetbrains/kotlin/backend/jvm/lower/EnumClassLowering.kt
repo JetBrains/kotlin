@@ -124,6 +124,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 enumConstructor.body!! // will be transformed later
             ).apply {
                 parent = enumClass
+                returnType = loweredConstructorDescriptor.returnType.toIrType()!!
                 createParameterDeclarations()
                 loweredEnumConstructors[constructorDescriptor] = this
                 constructorDescriptor.valueParameters.forEach {
@@ -261,7 +262,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 val result = IrDelegatingConstructorCallImpl(
                     startOffset,
                     endOffset,
-                    enumConstructorCall.symbol.owner.returnType,
+                    context.irBuiltIns.unitType,
                     enumConstructorCall.symbol,
                     enumConstructorCall.descriptor,
                     enumConstructorCall.typeArgumentsCount
@@ -297,7 +298,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 val result = IrDelegatingConstructorCallImpl(
                     startOffset,
                     endOffset,
-                    loweredDelegatedConstructor.symbol.owner.returnType,
+                    context.irBuiltIns.unitType,
                     loweredDelegatedConstructor.symbol,
                     loweredDelegatedConstructor.descriptor,
                     loweredDelegatedConstructor.typeParameters.size
@@ -357,7 +358,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 IrDelegatingConstructorCallImpl(
                     startOffset,
                     endOffset,
-                    loweredConstructor.symbol.owner.returnType,
+                    context.irBuiltIns.unitType,
                     loweredConstructor.symbol,
                     loweredConstructor.descriptor,
                     loweredConstructor.typeParameters.size

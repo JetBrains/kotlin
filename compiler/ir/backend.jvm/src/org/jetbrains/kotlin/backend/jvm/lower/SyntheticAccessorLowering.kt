@@ -173,7 +173,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
                             IrDelegatingConstructorCallImpl(
                                 expression.startOffset,
                                 expression.endOffset,
-                                expression.type,
+                                context.irBuiltIns.unitType,
                                 accessorForIr as ClassConstructorDescriptor,
                                 0
                             )
@@ -240,6 +240,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
                 accessorForIr, body
             )
+            syntheticFunction.returnType = accessor.calleeDescriptor.returnType!!.toIrType()!!
             syntheticFunction.createParameterDeclarations()
 
             val calleeDescriptor = accessor.calleeDescriptor as FunctionDescriptor
@@ -250,7 +251,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
                     val delegationConstructor = createFunctionSymbol(accessor.calleeDescriptor)
                     IrDelegatingConstructorCallImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        delegationConstructor.owner.returnType,
+                        context.irBuiltIns.unitType,
                         delegationConstructor as IrConstructorSymbol,
                         accessor.calleeDescriptor as ClassConstructorDescriptor
                     )

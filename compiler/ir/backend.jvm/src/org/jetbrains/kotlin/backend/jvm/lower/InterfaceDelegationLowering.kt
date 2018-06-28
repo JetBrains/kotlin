@@ -71,7 +71,7 @@ class InterfaceDelegationLowering(val state: GenerationState) : IrElementTransfo
         val defaultImpls = InterfaceLowering.createDefaultImplsClassDescriptor(interfaceDescriptor)
         val defaultImplFun =
             InterfaceLowering.createDefaultImplFunDescriptor(defaultImpls, interfaceFun.original, interfaceDescriptor, state.typeMapper)
-
+        irFunction.returnType = defaultImplFun.returnType!!.toIrType()!!
         val irCallImpl =
             IrCallImpl(
                 UNDEFINED_OFFSET,
@@ -85,7 +85,7 @@ class InterfaceDelegationLowering(val state: GenerationState) : IrElementTransfo
             IrReturnImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
-                irFunction.symbol.owner.returnType,
+                irFunction.returnType,
                 irFunction.symbol,
                 irCallImpl
             )

@@ -302,6 +302,8 @@ class ExpressionCodegen(
             mv.athrow()
         } else if (expression.descriptor !is ConstructorDescriptor) {
             return returnType?.run { coerceNotToUnit(callable.returnType, this) } ?: onStack(callable.returnType)
+        } else {
+            return none()
         }
 
         return expression.onStack

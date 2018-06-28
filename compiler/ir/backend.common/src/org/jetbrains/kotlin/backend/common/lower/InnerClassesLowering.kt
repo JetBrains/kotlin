@@ -235,7 +235,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
 
                 val newCallee = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(classConstructor)
                 val newCall = IrDelegatingConstructorCallImpl(
-                    expression.startOffset, expression.endOffset, expression.type, newCallee, newCallee.descriptor,
+                    expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, newCallee, newCallee.descriptor,
                     classConstructor.typeParameters.size
                 ).apply { copyTypeArgumentsFrom(expression) }
 
