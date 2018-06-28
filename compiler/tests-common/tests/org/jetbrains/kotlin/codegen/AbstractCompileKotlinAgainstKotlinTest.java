@@ -28,8 +28,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTestCase {
     private File tmpdir;
@@ -55,7 +57,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     @NotNull
     protected Pair<ClassFileFactory, ClassFileFactory> doTwoFileTest(@NotNull List<TestFile> files) throws Exception {
         // Note that it may be beneficial to improve this test to handle many files, compiling them successively against all previous
-        assert files.size() == 2 : "There should be exactly two files in this test";
+        assert files.size() == 2 || (files.size() == 3 && files.get(2).name.equals("CoroutineUtil.kt")) : "There should be exactly two files in this test";
         TestFile fileA = files.get(0);
         TestFile fileB = files.get(1);
         ClassFileFactory factoryA = compileA(fileA, files);
@@ -98,7 +100,13 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
                 compileDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
-        return compileKotlin(testFile.name, testFile.content, aDir, environment, compileDisposable);
+        List<TestFile> filesToCompile =
+                files.size() == 2
+                ? Collections.singletonList(testFile)
+                // A-file and CoroutineUtil.kt
+                : Arrays.asList(testFile, files.get(2));
+
+        return compileKotlin(filesToCompile, aDir, environment, compileDisposable);
     }
 
     @NotNull
@@ -114,7 +122,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
                 compileDisposable, configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
 
-        return compileKotlin(testFile.name, testFile.content, bDir, environment, compileDisposable);
+        return compileKotlin(Collections.singletonList(testFile), bDir, environment, compileDisposable);
     }
 
     private Disposable createDisposable(String debugName) {
@@ -125,16 +133,21 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
 
     @NotNull
     private ClassFileFactory compileKotlin(
-            @NotNull String fileName, @NotNull String content, @NotNull File outputDir, @NotNull KotlinCoreEnvironment environment,
+            @NotNull List<TestFile> files,
+            @NotNull File outputDir,
+            @NotNull KotlinCoreEnvironment environment,
             @NotNull Disposable disposable
-    ) throws IOException {
-        KtFile psiFile = KotlinTestUtils.createFile(fileName, content, environment.getProject());
+    ) {
+
+        List<KtFile> ktFiles =
+                files.stream().map(file -> KotlinTestUtils.createFile(file.name, file.content, environment.getProject()))
+                        .collect(Collectors.toList());
 
         ModuleVisibilityManager.SERVICE.getInstance(environment.getProject()).addModule(
                 new ModuleBuilder("module for test", tmpdir.getAbsolutePath(), "test")
         );
 
-        ClassFileFactory outputFiles = GenerationUtils.compileFileTo(psiFile, environment, outputDir);
+        ClassFileFactory outputFiles = GenerationUtils.compileFilesTo(ktFiles, environment, outputDir);
 
         Disposer.dispose(disposable);
         return outputFiles;
