@@ -16,9 +16,15 @@ Q: How do I create shared library?
 
 A: Use `-produce dynamic` compiler switch, or `konanArtifacts { dynamic('foo') {} }` in Gradle.
 It will produce platform-specific shared object (.so on Linux, .dylib on macOS and .dll on Windows targets) and
-C language header, allowing to use all public APIs available in your Kotlin/Native program from C code.
+C language header, allowing to use all public APIs available in your Kotlin/Native program from C/C++ code.
 See `samples/python_extension` as an example of using such shared object to provide a bridge between Python and
 Kotlin/Native.
+
+Q: How do I create static library or an object file?
+
+A: Use `-produce static` compiler switch, or `konanArtifacts { static('foo') {} }` in Gradle.
+It will produce platform-specific static object (.a library format) and C language header, allowing to
+use all public APIs available in your Kotlin/Native program from C/C++ code.
 
 Q: How do I run Kotlin/Native behind corporate proxy?
 

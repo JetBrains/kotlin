@@ -25,7 +25,7 @@ the following platforms:
    (`-target linux`, default on Linux hosts)
  * Microsoft Windows x86-64 (tested on Windows 7 and Windows 10), host and target (`-target mingw`,
    default on Windows hosts)
- * Apple iOS (arm64), cross-compiled target (`-target ios`), hosted on macOS
+ * Apple iOS (armv7 and arm64 devices, x86 simulator), cross-compiled target (`-target ios_arm64`), hosted on macOS
  * Linux arm32 hardfp, Raspberry Pi, cross-compiled target (`-target raspberrypi`), hosted on Linux
  * Linux mips big endian, cross-compiled target (`-target mips`), hosted on Linux
  * Linux mips little endian, cross-compiled target (`-target mipsel`), hosted on Linux
@@ -38,7 +38,7 @@ the following platforms:
 
 To run _Kotlin/Native_ JDK 8 or Java 9 (JDK) for the host platform has to be installed.
 
-On macOS it also requires Xcode 9.3 or newer to be installed.
+On macOS it also requires Xcode 9.4.1 or newer to be installed.
 
 The language and library version supported by this EAP release mostly match Kotlin 1.2.60.
 However, there are certain limitations, see section [Known Limitations](#limitations).

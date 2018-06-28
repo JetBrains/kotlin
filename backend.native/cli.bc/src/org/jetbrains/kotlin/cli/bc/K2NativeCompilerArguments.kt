@@ -75,7 +75,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-entry", shortName = "-e", valueDescription = "<name>", description = "Qualified entry point name")
     var mainPackage: String? = null
 
-    @Argument(value = "-produce", shortName = "-p", valueDescription = "{program|dynamic|framework|library|bitcode}", description = "Specify output file kind")
+    @Argument(value = "-produce", shortName = "-p",
+            valueDescription = "{program|static|dynamic|framework|library|bitcode}",
+            description = "Specify output file kind")
     var produce: String? = null
 
     @Argument(value = "-repo", shortName = "-r", valueDescription = "<path>", description = "Library search path")
