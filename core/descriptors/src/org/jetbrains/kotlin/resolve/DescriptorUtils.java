@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
@@ -634,4 +635,15 @@ public class DescriptorUtils {
                : descriptor;
     }
 
+    public static boolean isMethodOfAny(@NotNull FunctionDescriptor descriptor) {
+        String name = descriptor.getName().asString();
+        List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
+        if (parameters.isEmpty()) {
+            return name.equals("hashCode") || name.equals("toString");
+        }
+        else if (parameters.size() == 1 && name.equals("equals")) {
+            return isNullableAny(parameters.get(0).getType());
+        }
+        return false;
+    }
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 abstract class A<T> {
     abstract fun test(a: T, b:Boolean = false) : String
 }

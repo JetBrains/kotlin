@@ -34,6 +34,5 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
 
 interface JvmLoweredStatementOrigin : IrStatementOrigin {
     object DEFAULT_IMPLS_DELEGATION : IrStatementOriginImpl("DEFAULT_IMPL_DELEGATION")
-    object BRIDGE_DELEGATION : IrStatementOriginImpl("BRIDGE_DELEGATION")
     object TO_ARRAY : IrDeclarationOriginImpl("TO_ARRAY")
 }
