@@ -20,34 +20,24 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import java.util.*
+import org.jetbrains.kotlin.storage.StorageManager
 
 object JvmPlatform : TargetPlatform("JVM") {
-    private val defaultImports = LockBasedStorageManager().let { storageManager ->
-        storageManager.createMemoizedFunction<Boolean, List<ImportPath>> { includeKotlinComparisons ->
-            ArrayList<ImportPath>().apply {
-                addAll(Common.getDefaultImports(includeKotlinComparisons))
+    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
+        result.add(ImportPath.fromString("kotlin.jvm.*"))
 
-                add(ImportPath.fromString("kotlin.jvm.*"))
-
-                fun addAllClassifiersFromScope(scope: MemberScope) {
-                    for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
-                        add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
-                    }
-                }
-
-                for (builtinPackageFragment in JvmBuiltIns(storageManager).builtInsPackageFragmentsImportedByDefault) {
-                    addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
-                }
+        fun addAllClassifiersFromScope(scope: MemberScope) {
+            for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
+                result.add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
             }
         }
 
+        for (builtinPackageFragment in JvmBuiltIns(storageManager).builtInsPackageFragmentsImportedByDefault) {
+            addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
+        }
     }
 
     override val defaultLowPriorityImports: List<ImportPath> = listOf(ImportPath.fromString("java.lang.*"))
-
-    override fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath> = defaultImports(includeKotlinComparisons)
 
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
 
