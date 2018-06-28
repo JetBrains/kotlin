@@ -110,11 +110,6 @@ ALWAYS_INLINE KByte   Kotlin_Byte_dec              (KByte a           ) { return
 ALWAYS_INLINE KInt    Kotlin_Byte_unaryPlus        (KByte a           ) { return  +a; }
 ALWAYS_INLINE KInt    Kotlin_Byte_unaryMinus       (KByte a           ) { return  -a; }
 
-ALWAYS_INLINE KByte  Kotlin_Byte_or_Byte           (KByte a, KByte   b) { return a | b; }
-ALWAYS_INLINE KByte  Kotlin_Byte_xor_Byte          (KByte a, KByte   b) { return a ^ b; }
-ALWAYS_INLINE KByte  Kotlin_Byte_and_Byte          (KByte a, KByte   b) { return a & b; }
-ALWAYS_INLINE KByte  Kotlin_Byte_inv               (KByte a           ) { return  ~a;   }
-
 ALWAYS_INLINE KByte   Kotlin_Byte_toByte           (KByte a           ) { return a; }
 ALWAYS_INLINE KChar   Kotlin_Byte_toChar           (KByte a           ) { return a; }
 ALWAYS_INLINE KShort  Kotlin_Byte_toShort          (KByte a           ) { return a; }
@@ -171,11 +166,6 @@ ALWAYS_INLINE KShort  Kotlin_Short_inc              (KShort a           ) { retu
 ALWAYS_INLINE KShort  Kotlin_Short_dec              (KShort a           ) { return --a; }
 ALWAYS_INLINE KInt    Kotlin_Short_unaryPlus        (KShort a           ) { return  +a; }
 ALWAYS_INLINE KInt    Kotlin_Short_unaryMinus       (KShort a           ) { return  -a; }
-
-ALWAYS_INLINE KShort  Kotlin_Short_or_Short         (KShort a, KShort  b) { return a | b; }
-ALWAYS_INLINE KShort  Kotlin_Short_xor_Short        (KShort a, KShort  b) { return a ^ b; }
-ALWAYS_INLINE KShort  Kotlin_Short_and_Short        (KShort a, KShort  b) { return a & b; }
-ALWAYS_INLINE KShort  Kotlin_Short_inv              (KShort a           ) { return  ~a;   }
 
 ALWAYS_INLINE KByte   Kotlin_Short_toByte           (KShort a           ) { return a; }
 ALWAYS_INLINE KChar   Kotlin_Short_toChar           (KShort a           ) { return a; }

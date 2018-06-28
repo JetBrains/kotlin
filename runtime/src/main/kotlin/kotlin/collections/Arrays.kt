@@ -1016,14 +1016,6 @@ public actual fun CharArray.contentHashCode(): Int {
     return result
 }
 
-// From Library.kt.
-/**
- * Returns an array of objects of the given type with the given [size], initialized with null values.
- */
-public inline fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?> =
-        @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-        arrayOfUninitializedElements<T?>(size)
-
 // From JS collections.kt.
 internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> {
     return arrayOfNulls<Any>(size) as Array<T>
