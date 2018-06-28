@@ -53,6 +53,23 @@ public annotation class RestrictsSuspension
 @InlineOnly public inline fun <T> Continuation<T>.resumeWithException(exception: Throwable): Unit =
     resumeWith(SuccessOrFailure.failure(exception))
 
+
+/**
+ * Creates [Continuation] instance with a given [context] and a given implementation of [resumeWith] method.
+ */
+@SinceKotlin("1.3")
+@InlineOnly public inline fun <T> Continuation(
+    context: CoroutineContext = EmptyCoroutineContext,
+    crossinline resumeWith: (SuccessOrFailure<T>) -> Unit
+): Continuation<T> =
+    object : Continuation<T> {
+        override val context: CoroutineContext
+            get() = context
+
+        override fun resumeWith(result: SuccessOrFailure<T>) =
+            resumeWith(result)
+    }
+
 /**
  * Creates a coroutine without receiver and with result type [T].
  * This function creates a new, fresh instance of suspendable computation every time it is invoked.
