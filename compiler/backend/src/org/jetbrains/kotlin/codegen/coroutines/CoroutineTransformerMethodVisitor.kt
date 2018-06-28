@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransfor
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.sure
@@ -53,7 +54,7 @@ class CoroutineTransformerMethodVisitor(
 
     private var continuationIndex = if (isForNamedFunction) -1 else 0
     private var dataIndex = if (isForNamedFunction) -1 else 1
-    private var exceptionIndex = if (isForNamedFunction) -1 else 2
+    private var exceptionIndex = if (isForNamedFunction || languageVersionSettings.isReleaseCoroutines()) -1 else 2
 
     override fun performTransformations(methodNode: MethodNode) {
         removeFakeContinuationConstructorCall(methodNode)
@@ -81,7 +82,9 @@ class CoroutineTransformerMethodVisitor(
             }
 
             dataIndex = methodNode.maxLocals++
-            exceptionIndex = methodNode.maxLocals++
+            if (!languageVersionSettings.isReleaseCoroutines()) {
+                exceptionIndex = methodNode.maxLocals++
+            }
             continuationIndex = methodNode.maxLocals++
 
             prepareMethodNodePreludeForNamedFunction(methodNode)
@@ -136,7 +139,9 @@ class CoroutineTransformerMethodVisitor(
                 )
             )
 
-            insert(startLabel, withInstructionAdapter { generateResumeWithExceptionCheck(exceptionIndex) })
+            insert(startLabel, withInstructionAdapter {
+                generateResumeWithExceptionCheck(languageVersionSettings.isReleaseCoroutines(), dataIndex, exceptionIndex)
+            })
             insert(last, defaultLabel)
 
             insert(last, withInstructionAdapter {
@@ -161,7 +166,7 @@ class CoroutineTransformerMethodVisitor(
     }
 
     private fun createInsnForReadingLabel() =
-        if (isForNamedFunction)
+        if (isForNamedFunction && !languageVersionSettings.isReleaseCoroutines())
             MethodInsnNode(
                 Opcodes.INVOKEVIRTUAL,
                 classBuilderForCoroutineState.thisName,
@@ -172,12 +177,12 @@ class CoroutineTransformerMethodVisitor(
         else
             FieldInsnNode(
                 Opcodes.GETFIELD,
-                languageVersionSettings.coroutineImplAsmType().internalName,
+                computeLabelOwner(languageVersionSettings, classBuilderForCoroutineState.thisName).internalName,
                 COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor
             )
 
     private fun createInsnForSettingLabel() =
-        if (isForNamedFunction)
+        if (isForNamedFunction && !languageVersionSettings.isReleaseCoroutines())
             MethodInsnNode(
                 Opcodes.INVOKEVIRTUAL,
                 classBuilderForCoroutineState.thisName,
@@ -188,7 +193,7 @@ class CoroutineTransformerMethodVisitor(
         else
             FieldInsnNode(
                 Opcodes.PUTFIELD,
-                languageVersionSettings.coroutineImplAsmType().internalName,
+                computeLabelOwner(languageVersionSettings, classBuilderForCoroutineState.thisName).internalName,
                 COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor
             )
 
@@ -294,9 +299,11 @@ class CoroutineTransformerMethodVisitor(
             getfield(classBuilderForCoroutineState.thisName, DATA_FIELD_NAME, AsmTypes.OBJECT_TYPE.descriptor)
             visitVarInsn(Opcodes.ASTORE, dataIndex)
 
-            visitVarInsn(Opcodes.ALOAD, continuationIndex)
-            getfield(classBuilderForCoroutineState.thisName, EXCEPTION_FIELD_NAME, AsmTypes.JAVA_THROWABLE_TYPE.descriptor)
-            visitVarInsn(Opcodes.ASTORE, exceptionIndex)
+            if (!languageVersionSettings.isReleaseCoroutines()) {
+                visitVarInsn(Opcodes.ALOAD, continuationIndex)
+                getfield(classBuilderForCoroutineState.thisName, EXCEPTION_FIELD_NAME, AsmTypes.JAVA_THROWABLE_TYPE.descriptor)
+                visitVarInsn(Opcodes.ASTORE, exceptionIndex)
+            }
         })
     }
 
@@ -517,7 +524,7 @@ class CoroutineTransformerMethodVisitor(
             remove(possibleTryCatchBlockStart.previous)
 
             insert(possibleTryCatchBlockStart, withInstructionAdapter {
-                generateResumeWithExceptionCheck(exceptionIndex)
+                generateResumeWithExceptionCheck(languageVersionSettings.isReleaseCoroutines(), dataIndex, exceptionIndex)
 
                 // Load continuation argument just like suspending function returns it
                 load(dataIndex, AsmTypes.OBJECT_TYPE)
@@ -628,12 +635,21 @@ internal fun InstructionAdapter.generateContinuationConstructorCall(
     )
 }
 
-private fun InstructionAdapter.generateResumeWithExceptionCheck(exceptionIndex: Int) {
+private fun InstructionAdapter.generateResumeWithExceptionCheck(isReleaseCoroutines: Boolean, dataIndex: Int, exceptionIndex: Int) {
     // Check if resumeWithException has been called
-    load(exceptionIndex, AsmTypes.OBJECT_TYPE)
+    load(if (isReleaseCoroutines) dataIndex else exceptionIndex, AsmTypes.OBJECT_TYPE)
     dup()
     val noExceptionLabel = Label()
-    ifnull(noExceptionLabel)
+
+    if (isReleaseCoroutines) {
+        instanceOf(AsmTypes.SUCCESS_OR_FAILURE_FAILURE)
+        ifeq(noExceptionLabel)
+        // TODO: do we need this checkcast?
+        checkcast(AsmTypes.SUCCESS_OR_FAILURE_FAILURE)
+        getfield(AsmTypes.SUCCESS_OR_FAILURE_FAILURE.internalName, "exception", AsmTypes.JAVA_THROWABLE_TYPE.descriptor)
+    } else {
+        ifnull(noExceptionLabel)
+    }
     athrow()
 
     mark(noExceptionLabel)

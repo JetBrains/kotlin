@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
+import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -128,7 +130,12 @@ object InlineTestUtil {
                     if (skipMethodsOfThisClass) {
                         return null
                     }
-                    if (name == "doResume" && desc == "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;") {
+
+                    if (name == DO_RESUME_METHOD_NAME && desc == "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;") {
+                        return null
+                    }
+
+                    if (name == INVOKE_SUSPEND_METHOD_NAME && desc == "(Ljava/lang/Object;)Ljava/lang/Object;") {
                         return null
                     }
 

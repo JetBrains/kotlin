@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -688,7 +687,10 @@ public class FunctionCodegen {
                 }
             } else {
                 FunctionDescriptor lambdaDescriptor = ((ClosureContext) context.getParentContext()).getOriginalSuspendLambdaDescriptor();
-                if (lambdaDescriptor != null && functionDescriptor.getName().equals(Name.identifier("doResume"))) {
+                if (lambdaDescriptor != null &&
+                    CoroutineCodegenUtilKt.isResumeImplMethodName(
+                            parentCodegen.state.getLanguageVersionSettings(), functionDescriptor.getName().asString()
+                    )) {
                     destructuredParametersForSuspendLambda.addAll(lambdaDescriptor.getValueParameters());
                 }
             }

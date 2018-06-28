@@ -422,7 +422,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
             String superClassConstructorDescriptor;
             if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE) ||
-                superClassAsmType.equals(CoroutineCodegenUtilKt.coroutineImplAsmType(state.getLanguageVersionSettings()))) {
+                CoroutineCodegenUtilKt.isCoroutineSuperClass(state.getLanguageVersionSettings(), superClassAsmType.getInternalName())) {
                 int arity = calculateArity();
                 iv.iconst(arity);
                 if (shouldHaveBoundReferenceReceiver) {

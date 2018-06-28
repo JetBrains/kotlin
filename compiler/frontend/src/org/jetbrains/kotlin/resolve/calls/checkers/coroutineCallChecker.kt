@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -130,15 +131,17 @@ fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, dia
     }
 }
 
+fun KotlinType.isRestrictsSuspensionReceiver(languageVersionSettings: LanguageVersionSettings) = (listOf(this) + this.supertypes()).any {
+    it.constructor.declarationDescriptor?.annotations?.hasAnnotation(languageVersionSettings.restrictsSuspensionFqName()) == true
+}
+
 private fun checkRestrictsSuspension(
     enclosingSuspendCallableDescriptor: CallableDescriptor,
     resolvedCall: ResolvedCall<*>,
     reportOn: PsiElement,
     context: CallCheckerContext
 ) {
-    fun ReceiverValue.isRestrictsSuspensionReceiver() = (listOf(type) + type.supertypes()).any {
-        it.constructor.declarationDescriptor?.annotations?.hasAnnotation(context.languageVersionSettings.restrictsSuspensionFqName()) == true
-    }
+    fun ReceiverValue.isRestrictsSuspensionReceiver() = type.isRestrictsSuspensionReceiver(context.languageVersionSettings)
 
     infix fun ReceiverValue.sameInstance(other: ReceiverValue?): Boolean {
         if (other == null) return false
