@@ -149,8 +149,9 @@ abstract class AbstractKapt3Extension(
         if (aptMode.generateStubs) {
             logger.info { "Kotlin files to compile: " + files.map { it.virtualFile?.name ?: "<in memory ${it.hashCode()}>" } }
 
-            val kaptContext = compileStubs(project, module, bindingContext, files.toList())
-            generateKotlinSourceStubs(kaptContext)
+            contextForStubGeneration(project, module, bindingContext, files.toList()).use { context ->
+                generateKotlinSourceStubs(context)
+            }
         }
 
         if (!aptMode.runAnnotationProcessing) return doNotGenerateCode()
@@ -212,7 +213,7 @@ abstract class AbstractKapt3Extension(
         logger.info { "Annotation processing took $annotationProcessingTime ms" }
     }
 
-    private fun compileStubs(
+    private fun contextForStubGeneration(
             project: Project,
             module: ModuleDescriptor,
             bindingContext: BindingContext,
