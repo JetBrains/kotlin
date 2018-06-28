@@ -223,7 +223,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         if (!arguments.disableDefaultScriptingPlugin) {
             val explicitOrLoadedScriptingPlugin =
-                pluginClasspaths.any { File(it).name == PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR } ||
+                pluginClasspaths.any { File(it).name.startsWith(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME) } ||
                         try {
                             PluginCliParser::class.java.classLoader.loadClass("org.jetbrains.kotlin.extensions.ScriptingCompilerConfigurationExtension")
                             true
