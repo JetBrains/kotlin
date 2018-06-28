@@ -87,7 +87,7 @@ private fun audioCallback(userdata: COpaquePointer?, buffer: CPointer<Uint8Var>?
     while (outPosition < length) {
         val frame = decoder.nextAudioFrame(length - outPosition)
         if (frame != null) {
-            val toCopy = min(length - outPosition, frame.size - frame.position)
+            val toCopy = minOf(length - outPosition, frame.size - frame.position)
             memcpy(buffer + outPosition, frame.buffer.pointed.data + frame.position, toCopy.signExtend())
             frame.unref()
             outPosition += toCopy
