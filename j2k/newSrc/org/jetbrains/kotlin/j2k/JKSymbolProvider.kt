@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.j2k.tree.JKLocalVariable
-import org.jetbrains.kotlin.j2k.tree.JKParameter
+import org.jetbrains.kotlin.j2k.tree.JKClass
+import org.jetbrains.kotlin.j2k.tree.JKDeclaration
+import org.jetbrains.kotlin.j2k.tree.JKField
+import org.jetbrains.kotlin.j2k.tree.JKMethod
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
@@ -32,32 +34,40 @@ class JKSymbolProvider {
         }
     }
 
-    fun provideSymbol(reference: PsiReference): JKSymbol {
+    inline fun <reified T : JKSymbol> provideSymbol(reference: PsiReference): T {
         val target = reference.resolve()
-        if (target != null) return provideDirectSymbol(target)
-        return JKUnresolvedField(reference)
+        if (target != null) return provideDirectSymbol(target) as T
+        return JKUnresolvedField(reference).let { if (it is T) it else JKUnresolvedMethod(reference) as T }
     }
 
-    fun provideLocalVarSymbol(psi: PsiLocalVariable, variable: JKLocalVariable): JKSymbol {
-        return symbols.getOrPut(psi) { JKUniverseFieldSymbol(variable) }
-    }
-
-    fun provideParameterSymbol(psi: PsiParameter, variable: JKParameter): JKSymbol {
-        return symbols.getOrPut(psi) { JKUniverseFieldSymbol(variable) }
+    fun provideUniverseSymbol(psi: PsiElement, jk: JKDeclaration? = null): JKSymbol = symbols.getOrPut(psi) {
+        when (psi) {
+            is PsiField, is PsiParameter, is PsiLocalVariable -> JKUniverseFieldSymbol()
+            is PsiMethod -> JKUniverseMethodSymbol()
+            is PsiClass -> JKUniverseClassSymbol()
+            else -> TODO()
+        }
+    }.also {
+        if (jk != null)
+            when (it) {
+                is JKUniverseClassSymbol -> it.target = jk as JKClass
+                is JKUniverseFieldSymbol -> it.target = jk as JKField
+                is JKUniverseMethodSymbol -> it.target = jk as JKMethod
+            }
     }
 
     private inner class ElementVisitor : JavaElementVisitor() {
         override fun visitClass(aClass: PsiClass) {
-            symbols[aClass] = JKUniverseClassSymbol()
+            provideUniverseSymbol(aClass)
             aClass.acceptChildren(this)
         }
 
         override fun visitField(field: PsiField) {
-            symbols[field] = JKUniverseFieldSymbol()
+            provideUniverseSymbol(field)
         }
 
         override fun visitMethod(method: PsiMethod) {
-            symbols[method] = JKUniverseMethodSymbol()
+            provideUniverseSymbol(method)
         }
 
         override fun visitFile(file: PsiFile) {
