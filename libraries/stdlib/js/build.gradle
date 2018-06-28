@@ -15,10 +15,12 @@ def builtinsSrcDir = "${buildDir}/builtin-sources"
 def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
 def commonSrcDir = "${projectDir}/../src/kotlin"
 def commonSrcDir2 = "${projectDir}/../common/src"
+def coroutinesJsSrcDir = "${projectDir}/../coroutines/js/src"
 
 def builtinsDir = "${rootDir}/core/builtins"
 def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
 def experimentalJsModuleName = 'kotlin-experimental'
+def coroutinesJsModuleName = 'kotlin-stdlib-coroutines'
 def jsSrcDir = "src"
 def jsTestSrcDir = "test"
 def jsSrcJsDir = "${jsSrcDir}/js"
@@ -59,6 +61,12 @@ sourceSets {
             srcDir jsTestSrcDir
         }
     }
+
+    coroutines {
+        kotlin {
+            srcDir coroutinesJsSrcDir
+        }
+    }
 }
 
 configurations {
@@ -70,6 +78,7 @@ dependencies {
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
     testCompile project(':kotlin-test:kotlin-test-js')
     merger project(":tools:kotlin-stdlib-js-merger")
+    coroutinesCompile sourceSets.main.output
 }
 
 task prepareComparableSource(type: Copy) {
@@ -153,6 +162,19 @@ compileExperimentalKotlin2Js {
         sourceMap = true
         sourceMapPrefix = "./"
         freeCompilerArgs += ["-source-map-base-dirs", [experimentalSrcDir].join(File.pathSeparator)]
+    }
+}
+
+compileCoroutinesKotlin2Js {
+    dependsOn compileKotlin2Js
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        outputFile = "${buildDir}/classes/coroutines/${coroutinesJsModuleName}.js"
+        freeCompilerArgs = [
+                "-version",
+                "-Xallow-kotlin-package"
+        ]
     }
 }
 
