@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
@@ -442,7 +444,7 @@ class ExpressionCodegen(
         val hasSpread = arguments.firstIsInstanceOrNull<IrSpreadElement>() != null
 
         if (hasSpread) {
-            val arrayOfReferences = outType.isArray()
+            val arrayOfReferences = KotlinBuiltIns.isArray(outType.toKotlinType()!!)
             if (size == 1) {
                 // Arrays.copyOf(receiverValue, newLength)
                 val argument = (arguments[0] as IrSpreadElement).expression
