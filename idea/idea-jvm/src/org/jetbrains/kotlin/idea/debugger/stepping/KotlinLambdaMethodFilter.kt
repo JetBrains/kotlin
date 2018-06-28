@@ -21,7 +21,7 @@ import com.intellij.debugger.engine.BreakpointStepMethodFilter
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.util.Range
 import com.sun.jdi.Location
-import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
+import org.jetbrains.kotlin.codegen.coroutines.isResumeImplMethodNameFromAnyLanguageSettings
 import org.jetbrains.kotlin.idea.debugger.isInsideInlineArgument
 import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.psi.KtBlockExpression
@@ -74,8 +74,8 @@ class KotlinLambdaMethodFilter(
     override fun getCallingExpressionLines() = if (isInline) Range(0, 999) else myCallingExpressionLines
 
     private fun isLambdaName(name: String?): Boolean {
-        if (isSuspend) {
-            return name == DO_RESUME_METHOD_NAME
+        if (isSuspend && name != null) {
+            return isResumeImplMethodNameFromAnyLanguageSettings(name)
         }
 
         return name == OperatorNameConventions.INVOKE.asString()

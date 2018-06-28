@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
+import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 
 val SUSPEND_COROUTINE_OR_RETURN_NAME = Name.identifier("suspendCoroutineOrReturn")
 val INTERCEPTED_NAME = Name.identifier("intercepted")
@@ -21,7 +22,7 @@ val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
 val SUSPEND_COROUTINE_UNINTERCEPTED_OR_RETURN_NAME = Name.identifier("suspendCoroutineUninterceptedOrReturn")
 
 fun FunctionDescriptor.isBuiltInIntercepted(languageVersionSettings: LanguageVersionSettings): Boolean {
-    if (name != INTERCEPTED_NAME) return false
+    if (name != INTERCEPTED_NAME || languageVersionSettings.isReleaseCoroutines()) return false
     val original =
         module.getPackage(languageVersionSettings.coroutinesIntrinsicsPackageFqName()).memberScope
             .getContributedFunctions(INTERCEPTED_NAME, NoLookupLocation.FROM_BACKEND)
@@ -30,7 +31,7 @@ fun FunctionDescriptor.isBuiltInIntercepted(languageVersionSettings: LanguageVer
 }
 
 fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturn(languageVersionSettings: LanguageVersionSettings): Boolean {
-    if (name != SUSPEND_COROUTINE_OR_RETURN_NAME) return false
+    if (name != SUSPEND_COROUTINE_OR_RETURN_NAME || languageVersionSettings.isReleaseCoroutines()) return false
 
     val originalDeclaration = getBuiltInSuspendCoroutineOrReturn(languageVersionSettings) ?: return false
 
