@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
-import java.lang.reflect.Member
 import java.lang.reflect.Method
 import kotlin.reflect.jvm.internal.structure.*
 
@@ -86,16 +85,6 @@ internal sealed class JvmFunctionSignature {
 
         override fun asString(): String =
             methods.joinToString(separator = "", prefix = "<init>(", postfix = ")V") { it.returnType.desc }
-    }
-
-    open class BuiltInFunction(private val signature: String) : JvmFunctionSignature() {
-        open fun getMember(container: KDeclarationContainerImpl): Member? = null
-
-        override fun asString(): String = signature
-
-        class Predefined(signature: String, private val member: Member) : BuiltInFunction(signature) {
-            override fun getMember(container: KDeclarationContainerImpl): Member = member
-        }
     }
 }
 
@@ -175,10 +164,6 @@ internal object RuntimeTypeMapper {
 
         when (function) {
             is DeserializedCallableMemberDescriptor -> {
-                mapIntrinsicFunctionSignature(function)?.let {
-                    return it
-                }
-
                 val proto = function.proto
                 if (proto is ProtoBuf.Function) {
                     JvmProtoBufUtil.getJvmMethodSignature(proto, function.nameResolver, function.typeTable)?.let { signature ->
@@ -257,34 +242,6 @@ internal object RuntimeTypeMapper {
             is PropertySetterDescriptor -> JvmAbi.setterName(descriptor.propertyIfAccessor.name.asString())
             else -> descriptor.name.asString()
         }
-
-    private fun mapIntrinsicFunctionSignature(function: FunctionDescriptor): JvmFunctionSignature? {
-        val parameters = function.valueParameters
-
-        when (function.name.asString()) {
-            "equals" -> if (parameters.size == 1 && KotlinBuiltIns.isNullableAny(parameters.single().type)) {
-                return JvmFunctionSignature.BuiltInFunction.Predefined(
-                    "equals(Ljava/lang/Object;)Z",
-                    Any::class.java.getDeclaredMethod("equals", Any::class.java)
-                )
-            }
-            "hashCode" -> if (parameters.isEmpty()) {
-                return JvmFunctionSignature.BuiltInFunction.Predefined(
-                    "hashCode()I",
-                    Any::class.java.getDeclaredMethod("hashCode")
-                )
-            }
-            "toString" -> if (parameters.isEmpty()) {
-                return JvmFunctionSignature.BuiltInFunction.Predefined(
-                    "toString()Ljava/lang/String;",
-                    Any::class.java.getDeclaredMethod("toString")
-                )
-            }
-            // TODO: generalize and support other functions from built-ins
-        }
-
-        return null
-    }
 
     fun mapJvmClassToKotlinClassId(klass: Class<*>): ClassId {
         if (klass.isArray) {

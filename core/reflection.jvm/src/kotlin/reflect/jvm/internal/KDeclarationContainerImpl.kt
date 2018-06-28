@@ -27,6 +27,7 @@ import kotlin.jvm.internal.ClassBasedDeclarationContainer
 import kotlin.reflect.jvm.internal.components.RuntimeModuleData
 import kotlin.reflect.jvm.internal.structure.createArrayType
 import kotlin.reflect.jvm.internal.structure.safeClassLoader
+import kotlin.reflect.jvm.internal.structure.wrapperByPrimitive
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
     abstract inner class Data {
@@ -37,7 +38,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     protected open val methodOwner: Class<*>
-        get() = jClass
+        get() = jClass.wrapperByPrimitive ?: jClass
 
     abstract val constructorDescriptors: Collection<ConstructorDescriptor>
 

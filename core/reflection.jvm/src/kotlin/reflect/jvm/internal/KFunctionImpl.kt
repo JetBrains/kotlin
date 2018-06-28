@@ -72,7 +72,6 @@ internal class KFunctionImpl private constructor(
                 val methods = jvmSignature.methods
                 return@caller AnnotationConstructorCaller(container.jClass, methods.map { it.name }, POSITIONAL_CALL, JAVA, methods)
             }
-            is BuiltInFunction -> jvmSignature.getMember(container)
         }
 
         when (member) {
