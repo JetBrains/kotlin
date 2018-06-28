@@ -177,7 +177,8 @@ public final class K2JSTranslator {
                 List<DeclarationDescriptor> scope = translationResult.getFileMemberScopes().get(file);
                 assert scope != null : "Could not find descriptors for file: " + file;
                 ProtoBuf.PackageFragment packagePart = serializationUtil.serializeDescriptors(
-                        bindingTrace.getBindingContext(), moduleDescriptor, scope, file.getPackageFqName());
+                        bindingTrace.getBindingContext(), moduleDescriptor, scope, file.getPackageFqName(),
+                        CommonConfigurationKeysKt.getLanguageVersionSettings(config.getConfiguration()));
 
                 File ioFile = VfsUtilCore.virtualToIoFile(file.getVirtualFile());
                 incrementalResults.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst);

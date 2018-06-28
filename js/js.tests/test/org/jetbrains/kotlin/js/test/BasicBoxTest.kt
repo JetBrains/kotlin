@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import junit.framework.TestCase
+import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -19,10 +20,7 @@ import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderImpl
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
@@ -90,24 +88,24 @@ abstract class BasicBoxTest(
         doTest(filePath, "OK", MainCallParameters.noCall())
     }
 
-    fun doTestWithCoroutinesPackageReplacement(filePath: String, packageName: String) {
-        if (packageName == "kotlin.coroutines") return // TODO: Support JS in kotlin-stdlib-coroutines
-        doTest(filePath, "OK", MainCallParameters.noCall(), packageName)
+    fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
+//        if (packageName == "kotlin.coroutines") return // TODO: Support JS in kotlin-stdlib-coroutines
+        doTest(filePath, "OK", MainCallParameters.noCall(), coroutinesPackage)
     }
 
-    fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, packageName: String = "") {
+    fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String = "") {
         val file = File(filePath)
         val outputDir = getOutputDir(file)
         var fileContent = KotlinTestUtils.doLoadFile(file)
-        if (packageName.isNotEmpty()) {
-            fileContent = fileContent.replace("COROUTINES_PACKAGE", packageName)
+        if (coroutinesPackage.isNotEmpty()) {
+            fileContent = fileContent.replace("COROUTINES_PACKAGE", coroutinesPackage)
         }
 
         val outputPrefixFile = getOutputPrefixFile(filePath)
         val outputPostfixFile = getOutputPostfixFile(filePath)
 
-        TestFileFactoryImpl().use { testFactory ->
-            val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory, true, "")
+        TestFileFactoryImpl(coroutinesPackage).use { testFactory ->
+            val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory, true, coroutinesPackage)
             val modules = inputFiles
                     .map { it.module }.distinct()
                     .map { it.name to it }.toMap()
@@ -637,10 +635,11 @@ abstract class BasicBoxTest(
         TestCase.assertEquals(expectedResult, result)
     }
 
-    private inner class TestFileFactoryImpl : TestFileFactory<TestModule, TestFile>, Closeable {
+    private inner class TestFileFactoryImpl(val coroutinesPackage: String) : TestFileFactory<TestModule, TestFile>, Closeable {
         var testPackage: String? = null
         val tmpDir = KotlinTestUtils.tmpDir("js-tests")
         val defaultModule = TestModule(TEST_MODULE, emptyList(), emptyList())
+        var languageVersionSettings: LanguageVersionSettings? = null
 
         override fun createFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile? {
             val currentModule = module ?: defaultModule
@@ -667,10 +666,38 @@ abstract class BasicBoxTest(
             KotlinTestUtils.mkdirs(temporaryFile.parentFile)
             temporaryFile.writeText(text, Charsets.UTF_8)
 
-            val old = currentModule.languageVersionSettings
-            val new = parseLanguageVersionSettings(directives)
-            assert(old == null || old == new) { "Should not specify language version settings twice:\n$old\n$new" }
-            currentModule.languageVersionSettings = new
+            // TODO Deduplicate logic copied from CodegenTestCase.updateConfigurationByDirectivesInTestFiles
+            fun LanguageVersion.toSettings() = CompilerTestLanguageVersionSettings(
+                emptyMap(),
+                ApiVersion.createByLanguageVersion(this),
+                this,
+                emptyMap()
+            )
+
+            fun LanguageVersionSettings.trySet() {
+                val old = languageVersionSettings
+                assert(old == null || old == this) { "Should not specify language version settings twice:\n$old\n$this" }
+                languageVersionSettings = this
+            }
+            InTextDirectivesUtils.findStringWithPrefixes(text, "// LANGUAGE_VERSION:")?.let {
+                LanguageVersion.fromVersionString(it)?.toSettings()?.trySet()
+            }
+            if (!InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// COMMON_COROUTINES_TEST").isEmpty()) {
+                assert(!text.contains("COROUTINES_PACKAGE")) { "Must replace COROUTINES_PACKAGE prior to tests compilation" }
+                if (!coroutinesPackage.isEmpty()) {
+                    if (coroutinesPackage == "kotlin.coroutines.experimental") {
+                        LanguageVersion.KOTLIN_1_2.toSettings().trySet()
+                    } else {
+                        LanguageVersion.KOTLIN_1_3.toSettings().trySet()
+                    }
+                }
+            }
+
+            parseLanguageVersionSettings(directives)?.trySet()
+
+            // Relies on the order of module creation
+            // TODO is that ok?
+            currentModule.languageVersionSettings = languageVersionSettings
 
             SOURCE_MAP_SOURCE_EMBEDDING.find(text)?.let { match ->
                 currentModule.sourceMapSourceEmbedding = SourceMapSourceEmbedding.valueOf(match.groupValues[1])
