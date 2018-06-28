@@ -97,7 +97,7 @@ internal abstract class ContinuationImpl protected constructor(
     public fun intercepted(): Continuation<Any?> =
         intercepted
             ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
-                .also { intercepted = this }
+                .also { intercepted = it }
 
     protected override fun releaseIntercepted() {
         val intercepted = intercepted
