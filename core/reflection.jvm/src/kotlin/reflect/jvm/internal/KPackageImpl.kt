@@ -36,8 +36,8 @@ import kotlin.reflect.jvm.internal.components.ReflectKotlinClass
 import kotlin.reflect.jvm.internal.structure.classId
 
 internal class KPackageImpl(
-        override val jClass: Class<*>,
-        @Suppress("unused") val usageModuleName: String? = null // may be useful for debug
+    override val jClass: Class<*>,
+    @Suppress("unused") val usageModuleName: String? = null // may be useful for debug
 ) : KDeclarationContainerImpl() {
     private inner class Data : KDeclarationContainerImpl.Data() {
         private val kotlinClass: ReflectKotlinClass? by ReflectProperties.lazySoft {
@@ -58,8 +58,7 @@ internal class KPackageImpl(
             // The default value for 'xs' is empty string, as declared in kotlin.Metadata
             if (facadeName != null && facadeName.isNotEmpty()) {
                 jClass.classLoader.loadClass(facadeName.replace('/', '.'))
-            }
-            else {
+            } else {
                 jClass
             }
         }
@@ -70,8 +69,7 @@ internal class KPackageImpl(
                 val strings = header.strings
                 if (data != null && strings != null) {
                     JvmProtoBufUtil.readPackageDataFrom(data, strings)
-                }
-                else null
+                } else null
             }
         }
 
@@ -97,10 +95,10 @@ internal class KPackageImpl(
         get() = emptyList()
 
     override fun getProperties(name: Name): Collection<PropertyDescriptor> =
-            scope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION)
+        scope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION)
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> =
-            scope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
+        scope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override fun getLocalProperty(index: Int): PropertyDescriptor? {
         return data().metadata?.let { (nameResolver, packageProto) ->
@@ -111,10 +109,10 @@ internal class KPackageImpl(
     }
 
     override fun equals(other: Any?): Boolean =
-            other is KPackageImpl && jClass == other.jClass
+        other is KPackageImpl && jClass == other.jClass
 
     override fun hashCode(): Int =
-            jClass.hashCode()
+        jClass.hashCode()
 
     override fun toString(): String {
         val fqName = jClass.classId.packageFqName

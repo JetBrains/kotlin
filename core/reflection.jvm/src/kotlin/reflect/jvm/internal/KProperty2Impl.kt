@@ -23,13 +23,15 @@ import kotlin.reflect.KMutableProperty2
 import kotlin.reflect.KProperty2
 
 internal open class KProperty2Impl<D, E, out R> : KProperty2<D, E, R>, KPropertyImpl<R> {
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature, CallableReference.NO_RECEIVER)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(
+        container, name, signature, CallableReference.NO_RECEIVER
+    )
 
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
-    private val getter_ = ReflectProperties.lazy { Getter(this) }
+    private val _getter = ReflectProperties.lazy { Getter(this) }
 
-    override val getter: Getter<D, E, R> get() = getter_()
+    override val getter: Getter<D, E, R> get() = _getter()
 
     override fun get(receiver1: D, receiver2: E): R = getter.call(receiver1, receiver2)
 
@@ -49,13 +51,14 @@ internal class KMutableProperty2Impl<D, E, R> : KProperty2Impl<D, E, R>, KMutabl
 
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
-    private val setter_ = ReflectProperties.lazy { Setter(this) }
+    private val _setter = ReflectProperties.lazy { Setter(this) }
 
-    override val setter: Setter<D, E, R> get() = setter_()
+    override val setter: Setter<D, E, R> get() = _setter()
 
     override fun set(receiver1: D, receiver2: E, value: R) = setter.call(receiver1, receiver2, value)
 
-    class Setter<D, E, R>(override val property: KMutableProperty2Impl<D, E, R>) : KPropertyImpl.Setter<R>(), KMutableProperty2.Setter<D, E, R> {
+    class Setter<D, E, R>(override val property: KMutableProperty2Impl<D, E, R>) : KPropertyImpl.Setter<R>(),
+        KMutableProperty2.Setter<D, E, R> {
         override fun invoke(receiver1: D, receiver2: E, value: R): Unit = property.set(receiver1, receiver2, value)
     }
 }

@@ -76,7 +76,7 @@ internal sealed class JvmFunctionSignature {
 
     class JavaConstructor(val constructor: Constructor<*>) : JvmFunctionSignature() {
         override fun asString(): String =
-                constructor.parameterTypes.joinToString(separator = "", prefix = "<init>(", postfix = ")V") { it.desc }
+            constructor.parameterTypes.joinToString(separator = "", prefix = "<init>(", postfix = ")V") { it.desc }
     }
 
     class FakeJavaAnnotationConstructor(val jClass: Class<*>) : JvmFunctionSignature() {
@@ -84,7 +84,7 @@ internal sealed class JvmFunctionSignature {
         val methods = jClass.declaredMethods.sortedBy { it.name }
 
         override fun asString(): String =
-                methods.joinToString(separator = "", prefix = "<init>(", postfix = ")V") { it.returnType.desc }
+            methods.joinToString(separator = "", prefix = "<init>(", postfix = ")V") { it.returnType.desc }
     }
 
     open class BuiltInFunction(private val signature: String) : JvmFunctionSignature() {
@@ -92,7 +92,7 @@ internal sealed class JvmFunctionSignature {
 
         override fun asString(): String = signature
 
-        class Predefined(signature: String, private val member: Member): BuiltInFunction(signature) {
+        class Predefined(signature: String, private val member: Member) : BuiltInFunction(signature) {
             override fun getMember(container: KDeclarationContainerImpl): Member = member
         }
     }
@@ -106,19 +106,18 @@ internal sealed class JvmPropertySignature {
     abstract fun asString(): String
 
     class KotlinProperty(
-            val descriptor: PropertyDescriptor,
-            val proto: ProtoBuf.Property,
-            val signature: JvmProtoBuf.JvmPropertySignature,
-            val nameResolver: NameResolver,
-            val typeTable: TypeTable
+        val descriptor: PropertyDescriptor,
+        val proto: ProtoBuf.Property,
+        val signature: JvmProtoBuf.JvmPropertySignature,
+        val nameResolver: NameResolver,
+        val typeTable: TypeTable
     ) : JvmPropertySignature() {
         private val string: String = if (signature.hasGetter()) {
             nameResolver.getString(signature.getter.name) + nameResolver.getString(signature.getter.desc)
-        }
-        else {
+        } else {
             val (name, desc) =
-                    JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable) ?:
-                    throw KotlinReflectionInternalError("No field signature for property: $descriptor")
+                    JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable)
+                            ?: throw KotlinReflectionInternalError("No field signature for property: $descriptor")
             JvmAbi.getterName(name) + getManglingSuffix() + "()" + desc
         }
 
@@ -149,9 +148,7 @@ internal sealed class JvmPropertySignature {
 
     class JavaField(val field: Field) : JvmPropertySignature() {
         override fun asString(): String =
-                JvmAbi.getterName(field.name) +
-                "()" +
-                field.type.desc
+            JvmAbi.getterName(field.name) + "()" + field.type.desc
     }
 }
 
@@ -186,12 +183,13 @@ internal object RuntimeTypeMapper {
                     }
                 }
                 // If it's a deserialized function but has no JVM signature, it must be from built-ins
-                throw KotlinReflectionInternalError("Reflection on built-in Kotlin types is not yet fully supported. " +
-                                                    "No metadata found for $function")
+                throw KotlinReflectionInternalError(
+                    "Reflection on built-in Kotlin types is not yet fully supported. No metadata found for $function"
+                )
             }
             is JavaMethodDescriptor -> {
-                val method = ((function.source as? JavaSourceElement)?.javaElement as? ReflectJavaMethod)?.member ?:
-                             throw KotlinReflectionInternalError("Incorrect resolution sequence for Java method $function")
+                val method = ((function.source as? JavaSourceElement)?.javaElement as? ReflectJavaMethod)?.member
+                        ?: throw KotlinReflectionInternalError("Incorrect resolution sequence for Java method $function")
 
                 return JvmFunctionSignature.JavaMethod(method)
             }
@@ -226,8 +224,8 @@ internal object RuntimeTypeMapper {
                 when (element) {
                     is ReflectJavaField -> JvmPropertySignature.JavaField(element.member)
                     is ReflectJavaMethod -> JvmPropertySignature.JavaMethodProperty(
-                            element.member,
-                            ((property.setter?.source as? JavaSourceElement)?.javaElement as? ReflectJavaMethod)?.member
+                        element.member,
+                        ((property.setter?.source as? JavaSourceElement)?.javaElement as? ReflectJavaMethod)?.member
                     )
                     else -> throw KotlinReflectionInternalError("Incorrect resolution sequence for Java field $property (source = $element)")
                 }
@@ -243,16 +241,22 @@ internal object RuntimeTypeMapper {
 
         when (function.name.asString()) {
             "equals" -> if (parameters.size == 1 && KotlinBuiltIns.isNullableAny(parameters.single().type)) {
-                return JvmFunctionSignature.BuiltInFunction.Predefined("equals(Ljava/lang/Object;)Z",
-                                                                       Any::class.java.getDeclaredMethod("equals", Any::class.java))
+                return JvmFunctionSignature.BuiltInFunction.Predefined(
+                    "equals(Ljava/lang/Object;)Z",
+                    Any::class.java.getDeclaredMethod("equals", Any::class.java)
+                )
             }
             "hashCode" -> if (parameters.isEmpty()) {
-                return JvmFunctionSignature.BuiltInFunction.Predefined("hashCode()I",
-                                                                       Any::class.java.getDeclaredMethod("hashCode"))
+                return JvmFunctionSignature.BuiltInFunction.Predefined(
+                    "hashCode()I",
+                    Any::class.java.getDeclaredMethod("hashCode")
+                )
             }
             "toString" -> if (parameters.isEmpty()) {
-                return JvmFunctionSignature.BuiltInFunction.Predefined("toString()Ljava/lang/String;",
-                                                                       Any::class.java.getDeclaredMethod("toString"))
+                return JvmFunctionSignature.BuiltInFunction.Predefined(
+                    "toString()Ljava/lang/String;",
+                    Any::class.java.getDeclaredMethod("toString")
+                )
             }
             // TODO: generalize and support other functions from built-ins
         }
