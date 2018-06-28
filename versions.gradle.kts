@@ -1,9 +1,9 @@
 
-extra["versions.intellijSdk"] = "181.4892.42"
+extra["versions.intellijSdk"] = "181.4668.68"
 extra["versions.androidBuildTools"] = "r23.0.1"
-extra["versions.idea.NodeJS"] = "181.3494.12"
-//extra["versions.androidStudioRelease"] = "3.1.0.5"
-//extra["versions.androidStudioBuild"] = "173.4506631"
+extra["versions.idea.NodeJS"] = "181.2784.17"
+extra["versions.androidStudioRelease"] = "3.2.0.13"
+extra["versions.androidStudioBuild"] = "181.4763614"
 
 val gradleJars = listOf(
     "gradle-api",

@@ -36,10 +36,10 @@ class KotlinGradleAndroidModuleModelProjectDataService : AbstractProjectDataServ
     override fun getTargetDataKey() = KEY
 
     override fun postProcess(
-        toImport: MutableCollection<DataNode<AndroidModuleModel>>,
-        projectData: ProjectData?,
-        project: Project,
-        modelsProvider: IdeModifiableModelsProvider
+            toImport: MutableCollection<DataNode<AndroidModuleModel>>,
+            projectData: ProjectData?,
+            project: Project,
+            modelsProvider: IdeModifiableModelsProvider
     ) {
         super.postProcess(toImport, projectData, project, modelsProvider)
         for (moduleModelNode in toImport) {
@@ -47,7 +47,7 @@ class KotlinGradleAndroidModuleModelProjectDataService : AbstractProjectDataServ
             val moduleData = moduleNode.data
             val ideModule = modelsProvider.findIdeModule(moduleData) ?: continue
             val sourceSetName = moduleModelNode.data.selectedVariant.name
-            val kotlinFacet = configureFacetByGradleModule(ideModule, modelsProvider, moduleNode, null, sourceSetName) ?: continue
+            val kotlinFacet = configureFacetByGradleModule(moduleNode, sourceSetName, ideModule, modelsProvider) ?: continue
             GradleProjectImportHandler.getInstances(project).forEach { it.importByModule(kotlinFacet, moduleNode) }
         }
     }
