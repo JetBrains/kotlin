@@ -170,8 +170,7 @@ class NewResolutionOldInference(
             context.transformToReceiverWithSmartCastInfo(explicitReceiver as ReceiverValue)
         }
 
-        val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
-        val scopeTower = ImplicitScopeTowerImpl(context, dynamicScope, syntheticScopes, context.call.createLookupLocation())
+        val scopeTower = createImplicitScopeTower(context)
 
         val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
         val isBinaryRemOperator = isBinaryRemOperator(context.call)
@@ -347,12 +346,12 @@ class NewResolutionOldInference(
         return true
     }
 
-    private class ImplicitScopeTowerImpl(
-        val resolutionContext: ResolutionContext<*>,
-        override val dynamicScope: MemberScope,
-        override val syntheticScopes: SyntheticScopes,
-        override val location: LookupLocation
-    ) : ImplicitScopeTower {
+    private fun createImplicitScopeTower(resolutionContext: BasicCallResolutionContext) = object: ImplicitScopeTower {
+        override val dynamicScope: MemberScope =
+            dynamicCallableDescriptors.createDynamicDescriptorScope(resolutionContext.call, resolutionContext.scope.ownerDescriptor)
+        override val syntheticScopes: SyntheticScopes = this@NewResolutionOldInference.syntheticScopes
+        override val location: LookupLocation = resolutionContext.call.createLookupLocation()
+
         private val cache = HashMap<ReceiverValue, ReceiverValueWithSmartCastInfo>()
 
         override fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo? =
