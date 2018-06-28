@@ -158,7 +158,7 @@ abstract class BaseGradleIT {
     }
 
     // the second parameter is for using with ToolingAPI, that do not like --daemon/--no-daemon  options at all
-    data class BuildOptions(
+    data class BuildOptions constructor(
         val withDaemon: Boolean = false,
         val daemonOptionSupported: Boolean = true,
         val incremental: Boolean? = null,
@@ -171,8 +171,11 @@ abstract class BaseGradleIT {
         val kotlinVersion: String = KOTLIN_VERSION,
         val kotlinDaemonDebugPort: Int? = null,
         val usePreciseJavaTracking: Boolean? = null,
-        val withBuildCache: Boolean = false
+        val withBuildCache: Boolean = false,
+        val kaptOptions: KaptOptions? = null
     )
+
+    data class KaptOptions(val verbose: Boolean, val useWorkers: Boolean)
 
     open inner class Project(
         val projectName: String,
@@ -523,6 +526,11 @@ abstract class BaseGradleIT {
             } else {
                 // Override possibly enabled system-wide caching:
                 add("-Dorg.gradle.caching=false")
+            }
+
+            options.kaptOptions?.also { kaptOptions ->
+                add("-Pkapt.verbose=${kaptOptions.verbose}")
+                add("-Pkapt.use.worker.api=${kaptOptions.useWorkers}")
             }
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):

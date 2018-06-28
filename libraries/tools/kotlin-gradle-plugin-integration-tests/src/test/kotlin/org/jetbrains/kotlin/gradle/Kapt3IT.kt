@@ -29,11 +29,19 @@ abstract class Kapt3BaseIT : BaseGradleIT() {
     }
 
     override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(withDaemon = true)
+        super.defaultBuildOptions().copy(kaptOptions = kaptOptions())
+
+    protected open fun kaptOptions(): KaptOptions =
+        KaptOptions(verbose = true, useWorkers = false)
 
     fun CompiledProject.assertKaptSuccessful() {
         KAPT_SUCCESSFUL_REGEX.findAll(this.output).count() > 0
     }
+}
+
+class Kapt3WorkersIT : Kapt3IT() {
+    override fun kaptOptions(): KaptOptions =
+        super.kaptOptions().copy(useWorkers = true)
 }
 
 open class Kapt3IT : Kapt3BaseIT() {
