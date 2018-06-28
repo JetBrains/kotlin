@@ -148,6 +148,8 @@ class QuickFixRegistrar : QuickFixContributor {
         TYPE_CANT_BE_USED_FOR_CONST_VAL.registerFactory(removeModifierFactory)
         DEPRECATED_BINARY_MOD.registerFactory(removeModifierFactory)
         DEPRECATED_BINARY_MOD.registerFactory(RenameModToRemFix.Factory)
+        FORBIDDEN_BINARY_MOD.registerFactory(removeModifierFactory)
+        FORBIDDEN_BINARY_MOD.registerFactory(RenameModToRemFix.Factory)
 
 
         UNRESOLVED_REFERENCE.registerFactory(ImportFix)

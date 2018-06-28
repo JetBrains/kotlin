@@ -13813,6 +13813,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/operatorRem/doNotResolveToInapplicableRem.kt");
             }
 
+            @TestMetadata("forbiddenModOperatorConvention.kt")
+            public void testForbiddenModOperatorConvention() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorRem/forbiddenModOperatorConvention.kt");
+            }
+
             @TestMetadata("modWithRemAssign.kt")
             public void testModWithRemAssign() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorRem/modWithRemAssign.kt");

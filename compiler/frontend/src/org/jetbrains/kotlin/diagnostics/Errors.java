@@ -747,7 +747,9 @@ public interface Errors {
     DiagnosticFactory2<KtBinaryExpression, KotlinType, KotlinType> FORBIDDEN_IDENTITY_EQUALS = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory2<PsiElement, FunctionDescriptor, String> DEPRECATED_BINARY_MOD = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, FunctionDescriptor, String> FORBIDDEN_BINARY_MOD = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<PsiElement, FunctionDescriptor, String> DEPRECATED_BINARY_MOD_AS_REM = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, FunctionDescriptor, String> FORBIDDEN_BINARY_MOD_AS_REM = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory0<KtArrayAccessExpression> NO_GET_METHOD = DiagnosticFactory0.create(ERROR, ARRAY_ACCESS);
     DiagnosticFactory0<KtArrayAccessExpression> NO_SET_METHOD = DiagnosticFactory0.create(ERROR, ARRAY_ACCESS);

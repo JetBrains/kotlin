@@ -7699,6 +7699,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/modifiers/removeInnerForClassInTrait.kt");
         }
 
+        @TestMetadata("removeModifierFromForbiddenOperatorMod.kt")
+        public void testRemoveModifierFromForbiddenOperatorMod() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/removeModifierFromForbiddenOperatorMod.kt");
+        }
+
         @TestMetadata("removeModifierFromOperatorMod.kt")
         public void testRemoveModifierFromOperatorMod() throws Exception {
             runTest("idea/testData/quickfix/modifiers/removeModifierFromOperatorMod.kt");
@@ -9285,6 +9290,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         public void testAllFilesPresentInRenameToRem() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/renameToRem"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("forbiddenModAsMember.kt")
+        public void testForbiddenModAsMember() throws Exception {
+            runTest("idea/testData/quickfix/renameToRem/forbiddenModAsMember.kt");
         }
 
         @TestMetadata("modAsExtension.kt")
