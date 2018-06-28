@@ -76,6 +76,8 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
@@ -1001,6 +1003,17 @@ fun checkSuperMethodsWithPopup(
 fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
     val containingObject = containingClassOrObject as? KtObjectDeclaration ?: return false
     return containingObject.isCompanion() && containingObject.containingClassOrObject == klass
+}
+
+internal fun KtDeclaration.withExpectedActuals(): List<KtDeclaration> {
+    val expect = liftToExpected() ?: return listOf(this)
+    val actuals = expect.actualsForExpected()
+    return listOf(expect) + actuals
+}
+
+internal fun KtDeclaration.resolveToExpectedDescriptorIfPossible(): DeclarationDescriptor {
+    val descriptor = unsafeResolveToDescriptor()
+    return descriptor.liftToExpected() ?: descriptor
 }
 
 fun DialogWrapper.showWithTransaction() {
