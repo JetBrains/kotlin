@@ -8,6 +8,7 @@
 package kotlin
 
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+@SinceKotlin("1.3")
 public inline class UShortArray internal constructor(private val storage: ShortArray) : Collection<UShort> {
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
@@ -37,11 +38,13 @@ public inline class UShortArray internal constructor(private val storage: ShortA
     override fun isEmpty(): Boolean = this.storage.size == 0
 }
 
+@SinceKotlin("1.3")
 public /*inline*/ fun UShortArray(size: Int, init: (Int) -> UShort): UShortArray {
     return UShortArray(ShortArray(size) { index -> init(index).toShort() })
 }
 
 @Suppress("FORBIDDEN_VARARG_PARAMETER_TYPE")
+@SinceKotlin("1.3")
 public fun ushortArrayOf(vararg elements: UShort): UShortArray {
     return UShortArray(elements.size) { index -> elements[index] }
 }

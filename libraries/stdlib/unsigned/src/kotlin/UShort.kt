@@ -10,6 +10,7 @@ package kotlin
 import kotlin.experimental.*
 
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+@SinceKotlin("1.3")
 public inline class UShort internal constructor(private val data: Short) : Comparable<UShort> {
 
     companion object {
@@ -128,7 +129,11 @@ public inline class UShort internal constructor(private val data: Short) : Compa
 
 }
 
+@SinceKotlin("1.3")
 public fun Byte.toUShort(): UShort = UShort(this.toShort() and 0xFF)
+@SinceKotlin("1.3")
 public fun Short.toUShort(): UShort = UShort(this)
+@SinceKotlin("1.3")
 public fun Int.toUShort(): UShort = UShort(this.toShort())
+@SinceKotlin("1.3")
 public fun Long.toUShort(): UShort = UShort(this.toShort())

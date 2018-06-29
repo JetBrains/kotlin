@@ -10,6 +10,7 @@ package kotlin
 import kotlin.experimental.*
 
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+@SinceKotlin("1.3")
 public inline class UByte internal constructor(private val data: Byte) : Comparable<UByte> {
 
     companion object {
@@ -128,7 +129,11 @@ public inline class UByte internal constructor(private val data: Byte) : Compara
 
 }
 
+@SinceKotlin("1.3")
 public fun Byte.toUByte(): UByte = UByte(this)
+@SinceKotlin("1.3")
 public fun Short.toUByte(): UByte = UByte(this.toByte())
+@SinceKotlin("1.3")
 public fun Int.toUByte(): UByte = UByte(this.toByte())
+@SinceKotlin("1.3")
 public fun Long.toUByte(): UByte = UByte(this.toByte())

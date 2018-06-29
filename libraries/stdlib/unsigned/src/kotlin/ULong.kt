@@ -10,6 +10,7 @@ package kotlin
 import kotlin.experimental.*
 
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+@SinceKotlin("1.3")
 public inline class ULong internal constructor(private val data: Long) : Comparable<ULong> {
 
     companion object {
@@ -132,7 +133,11 @@ public inline class ULong internal constructor(private val data: Long) : Compara
 
 }
 
+@SinceKotlin("1.3")
 public fun Byte.toULong(): ULong = ULong(this.toLong() and 0xFF)
+@SinceKotlin("1.3")
 public fun Short.toULong(): ULong = ULong(this.toLong() and 0xFFFF)
+@SinceKotlin("1.3")
 public fun Int.toULong(): ULong = ULong(this.toLong() and 0xFFFF_FFFF)
+@SinceKotlin("1.3")
 public fun Long.toULong(): ULong = ULong(this)
