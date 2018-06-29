@@ -41,7 +41,7 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {
-        java.srcDirs("jps-tests/test")
+        // No JPS in AS
     }
 }
 
