@@ -233,6 +233,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/recursiveGeneric.kt");
     }
 
+    @TestMetadata("reflectTopLevelFunctionOtherFile.kt")
+    public void testReflectTopLevelFunctionOtherFile() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/reflectTopLevelFunctionOtherFile.kt");
+    }
+
     @TestMetadata("sealedClass.kt")
     public void testSealedClass() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/sealedClass.kt");
