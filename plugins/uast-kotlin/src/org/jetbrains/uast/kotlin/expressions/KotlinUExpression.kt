@@ -34,7 +34,7 @@ interface KotlinEvaluatableUElement : UExpression {
     override fun evaluate(): Any? {
         val ktElement = psi as? KtExpression ?: return null
         
-        val compileTimeConst = ktElement.analyze()[BindingContext.COMPILE_TIME_VALUE, ktElement]
+        val compileTimeConst = ktElement.analyze()[BindingContext.COMPILE_TIME_VALUE, ktElement]?.takeIf { !it.isError }
         return compileTimeConst?.getValue(TypeUtils.NO_EXPECTED_TYPE)
     }
 }
