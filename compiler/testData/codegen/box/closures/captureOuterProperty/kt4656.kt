@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 //KT-4656 Wrong capturing a function literal variable
 
 fun box(): String {
