@@ -157,17 +157,6 @@ class JKReturnStatementImpl(expression: JKExpression) : JKBranchElementBase(), J
     override val expression by child(expression)
 }
 
-class JKJavaAssignmentExpressionImpl(
-    lExpression: JKExpression,
-    rExpression: JKExpression/*,
-    TODO operation:? */
-) : JKBranchElementBase(), JKJavaAssignmentExpression {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaAssignmentExpression(this, data)
-
-    override var lExpression: JKExpression by child(lExpression)
-    override var rExpression: JKExpression by child(rExpression)
-}
-
 class JKJavaAssertStatementImpl(condition: JKExpression, description: JKExpression) : JKJavaAssertStatement, JKBranchElementBase() {
     override val description by child(description)
     override val condition by child(condition)
@@ -202,4 +191,14 @@ class JKJavaPolyadicExpressionImpl(operands: List<JKExpression>, override var to
     }
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaPolyadicExpression(this, data)
+}
+
+class JKJavaAssignmentExpressionImpl(
+    override var field: JKFieldSymbol,
+    expression: JKExpression,
+    override var operator: JKOperator
+) : JKBranchElementBase(), JKJavaAssignmentExpression {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaAssignmentExpression(this, data)
+
+    override var expression: JKExpression by child(expression)
 }

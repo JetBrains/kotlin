@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
+import org.jetbrains.kotlin.j2k.tree.impl.JKFieldSymbol
+
 interface JKKtProperty : JKField {
     val getter: JKBlock
     val setter: JKBlock
@@ -29,7 +31,11 @@ interface JKKtConstructor : JKDeclaration
 
 interface JKKtPrimaryConstructor : JKKtConstructor
 
-interface JKKtAssignmentStatement : JKStatement
+interface JKKtAssignmentStatement : JKStatement{
+    var field: JKFieldSymbol
+    var expression: JKExpression
+    var operator: JKOperator
+}
 
 interface JKKtCall : JKMethodCallExpression
 
