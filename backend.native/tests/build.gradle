@@ -1893,6 +1893,11 @@ task finally11(type: RunKonanTest) {
     source = "codegen/try/finally11.kt"
 }
 
+task finally_returnsDifferentTypes(type: RunKonanTest) {
+    goldValue = "zzz\n42\n"
+    source = "codegen/try/returnsDifferentTypes.kt"
+}
+
 task scope1(type: RunKonanTest) {
     goldValue = "1\n"
     source = "codegen/dataflow/scope1.kt"

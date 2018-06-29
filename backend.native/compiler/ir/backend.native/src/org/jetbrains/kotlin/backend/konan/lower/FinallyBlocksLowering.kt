@@ -26,9 +26,6 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -38,6 +35,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -177,6 +175,14 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
         return performHighLevelJump(tryScopes, 0, jump, startOffset, endOffset, value)
     }
 
+    private val IrReturnTarget.returnType: IrType
+        get() = when (this) {
+            is IrConstructor -> context.irBuiltIns.unitType
+            is IrFunction -> returnType
+            is IrReturnableBlock -> type
+            else -> error("Unknown ReturnTarget: $this")
+        }
+
     private fun performHighLevelJump(tryScopes: List<TryScope>,
                                      index: Int,
                                      jump: HighLevelJump,
@@ -188,7 +194,7 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
 
         val currentTryScope = tryScopes[index]
         currentTryScope.jumps.getOrPut(jump) {
-            val type = value.type
+            val type = (jump as? Return)?.target?.owner?.returnType ?: value.type
             val symbol = getIrReturnableBlockSymbol(jump.toString(), type)
             with(currentTryScope) {
                 irBuilder.run {
