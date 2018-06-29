@@ -95,7 +95,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                         val sort = cst.sort
                         when (sort) {
                             Type.OBJECT, Type.ARRAY -> eval.loadClass(cst)
-                            Type.METHOD -> throw UnsupportedByteCodeException("Mothod handles are not supported")
+                            Type.METHOD -> throw UnsupportedByteCodeException("Method handles are not supported")
                             else -> throw UnsupportedByteCodeException("Illegal LDC constant " + cst)
                         }
                     }
