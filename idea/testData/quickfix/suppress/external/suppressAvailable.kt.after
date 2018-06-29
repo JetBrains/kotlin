@@ -1,4 +1,4 @@
-// "Suppress Warnings" "true"
+// "Suppress 'SpellCheckingInspection' for val str" "true"
 // TOOL: com.intellij.spellchecker.inspections.SpellCheckingInspection
 // ACTION: Add 'const' modifier
 // ACTION: Typo: Change to...
@@ -12,6 +12,7 @@
 // ACTION: Convert property initializer to getter
 // ACTION: Inject language or reference
 // ACTION: To raw string literal
+// ACTION: Suppress 'SpellCheckingInspection' for file suppressAvailable.kt
 
 @Suppress("SpellCheckingInspection")
 val str = "kjsghkjshtiurhuig"

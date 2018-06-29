@@ -22,6 +22,8 @@ class KotlinInspectionSuppressor : InspectionSuppressor {
             object : SuppressQuickFix {
                 override fun getFamilyName() = it.familyName
 
+                override fun getName() = it.text
+
                 override fun applyFix(project: Project, descriptor: ProblemDescriptor) = it.invoke(project, null, descriptor.psiElement)
 
                 override fun isAvailable(project: Project, context: PsiElement) = it.isAvailable(project, null, context)
