@@ -162,12 +162,15 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 result
             }
         }
-        catch(e: EvaluateException) {
+        catch (e: EvaluateException) {
             throw e
         }
-        catch(e: ProcessCanceledException) {
+        catch (e: ProcessCanceledException) {
             LOG.debug(e)
             exception(e)
+        }
+        catch (e: Eval4JInterpreterException) {
+            exception(e.cause)
         }
         catch (e: Exception) {
             val isSpecialException = isSpecialException(e)

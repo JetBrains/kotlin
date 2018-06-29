@@ -25,6 +25,8 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 
 class UnsupportedByteCodeException(message: String) : RuntimeException(message)
 
+class Eval4JInterpreterException(override val cause: Throwable) : RuntimeException(cause)
+
 interface Eval {
     fun loadClass(classType: Type): Value
     fun loadString(str: String): Value
@@ -214,6 +216,8 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
         }
     }
 
+    private fun divisionByZero(): Nothing = throw Eval4JInterpreterException(ArithmeticException("Division by zero"))
+
     override fun binaryOperation(insn: AbstractInsnNode, value1: Value, value2: Value): Value? {
         return when (insn.opcode) {
             IALOAD, BALOAD, CALOAD, SALOAD,
@@ -223,7 +227,13 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             IADD -> int(value1.int + value2.int)
             ISUB -> int(value1.int - value2.int)
             IMUL -> int(value1.int * value2.int)
-            IDIV -> int(value1.int / value2.int)
+            IDIV -> {
+                val divider = value2.int
+                if (divider == 0) {
+                    divisionByZero()
+                }
+                int(value1.int / divider)
+            }
             IREM -> int(value1.int % value2.int)
             ISHL -> int(value1.int shl value2.int)
             ISHR -> int(value1.int shr value2.int)
@@ -235,7 +245,13 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             LADD -> long(value1.long + value2.long)
             LSUB -> long(value1.long - value2.long)
             LMUL -> long(value1.long * value2.long)
-            LDIV -> long(value1.long / value2.long)
+            LDIV -> {
+                val divider = value2.long
+                if (divider == 0L) {
+                    divisionByZero()
+                }
+                long(value1.long / divider)
+            }
             LREM -> long(value1.long % value2.long)
             LSHL -> long(value1.long shl value2.int)
             LSHR -> long(value1.long shr value2.int)
@@ -247,13 +263,25 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             FADD -> float(value1.float + value2.float)
             FSUB -> float(value1.float - value2.float)
             FMUL -> float(value1.float * value2.float)
-            FDIV -> float(value1.float / value2.float)
+            FDIV -> {
+                val divider = value2.float
+                if (divider == 0f) {
+                    divisionByZero()
+                }
+                float(value1.float / divider)
+            }
             FREM -> float(value1.float % value2.float)
 
             DADD -> double(value1.double + value2.double)
             DSUB -> double(value1.double - value2.double)
             DMUL -> double(value1.double * value2.double)
-            DDIV -> double(value1.double / value2.double)
+            DDIV -> {
+                val divider = value2.double
+                if (divider == 0.0) {
+                    divisionByZero()
+                }
+                double(value1.double / divider)
+            }
             DREM -> double(value1.double % value2.double)
 
             LCMP -> {
