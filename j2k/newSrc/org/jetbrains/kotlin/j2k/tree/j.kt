@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.j2k.tree
 
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
-import org.jetbrains.kotlin.j2k.tree.impl.JKFieldSymbol
 import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
 
 interface JKJavaField : JKField, JKBranchElement
@@ -85,7 +84,7 @@ interface JKJavaPolyadicExpression : JKExpression {
 }
 
 interface JKJavaAssignmentExpression : JKExpression, JKBranchElement {
-    var field: JKFieldSymbol
+    var field: JKAssignableExpression
     var expression: JKExpression
     var operator: JKOperator
 }

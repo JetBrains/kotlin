@@ -194,7 +194,7 @@ class JKJavaPolyadicExpressionImpl(operands: List<JKExpression>, override var to
 }
 
 class JKJavaAssignmentExpressionImpl(
-    override var field: JKFieldSymbol,
+    override var field: JKAssignableExpression,
     expression: JKExpression,
     override var operator: JKOperator
 ) : JKBranchElementBase(), JKJavaAssignmentExpression {
