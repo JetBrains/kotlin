@@ -1,4 +1,6 @@
 
+import com.sun.javafx.scene.CameraHelper.project
+import jdk.nashorn.internal.objects.NativeArray.forEach
 import org.gradle.api.Project
 import java.util.*
 import java.io.File
@@ -6,6 +8,7 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import java.nio.file.Files.delete
 
 buildscript {
     extra["defaultSnapshotVersion"] = "1.2-SNAPSHOT"
@@ -17,7 +20,7 @@ buildscript {
             "https://jcenter.bintray.com/",
             "https://plugins.gradle.org/m2",
             "http://dl.bintray.com/kotlin/kotlinx",
-            "https://repo.gradle.org/gradle/libs-releases-local", // for native-platform
+            "https://repo.gradle.org/gradle/ext-releases-local", // for native-platform
             "https://jetbrains.bintray.com/intellij-third-party-dependencies",// for jflex
             "http://dl.bintray.com/kotlin/ktor")
 
