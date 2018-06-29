@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion
 import org.jetbrains.kotlin.gradle.tasks.clearOutputDirectories
 import org.jetbrains.kotlin.gradle.tasks.findKotlinStdlibClasspath
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.Serializable
 import java.net.URLClassLoader
@@ -123,9 +124,12 @@ private class KaptExecution @Inject constructor(
     }
 
     private fun createKaptPaths(classLoader: ClassLoader) = with(paths) {
+        val fullClasspath = ArrayList<File>()
+        fullClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre())
+        fullClasspath.addAll(compileClasspath)
         Class.forName("org.jetbrains.kotlin.kapt3.base.KaptPaths", true, classLoader).constructors.single().newInstance(
             projectBaseDir,
-            compileClasspath,
+            fullClasspath,
             annotationProcessingClasspath,
             javaSourceRoots,
             sourcesOutputDir,
