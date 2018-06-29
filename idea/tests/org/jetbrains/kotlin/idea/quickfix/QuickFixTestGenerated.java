@@ -10286,6 +10286,29 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/suppress/external")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class External extends AbstractQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInExternal() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/external"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("suppressActive.kt")
+            public void testSuppressActive() throws Exception {
+                runTest("idea/testData/quickfix/suppress/external/suppressActive.kt");
+            }
+
+            @TestMetadata("suppressAvailable.kt")
+            public void testSuppressAvailable() throws Exception {
+                runTest("idea/testData/quickfix/suppress/external/suppressAvailable.kt");
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/suppress/forStatement")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
