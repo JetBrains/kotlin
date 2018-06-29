@@ -21,7 +21,6 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
-import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
@@ -75,7 +74,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiAssignmentExpression.toJK(): JKJavaAssignmentExpression {
             return JKJavaAssignmentExpressionImpl(
-                (lExpression.toJK() as? JKFieldAccessExpression ?: error("Its possible?")).identifier,
+                lExpression.toJK() as? JKAssignableExpression ?: error("Its possible?"),
                 rExpression.toJK(),
                 operationSign.toJK()
             )

@@ -135,7 +135,7 @@ interface JKMethodCallExpression : JKExpression {
     val arguments: JKExpressionList
 }
 
-interface JKFieldAccessExpression : JKExpression {
+interface JKFieldAccessExpression : JKAssignableExpression {
     val identifier: JKFieldSymbol
 }
 
@@ -143,7 +143,7 @@ interface JKClassAccessExpression : JKExpression {
     val identifier: JKClassSymbol
 }
 
-interface JKArrayAccessExpression : JKExpression {
+interface JKArrayAccessExpression : JKAssignableExpression {
     val expression: JKExpression
     val indexExpression: JKExpression
 }
@@ -227,3 +227,5 @@ interface JKIfElseExpression : JKExpression {
     var thenBranch: JKExpression
     var elseBranch: JKExpression
 }
+
+interface JKAssignableExpression : JKExpression
