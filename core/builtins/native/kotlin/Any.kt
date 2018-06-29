@@ -46,4 +46,36 @@ public open class Any {
      * Returns a string representation of the object.
      */
     public open fun toString(): String
+
+    /**
+     * Returns a map representation of the object.
+     */
+    public fun toMap() : Map{
+        var map : Map<Any,Any>()
+        try {
+            val objClass = this.getClass()
+
+            val fields = objClass.getFields()
+            for (field in fields) {
+                field.setAccessible(true)
+                val name = field.getName()
+                val value = field.get(this)
+                map.put(name,value)
+            }
+
+            val privateFields = objClass.getDeclaredFields() //accessing private values
+            for (field in privateFields) {
+                field.setAccessible(true)
+                val name = field.getName()
+                val value = field.get(this)
+                map.put(name,value)
+            }
+
+
+            return map
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
 }
