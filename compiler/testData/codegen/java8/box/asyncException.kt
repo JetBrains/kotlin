@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 // COMMON_COROUTINES_TEST
 // FULL_JDK
+// WITH_COROUTINES
 
 import java.util.concurrent.CompletableFuture
 import COROUTINES_PACKAGE.*
@@ -45,7 +46,7 @@ fun box(): String {
 
 fun <T> async(c: suspend () -> T): CompletableFuture<T> {
     val future = CompletableFuture<T>()
-    c.startCoroutine(object : Continuation<T> {
+    c.startCoroutine(object : helpers.ContinuationAdapter<T>() {
         override val context = EmptyCoroutineContext
 
         override fun resume(data: T) {
