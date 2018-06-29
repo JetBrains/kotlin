@@ -314,7 +314,7 @@ class JDIEval(
             Type.CHAR_TYPE -> MethodDescription("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;", false)
             Type.FLOAT_TYPE -> MethodDescription("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false)
             Type.DOUBLE_TYPE -> MethodDescription("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;", false)
-            else -> throw UnsupportedOperationException("Couldn't box non primitive type ${value.asmType.internalName}")
+            else -> throw UnsupportedOperationException("Couldn't box non-primitive type ${value.asmType.internalName}")
         }
         return invokeStaticMethod(method, listOf(value))
     }
