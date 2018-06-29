@@ -49,12 +49,12 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         /**
          * A constant holding the minimum value an instance of $className can have.
          */
-        public /*const*/ val MIN_VALUE: $className = $className(0)
+        public const val MIN_VALUE: $className = $className(0)
 
         /**
          * A constant holding the maximum value an instance of $className can have.
          */
-        public /*const*/ val MAX_VALUE: $className = $className(-1)
+        public const val MAX_VALUE: $className = $className(-1)
     }""")
 
         generateCompareTo()

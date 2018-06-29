@@ -17,12 +17,12 @@ public inline class ULong internal constructor(private val data: Long) : Compara
         /**
          * A constant holding the minimum value an instance of ULong can have.
          */
-        public /*const*/ val MIN_VALUE: ULong = ULong(0)
+        public const val MIN_VALUE: ULong = ULong(0)
 
         /**
          * A constant holding the maximum value an instance of ULong can have.
          */
-        public /*const*/ val MAX_VALUE: ULong = ULong(-1)
+        public const val MAX_VALUE: ULong = ULong(-1)
     }
 
     /**

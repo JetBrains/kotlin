@@ -17,12 +17,12 @@ public inline class UInt internal constructor(private val data: Int) : Comparabl
         /**
          * A constant holding the minimum value an instance of UInt can have.
          */
-        public /*const*/ val MIN_VALUE: UInt = UInt(0)
+        public const val MIN_VALUE: UInt = UInt(0)
 
         /**
          * A constant holding the maximum value an instance of UInt can have.
          */
-        public /*const*/ val MAX_VALUE: UInt = UInt(-1)
+        public const val MAX_VALUE: UInt = UInt(-1)
     }
 
     /**

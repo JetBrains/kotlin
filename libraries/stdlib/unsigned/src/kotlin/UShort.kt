@@ -17,12 +17,12 @@ public inline class UShort internal constructor(private val data: Short) : Compa
         /**
          * A constant holding the minimum value an instance of UShort can have.
          */
-        public /*const*/ val MIN_VALUE: UShort = UShort(0)
+        public const val MIN_VALUE: UShort = UShort(0)
 
         /**
          * A constant holding the maximum value an instance of UShort can have.
          */
-        public /*const*/ val MAX_VALUE: UShort = UShort(-1)
+        public const val MAX_VALUE: UShort = UShort(-1)
     }
 
     /**

@@ -17,12 +17,12 @@ public inline class UByte internal constructor(private val data: Byte) : Compara
         /**
          * A constant holding the minimum value an instance of UByte can have.
          */
-        public /*const*/ val MIN_VALUE: UByte = UByte(0)
+        public const val MIN_VALUE: UByte = UByte(0)
 
         /**
          * A constant holding the maximum value an instance of UByte can have.
          */
-        public /*const*/ val MAX_VALUE: UByte = UByte(-1)
+        public const val MAX_VALUE: UByte = UByte(-1)
     }
 
     /**
