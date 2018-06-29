@@ -115,20 +115,21 @@ private fun KtQualifiedExpression.collectCallExpression(): List<KtCallExpression
 
     val transformationCalls = calls
         .asSequence()
-        .dropWhile { it !in transformations }
-        .takeWhile { call ->
-            call in transformations && call.valueArguments.none { arg ->
-                arg.anyDescendantOfType<KtReturnExpression> { it.labelQualifier == null }
-            }
-        }
+        .dropWhile { !it.isTransformation() }
+        .takeWhile { it.isTransformation() && !it.hasReturn() }
         .toList()
     if (transformationCalls.size < 2) return emptyList()
 
     return transformationCalls
 }
 
-private operator fun List<FqName>.contains(call: KtCallExpression): Boolean = any {
-    it.shortName().asString() == call.calleeExpression?.text && it == call.getCallableDescriptor()?.fqNameSafe
+private fun KtCallExpression.hasReturn(): Boolean = valueArguments.any { arg ->
+    arg.anyDescendantOfType<KtReturnExpression> { it.labelQualifier == null }
+}
+
+private fun KtCallExpression.isTransformation(): Boolean {
+    val fqName = transformations[calleeExpression?.text] ?: return false
+    return fqName == getCallableDescriptor()?.fqNameSafe
 }
 
 private val transformations = listOf(
@@ -161,4 +162,4 @@ private val transformations = listOf(
     "takeWhile",
     "windowed",
     "zipWithNext"
-).map { FqName("kotlin.collections.$it") }
+).associate { it to FqName("kotlin.collections.$it") }
