@@ -32,7 +32,7 @@ suspend fun callLocal() {
 }
 
 fun builder(c: suspend () -> Unit) {
-    val continuation = object: Continuation<Unit> {
+    val continuation = object: ContinuationAdapter<Unit>() {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 

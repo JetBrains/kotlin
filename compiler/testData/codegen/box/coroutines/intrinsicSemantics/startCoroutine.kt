@@ -21,7 +21,7 @@ suspend fun suspendWithException(): String = suspendCoroutineOrReturn { x ->
 fun builder(c: suspend () -> String): String {
     var fromSuspension: String? = null
 
-    c.startCoroutine(object: Continuation<String> {
+    c.startCoroutine(object: ContinuationAdapter<String>() {
         override val context: CoroutineContext
             get() =  EmptyCoroutineContext
 

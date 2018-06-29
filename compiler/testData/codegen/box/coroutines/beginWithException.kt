@@ -12,7 +12,7 @@ suspend fun suspendHere(): Any = suspendCoroutineOrReturn { x -> }
 fun builder(c: suspend () -> Unit) {
     var exception: Throwable? = null
 
-    c.createCoroutine(object : Continuation<Unit> {
+    c.createCoroutine(object : ContinuationAdapter<Unit>() {
         override val context = EmptyCoroutineContext
 
         override fun resume(data: Unit) {

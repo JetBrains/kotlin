@@ -34,5 +34,9 @@ fun createTextForHelpers(coroutinesPackage: String): String {
             |    override fun resume(data: Any?) {}
             |    override fun resumeWithException(exception: Throwable) { throw exception }
             |}
+            |
+            |abstract class ContinuationAdapter<in T> : Continuation<T> {
+            |    override val context: CoroutineContext = EmptyCoroutineContext
+            |}
         """.trimMargin()
 }

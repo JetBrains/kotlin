@@ -7,16 +7,14 @@ inline suspend fun foo(x: suspend () -> String) = x()
 
 // FILE: box.kt
 // WITH_RUNTIME
+// WITH_COROUTINES
 // COMMON_COROUTINES_TEST
 
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(object: Continuation<Unit> {
-        override val context: CoroutineContext
-            get() = EmptyCoroutineContext
-
+    c.startCoroutine(object: helpers.ContinuationAdapter<Unit>() {
         override fun resume(value: Unit) {
         }
 

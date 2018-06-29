@@ -20,7 +20,7 @@ class Controller {
 
 fun builder(c: suspend Controller.() -> Unit): String {
     val controller = Controller()
-    c.startCoroutine(controller, object : Continuation<Unit> {
+    c.startCoroutine(controller, object : ContinuationAdapter<Unit>() {
         override val context = EmptyCoroutineContext
 
         override fun resume(data: Unit) {}

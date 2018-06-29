@@ -28,7 +28,7 @@ fun <T> asyncGenerate(block: suspend AsyncGenerator<T>.() -> Unit): AsyncSequenc
     }
 }
 
-class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuation<Unit> {
+class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, ContinuationAdapter<Unit>() {
     var computedNext = false
     var nextValue: T? = null
     var nextStep: Continuation<Unit>? = null

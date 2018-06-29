@@ -22,7 +22,7 @@ fun builder(shouldSuspend: Boolean, c: suspend () -> String): String {
     var fromSuspension: String? = null
 
     val result = try {
-        c.startCoroutineUninterceptedOrReturn(object: Continuation<String> {
+        c.startCoroutineUninterceptedOrReturn(object: ContinuationAdapter<String>() {
             override val context: CoroutineContext
                 get() =  EmptyCoroutineContext
 
