@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.actions.FormatChangedTextUtil
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.ex.ProblemDescriptorImpl
+import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
@@ -28,10 +30,18 @@ import org.jetbrains.kotlin.idea.formatter.FormattingChange.ShiftIndentInsideRan
 import org.jetbrains.kotlin.idea.formatter.collectFormattingChanges
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtFile
+import javax.swing.JComponent
+import javax.xml.bind.annotation.XmlAttribute
 
 class ReformatInspection : LocalInspectionTool() {
+    @XmlAttribute var processChangedFilesOnly: Boolean = false
+
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
         if (file !is KtFile || !ProjectRootsUtil.isInProjectSource(file)) {
+            return null
+        }
+
+        if (processChangedFilesOnly && !FormatChangedTextUtil.hasChanges(file)) {
             return null
         }
 
@@ -62,6 +72,14 @@ class ReformatInspection : LocalInspectionTool() {
         }.toTypedArray()
     }
 
+    override fun createOptionsPanel(): JComponent? {
+        return SingleCheckboxOptionsPanel(
+            "Apply only to modified files (for projects under a version control)",
+            this,
+            "processChangedFilesOnly"
+        )
+    }
+
     private fun isEmptyLineReformat(whitespace: PsiWhiteSpace, change: FormattingChange): Boolean {
         if (change !is FormattingChange.ReplaceWhiteSpace) return false
 
@@ -69,7 +87,7 @@ class ReformatInspection : LocalInspectionTool() {
         val afterText = change.whiteSpace
 
         return beforeText.count { it == '\n' } == afterText.count { it == '\n' } &&
-               beforeText.substringAfterLast('\n') == afterText.substringAfterLast('\n')
+                beforeText.substringAfterLast('\n') == afterText.substringAfterLast('\n')
     }
 
     private object ReformatQuickFix : LocalQuickFix {
