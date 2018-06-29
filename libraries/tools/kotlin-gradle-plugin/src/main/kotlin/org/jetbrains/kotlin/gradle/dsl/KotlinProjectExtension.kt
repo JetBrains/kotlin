@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.PolymorphicDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetContainer
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinJavaSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinOnlySourceSetContainer
@@ -31,65 +34,18 @@ internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProj
     DslObject(kotlinExt).extensions.create("experimental", ExperimentalExtension::class.java)
 }
 
-internal val Project.kotlinExtension: KotlinPlatformExtension
-    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinPlatformExtension
+internal val Project.kotlinExtension: KotlinProjectExtension
+    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinProjectExtension
 
 open class KotlinProjectExtension {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
-}
-
-interface KotlinPlatformExtension {
-    val platformName: String
-    val platformDisambiguationClassifier: String? get() = null
-
-    val platformType: KotlinPlatformType
 
     val sourceSets: KotlinSourceSetContainer<out KotlinSourceSet>
         get() = DslObject(this).extensions.getByType(KotlinSourceSetContainer::class.java)
-}
 
-internal fun KotlinPlatformExtension.disambiguateName(simpleName: String) =
-    platformDisambiguationClassifier?.plus(simpleName.capitalize()) ?: simpleName
-
-open class KotlinAndroidPlatformExtension : KotlinProjectExtension(), KotlinPlatformExtension {
-    override var platformName: String = "kotlin"
-        internal set
-
-    override val platformType = KotlinPlatformType.jvm
-}
-
-open class KotlinWithJavaPlatformExtension : KotlinProjectExtension(), KotlinPlatformExtension {
-    override var platformName: String = "kotlin"
-        internal set
-
-    override val platformType = KotlinPlatformType.jvm
-    /**
-     * With Gradle 4.0+, disables the separate output directory for Kotlin, falling back to sharing the deprecated
-     * single classes directory per source set. With Gradle < 4.0, has no effect.
-     * */
-    var copyClassesToJavaOutput = false
-
-    override val sourceSets: KotlinJavaSourceSetContainer
-        get() = DslObject(this).extensions.getByType(KotlinJavaSourceSetContainer::class.java)
-}
-
-open class KotlinOnlyPlatformExtension: KotlinProjectExtension(), KotlinPlatformExtension {
-    override lateinit var platformType: KotlinPlatformType
-        internal set
-
-    override lateinit var platformName: String
-        internal set
-
-    /** A non-null value if all project-global entities connected to this extension, such as configurations, should contain the
-     * platform classifier in their names. Null otherwise. */
-    override var platformDisambiguationClassifier: String? = null
-        internal set
-
-    var userDefinedPlatformId: String? = null
-
-    override val sourceSets: KotlinOnlySourceSetContainer
-        get() = DslObject(this).extensions.getByType(KotlinOnlySourceSetContainer::class.java)
+    val targets: KotlinTargetContainer
+        get() = DslObject(this).extensions.getByType(KotlinTargetContainer::class.java)
 }
 
 open class ExperimentalExtension {

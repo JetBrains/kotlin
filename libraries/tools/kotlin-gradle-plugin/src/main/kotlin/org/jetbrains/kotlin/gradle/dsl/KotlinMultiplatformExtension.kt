@@ -7,15 +7,20 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
 import org.gradle.api.Named
+import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformProjectConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.executeClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import java.io.Serializable
 
 open class KotlinMultiplatformExtension : KotlinProjectExtension() {
     internal lateinit var projectConfigurator: KotlinMultiplatformProjectConfigurator
 
-    private inline fun <reified T : KotlinPlatformExtension> getOrCreatePlatformExtension(
+    private inline fun <reified T : KotlinTarget> getOrCreateTarget(
         classifier: String,
         crossinline createExtensionIfAbsent: () -> T
     ): T {
@@ -24,63 +29,59 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension() {
         return result as T
     }
 
-    val common: KotlinOnlyPlatformExtension
-        get() = getOrCreatePlatformExtension("common") { projectConfigurator.createCommonExtension() }
+    val common: KotlinOnlyTarget
+        get() = getOrCreateTarget("common") { projectConfigurator.createCommonExtension() }
 
-    fun common(configure: KotlinOnlyPlatformExtension.() -> Unit) {
+    fun common(configure: KotlinOnlyTarget.() -> Unit) {
         common.apply(configure)
     }
 
     fun common(configure: Closure<*>) = common { executeClosure(configure) }
 
-    val jvm: KotlinMppPlatformExtension
-        get() = getOrCreatePlatformExtension("jvm") { projectConfigurator.createJvmExtension() }
+    val jvm: KotlinMppTarget
+        get() = getOrCreateTarget("jvm") { projectConfigurator.createJvmExtension() }
 
-    fun jvm(configure: KotlinMppPlatformExtension.() -> Unit) {
+    fun jvm(configure: KotlinMppTarget.() -> Unit) {
         jvm.apply(configure)
     }
 
     fun jvm(configure: Closure<*>) = jvm { executeClosure(configure) }
 
-    val jvmWithJava: KotlinWithJavaPlatformExtension
-        get() = getOrCreatePlatformExtension("jvmWithJava") { projectConfigurator.createJvmWithJavaExtension() }
+    val jvmWithJava: KotlinWithJavaTarget
+        get() = getOrCreateTarget("jvmWithJava") { projectConfigurator.createJvmWithJavaExtension() }
 
-    fun jvmWithJava(configure: KotlinWithJavaPlatformExtension.() -> Unit) {
+    fun jvmWithJava(configure: KotlinWithJavaTarget.() -> Unit) {
         jvmWithJava.apply(configure)
     }
 
     fun jvmWithJava(configure: Closure<*>) = jvmWithJava { executeClosure(configure) }
 
-    val js: KotlinMppPlatformExtension
-        get() = getOrCreatePlatformExtension("js") { projectConfigurator.createJsPlatformExtension() }
+    val js: KotlinMppTarget
+        get() = getOrCreateTarget("js") { projectConfigurator.createJsPlatformExtension() }
 
-    fun js(configure: KotlinMppPlatformExtension.() -> Unit) {
+    fun js(configure: KotlinMppTarget.() -> Unit) {
         js.apply(configure)
     }
 
     fun js(configure: Closure<*>) = js { executeClosure(configure) }
 
-    val android: KotlinAndroidPlatformExtension
-        get() = getOrCreatePlatformExtension("android") { projectConfigurator.createAndroidPlatformExtension() }
+    val android: KotlinAndroidTarget
+        get() = getOrCreateTarget("android") { projectConfigurator.createAndroidPlatformExtension() }
 
-    fun android(configure: KotlinAndroidPlatformExtension.() -> Unit) {
+    fun android(configure: KotlinAndroidTarget.() -> Unit) {
         android.apply(configure)
     }
 
     fun android(configure: Closure<*>) = android { executeClosure(configure) }
 }
 
-open class KotlinMppPlatformExtension : KotlinOnlyPlatformExtension() {
+open class KotlinMppTarget(
+    project: Project,
+    projectExtension: KotlinProjectExtension
+) : KotlinOnlyTarget(project, projectExtension) {
     internal lateinit var projectConfigurator: KotlinMultiplatformProjectConfigurator
 
     fun expectedBy(modulePath: String) {
         projectConfigurator.addExternalExpectedByModule(this, modulePath)
     }
-}
-
-enum class KotlinPlatformType: Named, Serializable {
-    common, jvm, js, native;
-
-    override fun toString(): String = name
-    override fun getName(): String = name
 }

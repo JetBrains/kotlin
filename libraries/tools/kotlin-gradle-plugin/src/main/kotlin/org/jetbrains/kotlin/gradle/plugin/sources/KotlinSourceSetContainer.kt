@@ -13,7 +13,7 @@ import org.gradle.api.internal.tasks.TaskResolver
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.internal.reflect.Instantiator
-import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProvider
 import org.jetbrains.kotlin.gradle.plugin.addConvention
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
@@ -27,7 +27,7 @@ abstract class KotlinSourceSetContainer<T : KotlinSourceSet> internal constructo
 ) : AbstractNamedDomainObjectContainer<T>(itemClass, instantiator), KotlinSourceSetProvider {
 
     // Needs setting when the plugin is applied. See `registerKotlinSourceSetsIfAbsent`.
-    lateinit var kotlinPlatformExtension: KotlinPlatformExtension
+    lateinit var kotlinProjectExtension: KotlinProjectExtension
 
     protected open fun defaultSourceLocation(sourceSetName: String): File =
         project.file("src/$sourceSetName")
@@ -50,60 +50,21 @@ abstract class KotlinSourceSetContainer<T : KotlinSourceSet> internal constructo
         maybeCreate(displayName)
 }
 
-class KotlinAndroidSourceSetContainer(
-    instantiator: Instantiator,
-    project: Project,
-    fileResolver: FileResolver
-): KotlinSourceSetContainer<KotlinAndroidSourceSet>(KotlinAndroidSourceSet::class.java, instantiator, fileResolver, project) {
-    override fun doCreateSourceSet(name: String): KotlinAndroidSourceSet =
-        KotlinAndroidSourceSet(name, fileResolver)
-}
-
-class KotlinJavaSourceSetContainer internal constructor(
-    instantiator: Instantiator,
-    project: Project,
-    fileResolver: FileResolver
-) : KotlinSourceSetContainer<KotlinJavaSourceSet>(KotlinJavaSourceSet::class.java, instantiator, fileResolver, project) {
-
-    override fun doCreateSourceSet(name: String): KotlinJavaSourceSet {
-        findByName(name)?.let { return it }
-
-        val javaSourceSet = javaSourceSetContainer.maybeCreate(name)
-
-        val result = KotlinJavaSourceSet(name, fileResolver, javaSourceSet)
-
-        javaSourceSet.addConvention("kotlin", result)
-
-        return result
-    }
-
-    private val javaSourceSetContainer: SourceSetContainer
-        get() = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
-}
-
-class KotlinOnlySourceSetContainer(
+// TODO maybe simplify to Project.container(<...>, factory)
+class DefaultKotlinSourceSetContainer(
     project: Project,
     fileResolver: FileResolver,
     instantiator: Instantiator,
     private val taskResolver: TaskResolver
-) : KotlinSourceSetContainer<KotlinOnlySourceSet>(KotlinOnlySourceSet::class.java, instantiator, fileResolver, project) {
+) : KotlinSourceSetContainer<DefaultKotlinSourceSet>(DefaultKotlinSourceSet::class.java, instantiator, fileResolver, project) {
 
-    override fun defaultSourceLocation(sourceSetName: String): File =
-        if (kotlinPlatformExtension.platformDisambiguationClassifier == null)
-            super.defaultSourceLocation(sourceSetName)
-        else
-            project.file("src/${kotlinPlatformExtension.platformDisambiguationClassifier}/$sourceSetName")
-
-    override fun setUpSourceSetDefaults(sourceSet: KotlinOnlySourceSet) {
+    override fun setUpSourceSetDefaults(sourceSet: DefaultKotlinSourceSet) {
         super.setUpSourceSetDefaults(sourceSet)
         sourceSet.resources.srcDir(File(defaultSourceLocation(sourceSet.name), "resources"))
     }
 
-    override fun doCreateSourceSet(name: String): KotlinOnlySourceSet {
-        val newSourceSetOutput = instantiator.newInstance(
-            DefaultSourceSetOutput::class.java, name, fileResolver, taskResolver
-        )
-
-        return KotlinOnlySourceSet(name, fileResolver, newSourceSetOutput, project, kotlinPlatformExtension)
+    override fun doCreateSourceSet(name: String): DefaultKotlinSourceSet {
+        val newSourceSetOutput = instantiator.newInstance(DefaultSourceSetOutput::class.java, name, fileResolver, taskResolver)
+        return DefaultKotlinSourceSet(project, name, fileResolver)
     }
 }

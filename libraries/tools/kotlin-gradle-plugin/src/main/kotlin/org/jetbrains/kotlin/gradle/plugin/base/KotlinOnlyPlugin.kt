@@ -29,20 +29,20 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
-import org.jetbrains.kotlin.gradle.dsl.KotlinOnlyPlatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PlatformConfigurationUsage
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinBaseSourceSet
 import java.io.File
 import javax.inject.Inject
 
-open class KotlinOnlyPlatformConfigurator(
+open class KotlinOnlyTargetConfigurator(
     private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     private val objectFactory: ObjectFactory
 ) {
-    fun configureKotlinPlatform(project: Project, kotlinPlatformExtension: KotlinOnlyPlatformExtension) {
+    fun configureTarget(project: Project, kotlinPlatformExtension: KotlinOnlyTarget) {
         configureSourceSetDefaults(project, kotlinPlatformExtension)
         configureSourceSets(project, kotlinPlatformExtension)
         configureConfigurations(project, kotlinPlatformExtension)
@@ -53,20 +53,20 @@ open class KotlinOnlyPlatformConfigurator(
         setCompatibilityOfAbstractCompileTasks(project)
     }
 
-    private fun configureSourceSets(project: Project, platformExtension: KotlinOnlyPlatformExtension) {
-        val main = platformExtension.sourceSets.create(mainSourceSetName)
+    private fun configureSourceSets(project: Project, platformTarget: KotlinOnlyTarget) {
+        val main = platformTarget.compilations
 
-        platformExtension.sourceSets.create(testSourceSetName).apply {
-            compileClasspath = project.files(main.output, project.configurations.maybeCreate(platformExtension.testCompileClasspathConfigurationName))
-            runtimeClasspath = project.files(output, main.output, project.configurations.maybeCreate(platformExtension.testRuntimeClasspathConfigurationName))
+        platformTarget.sourceSets.create(testSourceSetName).apply {
+            compileClasspath = project.files(main.output, project.configurations.maybeCreate(platformTarget.testCompileClasspathConfigurationName))
+            runtimeClasspath = project.files(output, main.output, project.configurations.maybeCreate(platformTarget.testRuntimeClasspathConfigurationName))
         }
 
-        platformExtension.sourceSets.all {
+        platformTarget.sourceSets.all {
             buildOutputCleanupRegistry.registerOutputs(it.output)
         }
     }
 
-    private fun configureSourceSetDefaults(project: Project, platformExtension: KotlinOnlyPlatformExtension) {
+    private fun configureSourceSetDefaults(project: Project, platformExtension: KotlinOnlyTarget) {
         platformExtension.sourceSets.all { sourceSet ->
             val outputConventionMapping = DslObject(sourceSet.output).conventionMapping
 
@@ -80,7 +80,7 @@ open class KotlinOnlyPlatformConfigurator(
         }
     }
 
-    private fun configureArchivesAndComponent(project: Project, platformExtension: KotlinOnlyPlatformExtension) {
+    private fun configureArchivesAndComponent(project: Project, platformExtension: KotlinOnlyTarget) {
         val jar = project.tasks.create(platformExtension.jarTaskName, Jar::class.java)
         jar.description = "Assembles a jar archive containing the main classes."
         jar.group = BasePlugin.BUILD_GROUP
@@ -143,7 +143,7 @@ open class KotlinOnlyPlatformConfigurator(
 
     private fun defineConfigurationsForSourceSet(
         sourceSet: KotlinBaseSourceSet,
-        platformExtension: KotlinOnlyPlatformExtension,
+        platformExtension: KotlinOnlyTarget,
         configurations: ConfigurationContainer
     ) {
         val compileConfiguration = configurations.maybeCreate(sourceSet.compileConfigurationName)
@@ -203,7 +203,7 @@ open class KotlinOnlyPlatformConfigurator(
         sourceSet.runtimeClasspath = sourceSet.output.plus(runtimeClasspathConfiguration)
     }
 
-    private fun configureConfigurations(project: Project, platformExtension: KotlinOnlyPlatformExtension) {
+    private fun configureConfigurations(project: Project, platformExtension: KotlinOnlyTarget) {
         val configurations = project.configurations
 
         val defaultConfiguration = configurations.maybeCreate(platformExtension.defaultConfigurationName)
@@ -254,7 +254,7 @@ open class KotlinOnlyPlatformConfigurator(
     }
 
 
-    private fun configureBuild(project: Project, platformExtension: KotlinOnlyPlatformExtension) {
+    private fun configureBuild(project: Project, platformExtension: KotlinOnlyTarget) {
         project.tasks.maybeCreate(buildNeededTaskName, DefaultTask::class.java).apply {
             description = "Assembles and tests this project and all projects it depends on."
             group = "build"
@@ -306,13 +306,13 @@ open class KotlinOnlyPlatformConfigurator(
     }
 }
 
-internal fun Configuration.usesPlatformOf(extension: KotlinPlatformExtension): Configuration {
-    if (extension is KotlinOnlyPlatformExtension) {
+internal fun Configuration.usesPlatformOf(extension: KotlinTarget): Configuration {
+    if (extension is KotlinOnlyTarget) {
         extension.userDefinedPlatformId?.let {
-            attributes.attribute(KotlinOnlyPlatformConfigurator.kotlinPlatformIdentifierAttribute, it)
+            attributes.attribute(KotlinOnlyTargetConfigurator.kotlinPlatformIdentifierAttribute, it)
         }
     }
-    attributes.attribute(KotlinOnlyPlatformConfigurator.kotlinPlatformTypeAttribute, extension.platformType)
+    attributes.attribute(KotlinOnlyTargetConfigurator.kotlinPlatformTypeAttribute, extension.platformType)
     return this
 }
 
@@ -328,7 +328,7 @@ class KotlinOnlyPlugin @Inject constructor(
             // TODO check that the functionality of JavaBasePlugin is correctly copied
         }
 
-        val kotlinPlatformExtension = project.kotlinExtension as KotlinOnlyPlatformExtension
-        KotlinOnlyPlatformConfigurator(buildOutputCleanupRegistry, objectFactory).configureKotlinPlatform(project, kotlinPlatformExtension)
+        val kotlinPlatformExtension = project.kotlinExtension as KotlinOnlyTarget
+        KotlinOnlyTargetConfigurator(buildOutputCleanupRegistry, objectFactory).configureTarget(project, kotlinPlatformExtension)
     }
 }

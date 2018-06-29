@@ -15,14 +15,13 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.capabilities.Capability
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
-import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformExtension
-import org.jetbrains.kotlin.gradle.plugin.base.runtimeConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 
 internal class KotlinPlatformSoftwareComponent(
     private val project: Project,
-    private val kotlinPlatformExtensions: List<KotlinPlatformExtension>
+    private val kotlinTargets: List<KotlinTarget>
 ) : SoftwareComponentInternal {
-    override fun getUsages(): Set<UsageContext> = kotlinPlatformExtensions.map(::KotlinPlatformUsageContext).toSet()
+    override fun getUsages(): Set<UsageContext> = kotlinTargets.map(::KotlinPlatformUsageContext).toSet()
 
     override fun getName(): String = project.name
 
@@ -32,13 +31,13 @@ internal class KotlinPlatformSoftwareComponent(
         }
     }
 
-    private inner class KotlinPlatformUsageContext(val kotlinPlatformExtension: KotlinPlatformExtension) : UsageContext {
+    private inner class KotlinPlatformUsageContext(val kotlinTarget: KotlinTarget) : UsageContext {
         override fun getUsage(): Usage = kotlinUsage
 
-        override fun getName(): String = kotlinPlatformExtension.platformName
+        override fun getName(): String = kotlinTarget.targetName
 
         private val configuration: Configuration
-            get() = project.configurations.getByName(kotlinPlatformExtension.runtimeConfigurationName)
+            get() = project.configurations.getByName(kotlinTarget.runtimeConfigurationName)
 
         override fun getDependencies(): MutableSet<out ModuleDependency> =
             configuration.incoming.dependencies.withType(ModuleDependency::class.java)

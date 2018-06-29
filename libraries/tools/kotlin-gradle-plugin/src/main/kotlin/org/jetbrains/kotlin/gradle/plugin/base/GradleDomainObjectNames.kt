@@ -5,36 +5,36 @@
 
 package org.jetbrains.kotlin.gradle.plugin.base
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformExtension
-import org.jetbrains.kotlin.gradle.dsl.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import kotlin.reflect.KProperty
 
-private val configurationNameFromPlatformExtension = NameFromKotlinExtensionDelegate("ConfigurationName")
-private val taskNameFromPlatformExtension = NameFromKotlinExtensionDelegate("TaskName")
+private val configurationNameFromPlatformExtension = NameFromKotlinTargetDelegate("ConfigurationName")
+private val taskNameFromPlatformExtension = NameFromKotlinTargetDelegate("TaskName")
 
-internal val KotlinPlatformExtension.defaultConfigurationName by configurationNameFromPlatformExtension
-internal val KotlinPlatformExtension.compileConfigurationName by configurationNameFromPlatformExtension
-internal val KotlinPlatformExtension.testCompileConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.defaultConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.compileConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.testCompileConfigurationName by configurationNameFromPlatformExtension
 
-internal val KotlinPlatformExtension.compileClasspathConfigurationName by configurationNameFromPlatformExtension
-internal val KotlinPlatformExtension.testCompileClasspathConfigurationName by configurationNameFromPlatformExtension
-internal val KotlinPlatformExtension.testRuntimeClasspathConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.compileClasspathConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.testCompileClasspathConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.testRuntimeClasspathConfigurationName by configurationNameFromPlatformExtension
 
-internal val KotlinPlatformExtension.apiElementsConfigurationName by configurationNameFromPlatformExtension
-internal val KotlinPlatformExtension.runtimeElementsConfigurationName by configurationNameFromPlatformExtension
-internal val KotlinPlatformExtension.implementationConfigurationName by configurationNameFromPlatformExtension
-internal val KotlinPlatformExtension.testImplementationConfigurationName by configurationNameFromPlatformExtension
-internal val KotlinPlatformExtension.runtimeConfigurationName by configurationNameFromPlatformExtension
-internal val KotlinPlatformExtension.runtimeOnlyConfigurationName by configurationNameFromPlatformExtension
-internal val KotlinPlatformExtension.testRuntimeConfigurationName by configurationNameFromPlatformExtension
-internal val KotlinPlatformExtension.testRuntimeOnlyConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.apiElementsConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.runtimeElementsConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.implementationConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.testImplementationConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.runtimeConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.runtimeOnlyConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.testRuntimeConfigurationName by configurationNameFromPlatformExtension
+internal val KotlinTarget.testRuntimeOnlyConfigurationName by configurationNameFromPlatformExtension
 
-internal val KotlinPlatformExtension.classesTaskName by taskNameFromPlatformExtension
-internal val KotlinPlatformExtension.jarTaskName by taskNameFromPlatformExtension
-internal val KotlinPlatformExtension.processResourcesTaskName by taskNameFromPlatformExtension
+internal val KotlinTarget.classesTaskName by taskNameFromPlatformExtension
+internal val KotlinTarget.jarTaskName by taskNameFromPlatformExtension
+internal val KotlinTarget.processResourcesTaskName by taskNameFromPlatformExtension
 
-private class NameFromKotlinExtensionDelegate(val propertySuffix: String) {
-    operator fun getValue(thisRef: KotlinPlatformExtension, property: KProperty<*>): String {
+private class NameFromKotlinTargetDelegate(val propertySuffix: String) {
+    operator fun getValue(thisRef: KotlinTarget, property: KProperty<*>): String {
         require(property.name.endsWith(propertySuffix))
         val nameToDisambiguate = property.name.substringBeforeLast(propertySuffix)
             .also { require(it.isNotEmpty()) }

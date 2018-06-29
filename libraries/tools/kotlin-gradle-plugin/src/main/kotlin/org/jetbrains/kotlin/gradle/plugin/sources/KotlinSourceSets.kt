@@ -15,10 +15,12 @@ import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.dsl.KotlinPlatformExtension
-import org.jetbrains.kotlin.gradle.dsl.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.base.classesTaskName
 import org.jetbrains.kotlin.gradle.plugin.base.processResourcesTaskName
+import org.jetbrains.kotlin.gradle.plugin.executeClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import java.lang.reflect.Constructor
 
@@ -38,8 +40,6 @@ interface KotlinBaseSourceSet : KotlinSourceSet {
     val processResourcesTaskName: String
 
     val compileKotlinTaskName: String
-
-    val jarTaskName: String
 
     val compileConfigurationName: String
 
@@ -69,72 +69,9 @@ abstract class AbstractKotlinSourceSet(
             filter.include("**/*.java", "**/*.kt", "**/*.kts")
         }
 
-    final override fun kotlin(configureClosure: Closure<Any?>?): KotlinSourceSet {
+    final override fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet {
         ConfigureUtil.configure(configureClosure, kotlin)
-        return this
-    }
-}
-
-class KotlinAndroidSourceSet(
-    displayName: String,
-    fileResolver: FileResolver
-) : AbstractKotlinSourceSet(displayName, fileResolver) {
-    override fun toString(): String = "source set '$displayName' (Android)"
-}
-
-class KotlinJavaSourceSet(
-    displayName: String,
-    fileResolver: FileResolver,
-    val javaSourceSet: SourceSet
-) : AbstractKotlinSourceSet(displayName, fileResolver), KotlinBaseSourceSet {
-    val java: SourceDirectorySet get() = javaSourceSet.java
-
-    val allJava: SourceDirectorySet get() = javaSourceSet.allJava
-
-    val compileJavaTaskName: String get() = javaSourceSet.compileJavaTaskName
-
-    override var compileClasspath: FileCollection
-        get() = javaSourceSet.compileClasspath
-        set(value) {
-            javaSourceSet.compileClasspath = value
-        }
-
-    override var runtimeClasspath: FileCollection
-        get() = javaSourceSet.runtimeClasspath
-        set(value) {
-            javaSourceSet.runtimeClasspath = value
-        }
-
-    override val output: SourceSetOutput get() = javaSourceSet.output
-
-    override val resources: SourceDirectorySet get() = javaSourceSet.resources
-
-    override val allSource: SourceDirectorySet get() = javaSourceSet.allSource
-
-    override val compileKotlinTaskName: String get() = javaSourceSet.getTaskName("compile", "Kotlin")
-
-    override val classesTaskName: String get() = javaSourceSet.classesTaskName
-
-    override val jarTaskName: String get() = javaSourceSet.jarTaskName
-
-    override val processResourcesTaskName: String get() = javaSourceSet.processResourcesTaskName
-
-    override val compileConfigurationName: String get() = javaSourceSet.compileConfigurationName
-
-    override val runtimeConfigurationName: String get() = javaSourceSet.runtimeConfigurationName
-
-    override val compileOnlyConfigurationName: String get() = javaSourceSet.compileOnlyConfigurationName
-
-    override val runtimeOnlyConfigurationName: String get() = javaSourceSet.runtimeOnlyConfigurationName
-
-    override val implementationConfigurationName: String get() = javaSourceSet.implementationConfigurationName
-
-    override val compileClasspathConfigurationName: String get() = javaSourceSet.compileClasspathConfigurationName
-
-    override val runtimeClasspathConfigurationName: String get() = javaSourceSet.runtimeClasspathConfigurationName
-
-    override fun compiledBy(vararg taskPaths: Any) {
-        javaSourceSet.compiledBy(*taskPaths)
+        return kotlin
     }
 }
 
@@ -147,65 +84,107 @@ internal fun KotlinSourceSet.composeName(prefix: String? = null, suffix: String?
     return resultPrefix + resultSuffix
 }
 
-open class KotlinOnlySourceSet(
-    name: String,
-    fileResolver: FileResolver,
-    newSourceSetOutput: SourceSetOutput,
-    val project: Project,
-    val kotlinPlatformExtension: KotlinPlatformExtension
-) : AbstractKotlinSourceSet(name, fileResolver), KotlinBaseSourceSet {
+class DefaultKotlinSourceSet(
+    private val project: Project,
+    val displayName: String,
+    val fileResolver: FileResolver
+) : KotlinSourceSet {
+    override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(displayName + ".kotlin", fileResolver)
 
-    override fun toString(): String =
-        "source set '$name'" +
-                kotlinPlatformExtension.platformDisambiguationClassifier?.let { " ($it)" }.orEmpty()
+    val resources: SourceDirectorySet = createDefaultSourceDirectorySet(displayName + ".resources", fileResolver)
 
-    override var compileClasspath: FileCollection = project.files()
+    override fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet = kotlin.apply { executeClosure(configureClosure) }
 
-    override var runtimeClasspath: FileCollection = project.files()
+    override fun getName(): String = displayName
 
-    override val output: SourceSetOutput = newSourceSetOutput
+    override fun dependencies(configure: KotlinSourceSetDependencyHandler.() -> Unit) {
 
-    override val resources: SourceDirectorySet = createDefaultSourceDirectorySet("$name.resources", fileResolver)
+    }
 
-    override val allSource: SourceDirectorySet =
-        createDefaultSourceDirectorySet("$name.allSource", fileResolver).apply {
-            source(kotlin)
-            source(resources)
+    private inner class DepenencyHandler : KotlinSourceSetDependencyHandler {
+        override fun api(dependencyNotation: Any) {
+            TODO("not implemented")
         }
 
-    override val classesTaskName: String get() = composeName(kotlinPlatformExtension.classesTaskName)
+        override fun implementation(dependencyNotation: Any) {
+            TODO("not implemented")
+        }
 
-    override val jarTaskName: String get() = composeName(suffix = "jar")
+        override fun compileOnly(dependencyNotation: Any) {
+            TODO("not implemented")
+        }
 
-    override val processResourcesTaskName: String get() = composeName(kotlinPlatformExtension.processResourcesTaskName)
+        override fun runtimeOnly(dependencyNotation: Any) {
+            TODO("not implemented")
+        }
 
-    override val compileKotlinTaskName: String get() = composeName("compile", kotlinPlatformExtension.platformName)
-
-    override val compileConfigurationName: String
-        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "compile"))
-
-    override val runtimeConfigurationName: String
-        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "runtime"))
-
-    override val compileOnlyConfigurationName: String
-        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "compileOnly"))
-
-    override val runtimeOnlyConfigurationName: String
-        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "runtimeOnly"))
-
-    override val implementationConfigurationName: String
-        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "implementation"))
-
-    override val compileClasspathConfigurationName: String
-        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "compileClasspath"))
-
-    override val runtimeClasspathConfigurationName: String
-        get() = kotlinPlatformExtension.disambiguateName(composeName(suffix = "runtimeClasspath"))
-
-    override fun compiledBy(vararg taskPaths: Any) {
-        (output.classesDirs as ConfigurableFileCollection).from(project.files().builtBy(*taskPaths))
+        private fun addDependency(configurationName: String, dependencyNotation: Any) {
+            project.dependencies.add(configurationName, dependencyNotation)
+        }
     }
+
+    override fun dependencies(configureClosure: Closure<Any?>) =
+        dependencies f@{ this@f.executeClosure(configureClosure) }
 }
+
+//open class KotlinOnlySourceSet(
+//    name: String,
+//    fileResolver: FileResolver,
+//    newSourceSetOutput: SourceSetOutput,
+//    val project: Project,
+//) : KotlinSourceSet(name, fileResolver), KotlinBaseSourceSet {
+//
+//    override fun toString(): String =
+//        "source set '$name'" +
+//                kotlinTarget.disambiguationClassifier?.let { " ($it)" }.orEmpty()
+//
+//    override var compileClasspath: FileCollection = project.files()
+//
+//    override var runtimeClasspath: FileCollection = project.files()
+//
+//    override val output: SourceSetOutput = newSourceSetOutput
+//
+//    override val resources: SourceDirectorySet = createDefaultSourceDirectorySet("$name.resources", fileResolver)
+//
+//    override val allSource: SourceDirectorySet =
+//        createDefaultSourceDirectorySet("$name.allSource", fileResolver).apply {
+//            source(kotlin)
+//            source(resources)
+//        }
+//
+//    override val classesTaskName: String get() = composeName(kotlinTarget.classesTaskName)
+//
+//    override val jarTaskName: String get() = composeName(suffix = "jar")
+//
+//    override val processResourcesTaskName: String get() = composeName(kotlinTarget.processResourcesTaskName)
+//
+//    override val compileKotlinTaskName: String get() = composeName("compile", kotlinTarget.targetName)
+//
+//    override val compileConfigurationName: String
+//        get() = kotlinTarget.disambiguateName(composeName(suffix = "compile"))
+//
+//    override val runtimeConfigurationName: String
+//        get() = kotlinTarget.disambiguateName(composeName(suffix = "runtime"))
+//
+//    override val compileOnlyConfigurationName: String
+//        get() = kotlinTarget.disambiguateName(composeName(suffix = "compileOnly"))
+//
+//    override val runtimeOnlyConfigurationName: String
+//        get() = kotlinTarget.disambiguateName(composeName(suffix = "runtimeOnly"))
+//
+//    override val implementationConfigurationName: String
+//        get() = kotlinTarget.disambiguateName(composeName(suffix = "implementation"))
+//
+//    override val compileClasspathConfigurationName: String
+//        get() = kotlinTarget.disambiguateName(composeName(suffix = "compileClasspath"))
+//
+//    override val runtimeClasspathConfigurationName: String
+//        get() = kotlinTarget.disambiguateName(composeName(suffix = "runtimeClasspath"))
+//
+//    override fun compiledBy(vararg taskPaths: Any) {
+//        (output.classesDirs as ConfigurableFileCollection).from(project.files().builtBy(*taskPaths))
+//    }
+//}
 
 private val createDefaultSourceDirectorySet: (name: String?, resolver: FileResolver?) -> SourceDirectorySet = run {
     val klass = DefaultSourceDirectorySet::class.java

@@ -23,17 +23,16 @@ import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.base.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinPlatformSoftwareComponent
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCommonTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.utils.matchSymmetricallyByNames
 import java.io.Serializable
 
-internal val Project.multiplatformExtension get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
+internal val Project.multiplatformExtension get(): KotlinMultiplatformExtension? =
+    project.extensions.findByName("kotlin") as KotlinMultiplatformExtension
 
 internal class KotlinMultiplatformProjectConfigurator(
     private val project: Project,
@@ -44,9 +43,9 @@ internal class KotlinMultiplatformProjectConfigurator(
     private val kotlinPluginVersion: String,
     buildOutputCleanupRegistry: BuildOutputCleanupRegistry
 ) {
-    val kotlinOnlyPlatformConfigurator = KotlinOnlyPlatformConfigurator(buildOutputCleanupRegistry, objectFactory)
+    val kotlinOnlyPlatformConfigurator = KotlinOnlyTargetConfigurator(buildOutputCleanupRegistry, objectFactory)
 
-    private inline fun <reified T : KotlinOnlyPlatformExtension> createAndSetupExtension(
+    private inline fun <reified T : KotlinOnlyTarget> createAndSetupExtension(
         name: String,
         kotlinPlatformType: KotlinPlatformType,
         platformClassifier: String,
@@ -54,214 +53,217 @@ internal class KotlinMultiplatformProjectConfigurator(
         userDefinedId: String? = null
     ): T {
         val extension = objectFactory.newInstance(T::class.java).apply {
-            platformName = name
+            this.targetName = name
             platformType = kotlinPlatformType
-            platformDisambiguationClassifier = platformClassifier
+            disambiguationClassifier = platformClassifier
             userDefinedPlatformId = userDefinedId
         }
         val multiplatformExtension = project.multiplatformExtension
         (multiplatformExtension as ExtensionAware).extensions.add(platformClassifier, extension)
-        registerKotlinSourceSetsIfAbsent(sourceSetContainer, extension)
-        kotlinOnlyPlatformConfigurator.configureKotlinPlatform(project, extension)
+        kotlinOnlyPlatformConfigurator.configureTarget(project, extension)
         return extension
     }
 
-    fun createCommonExtension(): KotlinOnlyPlatformExtension {
+    fun createCommonExtension(): KotlinOnlyTarget {
         val sourceSets = KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver)
-        val extension = createAndSetupExtension<KotlinOnlyPlatformExtension>(
+        val extension = createAndSetupExtension<KotlinOnlyTarget>(
             "kotlinCommon", KotlinPlatformType.common, "common", sourceSets
         )
 
         val tasksProvider = KotlinCommonTasksProvider()
-        configureSourceSetDefaults(extension) { sourceSet: KotlinOnlySourceSet ->
-            KotlinCommonSourceSetProcessor(project, sourceSet, tasksProvider, sourceSets, extension, kotlinPluginVersion)
+        configureCompilationDefaults(extension) { compilation: KotlinCompilation ->
+            KotlinCommonSourceSetProcessor(project, compilation, tasksProvider, sourceSets, kotlinPluginVersion)
         }
 
         return extension
     }
 
-    fun createJvmExtension(disambiguationSuffix: String? = null): KotlinMppPlatformExtension {
+    fun createJvmExtension(disambiguationSuffix: String? = null): KotlinMppTarget {
         val sourceSets = KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver)
         val platformSuffix = disambiguationSuffix?.capitalize().orEmpty()
         val platformName = "kotlinJvm$platformSuffix"
         val platformClassifier = "jvm$platformSuffix"
 
-        val extension = createAndSetupExtension<KotlinMppPlatformExtension>(
+        val extension = createAndSetupExtension<KotlinMppTarget>(
             platformName, KotlinPlatformType.jvm, platformClassifier, sourceSets
         ).apply {
             projectConfigurator = this@KotlinMultiplatformProjectConfigurator
         }
 
         val tasksProvider = KotlinTasksProvider()
-        configureSourceSetDefaults(extension) { sourceSet: KotlinOnlySourceSet ->
+        configureCompilationDefaults(extension) { compilation: KotlinCompilation ->
             Kotlin2JvmSourceSetProcessor(
-                project, sourceSet, tasksProvider, sourceSets, extension, kotlinPluginVersion
+                project, tasksProvider, sourceSets, compilation as KotlinJvmCompilation, kotlinPluginVersion
             )
         }
 
-        linkCommonAndPlatformExtensions(project.multiplatformExtension.common, extension)
+//        linkCommonAndPlatformExtensions(project.multiplatformExtension.targets.common, extension)
 
         return extension
     }
 
-    fun createJvmWithJavaExtension(): KotlinWithJavaPlatformExtension {
+    fun createJvmWithJavaExtension(): KotlinWithJavaTarget {
         project.plugins.apply(JavaPlugin::class.java)
 
         val sourceSets = KotlinJavaSourceSetContainer(instantiator, project, fileResolver)
         val platformClassifier = "jvmWithJava"
 
-        val extension = objectFactory.newInstance(KotlinWithJavaPlatformExtension::class.java).apply {
+        val extension = objectFactory.newInstance(KotlinWithJavaTarget::class.java).apply {
             val multiplatformExtension = project.multiplatformExtension
             (multiplatformExtension as ExtensionAware).extensions.add(platformClassifier, this@apply)
-            registerKotlinSourceSetsIfAbsent(sourceSets, this@apply)
-            platformName = "kotlin" + platformClassifier.capitalize()
+             registerKotlinSourceSetsIfAbsent(sourceSets, project.kotlinExtension)
+            targetName = "kotlin" + platformClassifier.capitalize()
         }
 
         project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.all { javaSourceSet ->
-            extension.sourceSets.maybeCreate(javaSourceSet.name)
+            project.kotlinExtension.sourceSets.maybeCreate(javaSourceSet.name)
+            // fixme setup compilation for this target?
         }
 
         val tasksProvider = KotlinTasksProvider()
 
-        configureSourceSetDefaults(extension) { sourceSet: KotlinJavaSourceSet ->
+        configureCompilationDefaults(extension) { compilation: KotlinJvmWithJavaCompilation ->
             Kotlin2JvmSourceSetProcessor(
-                project, sourceSet, tasksProvider, sourceSets, extension, kotlinPluginVersion
+                project, tasksProvider, sourceSets, compilation, kotlinPluginVersion
             )
         }
 
-        linkCommonAndPlatformExtensions(project.multiplatformExtension.common, extension)
+//        linkCommonAndPlatformExtensions(project.multiplatformExtension.common, extension)
 
         setupConfigurationsInProjectWithJava(project, extension)
 
         return extension
     }
 
-    fun createAndroidPlatformExtension(): KotlinAndroidPlatformExtension {
+    fun createAndroidPlatformExtension(): KotlinAndroidTarget {
         val platformClassifier = "android"
 
         val sourceSets = KotlinAndroidSourceSetContainer(instantiator, project, fileResolver)
 
-        val extension = objectFactory.newInstance(KotlinAndroidPlatformExtension::class.java).apply {
+        val extension = objectFactory.newInstance(KotlinAndroidTarget::class.java).apply {
             val multiplatformExtension = project.multiplatformExtension
             (multiplatformExtension as ExtensionAware).extensions.add(platformClassifier, this@apply)
-            registerKotlinSourceSetsIfAbsent(sourceSets, this@apply)
-            platformName = "kotlin" + platformClassifier.capitalize()
+            targetName = "kotlin" + platformClassifier.capitalize()
         }
 
         val tasksProvider = AndroidTasksProvider()
 
-        KotlinAndroidPlugin.applyToExtension(project, extension, sourceSets, tasksProvider, kotlinPluginVersion)
+        KotlinAndroidPlugin.applyToCompilation(project, extension, sourceSets, tasksProvider, kotlinPluginVersion)
 
-        linkCommonAndPlatformExtensions(project.multiplatformExtension.common, extension)
+//        linkCommonAndPlatformExtensions(project.multiplatformExtension.common, extension)
 
         return extension
     }
 
-    fun setupConfigurationsInProjectWithJava(project: Project, extension: KotlinWithJavaPlatformExtension) {
+    fun setupConfigurationsInProjectWithJava(project: Project, extension: KotlinWithJavaTarget) {
         project.afterEvaluate {
             listOf(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME, JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME).forEach {
                 project.configurations.getByName(it).usesPlatformOf(extension)
             }
-            extension.sourceSets.all { sourceSet ->
-                listOf(sourceSet.compileClasspathConfigurationName, sourceSet.runtimeClasspathConfigurationName).forEach {
+            extension.compilations.all { kotlinCompilationWithJava ->
+                val javaSourceSet = kotlinCompilationWithJava.javaSourceSet
+                listOf(javaSourceSet.compileClasspathConfigurationName, javaSourceSet.runtimeClasspathConfigurationName).forEach {
                     project.configurations.getByName(it).usesPlatformOf(extension)
                 }
             }
         }
     }
 
-    fun createJsPlatformExtension(disambiguationSuffix: String? = null): KotlinMppPlatformExtension {
+    fun createJsPlatformExtension(disambiguationSuffix: String? = null): KotlinMppTarget {
         val sourceSets = KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver)
         val platformSuffix = disambiguationSuffix?.capitalize().orEmpty()
         val platformName = "kotlinJs$platformSuffix"
         val platformClassifier = "js$platformSuffix"
 
-        val extension = createAndSetupExtension<KotlinMppPlatformExtension>(
+        val extension = createAndSetupExtension<KotlinMppTarget>(
             platformName, KotlinPlatformType.js, platformClassifier, sourceSets
         ).apply {
             projectConfigurator = this@KotlinMultiplatformProjectConfigurator
         }
 
         val tasksProvider = Kotlin2JsTasksProvider()
-        configureSourceSetDefaults(extension) { sourceSet: KotlinOnlySourceSet ->
-            Kotlin2JsSourceSetProcessor(project, sourceSet, tasksProvider, sourceSets, extension, kotlinPluginVersion)
+        configureCompilationDefaults(extension) { compilation: KotlinJsCompilation ->
+            Kotlin2JsSourceSetProcessor(project, tasksProvider, sourceSets, compilation, kotlinPluginVersion)
         }
 
-        linkCommonAndPlatformExtensions(project.multiplatformExtension.common , extension)
+//        linkCommonAndPlatformExtensions(project.multiplatformExtension.common , extension)
 
         return extension
     }
 
-    private inline fun <reified T : KotlinSourceSet> configureSourceSetDefaults(
-        extension: KotlinPlatformExtension,
+    private inline fun <reified T : KotlinCompilation> configureCompilationDefaults(
+        target: KotlinTarget,
         crossinline buildSourceSetProcessor: (T) -> KotlinSourceSetProcessor<*>
     ) {
-        extension.sourceSets.all { sourceSet ->
-            sourceSet as T
-            buildSourceSetProcessor(sourceSet).run()
+        target.compilations.all { compilation ->
+            compilation as T
+            buildSourceSetProcessor(compilation).run()
         }
     }
 
     protected fun linkCommonAndPlatformExtensions(
-        commonExtension: KotlinPlatformExtension,
-        platformExtension: KotlinPlatformExtension,
+        commonExtension: KotlinTarget,
+        target: KotlinTarget,
         setupConfigurationRelations: Boolean = true
     ) {
-        matchSymmetricallyByNames(commonExtension.sourceSets, platformExtension.sourceSets) {
-                commonSourceSet: KotlinSourceSet, platformSourceSet: KotlinSourceSet ->
-            //todo add the sources to the task as it's done in old MPP?
-            platformSourceSet.kotlin.source(commonSourceSet.kotlin)
-        }
-
-        if (setupConfigurationRelations) {
-            listOf(
-                commonExtension.apiElementsConfigurationName to platformExtension.compileConfigurationName,
-                commonExtension.runtimeElementsConfigurationName to platformExtension.runtimeOnlyConfigurationName
-            ).forEach { (commonConfigurationName, platformConfigurationName) ->
-                val commonConfiguration = project.configurations.getByName(commonConfigurationName)
-                val platformConfiguration = project.configurations.getByName(platformConfigurationName)
-                platformConfiguration.extendsFrom(commonConfiguration)
-            }
-        }
+        // TODO this code may not be needed after all, since the source sets are going to be matched with the compatibility rules
+//        matchSymmetricallyByNames(, target.sourceSets) {
+//                commonSourceSet: KotlinSourceSet, platformSourceSet: KotlinSourceSet ->
+//            //todo add the sources to the task as it's done in old MPP?
+//            platformSourceSet.kotlin.source(commonSourceSet.kotlin)
+//        }
+//
+//        if (setupConfigurationRelations) {
+//            listOf(
+//                commonExtension.apiElementsConfigurationName to target.compileConfigurationName,
+//                commonExtension.runtimeElementsConfigurationName to target.runtimeOnlyConfigurationName
+//            ).forEach { (commonConfigurationName, platformConfigurationName) ->
+//                val commonConfiguration = project.configurations.getByName(commonConfigurationName)
+//                val platformConfiguration = project.configurations.getByName(platformConfigurationName)
+//                platformConfiguration.extendsFrom(commonConfiguration)
+//            }
+//        }
     }
 
-    internal fun addExternalExpectedByModule(extension: KotlinMppPlatformExtension, modulePath: String) {
-        val otherModule = project.project(modulePath)
-
-        //FIXME assumption that the configuration names are the same, and the dependency project is built with experimental plugin
-        lateinit var commonConfigurationName: String
-        project.multiplatformExtension.common { commonConfigurationName = this.apiElementsConfigurationName }
-
-        val otherModuleUsageAttribute = PlatformConfigurationUsage.attributeForModule(otherModule).also {
-            PlatformConfigurationUsage.configureMatchingStrategy(project, it)
-        }
-
-        val otherConfigurationName = "platformDependencies${extension.platformDisambiguationClassifier!!.capitalize()}"
-
-        otherModule.whenEvaluated {
-            otherModule.configurations.create(otherConfigurationName).apply {
-                extendsFrom(otherModule.configurations.getByName(commonConfigurationName))
-                usesPlatformOf(extension)
-                attributes.attribute(otherModuleUsageAttribute, PlatformConfigurationUsage.PLATFORM_DEPENDENCIES)
-            }
-        }
-
-        extension.sourceSets.all { sourceSet ->
-            val configurationsToAffect = listOf(
-                sourceSet.compileClasspathConfigurationName,
-                sourceSet.runtimeClasspathConfigurationName
-            ).map { project.configurations.getByName(it) }
-
-            configurationsToAffect.forEach {
-                it.attributes.attribute(otherModuleUsageAttribute, PlatformConfigurationUsage.PLATFORM_DEPENDENCIES)
-            }
-        }
-
-        otherModule.whenEvaluated {
-            otherModule.multiplatformExtension.common {
-                linkCommonAndPlatformExtensions(this@common, extension)
-            }
-        }
+    internal fun addExternalExpectedByModule(extension: KotlinMppTarget, modulePath: String) {
+//        val otherModule = project.project(modulePath)
+//
+//        //FIXME assumption that the configuration names are the same, and the dependency project is built with experimental plugin
+//        lateinit var commonConfigurationName: String
+//        project.multiplatformExtension.common { commonConfigurationName = this.apiElementsConfigurationName }
+//
+//        val otherModuleUsageAttribute = PlatformConfigurationUsage.attributeForModule(otherModule).also {
+//            PlatformConfigurationUsage.configureMatchingStrategy(project, it)
+//        }
+//
+//        val otherConfigurationName = "platformDependencies${extension.disambiguationClassifier!!.capitalize()}"
+//
+//        otherModule.whenEvaluated {
+//            otherModule.configurations.create(otherConfigurationName).apply {
+//                extendsFrom(otherModule.configurations.getByName(commonConfigurationName))
+//                usesPlatformOf(extension)
+//                attributes.attribute(otherModuleUsageAttribute, PlatformConfigurationUsage.PLATFORM_DEPENDENCIES)
+//            }
+//        }
+//
+//        extension.sourceSets.all { sourceSet ->
+//            val configurationsToAffect = listOf(
+//                sourceSet.compileClasspathConfigurationName,
+//                sourceSet.runtimeClasspathConfigurationName
+//            ).map { project.configurations.getByName(it) }
+//
+//            configurationsToAffect.forEach {
+//                it.attributes.attribute(otherModuleUsageAttribute, PlatformConfigurationUsage.PLATFORM_DEPENDENCIES)
+//            }
+//        }
+//
+//        otherModule.whenEvaluated {
+//            otherModule.multiplatformExtension.common {
+//                linkCommonAndPlatformExtensions(this@common, extension)
+//            }
+//        }
+        // fixme unsupported for now
+        throw UnsupportedOperationException()
     }
 }
 
@@ -283,6 +285,9 @@ internal class KotlinMultiplatformPlugin(
             kotlinGradleBuildServices, kotlinPluginVersion, buildOutputCleanupRegistry
         )
 
+        val kotlinSourceSets = KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver)
+
+        registerKotlinSourceSetsIfAbsent(kotlinSourceSets, kotlinMultiplatformExtension)
         configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
         kotlinMultiplatformExtension.common { } // make it configure by default
 
@@ -294,7 +299,7 @@ internal class KotlinMultiplatformPlugin(
         val extensions = (project.multiplatformExtension as ExtensionAware).extensions
 
         val platformExtensions = extensions.schema.mapNotNull { (name, _) ->
-            extensions.getByName(name) as? KotlinPlatformExtension
+            extensions.getByName(name) as? KotlinTarget
         }
 
         val platformSoftwareComponent = KotlinPlatformSoftwareComponent(project, platformExtensions)

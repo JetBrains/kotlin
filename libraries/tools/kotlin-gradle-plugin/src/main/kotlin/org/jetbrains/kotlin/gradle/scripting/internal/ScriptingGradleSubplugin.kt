@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.gradle.scripting.internal
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.jetbrains.kotlin.gradle.plugin.JetBrainsSubpluginArtifact
-import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
-import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
-import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 
@@ -42,7 +39,7 @@ class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         javaCompile: AbstractCompile?,
         variantData: Any?,
         androidProjectHandler: Any?,
-        kotlinSourceSet: KotlinSourceSet?
+        kotlinCompilation: KotlinCompilation?
     ): List<SubpluginOption> {
         if (!ScriptingGradleSubplugin.isEnabled(project)) return emptyList()
 

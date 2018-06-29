@@ -26,6 +26,9 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinAndroidSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinJavaSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinOnlySourceSetContainer
@@ -71,17 +74,11 @@ open class KotlinPluginWrapper @Inject constructor(fileResolver: FileResolver, p
             KotlinPlugin(
                 KotlinTasksProvider(), KotlinJavaSourceSetContainer(instantiator, project, fileResolver), kotlinPluginVersion
             )
-
-    override val projectExtensionClass: KClass<out KotlinWithJavaPlatformExtension>
-        get() = KotlinWithJavaPlatformExtension::class
 }
 
 open class KotlinCommonPluginWrapper @Inject constructor(fileResolver: FileResolver, private val instantiator: Instantiator): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
             KotlinCommonPlugin(KotlinCommonTasksProvider(), KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver), kotlinPluginVersion)
-
-    override val projectExtensionClass: KClass<out KotlinOnlyPlatformExtension>
-        get() = KotlinOnlyPlatformExtension::class
 }
 
 open class KotlinMultiplatformPluginWrapper @Inject constructor(
@@ -107,17 +104,11 @@ open class KotlinAndroidPluginWrapper @Inject constructor(fileResolver: FileReso
             KotlinAndroidSourceSetContainer(instantiator, project, fileResolver),
             kotlinPluginVersion
         )
-
-    override val projectExtensionClass: KClass<KotlinAndroidPlatformExtension>
-        get() = KotlinAndroidPlatformExtension::class
 }
 
 open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver, private val instantiator: Instantiator): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
             Kotlin2JsPlugin(Kotlin2JsTasksProvider(), KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver), kotlinPluginVersion)
-
-    override val projectExtensionClass: KClass<KotlinOnlyPlatformExtension>
-        get() = KotlinOnlyPlatformExtension::class
 }
 
 fun Project.getKotlinPluginVersion(): String? {

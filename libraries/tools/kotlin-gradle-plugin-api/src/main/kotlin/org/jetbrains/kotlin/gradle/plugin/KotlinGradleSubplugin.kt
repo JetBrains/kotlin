@@ -57,7 +57,7 @@ interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
         javaCompile: AbstractCompile?,
         variantData: Any?,
         androidProjectHandler: Any?,
-        kotlinSourceSet: KotlinSourceSet?
+        kotlinCompilation: KotlinCompilation?
     ): List<SubpluginOption>
 
     fun getSubpluginKotlinTasks(
