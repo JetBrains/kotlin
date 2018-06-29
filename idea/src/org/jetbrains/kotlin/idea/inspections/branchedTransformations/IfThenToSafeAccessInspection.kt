@@ -83,6 +83,9 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
         negatedClause == null && baseClause.isUsedAsExpression(context) -> false
         negatedClause != null && !negatedClause.isNullExpression() -> false
         else -> baseClause.evaluatesTo(receiverExpression) || baseClause.hasFirstReceiverOf(receiverExpression) ||
-                receiverExpression is KtThisExpression && getImplicitReceiver()?.let { it.type == receiverExpression.getType(context) } == true
+                receiverExpression is KtThisExpression && getImplicitReceiver()?.let { it.type == receiverExpression.getType(context) } == true ||
+                (baseClause as? KtCallExpression)?.valueArguments?.map { it.getArgumentExpression() }?.let {
+                    it.any { it?.evaluatesTo(receiverExpression) == true } && it.all { it is KtNameReferenceExpression }
+                } == true
     }
 }

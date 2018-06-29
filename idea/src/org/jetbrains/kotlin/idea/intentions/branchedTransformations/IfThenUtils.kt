@@ -211,10 +211,12 @@ data class IfThenToSelectData(
                         hasImplicitReceiver() -> factory.createExpressionByPattern("$0?.$1", newReceiver!!, baseClause).insertSafeCalls(
                             factory
                         )
+                        baseClause is KtCallExpression -> replacedBaseClause(baseClause, newReceiver!!, factory)
                         else -> error("Illegal state")
                     }
                 }
                 hasImplicitReceiver() -> factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
+                baseClause is KtCallExpression -> replacedBaseClause(baseClause, receiverExpression, factory)
                 else -> baseClause.insertSafeCalls(factory)
             }
         }
@@ -223,6 +225,24 @@ data class IfThenToSelectData(
     internal fun getImplicitReceiver(): ImplicitReceiver? = baseClause.getResolvedCall(context)?.getImplicitReceiverValue()
 
     internal fun hasImplicitReceiver(): Boolean = getImplicitReceiver() != null
+
+    private fun replacedBaseClause(baseClause: KtCallExpression, receiver: KtExpression, factory: KtPsiFactory): KtExpression {
+        return factory.buildExpression {
+            appendExpression(receiver)
+            appendFixedText("?.let {")
+            appendExpression(baseClause.calleeExpression)
+            appendFixedText("(")
+            baseClause.valueArguments.forEachIndexed { index, arg ->
+                if (index != 0) appendFixedText(", ")
+                val argExpression = arg.getArgumentExpression()
+                if (argExpression?.evaluatesTo(receiverExpression) == true)
+                    appendFixedText("it")
+                else
+                    appendExpression(arg.getArgumentExpression())
+            }
+            appendFixedText(") }")
+        }
+    }
 }
 
 internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData? {
