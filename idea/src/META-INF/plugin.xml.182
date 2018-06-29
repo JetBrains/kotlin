@@ -476,7 +476,6 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <codeInsight.template.postfixTemplateProvider language="kotlin"
                                                   implementationClass="org.jetbrains.kotlin.idea.codeInsight.postfix.KtPostfixTemplateProvider"/>
 
-
     <codeInsight.linkHandler prefix="#kotlinClass/" handlerClass="org.jetbrains.kotlin.idea.highlighter.markers.KotlinClassTooltipLinkHandler"/>
 
     <defaultHighlightingSettingProvider language="kotlin" implementation="org.jetbrains.kotlin.idea.highlighter.KotlinDefaultHighlightingSettingsProvider"/>
@@ -1885,7 +1884,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      shortName="KotlinDeprecation"
                      displayName="Usage of redundant or deprecated syntax or deprecated symbols"
                      groupPath="Kotlin"
-                     groupName="Other problems"
+                     groupName="Migration"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WARNING"
@@ -2861,7 +2860,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.RedundantAsyncInspection"
-                     displayName="Redundant async call"
+                     displayName="Redundant 'async' call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
