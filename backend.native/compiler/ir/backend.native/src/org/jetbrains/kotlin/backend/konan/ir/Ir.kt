@@ -318,6 +318,14 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val freeze = symbolTable.referenceSimpleFunction(
             builtInsPackage("konan", "worker").getContributedFunctions(Name.identifier("freeze"), NoLookupLocation.FROM_BACKEND).single())
 
+    val println = symbolTable.referenceSimpleFunction(
+            builtInsPackage("kotlin", "io").getContributedFunctions(Name.identifier("println"), NoLookupLocation.FROM_BACKEND)
+                    .single { it.valueParameters.singleOrNull()?.type == builtIns.stringType })
+
+    val anyNToString = symbolTable.referenceSimpleFunction(
+            builtInsPackage("kotlin").getContributedFunctions(Name.identifier("toString"), NoLookupLocation.FROM_BACKEND)
+                    .single { it.extensionReceiverParameter?.type == builtIns.nullableAnyType})
+
     val getContinuation = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("getContinuation").single())
 

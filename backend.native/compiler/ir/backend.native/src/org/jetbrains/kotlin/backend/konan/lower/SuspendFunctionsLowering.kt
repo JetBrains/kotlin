@@ -1194,6 +1194,13 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
         private fun IrBuilderWithScope.irThrowIfNotNull(exception: IrValueDeclaration) =
                 irIfThen(irNot(irEqeqeq(irGet(exception), irNull())),
                         irThrow(irImplicitCast(irGet(exception), exception.type.makeNotNull())))
+
+        fun IrBuilderWithScope.irDebugOutput(value: IrExpression) =
+                irCall(symbols.println).apply {
+                    putValueArgument(0, irCall(symbols.anyNToString).apply {
+                        extensionReceiver = value
+                    })
+                }
     }
 
     private open class VariablesScopeTracker: IrElementVisitorVoid {
