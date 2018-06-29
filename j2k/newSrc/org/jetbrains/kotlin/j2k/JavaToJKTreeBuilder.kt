@@ -74,7 +74,11 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         }
 
         fun PsiAssignmentExpression.toJK(): JKJavaAssignmentExpression {
-            return JKJavaAssignmentExpressionImpl(lExpression.toJK(), rExpression.toJK())
+            return JKJavaAssignmentExpressionImpl(
+                (lExpression.toJK() as? JKFieldAccessExpression ?: error("Its possible?")).identifier,
+                rExpression.toJK(),
+                operationSign.toJK()
+            )
         }
 
         fun PsiBinaryExpression.toJK(): JKExpression {
@@ -110,7 +114,6 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiMethodCallExpression.toJK(): JKExpression {
             val method = methodExpression as PsiReferenceExpressionImpl
-
             val call = JKJavaMethodCallExpressionImpl(symbolProvider.provideSymbol(method), argumentList.toJK())
             return if (method.findChildByRole(ChildRole.DOT) != null) {
                 JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, call)

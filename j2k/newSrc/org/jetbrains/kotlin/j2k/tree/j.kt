@@ -17,17 +17,13 @@
 package org.jetbrains.kotlin.j2k.tree
 
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
+import org.jetbrains.kotlin.j2k.tree.impl.JKFieldSymbol
 import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
 
 interface JKJavaField : JKField, JKBranchElement
 
 interface JKJavaMethod : JKMethod, JKBranchElement {
     val block: JKBlock
-}
-
-interface JKJavaAssignmentExpression : JKExpression, JKBranchElement {
-    var lExpression: JKExpression
-    var rExpression: JKExpression
 }
 
 interface JKJavaMethodCallExpression : JKMethodCallExpression
@@ -86,4 +82,10 @@ interface JKJavaPolyadicExpression : JKExpression {
     var tokens: List<JKOperator>
 
     fun getTokenBeforeOperand(operand: JKExpression): JKOperator?
+}
+
+interface JKJavaAssignmentExpression : JKExpression, JKBranchElement {
+    var field: JKFieldSymbol
+    var expression: JKExpression
+    var operator: JKOperator
 }
