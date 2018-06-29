@@ -166,7 +166,7 @@ class JDIEval(
             return array.array().getValue(index.int).asValue()
         }
         catch (e: IndexOutOfBoundsException) {
-            throwEvalException(ArrayIndexOutOfBoundsException(e.message))
+            throwInterpretingException(ArrayIndexOutOfBoundsException(e.message))
         }
     }
 
@@ -175,7 +175,7 @@ class JDIEval(
             return array.array().setValue(index.int, newValue.asJdiValue(vm, array.asmType.arrayElementType))
         }
         catch (e: IndexOutOfBoundsException) {
-            throwEvalException(ArrayIndexOutOfBoundsException(e.message))
+            throwInterpretingException(ArrayIndexOutOfBoundsException(e.message))
         }
     }
 

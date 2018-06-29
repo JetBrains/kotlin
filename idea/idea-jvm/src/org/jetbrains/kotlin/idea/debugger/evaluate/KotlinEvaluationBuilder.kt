@@ -169,7 +169,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             LOG.debug(e)
             exception(e)
         }
-        catch (e: Eval4JInterpreterException) {
+        catch (e: Eval4JInterpretingException) {
             exception(e.cause)
         }
         catch (e: Exception) {

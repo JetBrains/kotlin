@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
 // RESULT: 1: I
 
 // EXPRESSION: derived.prop
-// RESULT: java.lang.ClassCastException: smartcasts.Base cannot be cast to smartcasts.Derived: Ljava/lang/ClassCastException;
+// RESULT: java.lang.ClassCastException : smartcasts.Base cannot be cast to smartcasts.Derived
 fun test1(derived: Base) =
         derived is Derived &&
         //Breakpoint!
