@@ -2,6 +2,6 @@
 
 fun test(list: List<Int>): List<Int> {
     return list
-            .filter { it > 1 }
-            .map { it * 2 }<caret>
+            .filter<caret> { it > 1 }
+            .map { it * 2 }
 }

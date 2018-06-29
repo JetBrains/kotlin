@@ -1,8 +1,8 @@
 // WITH_RUNTIME
 
 fun test(list: List<Int>): List<Pair<List<Int>, List<Int>>> {
-    return <caret>list
-            .chunked(1)
+    return list
+            .<caret>chunked(1)
             .distinct()
             .distinctBy { it }
             .drop(1)

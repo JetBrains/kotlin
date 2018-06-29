@@ -1,8 +1,8 @@
 // WITH_RUNTIME
 
 fun test(foo: Foo): List<Int> {
-    return <caret>foo.getList()
-            .filter { it > 1 }
+    return foo.getList()
+            .<caret>filter { it > 1 }
             .map { it * 2 }
 }
 

@@ -21,17 +21,23 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 class ConvertCallChainIntoSequenceInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
         qualifiedExpressionVisitor(fun(expression) {
-            val target = expression.findTarget() ?: return
+            val (targetQualified, targetCall) = expression.findTarget() ?: return
+            val rangeInElement = targetCall.calleeExpression?.textRange?.shiftRight(-targetQualified.startOffset) ?: return
             holder.registerProblem(
-                target,
-                "Call chain on collection should be converted into 'Sequence'",
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                ConvertCallChainIntoSequenceFix()
+                holder.manager.createProblemDescriptor(
+                    targetQualified,
+                    rangeInElement,
+                    "Call chain on collection should be converted into 'Sequence'",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    isOnTheFly,
+                    ConvertCallChainIntoSequenceFix()
+                )
             )
         })
 }
@@ -88,7 +94,7 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
     }
 }
 
-private fun KtQualifiedExpression.findTarget(): KtQualifiedExpression? {
+private fun KtQualifiedExpression.findTarget(): Pair<KtQualifiedExpression, KtCallExpression>? {
     if (parent is KtQualifiedExpression) return null
 
     val calls = collectCallExpression()
@@ -97,7 +103,7 @@ private fun KtQualifiedExpression.findTarget(): KtQualifiedExpression? {
     val qualified = calls.first().parent as? KtQualifiedExpression ?: return null
     val fqName = qualified.getCallableDescriptor()?.returnType?.constructor?.declarationDescriptor?.fqNameSafe
     if (fqName != KotlinBuiltIns.FQ_NAMES.list) return null
-    return qualified
+    return qualified to calls.last()
 }
 
 private fun KtQualifiedExpression.collectCallExpression(): List<KtCallExpression> {
