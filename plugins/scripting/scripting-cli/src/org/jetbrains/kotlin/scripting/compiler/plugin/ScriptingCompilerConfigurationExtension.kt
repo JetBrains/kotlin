@@ -55,7 +55,6 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
                 JVMConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES,
                 ScriptDefinitionsFromClasspathDiscoverySource(
                     configuration.jvmClasspathRoots,
-                    emptyList(),
                     configuration.get(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION) ?: emptyMap(),
                     messageCollector
                 )
@@ -78,13 +77,10 @@ fun configureScriptDefinitions(
     messageCollector: MessageCollector,
     scriptResolverEnv: Map<String, Any?>
 ) {
-    val classpath = configuration.jvmClasspathRoots
     // TODO: consider using escaping to allow kotlin escaped names in class names
-    if (scriptTemplates.isNotEmpty()) {
-        loadScriptTemplatesFromClasspath(scriptTemplates, classpath, emptyList(), baseClassloader, scriptResolverEnv, messageCollector)
-            .forEach {
-                configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, it)
-            }
-    }
+    val templatesFromClasspath = loadScriptTemplatesFromClasspath(
+        scriptTemplates, configuration.jvmClasspathRoots, emptyList(), baseClassloader, scriptResolverEnv, messageCollector
+    )
+    configuration.addAll(JVMConfigurationKeys.SCRIPT_DEFINITIONS, templatesFromClasspath.toList())
 }
 

@@ -80,10 +80,10 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
         )
     }
 
-    fun testLazyScriptDefinition() {
+    fun testLazyScriptDefinitionDiscovery() {
 
-        // Two tests in one function: the discovery code separately, and as a part of regular compilation
-        // tests are combined to avoid double compilation of script definition modules
+        // Three tests in one function: the direct loading, the discovery code separately, and as a part of regular compilation
+        // tests are combined to avoid multiple compilation of script definition modules
 
         val defsOut = File(tmpdir, "testLazyScriptDefinition/out/defs")
         val defsSrc = File(TEST_DATA_DIR, "lazyDefinitions/definitions")
@@ -105,15 +105,33 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
             "Compilation of script definitions failed: $messageCollector"
         }
 
+        messageCollector.clear()
+
+        loadScriptTemplatesFromClasspath(
+            listOf("TestScriptWithReceivers", "TestScriptWithSimpleEnvVars"),
+            listOf(defsOut), emptyList(), this::class.java.classLoader, emptyMap(), messageCollector
+        ).toList()
+
+        for (def in defClasses) {
+            assertTrue(messageCollector.messages.any { it.message.contains("Configure scripting: Added template $def") }) {
+                "Missing messages from loading sequence (should contain \"Added template $def\"):\n$messageCollector"
+            }
+            assertTrue(messageCollector.messages.none { it.message.contains("Configure scripting: loading script definition class $def") }) {
+                "Unexpected messages from loading sequence (should not contain \"loading script definition class $def\"):\n$messageCollector"
+            }
+        }
+
+        messageCollector.clear()
+
+        // chacking lazy discovery
+
         val templatesDir = File(defsOut, SCRIPT_DEFINITION_MARKERS_PATH).also { it.mkdirs() }
         for (def in defClasses) {
             File(templatesDir, def).createNewFile()
         }
 
-        messageCollector.clear()
-
         val lazyDefsSeq =
-            discoverScriptTemplatesInClasspath(listOf(defsOut), emptyList(), this::class.java.classLoader, emptyMap(), messageCollector)
+            discoverScriptTemplatesInClasspath(listOf(defsOut), this::class.java.classLoader, emptyMap(), messageCollector)
 
         assertTrue(messageCollector.messages.isEmpty()) {
             "Unexpected messages from discovery sequence (should be empty):\n$messageCollector"
@@ -122,14 +140,10 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
         val lazyDefs = lazyDefsSeq.toList()
 
         for (def in defClasses) {
-            assertTrue(
-                messageCollector.messages.any { it.message.contains("Configure scripting: Added template $def") }
-            ) {
+            assertTrue(messageCollector.messages.any { it.message.contains("Configure scripting: Added template $def") }) {
                 "Missing messages from discovery sequence (should contain \"Added template $def\"):\n$messageCollector"
             }
-            assertTrue(
-                messageCollector.messages.none { it.message.contains("Configure scripting: loading script definition class $def") }
-            ) {
+            assertTrue(messageCollector.messages.none { it.message.contains("Configure scripting: loading script definition class $def") }) {
                 "Unexpected messages from discovery sequence (should not contain \"loading script definition class $def\"):\n$messageCollector"
             }
         }
@@ -183,7 +197,7 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
 
         messageCollector.clear()
 
-        discoverScriptTemplatesInClasspath(listOf(defsOut), emptyList(), this::class.java.classLoader, emptyMap(), messageCollector).toList()
+        discoverScriptTemplatesInClasspath(listOf(defsOut), this::class.java.classLoader, emptyMap(), messageCollector).toList()
 
         assertTrue(
             messageCollector.messages.isNotEmpty()
@@ -193,6 +207,7 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
         }
     }
 }
+
 
 class TestMessageCollector : MessageCollector {
     data class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageLocation?)
