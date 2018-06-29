@@ -2,6 +2,7 @@
 // COMMON_COROUTINES_TEST
 // FILE: A.kt
 // WITH_RUNTIME
+// WITH_COROUTINES
 package a
 
 import COROUTINES_PACKAGE.*
@@ -15,7 +16,7 @@ class Controller {
 }
 
 fun builder(c: suspend Controller.() -> Unit) {
-    c.startCoroutine(Controller(), object : Continuation<Unit> {
+    c.startCoroutine(Controller(), object : helpers.ContinuationAdapter<Unit>() {
         override val context: CoroutineContext = EmptyCoroutineContext
         override fun resume(value: Unit) {}
 
