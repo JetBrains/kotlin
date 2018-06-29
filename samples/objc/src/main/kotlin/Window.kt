@@ -78,7 +78,7 @@ private class MyAppDelegate() : NSObject(), NSApplicationDelegateProtocol {
             }
         }
 
-        val button = NSButton().initWithFrame(NSMakeRect(10.0, 10.0, 100.0, 40.0)).apply {
+        val button = NSButton(NSMakeRect(10.0, 10.0, 100.0, 40.0)).apply {
             title = "Press me"
             target = controller
             action = NSSelectorFromString("onClick")
