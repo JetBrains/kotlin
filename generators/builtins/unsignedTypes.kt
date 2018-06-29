@@ -260,9 +260,11 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
     val storageElementType = type.asSigned.capitalized
     val storageArrayType = storageElementType + "Array"
     override fun generateBody() {
-        out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
         out.println("@SinceKotlin(\"1.3\")")
-        out.println("public inline class $arrayType internal constructor(private val storage: $storageArrayType) : Collection<$elementType> {")
+        out.println("public inline class $arrayType")
+        out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
+        out.println("@PublishedApi")
+        out.println("internal constructor(private val storage: $storageArrayType) : Collection<$elementType> {")
         out.println(
             """
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
@@ -294,17 +296,16 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
 
         out.println("}")
 
+        // TODO: Make inline constructor, like in ByteArray
         out.println()
         out.println("@SinceKotlin(\"1.3\")")
-        out.println("""public /*inline*/ fun $arrayType(size: Int, init: (Int) -> $elementType): $arrayType {
+        out.println("""public inline fun $arrayType(size: Int, init: (Int) -> $elementType): $arrayType {
     return $arrayType($storageArrayType(size) { index -> init(index).to$storageElementType() })
 }
 
-@Suppress("FORBIDDEN_VARARG_PARAMETER_TYPE")
 @SinceKotlin("1.3")
-public fun $arrayTypeOf(vararg elements: $elementType): $arrayType {
-    return $arrayType(elements.size) { index -> elements[index] }
-}"""
+// TODO: @kotlin.internal.InlineOnly
+public inline fun $arrayTypeOf(vararg elements: $elementType): $arrayType = elements"""
         )
     }
 }

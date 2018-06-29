@@ -7,9 +7,11 @@
 
 package kotlin
 
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @SinceKotlin("1.3")
-public inline class ULongArray internal constructor(private val storage: LongArray) : Collection<ULong> {
+public inline class ULongArray
+@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+@PublishedApi
+internal constructor(private val storage: LongArray) : Collection<ULong> {
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): ULong = storage[index].toULong()
@@ -39,12 +41,10 @@ public inline class ULongArray internal constructor(private val storage: LongArr
 }
 
 @SinceKotlin("1.3")
-public /*inline*/ fun ULongArray(size: Int, init: (Int) -> ULong): ULongArray {
+public inline fun ULongArray(size: Int, init: (Int) -> ULong): ULongArray {
     return ULongArray(LongArray(size) { index -> init(index).toLong() })
 }
 
-@Suppress("FORBIDDEN_VARARG_PARAMETER_TYPE")
 @SinceKotlin("1.3")
-public fun ulongArrayOf(vararg elements: ULong): ULongArray {
-    return ULongArray(elements.size) { index -> elements[index] }
-}
+// TODO: @kotlin.internal.InlineOnly
+public inline fun ulongArrayOf(vararg elements: ULong): ULongArray = elements
