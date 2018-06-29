@@ -25,8 +25,6 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 
 class UnsupportedByteCodeException(message: String) : RuntimeException(message)
 
-class Eval4JInterpreterException(override val cause: Throwable) : RuntimeException(cause)
-
 interface Eval {
     fun loadClass(classType: Type): Value
     fun loadString(str: String): Value
@@ -186,7 +184,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                 when {
                     value == NULL_VALUE -> NULL_VALUE
                     eval.isInstanceOf(value, targetType) -> ObjectValue(value.obj(), targetType)
-                    else -> throwEvalException(ClassCastException("${value.asmType.className} cannot be cast to ${targetType.className}"))
+                    else -> throwInterpretingException(ClassCastException("${value.asmType.className} cannot be cast to ${targetType.className}"))
                 }
             }
 
@@ -216,7 +214,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
         }
     }
 
-    private fun divisionByZero(): Nothing = throw Eval4JInterpreterException(ArithmeticException("Division by zero"))
+    private fun divisionByZero(): Nothing = throwInterpretingException(ArithmeticException("Division by zero"))
 
     override fun binaryOperation(insn: AbstractInsnNode, value1: Value, value2: Value): Value? {
         return when (insn.opcode) {
