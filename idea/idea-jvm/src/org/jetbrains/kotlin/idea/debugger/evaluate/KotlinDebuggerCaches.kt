@@ -144,7 +144,7 @@ class KotlinDebuggerCaches(project: Project) {
             val cache = getInstance(runReadAction { psiElement.project })
 
             val file = runReadAction { psiElement.containingFile as KtFile }
-            val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
+            val isInLibrary = runReadAction { LibraryUtil.findLibraryEntry(file.virtualFile, file.project) } != null
 
             val key = if (!isInLibrary) file else psiElement
 
