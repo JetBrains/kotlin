@@ -28,10 +28,13 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
 import org.jetbrains.kotlin.idea.configuration.ModuleSourceRootMap
@@ -43,6 +46,9 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
+import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import org.junit.Test
@@ -2148,6 +2154,88 @@ compileTestKotlin {
         )
 
         assertAllModulesConfigured()
+    }
+
+    @Test
+    fun testStableModuleNameWhileUsingGradle_JS() {
+        createProjectSubFile(
+            "build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50")
+                }
+            }
+
+            apply plugin: 'kotlin2js'
+
+            repositories {
+                mavenCentral()
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.50"
+            }
+
+        """
+        )
+        importProject()
+
+        checkStableModuleName("project_main", "project", JsPlatform, isProduction = true)
+        // Note "_test" suffix: this is current behavior of K2JS Compiler
+        checkStableModuleName("project_test", "project_test", JsPlatform, isProduction = false)
+
+        assertAllModulesConfigured()
+    }
+
+    @Test
+    fun testStableModuleNameWhileUsingGradle_JVM() {
+        createProjectSubFile(
+            "build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            repositories {
+                mavenCentral()
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.50"
+            }
+
+            compileKotlin {
+                kotlinOptions.languageVersion = "1.2"
+            }
+        """
+        )
+        importProject()
+
+        checkStableModuleName("project_main", "project", JvmPlatform, isProduction = true)
+        checkStableModuleName("project_test", "project", JvmPlatform, isProduction = false)
+
+        assertAllModulesConfigured()
+    }
+
+    private fun checkStableModuleName(projectName: String, expectedName: String, platform: TargetPlatform, isProduction: Boolean) {
+        val module = getModule(projectName)
+        val moduleInfo = if (isProduction) module.productionSourceInfo() else module.testSourceInfo()
+
+        val resolutionFacade = KotlinCacheService.getInstance(myProject).getResolutionFacadeByModuleInfo(moduleInfo!!, platform)!!
+        val moduleDescriptor = resolutionFacade.moduleDescriptor
+
+        Assert.assertEquals("<$expectedName>", moduleDescriptor.name.asString())
     }
 
     private fun assertAllModulesConfigured() {

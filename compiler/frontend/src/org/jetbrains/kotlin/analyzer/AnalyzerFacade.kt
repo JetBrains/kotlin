@@ -247,7 +247,11 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private fun createModuleDescriptor(module: M): ModuleData {
         val moduleDescriptor = ModuleDescriptorImpl(
             module.name,
-            projectContext.storageManager, builtIns, modulePlatforms(module), module.capabilities
+            projectContext.storageManager,
+            builtIns,
+            modulePlatforms(module),
+            module.capabilities,
+            module.stableName
         )
         moduleInfoByDescriptor[moduleDescriptor] = module
         setupModuleDescriptor(module, moduleDescriptor)
@@ -274,6 +278,8 @@ interface ModuleInfo {
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = mapOf(Capability to this)
+    val stableName: Name?
+        get() = null
 
     // For common modules, we add built-ins at the beginning of the dependencies list, after the SDK.
     // This is needed because if a JVM module depends on the common module, we should use JVM built-ins for resolution of both modules.

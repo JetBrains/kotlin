@@ -28,9 +28,12 @@ import com.intellij.util.PathUtil
 import junit.framework.TestCase
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
@@ -38,7 +41,10 @@ import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.junit.Assert
 import java.io.File
 
@@ -2772,6 +2778,127 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             LanguageFeature.State.ENABLED,
             getModule("project").languageVersionSettings.getFeatureSupport(LanguageFeature.InlineClasses)
         )
+    }
+
+    fun testStableModuleNameWhileUsingMaven_JVM() {
+        createProjectSubDirs("src/main/kotlin")
+
+        importProject(
+            """
+            <groupId>test</groupId>
+            <artifactId>project</artifactId>
+            <version>1.0.0</version>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib</artifactId>
+                    <version>$kotlinVersion</version>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+                <plugins>
+                    <plugin>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-plugin</artifactId>
+
+                        <executions>
+                            <execution>
+                                <id>compile</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <languageVersion>1.2</languageVersion>
+                            <jvmTarget>1.8</jvmTarget>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            """
+        )
+
+        assertImporterStatePresent()
+
+        checkStableModuleName("project", "project", JvmPlatform, isProduction = true)
+        checkStableModuleName("project", "project", JvmPlatform, isProduction = false)
+    }
+
+    fun testStableModuleNameWhileUsngMaven_JS() {
+        createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
+
+        importProject(
+            """
+            <groupId>test</groupId>
+            <artifactId>project</artifactId>
+            <version>1.0.0</version>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib-js</artifactId>
+                    <version>$kotlinVersion</version>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+                <plugins>
+                    <plugin>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-plugin</artifactId>
+
+                        <executions>
+                            <execution>
+                                <id>compile</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>js</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <languageVersion>1.1</languageVersion>
+                            <apiVersion>1.0</apiVersion>
+                            <multiPlatform>true</multiPlatform>
+                            <nowarn>true</nowarn>
+                            <args>
+                                <arg>-Xcoroutines=enable</arg>
+                            </args>
+                            <sourceMap>true</sourceMap>
+                            <outputFile>test.js</outputFile>
+                            <metaInfo>true</metaInfo>
+                            <moduleKind>commonjs</moduleKind>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            """
+        )
+
+        assertImporterStatePresent()
+
+        // Note that we check name induced by '-output-file' -- may be it's not the best
+        // decision, but we don't have a better one
+        checkStableModuleName("project", "test", JsPlatform, isProduction = true)
+        checkStableModuleName("project", "test", JsPlatform, isProduction = false)
+    }
+
+    private fun checkStableModuleName(projectName: String, expectedName: String, platform: TargetPlatform, isProduction: Boolean) {
+        val module = getModule(projectName)
+        val moduleInfo = if (isProduction) module.productionSourceInfo() else module.testSourceInfo()
+
+        val resolutionFacade = KotlinCacheService.getInstance(myProject).getResolutionFacadeByModuleInfo(moduleInfo!!, platform)!!
+        val moduleDescriptor = resolutionFacade.moduleDescriptor
+
+        Assert.assertEquals("<$expectedName>", moduleDescriptor.name.asString())
     }
 
     private fun assertImporterStatePresent() {

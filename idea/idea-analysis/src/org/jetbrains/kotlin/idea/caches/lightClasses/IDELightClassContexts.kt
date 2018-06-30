@@ -281,7 +281,8 @@ internal object IDELightClassContexts {
     private fun setupAdHocResolve(project: Project, realWorldModule: ModuleDescriptor, files: List<KtFile>): ResolveSession {
         val trace = BindingTraceContext()
         val sm = LockBasedStorageManager.NO_LOCKS
-        val moduleDescriptor = ModuleDescriptorImpl(realWorldModule.name, sm, realWorldModule.builtIns)
+        val moduleDescriptor =
+            ModuleDescriptorImpl(realWorldModule.name, sm, realWorldModule.builtIns, stableName = realWorldModule.stableName)
 
         moduleDescriptor.setDependencies(moduleDescriptor, moduleDescriptor.builtIns.builtInsModule)
 

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunction;
@@ -281,7 +282,13 @@ public class JvmCodegenUtil {
 
     @NotNull
     public static String getModuleName(ModuleDescriptor module) {
-        return StringsKt.removeSurrounding(module.getName().asString(), "<", ">");
+        Name name = module.getStableName();
+        if (name == null) {
+            // Defensive fallback to possibly unstable name, to not fail with exception
+            return StringsKt.removeSurrounding(module.getName().asString(), "<", ">");
+        } else {
+            return StringsKt.removeSurrounding(name.asString(), "<", ">");
+        }
     }
 
     @NotNull

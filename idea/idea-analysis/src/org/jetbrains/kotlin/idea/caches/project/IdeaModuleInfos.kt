@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.getStableName
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
@@ -158,6 +159,8 @@ data class ModuleProductionSourceInfo internal constructor(
 
     override val name = Name.special("<production sources for module ${module.name}>")
 
+    override val stableName: Name = module.getStableName()
+
     override fun contentScope(): GlobalSearchScope = ModuleProductionSourceScope(module)
 
     override fun <T> createCachedValueProvider(f: () -> CachedValueProvider.Result<T>) = CachedValueProvider { f() }
@@ -169,6 +172,8 @@ data class ModuleTestSourceInfo internal constructor(override val module: Module
     ModuleSourceInfoWithExpectedBy(forProduction = false), org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo {
 
     override val name = Name.special("<test sources for module ${module.name}>")
+
+    override val stableName: Name = module.getStableName()
 
     override val displayedName get() = module.name + " (test)"
 
