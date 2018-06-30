@@ -21,6 +21,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
+import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
@@ -62,6 +63,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                     Array(operands.lastIndex) { getTokenBeforeOperand(operands[it + 1]) }.map { it?.toJK() ?: TODO() }
                 )
                 is PsiArrayInitializerExpression -> toJK()
+                is PsiLambdaExpression -> toJK()
                 else -> {
                     throw RuntimeException("Not supported: ${this::class}")
                 }
@@ -109,6 +111,19 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiPostfixExpression.toJK(): JKExpression {
             return JKPostfixExpressionImpl(operand.toJK(), operationSign.toJK())
+        }
+
+        fun PsiLambdaExpression.toJK(): JKExpression {
+            return JKLambdaExpressionImpl(
+                with(declarationMapper) { parameterList.parameters.map { it.toJK() } },
+                JKTypeElementImpl(JKJavaVoidType),
+                body.let {
+                    when (it) {
+                        is PsiExpression -> JKExpressionStatementImpl(it.toJK())
+                        is PsiCodeBlock -> JKBlockStatementImpl(with(declarationMapper) { it.toJK() })
+                        else -> JKBlockStatementImpl(JKBodyStub)
+                    }
+                })
         }
 
         fun PsiMethodCallExpression.toJK(): JKExpression {

@@ -29,7 +29,7 @@ interface JKKtConstructor : JKDeclaration
 
 interface JKKtPrimaryConstructor : JKKtConstructor
 
-interface JKKtAssignmentStatement : JKStatement{
+interface JKKtAssignmentStatement : JKStatement {
     var field: JKAssignableExpression
     var expression: JKExpression
     var operator: JKOperator
@@ -47,6 +47,11 @@ interface JKKtModifier : JKModifier {
 }
 
 interface JKKtMethodCallExpression : JKMethodCallExpression
+
+interface JKKtAlsoCallExpression : JKKtMethodCallExpression {
+    val statement: JKStatement
+    val parameterName: String
+}
 
 interface JKKtFieldAccessExpression : JKFieldAccessExpression
 

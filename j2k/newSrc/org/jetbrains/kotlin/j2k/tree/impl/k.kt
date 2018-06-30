@@ -127,3 +127,28 @@ class JKKtWordOperatorImpl constructor(override val operatorText: String) : JKOp
 class JKKtModifierImpl(override val type: JKKtModifier.KtModifierType) : JKKtModifier, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtModifier(this, data)
 }
+
+class JKKtAlsoCallExpressionImpl(
+    override val statement: JKStatement,
+    override val parameterName: String = "it"
+) : JKKtAlsoCallExpression, JKBranchElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAlsoCallExpression(this, data)
+
+    override val identifier
+        get() = TODO()
+    override var arguments: JKExpressionList by child(
+        JKExpressionListImpl(
+            listOf(
+                JKLambdaExpressionImpl(
+                    listOf(
+                        JKParameterImpl(
+                            JKTypeElementImpl(JKJavaVoidType),
+                            JKNameIdentifierImpl(parameterName),
+                            JKModifierListImpl()
+                        )
+                    ), JKTypeElementImpl(JKJavaVoidType), statement
+                )
+            )
+        )
+    )
+}

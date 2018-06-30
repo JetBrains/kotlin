@@ -310,3 +310,11 @@ class JKModalityModifierImpl(override val modality: JKModalityModifier.Modality)
 class JKAccessModifierImpl(override val visibility: JKAccessModifier.Visibility) : JKAccessModifier, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAccessModifier(this, data)
 }
+
+class JKLambdaExpressionImpl(parameters: List<JKParameter>, returnType: JKTypeElement, statement: JKStatement) :
+    JKLambdaExpression, JKBranchElementBase() {
+    override var statement by child(statement)
+    override val returnType by child(returnType)
+    override var parameters by children(parameters)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLambdaExpression(this, data)
+}
