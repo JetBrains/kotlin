@@ -21,7 +21,7 @@ private class TemplateAnnotationVisitor(val anns: ArrayList<BinAnnData> = arrayL
 private class TemplateClassVisitor(val annVisitor: TemplateAnnotationVisitor) : ClassVisitor(Opcodes.ASM5) {
     override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
         val shortName = Type.getType(desc).internalName.substringAfterLast("/")
-        if (shortName.startsWith("KotlinScript")) {
+        if (shortName.startsWith("KotlinScript") || shortName.startsWith("ScriptTemplate")) {
             annVisitor.anns.add(BinAnnData(shortName))
             return annVisitor
         }
