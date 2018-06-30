@@ -395,6 +395,7 @@ val String.wcstr: CValues<ShortVar>
  *
  * @return the [kotlin.String] decoded from given zero-terminated UTF-8-encoded C string.
  */
+// TODO: optimize
 fun CPointer<ByteVar>.toKString(): String {
     val nativeBytes = this
 
