@@ -229,3 +229,9 @@ interface JKIfElseExpression : JKExpression {
 }
 
 interface JKAssignableExpression : JKExpression
+
+interface JKLambdaExpression : JKExpression {
+    var parameters: List<JKParameter>
+    val returnType: JKTypeElement
+    var statement: JKStatement
+}
