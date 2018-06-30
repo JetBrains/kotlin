@@ -234,7 +234,7 @@ class KotlinIndicesHelper(
     fun getJvmClassesByName(name: String): Collection<ClassDescriptor> {
         return PsiShortNamesCache.getInstance(project).getClassesByName(name, scope)
                 .filter { it in scope && it.containingFile != null }
-                .mapNotNull { it.resolveToDescriptor(resolutionFacade) }
+                .mapNotNull { it.getJavaMemberDescriptor() as? ClassDescriptor }
                 .filter(descriptorFilter)
                 .toSet()
     }
