@@ -1,0 +1,4 @@
+package
+
+public fun case_1(): kotlin.String
+public fun case_2(): kotlin.String
