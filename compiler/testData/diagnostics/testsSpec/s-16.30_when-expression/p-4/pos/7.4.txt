@@ -1,0 +1,9 @@
+package
+
+public fun case_1(/*0*/ value: kotlin.Boolean, /*1*/ value1: kotlin.Int, /*2*/ value2: kotlin.Int): kotlin.String
+public fun case_2(/*0*/ value: kotlin.Boolean, /*1*/ value1: kotlin.Int, /*2*/ value2: kotlin.Int): kotlin.String
+public fun case_3(/*0*/ value: kotlin.Boolean): kotlin.String
+public fun case_4(/*0*/ value: kotlin.Boolean): kotlin.String
+public fun case_5(/*0*/ value: kotlin.Boolean): kotlin.String
+public fun case_6(/*0*/ value: kotlin.Boolean): kotlin.String
+public fun case_7(/*0*/ value: kotlin.Boolean): kotlin.String
