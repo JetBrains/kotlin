@@ -123,6 +123,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             directives: Map<String, String>
     ) {
         private val diagnosedRanges: List<CheckerTestUtil.DiagnosedRange> = ArrayList()
+        val actualDiagnostics: MutableList<ActualDiagnostic> = ArrayList()
         val expectedText: String
         private val clearText: String
         private val createKtFile: Lazy<KtFile?>
@@ -234,6 +235,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     ) + jvmSignatureDiagnostics,
                     { whatDiagnosticsToConsider.value(it.diagnostic) }
             )
+
+            actualDiagnostics.addAll(diagnostics)
 
             val uncheckedDiagnostics = mutableListOf<PositionalTextDiagnostic>()
             val inferenceCompatibilityOfTest = asInferenceCompatibility(withNewInference)
