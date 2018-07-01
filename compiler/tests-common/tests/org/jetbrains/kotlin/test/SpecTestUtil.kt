@@ -83,7 +83,7 @@ abstract class SpecTestValidator(private val testDataFile: File, private val tes
     protected val testInfo by lazy { testInfoByContent }
 
     companion object {
-        const val specUrl = "https://petukhovvictor.github.io/kotlin-spec"
+        const val specUrl = "https://jetbrains.github.io/kotlin-spec/"
 
         private const val integerRegex = "[1-9]\\d*"
         private const val testPathRegex =
@@ -184,7 +184,7 @@ abstract class SpecTestValidator(private val testDataFile: File, private val tes
         println("--------------------------------------------------")
         println("${testInfoByFilename.testType} ${testArea.title} SPEC TEST")
         println("SECTION: ${testInfoByFilename.sectionNumber} ${testInfoByContent.sectionName} (paragraph: ${testInfoByFilename.paragraphNumber})")
-        println("SENTENCE ${testInfoByContent.sentenceNumber} [$specSentenceUrl]: ${testInfoByContent.sentence}")
+        println("SENTENCE ${testInfoByContent.sentenceNumber}: ${testInfoByContent.sentence}")
         println("TEST NUMBER: ${testInfoByContent.testNumber}")
         println("NUMBER OF TEST CASES: ${testInfoByContent.cases!!.size}")
         println("DESCRIPTION: ${testInfoByContent.description}")
