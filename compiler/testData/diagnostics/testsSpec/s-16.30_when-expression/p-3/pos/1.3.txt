@@ -1,0 +1,3 @@
+package
+
+public fun case_1(/*0*/ value: kotlin.Int, /*1*/ value1: kotlin.Boolean, /*2*/ value2: kotlin.Byte, /*3*/ value3: kotlin.Short, /*4*/ value4: kotlin.Int, /*5*/ value5: kotlin.Long, /*6*/ value6: kotlin.Float, /*7*/ value7: kotlin.Double, /*8*/ value8: kotlin.String, /*9*/ value9: kotlin.Char, /*10*/ obj1: kotlin.collections.List<kotlin.String>, /*11*/ obj2: kotlin.collections.List<kotlin.String>, /*12*/ obj3: kotlin.Nothing, /*13*/ obj4: kotlin.Any): kotlin.Unit

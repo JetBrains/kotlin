@@ -1,0 +1,11 @@
+package
+
+public fun case_1(/*0*/ value: kotlin.Int, /*1*/ value1: A): kotlin.String
+public fun case_2(/*0*/ value: kotlin.Int, /*1*/ value1: kotlin.Int, /*2*/ value2: kotlin.Any, /*3*/ value3: kotlin.Nothing, /*4*/ value4: kotlin.Unit, /*5*/ value5: kotlin.collections.Map<kotlin.Int, kotlin.Int>): kotlin.String
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

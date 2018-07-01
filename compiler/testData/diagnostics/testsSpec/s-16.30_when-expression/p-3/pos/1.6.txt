@@ -1,0 +1,69 @@
+package
+
+public fun case_1(/*0*/ value: kotlin.Int, /*1*/ value1: kotlin.Int, /*2*/ value2: kotlin.Boolean?, /*3*/ value3: Direction?, /*4*/ value4: Expr?): kotlin.Unit
+
+public final data class Const : Expr {
+    public constructor Const(/*0*/ number: kotlin.Int)
+    public final val number: kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ number: kotlin.Int = ...): Const
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final enum class Direction : kotlin.Enum<Direction> {
+    enum entry NORTH
+
+    enum entry SOUTH
+
+    enum entry WEST
+
+    enum entry EAST
+
+    private constructor Direction()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Direction): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<Direction!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Direction
+    public final /*synthesized*/ fun values(): kotlin.Array<Direction>
+}
+
+public sealed class Expr {
+    private constructor Expr()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final data class Mul : Expr {
+    public constructor Mul(/*0*/ m1: kotlin.Int, /*1*/ m2: kotlin.Int)
+    public final val m1: kotlin.Int
+    public final val m2: kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component2(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ m1: kotlin.Int = ..., /*1*/ m2: kotlin.Int = ...): Mul
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Sum : Expr {
+    public constructor Sum(/*0*/ e1: kotlin.Int, /*1*/ e2: kotlin.Int)
+    public final val e1: kotlin.Int
+    public final val e2: kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component2(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ e1: kotlin.Int = ..., /*1*/ e2: kotlin.Int = ...): Sum
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

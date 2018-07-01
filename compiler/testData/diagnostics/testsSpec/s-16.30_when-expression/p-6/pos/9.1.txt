@@ -1,0 +1,4 @@
+package
+
+public fun case_1(/*0*/ value: kotlin.Boolean?): kotlin.String
+public fun case_2(/*0*/ value: kotlin.Boolean?): kotlin.String
