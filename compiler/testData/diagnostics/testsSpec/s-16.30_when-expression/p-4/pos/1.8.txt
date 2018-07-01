@@ -1,0 +1,3 @@
+package
+
+public fun case_1(/*0*/ value: kotlin.Int, /*1*/ value1: kotlin.String, /*2*/ value2: kotlin.String): kotlin.Unit

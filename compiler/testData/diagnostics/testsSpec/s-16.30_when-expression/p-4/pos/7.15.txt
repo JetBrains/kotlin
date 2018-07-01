@@ -1,0 +1,13 @@
+package
+
+public fun case_1(/*0*/ value: kotlin.Int?, /*1*/ value1: kotlin.collections.List<kotlin.Int>, /*2*/ value2: A, /*3*/ value3: A?): kotlin.String
+public fun case_2(/*0*/ value: kotlin.Int?, /*1*/ value1: kotlin.collections.List<kotlin.Int>, /*2*/ value2: A, /*3*/ value3: A?): kotlin.String
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun mul(/*0*/ value: kotlin.Int): kotlin.Int
+    public final fun nestedMul(/*0*/ value1: kotlin.Int): (kotlin.Int) -> kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
