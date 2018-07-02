@@ -63,6 +63,7 @@ internal abstract class AbstractSet(val type: Int = 0) {
             override fun hasConsumed(matchResult: MatchResultImpl): Boolean =
                 throw AssertionError("This method is not expected to be called.")
             override fun processSecondPassInternal(): AbstractSet = this
+            override fun processSecondPass(): AbstractSet = this
         }
     }
 
@@ -151,7 +152,7 @@ internal abstract class AbstractSet(val type: Int = 0) {
     /**
      * This method performs the second pass without checking if it's already performed or not.
      */
-    open fun processSecondPassInternal(): AbstractSet {
+    protected open fun processSecondPassInternal(): AbstractSet {
         if (!next.secondPassVisited) {
             this.next = next.processSecondPass()
         }

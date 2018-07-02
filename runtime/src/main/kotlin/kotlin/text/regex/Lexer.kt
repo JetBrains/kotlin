@@ -772,15 +772,15 @@ internal class Lexer(val patternString: String, flags: Int) {
          * to description at http://www.unicode.org/versions/Unicode4.0.0/ch03.pdf
          * "3.12 Conjoining Jamo Behavior"
          */
-        val SBase = 0xAC00
-        val LBase = 0x1100
-        val VBase = 0x1161
-        val TBase = 0x11A7
-        val SCount = 11172
-        val LCount = 19
-        val VCount = 21
-        val TCount = 28
-        val NCount = 588
+        const val SBase = 0xAC00
+        const val LBase = 0x1100
+        const val VBase = 0x1161
+        const val TBase = 0x11A7
+        const val SCount = 11172
+        const val LCount = 19
+        const val VCount = 21
+        const val TCount = 28
+        const val NCount = 588
 
         // Access to the decomposition tables. =========================================================================
         /** Gets canonical class for given codepoint from decomposition mappings table. */
