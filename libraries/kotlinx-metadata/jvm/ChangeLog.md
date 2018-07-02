@@ -1,5 +1,9 @@
 # kotlinx-metadata-jvm
 
+## 0.0.4
+
+- [`KT-25223`](https://youtrack.jetbrains.com/issue/KT-25223) Add JvmFunctionExtensionVisitor.visitEnd
+
 ## 0.0.3
 
 - Support metadata of local delegated properties (see `JvmDeclarationContainerExtensionVisitor.visitLocalDelegatedProperty`)

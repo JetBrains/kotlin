@@ -52,6 +52,8 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         if (lambdaClassOriginName != null) {
             ext.visitLambdaClassOriginName(c[lambdaClassOriginName])
         }
+
+        ext.visitEnd()
     }
 
     override fun readPropertyExtensions(v: KmPropertyVisitor, proto: ProtoBuf.Property, c: ReadContext) {
