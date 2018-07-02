@@ -22,6 +22,7 @@ import com.intellij.debugger.engine.DebuggerUtils
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.sun.jdi.AbsentInformationException
+import com.sun.jdi.ObjectCollectedException
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClassOrNull
@@ -268,7 +269,14 @@ private fun String.toJdiName() = replace('/', '.')
 
 private fun DebugProcess.findTargetClasses(outerClass: ReferenceType, lineAt: Int): List<ReferenceType> {
     val vmProxy = virtualMachineProxy
-    if (!outerClass.isPrepared) return emptyList()
+
+    try {
+        if (!outerClass.isPrepared) {
+            return emptyList()
+        }
+    } catch (e: ObjectCollectedException) {
+        return emptyList()
+    }
 
     val targetClasses = ArrayList<ReferenceType>(1)
 
