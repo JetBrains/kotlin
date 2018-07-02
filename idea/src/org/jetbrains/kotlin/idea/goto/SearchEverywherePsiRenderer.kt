@@ -30,6 +30,7 @@ import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.ui.FilePathSplittingPolicy
+import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -43,7 +44,7 @@ import javax.swing.JList
 
 // Mostly copied from com.intellij.ide.actions.SearchEverywherePsiRenderer
 // TODO: Drop copied code when SearchEverywherePsiRenderer becomes public
-internal class KotlinSearchEverywherePsiRenderer(private val myList: JList<*>) : PsiElementListCellRenderer<PsiElement>() {
+internal class KotlinSearchEverywherePsiRenderer(private val myList: JList<*>) : DefaultPsiElementCellRenderer() {
     companion object {
         private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
@@ -71,7 +72,7 @@ internal class KotlinSearchEverywherePsiRenderer(private val myList: JList<*>) :
     }
 
     override fun getElementText(element: PsiElement?): String {
-        if (element !is KtNamedFunction) return ""
+        if (element !is KtNamedFunction) return super.getElementText(element)
         val descriptor = element.resolveToDescriptorIfAny() ?: return ""
         return buildString {
             descriptor.extensionReceiverParameter?.let { append(RENDERER.renderType(it.type)).append('.') }
