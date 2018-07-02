@@ -22,7 +22,13 @@ fun IrType.withHasQuestionMark(hasQuestionMark: Boolean): IrType =
             if (this.hasQuestionMark == hasQuestionMark)
                 this
             else
-                IrSimpleTypeImpl(originalKotlinType, classifier, hasQuestionMark, arguments, annotations)
+                IrSimpleTypeImpl(
+                    makeKotlinType(classifier, arguments, hasQuestionMark),
+                    classifier,
+                    hasQuestionMark,
+                    arguments,
+                    annotations
+                )
         else -> this
     }
 
@@ -35,7 +41,7 @@ val IrType.classifierOrNull: IrClassifierSymbol?
 fun IrType.makeNotNull() =
     if (this is IrSimpleType && this.hasQuestionMark)
         IrSimpleTypeImpl(
-            originalKotlinType,
+            makeKotlinType(classifier, arguments, false),
             classifier,
             false,
             arguments,
@@ -48,7 +54,7 @@ fun IrType.makeNotNull() =
 fun IrType.makeNullable() =
     if (this is IrSimpleType && !this.hasQuestionMark)
         IrSimpleTypeImpl(
-            originalKotlinType,
+            makeKotlinType(classifier, arguments, true),
             classifier,
             true,
             arguments,
@@ -64,20 +70,24 @@ fun IrType.toKotlinType(): KotlinType {
     }
 
     return when (this) {
-        is IrSimpleType -> {
-            val classifier = classifier.descriptor
-            val arguments = arguments.mapIndexed { index, it ->
-                when (it) {
-                    is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toKotlinType())
-                    is IrStarProjection -> StarProjectionImpl((classifier as ClassDescriptor).declaredTypeParameters[index])
-                    else -> error(it)
-                }
-            }
-
-            classifier.defaultType.replace(newArguments = arguments).makeNullableAsSpecified(hasQuestionMark)
-        }
+        is IrSimpleType -> makeKotlinType(classifier, arguments, hasQuestionMark)
         else -> TODO(toString())
     }
+}
+
+private fun makeKotlinType(
+    classifier: IrClassifierSymbol,
+    arguments: List<IrTypeArgument>,
+    hasQuestionMark: Boolean
+): SimpleType {
+    val kotlinTypeArguments = arguments.mapIndexed { index, it ->
+        when (it) {
+            is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toKotlinType())
+            is IrStarProjection -> StarProjectionImpl((classifier.descriptor as ClassDescriptor).declaredTypeParameters[index])
+            else -> error(it)
+        }
+    }
+    return classifier.descriptor.defaultType.replace(newArguments = kotlinTypeArguments).makeNullableAsSpecified(hasQuestionMark)
 }
 
 fun ClassifierDescriptor.toIrType(hasQuestionMark: Boolean = false): IrType {

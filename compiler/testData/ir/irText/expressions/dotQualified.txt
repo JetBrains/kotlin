@@ -9,15 +9,15 @@ FILE fqName:<root> fileName:/dotQualified.kt
     VALUE_PARAMETER name:s index:0 type:kotlin.String? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='lengthN(String?): Int?'
-        BLOCK type=kotlin.Int origin=SAFE_CALL
+        BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? flags:val
             GET_VAR 'value-parameter s: String?' type=kotlin.String? origin=null
-          WHEN type=kotlin.Int origin=null
+          WHEN type=kotlin.Int? origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
-              then: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY

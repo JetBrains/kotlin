@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/elvis.kt
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: GET_VAR 'value-parameter b: Any' type=kotlin.Any origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/elvis.kt
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_elvis_lhs: String?' type=kotlin.String? origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: GET_VAR 'value-parameter b: Any' type=kotlin.Any origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/elvis.kt
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
                 typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
                 GET_VAR 'value-parameter b: Any?' type=kotlin.Any? origin=null
@@ -92,7 +92,7 @@ FILE fqName:<root> fileName:/elvis.kt
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
@@ -108,7 +108,7 @@ FILE fqName:<root> fileName:/elvis.kt
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true

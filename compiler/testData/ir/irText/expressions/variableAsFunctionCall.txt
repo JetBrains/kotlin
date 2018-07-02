@@ -32,29 +32,29 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
     VALUE_PARAMETER name:ns index:0 type:kotlin.String? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test4(String?): String?'
-        BLOCK type=kotlin.String origin=SAFE_CALL
-          VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:() -> kotlin.String flags:val
-            BLOCK type=() -> kotlin.String origin=SAFE_CALL
+        BLOCK type=kotlin.String? origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:(() -> kotlin.String)? flags:val
+            BLOCK type=(() -> kotlin.String)? origin=SAFE_CALL
               VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? flags:val
                 GET_VAR 'value-parameter ns: String?' type=kotlin.String? origin=null
-              WHEN type=() -> kotlin.String origin=null
+              WHEN type=(() -> kotlin.String)? origin=null
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
-                    arg1: CONST Null type=kotlin.Nothing value=null
-                  then: CONST Null type=kotlin.Nothing value=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'k() on String: () -> String' type=() -> kotlin.String origin=null
                     $receiver: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
-          WHEN type=kotlin.String origin=null
+          WHEN type=kotlin.String? origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'tmp1_safe_receiver: () -> String' type=() -> kotlin.String origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
-              then: CONST Null type=kotlin.Nothing value=null
+                arg0: GET_VAR 'tmp1_safe_receiver: (() -> String)?' type=(() -> kotlin.String)? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'invoke(): String' type=kotlin.String origin=null
-                $this: GET_VAR 'tmp1_safe_receiver: () -> String' type=() -> kotlin.String origin=null
+                $this: GET_VAR 'tmp1_safe_receiver: (() -> String)?' type=(() -> kotlin.String)? origin=null
 

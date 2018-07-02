@@ -32,21 +32,21 @@ FILE fqName:<root> fileName:/chainOfSafeCalls.kt
     VALUE_PARAMETER name:nc index:0 type:C? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(C?): C?'
-        BLOCK type=C origin=SAFE_CALL
-          VAR IR_TEMPORARY_VARIABLE name:tmp3_safe_receiver type:C flags:val
-            BLOCK type=C origin=SAFE_CALL
+        BLOCK type=C? origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp3_safe_receiver type:C? flags:val
+            BLOCK type=C? origin=SAFE_CALL
               VAR IR_TEMPORARY_VARIABLE name:tmp2_safe_receiver type:C? flags:val
                 BLOCK type=C? origin=SAFE_CALL
-                  VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:C flags:val
-                    BLOCK type=C origin=SAFE_CALL
+                  VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:C? flags:val
+                    BLOCK type=C? origin=SAFE_CALL
                       VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:C? flags:val
                         GET_VAR 'value-parameter nc: C?' type=C? origin=null
-                      WHEN type=C origin=null
+                      WHEN type=C? origin=null
                         BRANCH
                           if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                             arg0: GET_VAR 'tmp0_safe_receiver: C?' type=C? origin=null
-                            arg1: CONST Null type=kotlin.Nothing value=null
-                          then: CONST Null type=kotlin.Nothing value=null
+                            arg1: CONST Null type=kotlin.Nothing? value=null
+                          then: CONST Null type=kotlin.Nothing? value=null
                         BRANCH
                           if: CONST Boolean type=kotlin.Boolean value=true
                           then: CALL 'foo(): C' type=C origin=null
@@ -54,31 +54,31 @@ FILE fqName:<root> fileName:/chainOfSafeCalls.kt
                   WHEN type=C? origin=null
                     BRANCH
                       if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'tmp1_safe_receiver: C' type=C origin=null
-                        arg1: CONST Null type=kotlin.Nothing value=null
-                      then: CONST Null type=kotlin.Nothing value=null
+                        arg0: GET_VAR 'tmp1_safe_receiver: C?' type=C? origin=null
+                        arg1: CONST Null type=kotlin.Nothing? value=null
+                      then: CONST Null type=kotlin.Nothing? value=null
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: CALL 'bar(): C?' type=C? origin=null
-                        $this: GET_VAR 'tmp1_safe_receiver: C' type=C origin=null
-              WHEN type=C origin=null
+                        $this: GET_VAR 'tmp1_safe_receiver: C?' type=C? origin=null
+              WHEN type=C? origin=null
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp2_safe_receiver: C?' type=C? origin=null
-                    arg1: CONST Null type=kotlin.Nothing value=null
-                  then: CONST Null type=kotlin.Nothing value=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'foo(): C' type=C origin=null
                     $this: GET_VAR 'tmp2_safe_receiver: C?' type=C? origin=null
-          WHEN type=C origin=null
+          WHEN type=C? origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'tmp3_safe_receiver: C' type=C origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
-              then: CONST Null type=kotlin.Nothing value=null
+                arg0: GET_VAR 'tmp3_safe_receiver: C?' type=C? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'foo(): C' type=C origin=null
-                $this: GET_VAR 'tmp3_safe_receiver: C' type=C origin=null
+                $this: GET_VAR 'tmp3_safe_receiver: C?' type=C? origin=null
 

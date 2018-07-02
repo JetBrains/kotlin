@@ -624,7 +624,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
               BRANCH
                 if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                   arg0: GET_VAR 'tmp1: Array<Any>?' type=kotlin.Array<kotlin.Any>? origin=null
-                  arg1: CONST Null type=kotlin.Nothing value=null
+                  arg1: CONST Null type=kotlin.Nothing? value=null
                 then: CONST Int type=kotlin.Int value=0
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true

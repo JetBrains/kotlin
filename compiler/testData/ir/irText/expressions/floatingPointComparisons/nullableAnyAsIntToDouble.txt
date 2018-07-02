@@ -10,15 +10,15 @@ FILE fqName:<root> fileName:/nullableAnyAsIntToDouble.kt
               typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
               GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
             then: CALL 'less(Double, Double): Boolean' type=kotlin.Boolean origin=LT
-              arg0: BLOCK type=kotlin.Double origin=SAFE_CALL
+              arg0: BLOCK type=kotlin.Double? origin=SAFE_CALL
                 VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:val
                   GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
-                WHEN type=kotlin.Double origin=null
+                WHEN type=kotlin.Double? origin=null
                   BRANCH
                     if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                       arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
-                      arg1: CONST Null type=kotlin.Nothing value=null
-                    then: CONST Null type=kotlin.Nothing value=null
+                      arg1: CONST Null type=kotlin.Nothing? value=null
+                    then: CONST Null type=kotlin.Nothing? value=null
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'toDouble(): Double' type=kotlin.Double origin=null

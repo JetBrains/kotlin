@@ -246,7 +246,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
               BRANCH
                 if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                   arg0: GET_VAR 'tmp1: Any?' type=kotlin.Any? origin=null
-                  arg1: CONST Null type=kotlin.Nothing value=null
+                  arg1: CONST Null type=kotlin.Nothing? value=null
                 then: CONST Int type=kotlin.Int value=0
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -441,7 +441,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp1: Double?' type=kotlin.Double? origin=null
-                    arg1: CONST Null type=kotlin.Nothing value=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
                   then: CONST Int type=kotlin.Int value=0
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
@@ -468,7 +468,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp2: Float?' type=kotlin.Float? origin=null
-                    arg1: CONST Null type=kotlin.Nothing value=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
                   then: CONST Int type=kotlin.Int value=0
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true

@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_elvis_lhs: Boolean?' type=kotlin.Boolean? origin=null
-                    arg1: CONST Null type=kotlin.Nothing value=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
                   then: BREAK label=null loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_elvis_lhs: Boolean?' type=kotlin.Boolean? origin=null
-                    arg1: CONST Null type=kotlin.Nothing value=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
                   then: CONTINUE label=null loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                     BRANCH
                       if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'tmp0_elvis_lhs: List<String>?' type=kotlin.collections.List<kotlin.String>? origin=null
-                        arg1: CONST Null type=kotlin.Nothing value=null
+                        arg1: CONST Null type=kotlin.Nothing? value=null
                       then: CONTINUE label=null loop.label=L
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
@@ -81,7 +81,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                     BRANCH
                       if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'tmp0_elvis_lhs: List<String>?' type=kotlin.collections.List<kotlin.String>? origin=null
-                        arg1: CONST Null type=kotlin.Nothing value=null
+                        arg1: CONST Null type=kotlin.Nothing? value=null
                       then: BREAK label=null loop.label=L
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true

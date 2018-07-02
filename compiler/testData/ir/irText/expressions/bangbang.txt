@@ -3,14 +3,14 @@ FILE fqName:<root> fileName:/bangbang.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Any?): Any'
-        BLOCK type=kotlin.Any? origin=EXCLEXCL
+        BLOCK type=kotlin.Any origin=EXCLEXCL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_notnull type:kotlin.Any? flags:val
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
-          WHEN type=kotlin.Any? origin=null
+          WHEN type=kotlin.Any origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_notnull: Any?' type=kotlin.Any? origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
@@ -20,16 +20,16 @@ FILE fqName:<root> fileName:/bangbang.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(Any?): Int'
         BLOCK type=kotlin.Int origin=EXCLEXCL
-          VAR IR_TEMPORARY_VARIABLE name:tmp1_notnull type:kotlin.Int flags:val
-            BLOCK type=kotlin.Int origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_notnull type:kotlin.Int? flags:val
+            BLOCK type=kotlin.Int? origin=SAFE_CALL
               VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:val
                 GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
-              WHEN type=kotlin.Int origin=null
+              WHEN type=kotlin.Int? origin=null
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
-                    arg1: CONST Null type=kotlin.Nothing value=null
-                  then: CONST Null type=kotlin.Nothing value=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'hashCode(): Int' type=kotlin.Int origin=null
@@ -37,10 +37,10 @@ FILE fqName:<root> fileName:/bangbang.kt
           WHEN type=kotlin.Int origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'tmp1_notnull: Int' type=kotlin.Int origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
+                arg0: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
               then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: GET_VAR 'tmp1_notnull: Int' type=kotlin.Int origin=null
+              then: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? origin=null
 

@@ -34,15 +34,15 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='inc() on Int?: Int?'
-        BLOCK type=kotlin.Int origin=SAFE_CALL
+        BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Int? flags:val
             GET_VAR 'this@inc: Int?' type=kotlin.Int? origin=null
-          WHEN type=kotlin.Int origin=null
+          WHEN type=kotlin.Int? origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_safe_receiver: Int?' type=kotlin.Int? origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
-              then: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'inc(): Int' type=kotlin.Int origin=null
@@ -68,8 +68,10 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
-              arg1: CONST Null type=kotlin.Nothing value=null
-            then: CONST Null type=kotlin.Nothing value=null
+              arg1: CONST Null type=kotlin.Nothing? value=null
+            then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+              CONST Null type=kotlin.Nothing? value=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -92,16 +94,16 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE name:tmp1_array type:kotlin.Int flags:val
-            BLOCK type=kotlin.Int origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_array type:kotlin.Int? flags:val
+            BLOCK type=kotlin.Int? origin=SAFE_CALL
               VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:test.C? flags:val
                 GET_VAR 'value-parameter nc: C?' type=test.C? origin=null
-              WHEN type=kotlin.Int origin=null
+              WHEN type=kotlin.Int? origin=null
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
-                    arg1: CONST Null type=kotlin.Nothing value=null
-                  then: CONST Null type=kotlin.Nothing value=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL '<get-p>() on C?: Int' type=kotlin.Int origin=GET_PROPERTY
@@ -110,10 +112,10 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
             CONST Int type=kotlin.Int value=0
           VAR IR_TEMPORARY_VARIABLE name:tmp3 type:kotlin.Int flags:val
             CALL 'get(Int) on Int?: Int' type=kotlin.Int origin=POSTFIX_INCR
-              $receiver: GET_VAR 'tmp1_array: Int' type=kotlin.Int origin=null
+              $receiver: GET_VAR 'tmp1_array: Int?' type=kotlin.Int? origin=null
               index: GET_VAR 'tmp2_index0: Int' type=kotlin.Int origin=null
           CALL 'set(Int, Int) on Int?: Unit' type=kotlin.Unit origin=POSTFIX_INCR
-            $receiver: GET_VAR 'tmp1_array: Int' type=kotlin.Int origin=null
+            $receiver: GET_VAR 'tmp1_array: Int?' type=kotlin.Int? origin=null
             index: GET_VAR 'tmp2_index0: Int' type=kotlin.Int origin=null
             value: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
               $this: GET_VAR 'tmp3: Int' type=kotlin.Int origin=null

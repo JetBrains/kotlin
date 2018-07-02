@@ -64,15 +64,15 @@ FILE fqName:<root> fileName:/safeCalls.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.String? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(String?): Int?'
-        BLOCK type=kotlin.Int origin=SAFE_CALL
+        BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? flags:val
             GET_VAR 'value-parameter x: String?' type=kotlin.String? origin=null
-          WHEN type=kotlin.Int origin=null
+          WHEN type=kotlin.Int? origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
-              then: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
@@ -81,15 +81,15 @@ FILE fqName:<root> fileName:/safeCalls.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.String? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(String?): Int?'
-        BLOCK type=kotlin.Int origin=SAFE_CALL
+        BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? flags:val
             GET_VAR 'value-parameter x: String?' type=kotlin.String? origin=null
-          WHEN type=kotlin.Int origin=null
+          WHEN type=kotlin.Int? origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
-              then: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'hashCode(): Int' type=kotlin.Int origin=null
@@ -99,15 +99,15 @@ FILE fqName:<root> fileName:/safeCalls.kt
     VALUE_PARAMETER name:y index:1 type:kotlin.Any? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(String?, Any?): Boolean?'
-        BLOCK type=kotlin.Boolean origin=SAFE_CALL
+        BLOCK type=kotlin.Boolean? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? flags:val
             GET_VAR 'value-parameter x: String?' type=kotlin.String? origin=null
-          WHEN type=kotlin.Boolean origin=null
+          WHEN type=kotlin.Boolean? origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
-              then: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
@@ -123,8 +123,10 @@ FILE fqName:<root> fileName:/safeCalls.kt
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_safe_receiver: Ref?' type=Ref? origin=null
-              arg1: CONST Null type=kotlin.Nothing value=null
-            then: CONST Null type=kotlin.Nothing value=null
+              arg1: CONST Null type=kotlin.Nothing? value=null
+            then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+              CONST Null type=kotlin.Nothing? value=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL '<set-value>(Int): Unit' type=kotlin.Unit origin=EQ
@@ -135,15 +137,15 @@ FILE fqName:<root> fileName:/safeCalls.kt
     VALUE_PARAMETER name:s index:0 type:kotlin.String? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test5(String?) on IHost: Int?'
-        BLOCK type=kotlin.Int origin=SAFE_CALL
+        BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? flags:val
             GET_VAR 'value-parameter s: String?' type=kotlin.String? origin=null
-          WHEN type=kotlin.Int origin=null
+          WHEN type=kotlin.Int? origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
-              then: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'extLength() on String: Int' type=kotlin.Int origin=null
@@ -158,15 +160,15 @@ FILE fqName:<root> fileName:/safeCalls.kt
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-        BLOCK type=kotlin.Int origin=SAFE_CALL
+        BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Int flags:val
             CONST Int type=kotlin.Int value=42
-          WHEN type=kotlin.Int origin=null
+          WHEN type=kotlin.Int? origin=null
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_safe_receiver: Int' type=kotlin.Int origin=null
-                arg1: CONST Null type=kotlin.Nothing value=null
-              then: CONST Null type=kotlin.Nothing value=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'foo() on Int: Int' type=kotlin.Int origin=null

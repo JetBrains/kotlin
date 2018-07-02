@@ -10,14 +10,14 @@ FILE fqName:<root> fileName:/eqeqRhsConditionPossiblyAffectingLhs.kt
               if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
                 typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
                 GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
-              then: BLOCK type=kotlin.Nothing? origin=EXCLEXCL
+              then: BLOCK type=kotlin.Nothing origin=EXCLEXCL
                 VAR IR_TEMPORARY_VARIABLE name:tmp0_notnull type:kotlin.Nothing? flags:val
                   CONST Null type=kotlin.Nothing? value=null
-                WHEN type=kotlin.Nothing? origin=null
+                WHEN type=kotlin.Nothing origin=null
                   BRANCH
                     if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                       arg0: GET_VAR 'tmp0_notnull: Nothing?' type=kotlin.Nothing? origin=null
-                      arg1: CONST Null type=kotlin.Nothing value=null
+                      arg1: CONST Null type=kotlin.Nothing? value=null
                     then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
