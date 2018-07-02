@@ -953,9 +953,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/annotations/kt1860-positive.kt");
             }
 
-            @TestMetadata("kt1886annotationBody.kt")
-            public void testKt1886annotationBody() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/annotations/kt1886annotationBody.kt");
+            @TestMetadata("kt1886annotationBody_after.kt")
+            public void testKt1886annotationBody_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/kt1886annotationBody_after.kt");
+            }
+
+            @TestMetadata("kt1886annotationBody_before.kt")
+            public void testKt1886annotationBody_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/kt1886annotationBody_before.kt");
             }
 
             @TestMetadata("missingValOnParameter.kt")
@@ -1115,9 +1120,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/compareAndEquals.kt");
                 }
 
-                @TestMetadata("enumConst.kt")
-                public void testEnumConst() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/enumConst.kt");
+                @TestMetadata("enumConst_after.kt")
+                public void testEnumConst_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/enumConst_after.kt");
+                }
+
+                @TestMetadata("enumConst_before.kt")
+                public void testEnumConst_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/enumConst_before.kt");
                 }
 
                 @TestMetadata("javaProperties.kt")
@@ -1404,9 +1414,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/FieldAnnotations.kt");
                 }
 
-                @TestMetadata("fileAnnotationWithoutColon.kt")
-                public void testFileAnnotationWithoutColon() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/fileAnnotationWithoutColon.kt");
+                @TestMetadata("fileAnnotationWithoutColon_after.kt")
+                public void testFileAnnotationWithoutColon_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/fileAnnotationWithoutColon_after.kt");
+                }
+
+                @TestMetadata("fileAnnotationWithoutColon_before.kt")
+                public void testFileAnnotationWithoutColon_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/fileAnnotationWithoutColon_before.kt");
                 }
 
                 @TestMetadata("FileAnnotations.kt")
@@ -1434,9 +1449,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/ReceiverAnnotations.kt");
                 }
 
-                @TestMetadata("receiverUseSiteTargetOnExtensionFunction.kt")
-                public void testReceiverUseSiteTargetOnExtensionFunction() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/receiverUseSiteTargetOnExtensionFunction.kt");
+                @TestMetadata("receiverUseSiteTargetOnExtensionFunction_after.kt")
+                public void testReceiverUseSiteTargetOnExtensionFunction_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/receiverUseSiteTargetOnExtensionFunction_after.kt");
+                }
+
+                @TestMetadata("receiverUseSiteTargetOnExtensionFunction_before.kt")
+                public void testReceiverUseSiteTargetOnExtensionFunction_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/receiverUseSiteTargetOnExtensionFunction_before.kt");
                 }
 
                 @TestMetadata("repeatable.kt")
@@ -1454,14 +1474,19 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/SparamAnnotations.kt");
                 }
 
-                @TestMetadata("wrongParamAnnotationsOnTypes.kt")
-                public void testWrongParamAnnotationsOnTypes() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/wrongParamAnnotationsOnTypes.kt");
-                }
-
                 @TestMetadata("wrongParamAnnotationsOnTypesError.kt")
                 public void testWrongParamAnnotationsOnTypesError() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/wrongParamAnnotationsOnTypesError.kt");
+                }
+
+                @TestMetadata("wrongParamAnnotationsOnTypes_after.kt")
+                public void testWrongParamAnnotationsOnTypes_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/wrongParamAnnotationsOnTypes_after.kt");
+                }
+
+                @TestMetadata("wrongParamAnnotationsOnTypes_before.kt")
+                public void testWrongParamAnnotationsOnTypes_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/wrongParamAnnotationsOnTypes_before.kt");
                 }
             }
         }

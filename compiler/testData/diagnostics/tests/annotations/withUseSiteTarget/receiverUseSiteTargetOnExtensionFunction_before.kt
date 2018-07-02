@@ -1,3 +1,5 @@
+// !LANGUAGE: -RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
+
 @Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class Fancy
 
