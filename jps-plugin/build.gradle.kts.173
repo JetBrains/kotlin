@@ -35,7 +35,6 @@ dependencies {
     }
     testRuntime(intellijDep())
     testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(projectDist(":kotlin-compiler"))
     testRuntime(projectDist(":kotlin-script-runtime"))
 }
 
@@ -47,6 +46,9 @@ sourceSets {
 }
 
 projectTest {
+    // do not replace with compile/runtime dependency,
+    // because it forces Intellij reindexing after each compiler change
+    dependsOn(":kotlin-compiler:dist")
     workingDir = rootDir
 }
 
