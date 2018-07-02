@@ -171,6 +171,8 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
                     frameInfo = FrameInfo(frame?.thisObject(), visibleVariables)
                 } catch (ignored: AbsentInformationException) {
                     // Debug info unavailable
+                } catch (ignored: InvalidStackFrameException) {
+                    // Thread is resumed, the frame we have is not valid anymore
                 } finally {
                     semaphore.up()
                 }
