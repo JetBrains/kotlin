@@ -41,7 +41,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.irCall
@@ -191,7 +193,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         val transformer = ParameterSubstitutor()
         statements.transform { it.transform(transformer, data = null) }
         statements.addAll(0, evaluationStatements)
-        val oldDescriptor = copyFunctionDeclaration.returnType.getClass()?.descriptor
+        val oldDescriptor = (copyFunctionDeclaration.returnType.classifierOrNull as? IrClassSymbol)?.descriptor
         val substitutedDescriptor = oldDescriptor?.let { globalSubstituteMap[it] }
         val returnType = substitutedDescriptor?.let { context.ir.translateErased((it.descriptor as ClassDescriptor).defaultType) }
                 ?: copyFunctionDeclaration.returnType
