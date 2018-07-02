@@ -146,8 +146,18 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
     }
 
     //-------------------------------------------------------------------------//
+    /**
+     * TODO: JVM inliner crashed on attempt inline this function from transform.kt with:
+     *  j.l.IllegalStateException: Couldn't obtain compiled function body for
+     *  public inline fun <reified T : org.jetbrains.kotlin.ir.IrElement> kotlin.collections.MutableList<T>.transform...
+     */
+     private inline fun <reified T : IrElement> MutableList<T>.transform(transformation: (T) -> IrElement) {
+          forEachIndexed { i, item ->
+              set(i, transformation(item) as T)
+          }
+     }
 
-    private fun inlineFunction(callee: IrCall,                                              // Call to be substituted.
+     private fun inlineFunction(callee: IrCall,                                             // Call to be substituted.
                                caller: IrFunction): IrReturnableBlockImpl {                 // Function to substitute.
 
         val copyFunctionDeclaration = copyIrElement.copy(                         // Create copy of original function.

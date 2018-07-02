@@ -138,57 +138,6 @@ class IrFileImpl(entry: SourceManager.FileEntry) : IrFile {
 
 //-----------------------------------------------------------------------------//
 
-interface IrSuspensionPoint : IrExpression {
-    var suspensionPointIdParameter: IrVariable
-    var result: IrExpression
-    var resumeResult: IrExpression
-}
-
-interface IrSuspendableExpression : IrExpression {
-    var suspensionPointId: IrExpression
-    var result: IrExpression
-}
-
-class IrSuspensionPointImpl(startOffset: Int, endOffset: Int, type: IrType,
-                            override var suspensionPointIdParameter: IrVariable,
-                            override var result: IrExpression,
-                            override var resumeResult: IrExpression)
-    : IrExpressionBase(startOffset, endOffset, type), IrSuspensionPoint {
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitExpression(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        suspensionPointIdParameter.accept(visitor, data)
-        result.accept(visitor, data)
-        resumeResult.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        suspensionPointIdParameter = suspensionPointIdParameter.transform(transformer, data) as IrVariable
-        result = result.transform(transformer, data)
-        resumeResult = resumeResult.transform(transformer, data)
-    }
-}
-
-class IrSuspendableExpressionImpl(startOffset: Int, endOffset: Int, type: IrType,
-                                  override var suspensionPointId: IrExpression, override var result: IrExpression)
-    : IrExpressionBase(startOffset, endOffset, type), IrSuspendableExpression {
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitExpression(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        suspensionPointId.accept(visitor, data)
-        result.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        suspensionPointId = suspensionPointId.transform(transformer, data)
-        result = result.transform(transformer, data)
-    }
-}
-
 internal interface IrPrivateFunctionCall : IrCall {
     val virtualCallee: IrCall?
     val dfgSymbol: DataFlowIR.FunctionSymbol.Declared

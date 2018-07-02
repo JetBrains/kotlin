@@ -111,3 +111,14 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
         receiver: R,
         completion: Continuation<T>
 ): Any? = (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+
+
+
+/**
+ * This value is used as a return value of [suspendCoroutineOrReturn] `block` argument to state that
+ * the execution was suspended and will not return any result immediately.
+ */
+@SinceKotlin("1.1")
+public actual val COROUTINE_SUSPENDED: Any = CoroutineSuspendedMarker
+
+private object CoroutineSuspendedMarker

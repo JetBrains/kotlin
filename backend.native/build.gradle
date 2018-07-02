@@ -129,27 +129,25 @@ configurations {
     }
 }
 
-def localKotlinCompilerModule = project.files("libs/kotlin-compiler.jar")
-
 dependencies {
-    kotlin_compiler_jar localKotlinCompilerModule
-    kotlin_stdlib_jar project.files("libs/kotlin-stdlib.jar")
-    kotlin_reflect_jar project.files("libs/kotlin-reflect.jar")
-    kotlin_script_runtime_jar project.files("libs/kotlin-script-runtime.jar")
+    kotlin_compiler_jar "$kotlinCompilerModule@jar"
+    kotlin_stdlib_jar "$kotlinStdLibModule@jar"
+    kotlin_reflect_jar "$kotlinReflectModule@jar"
+    kotlin_script_runtime_jar "$kotlinScriptRuntimeModule@jar"
     kotlin_common_stdlib_src kotlinCommonStdlibModule
 
     compilerCompile "com.google.protobuf:protobuf-java:${protobufVersion}"
 
-    compilerCompile localKotlinCompilerModule
+    compilerCompile kotlinCompilerModule
     compilerCompile kotlinNativeInterop['llvm'].configuration
     compilerCompile kotlinNativeInterop['hash'].configuration
     compilerCompile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
 
-    cli_bcCompile localKotlinCompilerModule
+    cli_bcCompile kotlinCompilerModule
     cli_bcCompile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
     cli_bcCompile sourceSets.compiler.output
 
-    bc_frontendCompile localKotlinCompilerModule
+    bc_frontendCompile kotlinCompilerModule
 
     cli_bc sourceSets.cli_bc.output
 }

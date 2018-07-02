@@ -362,7 +362,7 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     override val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
             coroutinesIntrinsicsPackage
                     .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND)
-                    .single().getter!!
+                    .filterNot { it.isExpect }.single().getter!!
     )
 
 

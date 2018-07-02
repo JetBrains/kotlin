@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.backend.konan.correspondingValueType
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.descriptors.target
 import org.jetbrains.kotlin.backend.konan.getTypeConversion
-import org.jetbrains.kotlin.backend.konan.ir.IrSuspendableExpression
-import org.jetbrains.kotlin.backend.konan.ir.IrSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.isValueType
