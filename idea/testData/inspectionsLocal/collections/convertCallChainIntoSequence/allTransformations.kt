@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 
-fun test(list: List<Int>): List<Pair<List<Int>, List<Int>>> {
+fun test(list: List<Int>): List<Pair<IndexedValue<List<Int>>, IndexedValue<List<Int>>>> {
     return list
             .<caret>chunked(1)
             .distinct()
@@ -30,6 +30,7 @@ fun test(list: List<Int>): List<Pair<List<Int>, List<Int>>> {
             .take(1)
             .takeWhile { true }
             .windowed(1, 1, true)
+            .withIndex()
             .zipWithNext()
             .zipWithNext { a, b -> a }
 }

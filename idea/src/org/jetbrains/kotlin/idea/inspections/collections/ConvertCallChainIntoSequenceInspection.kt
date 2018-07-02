@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.types.KotlinType
 
 class ConvertCallChainIntoSequenceInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
@@ -54,8 +55,7 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
         val lastCall = calls.lastOrNull() ?: return
         val first = firstCall.parent as? KtQualifiedExpression ?: return
         val last = lastCall.parent as? KtQualifiedExpression ?: return
-        val next = last.parent as? KtQualifiedExpression
-        val nextType = next?.getCallableDescriptor()?.returnType
+        val endWithTermination = lastCall.isTermination()
 
         val psiFactory = KtPsiFactory(expression)
         val dot = buildString {
@@ -76,11 +76,7 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
         )
         firstCommentSaver.restore(firstReplaced)
 
-        val nextDescriptor = next?.getCallableDescriptor()
-        if (nextDescriptor == null
-            || !nextDescriptor.fqNameSafe.asString().startsWith("kotlin.sequences.")
-            || nextDescriptor.returnType != nextType
-        ) {
+        if (!endWithTermination) {
             val lastCommentSaver = CommentSaver(last)
             val lastReplaced = last.replace(
                 psiFactory.buildExpression {
@@ -100,9 +96,10 @@ private fun KtQualifiedExpression.findTarget(): Pair<KtQualifiedExpression, KtCa
     val calls = collectCallExpression()
     if (calls.isEmpty()) return null
 
+    val receiverType = (calls.last().parent as? KtQualifiedExpression)?.receiverExpression?.getCallableDescriptor()?.returnType
+    if (receiverType?.isCollection() != true) return null
+
     val qualified = calls.first().parent as? KtQualifiedExpression ?: return null
-    val fqName = qualified.getCallableDescriptor()?.returnType?.constructor?.declarationDescriptor?.fqNameSafe
-    if (fqName != KotlinBuiltIns.FQ_NAMES.list) return null
     return qualified to calls.last()
 }
 
@@ -121,20 +118,28 @@ private fun KtQualifiedExpression.collectCallExpression(): List<KtCallExpression
 
     val transformationCalls = calls
         .asSequence()
-        .dropWhile { !it.isTransformation() }
-        .takeWhile { it.isTransformation() && !it.hasReturn() }
+        .dropWhile { !it.isTransformationOrTermination() }
+        .takeWhile { it.isTransformationOrTermination() && !it.hasReturn() }
         .toList()
     if (transformationCalls.size < 2) return emptyList()
 
     return transformationCalls
 }
 
+private fun KotlinType.isCollection(): Boolean =
+    constructor.declarationDescriptor?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.collection || constructor.supertypes.any { it.isCollection() }
+
 private fun KtCallExpression.hasReturn(): Boolean = valueArguments.any { arg ->
     arg.anyDescendantOfType<KtReturnExpression> { it.labelQualifier == null }
 }
 
-private fun KtCallExpression.isTransformation(): Boolean {
-    val fqName = transformations[calleeExpression?.text] ?: return false
+private fun KtCallExpression.isTransformationOrTermination(): Boolean {
+    val fqName = transformationAndTerminations[calleeExpression?.text] ?: return false
+    return fqName == getCallableDescriptor()?.fqNameSafe
+}
+
+private fun KtCallExpression.isTermination(): Boolean {
+    val fqName = terminations[calleeExpression?.text] ?: return false
     return fqName == getCallableDescriptor()?.fqNameSafe
 }
 
@@ -167,5 +172,76 @@ private val transformations = listOf(
     "take",
     "takeWhile",
     "windowed",
+    "withIndex",
     "zipWithNext"
 ).associate { it to FqName("kotlin.collections.$it") }
+
+private val terminations = listOf(
+    "all",
+    "any",
+    "asIterable",
+    "asSequence",
+    "associate",
+    "associateBy",
+    "associateByTo",
+    "associateTo",
+    "average",
+    "contains",
+    "count",
+    "elementAt",
+    "elementAtOrElse",
+    "elementAtOrNull",
+    "filterIndexedTo",
+    "filterIsInstanceTo",
+    "filterNotNullTo",
+    "filterNotTo",
+    "filterTo",
+    "find",
+    "findLast",
+    "first",
+    "firstOrNull",
+    "fold",
+    "foldIndexed",
+    "groupBy",
+    "groupByTo",
+    "groupingBy",
+    "indexOf",
+    "indexOfFirst",
+    "indexOfLast",
+    "joinTo",
+    "joinToString",
+    "last",
+    "lastIndexOf",
+    "lastOrNull",
+    "mapIndexedNotNullTo",
+    "mapIndexedTo",
+    "mapNotNullTo",
+    "mapTo",
+    "max",
+    "maxBy",
+    "maxWith",
+    "min",
+    "minBy",
+    "minWith",
+    "none",
+    "partition",
+    "reduce",
+    "reduceIndexed",
+    "single",
+    "singleOrNull",
+    "sum",
+    "sumBy",
+    "sumByDouble",
+    "toCollection",
+    "toHashSet",
+    "toList",
+    "toMutableList",
+    "toMutableSet",
+    "toSet",
+    "toSortedSet"
+).associate {
+    val pkg = if (it in listOf("contains", "indexOf", "lastIndexOf")) "kotlin.collections.List" else "kotlin.collections"
+    it to FqName("$pkg.$it")
+}
+
+private val transformationAndTerminations = transformations + terminations

@@ -500,13 +500,13 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
             }
 
-            @TestMetadata("all.kt")
-            public void testAll() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/all.kt");
-            }
-
             public void testAllFilesPresentInConvertCallChainIntoSequence() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("allTransformations.kt")
+            public void testAllTransformations() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/allTransformations.kt");
             }
 
             @TestMetadata("comment.kt")
@@ -517,6 +517,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("comment2.kt")
             public void testComment2() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/comment2.kt");
+            }
+
+            @TestMetadata("mutableList.kt")
+            public void testMutableList() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/mutableList.kt");
+            }
+
+            @TestMetadata("mutableSet.kt")
+            public void testMutableSet() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/mutableSet.kt");
             }
 
             @TestMetadata("noTargetCallChain.kt")
@@ -532,6 +542,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("noTargetCallChain3.kt")
             public void testNoTargetCallChain3() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/noTargetCallChain3.kt");
+            }
+
+            @TestMetadata("noTargetTermination.kt")
+            public void testNoTargetTermination() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/noTargetTermination.kt");
+            }
+
+            @TestMetadata("noTargetTermination2.kt")
+            public void testNoTargetTermination2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/noTargetTermination2.kt");
             }
 
             @TestMetadata("nullable.kt")
@@ -554,6 +574,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/returnAtLabels.kt");
             }
 
+            @TestMetadata("set.kt")
+            public void testSet() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/set.kt");
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/simple.kt");
@@ -574,24 +599,337 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/simple4.kt");
             }
 
-            @TestMetadata("termination.kt")
-            public void testTermination() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination.kt");
-            }
+            @TestMetadata("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Termination extends AbstractLocalInspectionTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
 
-            @TestMetadata("termination2.kt")
-            public void testTermination2() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination2.kt");
-            }
+                @TestMetadata("all.kt")
+                public void testAll() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/all.kt");
+                }
 
-            @TestMetadata("termination3.kt")
-            public void testTermination3() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination3.kt");
-            }
+                public void testAllFilesPresentInTermination() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                }
 
-            @TestMetadata("termination4.kt")
-            public void testTermination4() throws Exception {
-                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination4.kt");
+                @TestMetadata("any.kt")
+                public void testAny() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/any.kt");
+                }
+
+                @TestMetadata("asIterable.kt")
+                public void testAsIterable() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/asIterable.kt");
+                }
+
+                @TestMetadata("asSequence.kt")
+                public void testAsSequence() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/asSequence.kt");
+                }
+
+                @TestMetadata("assosiate.kt")
+                public void testAssosiate() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/assosiate.kt");
+                }
+
+                @TestMetadata("assosiateBy.kt")
+                public void testAssosiateBy() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/assosiateBy.kt");
+                }
+
+                @TestMetadata("assosiateByTo.kt")
+                public void testAssosiateByTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/assosiateByTo.kt");
+                }
+
+                @TestMetadata("assosiateTo.kt")
+                public void testAssosiateTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/assosiateTo.kt");
+                }
+
+                @TestMetadata("average.kt")
+                public void testAverage() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/average.kt");
+                }
+
+                @TestMetadata("contains.kt")
+                public void testContains() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/contains.kt");
+                }
+
+                @TestMetadata("count.kt")
+                public void testCount() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/count.kt");
+                }
+
+                @TestMetadata("elementAt.kt")
+                public void testElementAt() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/elementAt.kt");
+                }
+
+                @TestMetadata("elementAtOrElse.kt")
+                public void testElementAtOrElse() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/elementAtOrElse.kt");
+                }
+
+                @TestMetadata("elementAtOrNull.kt")
+                public void testElementAtOrNull() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/elementAtOrNull.kt");
+                }
+
+                @TestMetadata("filterIndexedTo.kt")
+                public void testFilterIndexedTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/filterIndexedTo.kt");
+                }
+
+                @TestMetadata("filterIsInstanceTo.kt")
+                public void testFilterIsInstanceTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/filterIsInstanceTo.kt");
+                }
+
+                @TestMetadata("filterNotNullTo.kt")
+                public void testFilterNotNullTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/filterNotNullTo.kt");
+                }
+
+                @TestMetadata("filterNotTo.kt")
+                public void testFilterNotTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/filterNotTo.kt");
+                }
+
+                @TestMetadata("filterTo.kt")
+                public void testFilterTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/filterTo.kt");
+                }
+
+                @TestMetadata("find.kt")
+                public void testFind() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/find.kt");
+                }
+
+                @TestMetadata("findLast.kt")
+                public void testFindLast() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/findLast.kt");
+                }
+
+                @TestMetadata("first.kt")
+                public void testFirst() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/first.kt");
+                }
+
+                @TestMetadata("firstOrNull.kt")
+                public void testFirstOrNull() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/firstOrNull.kt");
+                }
+
+                @TestMetadata("fold.kt")
+                public void testFold() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/fold.kt");
+                }
+
+                @TestMetadata("foldIndexed.kt")
+                public void testFoldIndexed() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/foldIndexed.kt");
+                }
+
+                @TestMetadata("forEach.kt")
+                public void testForEach() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/forEach.kt");
+                }
+
+                @TestMetadata("forEachIndexed.kt")
+                public void testForEachIndexed() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/forEachIndexed.kt");
+                }
+
+                @TestMetadata("groupBy.kt")
+                public void testGroupBy() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/groupBy.kt");
+                }
+
+                @TestMetadata("groupByTo.kt")
+                public void testGroupByTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/groupByTo.kt");
+                }
+
+                @TestMetadata("groupingBy.kt")
+                public void testGroupingBy() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/groupingBy.kt");
+                }
+
+                @TestMetadata("indexOf.kt")
+                public void testIndexOf() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/indexOf.kt");
+                }
+
+                @TestMetadata("indexOfFirst.kt")
+                public void testIndexOfFirst() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/indexOfFirst.kt");
+                }
+
+                @TestMetadata("indexOfLast.kt")
+                public void testIndexOfLast() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/indexOfLast.kt");
+                }
+
+                @TestMetadata("joinTo.kt")
+                public void testJoinTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/joinTo.kt");
+                }
+
+                @TestMetadata("joinToString.kt")
+                public void testJoinToString() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/joinToString.kt");
+                }
+
+                @TestMetadata("last.kt")
+                public void testLast() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/last.kt");
+                }
+
+                @TestMetadata("lastIndexOf.kt")
+                public void testLastIndexOf() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/lastIndexOf.kt");
+                }
+
+                @TestMetadata("lastOrNull.kt")
+                public void testLastOrNull() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/lastOrNull.kt");
+                }
+
+                @TestMetadata("mapIndexedNotNullTo.kt")
+                public void testMapIndexedNotNullTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/mapIndexedNotNullTo.kt");
+                }
+
+                @TestMetadata("mapIndexedTo.kt")
+                public void testMapIndexedTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/mapIndexedTo.kt");
+                }
+
+                @TestMetadata("mapNotNullTo.kt")
+                public void testMapNotNullTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/mapNotNullTo.kt");
+                }
+
+                @TestMetadata("mapTo.kt")
+                public void testMapTo() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/mapTo.kt");
+                }
+
+                @TestMetadata("max.kt")
+                public void testMax() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/max.kt");
+                }
+
+                @TestMetadata("maxBy.kt")
+                public void testMaxBy() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxBy.kt");
+                }
+
+                @TestMetadata("maxWith.kt")
+                public void testMaxWith() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxWith.kt");
+                }
+
+                @TestMetadata("min.kt")
+                public void testMin() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/min.kt");
+                }
+
+                @TestMetadata("minBy.kt")
+                public void testMinBy() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minBy.kt");
+                }
+
+                @TestMetadata("minWith.kt")
+                public void testMinWith() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minWith.kt");
+                }
+
+                @TestMetadata("none.kt")
+                public void testNone() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/none.kt");
+                }
+
+                @TestMetadata("partition.kt")
+                public void testPartition() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/partition.kt");
+                }
+
+                @TestMetadata("reduce.kt")
+                public void testReduce() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/reduce.kt");
+                }
+
+                @TestMetadata("reduceIndexed.kt")
+                public void testReduceIndexed() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/reduceIndexed.kt");
+                }
+
+                @TestMetadata("single.kt")
+                public void testSingle() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/single.kt");
+                }
+
+                @TestMetadata("singleOrNull.kt")
+                public void testSingleOrNull() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/singleOrNull.kt");
+                }
+
+                @TestMetadata("sum.kt")
+                public void testSum() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/sum.kt");
+                }
+
+                @TestMetadata("sumBy.kt")
+                public void testSumBy() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/sumBy.kt");
+                }
+
+                @TestMetadata("sumByDouble.kt")
+                public void testSumByDouble() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/sumByDouble.kt");
+                }
+
+                @TestMetadata("toCollection.kt")
+                public void testToCollection() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/toCollection.kt");
+                }
+
+                @TestMetadata("toHashSet.kt")
+                public void testToHashSet() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/toHashSet.kt");
+                }
+
+                @TestMetadata("toList.kt")
+                public void testToList() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/toList.kt");
+                }
+
+                @TestMetadata("toMutableList.kt")
+                public void testToMutableList() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/toMutableList.kt");
+                }
+
+                @TestMetadata("toMutableSet.kt")
+                public void testToMutableSet() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/toMutableSet.kt");
+                }
+
+                @TestMetadata("toSet.kt")
+                public void testToSet() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/toSet.kt");
+                }
+
+                @TestMetadata("toSortedSet.kt")
+                public void testToSortedSet() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/toSortedSet.kt");
+                }
             }
         }
 
