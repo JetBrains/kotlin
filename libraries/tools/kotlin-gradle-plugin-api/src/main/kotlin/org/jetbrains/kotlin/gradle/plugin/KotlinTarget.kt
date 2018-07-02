@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Named
-import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.HasAttributes
@@ -20,6 +19,10 @@ interface KotlinTarget: HasAttributes {
 
     val compilations: NamedDomainObjectContainer<out KotlinCompilation>
     val project: Project
+
+    val defaultConfigurationName: String
+    val apiElementsConfigurationName: String
+    val runtimeElementsConfigurationName: String
 }
 
 enum class KotlinPlatformType: Named, Serializable {

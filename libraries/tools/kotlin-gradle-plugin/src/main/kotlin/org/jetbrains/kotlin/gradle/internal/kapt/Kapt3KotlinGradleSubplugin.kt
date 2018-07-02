@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKa
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedKotlinSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinJavaSourceSet
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.isWorkerAPISupported
@@ -344,7 +343,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.classesDir = classesOutputDir
 
         kotlinCompilation?.run {
-            this as KotlinJavaSourceSet
             output.apply {
                 if (tryAddClassesDir { project.files(classesOutputDir).builtBy(kaptTask) }) {
                     kotlinCompile.attachClassesDir { classesOutputDir }

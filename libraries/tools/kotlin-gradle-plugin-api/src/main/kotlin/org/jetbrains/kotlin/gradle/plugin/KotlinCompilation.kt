@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.attributes.HasAttributes
-import org.gradle.api.attributes.HasConfigurableAttributes
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.SourceSetOutput
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 
@@ -18,9 +18,9 @@ interface KotlinCompilation: HasAttributes {
 
     val kotlinSourceSets: List<KotlinSourceSet>
 
-    val apiDependencyFiles: FileCollection
+    val compileDependencyConfigurationName: String
 
-    val runtimeDependencyFiles: FileCollection
+    var compileDependencyFiles: FileCollection
 
     val output: SourceSetOutput
 
@@ -36,4 +36,16 @@ interface KotlinCompilation: HasAttributes {
     }
 
     fun source(sourceSet: KotlinSourceSet)
+}
+
+interface KotlinCompilationToRunnableFiles : KotlinCompilation {
+    val runtimeDependencyConfigurationName: String
+
+    var runtimeDependencyFiles: FileCollection
+}
+
+interface KotlinCompilationWithResources : KotlinCompilation {
+    val resources: SourceDirectorySet
+
+    val processResourcesTaskName: String
 }

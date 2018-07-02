@@ -26,7 +26,6 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinBaseSourceSet
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.matchSymmetricallyByNames
 
@@ -137,7 +136,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     protected fun getKotlinSourceDirectorySetSafe(from: Any): SourceDirectorySet? {
         // Access through reflection, because another project's KotlinBaseSourceSet might be loaded
         // by a different class loader:
-        val kotlinSourceSetIface = from.javaClass.interfaces.find { it.name == KotlinBaseSourceSet::class.qualifiedName }
+        val kotlinSourceSetIface = from.javaClass.interfaces.find { it.name == KotlinSourceSet::class.qualifiedName }
         val getKotlin = kotlinSourceSetIface?.methods?.find { it.name == "getKotlin" } ?: return null
         return getKotlin(from) as? SourceDirectorySet
     }
@@ -168,7 +167,7 @@ open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase(
     override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: KotlinSourceSet, platformProject: Project) {
         val androidExtension = platformProject.extensions.getByName("android") as BaseExtension
         val androidSourceSet = androidExtension.sourceSets.findByName(commonSourceSet.name) ?: return
-        val kotlinSourceSet = androidSourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinBaseSourceSet
+        val kotlinSourceSet = androidSourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
                 ?: return
         kotlinSourceSet.kotlin.source(commonSourceSet.kotlin)
     }

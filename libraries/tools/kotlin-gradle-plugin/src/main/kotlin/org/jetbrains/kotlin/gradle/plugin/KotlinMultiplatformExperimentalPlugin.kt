@@ -45,7 +45,7 @@ internal class KotlinMultiplatformProjectConfigurator(
 ) {
     val kotlinOnlyPlatformConfigurator = KotlinOnlyTargetConfigurator(buildOutputCleanupRegistry, objectFactory)
 
-    private inline fun <reified T : KotlinOnlyTarget> createAndSetupExtension(
+    private inline fun <reified T : KotlinOnlyTarget<*>> createAndSetupTarget(
         name: String,
         kotlinPlatformType: KotlinPlatformType,
         platformClassifier: String,
@@ -64,9 +64,9 @@ internal class KotlinMultiplatformProjectConfigurator(
         return extension
     }
 
-    fun createCommonExtension(): KotlinOnlyTarget {
-        val sourceSets = KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver)
-        val extension = createAndSetupExtension<KotlinOnlyTarget>(
+    fun createCommonExtension(): KotlinOnlyTarget<KotlinCommonCompilation> {
+        val sourceSets = DefaultKotlinSourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver)
+        val extension = createAndSetupTarget<KotlinOnlyTarget<KotlinCommonCompilation>>(
             "kotlinCommon", KotlinPlatformType.common, "common", sourceSets
         )
 
@@ -78,13 +78,13 @@ internal class KotlinMultiplatformProjectConfigurator(
         return extension
     }
 
-    fun createJvmExtension(disambiguationSuffix: String? = null): KotlinMppTarget {
-        val sourceSets = KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver)
+    fun createJvmExtension(disambiguationSuffix: String? = null): KotlinOnlyTarget<KotlinJvmCompilation> {
+        val sourceSets = DefaultKotlinSourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver)
         val platformSuffix = disambiguationSuffix?.capitalize().orEmpty()
         val platformName = "kotlinJvm$platformSuffix"
         val platformClassifier = "jvm$platformSuffix"
 
-        val extension = createAndSetupExtension<KotlinMppTarget>(
+        val extension = createAndSetupTarget<KotlinOnlyTarget<KotlinJvmCompilation>>(
             platformName, KotlinPlatformType.jvm, platformClassifier, sourceSets
         ).apply {
             projectConfigurator = this@KotlinMultiplatformProjectConfigurator
@@ -169,13 +169,13 @@ internal class KotlinMultiplatformProjectConfigurator(
         }
     }
 
-    fun createJsPlatformExtension(disambiguationSuffix: String? = null): KotlinMppTarget {
+    fun createJsPlatformExtension(disambiguationSuffix: String? = null): KotlinOnlyTarget<KotlinJsCompilation> {
         val sourceSets = KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver)
         val platformSuffix = disambiguationSuffix?.capitalize().orEmpty()
         val platformName = "kotlinJs$platformSuffix"
         val platformClassifier = "js$platformSuffix"
 
-        val extension = createAndSetupExtension<KotlinMppTarget>(
+        val extension = createAndSetupTarget<KotlinMppTarget>(
             platformName, KotlinPlatformType.js, platformClassifier, sourceSets
         ).apply {
             projectConfigurator = this@KotlinMultiplatformProjectConfigurator

@@ -16,6 +16,7 @@ import org.gradle.api.capabilities.Capability
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.base.runtimeConfigurationName
 
 internal class KotlinPlatformSoftwareComponent(
     private val project: Project,

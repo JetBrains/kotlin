@@ -16,14 +16,9 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import org.gradle.api.NamedDomainObjectCollection
-import org.gradle.api.PolymorphicDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetContainer
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinJavaSourceSetContainer
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinOnlySourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetContainer
 import kotlin.reflect.KClass
 
@@ -43,9 +38,6 @@ open class KotlinProjectExtension {
 
     val sourceSets: KotlinSourceSetContainer<out KotlinSourceSet>
         get() = DslObject(this).extensions.getByType(KotlinSourceSetContainer::class.java)
-
-    val targets: KotlinTargetContainer
-        get() = DslObject(this).extensions.getByType(KotlinTargetContainer::class.java)
 }
 
 open class ExperimentalExtension {

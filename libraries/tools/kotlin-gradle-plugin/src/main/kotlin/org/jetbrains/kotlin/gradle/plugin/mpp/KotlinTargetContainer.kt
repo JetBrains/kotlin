@@ -17,20 +17,16 @@ class KotlinTargetContainer internal constructor(
     protected val fileResolver: FileResolver,
     protected val project: Project
 ) : AbstractPolymorphicDomainObjectContainer<KotlinTarget>(KotlinTarget::class.java, instantiator, { it.targetName }) {
-    override fun <U : KotlinTarget?> doCreate(p0: String?, p1: Class<U>?): U {
-        TODO("not implemented")
+
+    override fun <U : KotlinTarget?> doCreate(p0: String?, p1: Class<U>?): U =
+        throw UnsupportedOperationException("creating targets directly is not yet supported")
+
+    override fun getCreateableTypes(): Set<Class<out KotlinTarget>> = emptySet()
+
+    override fun getEntityInstantiator(): NamedEntityInstantiator<KotlinTarget> = object : NamedEntityInstantiator<KotlinTarget> {
+        override fun <S : KotlinTarget> create(p0: String?, p1: Class<S>): S =
+            throw UnsupportedOperationException("creating targets directly is not yet supported")
     }
 
-    override fun getCreateableTypes(): MutableSet<out Class<out KotlinTarget>> {
-        TODO("not implemented")
-    }
-
-    override fun getEntityInstantiator(): NamedEntityInstantiator<KotlinTarget> {
-        TODO("not implemented")
-    }
-
-    override fun doCreate(p0: String?): KotlinTarget {
-        TODO("not implemented")
-    }
-
+    override fun doCreate(name: String): KotlinTarget = doCreate(name, KotlinOnlyTarget::class.java)
 }

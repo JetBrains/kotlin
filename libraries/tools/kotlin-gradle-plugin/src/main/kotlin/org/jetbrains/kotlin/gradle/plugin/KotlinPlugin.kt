@@ -25,18 +25,19 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
-import org.jetbrains.kotlin.gradle.plugin.base.KotlinOnlyPlugin
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
+import org.jetbrains.kotlin.gradle.plugin.base.KotlinOnlyPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetContainer
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.net.URL
@@ -84,7 +85,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         logger.kotlinDebug("Creating kotlin compile task $name")
         val kotlinCompile = doCreateTask(project, name)
         kotlinCompile.description = taskDescription
-        kotlinCompile.mapClasspath { kotlinCompilation.apiDependencyFiles }
+        kotlinCompile.mapClasspath { kotlinCompilation.compileDependencyFiles }
         kotlinCompile.setDestinationDir { defaultKotlinDestinationDir }
         kotlinCompilation.output.tryAddClassesDir { project.files(kotlinTask.destinationDir).builtBy(kotlinTask) }
         return kotlinCompile
@@ -354,7 +355,7 @@ internal class KotlinCommonSourceSetProcessor(
 
 internal abstract class AbstractKotlinPlugin(
     val tasksProvider: KotlinTasksProvider,
-    val kotlinSourceSetContainer: KotlinSourceSetContainer<out KotlinBaseSourceSet>,
+    val kotlinSourceSetContainer: KotlinSourceSetContainer<out KotlinSourceSet>,
     protected val kotlinPluginVersion: String
 ) : Plugin<Project> {
     internal abstract fun buildSourceSetProcessor(project: Project, compilation: KotlinCompilation, kotlinPluginVersion: String): KotlinSourceSetProcessor<*>
@@ -436,13 +437,13 @@ internal fun registerKotlinSourceSetsIfAbsent(
 
 internal open class KotlinPlugin(
     tasksProvider: KotlinTasksProvider,
-    val kotlinJavaSourceSetProvider: KotlinJavaSourceSetContainer,
+    val kotlinSourceSetProvider: KotlinSourceSetContainer<out KotlinSourceSet>,
     kotlinPluginVersion: String
-) : AbstractKotlinPlugin(tasksProvider, kotlinJavaSourceSetProvider, kotlinPluginVersion) {
+) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion) {
     override fun buildSourceSetProcessor(project: Project, compilation: KotlinCompilation, kotlinPluginVersion: String) =
             Kotlin2JvmSourceSetProcessor(
                 project, tasksProvider,
-                kotlinJavaSourceSetProvider, compilation as KotlinJvmCompilation,
+                kotlinSourceSetProvider, compilation as KotlinJvmCompilation,
                 kotlinPluginVersion
             )
 
@@ -462,7 +463,7 @@ internal open class KotlinPlugin(
 
 internal open class KotlinCommonPlugin(
     tasksProvider: KotlinTasksProvider,
-    kotlinSourceSetProvider: KotlinOnlySourceSetContainer,
+    kotlinSourceSetProvider: KotlinSourceSetContainer<out KotlinSourceSet>,
     kotlinPluginVersion: String
 ) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetProvider, kotlinPluginVersion) {
 
@@ -474,8 +475,6 @@ internal open class KotlinCommonPlugin(
         KotlinCommonSourceSetProcessor(project, compilation, tasksProvider, kotlinSourceSetContainer, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val kotlinOnlyPlatformExtension = project.kotlinExtension as KotlinOnlyTarget
-        kotlinOnlyPlatformExtension.targetName = "kotlinCommon"
         registerKotlinSourceSetsIfAbsent(kotlinSourceSetContainer, project.kotlinExtension)
 
         project.plugins.apply(KotlinOnlyPlugin::class.java)
@@ -485,7 +484,7 @@ internal open class KotlinCommonPlugin(
 
 internal open class Kotlin2JsPlugin(
     tasksProvider: KotlinTasksProvider,
-    kotlinSourceSetContainer: KotlinSourceSetContainer<out KotlinBaseSourceSet>,
+    kotlinSourceSetContainer: KotlinSourceSetContainer<out KotlinSourceSet>,
     kotlinPluginVersion: String
 ) : AbstractKotlinPlugin(tasksProvider, kotlinSourceSetContainer, kotlinPluginVersion) {
 
@@ -510,7 +509,7 @@ internal open class Kotlin2JsPlugin(
 
 internal open class KotlinAndroidPlugin(
     val tasksProvider: KotlinTasksProvider,
-    private val kotlinSourceSetProvider: KotlinAndroidSourceSetContainer,
+    private val kotlinSourceSetProvider: KotlinSourceSetContainer<out KotlinSourceSet>,
     private val kotlinPluginVersion: String
 ) : Plugin<Project> {
 

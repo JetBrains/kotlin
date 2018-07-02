@@ -17,4 +17,9 @@ interface KotlinSourceSet: Named {
 
     fun dependencies(configure: KotlinSourceSetDependencyHandler.() -> Unit)
     fun dependencies(configureClosure: Closure<Any?>)
+
+    val apiConfigurationName: String
+    val implementationConfigurationName: String
+    val compileOnlyConfigurationName: String
+    val runtimeOnlyConfigurationName: String
 }

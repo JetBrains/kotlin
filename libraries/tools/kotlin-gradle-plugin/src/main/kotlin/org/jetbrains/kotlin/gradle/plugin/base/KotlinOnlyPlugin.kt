@@ -15,8 +15,8 @@ import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.internal.ConventionMapping
 import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
@@ -30,11 +30,9 @@ import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.PlatformConfigurationUsage
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinBaseSourceSet
+import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import java.io.File
 import javax.inject.Inject
 
@@ -42,10 +40,13 @@ open class KotlinOnlyTargetConfigurator(
     private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     private val objectFactory: ObjectFactory
 ) {
-    fun configureTarget(project: Project, kotlinPlatformExtension: KotlinOnlyTarget) {
-        configureSourceSetDefaults(project, kotlinPlatformExtension)
+    fun <KotlinCompilationType: KotlinCompilation> configureTarget(
+        project: Project,
+        kotlinPlatformExtension: KotlinOnlyTarget<KotlinCompilationType>
+    ) {
+        configureCompilationDefaults(project, kotlinPlatformExtension)
         configureSourceSets(project, kotlinPlatformExtension)
-        configureConfigurations(project, kotlinPlatformExtension)
+        defineConfigurationsForTarget(project, kotlinPlatformExtension)
         configureArchivesAndComponent(project, kotlinPlatformExtension)
         configureBuild(project, kotlinPlatformExtension)
 
@@ -53,34 +54,42 @@ open class KotlinOnlyTargetConfigurator(
         setCompatibilityOfAbstractCompileTasks(project)
     }
 
-    private fun configureSourceSets(project: Project, platformTarget: KotlinOnlyTarget) {
-        val main = platformTarget.compilations
+    private fun <KotlinCompilationType: KotlinCompilation> configureSourceSets(
+        project: Project,
+        platformTarget: KotlinOnlyTarget<KotlinCompilationType>
+    ) {
+        val main = platformTarget.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-        platformTarget.sourceSets.create(testSourceSetName).apply {
-            compileClasspath = project.files(main.output, project.configurations.maybeCreate(platformTarget.testCompileClasspathConfigurationName))
-            runtimeClasspath = project.files(output, main.output, project.configurations.maybeCreate(platformTarget.testRuntimeClasspathConfigurationName))
+        platformTarget.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
+            compileDependencyFiles = project.files(main.output, project.configurations.maybeCreate(compileDependencyConfigurationName))
+
+            if (this is KotlinCompilationToRunnableFiles) {
+                runtimeDependencyFiles = project.files(output, main.output, project.configurations.maybeCreate(runtimeDependencyConfigurationName))
+            }
         }
 
-        platformTarget.sourceSets.all {
+        platformTarget.compilations.all {
             buildOutputCleanupRegistry.registerOutputs(it.output)
         }
     }
 
-    private fun configureSourceSetDefaults(project: Project, platformExtension: KotlinOnlyTarget) {
-        platformExtension.sourceSets.all { sourceSet ->
-            val outputConventionMapping = DslObject(sourceSet.output).conventionMapping
+    private fun <KotlinCompilationType: KotlinCompilation> configureCompilationDefaults(project: Project, target: KotlinOnlyTarget<KotlinCompilationType>) {
+        target.compilations.all { compilation ->
+            val outputConventionMapping = DslObject(compilation.output).conventionMapping
 
             val configurations = project.configurations
 
-            definePathsForSourceSet(sourceSet, outputConventionMapping, project)
-            defineConfigurationsForSourceSet(sourceSet, platformExtension, configurations)
+            if (compilation is KotlinCompilationWithResources) {
+                configureResourceProcessing(project, compilation, compilation.resources, project)
+            }
 
-            createProcessResourcesTask(sourceSet, sourceSet.resources, project)
-            createLifecycleTask(sourceSet, project)
+            defineConfigurationsForCompilation(compilation, target, configurations)
+
+            createLifecycleTask(compilation, project)
         }
     }
 
-    private fun configureArchivesAndComponent(project: Project, platformExtension: KotlinOnlyTarget) {
+    private fun configureArchivesAndComponent(project: Project, platformExtension: KotlinOnlyTarget<*>) {
         val jar = project.tasks.create(platformExtension.jarTaskName, Jar::class.java)
         jar.description = "Assembles a jar archive containing the main classes."
         jar.group = BasePlugin.BUILD_GROUP
@@ -110,43 +119,48 @@ open class KotlinOnlyTargetConfigurator(
         publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
     }
 
-    private fun definePathsForSourceSet(sourceSet: KotlinBaseSourceSet, outputConventionMapping: ConventionMapping, project: Project) {
-        outputConventionMapping.map("resourcesDir") {
-            val classesDirName = "resources/" + sourceSet.name
+    private fun configureResourceProcessing(
+        project: Project,
+        compilation: KotlinCompilationWithResources,
+        resourceSet: SourceDirectorySet,
+        target: Project
+    ) {
+        DslObject(compilation.output).conventionMapping.map("resourcesDir") {
+            val classesDirName = "resources/" + compilation.name
             File(project.buildDir, classesDirName)
         }
 
-        sourceSet.resources.srcDir("src/" + sourceSet.name + "/resources")
-    }
+        compilation.resources.srcDir("src/" + compilation.name + "/resources")
 
-    private fun createProcessResourcesTask(sourceSet: KotlinBaseSourceSet, resourceSet: SourceDirectorySet, target: Project) {
         //TODO replace maybeCreate with create, as there won't be Java plugin
-        val resourcesTask = target.tasks.maybeCreate(sourceSet.processResourcesTaskName, ProcessResources::class.java)
+        val resourcesTask = target.tasks.maybeCreate(compilation.processResourcesTaskName, ProcessResources::class.java)
         resourcesTask.description = "Processes $resourceSet."
-        DslObject(resourcesTask).conventionMapping.map("destinationDir") { sourceSet.output.resourcesDir }
+        DslObject(resourcesTask).conventionMapping.map("destinationDir") { compilation.output.resourcesDir }
         resourcesTask.from(resourceSet)
     }
 
-    private fun createLifecycleTask(sourceSet: KotlinBaseSourceSet, target: Project) {
-        sourceSet.compiledBy(sourceSet.classesTaskName)
+    private fun createLifecycleTask(compilation: KotlinCompilation, project: Project) {
+        (compilation.output.classesDirs as ConfigurableFileCollection).from(project.files().builtBy(compilation.compileAllTaskName))
 
-        target.tasks.create(sourceSet.classesTaskName).apply {
+        project.tasks.create(compilation.compileAllTaskName).apply {
             group = LifecycleBasePlugin.BUILD_GROUP
-            description = "Assembles " + sourceSet.output + "."
+            description = "Assembles " + compilation.output + "."
             dependsOn(
-                sourceSet.output.dirs,
-                sourceSet.compileKotlinTaskName,
-                sourceSet.processResourcesTaskName
+                compilation.output.dirs,
+                compilation.compileKotlinTaskName
             )
+            if (compilation is KotlinCompilationWithResources) {
+                dependsOn(compilation.processResourcesTaskName)
+            }
         }
     }
 
-    private fun defineConfigurationsForSourceSet(
-        sourceSet: KotlinBaseSourceSet,
-        platformExtension: KotlinOnlyTarget,
+    private fun defineConfigurationsForCompilation(
+        compilation: KotlinCompilation,
+        platformExtension: KotlinOnlyTarget<*>,
         configurations: ConfigurationContainer
     ) {
-        val compileConfiguration = configurations.maybeCreate(sourceSet.compileConfigurationName)
+        val compileConfiguration = configurations.maybeCreate(compilation.compileConfigurationName)
         compileConfiguration.isVisible = false
         compileConfiguration.description = "Dependencies for $sourceSet (deprecated, use '${sourceSet.implementationConfigurationName} ' instead)."
 
@@ -203,12 +217,12 @@ open class KotlinOnlyTargetConfigurator(
         sourceSet.runtimeClasspath = sourceSet.output.plus(runtimeClasspathConfiguration)
     }
 
-    private fun configureConfigurations(project: Project, platformExtension: KotlinOnlyTarget) {
+    private fun defineConfigurationsForTarget(project: Project, target: KotlinOnlyTarget<*>) {
         val configurations = project.configurations
 
-        val defaultConfiguration = configurations.maybeCreate(platformExtension.defaultConfigurationName)
-        val compileConfiguration = configurations.maybeCreate(platformExtension.compileConfigurationName)
-        val implementationConfiguration = configurations.maybeCreate(platformExtension.implementationConfigurationName)
+        val defaultConfiguration = configurations.maybeCreate(target.defaultConfigurationName)
+
+        val implementationConfiguration = configurations.maybeCreate(target.implementationConfigurationName)
         val runtimeConfiguration = configurations.maybeCreate(platformExtension.runtimeConfigurationName)
         val runtimeOnlyConfiguration = configurations.maybeCreate(platformExtension.runtimeOnlyConfigurationName)
         val compileTestsConfiguration = configurations.maybeCreate(platformExtension.testCompileConfigurationName)
@@ -293,9 +307,6 @@ open class KotlinOnlyTargetConfigurator(
 
 
     internal companion object {
-        const val mainSourceSetName = "main"
-        const val testSourceSetName = "test"
-
         const val buildNeededTaskName = "buildAllNeeded"
         const val buildDependentTaskName = "buildAllDependents"
 
@@ -307,7 +318,7 @@ open class KotlinOnlyTargetConfigurator(
 }
 
 internal fun Configuration.usesPlatformOf(extension: KotlinTarget): Configuration {
-    if (extension is KotlinOnlyTarget) {
+    if (extension is KotlinOnlyTarget<*>) {
         extension.userDefinedPlatformId?.let {
             attributes.attribute(KotlinOnlyTargetConfigurator.kotlinPlatformIdentifierAttribute, it)
         }
@@ -328,7 +339,7 @@ class KotlinOnlyPlugin @Inject constructor(
             // TODO check that the functionality of JavaBasePlugin is correctly copied
         }
 
-        val kotlinPlatformExtension = project.kotlinExtension as KotlinOnlyTarget
+        val kotlinTarget = KotlinOnlyTarget `
         KotlinOnlyTargetConfigurator(buildOutputCleanupRegistry, objectFactory).configureTarget(project, kotlinPlatformExtension)
     }
 }

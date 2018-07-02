@@ -16,6 +16,9 @@ interface KotlinCompilationFactory<T: KotlinCompilation> : NamedDomainObjectFact
     val itemClass: Class<T>
 }
 
+private fun Project.createSourceSetOutput(name: String) =
+    KotlinSourceSetOutput(this, buildDir.resolve("processedResources/$name"))
+
 class KotlinCommonCompilationFactory(
     val project: Project,
     val target: KotlinOnlyTarget<KotlinCommonCompilation>
@@ -23,9 +26,8 @@ class KotlinCommonCompilationFactory(
     override val itemClass: Class<KotlinCommonCompilation>
         get() = KotlinCommonCompilation::class.java
 
-    override fun create(p0: String?): KotlinCommonCompilation {
-        TODO("not implemented")
-    }
+    override fun create(name: String): KotlinCommonCompilation =
+        KotlinCommonCompilation(target, name, project.createSourceSetOutput(name))
 }
 
 class KotlinJvmCompilationFactory(
@@ -35,7 +37,11 @@ class KotlinJvmCompilationFactory(
     override val itemClass: Class<KotlinJvmCompilation>
         get() = KotlinJvmCompilation::class.java
 
-    override fun create(name: String): KotlinJvmCompilation = KotlinJvmCompilation(target, name, )
+    override fun create(name: String): KotlinJvmCompilation = KotlinJvmCompilation(
+        target,
+        name,
+        KotlinSourceSetOutput(project, project.buildDir.resolve("resources/$name"))
+    )
 }
 
 class KotlinJvmWithJavaCompilationFactory(
@@ -55,11 +61,32 @@ class KotlinJvmWithJavaCompilationFactory(
     }
 }
 
-class KotlinJsCompilationFactory(val project: Project) : KotlinCompilationFactory<KotlinJsCompilation> {
+class KotlinJvmAndroidCompilationFactory(
+    val project: Project,
+    val target: KotlinAndroidTarget
+) : KotlinCompilationFactory<KotlinJvmAndroidCompilation> {
+    private val javaSourceSets: SourceSetContainer
+        get() = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
+
+    override val itemClass: Class<KotlinJvmAndroidCompilation>
+        get() = KotlinJvmAndroidCompilation::class.java
+
+    override fun create(name: String): KotlinJvmAndroidCompilation {
+        val output = project.createSourceSetOutput(name)
+        val result = KotlinJvmAndroidCompilation(target, name, output)
+        return result
+    }
+}
+
+class Kotlin
+
+class KotlinJsCompilationFactory(
+    val project: Project,
+    val target: KotlinOnlyTarget<KotlinJsCompilation>
+) : KotlinCompilationFactory<KotlinJsCompilation> {
     override val itemClass: Class<KotlinJsCompilation>
         get() = KotlinJsCompilation::class.java
 
-    override fun create(p0: String?): KotlinJsCompilation {
-        TODO("not implemented")
-    }
+    override fun create(name: String): KotlinJsCompilation =
+            KotlinJsCompilation(target, name, project.createSourceSetOutput(name))
 }

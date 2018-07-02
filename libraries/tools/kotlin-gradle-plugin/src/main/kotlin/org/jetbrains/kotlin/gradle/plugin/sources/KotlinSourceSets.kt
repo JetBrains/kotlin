@@ -7,56 +7,15 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import groovy.lang.Closure
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.file.DefaultSourceDirectorySet
 import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetDependencyHandler
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.base.classesTaskName
-import org.jetbrains.kotlin.gradle.plugin.base.processResourcesTaskName
 import org.jetbrains.kotlin.gradle.plugin.executeClosure
-import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.lang.reflect.Constructor
-
-interface KotlinBaseSourceSet : KotlinSourceSet {
-    var compileClasspath: FileCollection
-
-    var runtimeClasspath: FileCollection
-
-    val output: SourceSetOutput
-
-    val resources: SourceDirectorySet
-
-    val allSource: SourceDirectorySet
-
-    val classesTaskName: String
-
-    val processResourcesTaskName: String
-
-    val compileKotlinTaskName: String
-
-    val compileConfigurationName: String
-
-    val runtimeConfigurationName: String
-
-    val compileOnlyConfigurationName: String
-
-    val runtimeOnlyConfigurationName: String
-
-    val implementationConfigurationName: String
-
-    val compileClasspathConfigurationName: String
-
-    val runtimeClasspathConfigurationName: String
-
-    fun compiledBy(vararg taskPaths: Any)
-}
 
 abstract class AbstractKotlinSourceSet(
     val displayName: String,
@@ -89,6 +48,19 @@ class DefaultKotlinSourceSet(
     val displayName: String,
     val fileResolver: FileResolver
 ) : KotlinSourceSet {
+
+    override val apiConfigurationName: String
+        get() = disambiguateName("api")
+
+    override val implementationConfigurationName: String
+        get() = disambiguateName("implementation")
+
+    override val compileOnlyConfigurationName: String
+        get() = disambiguateName("compileOnly")
+
+    override val runtimeOnlyConfigurationName: String
+        get() = disambiguateName("runtimeOnly")
+
     override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(displayName + ".kotlin", fileResolver)
 
     val resources: SourceDirectorySet = createDefaultSourceDirectorySet(displayName + ".resources", fileResolver)
@@ -102,21 +74,13 @@ class DefaultKotlinSourceSet(
     }
 
     private inner class DepenencyHandler : KotlinSourceSetDependencyHandler {
-        override fun api(dependencyNotation: Any) {
-            TODO("not implemented")
-        }
+        override fun api(dependencyNotation: Any) = addDependency(apiConfigurationName, dependencyNotation)
 
-        override fun implementation(dependencyNotation: Any) {
-            TODO("not implemented")
-        }
+        override fun implementation(dependencyNotation: Any) = addDependency(implementationConfigurationName, dependencyNotation)
 
-        override fun compileOnly(dependencyNotation: Any) {
-            TODO("not implemented")
-        }
+        override fun compileOnly(dependencyNotation: Any) = addDependency(compileOnlyConfigurationName, dependencyNotation)
 
-        override fun runtimeOnly(dependencyNotation: Any) {
-            TODO("not implemented")
-        }
+        override fun runtimeOnly(dependencyNotation: Any) = addDependency(runtimeOnlyConfigurationName, dependencyNotation)
 
         private fun addDependency(configurationName: String, dependencyNotation: Any) {
             project.dependencies.add(configurationName, dependencyNotation)
@@ -126,6 +90,9 @@ class DefaultKotlinSourceSet(
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ this@f.executeClosure(configureClosure) }
 }
+
+internal fun KotlinSourceSet.disambiguateName(simpleName: String) =
+    lowerCamelCaseName(simpleName, name)
 
 //open class KotlinOnlySourceSet(
 //    name: String,

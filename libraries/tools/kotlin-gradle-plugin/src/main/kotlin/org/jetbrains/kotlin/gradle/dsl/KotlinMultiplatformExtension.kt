@@ -6,18 +6,21 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
-import org.gradle.api.Named
-import org.gradle.api.Project
+import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformProjectConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.executeClosure
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
-import java.io.Serializable
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 
 open class KotlinMultiplatformExtension : KotlinProjectExtension() {
+    val targets: KotlinTargetContainer
+        get() = DslObject(this).extensions.getByType(KotlinTargetContainer::class.java)
+
+    fun targets(configure: KotlinTargetContainer.() -> Unit) = targets.run(configure)
+
+    fun targets(closure: Closure<*>) = targets.executeClosure(closure)
+
     internal lateinit var projectConfigurator: KotlinMultiplatformProjectConfigurator
 
     private inline fun <reified T : KotlinTarget> getOrCreateTarget(
@@ -29,19 +32,19 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension() {
         return result as T
     }
 
-    val common: KotlinOnlyTarget
+    val common: KotlinOnlyTarget<KotlinCommonCompilation>
         get() = getOrCreateTarget("common") { projectConfigurator.createCommonExtension() }
 
-    fun common(configure: KotlinOnlyTarget.() -> Unit) {
+    fun common(configure: KotlinOnlyTarget<KotlinCommonCompilation>.() -> Unit) {
         common.apply(configure)
     }
 
     fun common(configure: Closure<*>) = common { executeClosure(configure) }
 
-    val jvm: KotlinMppTarget
+    val jvm: KotlinOnlyTarget<KotlinJvmCompilation>
         get() = getOrCreateTarget("jvm") { projectConfigurator.createJvmExtension() }
 
-    fun jvm(configure: KotlinMppTarget.() -> Unit) {
+    fun jvm(configure: KotlinOnlyTarget<KotlinJvmCompilation>.() -> Unit) {
         jvm.apply(configure)
     }
 
@@ -56,10 +59,10 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension() {
 
     fun jvmWithJava(configure: Closure<*>) = jvmWithJava { executeClosure(configure) }
 
-    val js: KotlinMppTarget
+    val js: KotlinOnlyTarget<KotlinJsCompilation>
         get() = getOrCreateTarget("js") { projectConfigurator.createJsPlatformExtension() }
 
-    fun js(configure: KotlinMppTarget.() -> Unit) {
+    fun js(configure: KotlinOnlyTarget<KotlinJsCompilation>.() -> Unit) {
         js.apply(configure)
     }
 
@@ -73,15 +76,4 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension() {
     }
 
     fun android(configure: Closure<*>) = android { executeClosure(configure) }
-}
-
-open class KotlinMppTarget(
-    project: Project,
-    projectExtension: KotlinProjectExtension
-) : KotlinOnlyTarget(project, projectExtension) {
-    internal lateinit var projectConfigurator: KotlinMultiplatformProjectConfigurator
-
-    fun expectedBy(modulePath: String) {
-        projectConfigurator.addExternalExpectedByModule(this, modulePath)
-    }
 }

@@ -25,13 +25,10 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
-import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinAndroidSourceSetContainer
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinJavaSourceSetContainer
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinOnlySourceSetContainer
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.createKotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetContainer
 import org.jetbrains.kotlin.gradle.tasks.*
 import java.io.FileNotFoundException
 import java.util.*
@@ -72,13 +69,13 @@ abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver)
 open class KotlinPluginWrapper @Inject constructor(fileResolver: FileResolver, private val instantiator: Instantiator): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
             KotlinPlugin(
-                KotlinTasksProvider(), KotlinJavaSourceSetContainer(instantiator, project, fileResolver), kotlinPluginVersion
+                KotlinTasksProvider(), DefaultKotlinSourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver), kotlinPluginVersion
             )
 }
 
 open class KotlinCommonPluginWrapper @Inject constructor(fileResolver: FileResolver, private val instantiator: Instantiator): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-            KotlinCommonPlugin(KotlinCommonTasksProvider(), KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver), kotlinPluginVersion)
+            KotlinCommonPlugin(KotlinCommonTasksProvider(), DefaultKotlinSourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver), kotlinPluginVersion)
 }
 
 open class KotlinMultiplatformPluginWrapper @Inject constructor(
@@ -101,14 +98,14 @@ open class KotlinAndroidPluginWrapper @Inject constructor(fileResolver: FileReso
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         KotlinAndroidPlugin(
             AndroidTasksProvider(),
-            KotlinAndroidSourceSetContainer(instantiator, project, fileResolver),
+            DefaultKotlinSourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver),
             kotlinPluginVersion
         )
 }
 
 open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver, private val instantiator: Instantiator): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-            Kotlin2JsPlugin(Kotlin2JsTasksProvider(), KotlinOnlySourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver), kotlinPluginVersion)
+            Kotlin2JsPlugin(Kotlin2JsTasksProvider(), DefaultKotlinSourceSetContainer(project, fileResolver, instantiator, project.tasks as TaskResolver), kotlinPluginVersion)
 }
 
 fun Project.getKotlinPluginVersion(): String? {
