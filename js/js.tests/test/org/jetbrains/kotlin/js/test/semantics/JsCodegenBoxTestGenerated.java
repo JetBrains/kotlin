@@ -5969,15 +5969,13 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @TestMetadata("inlineWithJava.kt")
+            public void testInlineWithJava() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineWithJava.kt");
+            }
+
+            @TestMetadata("inlineWithJava_1_2.kt")
             public void testInlineWithJava_1_2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/inlineWithJava.kt");
-                try {
-                    doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
-                }
-                catch (Throwable ignore) {
-                    return;
-                }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineWithJava_1_2.kt");
             }
 
             @TestMetadata("simple.kt")

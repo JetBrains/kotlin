@@ -3,7 +3,7 @@
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
 import helpers.*
-import COROUTINES_PACKAGE.startCoroutine
+import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 interface TestInterface {

@@ -1,4 +1,4 @@
-// !API_VERSION: 1.3
+// LANGUAGE_VERSION: 1.3
 
 suspend fun named() {}
 

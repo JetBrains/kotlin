@@ -1,4 +1,3 @@
-// LANGUAGE_VERSION: 1.3
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // WITH_COROUTINES
@@ -14,20 +13,20 @@ interface I {
 
 public class JavaClass implements I {
     @Override
-    public String foo(int x, kotlin.coroutines.Continuation<? super String> continuation) {
+    public String foo(int x, kotlin.coroutines.experimental.Continuation<? super String> continuation) {
         return "O";
     }
 
     @Override
-    public Object bar(int x, kotlin.coroutines.Continuation<? super String> continuation) {
+    public Object bar(int x, kotlin.coroutines.experimental.Continuation<? super String> continuation) {
         return foo(x, continuation);
     }
 }
 
 // FILE: main.kt
 import helpers.*
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 class K : JavaClass() {
     override suspend fun foo(x: Int): String = super.foo(x) + suspendCoroutine { it.resume("K") }

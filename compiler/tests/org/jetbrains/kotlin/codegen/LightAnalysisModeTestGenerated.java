@@ -5340,15 +5340,13 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
 
         @TestMetadata("coroutineToString.kt")
-        public void testCoroutineToString_1_2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/coroutineToString.kt");
-            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+        public void testCoroutineToString() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/coroutineToString.kt");
         }
 
-        @TestMetadata("coroutineToString.kt")
-        public void testCoroutineToString_1_3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/coroutineToString.kt");
-            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+        @TestMetadata("coroutineToString_1_2.kt")
+        public void testCoroutineToString_1_2() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/coroutineToString_1_2.kt");
         }
 
         @TestMetadata("createCoroutineSafe.kt")
@@ -5508,15 +5506,13 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
 
         @TestMetadata("illegalState.kt")
-        public void testIllegalState_1_2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/illegalState.kt");
-            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+        public void testIllegalState() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/illegalState.kt");
         }
 
-        @TestMetadata("illegalState.kt")
-        public void testIllegalState_1_3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/illegalState.kt");
-            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+        @TestMetadata("illegalState_1_2.kt")
+        public void testIllegalState_1_2() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/illegalState_1_2.kt");
         }
 
         @TestMetadata("indirectInlineUsedAsNonInline.kt")
@@ -5976,15 +5972,13 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
 
         @TestMetadata("suspendCovariantJavaOverrides.kt")
-        public void testSuspendCovariantJavaOverrides_1_2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendCovariantJavaOverrides.kt");
-            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+        public void testSuspendCovariantJavaOverrides() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendCovariantJavaOverrides.kt");
         }
 
-        @TestMetadata("suspendCovariantJavaOverrides.kt")
-        public void testSuspendCovariantJavaOverrides_1_3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendCovariantJavaOverrides.kt");
-            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+        @TestMetadata("suspendCovariantJavaOverrides_1_2.kt")
+        public void testSuspendCovariantJavaOverrides_1_2() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendCovariantJavaOverrides_1_2.kt");
         }
 
         @TestMetadata("suspendDefaultImpl.kt")
@@ -6084,15 +6078,13 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
 
         @TestMetadata("suspendJavaOverrides.kt")
-        public void testSuspendJavaOverrides_1_2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendJavaOverrides.kt");
-            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+        public void testSuspendJavaOverrides() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendJavaOverrides.kt");
         }
 
-        @TestMetadata("suspendJavaOverrides.kt")
-        public void testSuspendJavaOverrides_1_3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendJavaOverrides.kt");
-            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+        @TestMetadata("suspendJavaOverrides_1_2.kt")
+        public void testSuspendJavaOverrides_1_2() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendJavaOverrides_1_2.kt");
         }
 
         @TestMetadata("suspensionInsideSafeCallWithElvis.kt")
@@ -7141,15 +7133,13 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             }
 
             @TestMetadata("inlineWithJava.kt")
-            public void testInlineWithJava_1_2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/inlineWithJava.kt");
-                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+            public void testInlineWithJava() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineWithJava.kt");
             }
 
-            @TestMetadata("inlineWithJava.kt")
-            public void testInlineWithJava_1_3() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/inlineWithJava.kt");
-                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+            @TestMetadata("inlineWithJava_1_2.kt")
+            public void testInlineWithJava_1_2() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineWithJava_1_2.kt");
             }
 
             @TestMetadata("simple.kt")
@@ -7348,15 +7338,13 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             }
 
             @TestMetadata("openFunWithJava.kt")
-            public void testOpenFunWithJava_1_2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/openFunWithJava.kt");
-                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+            public void testOpenFunWithJava() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/openFunWithJava.kt");
             }
 
-            @TestMetadata("openFunWithJava.kt")
-            public void testOpenFunWithJava_1_3() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/openFunWithJava.kt");
-                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+            @TestMetadata("openFunWithJava_1_2.kt")
+            public void testOpenFunWithJava_1_2() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/openFunWithJava_1_2.kt");
             }
 
             @TestMetadata("operators.kt")

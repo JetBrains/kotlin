@@ -1,10 +1,9 @@
-// LANGUAGE_VERSION: 1.3
 // WITH_RUNTIME
 // WITH_COROUTINES
 import helpers.*
 // TREAT_AS_ONE_FILE
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
     x.resume("OK")
 }
@@ -41,9 +40,9 @@ fun box(): String {
     return result
 }
 
-// 1 LOCALVARIABLE i Ljava/lang/String; L.* 2
-// 1 LOCALVARIABLE s Ljava/lang/String; L.* 2
-// 1 PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1.L\$0 : Ljava/lang/Object;
+// 1 LOCALVARIABLE i Ljava/lang/String; L.* 3
+// 1 LOCALVARIABLE s Ljava/lang/String; L.* 3
+// 1 PUTFIELD VarValueConflictsWithTableSameSort_1_2Kt\$box\$1.L\$0 : Ljava/lang/Object;
 /* 1 load in try/finally */
 /* 1 load in result = s */
 /* 1 load before suspension point */
