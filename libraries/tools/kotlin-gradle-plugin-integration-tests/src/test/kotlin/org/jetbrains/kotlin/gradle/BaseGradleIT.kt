@@ -19,6 +19,9 @@ abstract class BaseGradleIT {
 
     protected open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
 
+    protected open val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.None
+
     @Before
     fun setUp() {
         workingDir = createTempDir("BaseGradleIT")
@@ -179,7 +182,7 @@ abstract class BaseGradleIT {
 
     open inner class Project(
         val projectName: String,
-        val gradleVersionRequirement: GradleVersionRequired = GradleVersionRequired.None,
+        val gradleVersionRequirement: GradleVersionRequired = defaultGradleVersion,
         directoryPrefix: String? = null,
         val minLogLevel: LogLevel = LogLevel.DEBUG
     ) {
