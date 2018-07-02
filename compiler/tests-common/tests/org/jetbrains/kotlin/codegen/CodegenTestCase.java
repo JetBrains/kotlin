@@ -68,6 +68,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt.API_VERSION_DIRECTIVE;
 import static org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettings;
 import static org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
@@ -196,9 +197,16 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             }
 
             Map<String, String> directives = KotlinTestUtils.parseDirectives(testFile.content);
+
+            if (InTextDirectivesUtils.isDirectiveDefined(testFile.content, "WITH_UNSIGNED")) {
+                assertDirectivesToNull(explicitLanguageVersionSettings, explicitLanguageVersion);
+                explicitLanguageVersion = LanguageVersion.KOTLIN_1_3;
+                directives.put(API_VERSION_DIRECTIVE, ApiVersion.KOTLIN_1_3.getVersionString());
+            }
+
             LanguageVersionSettings fileLanguageVersionSettings = parseLanguageVersionSettings(directives);
             if (fileLanguageVersionSettings != null) {
-                assertDirectivesToNull(explicitLanguageVersionSettings, explicitLanguageVersion);
+                assertDirectivesToNull(explicitLanguageVersionSettings, null);
                 explicitLanguageVersionSettings = fileLanguageVersionSettings;
             }
         }

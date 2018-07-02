@@ -1,5 +1,3 @@
-// !LANGUAGE: +InlineClasses
-// !SKIP_METADATA_VERSION_CHECK
 // WITH_UNSIGNED
 
 val testSimpleUIntLiteral = 1u
