@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
@@ -133,8 +134,12 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                 return mostVisibleProperties.first()
             }
 
+            val allMembers = getProperties(Name.identifier(name)).joinToString("\n") { descriptor ->
+                DescriptorRenderer.DEBUG_TEXT.render(descriptor) + " | " + RuntimeTypeMapper.mapPropertySignature(descriptor)
+            }
             throw KotlinReflectionInternalError(
-                "${properties.size} properties '$name' (JVM signature: $signature) resolved in $this: $properties"
+                "Property '$name' (JVM signature: $signature) not resolved in $this:" +
+                        if (allMembers.isEmpty()) " no members found" else "\n$allMembers"
             )
         }
 
@@ -142,16 +147,18 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     fun findFunctionDescriptor(name: String, signature: String): FunctionDescriptor {
-        val functions = (if (name == "<init>") constructorDescriptors.toList() else getFunctions(Name.identifier(name)))
-            .filter { descriptor ->
-                RuntimeTypeMapper.mapSignature(descriptor).asString() == signature
-            }
+        val members = if (name == "<init>") constructorDescriptors.toList() else getFunctions(Name.identifier(name))
+        val functions = members.filter { descriptor ->
+            RuntimeTypeMapper.mapSignature(descriptor).asString() == signature
+        }
 
         if (functions.size != 1) {
-            val debugText = "'$name' (JVM signature: $signature)"
+            val allMembers = members.joinToString("\n") { descriptor ->
+                DescriptorRenderer.DEBUG_TEXT.render(descriptor) + " | " + RuntimeTypeMapper.mapSignature(descriptor)
+            }
             throw KotlinReflectionInternalError(
-                if (functions.isEmpty()) "Function $debugText not resolved in $this"
-                else "${functions.size} functions $debugText resolved in $this: $functions"
+                "Function '$name' (JVM signature: $signature) not resolved in $this:" +
+                        if (allMembers.isEmpty()) " no members found" else "\n$allMembers"
             )
         }
 
