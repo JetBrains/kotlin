@@ -791,13 +791,13 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
             importProject()
 
             assertModuleModuleDepScope("app", "cmn", DependencyScope.COMPILE)
-            TestCase.assertEquals(listOf("cmn"), facetSettings("app").implementedModuleNames)
+            TestCase.assertEquals(listOf("cmn"), facetSettings("jvm").implementedModuleNames)
 
             currentExternalProjectSettings.isResolveModulePerSourceSet = false
             importProject()
 
             assertModuleModuleDepScope("app", "cmn", DependencyScope.COMPILE)
-            TestCase.assertEquals(listOf("cmn"), facetSettings("app").implementedModuleNames)
+            TestCase.assertEquals(listOf("cmn"), facetSettings("jvm").implementedModuleNames)
         } finally {
             currentExternalProjectSettings.isResolveModulePerSourceSet = isResolveModulePerSourceSet
         }
