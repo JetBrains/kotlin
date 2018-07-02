@@ -5,10 +5,20 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.test.ConfigurationKind
 
 abstract class AbstractDiagnosticsWithUnsignedTypes : AbstractDiagnosticsTest() {
     override fun getConfigurationKind(): ConfigurationKind {
         return ConfigurationKind.WITH_UNSIGNED_TYPES
     }
+
+    override fun defaultLanguageVersionSettings(): LanguageVersionSettings =
+        CompilerTestLanguageVersionSettings(
+            DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
+            ApiVersion.KOTLIN_1_3,
+            LanguageVersion.KOTLIN_1_3
+        )
 }

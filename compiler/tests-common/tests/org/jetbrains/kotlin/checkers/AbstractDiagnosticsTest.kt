@@ -233,7 +233,14 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             }
         }
 
-        return result ?: CompilerTestLanguageVersionSettings(
+        return result ?: defaultLanguageVersionSettings()
+    }
+
+    /**
+     * Version settings used when no test data files have overriding version directives
+     */
+    protected open fun defaultLanguageVersionSettings(): LanguageVersionSettings {
+        return CompilerTestLanguageVersionSettings(
             DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
             LanguageVersionSettingsImpl.DEFAULT.apiVersion,
             LanguageVersionSettingsImpl.DEFAULT.languageVersion

@@ -1,5 +1,3 @@
-// !LANGUAGE: +InlineClasses
-// !SKIP_METADATA_VERSION_CHECK
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 const val u1: UByte = 0xFFu
