@@ -181,7 +181,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             val text = runReadAction { codeFragment.context?.text ?: "null" }
             val attachments = arrayOf(attachmentByPsiFile(sourcePosition.file),
                                       attachmentByPsiFile(codeFragment),
-                                      Attachment("breakpoint.info", "line: ${sourcePosition.line}"),
+                                      Attachment("breakpoint.info", "line: ${runReadAction { sourcePosition.line }}"),
                                       Attachment("context.info", text))
 
             LOG.error(LogMessageEx.createEvent(

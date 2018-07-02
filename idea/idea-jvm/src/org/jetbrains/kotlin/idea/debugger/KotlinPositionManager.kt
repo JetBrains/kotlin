@@ -304,7 +304,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         if (psiFile is ClsFileImpl) {
             val decompiledPsiFile = psiFile.readAction { it.decompiledPsiFile }
-            if (decompiledPsiFile is KtClsFile && sourcePosition.line == -1) {
+            if (decompiledPsiFile is KtClsFile && runReadAction { sourcePosition.line } == -1) {
                 val className = JvmFileClassUtil.getFileClassInternalName(decompiledPsiFile)
                 return myDebugProcess.virtualMachineProxy.classesByName(className)
             }

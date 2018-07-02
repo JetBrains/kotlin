@@ -81,7 +81,7 @@ class DebuggerClassNameProvider(
      * Returns classes in which the given line number *is* present.
      */
     fun getClassesForPosition(position: SourcePosition): List<ReferenceType> = with (debugProcess) {
-        val lineNumber = position.line
+        val lineNumber = runReadAction { position.line }
 
         return doGetClassesForPosition(position)
                 .flatMap { className -> virtualMachineProxy.classesByName(className) }
