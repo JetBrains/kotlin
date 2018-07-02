@@ -18,11 +18,14 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
@@ -99,18 +102,18 @@ class LazyScriptDescriptor(
         }
     }
 
-    internal fun findTypeDescriptor(kClass: KClass<*>, errorDiagnostic: DiagnosticFactory1<PsiElement, String>): ClassDescriptor? =
+    internal fun findTypeDescriptor(kClass: KClass<*>, errorDiagnostic: DiagnosticFactory1<PsiElement, String>?): ClassDescriptor? =
         findTypeDescriptor(kClass.classId, kClass.toString(), errorDiagnostic)
 
-    internal fun findTypeDescriptor(type: KType, errorDiagnostic: DiagnosticFactory1<PsiElement, String>): ClassDescriptor? =
+    internal fun findTypeDescriptor(type: KType, errorDiagnostic: DiagnosticFactory1<PsiElement, String>?): ClassDescriptor? =
         findTypeDescriptor(type.classId, type.toString(), errorDiagnostic)
 
     internal fun findTypeDescriptor(
         classId: ClassId?, typeName: String,
-        errorDiagnostic: DiagnosticFactory1<PsiElement, String>
+        errorDiagnostic: DiagnosticFactory1<PsiElement, String>?
     ): ClassDescriptor? {
         val typeDescriptor = classId?.let { module.findClassAcrossModuleDependencies(it) }
-        if (typeDescriptor == null) {
+        if (typeDescriptor == null && errorDiagnostic != null) {
             // TODO: use PositioningStrategies to highlight some specific place in case of error, instead of treating the whole file as invalid
             resolveSession.trace.report(
                 errorDiagnostic.on(
@@ -152,4 +155,41 @@ class LazyScriptDescriptor(
     }
 
     override fun getOuterScope(): LexicalScope = scriptOuterScope()
+
+    private val scriptClassAnnotations: () -> Annotations = resolveSession.storageManager.createLazyValue {
+        val baseAnnotations = baseClassDescriptor()?.annotations?.let { ann ->
+            FilteredAnnotations(ann) { fqname ->
+                val shortName = fqname.shortName().identifier
+                // TODO: consider more precise annotation filtering
+                !shortName.startsWith("KotlinScript") && !shortName.startsWith("ScriptTemplate")
+            }
+        } ?: super.annotations
+        val syntheticAnnotations =
+            scriptDefinition().targetClassAnnotations.mapNotNull { annInstance ->
+                try {
+                    val annDescriptor = findTypeDescriptor(annInstance.annotationClass, null) ?: throw Exception("class not found")
+                    val annArguments = HashMap<Name, ConstantValue<*>>()
+                    for (arg in annInstance.annotationClass.java.declaredMethods) {
+                        val argVal = ConstantValueFactory.createConstantValue(arg.invoke(annInstance))
+                                ?: throw Exception("Unsupported annotation argument: ${arg.name}")
+                        annArguments[Name.identifier(arg.name)] = argVal
+                    }
+                    AnnotationDescriptorImpl(annDescriptor.defaultType, annArguments, source)
+                } catch (e: Throwable) {
+                    resolveSession.trace.report(
+                        Errors.INVALID_SCRIPT_TARGET_ANNOTATION_CLASS.on(
+                            scriptInfo.script,
+                            annInstance.toString(),
+                            e.message ?: ""
+                        )
+                    )
+                    null
+                }
+            }
+        if (syntheticAnnotations.isEmpty()) baseAnnotations
+        else CompositeAnnotations(baseAnnotations, AnnotationsImpl(syntheticAnnotations))
+    }
+
+    override val annotations: Annotations
+        get() = scriptClassAnnotations()
 }

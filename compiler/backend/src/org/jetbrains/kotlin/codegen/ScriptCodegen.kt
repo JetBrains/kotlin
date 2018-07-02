@@ -44,6 +44,7 @@ class ScriptCodegen private constructor(
                 typeMapper.mapSupertype(scriptDescriptor.getSuperClassOrAny().defaultType, null).internalName,
                 mapSupertypesNames(typeMapper, scriptDescriptor.getSuperInterfaces(), null)
         )
+        AnnotationCodegen.forClass(v.visitor, this, typeMapper).genAnnotations(scriptDescriptor, null)
     }
 
     override fun generateBody() {
