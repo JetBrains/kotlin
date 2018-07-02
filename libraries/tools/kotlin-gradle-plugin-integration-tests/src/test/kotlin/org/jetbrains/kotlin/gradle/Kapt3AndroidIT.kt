@@ -14,7 +14,7 @@ open class Kapt3Android32IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: String
         get() = "3.2.0-beta01"
 
-    override val gradleVersion: GradleVersionRequired
+    override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("4.6")
 }
 
@@ -22,7 +22,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     protected open val androidGradlePluginVersion: String
         get() = "2.3.0"
 
-    protected open val gradleVersion: GradleVersionRequired
+    override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("4.1")
 
     override fun defaultBuildOptions() =
@@ -33,7 +33,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     @Test
     fun testButterKnife() {
-        val project = Project("android-butterknife", gradleVersion, directoryPrefix = "kapt2")
+        val project = Project("android-butterknife", directoryPrefix = "kapt2")
 
         project.build("assembleDebug") {
             assertSuccessful()
@@ -64,7 +64,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     @Test
     fun testDagger() {
-        val project = Project("android-dagger", gradleVersion, directoryPrefix = "kapt2")
+        val project = Project("android-dagger", directoryPrefix = "kapt2")
 
         project.build("assembleDebug") {
             assertSuccessful()
@@ -90,7 +90,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     @Test
     fun testKt15001() {
-        val project = Project("kt15001", gradleVersion, directoryPrefix = "kapt2")
+        val project = Project("kt15001", directoryPrefix = "kapt2")
 
         project.build("assembleDebug") {
             assertSuccessful()
@@ -100,7 +100,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     @Test
     fun testDbFlow() {
-        val project = Project("android-dbflow", gradleVersion, directoryPrefix = "kapt2")
+        val project = Project("android-dbflow", directoryPrefix = "kapt2")
 
         project.build("assembleDebug") {
             assertSuccessful()
@@ -114,7 +114,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     @Test
     fun testRealm() {
-        val project = Project("android-realm", gradleVersion, directoryPrefix = "kapt2")
+        val project = Project("android-realm", directoryPrefix = "kapt2")
 
         project.build("assembleDebug") {
             assertSuccessful()
@@ -128,7 +128,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
     @Test
     open fun testDatabinding() {
-        val project = Project("android-databinding", gradleVersion, directoryPrefix = "kapt2")
+        val project = Project("android-databinding", directoryPrefix = "kapt2")
 
         if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
             project.setupWorkingDir()
