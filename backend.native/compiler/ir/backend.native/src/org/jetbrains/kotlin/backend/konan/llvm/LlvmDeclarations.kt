@@ -127,8 +127,8 @@ private fun Context.getDeclaredFields(classDescriptor: ClassDescriptor): List<Ir
     val irClass = classDescriptor
     val fields = irClass.declarations.mapNotNull {
         when (it) {
-            is IrField -> it
-            is IrProperty -> it.konanBackingField
+            is IrField -> it.takeIf { it.isReal }
+            is IrProperty -> it.takeIf { it.isReal }?.konanBackingField
             else -> null
         }
     }

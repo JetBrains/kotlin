@@ -93,6 +93,7 @@ fun IrClass.getSuperInterfaces() = this.superClasses.map { it.owner }.filter { i
 
 val IrProperty.konanBackingField: IrField?
     get() {
+        assert(this.isReal)
         this.backingField?.let { return it }
 
         (this.descriptor as? DeserializedPropertyDescriptor)?.backingField?.let { backingFieldDescriptor ->
@@ -115,6 +116,10 @@ val IrProperty.konanBackingField: IrField?
 val IrField.containingClass get() = this.parent as? IrClass
 
 val IrFunction.isReal get() = this.origin != IrDeclarationOrigin.FAKE_OVERRIDE
+
+// Note: psi2ir doesn't set `origin = FAKE_OVERRIDE` for fields and properties yet.
+val IrProperty.isReal: Boolean get() = this.descriptor.kind.isReal
+val IrField.isReal: Boolean get() = this.descriptor.kind.isReal
 
 val IrSimpleFunction.isOverridable: Boolean
     get() = visibility != Visibilities.PRIVATE
