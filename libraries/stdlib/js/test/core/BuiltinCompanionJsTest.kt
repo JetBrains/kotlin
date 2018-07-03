@@ -7,7 +7,7 @@ package test.js
 
 import kotlin.test.*
 
-class NumbersJsTest {
+class BuiltinCompanionJsTest {
 
     @Test fun longMinMaxValues() {
         assertEquals(js("Kotlin.Long.MIN_VALUE"), Long.MIN_VALUE)
