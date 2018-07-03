@@ -65,12 +65,14 @@ ext.compileJava9Sources = { Project project, String moduleName, Collection<FileC
         it.options.sourcepath = files(java9SourceSet.srcDirs)
 
         doFirst {
-            def moduleFiles = moduleOutputs.collect { it.files }.flatten().join(File.pathSeparator)
+            def moduleFiles = files(*moduleOutputs)
+            def modulePath = project.configurations.compileClasspath.filter { !(it in moduleFiles.files) }
 
             options.compilerArgs = [
-                    '--module-path', project.configurations.compileClasspath.asPath,
-                    '--patch-module', "$moduleName=$moduleFiles"
+                    '--module-path', modulePath.asPath,
+                    '--patch-module', "$moduleName=${moduleFiles.asPath}"
             ]
+
             classpath = files()
         }
     }
