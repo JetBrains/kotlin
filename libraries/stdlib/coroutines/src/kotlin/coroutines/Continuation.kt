@@ -59,7 +59,7 @@ public annotation class RestrictsSuspension
  */
 @SinceKotlin("1.3")
 @InlineOnly public inline fun <T> Continuation(
-    context: CoroutineContext = EmptyCoroutineContext,
+    context: CoroutineContext,
     crossinline resumeWith: (SuccessOrFailure<T>) -> Unit
 ): Continuation<T> =
     object : Continuation<T> {
@@ -146,12 +146,7 @@ public suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<
     }
 
 /**
- * Continuation context of current coroutine.
- *
- * This allows the user code to not pass an extra [CoroutineContext] parameter in basic coroutine builders
- * like [launch](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/launch.html)
- * and [async](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/async.html),
- * but still provide easy access to coroutine context.
+ * Returns context of the current coroutine.
  */
 @SinceKotlin("1.3")
 @Suppress("WRONG_MODIFIER_TARGET")
