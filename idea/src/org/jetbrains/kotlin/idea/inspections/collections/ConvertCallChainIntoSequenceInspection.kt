@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -53,8 +54,8 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
         val calls = expression.collectCallExpression().reversed()
         val firstCall = calls.firstOrNull() ?: return
         val lastCall = calls.lastOrNull() ?: return
-        val first = firstCall.parent as? KtQualifiedExpression ?: return
-        val last = lastCall.parent as? KtQualifiedExpression ?: return
+        val first = firstCall.getQualifiedExpressionForSelector() ?: return
+        val last = lastCall.getQualifiedExpressionForSelector() ?: return
         val endWithTermination = lastCall.isTermination()
 
         val psiFactory = KtPsiFactory(expression)
@@ -96,10 +97,10 @@ private fun KtQualifiedExpression.findTarget(): Pair<KtQualifiedExpression, KtCa
     val calls = collectCallExpression()
     if (calls.isEmpty()) return null
 
-    val receiverType = (calls.last().parent as? KtQualifiedExpression)?.receiverExpression?.getCallableDescriptor()?.returnType
+    val receiverType = (calls.last().getQualifiedExpressionForSelector())?.receiverExpression?.getCallableDescriptor()?.returnType
     if (receiverType?.isCollection() != true) return null
 
-    val qualified = calls.first().parent as? KtQualifiedExpression ?: return null
+    val qualified = calls.first().getQualifiedExpressionForSelector() ?: return null
     return qualified to calls.last()
 }
 
