@@ -139,7 +139,7 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer(), Kot
         get() = true
 
     override fun getConfigurationData(element: PsiElement): MochaConfigData? {
-        return getConfigurationData(element)
+        return getConfigurationData(element, null)
     }
 
     override fun isConfigurationFromCompatibleContext(configuration: MochaRunConfiguration, context: ConfigurationContext): Boolean {
