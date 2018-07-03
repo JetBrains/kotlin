@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.builtins
+package kotlin.reflect.jvm.internal.impl.serialization.deserialization.builtins;
 
-import java.io.InputStream
+import kotlin.Unit;
 
-class BuiltInsResourceLoader {
-    fun loadResource(path: String): InputStream? {
-        return this::class.java.classLoader?.getResourceAsStream(path)
-               ?: ClassLoader.getSystemResourceAsStream(path)
+import java.io.IOException;
+import java.io.InputStream;
+
+public class BuiltInsResourceLoader {
+    public InputStream loadResource(String path) throws IOException {
+        Module stdlib = Unit.class.getModule();
+        return stdlib != null ? stdlib.getResourceAsStream(path) : null;
     }
 }

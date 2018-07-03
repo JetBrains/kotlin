@@ -3,11 +3,12 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.platform
+package org.jetbrains.kotlin.builtins.jvm
 
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.*
@@ -29,9 +30,9 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
 
     // describes mapping for a java class that has separate readOnly and mutable equivalents in Kotlin
     data class PlatformMutabilityMapping(
-            val javaClass: ClassId,
-            val kotlinReadOnly: ClassId,
-            val kotlinMutable: ClassId
+        val javaClass: ClassId,
+        val kotlinReadOnly: ClassId,
+        val kotlinMutable: ClassId
     )
 
     private inline fun <reified T> mutabilityMapping(kotlinReadOnly: ClassId, kotlinMutable: FqName): PlatformMutabilityMapping {
@@ -40,16 +41,16 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
     }
 
     val mutabilityMappings = listOf(
-            mutabilityMapping<Iterable<*>>(ClassId.topLevel(FQ_NAMES.iterable), FQ_NAMES.mutableIterable),
-            mutabilityMapping<Iterator<*>>(ClassId.topLevel(FQ_NAMES.iterator), FQ_NAMES.mutableIterator),
-            mutabilityMapping<Collection<*>>(ClassId.topLevel(FQ_NAMES.collection), FQ_NAMES.mutableCollection),
-            mutabilityMapping<List<*>>(ClassId.topLevel(FQ_NAMES.list), FQ_NAMES.mutableList),
-            mutabilityMapping<Set<*>>(ClassId.topLevel(FQ_NAMES.set), FQ_NAMES.mutableSet),
-            mutabilityMapping<ListIterator<*>>(ClassId.topLevel(FQ_NAMES.listIterator), FQ_NAMES.mutableListIterator),
-            mutabilityMapping<Map<*, *>>(ClassId.topLevel(FQ_NAMES.map), FQ_NAMES.mutableMap),
-            mutabilityMapping<Map.Entry<*, *>>(
-                    ClassId.topLevel(FQ_NAMES.map).createNestedClassId(FQ_NAMES.mapEntry.shortName()), FQ_NAMES.mutableMapEntry
-            )
+        mutabilityMapping<Iterable<*>>(ClassId.topLevel(FQ_NAMES.iterable), FQ_NAMES.mutableIterable),
+        mutabilityMapping<Iterator<*>>(ClassId.topLevel(FQ_NAMES.iterator), FQ_NAMES.mutableIterator),
+        mutabilityMapping<Collection<*>>(ClassId.topLevel(FQ_NAMES.collection), FQ_NAMES.mutableCollection),
+        mutabilityMapping<List<*>>(ClassId.topLevel(FQ_NAMES.list), FQ_NAMES.mutableList),
+        mutabilityMapping<Set<*>>(ClassId.topLevel(FQ_NAMES.set), FQ_NAMES.mutableSet),
+        mutabilityMapping<ListIterator<*>>(ClassId.topLevel(FQ_NAMES.listIterator), FQ_NAMES.mutableListIterator),
+        mutabilityMapping<Map<*, *>>(ClassId.topLevel(FQ_NAMES.map), FQ_NAMES.mutableMap),
+        mutabilityMapping<Map.Entry<*, *>>(
+            ClassId.topLevel(FQ_NAMES.map).createNestedClassId(FQ_NAMES.mapEntry.shortName()), FQ_NAMES.mutableMapEntry
+        )
     )
 
     init {
@@ -68,13 +69,17 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         }
 
         for (jvmType in JvmPrimitiveType.values()) {
-            add(ClassId.topLevel(jvmType.wrapperFqName),
-                ClassId.topLevel(KotlinBuiltIns.getPrimitiveFqName(jvmType.primitiveType)))
+            add(
+                ClassId.topLevel(jvmType.wrapperFqName),
+                ClassId.topLevel(KotlinBuiltIns.getPrimitiveFqName(jvmType.primitiveType))
+            )
         }
 
         for (classId in CompanionObjectMapping.allClassesWithIntrinsicCompanions()) {
-            add(ClassId.topLevel(FqName("kotlin.jvm.internal." + classId.shortClassName.asString() + "CompanionObject")),
-                classId.createNestedClassId(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT))
+            add(
+                ClassId.topLevel(FqName("kotlin.jvm.internal." + classId.shortClassName.asString() + "CompanionObject")),
+                classId.createNestedClassId(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
+            )
         }
 
         // TODO: support also functions with >= 23 parameters
@@ -208,11 +213,12 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
     }
 
     private fun convertToOppositeMutability(
-            descriptor: ClassDescriptor,
-            map: Map<FqNameUnsafe, FqName>,
-            mutabilityKindName: String
+        descriptor: ClassDescriptor,
+        map: Map<FqNameUnsafe, FqName>,
+        mutabilityKindName: String
     ): ClassDescriptor {
-        val oppositeClassFqName = map[DescriptorUtils.getFqName(descriptor)] ?: throw IllegalArgumentException("Given class $descriptor is not a $mutabilityKindName collection")
+        val oppositeClassFqName = map[DescriptorUtils.getFqName(descriptor)]
+                ?: throw IllegalArgumentException("Given class $descriptor is not a $mutabilityKindName collection")
         return descriptor.builtIns.getBuiltInClassByFqName(oppositeClassFqName)
     }
 }
