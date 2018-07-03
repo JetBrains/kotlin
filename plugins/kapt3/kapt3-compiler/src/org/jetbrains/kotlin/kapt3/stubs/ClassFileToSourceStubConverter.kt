@@ -235,7 +235,7 @@ class ClassFileToSourceStubConverter(
         // We prefer ordinary imports over aliased ones.
         val sortedImportDirectives = file.importDirectives.partition { it.aliasName == null }.run { first + second }
 
-        for (importDirective in sortedImportDirectives) {
+        loop@ for (importDirective in sortedImportDirectives) {
             // Qualified name should be valid Java fq-name
             val importedFqName = importDirective.importedFqName?.takeIf { it.pathSegments().size > 1 } ?: continue
             if (!isValidQualifiedName(importedFqName)) continue
@@ -243,11 +243,23 @@ class ClassFileToSourceStubConverter(
             val shortName = importedFqName.shortName()
             if (shortName.asString() == classDeclaration.simpleName.toString()) continue
 
-            val importedReference = getReferenceExpression(importDirective.importedReference)
-                    ?.let { kaptContext.bindingContext[BindingContext.REFERENCE_TARGET, it] }
+            val importedReference = resolveImportReference@ run {
+                val referenceExpression = getReferenceExpression(importDirective.importedReference) ?: return@run null
 
-            if (importedReference is CallableDescriptor
-                || (importDirective.isAllUnder && importedReference is ClassifierDescriptor)) continue
+                val bindingContext = kaptContext.bindingContext
+                bindingContext[BindingContext.REFERENCE_TARGET, referenceExpression]?.let { return@run it }
+
+                val allTargets = bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression] ?: return@run null
+                allTargets.find { it is CallableDescriptor }?.let { return@run it }
+
+                return@run allTargets.firstOrNull()
+            }
+
+            val isCallableImport = importedReference is CallableDescriptor
+            val isAllUnderClassifierImport = importDirective.isAllUnder && importedReference is ClassifierDescriptor
+
+            if (isCallableImport || isAllUnderClassifierImport)
+                continue@loop
 
             val importedExpr = treeMaker.FqName(importedFqName.asString())
 
