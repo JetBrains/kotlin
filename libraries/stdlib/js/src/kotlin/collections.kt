@@ -6,7 +6,7 @@
 package kotlin.collections
 
 import kotlin.comparisons.naturalOrder
-import kotlin.math.floor
+import kotlin.random.Random
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
 @kotlin.internal.InlineOnly
@@ -87,16 +87,7 @@ public actual fun <T> MutableList<T>.fill(value: T): Unit {
  * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
  */
 @SinceKotlin("1.2")
-public actual fun <T> MutableList<T>.shuffle(): Unit {
-    for (i in lastIndex downTo 1) {
-        val j = rand(i + 1)
-        val copy = this[i]
-        this[i] = this[j]
-        this[j] = copy
-    }
-}
-
-private fun rand(upperBound: Int) = floor(kotlin.js.Math.random() * upperBound).toInt()
+public actual fun <T> MutableList<T>.shuffle(): Unit = shuffle(Random)
 
 /**
  * Returns a new list with the elements of this list randomly shuffled.
