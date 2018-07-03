@@ -58,7 +58,21 @@ KLong Kotlin_AtomicLong_addAndGet(KRef thiz, KLong delta) {
 }
 
 KLong Kotlin_AtomicLong_compareAndSwap(KRef thiz, KLong expectedValue, KLong newValue) {
+#ifdef __mips
+    // Potentially huge performance penalty, but correct.
+    // TODO: reconsider, once target MIPS can do proper 64-bit CAS.
+    static int lock = 0;
+    while (compareAndSwap(&lock, 0, 1) != 0);
+    KLong* address = reinterpret_cast<KLong*>(thiz + 1);
+    KLong old = *address;
+    if (old == expectedValue) {
+      *address = newValue;
+    }
+    compareAndSwap(&lock, 1, 0);
+    return old;
+#else
     return compareAndSwapImpl(thiz, expectedValue, newValue);
+#endif
 }
 
 KNativePtr Kotlin_AtomicNativePtr_compareAndSwap(KRef thiz, KNativePtr expectedValue, KNativePtr newValue) {
