@@ -139,19 +139,26 @@ class CoroutineCodegenForLambda private constructor(
 
     private lateinit var constructorToUseFromInvoke: Method
 
-    private val createCoroutineDescriptor =
-        funDescriptor.createCustomCopy {
-            setName(Name.identifier(SUSPEND_FUNCTION_CREATE_METHOD_NAME))
-            setReturnType(
-                funDescriptor.module.getContinuationOfTypeOrAny(
-                    builtIns.unitType,
-                    state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
-                )
-            )
-            // 'create' method should not inherit initial descriptor for suspend function from original descriptor
-            putUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION, null)
-            setVisibility(Visibilities.PUBLIC)
-        }
+    private val createCoroutineDescriptor = SimpleFunctionDescriptorImpl.create(
+        funDescriptor.containingDeclaration,
+        Annotations.EMPTY,
+        Name.identifier(SUSPEND_FUNCTION_CREATE_METHOD_NAME),
+        funDescriptor.kind,
+        funDescriptor.source
+    ).also {
+        it.initialize(
+            funDescriptor.extensionReceiverParameter?.type,
+            funDescriptor.dispatchReceiverParameter,
+            funDescriptor.typeParameters,
+            funDescriptor.valueParameters,
+            funDescriptor.module.getContinuationOfTypeOrAny(
+                builtIns.unitType,
+                state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+            ),
+            funDescriptor.modality,
+            Visibilities.PUBLIC
+        )
+    }
 
     override fun generateClosureBody() {
         for (parameter in allFunctionParameters()) {

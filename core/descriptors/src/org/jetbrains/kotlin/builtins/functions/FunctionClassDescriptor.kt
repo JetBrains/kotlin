@@ -127,14 +127,12 @@ class FunctionClassDescriptor(
                     add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
             }
 
+            // For K{Suspend}Function{n}, add corresponding numbered {Suspend}Function{n} class, e.g. {Suspend}Function2 for K{Suspend}Function2
             val numberedSupertypeKind = when (functionKind) {
                 Kind.KFunction -> Kind.Function
                 Kind.KSuspendFunction -> Kind.SuspendFunction
                 else -> null
             }
-
-
-            // For K{Suspend}Function{n}, add corresponding numbered {Suspend}Function{n} class, e.g. {Suspend}Function2 for {Suspend}KFunction2
             if (numberedSupertypeKind != null) {
                 val packageView = containingDeclaration.containingDeclaration.getPackage(BUILT_INS_PACKAGE_FQ_NAME)
                 val kotlinPackageFragment = packageView.fragments.filterIsInstance<BuiltInsPackageFragment>().first()

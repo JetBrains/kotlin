@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -30,8 +29,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.addFakeContinuationMarker;
 
 /*
  * Notice the difference between two function descriptors in this class.
@@ -69,14 +66,13 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
     ) {
         super(state);
         this.resolvedCall = resolvedCall;
-        CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-        if (resultingDescriptor instanceof FunctionDescriptor && ((FunctionDescriptor) resultingDescriptor).isSuspend()) {
-            this.referencedFunction =
-                    CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView((FunctionDescriptor) resultingDescriptor, state);
+        FunctionDescriptor referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        if (referencedFunction.isSuspend()) {
+            this.referencedFunction = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(referencedFunction, state);
             this.functionDescriptor = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(functionDescriptor, state);
         }
         else {
-            this.referencedFunction = (FunctionDescriptor) resultingDescriptor;
+            this.referencedFunction = referencedFunction;
             this.functionDescriptor = functionDescriptor;
         }
         this.receiverType = receiverType;

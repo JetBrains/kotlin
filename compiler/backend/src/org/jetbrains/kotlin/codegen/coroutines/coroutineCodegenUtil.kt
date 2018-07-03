@@ -214,8 +214,7 @@ fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(function: D, stat
 fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(
     function: D,
     isReleaseCoroutines: Boolean,
-    bindingContext: BindingContext? = null,
-    dropSuspend: Boolean = false
+    bindingContext: BindingContext? = null
 ): D {
     assert(function.isSuspend) {
         "Suspended function is expected, but $function was found"
@@ -245,9 +244,6 @@ fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(
         setPreserveSourceElement()
         setReturnType(function.builtIns.nullableAnyType)
         setValueParameters(it.valueParameters + continuationParameter)
-        if (dropSuspend) {
-            setIsSuspend(false)
-        }
         putUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION, it)
     }
 }

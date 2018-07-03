@@ -334,19 +334,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         nameStack.push(name);
 
         if (CoroutineUtilKt.isSuspendLambda(functionDescriptor)) {
-            SimpleFunctionDescriptor jvmSuspendFunctionView =
-                    CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
-                            (SimpleFunctionDescriptor) functionDescriptor,
-                            languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
-                    );
-
-            bindingTrace.record(
-                    CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
-                    functionDescriptor,
-                    jvmSuspendFunctionView
-            );
-            closure.setSuspend(true);
-            closure.setSuspendLambda();
+            createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor, true);
         }
         functionsStack.push(functionDescriptor);
 
@@ -406,8 +394,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         if (callableDescriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) callableDescriptor;
-            if (functionDescriptor.isSuspend()){
-                createAndRecordSuspendFunctionView(closure, functionDescriptor, /* isSuspendLambda */ false, /* isDropSuspend */ false);
+            if (functionDescriptor.isSuspend()) {
+                createAndRecordSuspendFunctionView(closure, functionDescriptor, false);
             }
         }
 
@@ -421,15 +409,13 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     private SimpleFunctionDescriptor createAndRecordSuspendFunctionView(
             MutableClosure closure,
             SimpleFunctionDescriptor functionDescriptor,
-            boolean isSuspendLambda,
-            boolean isDropSuspend
+            boolean isSuspendLambda
     ) {
         SimpleFunctionDescriptor jvmSuspendFunctionView =
                 CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
                         functionDescriptor,
                         languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
-                        this.bindingContext,
-                        isDropSuspend
+                        this.bindingContext
                 );
 
         bindingTrace.record(
@@ -581,8 +567,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             MutableClosure closure = recordClosure(classDescriptor, name);
 
             SimpleFunctionDescriptor jvmSuspendFunctionView =
-                    createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor,
-                            /* isSuspendLambda*/ false, /* isDropSuspend */ false);
+                    createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor, false);
 
             // This is a very subtle place (hack).
             // When generating bytecode of some suspend function, we replace the original descriptor
@@ -626,8 +611,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             nameStack.push(name);
 
             if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend()) {
-                createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor,
-                        /* isSuspendLambda */ true, /* isDropSuspend */ true);
+                createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor,true);
             }
 
             functionsStack.push(functionDescriptor);

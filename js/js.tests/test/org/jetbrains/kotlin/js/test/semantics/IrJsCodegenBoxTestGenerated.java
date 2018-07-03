@@ -5495,20 +5495,17 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                     KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
                 }
 
+                private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+                    KotlinTestUtils.runTest0(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JS_IR, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInCallableReference() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
                 }
 
                 @TestMetadata("longArgs.kt")
                 public void testLongArgs_1_2() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/longArgs.kt");
-                    try {
-                        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/longArgs.kt", "kotlin.coroutines.experimental");
                 }
 
                 @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound")
@@ -5519,14 +5516,17 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                         KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
                     }
 
+                    private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+                        KotlinTestUtils.runTest0(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JS_IR, testDataFilePath);
+                    }
+
                     public void testAllFilesPresentInBound() throws Exception {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
                     }
 
                     @TestMetadata("emptyLHS.kt")
                     public void testEmptyLHS_1_2() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/emptyLHS.kt");
-                        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound/emptyLHS.kt", "kotlin.coroutines.experimental");
                     }
                 }
 
@@ -5538,20 +5538,22 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                         KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
                     }
 
+                    private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+                        KotlinTestUtils.runTest0(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JS_IR, testDataFilePath);
+                    }
+
                     public void testAllFilesPresentInFunction() throws Exception {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
                     }
 
                     @TestMetadata("genericCallableReferenceArguments.kt")
                     public void testGenericCallableReferenceArguments_1_2() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/genericCallableReferenceArguments.kt");
-                        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/genericCallableReferenceArguments.kt", "kotlin.coroutines.experimental");
                     }
 
                     @TestMetadata("genericCallableReferencesWithNullableTypes.kt")
                     public void testGenericCallableReferencesWithNullableTypes_1_2() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/genericCallableReferencesWithNullableTypes.kt");
-                        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                        runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/genericCallableReferencesWithNullableTypes.kt", "kotlin.coroutines.experimental");
                     }
 
                     @TestMetadata("getArityViaFunctionImpl.kt")
@@ -5567,14 +5569,17 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                             KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
                         }
 
+                        private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+                            KotlinTestUtils.runTest0(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JS_IR, testDataFilePath);
+                        }
+
                         public void testAllFilesPresentInLocal() throws Exception {
                             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
                         }
 
                         @TestMetadata("equalsHashCode.kt")
                         public void testEqualsHashCode_1_2() throws Exception {
-                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/equalsHashCode.kt");
-                            doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local/equalsHashCode.kt", "kotlin.coroutines.experimental");
                         }
                     }
                 }

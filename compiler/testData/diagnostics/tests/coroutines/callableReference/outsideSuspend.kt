@@ -1,6 +1,11 @@
 // !LANGUAGE: +Coroutines
 // SKIP_TXT
+// !CHECK_TYPE
+
+import kotlin.reflect.KSuspendFunction0
 
 suspend fun foo() {}
 
-val ref = ::foo
+fun test() {
+    ::foo checkType { _<KSuspendFunction0>() }
+}

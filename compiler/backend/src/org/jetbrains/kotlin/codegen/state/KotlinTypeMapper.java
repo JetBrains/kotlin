@@ -1016,19 +1016,12 @@ public class KotlinTypeMapper {
 
             return OperatorNameConventions.INVOKE.asString();
         }
-        else if (isLocalFunction(descriptor) || isFunctionExpression(descriptor) || isSuspendFunctionReference(descriptor)) {
+        else if (isLocalFunction(descriptor) || isFunctionExpression(descriptor)) {
             return OperatorNameConventions.INVOKE.asString();
         }
         else {
             return mangleMemberNameIfRequired(descriptor.getName().asString(), descriptor);
         }
-    }
-
-    private static boolean isSuspendFunctionReference(FunctionDescriptor descriptor) {
-        return descriptor instanceof SimpleFunctionDescriptor &&
-               descriptor.getName().isSpecial() &&
-               CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(descriptor) != null &&
-               CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(descriptor).isSuspend();
     }
 
     @NotNull

@@ -632,7 +632,7 @@ class DoubleColonExpressionResolver(
         val descriptor =
             if (resolutionResults?.isSingleResult == true) resolutionResults.resultingDescriptor else null
         if (descriptor is PropertyDescriptor && descriptor.isBuiltInCoroutineContext(languageVersionSettings)) {
-            context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable references to suspend property"))
+            context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable reference to suspend property"))
         }
 
         val expressionResult = lhsResult as? DoubleColonLHS.Expression ?: return
