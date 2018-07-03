@@ -1,6 +1,0 @@
-package
-
-public fun case_1(/*0*/ value: kotlin.Any?): kotlin.String
-public fun case_2(/*0*/ value: kotlin.Any?): kotlin.String
-public fun case_3(/*0*/ value: kotlin.Any?): kotlin.String
-public fun case_4(/*0*/ value: kotlin.Any?): kotlin.String
