@@ -10,6 +10,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace;
@@ -144,14 +145,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     }
 
     private static void updateConfigurationWithDirectives(String content, CompilerConfiguration configuration) {
-        String version = InTextDirectivesUtils.findStringWithPrefixes(content, "// LANGUAGE_VERSION:");
-        if (version != null) {
-            LanguageVersion explicitVersion = LanguageVersion.fromVersionString(version);
-            CommonConfigurationKeysKt.setLanguageVersionSettings(
-                    configuration,
-                    new LanguageVersionSettingsImpl(explicitVersion, ApiVersion.createByLanguageVersion(explicitVersion))
-            );
-        }
+        Map<String, String> directives = KotlinTestUtils.parseDirectives(content);
+        LanguageVersionSettings languageVersionSettings = CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettingsOrDefault(directives);
+
+        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, languageVersionSettings);
 
         if (InTextDirectivesUtils.isDirectiveDefined(content, "ANDROID_ANNOTATIONS")) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.androidAnnotationsForTests());
