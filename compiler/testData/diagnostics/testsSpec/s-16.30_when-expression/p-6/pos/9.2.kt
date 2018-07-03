@@ -1,3 +1,5 @@
+// SKIP_TXT
+
 /*
  KOTLIN SPEC TEST (POSITIVE)
 

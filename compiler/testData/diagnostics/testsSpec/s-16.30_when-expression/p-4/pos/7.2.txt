@@ -1,6 +1,0 @@
-package
-
-public fun case_1(/*0*/ value: kotlin.Boolean): kotlin.String
-public fun case_2(/*0*/ value: kotlin.Boolean): kotlin.String
-public fun case_3(/*0*/ value: kotlin.Boolean, /*1*/ value1: kotlin.Boolean, /*2*/ value2: kotlin.Boolean, /*3*/ value3: kotlin.Boolean): kotlin.String
-public fun case_4(/*0*/ value: kotlin.Boolean, /*1*/ value1: kotlin.Boolean, /*2*/ value2: kotlin.Boolean, /*3*/ value3: kotlin.Boolean): kotlin.String
