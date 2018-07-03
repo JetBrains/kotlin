@@ -117,11 +117,9 @@ abstract class IncrementalCompilerRunner<
 
     protected abstract fun calculateSourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles.Known, args: Args): CompilationMode
 
-    protected fun getDirtyFiles(changedFiles: ChangedFiles.Known): HashSet<File> {
-        val dirtyFiles = HashSet<File>(with(changedFiles) { modified.size + removed.size })
-        with(changedFiles) {
-            modified.asSequence() + removed.asSequence()
-        }.filterTo(dirtyFiles, File::isKotlinFile)
+    protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: ChangedFiles.Known) {
+        dirtyFiles.add(changedFiles.modified)
+        dirtyFiles.add(changedFiles.removed)
 
         if (dirtySourcesSinceLastTimeFile.exists()) {
             val files = dirtySourcesSinceLastTimeFile.readLines().map(::File)
@@ -129,14 +127,12 @@ abstract class IncrementalCompilerRunner<
                 reporter.report { "Source files added since last compilation: ${reporter.pathsAsString(files)}" }
             }
 
-            dirtyFiles.addAll(files)
+            dirtyFiles.add(files)
         }
-
-        return dirtyFiles
     }
 
     protected sealed class CompilationMode {
-        class Incremental(val dirtyFiles: Set<File>) : CompilationMode()
+        class Incremental(val dirtyFiles: DirtyFilesContainer) : CompilationMode()
         class Rebuild(getReason: () -> String = { "" }) : CompilationMode() {
             val reason: String by lazy(getReason)
         }
@@ -188,7 +184,7 @@ abstract class IncrementalCompilerRunner<
         preBuildHook(args, compilationMode)
 
         val dirtySources = when (compilationMode) {
-            is CompilationMode.Incremental -> ArrayList(compilationMode.dirtyFiles)
+            is CompilationMode.Incremental -> compilationMode.dirtyFiles.toMutableList()
             is CompilationMode.Rebuild -> allKotlinSources.toMutableList()
         }
 
