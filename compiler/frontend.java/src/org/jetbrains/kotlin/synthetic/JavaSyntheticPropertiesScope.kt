@@ -59,11 +59,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
 
             val originalGetterOrSetter = getterOrSetter.original
 
-            val names = listOfNotNull(
-                propertyNameByGetMethodName(name),
-                propertyNameBySetMethodName(name, withIsPrefix = true),
-                propertyNameBySetMethodName(name, withIsPrefix = false)
-            )
+            val names = propertyNamesByAccessorName(name)
 
             return names
                 .flatMap {
@@ -75,6 +71,12 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
                 }.filterIsInstance<SyntheticJavaPropertyDescriptor>()
                 .firstOrNull { originalGetterOrSetter == it.getMethod || originalGetterOrSetter == it.setMethod }
         }
+
+        fun propertyNamesByAccessorName(name: Name): List<Name> = listOfNotNull(
+            propertyNameByGetMethodName(name),
+            propertyNameBySetMethodName(name, withIsPrefix = true),
+            propertyNameBySetMethodName(name, withIsPrefix = false)
+        )
 
         fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, syntheticScope: SyntheticScope) =
             findByGetterOrSetter(getterOrSetter,
