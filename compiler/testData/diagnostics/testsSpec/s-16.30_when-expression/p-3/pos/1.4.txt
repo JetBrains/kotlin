@@ -1,3 +1,0 @@
-package
-
-public fun case_1(/*0*/ value: kotlin.Int, /*1*/ value1: kotlin.Byte, /*2*/ value2: kotlin.Short, /*3*/ value3: kotlin.Int, /*4*/ value4: kotlin.Long, /*5*/ value5: kotlin.Float, /*6*/ value6: kotlin.Double, /*7*/ value7: kotlin.Char): kotlin.Unit
