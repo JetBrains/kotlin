@@ -182,6 +182,7 @@ internal fun KotlinType.toPsiType(lightDeclaration: PsiModifierListOwner?, conte
             "kotlin.Char" -> PsiType.CHAR.orBoxed()
             "kotlin.Double" -> PsiType.DOUBLE.orBoxed()
             "kotlin.Float" -> PsiType.FLOAT.orBoxed()
+            "kotlin.Unit" -> PsiType.VOID.orBoxed()
             "kotlin.String" -> PsiType.getJavaLangString(context.manager, context.resolveScope)
             else -> {
                 val typeConstructor = this.constructor

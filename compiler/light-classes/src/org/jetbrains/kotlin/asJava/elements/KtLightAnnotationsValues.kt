@@ -82,6 +82,7 @@ private fun psiType(kotlinType: KotlinType, context: PsiElement): PsiType? {
         "kotlin.Char" -> PsiType.CHAR
         "kotlin.Double" -> PsiType.DOUBLE
         "kotlin.Float" -> PsiType.FLOAT
+        "kotlin.Unit" -> PsiType.VOID
         "kotlin.String" -> PsiType.getJavaLangString(context.manager, context.resolveScope)
         else -> PsiType.getTypeByName(typeFqName, context.project, context.resolveScope)
     }
