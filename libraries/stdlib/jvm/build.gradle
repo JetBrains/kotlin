@@ -212,6 +212,8 @@ compileUnsignedKotlin {
         languageVersion = "1.3"
         apiVersion = "1.3"
         freeCompilerArgs += [
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
                 "-XXLanguage:+InlineClasses"
         ]
     }

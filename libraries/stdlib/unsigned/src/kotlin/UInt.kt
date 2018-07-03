@@ -11,6 +11,7 @@ import kotlin.experimental.*
 
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public inline class UInt internal constructor(private val data: Int) : Comparable<UInt> {
 
     companion object {
@@ -134,10 +135,14 @@ public inline class UInt internal constructor(private val data: Int) : Comparabl
 }
 
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Byte.toUInt(): UInt = UInt(this.toInt() and 0xFF)
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Short.toUInt(): UInt = UInt(this.toInt() and 0xFFFF)
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Int.toUInt(): UInt = UInt(this)
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Long.toUInt(): UInt = UInt(this.toInt())

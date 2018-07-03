@@ -8,6 +8,7 @@
 package kotlin
 
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public inline class ULongArray
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @PublishedApi
@@ -41,10 +42,12 @@ internal constructor(private val storage: LongArray) : Collection<ULong> {
 }
 
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public inline fun ULongArray(size: Int, init: (Int) -> ULong): ULongArray {
     return ULongArray(LongArray(size) { index -> init(index).toLong() })
 }
 
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 // TODO: @kotlin.internal.InlineOnly
 public inline fun ulongArrayOf(vararg elements: ULong): ULongArray = elements

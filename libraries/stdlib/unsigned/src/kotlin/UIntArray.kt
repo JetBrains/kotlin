@@ -8,6 +8,7 @@
 package kotlin
 
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public inline class UIntArray
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @PublishedApi
@@ -41,10 +42,12 @@ internal constructor(private val storage: IntArray) : Collection<UInt> {
 }
 
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public inline fun UIntArray(size: Int, init: (Int) -> UInt): UIntArray {
     return UIntArray(IntArray(size) { index -> init(index).toInt() })
 }
 
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 // TODO: @kotlin.internal.InlineOnly
 public inline fun uintArrayOf(vararg elements: UInt): UIntArray = elements
