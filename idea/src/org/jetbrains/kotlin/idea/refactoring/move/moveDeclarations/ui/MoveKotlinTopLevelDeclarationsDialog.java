@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPan
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTable;
 import org.jetbrains.kotlin.idea.refactoring.move.MoveUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*;
+import static org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessorKt.MoveSource;
 import org.jetbrains.kotlin.idea.refactoring.ui.KotlinFileChooserDialog;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.name.FqName;
@@ -774,12 +775,11 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
             MoveDeclarationsDescriptor options = new MoveDeclarationsDescriptor(
                     myProject,
-                    elementsToMove,
+                    MoveSource(elementsToMove),
                     target,
                     MoveDeclarationsDelegate.TopLevel.INSTANCE,
                     isSearchInComments(),
                     isSearchInNonJavaFiles(),
-                    false,
                     deleteSourceFile,
                     moveCallback,
                     false,
