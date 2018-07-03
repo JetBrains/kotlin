@@ -144,22 +144,8 @@ class IncrementalJvmCompilerRunner(
         changedFiles: ChangedFiles.Known,
         args: K2JVMCompilerArguments
     ): CompilationMode {
-        val dirtyFiles = getDirtyFiles(changedFiles)
-
-        fun markDirtyBy(lookupSymbols: Collection<LookupSymbol>) {
-            if (lookupSymbols.isEmpty()) return
-
-            val dirtyFilesFromLookups = mapLookupSymbolsToFiles(caches.lookupCache, lookupSymbols, reporter)
-            dirtyFiles.addAll(dirtyFilesFromLookups)
-        }
-
-        fun markDirtyBy(dirtyClassesFqNames: Collection<FqName>) {
-            if (dirtyClassesFqNames.isEmpty()) return
-
-            val fqNamesWithSubtypes = dirtyClassesFqNames.flatMap { withSubtypes(it, listOf(caches.platformCache)) }
-            val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(listOf(caches.platformCache), fqNamesWithSubtypes, reporter)
-            dirtyFiles.addAll(dirtyFilesFromFqNames)
-        }
+        val dirtyFiles = DirtyFilesContainer(caches, reporter)
+        initDirtyFiles(dirtyFiles, changedFiles)
 
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild { "No information on previous build" }
         reporter.report { "Last Kotlin Build info -- $lastBuildInfo" }
@@ -173,8 +159,8 @@ class IncrementalJvmCompilerRunner(
                 "Could not get classpath's changes${classpathChanges.reason?.let { ": $it" }}"
             }
             is ChangesEither.Known -> {
-                markDirtyBy(classpathChanges.lookupSymbols)
-                markDirtyBy(classpathChanges.fqNames)
+                dirtyFiles.addByDirtySymbols(classpathChanges.lookupSymbols)
+                dirtyFiles.addByDirtyClasses(classpathChanges.fqNames)
             }
         }
 
@@ -184,9 +170,8 @@ class IncrementalJvmCompilerRunner(
                 is ChangesEither.Known -> javaFilesChanges.lookupSymbols
                 is ChangesEither.Unknown -> return CompilationMode.Rebuild { "Could not get changes for java files" }
             }
-            markDirtyBy(affectedJavaSymbols)
-        }
-        else {
+            dirtyFiles.addByDirtySymbols(affectedJavaSymbols)
+        } else {
             if (!processChangedJava(changedFiles, caches)) {
                 return CompilationMode.Rebuild { "Could not get changes for java files" }
             }
@@ -195,9 +180,9 @@ class IncrementalJvmCompilerRunner(
         val androidLayoutChanges = processLookupSymbolsForAndroidLayouts(changedFiles)
         val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles)
 
-        markDirtyBy(androidLayoutChanges)
-        markDirtyBy(removedClassesChanges.dirtyLookupSymbols)
-        markDirtyBy(removedClassesChanges.dirtyClassesFqNames)
+        dirtyFiles.addByDirtySymbols(androidLayoutChanges)
+        dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
+        dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
 
         return CompilationMode.Incremental(dirtyFiles)
     }

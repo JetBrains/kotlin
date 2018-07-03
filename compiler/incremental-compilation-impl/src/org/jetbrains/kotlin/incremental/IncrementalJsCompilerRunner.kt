@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.*
-import org.jetbrains.kotlin.name.FqName
 import java.io.File
 
 fun makeJsIncrementally(
@@ -91,27 +90,12 @@ class IncrementalJsCompilerRunner(
 
         if (changedLib != null) return CompilationMode.Rebuild { "Library has been changed: $changedLib" }
 
-        val dirtyFiles = getDirtyFiles(changedFiles)
-
-        // todo: unify with JVM calculateSourcesToCompile
-        fun markDirtyBy(lookupSymbols: Collection<LookupSymbol>) {
-            if (lookupSymbols.isEmpty()) return
-
-            val dirtyFilesFromLookups = mapLookupSymbolsToFiles(caches.lookupCache, lookupSymbols, reporter)
-            dirtyFiles.addAll(dirtyFilesFromLookups)
-        }
-
-        fun markDirtyBy(dirtyClassesFqNames: Collection<FqName>) {
-            if (dirtyClassesFqNames.isEmpty()) return
-
-            val fqNamesWithSubtypes = dirtyClassesFqNames.flatMap { withSubtypes(it, listOf(caches.platformCache)) }
-            val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(listOf(caches.platformCache), fqNamesWithSubtypes, reporter)
-            dirtyFiles.addAll(dirtyFilesFromFqNames)
-        }
+        val dirtyFiles = DirtyFilesContainer(caches, reporter)
+        initDirtyFiles(dirtyFiles, changedFiles)
 
         val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles)
-        markDirtyBy(removedClassesChanges.dirtyLookupSymbols)
-        markDirtyBy(removedClassesChanges.dirtyClassesFqNames)
+        dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
+        dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
 
         return CompilationMode.Incremental(dirtyFiles)
     }
