@@ -212,8 +212,6 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             }
         }
 
-        project.logger.warn("Blah: " + allResDirectories)
-
         return wrapPluginOptions(pluginOptions, "configuration")
     }
 
