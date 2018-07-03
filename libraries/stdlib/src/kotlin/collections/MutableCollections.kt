@@ -8,6 +8,8 @@
 
 package kotlin.collections
 
+import kotlin.random.Random
+
 /**
  * Removes a single instance of the specified element from this
  * collection, if it is present.
@@ -259,3 +261,26 @@ private fun MutableCollection<*>.retainNothing(): Boolean {
     clear()
     return result
 }
+
+/**
+ * Randomly shuffles elements in this mutable list using the specified [random] instance as the source of randomness.
+ *
+ * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ */
+@SinceKotlin("1.3")
+public fun <T> MutableList<T>.shuffle(random: Random): Unit {
+    for (i in lastIndex downTo 1) {
+        val j = random.nextInt(i + 1)
+        val copy = this[i]
+        this[i] = this[j]
+        this[j] = copy
+    }
+}
+
+/**
+ * Returns a new list with the elements of this list randomly shuffled
+ * using the specified [random] instance as the source of randomness.
+ */
+@SinceKotlin("1.3")
+public fun <T> Iterable<T>.shuffled(random: Random): List<T> = toMutableList().apply { shuffle(random) }
+
