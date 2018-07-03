@@ -611,7 +611,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             nameStack.push(name);
 
             if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend()) {
-                createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor,true);
+                createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor, true);
             }
 
             functionsStack.push(functionDescriptor);

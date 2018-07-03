@@ -365,7 +365,6 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         private Map<UserDataKey<?>, Object> userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
         private Boolean newHasSynthesizedParameterNames = null;
         protected boolean justForTypeSubstitution = false;
-        private boolean isSuspend;
 
         public CopyConfiguration(
                 @NotNull TypeSubstitution substitution,
@@ -376,8 +375,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors,
                 @Nullable KotlinType newExtensionReceiverParameterType,
                 @NotNull KotlinType newReturnType,
-                @Nullable Name name,
-                boolean isSuspend
+                @Nullable Name name
         ) {
             this.substitution = substitution;
             this.newOwner = newOwner;
@@ -388,7 +386,6 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             this.newExtensionReceiverParameterType = newExtensionReceiverParameterType;
             this.newReturnType = newReturnType;
             this.name = name;
-            this.isSuspend = isSuspend;
         }
 
         @Override
@@ -570,7 +567,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         return new CopyConfiguration(
                 substitutor.getSubstitution(),
                 getContainingDeclaration(), getModality(), getVisibility(), getKind(), getValueParameters(),
-                getExtensionReceiverParameterType(), getReturnType(), null, isSuspend);
+                getExtensionReceiverParameterType(), getReturnType(), null);
     }
 
     @Nullable
@@ -660,7 +657,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setExternal(isExternal);
         substitutedDescriptor.setInline(isInline);
         substitutedDescriptor.setTailrec(isTailrec);
-        substitutedDescriptor.setSuspend(configuration.isSuspend);
+        substitutedDescriptor.setSuspend(isSuspend);
         substitutedDescriptor.setExpect(isExpect);
         substitutedDescriptor.setActual(isActual);
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);

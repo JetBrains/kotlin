@@ -25,8 +25,7 @@ public class AnonymousFunctionDescriptor extends SimpleFunctionDescriptorImpl {
             @NotNull SourceElement source,
             boolean isSuspend
     ) {
-        super(containingDeclaration, null, annotations, SpecialNames.ANONYMOUS_FUNCTION, kind, source);
-        this.isSuspend = isSuspend;
+        this(containingDeclaration, null, annotations, SpecialNames.ANONYMOUS_FUNCTION, kind, source, isSuspend);
     }
 
     private AnonymousFunctionDescriptor(
@@ -35,10 +34,11 @@ public class AnonymousFunctionDescriptor extends SimpleFunctionDescriptorImpl {
             @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Kind kind,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            boolean isSuspend
     ) {
         super(declarationDescriptor, original, annotations, name, kind, source);
-        this.isSuspend = false;
+        this.isSuspend = isSuspend;
     }
 
     @NotNull
@@ -57,7 +57,8 @@ public class AnonymousFunctionDescriptor extends SimpleFunctionDescriptorImpl {
                 annotations,
                 newName != null ? newName : getName(),
                 kind,
-                source
+                source,
+                isSuspend
         );
     }
 
