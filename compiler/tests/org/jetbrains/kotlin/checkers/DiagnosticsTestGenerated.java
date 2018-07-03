@@ -13833,9 +13833,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/operatorRem/noOperatorRemFeature.kt");
             }
 
-            @TestMetadata("noWarningForModFromBuiltinsWhenApi1_0.kt")
-            public void testNoWarningForModFromBuiltinsWhenApi1_0() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/operatorRem/noWarningForModFromBuiltinsWhenApi1_0.kt");
+            @TestMetadata("noWarningForModFromBuiltinsWhenApi1_0_after.kt")
+            public void testNoWarningForModFromBuiltinsWhenApi1_0_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorRem/noWarningForModFromBuiltinsWhenApi1_0_after.kt");
+            }
+
+            @TestMetadata("noWarningForModFromBuiltinsWhenApi1_0_before.kt")
+            public void testNoWarningForModFromBuiltinsWhenApi1_0_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorRem/noWarningForModFromBuiltinsWhenApi1_0_before.kt");
             }
 
             @TestMetadata("numberRemConversions.kt")
