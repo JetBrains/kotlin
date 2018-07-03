@@ -33,6 +33,7 @@ class CustomScriptCodegenTest : CodegenTestCase() {
         val res = generateScriptClass()
         assertNull(res.safeGetAnnotation(KotlinScript::class))
         assertNotNull(res.safeGetAnnotation(MyScriptClassAnnotation::class))
+        assertNotNull(res.getConstructor().safeGetAnnotation(MyScriptConstructorAnnotation::class))
     }
 
     private fun generateScriptClass(): Class<*> = generateClass("ScriptTest")
@@ -79,14 +80,21 @@ class CustomScriptCodegenTest : CodegenTestCase() {
 private fun Class<*>.safeGetAnnotation(ann: KClass<out Annotation>): Annotation? =
     getAnnotation(classLoader.loadClass(ann.qualifiedName) as Class<Annotation>)
 
+private fun java.lang.reflect.Constructor<*>.safeGetAnnotation(ann: KClass<out Annotation>): Annotation? =
+    getAnnotation(this.declaringClass.classLoader.loadClass(ann.qualifiedName) as Class<Annotation>)
+
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class MyScriptClassAnnotation
 
+@Target(AnnotationTarget.CONSTRUCTOR)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class MyScriptConstructorAnnotation
+
 @Suppress("unused")
 @KotlinScript
 @MyScriptClassAnnotation()
-abstract class TestScriptWithAnnotatedBaseClass
+abstract class TestScriptWithAnnotatedBaseClass @MyScriptConstructorAnnotation constructor()
 
 object TestScriptWithMethodAnnotationsConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
     listOf(
