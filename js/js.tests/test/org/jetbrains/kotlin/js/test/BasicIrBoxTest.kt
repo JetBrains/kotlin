@@ -22,6 +22,16 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/core.kt",
     "core/builtins/native/kotlin/Number.kt",
     "core/builtins/native/kotlin/Comparable.kt",
+    "core/builtins/src/kotlin/internal/InternalAnnotations.kt",
+    "core/builtins/src/kotlin/internal/progressionUtil.kt",
+    "core/builtins/src/kotlin/Iterators.kt",
+    "core/builtins/src/kotlin/ProgressionIterators.kt",
+    "core/builtins/src/kotlin/Progressions.kt",
+    "core/builtins/src/kotlin/Range.kt",
+    "core/builtins/src/kotlin/Ranges.kt",
+    "core/builtins/src/kotlin/Unit.kt",
+    "core/builtins/native/kotlin/Collections.kt",
+    "core/builtins/native/kotlin/Iterator.kt",
     "libraries/stdlib/js/irRuntime",
     BasicBoxTest.COMMON_FILES_DIR_PATH
 )

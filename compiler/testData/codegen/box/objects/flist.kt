@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 public abstract class FList<T>() {
     public abstract val head: T
     public abstract val tail: FList<T>
