@@ -12,26 +12,11 @@ import kotlin.jvm.internal.FunctionBase
 import kotlin.jvm.internal.Reflection
 
 @SinceKotlin("1.3")
-// State machines for named restricted suspend functions extend from this class
-internal abstract class RestrictedContinuationImpl protected constructor(
+internal abstract class BaseContinuationImpl(
     @JvmField
     protected val completion: Continuation<Any?>?
 ) : Continuation<Any?>, Serializable {
-    init {
-        @Suppress("LeakingThis")
-        validateContext()
-    }
-
-    protected open fun validateContext() {
-        completion?.let {
-            require(it.context === EmptyCoroutineContext) { "Coroutines with restricted suspension must have EmptyCoroutineContext" }
-        }
-    }
-
-    public override val context: CoroutineContext
-        get() = EmptyCoroutineContext
-
-    // This implementation is final that it is fundamentally used to unroll resumeWith recursion
+    // This implementation is final. This fact is used to unroll resumeWith recursion.
     public final override fun resumeWith(result: SuccessOrFailure<Any?>) {
         var current = this
         var param = result
@@ -48,7 +33,7 @@ internal abstract class RestrictedContinuationImpl protected constructor(
                         SuccessOrFailure.failure(exception)
                     }
                 releaseIntercepted() // this state machine instance is terminating
-                if (completion is RestrictedContinuationImpl) {
+                if (completion is BaseContinuationImpl) {
                     // unrolling recursion via loop
                     current = completion
                     param = outcome
@@ -74,22 +59,40 @@ internal abstract class RestrictedContinuationImpl protected constructor(
     public open fun create(value: Any?, completion: Continuation<*>): Continuation<Unit> {
         throw UnsupportedOperationException("create(Any?;Continuation) has not been overridden")
     }
+
+    public override fun toString(): String {
+        // todo: how continuation shall be rendered?
+        return "Continuation @ ${this::class.java.name}"
+    }
+}
+
+@SinceKotlin("1.3")
+// State machines for named restricted suspend functions extend from this class
+internal abstract class RestrictedContinuationImpl(
+    completion: Continuation<Any?>?
+) : BaseContinuationImpl(completion) {
+    init {
+        completion?.let {
+            require(it.context === EmptyCoroutineContext) {
+                "Coroutines with restricted suspension must have EmptyCoroutineContext"
+            }
+        }
+    }
+
+    public override val context: CoroutineContext
+        get() = EmptyCoroutineContext
 }
 
 @SinceKotlin("1.3")
 // State machines for named suspend functions extend from this class
-internal abstract class ContinuationImpl protected constructor(
+internal abstract class ContinuationImpl(
     completion: Continuation<Any?>?,
     private val _context: CoroutineContext?
-) : RestrictedContinuationImpl(completion) {
-    protected constructor(completion: Continuation<Any?>?) : this(completion, completion?.context)
-
-    protected override fun validateContext() {
-        // nothing to do here -- supports any context
-    }
+) : BaseContinuationImpl(completion) {
+    constructor(completion: Continuation<Any?>?) : this(completion, completion?.context)
 
     public override val context: CoroutineContext
-        get() = _context!!
+        get() = _context!! 
 
     @Transient
     private var intercepted: Continuation<Any?>? = null
@@ -106,11 +109,6 @@ internal abstract class ContinuationImpl protected constructor(
         }
         this.intercepted = CompletedContinuation // just in case
     }
-
-    public override fun toString(): String {
-        // todo: how continuation shall be rendered?
-        return "Continuation @ ${this::class.java.name}"
-    }
 }
 
 internal object CompletedContinuation : Continuation<Any?> {
@@ -126,11 +124,11 @@ internal object CompletedContinuation : Continuation<Any?> {
 
 @SinceKotlin("1.3")
 // Restricted suspension lambdas inherit from this class
-internal abstract class RestrictedSuspendLambda protected constructor(
+internal abstract class RestrictedSuspendLambda(
     private val arity: Int,
     completion: Continuation<Any?>?
 ) : RestrictedContinuationImpl(completion), FunctionBase {
-    protected constructor(arity: Int) : this(arity, null)
+    constructor(arity: Int) : this(arity, null)
 
     public override fun getArity(): Int = arity
 
@@ -143,11 +141,11 @@ internal abstract class RestrictedSuspendLambda protected constructor(
 
 @SinceKotlin("1.3")
 // Suspension lambdas inherit from this class
-internal abstract class SuspendLambda protected constructor(
+internal abstract class SuspendLambda(
     private val arity: Int,
     completion: Continuation<Any?>?
 ) : ContinuationImpl(completion), FunctionBase {
-    protected constructor(arity: Int) : this(arity, null)
+    constructor(arity: Int) : this(arity, null)
 
     public override fun getArity(): Int = arity
 

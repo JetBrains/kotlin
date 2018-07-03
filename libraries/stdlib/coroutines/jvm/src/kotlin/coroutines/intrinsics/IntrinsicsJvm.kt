@@ -10,8 +10,7 @@
 package kotlin.coroutines.intrinsics
 
 import kotlin.coroutines.*
-import kotlin.coroutines.jvm.internal.ContinuationImpl
-import kotlin.coroutines.jvm.internal.RestrictedContinuationImpl
+import kotlin.coroutines.jvm.internal.*
 import kotlin.internal.InlineOnly
 
 /**
@@ -79,7 +78,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> =
-    if (this is RestrictedContinuationImpl)
+    if (this is BaseContinuationImpl)
         create(completion)
     else
         createCoroutineFromSuspendFunction(completion) {
@@ -112,7 +111,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     receiver: R,
     completion: Continuation<T>
 ): Continuation<Unit> =
-    if (this is RestrictedContinuationImpl)
+    if (this is BaseContinuationImpl)
         create(receiver, completion)
     else {
         createCoroutineFromSuspendFunction(completion) {
@@ -144,14 +143,14 @@ private inline fun <T> createCoroutineFromSuspendFunction(
     return if (context === EmptyCoroutineContext)
         object : RestrictedContinuationImpl(completion as Continuation<Any?>) {
             override fun invokeSuspend(result: SuccessOrFailure<Any?>): Any? {
-                result.getOrThrow() // Rethrow exception if trying to start with exception (will be caught by ContinuationImpl.resumeWith
+                result.getOrThrow() // Rethrow exception if trying to start with exception (will be caught by BaseContinuationImpl.resumeWith
                 return block() // run the block
             }
         }
     else
         object : ContinuationImpl(completion as Continuation<Any?>, context) {
             override fun invokeSuspend(result: SuccessOrFailure<Any?>): Any? {
-                result.getOrThrow() // Rethrow exception if trying to start with exception (will be caught by ContinuationImpl.resumeWith
+                result.getOrThrow() // Rethrow exception if trying to start with exception (will be caught by BaseContinuationImpl.resumeWith
                 return block() // run the block
             }
         }
