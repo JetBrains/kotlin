@@ -58,8 +58,21 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
             val classDescriptorOwner = getterOrSetter.containingDeclaration as? ClassDescriptor ?: return null
 
             val originalGetterOrSetter = getterOrSetter.original
-            return syntheticScopes.collectSyntheticExtensionProperties(listOf(classDescriptorOwner.defaultType))
-                .filterIsInstance<SyntheticJavaPropertyDescriptor>()
+
+            val names = listOfNotNull(
+                propertyNameByGetMethodName(name),
+                propertyNameBySetMethodName(name, withIsPrefix = true),
+                propertyNameBySetMethodName(name, withIsPrefix = false)
+            )
+
+            return names
+                .flatMap {
+                    syntheticScopes.collectSyntheticExtensionProperties(
+                        listOf(classDescriptorOwner.defaultType),
+                        it,
+                        NoLookupLocation.FROM_SYNTHETIC_SCOPE
+                    )
+                }.filterIsInstance<SyntheticJavaPropertyDescriptor>()
                 .firstOrNull { originalGetterOrSetter == it.getMethod || originalGetterOrSetter == it.setMethod }
         }
 
