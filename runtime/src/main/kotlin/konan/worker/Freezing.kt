@@ -26,7 +26,8 @@ public class FreezingException() : RuntimeException()
 /**
  * Exception thrown whenever we attempt to mutate frozen objects.
  */
-public class InvalidMutabilityException() : RuntimeException()
+public class InvalidMutabilityException(where: Any) :
+        RuntimeException("mutation attempt of frozen $where (hash is 0x${where.hashCode().toString(16)})")
 
 /**
  * Freezes object subgraph reachable from this object. Frozen objects can be freely
@@ -50,4 +51,4 @@ internal external fun isFrozenInternal(it: Any?): Boolean
 internal fun ThrowFreezingException(): Nothing = throw FreezingException()
 
 @ExportForCppRuntime
-internal fun ThrowInvalidMutabilityException(): Nothing = throw InvalidMutabilityException()
+internal fun ThrowInvalidMutabilityException(where: Any): Nothing = throw InvalidMutabilityException(where)

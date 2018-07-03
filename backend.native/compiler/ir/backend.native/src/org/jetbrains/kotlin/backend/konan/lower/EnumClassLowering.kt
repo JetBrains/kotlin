@@ -562,7 +562,6 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                 result.putValueArgument(1,
                         IrGetValueImpl(startOffset, endOffset, ordinalParameter.type, ordinalParameter.symbol, origin)
                 )
-
                 return result
             }
 

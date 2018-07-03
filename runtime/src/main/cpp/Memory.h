@@ -67,6 +67,10 @@ struct ContainerHeader {
   // Number of objects in the container.
   uint32_t objectCount_;
 
+  inline bool normal() const {
+      return (refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_NORMAL;
+  }
+
   inline bool permanent() const {
     return (refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_PERMANENT;
   }

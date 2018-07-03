@@ -38,13 +38,19 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
-val IrClassSymbol.objectIsShared get() = owner.origin == DECLARATION_ORIGIN_ENUM
+private val threadLocalAnnotationFqName = FqName("konan.ThreadLocal")
+
+val IrClassSymbol.objectIsShared get() =
+    !owner.hasAnnotation(threadLocalAnnotationFqName)
 
 internal fun emitLLVM(context: Context) {
     val irModule = context.irModule!!

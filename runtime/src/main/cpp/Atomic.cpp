@@ -16,6 +16,7 @@
 
 #include "Atomic.h"
 #include "Common.h"
+#include "Exceptions.h"
 #include "Memory.h"
 #include "Types.h"
 
@@ -44,8 +45,6 @@ inline AtomicReferenceLayout* asAtomicReference(KRef thiz) {
 
 extern "C" {
 
-RUNTIME_NORETURN void ThrowInvalidMutabilityException();
-
 KInt Kotlin_AtomicInt_addAndGet(KRef thiz, KInt delta) {
     return addAndGetImpl(thiz, delta);
 }
@@ -68,7 +67,7 @@ KNativePtr Kotlin_AtomicNativePtr_compareAndSwap(KRef thiz, KNativePtr expectedV
 
 void Kotlin_AtomicReference_checkIfFrozen(KRef value) {
     if (value != nullptr && !value->container()->permanentOrFrozen()) {
-        ThrowInvalidMutabilityException();
+        ThrowInvalidMutabilityException(value);
     }
 }
 

@@ -420,7 +420,6 @@ RUNTIME_USED ContainerHeader theStaticObjectsContainer = {
 void objc_release(void* ptr);
 void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
 RUNTIME_NORETURN void ThrowFreezingException();
-RUNTIME_NORETURN void ThrowInvalidMutabilityException();
 
 }  // extern "C"
 
@@ -1175,7 +1174,28 @@ OBJ_GETTER(InitInstance,
 OBJ_GETTER(InitSharedInstance,
     ObjHeader** location, ObjHeader** localLocation, const TypeInfo* type_info, void (*ctor)(ObjHeader*)) {
 #if KONAN_NO_THREADS
-  RETURN_RESULT_OF(InitInstance, location, type_info, ctor);
+  ObjHeader* value = *location;
+  if (value != nullptr) {
+    // OK'ish, inited by someone else.
+    RETURN_OBJ(value);
+  }
+  ObjHeader* object = AllocInstance(type_info, OBJ_RESULT);
+  UpdateRef(location, object);
+#if KONAN_NO_EXCEPTIONS
+  ctor(object);
+  FreezeSubgraph(object);
+  return object;
+#else
+  try {
+    ctor(object);
+    FreezeSubgraph(object);
+    return object;
+  } catch (...) {
+    UpdateRef(OBJ_RESULT, nullptr);
+    UpdateRef(location, nullptr);
+    throw;
+  }
+#endif
 #else
   ObjHeader* value = *localLocation;
   if (value != nullptr) RETURN_OBJ(value);
@@ -1188,28 +1208,27 @@ OBJ_GETTER(InitSharedInstance,
     // OK'ish, inited by someone else.
     RETURN_OBJ(value);
   }
-
   ObjHeader* object = AllocInstance(type_info, OBJ_RESULT);
-  MEMORY_LOG("Calling UpdateRef from InitInstance\n")
+  RuntimeAssert(object->container()->normal() , "Shared object cannot be co-allocated");
+  MEMORY_LOG("Calling UpdateRef from InitSharedInstance\n")
   UpdateRef(localLocation, object);
 #if KONAN_NO_EXCEPTIONS
   ctor(object);
-  if (!object->container()->frozen())
-    ThrowFreezingException();
+  FreezeSubgraph(object);
   UpdateRef(location, object);
   __sync_synchronize();
   return object;
 #else
   try {
     ctor(object);
-    if (!object->container()->frozen())
-      ThrowFreezingException();
+    FreezeSubgraph(object);
     UpdateRef(location, object);
     __sync_synchronize();
     return object;
   } catch (...) {
     UpdateRef(OBJ_RESULT, nullptr);
     UpdateRef(location, nullptr);
+    UpdateRef(localLocation, nullptr);
     __sync_synchronize();
     throw;
   }
@@ -1550,6 +1569,91 @@ void traverseStronglyConnectedComponent(ContainerHeader* container,
   }
 }
 
+void freezeAcyclic(ContainerHeader* rootContainer) {
+  KStdDeque<ContainerHeader*> queue;
+  queue.push_back(rootContainer);
+  while (!queue.empty()) {
+    ContainerHeader* current = queue.front();
+    queue.pop_front();
+    current->unMark();
+    current->resetBuffered();
+    current->setColor(CONTAINER_TAG_GC_BLACK);
+    // Note, that once object is frozen, it could be concurrently accessed, so
+    // color and similar attributes shall not be used.
+    current->freeze();
+    traverseContainerReferredObjects(current, [current, &queue](ObjHeader* obj) {
+        ContainerHeader* objContainer = obj->container();
+        if (!objContainer->permanentOrFrozen()) {
+          if (objContainer->marked())
+            queue.push_back(objContainer);
+        }
+    });
+  }
+}
+
+void freezeCyclic(ContainerHeader* rootContainer, const KStdVector<ContainerHeader*>& order) {
+  KStdUnorderedMap<ContainerHeader*, KStdVector<ContainerHeader*>> reversedEdges;
+  KStdDeque<ContainerHeader*> queue;
+  queue.push_back(rootContainer);
+  while (!queue.empty()) {
+    ContainerHeader* current = queue.front();
+    queue.pop_front();
+    current->unMark();
+    reversedEdges.emplace(current, KStdVector<ContainerHeader*>(0));
+    traverseContainerReferredObjects(current, [current, &queue, &reversedEdges](ObjHeader* obj) {
+          ContainerHeader* objContainer = obj->container();
+          if (!objContainer->permanentOrFrozen()) {
+            if (objContainer->marked())
+              queue.push_back(objContainer);
+            reversedEdges.emplace(objContainer, KStdVector<ContainerHeader*>(0)).first->second.push_back(current);
+          }
+      });
+    }
+
+    KStdVector<KStdVector<ContainerHeader*>> components;
+    MEMORY_LOG("Condensation:\n");
+    // Enumerate in the topological order.
+    for (auto it = order.rbegin(); it != order.rend(); ++it) {
+      auto* container = *it;
+      if (container->marked()) continue;
+      KStdVector<ContainerHeader*> component;
+      traverseStronglyConnectedComponent(container, reversedEdges, component);
+      MEMORY_LOG("SCC:\n");
+  #if TRACE_MEMORY
+      for (auto c : component)
+        konan::consolePrintf("    %p\n", c);
+  #endif
+      components.push_back(std::move(component));
+    }
+
+    // Enumerate strongly connected components in reversed topological order.
+  for (auto it = components.rbegin(); it != components.rend(); ++it) {
+    auto& component = *it;
+    int internalRefsCount = 0;
+    int totalCount = 0;
+    for (auto* container : component) {
+      totalCount += container->refCount();
+      traverseContainerReferredObjects(container, [&internalRefsCount](ObjHeader* obj) {
+          if (!obj->container()->permanentOrFrozen())
+              ++internalRefsCount;
+        });
+      }
+    // Create fictitious container for the whole component.
+    auto superContainer = component.size() == 1 ? component[0] : AllocAggregatingFrozenContainer(component);
+    // Don't count internal references.
+    superContainer->setRefCount(totalCount - internalRefsCount);
+
+    // Freeze component.
+    for (auto* container : component) {
+      container->resetBuffered();
+      container->setColor(CONTAINER_TAG_GC_BLACK);
+      // Note, that once object is frozen, it could be concurrently accessed, so
+      // color and similar attributes shall not be used.
+      container->freeze();
+    }
+  }
+}
+
 /**
  * Theory of operations.
  *
@@ -1570,12 +1674,12 @@ void traverseStronglyConnectedComponent(ContainerHeader* container,
  *     incoming references from the same strongly connected component are not counted)
  *   - mark all object's headers as frozen
  *
- *  Further reference counting on frozen objects is performed with the atomic operations, and so frozen
- * references could be passed accross multiple threads.
+ *  Further reference counting on frozen objects is performed with atomic operations, and so frozen
+ * references could be passed across multiple threads.
  */
 void FreezeSubgraph(ObjHeader* root) {
-  // TODO: for now, we just check that passed object graph has no cycles, and throw an exception,
-  // if it does. Next version will run Kosoraju-Sharir if cycles are found.
+  // First check that passed object graph has no cycles.
+  // If there are cycles - run graph condensation on cyclic graphs using Kosoraju-Sharir.
   ContainerHeader* rootContainer = root->container();
   if (rootContainer->permanentOrFrozen()) return;
 
@@ -1583,79 +1687,11 @@ void FreezeSubgraph(ObjHeader* root) {
   bool hasCycles = false;
   KStdVector<ContainerHeader*> order;
   depthFirstTraversal(rootContainer, &hasCycles, order);
-
-  KStdUnorderedMap<ContainerHeader*, KStdVector<ContainerHeader*>> reversedEdges;
   // Now unmark all marked objects, and freeze them, if no cycles detected.
-  KStdDeque<ContainerHeader*> queue;
-  queue.push_back(rootContainer);
-  while (!queue.empty()) {
-    ContainerHeader* current = queue.front();
-    queue.pop_front();
-    current->unMark();
-
-    if (hasCycles) {
-      reversedEdges.emplace(current, KStdVector<ContainerHeader*>(0));
-    } else {
-      current->resetBuffered();
-      current->setColor(CONTAINER_TAG_GC_BLACK);
-      // Note, that once object is frozen, it could be concurrently accessed, so
-      // color and similar attributes shall not be used.
-      current->freeze();
-    }
-    traverseContainerReferredObjects(current, [hasCycles, current, &queue, &reversedEdges](ObjHeader* obj) {
-        ContainerHeader* objContainer = obj->container();
-        if (!objContainer->permanentOrFrozen()) {
-          if (objContainer->marked())
-            queue.push_back(objContainer);
-          if (hasCycles)
-            reversedEdges.emplace(objContainer, KStdVector<ContainerHeader*>(0)).first->second.push_back(current);
-        }
-    });
-  }
-
   if (hasCycles) {
-    KStdVector<KStdVector<ContainerHeader*>> components;
-    MEMORY_LOG("Condensation:\n");
-    // Enumerate in topological order.
-    for (auto it = order.rbegin(); it != order.rend(); ++it) {
-      auto* container = *it;
-      if (container->marked()) continue;
-      KStdVector<ContainerHeader*> component;
-      traverseStronglyConnectedComponent(container, reversedEdges, component);
-      MEMORY_LOG("SCC:\n");
-#if TRACE_MEMORY
-      for (auto c : component)
-        konan::consolePrintf("    %p\n", c);
-#endif
-      components.push_back(std::move(component));
-    }
-    // Enumerate strongly connected components in reversed topological order.
-    for (auto it = components.rbegin(); it != components.rend(); ++it) {
-      auto& component = *it;
-      int internalRefsCount = 0;
-      int totalCount = 0;
-      for (auto* container : component) {
-        totalCount += container->refCount();
-        traverseContainerReferredObjects(container, [&internalRefsCount](ObjHeader* obj) {
-            if (!obj->container()->permanentOrFrozen())
-              ++internalRefsCount;
-        });
-      }
-      auto superContainer = component.size() == 1
-                              ? component[0]
-                              : AllocAggregatingFrozenContainer(component); // Create fictitious container for the whole component.
-      // Don't count internal references.
-      superContainer->setRefCount(totalCount - internalRefsCount);
-
-      // Freeze component.
-      for (auto* container : component) {
-        container->resetBuffered();
-        container->setColor(CONTAINER_TAG_GC_BLACK);
-        // Note, that once object is frozen, it could be concurrently accessed, so
-        // color and similar attributes shall not be used.
-        container->freeze();
-      }
-    }
+    freezeCyclic(rootContainer, order);
+  } else {
+    freezeAcyclic(rootContainer );
   }
 
   // Now remove frozen objects from the toFree list.
@@ -1671,14 +1707,14 @@ void FreezeSubgraph(ObjHeader* root) {
 // This function is called from field mutators to check if object's header is frozen.
 // If object is frozen, an exception is thrown.
 void MutationCheck(ObjHeader* obj) {
-  if (obj->container()->frozen()) ThrowInvalidMutabilityException();
+  if (obj->container()->frozen()) ThrowInvalidMutabilityException(obj);
 }
 
 OBJ_GETTER(SwapRefLocked,
     ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock) {
   lock(spinlock);
   ObjHeader* oldValue = *location;
-  // We do not use UpdateRef() here to avoid having ReleaseRef() on return slot under lock.
+  // We do not use UpdateRef() here to avoid having ReleaseRef() on return slot under the lock.
   if (oldValue == expectedValue) {
     SetRef(location, newValue);
   } else {
@@ -1697,7 +1733,7 @@ OBJ_GETTER(SwapRefLocked,
 OBJ_GETTER(ReadRefLocked, ObjHeader** location, int32_t* spinlock) {
   lock(spinlock);
   ObjHeader* value = *location;
-  // We do not use UpdateRef() here to avoid having ReleaseRef() on return slot under lock.
+  // We do not use UpdateRef() here to avoid having ReleaseRef() on return slot under the lock.
   if (value != nullptr)
     AddRef(value);
   unlock(spinlock);

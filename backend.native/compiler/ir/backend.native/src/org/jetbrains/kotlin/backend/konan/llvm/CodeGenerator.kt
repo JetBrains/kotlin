@@ -686,7 +686,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         positionAtEnd(bbInit)
         val typeInfo = codegen.typeInfoForAllocation(descriptor)
-        val defaultConstructor = descriptor.constructors.first { it.valueParameters.size == 0 }
+        val defaultConstructor = descriptor.constructors.single { it.valueParameters.size == 0 }
         val ctor = codegen.llvmFunction(defaultConstructor)
         val (initFunction, args) =
                 if (shared) {
