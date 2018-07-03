@@ -394,6 +394,19 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                Int32(DEINIT_GLOBALS).llvm              to bbGlobalDeinit),
                         bbDefault)
 
+                // Globals initalizers may contain accesses to objects, so visit them first.
+                appendingTo(bbInit) {
+                    context.llvm.fileInitializers
+                            .forEach {
+                                if (it.initializer?.expression !is IrConst<*>?) {
+                                    val initialization = evaluateExpression(it.initializer!!.expression)
+                                    val address = context.llvmDeclarations.forStaticField(it).storage
+                                    storeAny(initialization, address)
+                                }
+                            }
+                    ret(null)
+                }
+
                 appendingTo(bbLocalDeinit) {
                     context.llvm.fileInitializers.forEach {
                         val descriptor = it
@@ -408,18 +421,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
                 appendingTo(bbGlobalDeinit) {
                     context.llvm.sharedObjects.forEach { storeAny(codegen.kNullObjHeaderPtr, it) }
-                    ret(null)
-                }
-
-                appendingTo(bbInit) {
-                    context.llvm.fileInitializers
-                            .forEach {
-                                if (it.initializer?.expression !is IrConst<*>?) {
-                                    val initialization = evaluateExpression(it.initializer!!.expression)
-                                    val address = context.llvmDeclarations.forStaticField(it).storage
-                                    storeAny(initialization, address)
-                                }
-                            }
                     ret(null)
                 }
             }

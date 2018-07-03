@@ -266,6 +266,10 @@ task objectInitialization1(type: RunKonanTest) {
     source = "codegen/object/initialization1.kt"
 }
 
+task object_globalInitializer(type: RunStandaloneKonanTest) {
+    source = "codegen/object/globalInitializer.kt"
+}
+
 task check_type(type: RunKonanTest) {
     goldValue = "true\nfalse\ntrue\ntrue\ntrue\ntrue\n"
     source = "codegen/basics/check_type.kt"
