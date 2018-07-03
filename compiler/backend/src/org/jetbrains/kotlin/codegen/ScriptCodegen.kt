@@ -78,6 +78,7 @@ class ScriptCodegen private constructor(
             scriptDescriptor,
             scriptContext.earlierScripts
         )
+        val asmMethod = jvmSignature.asmMethod
 
         if (state.replSpecific.shouldGenerateScriptResultValue) {
             val resultFieldInfo = scriptContext.resultFieldInfo
@@ -92,6 +93,8 @@ class ScriptCodegen private constructor(
         val mv = classBuilder.newMethod(
                 OtherOrigin(scriptDeclaration, scriptDescriptor.unsubstitutedPrimaryConstructor),
                 ACC_PUBLIC, jvmSignature.asmMethod.name, jvmSignature.asmMethod.descriptor, null, null)
+
+        FunctionCodegen.generateMethodAnnotations(scriptDescriptor.unsubstitutedPrimaryConstructor, asmMethod, mv, this, typeMapper)
 
         if (state.classBuilderMode.generateBodies) {
             mv.visitCode()
