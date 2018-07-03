@@ -101,7 +101,7 @@ internal abstract class ContinuationImpl protected constructor(
 
     protected override fun releaseIntercepted() {
         val intercepted = intercepted
-        if (intercepted != null && intercepted != this) {
+        if (intercepted != null && intercepted !== this) {
             context[ContinuationInterceptor]!!.releaseInterceptedContinuation(intercepted)
         }
         this.intercepted = CompletedContinuation // just in case

@@ -24,14 +24,16 @@ public interface ContinuationInterceptor : CoroutineContext.Element {
      *
      * This function may simply return original [continuation] if it does not want to intercept this particular continuation.
      *
-     * When the original [continuation] completes coroutine framework invokes [releaseInterceptedContinuation]
-     * with the resulting continuation if it was intercepted.
+     * When the original [continuation] completes, coroutine framework invokes [releaseInterceptedContinuation]
+     * with the resulting continuation if it was intercepted, that is if `interceptContinuation` had previously
+     * returned a different continuation instance.
      */
     public fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T>
 
     /**
      * Invoked for the continuation instance returned by [interceptContinuation] when the original
-     * continuation completes and will not be used anymore.
+     * continuation completes and will not be used anymore. This function is invoked only if [interceptContinuation]
+     * had returned a different continuation instance from the one it was invoked with.
      *
      * Default implementation does nothing.
      *
