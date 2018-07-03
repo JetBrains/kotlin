@@ -19,7 +19,7 @@ import kotlin.internal.InlineOnly
 import kotlin.jvm.JvmField
 
 @SinceKotlin("1.3")
-public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(private val _value: Any?) {
+public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(internal val _value: Any?) {
     // discovery
 
     public val isSuccess: Boolean get() = _value !is Failure
