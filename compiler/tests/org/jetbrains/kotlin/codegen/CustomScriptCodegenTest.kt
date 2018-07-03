@@ -96,14 +96,3 @@ annotation class MyScriptConstructorAnnotation
 @MyScriptClassAnnotation()
 abstract class TestScriptWithAnnotatedBaseClass @MyScriptConstructorAnnotation constructor()
 
-object TestScriptWithMethodAnnotationsConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
-    listOf(
-        ScriptCompileConfigurationProperties.generatedClassAnnotations to listOf()
-    )
-)
-
-@Suppress("unused")
-@KotlinScript
-@KotlinScriptDefaultCompilationConfiguration(TestScriptWithMethodAnnotationsConfiguration::class)
-abstract class TestScriptWithMethodAnnotations
-
