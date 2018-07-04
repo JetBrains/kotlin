@@ -14,6 +14,9 @@ public inline class UByteArray
 @PublishedApi
 internal constructor(private val storage: ByteArray) : Collection<UByte> {
 
+    /** Creates a new array of the specified [size], with all elements initialized to zero. */
+    public constructor(size: Int) : this(ByteArray(size))
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): UByte = storage[index].toUByte()
 
