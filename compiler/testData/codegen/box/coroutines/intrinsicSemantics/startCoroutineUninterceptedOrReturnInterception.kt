@@ -8,17 +8,22 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 import kotlin.test.assertEquals
 
-suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
-    x.resume("OK")
-    COROUTINE_SUSPENDED
+var callback: () -> Unit = {}
+
+suspend fun suspendHere(): String = suspendCoroutine { x ->
+    callback = {
+        x.resume("OK")
+    }
 }
 
-suspend fun suspendWithException(): String = suspendCoroutineOrReturn { x ->
-    x.resumeWithException(RuntimeException("OK"))
-    COROUTINE_SUSPENDED
+suspend fun suspendWithException(): String = suspendCoroutine { x ->
+    callback = {
+        x.resumeWithException(RuntimeException("OK"))
+    }
 }
 
 fun builder(shouldSuspend: Boolean, expectedCount: Int, c: suspend () -> String): String {
+    callback = {}
     var fromSuspension: String? = null
     var counter = 0
 
@@ -38,6 +43,8 @@ fun builder(shouldSuspend: Boolean, expectedCount: Int, c: suspend () -> String)
     } catch (e: Exception) {
         "Exception: ${e.message}"
     }
+
+    callback()
 
     if (counter != expectedCount) throw RuntimeException("fail 0")
 
