@@ -54,6 +54,16 @@ fun Method.safeVariables(): List<LocalVariable> {
     }
 }
 
+fun Location.safeSourceName(): String? {
+    return try {
+        sourceName()
+    } catch (e: AbsentInformationException) {
+        null
+    } catch (e: InternalError) {
+        null
+    }
+}
+
 fun Location.safeLineNumber(): Int {
     return DebuggerUtilsEx.getLineNumber(this, false)
 }
