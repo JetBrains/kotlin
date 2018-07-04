@@ -6,6 +6,7 @@
 package kotlin.random
 
 import kotlin.*
+import kotlin.math.nextDown
 
 /**
  * An abstract class that is implemented by random number generator algorithms.
@@ -18,12 +19,43 @@ import kotlin.*
  */
 @SinceKotlin("1.3")
 public abstract class Random {
+
+    /**
+     * Gets the next random [bitCount] number of bits.
+     *
+     * Generates an `Int` whose lower [bitCount] bits are filled with random values and the remaining upper bits are zero.
+     *
+     * @param bitCount number of bits to generate, must be in range 0..32, otherwise the behavior is unspecified.
+     */
     public abstract fun nextBits(bitCount: Int): Int
 
+    /**
+     * Gets the next random `Int` from the random number generator.
+     *
+     * Generates an `Int` random value uniformly distributed between `Int.MIN_VALUE` and `Int.MAX_VALUE` (inclusive).
+     */
     public open fun nextInt(): Int = nextBits(32)
+
+    /**
+     * Gets the next random non-negative `Int` from the random number generator not greater than the specified [bound].
+     *
+     * Generates an `Int` random value uniformly distributed between `0` (inclusive) and the specified [bound] (exclusive).
+     *
+     * @param bound must be positive.
+     *
+     * @throws IllegalArgumentException if [bound] is negative or zero.
+     */
     public open fun nextInt(bound: Int): Int = nextInt(0, bound)
+
+    /**
+     * Gets the next random `Int` from the random number generator in the specified range.
+     *
+     * Generates an `Int` random value uniformly distributed between the specified [origin] (inclusive) and the specified [bound] (exclusive).
+     *
+     * @throws IllegalArgumentException if [origin] is greater than or equal to [bound].
+     */
     public open fun nextInt(origin: Int, bound: Int): Int {
-        checkRangeBounds(origin.toLong(), bound.toLong())
+        checkRangeBounds(origin, bound)
         val n = bound - origin
         if (n > 0 || n == Int.MIN_VALUE) {
             val rnd = if (n and -n == n) {
@@ -46,17 +78,45 @@ public abstract class Random {
         }
     }
 
+    /**
+     * Gets the next random `Int` from the random number generator in the specified [range].
+     *
+     * Generates an `Int` random value uniformly distributed in the specified [range]:
+     * from `range.start` inclusive to `range.endInclusive` inclusive.
+     *
+     * @throws IllegalArgumentException if [range] is empty.
+     */
     public open fun nextInt(range: IntRange): Int = when {
         range.last < Int.MAX_VALUE -> nextInt(range.first, range.last + 1)
         range.first > Int.MIN_VALUE -> nextInt(range.first - 1, range.last) + 1
         else -> nextInt()
     }
 
-
+    /**
+     * Gets the next random `Long` from the random number generator.
+     *
+     * Generates a `Long` random value uniformly distributed between `Long.MIN_VALUE` and `Long.MAX_VALUE` (inclusive).
+     */
     public open fun nextLong(): Long = nextInt().toLong().shl(32) + nextInt()
 
+    /**
+     * Gets the next random non-negative `Long` from the random number generator not greater than the specified [bound].
+     *
+     * Generates a `Long` random value uniformly distributed between `0` (inclusive) and the specified [bound] (exclusive).
+     *
+     * @param bound must be positive.
+     *
+     * @throws IllegalArgumentException if [bound] is negative or zero.
+     */
     public open fun nextLong(bound: Long): Long = nextLong(0, bound)
 
+    /**
+     * Gets the next random `Long` from the random number generator in the specified range.
+     *
+     * Generates a `Long` random value uniformly distributed between the specified [origin] (inclusive) and the specified [bound] (exclusive).
+     *
+     * @throws IllegalArgumentException if [origin] is greater than or equal to [bound].
+     */
     public open fun nextLong(origin: Long, bound: Long): Long {
         checkRangeBounds(origin, bound)
         val n = bound - origin
@@ -90,6 +150,14 @@ public abstract class Random {
         }
     }
 
+    /**
+     * Gets the next random `Long` from the random number generator in the specified [range].
+     *
+     * Generates a `Long` random value uniformly distributed in the specified [range]:
+     * from `range.start` inclusive to `range.endInclusive` inclusive.
+     *
+     * @throws IllegalArgumentException if [range] is empty.
+     */
     public open fun nextLong(range: LongRange): Long = when {
 //        range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
         range.last < Long.MAX_VALUE -> nextLong(range.start, range.endInclusive + 1)
@@ -97,30 +165,85 @@ public abstract class Random {
         else -> nextLong()
     }
 
+    /**
+     * Gets the next random [Boolean] value.
+     */
     public open fun nextBoolean(): Boolean = nextBits(1) != 0
 
+    /**
+     * Gets the next random [Double] value uniformly distributed between 0 (inclusive) and 1 (exclusive).
+     */
     public open fun nextDouble(): Double = (nextBits(26).toLong().shl(27) + nextBits(27)) / (1L shl 53).toDouble()
+
+    /**
+     * Gets the next random non-negative `Double` from the random number generator not greater than the specified [bound].
+     *
+     * Generates a `Double` random value uniformly distributed between 0 (inclusive) and [bound] (exclusive).
+     *
+     * @throws IllegalArgumentException if [bound] is negative or zero.
+     */
+    public open fun nextDouble(bound: Double): Double = nextDouble(0.0, bound)
+
+    /**
+     * Gets the next random `Double` from the random number generator in the specified range.
+     *
+     * Generates a `Double` random value uniformly distributed between the specified [origin] (inclusive) and the specified [bound] (exclusive).
+     *
+     * [origin] and [bound] must be finite otherwise the behavior is unspecified.
+     *
+     * @throws IllegalArgumentException if [origin] is greater than or equal to [bound].
+     */
+    public open fun nextDouble(origin: Double, bound: Double): Double {
+        checkRangeBounds(origin, bound)
+        return (origin + nextDouble() * (bound - origin)).let { if (it >= bound) bound.nextDown() else it }
+    }
+
+    /**
+     * Gets the next random [Float] value uniformly distributed between 0 (inclusive) and 1 (exclusive).
+     */
     public open fun nextFloat(): Float = nextBits(24) / (1 shl 24).toFloat()
 
-    public open fun nextBytes(array: ByteArray, startIndex: Int = 0, endIndex: Int = array.size): ByteArray {
-        // TODO: check range
+    /**
+     * Fills a subrange of the specified byte [array] starting from [fromIndex] inclusive and ending [toIndex] exclusive
+     * with random bytes.
+     *
+     * @return [array] with the subrange filled with random bytes.
+     */
+    public open fun nextBytes(array: ByteArray, fromIndex: Int = 0, toIndex: Int = array.size): ByteArray {
+        require(fromIndex in 0..array.size && toIndex in 0..array.size) { "fromIndex ($fromIndex) or toIndex ($toIndex) are out of range: 0..${array.size}." }
+        require(fromIndex <= toIndex) { "fromIndex ($fromIndex) must be not greater than toIndex ($toIndex)." }
 
-        var v: Int = 0
-        var bits: Int = 0
-        for (i in startIndex until endIndex) {
-            if (bits == 0) {
-                bits = if (endIndex - i >= 4) 32 else (endIndex - i) * 8
-                v = nextBits(bits)
-            }
-            array[i] = v.toByte()
-            v = v ushr 8
-            bits -= 8
+        val steps = (toIndex - fromIndex) / 4
+
+        var position = fromIndex
+        repeat(steps) {
+            val v = nextInt()
+            array[position] = v.toByte()
+            array[position + 1] = v.ushr(8).toByte()
+            array[position + 2] = v.ushr(16).toByte()
+            array[position + 3] = v.ushr(24).toByte()
+            position += 4
         }
+
+        val remainder = toIndex - position
+        val vr = nextBits(remainder * 8)
+        for (i in 0 until remainder) {
+            array[position + i] = vr.ushr(i * 8).toByte()
+        }
+
         return array
     }
 
+    /**
+     * Fills the specified byte [array] with random bytes and returns it.
+     *
+     * @return [array] filled with random bytes.
+     */
     public open fun nextBytes(array: ByteArray): ByteArray = nextBytes(array, 0, array.size)
 
+    /**
+     * Creates a byte array of the specified [size], filled with random bytes.
+     */
     public open fun nextBytes(size: Int): ByteArray = nextBytes(ByteArray(size))
 
     // TODO: UInt, ULong, UByteArray
@@ -128,7 +251,7 @@ public abstract class Random {
     /**
      * The default random number generator.
      *
-     *
+     * On JVM this generator is thread-safe, its methods can be invoked from multiple threads.
      *
      * @sample samples.random.Randoms.defaultRandom
      */
@@ -136,17 +259,40 @@ public abstract class Random {
 
         private var _defaultRandom: Random? = null
         private val defaultRandom: Random
-            get() = _defaultRandom ?: defaultPlatformRandom().also { _defaultRandom = it }
+            get() = _defaultRandom ?: initialize()
+
+        private fun initialize(): Random = defaultPlatformRandom().also { _defaultRandom = it }
 
 
         override fun nextBits(bitCount: Int): Int = defaultRandom.nextBits(bitCount)
+        override fun nextInt(): Int = defaultRandom.nextInt()
+        override fun nextInt(bound: Int): Int = defaultRandom.nextInt(bound)
+        override fun nextInt(origin: Int, bound: Int): Int = defaultRandom.nextInt(origin, bound)
+        override fun nextInt(range: IntRange): Int = defaultRandom.nextInt(range)
 
-        // TODO: Override others
+        override fun nextLong(): Long = defaultRandom.nextLong()
+        override fun nextLong(bound: Long): Long = defaultRandom.nextLong(bound)
+        override fun nextLong(origin: Long, bound: Long): Long = defaultRandom.nextLong(origin, bound)
+        override fun nextLong(range: LongRange): Long = defaultRandom.nextLong(range)
 
-        internal fun checkRangeBounds(origin: Long, bound: Long) {
-            if (origin >= bound) throw IllegalArgumentException("Random range is empty: [$origin, $bound)")
-        }
+        override fun nextBoolean(): Boolean = defaultRandom.nextBoolean()
 
+        override fun nextDouble(): Double = defaultRandom.nextDouble()
+        override fun nextDouble(bound: Double): Double = defaultRandom.nextDouble(bound)
+        override fun nextDouble(origin: Double, bound: Double): Double = defaultRandom.nextDouble(origin, bound)
+
+        override fun nextFloat(): Float = defaultRandom.nextFloat()
+
+        override fun nextBytes(array: ByteArray): ByteArray = defaultRandom.nextBytes(array)
+        override fun nextBytes(size: Int): ByteArray = defaultRandom.nextBytes(size)
+        override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray = defaultRandom.nextBytes(array, fromIndex, toIndex)
+
+
+        internal fun checkRangeBounds(origin: Int, bound: Int) = require(bound > origin) { boundsErrorMessage(origin, bound) }
+        internal fun checkRangeBounds(origin: Long, bound: Long) = require(bound > origin) { boundsErrorMessage(origin, bound) }
+        internal fun checkRangeBounds(origin: Double, bound: Double) = require(bound > origin) { boundsErrorMessage(origin, bound) }
+
+        private fun boundsErrorMessage(origin: Any, bound: Any) = "Random range is empty: [$origin, $bound)."
     }
 }
 
