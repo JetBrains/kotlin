@@ -5,8 +5,6 @@
 
 package kotlin.js
 
-fun asIs(a: dynamic) = a
-
 fun numberToByte(a: dynamic): Byte = toByte(numberToInt(a))
 
 fun numberToDouble(a: dynamic): Double = js("+a").unsafeCast<Double>()
