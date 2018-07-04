@@ -1358,6 +1358,8 @@ void GarbageCollect() {
 
   state->gcInProgress = true;
 
+  processFinalizerQueue(state);
+
   while (state->toFree->size() > 0) {
     CollectCycles(state);
     processFinalizerQueue(state);

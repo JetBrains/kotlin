@@ -2205,6 +2205,10 @@ task memory_weak1(type: RunKonanTest) {
     source = "runtime/memory/weak1.kt"
 }
 
+task memory_only_gc(type: RunStandaloneKonanTest) {
+    source = "runtime/memory/only_gc.kt"
+}
+
 task mpp1(type: RunStandaloneKonanTest) {
     source = "codegen/mpp/mpp1.kt"
     flags = ['-tr', '-Xmulti-platform']
