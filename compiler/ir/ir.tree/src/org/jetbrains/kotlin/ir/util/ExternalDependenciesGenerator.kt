@@ -43,15 +43,32 @@ class ExternalDependenciesGenerator(
         private val packageFragments = HashMap<PackageFragmentDescriptor, IrExternalPackageFragment>()
 
         fun run() {
-            while (true) {
-                val collector = DependenciesCollector()
-                collector.collectTopLevelDescriptorsForUnboundSymbols(symbolTable)
-                if (collector.isEmpty) break
-
-                collector.dependencyModules.mapTo(irModule.dependencyModules) { moduleDescriptor ->
-                    generateModuleStub(collector, moduleDescriptor)
-                }
+            stubGenerator.unboundSymbolGeneration = true
+            ArrayList(symbolTable.unboundClasses).forEach {
+                stubGenerator.generateClassStub(it.descriptor)
             }
+            ArrayList(symbolTable.unboundConstructors).forEach {
+                stubGenerator.generateConstructorStub(it.descriptor)
+            }
+            ArrayList(symbolTable.unboundEnumEntries).forEach {
+                stubGenerator.generateEnumEntryStub(it.descriptor)
+            }
+            ArrayList(symbolTable.unboundFields).forEach {
+                stubGenerator.generatePropertyStub(it.descriptor)
+            }
+            ArrayList(symbolTable.unboundSimpleFunctions).forEach {
+                stubGenerator.generateFunctionStub(it.descriptor)
+            }
+            ArrayList(symbolTable.unboundTypeParameters).forEach {
+                stubGenerator.generateOrGetTypeParameterStub(it.descriptor)
+            }
+
+            assert(symbolTable.unboundClasses.isEmpty())
+            assert(symbolTable.unboundConstructors.isEmpty())
+            assert(symbolTable.unboundEnumEntries.isEmpty())
+            assert(symbolTable.unboundFields.isEmpty())
+            assert(symbolTable.unboundSimpleFunctions.isEmpty())
+            assert(symbolTable.unboundTypeParameters.isEmpty())
         }
 
         private fun generateModuleStub(collector: DependenciesCollector, moduleDescriptor: ModuleDescriptor): IrModuleFragment =
@@ -80,7 +97,7 @@ class ExternalDependenciesGenerator(
 
         private fun getOrCreatePackageFragment(packageFragmentDescriptor: PackageFragmentDescriptor) =
             packageFragments.getOrPut(packageFragmentDescriptor) {
-                stubGenerator.generateEmptyExternalPackageFragmentStub(packageFragmentDescriptor)
+                stubGenerator.generateOrGetEmptyExternalPackageFragmentStub(packageFragmentDescriptor)
             }
 
     }
