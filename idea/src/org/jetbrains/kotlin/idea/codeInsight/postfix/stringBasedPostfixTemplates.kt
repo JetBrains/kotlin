@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.liveTemplates.macro.SuggestVariableNameMacro
 import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.KotlinType
@@ -43,6 +44,18 @@ internal abstract class ConstantStringBasedPostfixTemplate(
 
     override fun getElementToRemove(expr: PsiElement?) = expr
 }
+
+internal abstract class KtWrapWithCallPostfixTemplate(val functionName: String) : ConstantStringBasedPostfixTemplate(
+    functionName,
+    "$functionName(expr)",
+    "$functionName(\$expr$)\$END$",
+    createExpressionSelectorWithComplexFilter { expression, _ -> expression !is KtReturnExpression }
+)
+
+internal object KtWrapWithListOfPostfixTemplate : KtWrapWithCallPostfixTemplate("listOf")
+internal object KtWrapWithSetOfPostfixTemplate : KtWrapWithCallPostfixTemplate("setOf")
+internal object KtWrapWithArrayOfPostfixTemplate : KtWrapWithCallPostfixTemplate("arrayOf")
+internal object KtWrapWithSequenceOfPostfixTemplate : KtWrapWithCallPostfixTemplate("sequenceOf")
 
 internal class KtForEachPostfixTemplate(
     name: String
