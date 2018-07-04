@@ -1478,6 +1478,11 @@ task vtable1(type: RunKonanTest) {
     source = "datagen/rtti/vtable1.kt"
 }
 
+task vtable_any(type: RunKonanTest) {
+    source = "datagen/rtti/vtable_any.kt"
+    goldValue = "[1]\n[2]\n[3]\n[4]\n"
+}
+
 task strdedup1(type: RunKonanTest) {
     goldValue = "true\ntrue\n"
     source = "datagen/literals/strdedup1.kt"

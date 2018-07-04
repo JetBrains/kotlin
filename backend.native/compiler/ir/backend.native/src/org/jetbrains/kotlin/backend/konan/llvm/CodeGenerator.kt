@@ -19,16 +19,20 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.descriptors.stdlibModule
-import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.ClassDescriptor
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.FunctionDescriptor
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.konan.llvm.objc.*
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
 
@@ -618,8 +622,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     fun lookupVirtualImpl(receiver: LLVMValueRef, descriptor: FunctionDescriptor): LLVMValueRef {
         assert(LLVMTypeOf(receiver) == codegen.kObjHeaderPtr)
 
-        val owner = descriptor.containingDeclaration as ClassDescriptor
-
         val typeInfoPtr: LLVMValueRef = if (descriptor.getObjCMethodInfo() != null) {
             call(context.llvm.getObjCKotlinTypeInfo, listOf(receiver))
         } else {
@@ -629,14 +631,21 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             load(typeInfoPtrPtr)
         }
 
-        assert (typeInfoPtr.type == codegen.kTypeInfoPtr) { LLVMPrintTypeToString(typeInfoPtr.type)!!.toKString() }
+        assert(typeInfoPtr.type == codegen.kTypeInfoPtr) { LLVMPrintTypeToString(typeInfoPtr.type)!!.toKString() }
+
+        /*
+         * Resolve owner of the call with special handling of Any methods:
+         * if toString/eq/hc is invoked on an interface instance, we resolve
+         * owner as Any and dispatch it via vtable
+         */
+        val anyMethod = (descriptor as SimpleFunctionDescriptor).findOverriddenMethodOfAny()
+        val owner = (anyMethod ?: descriptor).containingDeclaration as ClassDescriptor
+
         val llvmMethod = if (!owner.isInterface) {
             // If this is a virtual method of the class - we can call via vtable.
-            val index = context.getVtableBuilder(owner).vtableIndex(descriptor as SimpleFunctionDescriptor)
-
+            val index = context.getVtableBuilder(owner).vtableIndex(anyMethod ?: descriptor)
             val vtablePlace = gep(typeInfoPtr, Int32(1).llvm) // typeInfoPtr + 1
             val vtable = bitcast(kInt8PtrPtr, vtablePlace)
-
             val slot = gep(vtable, Int32(index).llvm)
             load(slot)
         } else {
@@ -650,6 +659,16 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
         val functionPtrType = pointerType(codegen.getLlvmFunctionType(descriptor))   // Construct type of the method to be invoked
         return bitcast(functionPtrType, llvmMethod)           // Cast method address to the type
+    }
+
+    private fun IrSimpleFunction.findOverriddenMethodOfAny(): IrSimpleFunction? {
+        if (modality == Modality.ABSTRACT) return null
+        val resolved = resolveFakeOverride()
+        if ((resolved.parent as ClassDescriptor).isAny()) {
+            return resolved
+        }
+
+        return null
     }
 
     fun getObjectValue(
