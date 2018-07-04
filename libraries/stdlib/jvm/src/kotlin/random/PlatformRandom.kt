@@ -8,13 +8,19 @@ package kotlin.random
 import kotlin.UnsupportedOperationException
 import kotlin.internal.*
 
+/**
+ * Creates a [java.util.Random][java.util.Random] instance that uses the specified Kotlin [Random] generator as a randomness source.
+ */
 @SinceKotlin("1.3")
 public fun Random.asJavaRandom(): java.util.Random =
     (this as? AbstractPlatformRandom)?.impl ?: KotlinRandom(this)
 
+/**
+ * Creates a Kotlin [Random] instance that uses the specified [java.util.Random][java.util.Random] generator as a randomness source.
+ */
 @SinceKotlin("1.3")
 public fun java.util.Random.asKotlinRandom(): Random =
-    PlatformRandom(this)
+    (this as? KotlinRandom)?.impl ?: PlatformRandom(this)
 
 
 
@@ -32,12 +38,12 @@ internal abstract class AbstractPlatformRandom : Random() {
     override fun nextBits(bitCount: Int): Int = impl.nextInt() ushr (32 - bitCount).coerceAtLeast(0)
 
     override fun nextInt(): Int = impl.nextInt()
+    override fun nextInt(bound: Int): Int = impl.nextInt(bound)
     override fun nextLong(): Long = impl.nextLong()
     override fun nextBoolean(): Boolean = impl.nextBoolean()
     override fun nextDouble(): Double = impl.nextDouble()
     override fun nextFloat(): Float = impl.nextFloat()
-
-    override fun nextBytes(array: ByteArray): ByteArray = run { impl.nextBytes(array); array }
+    override fun nextBytes(array: ByteArray): ByteArray = array.also { impl.nextBytes(it) }
 }
 
 internal class FallbackThreadLocalRandom : AbstractPlatformRandom() {
@@ -61,12 +67,12 @@ private class KotlinRandom(val impl: Random) : java.util.Random() {
     override fun nextFloat(): Float = impl.nextFloat()
     override fun nextDouble(): Double = impl.nextDouble()
 
-    override fun setSeed(seed: Long) {
-        throw UnsupportedOperationException("Setting seed is not supported")
-    }
-
     override fun nextBytes(bytes: ByteArray) {
         impl.nextBytes(bytes)
+    }
+
+    override fun setSeed(seed: Long) {
+        throw UnsupportedOperationException("Setting seed is not supported.")
     }
 }
 
