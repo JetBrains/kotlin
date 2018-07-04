@@ -9,19 +9,24 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 class Controller {
-    suspend fun suspendHere() = suspendCoroutineOrReturn<String> { x ->
-        x.resume("OK")
-        COROUTINE_SUSPENDED
+    var callback: () -> Unit = {}
+    suspend fun suspendHere() = suspendCoroutine<String> { x ->
+        callback = {
+            x.resume("OK")
+        }
     }
 }
 
 fun builder(c: suspend Controller.() -> Unit) {
-    c.startCoroutine(Controller(), object : helpers.ContinuationAdapter<Unit>() {
+    val controller = Controller()
+    c.startCoroutine(controller, object : helpers.ContinuationAdapter<Unit>() {
         override val context: CoroutineContext = EmptyCoroutineContext
         override fun resume(value: Unit) {}
 
         override fun resumeWithException(exception: Throwable) {}
     })
+
+    controller.callback()
 }
 
 // FILE: B.kt
