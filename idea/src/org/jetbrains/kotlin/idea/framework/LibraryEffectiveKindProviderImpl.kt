@@ -15,10 +15,8 @@ import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.util.containers.SoftFactoryMap
 
 class LibraryEffectiveKindProviderImpl(project: Project) : LibraryEffectiveKindProvider {
-    companion object {
-        private val effectiveKindMap = object : SoftFactoryMap<LibraryEx, PersistentLibraryKind<*>?>() {
-            override fun create(key: LibraryEx) = detectLibraryKind(key.getFiles(OrderRootType.CLASSES))
-        }
+    private val effectiveKindMap = object : SoftFactoryMap<LibraryEx, PersistentLibraryKind<*>?>() {
+        override fun create(key: LibraryEx) = detectLibraryKind(key.getFiles(OrderRootType.CLASSES))
     }
 
     init {
