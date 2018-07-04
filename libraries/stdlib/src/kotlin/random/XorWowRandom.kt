@@ -46,5 +46,6 @@ internal constructor(
         return t + addend
     }
 
-    override fun nextBits(bitCount: Int): Int = nextInt() ushr (32 - bitCount)
+    override fun nextBits(bitCount: Int): Int =
+        nextInt().takeUpperBits(bitCount)
 }
