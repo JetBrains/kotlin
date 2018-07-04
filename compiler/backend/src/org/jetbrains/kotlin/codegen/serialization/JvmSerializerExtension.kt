@@ -178,7 +178,9 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
             if (setterMethod != null) signatureSerializer.methodSignature(null, setterMethod) else null
         )
 
-        proto.setExtension(JvmProtoBuf.propertySignature, signature)
+        if (signature != null) {
+            proto.setExtension(JvmProtoBuf.propertySignature, signature)
+        }
 
         if (descriptor.isJvmFieldPropertyInInterfaceCompanion()) {
             proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
@@ -262,7 +264,7 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
             syntheticMethod: JvmProtoBuf.JvmMethodSignature?,
             getter: JvmProtoBuf.JvmMethodSignature?,
             setter: JvmProtoBuf.JvmMethodSignature?
-        ): JvmProtoBuf.JvmPropertySignature {
+        ): JvmProtoBuf.JvmPropertySignature? {
             val signature = JvmProtoBuf.JvmPropertySignature.newBuilder()
 
             if (fieldDesc != null) {
@@ -281,7 +283,7 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
                 signature.setter = setter
             }
 
-            return signature.build()
+            return signature.build().takeIf { it.serializedSize > 0 }
         }
 
         fun fieldSignature(

@@ -5,83 +5,63 @@ public final annotation class A : kotlin/Annotation {
   // signature: <init>(ZCBSIFJD[Z[C[B[S[I[F[J[DLjava/lang/String;Lkotlin/annotation/AnnotationTarget;Lkotlin/reflect/KClass;LB;)V
   public /* primary */ constructor(z: kotlin/Boolean, c: kotlin/Char, b: kotlin/Byte, s: kotlin/Short, i: kotlin/Int, f: kotlin/Float, j: kotlin/Long, d: kotlin/Double, za: kotlin/BooleanArray, ca: kotlin/CharArray, ba: kotlin/ByteArray, sa: kotlin/ShortArray, ia: kotlin/IntArray, fa: kotlin/FloatArray, ja: kotlin/LongArray, da: kotlin/DoubleArray, str: kotlin/String, enum: kotlin/annotation/AnnotationTarget, klass: kotlin/reflect/KClass<*>, anno: B)
 
-  // field: anno:LB;
   public final val anno: B
     public final get
 
-  // field: b:B
   public final val b: kotlin/Byte
     public final get
 
-  // field: ba:[B
   public final val ba: kotlin/ByteArray
     public final get
 
-  // field: c:C
   public final val c: kotlin/Char
     public final get
 
-  // field: ca:[C
   public final val ca: kotlin/CharArray
     public final get
 
-  // field: d:D
   public final val d: kotlin/Double
     public final get
 
-  // field: da:[D
   public final val da: kotlin/DoubleArray
     public final get
 
-  // field: enum:Lkotlin/annotation/AnnotationTarget;
   public final val enum: kotlin/annotation/AnnotationTarget
     public final get
 
-  // field: f:F
   public final val f: kotlin/Float
     public final get
 
-  // field: fa:[F
   public final val fa: kotlin/FloatArray
     public final get
 
-  // field: i:I
   public final val i: kotlin/Int
     public final get
 
-  // field: ia:[I
   public final val ia: kotlin/IntArray
     public final get
 
-  // field: j:J
   public final val j: kotlin/Long
     public final get
 
-  // field: ja:[J
   public final val ja: kotlin/LongArray
     public final get
 
-  // field: klass:Lkotlin/reflect/KClass;
   public final val klass: kotlin/reflect/KClass<*>
     public final get
 
-  // field: s:S
   public final val s: kotlin/Short
     public final get
 
-  // field: sa:[S
   public final val sa: kotlin/ShortArray
     public final get
 
-  // field: str:Ljava/lang/String;
   public final val str: kotlin/String
     public final get
 
-  // field: z:Z
   public final val z: kotlin/Boolean
     public final get
 
-  // field: za:[Z
   public final val za: kotlin/BooleanArray
     public final get
 }
@@ -92,7 +72,6 @@ public final annotation class B : kotlin/Annotation {
   // signature: <init>(Ljava/lang/String;)V
   public /* primary */ constructor(value: kotlin/String)
 
-  // field: value:Ljava/lang/String;
   public final val value: kotlin/String
     public final get
 }
