@@ -14,6 +14,9 @@ public inline class ULongArray
 @PublishedApi
 internal constructor(private val storage: LongArray) : Collection<ULong> {
 
+    /** Creates a new array of the specified [size], with all elements initialized to zero. */
+    public constructor(size: Int) : this(LongArray(size))
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): ULong = storage[index].toULong()
 
