@@ -5505,14 +5505,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
 
                 @TestMetadata("fromJava.kt")
                 public void testFromJava_1_2() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/fromJava.kt");
-                    try {
-                        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
-                    }
-                    catch (Throwable ignore) {
-                        return;
-                    }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/fromJava.kt", "kotlin.coroutines.experimental");
                 }
 
                 @TestMetadata("longArgs.kt")

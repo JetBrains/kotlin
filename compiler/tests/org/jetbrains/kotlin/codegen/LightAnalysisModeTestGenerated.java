@@ -6300,14 +6300,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
                 @TestMetadata("fromJava.kt")
                 public void testFromJava_1_2() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/fromJava.kt");
-                    doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/fromJava.kt", "kotlin.coroutines.experimental");
                 }
 
                 @TestMetadata("fromJava.kt")
                 public void testFromJava_1_3() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/fromJava.kt");
-                    doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/fromJava.kt", "kotlin.coroutines");
                 }
 
                 @TestMetadata("longArgs.kt")
