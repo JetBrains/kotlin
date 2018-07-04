@@ -2060,6 +2060,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noAssertionsForInlineClassesBasedOnNullableTypes.kt");
         }
 
+        @TestMetadata("noBoxingOnCastOperations.kt")
+        public void testNoBoxingOnCastOperations() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noBoxingOnCastOperations.kt");
+        }
+
         @TestMetadata("noBoxingOperationsOnNonTrivialSpread.kt")
         public void testNoBoxingOperationsOnNonTrivialSpread() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noBoxingOperationsOnNonTrivialSpread.kt");

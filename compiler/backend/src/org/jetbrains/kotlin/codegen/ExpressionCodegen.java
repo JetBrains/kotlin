@@ -4431,9 +4431,17 @@ The "returned" value of try expression with no finally is either the last expres
 
         StackValue value = genQualified(receiver, left);
 
+        KotlinType leftKotlinType = value.kotlinType;
+        Type boxedLeftType;
+        if (leftKotlinType != null && InlineClassesUtilsKt.isInlineClassType(leftKotlinType)) {
+            boxedLeftType = typeMapper.mapTypeAsDeclaration(leftKotlinType);
+        } else {
+            boxedLeftType = boxType(value.type);
+        }
+
         Type boxedRightType = boxType(typeMapper.mapTypeAsDeclaration(rightKotlinType));
         return StackValue.operation(boxedRightType, rightKotlinType, v -> {
-            value.put(boxType(value.type), value.kotlinType, v);
+            value.put(boxedLeftType, value.kotlinType, v);
 
             if (value.type == Type.VOID_TYPE) {
                 StackValue.putUnitInstance(v);
