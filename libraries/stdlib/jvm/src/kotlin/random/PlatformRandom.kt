@@ -35,7 +35,8 @@ internal actual fun fastLog2(value: Int): Int =
 internal abstract class AbstractPlatformRandom : Random() {
     abstract val impl: java.util.Random
 
-    override fun nextBits(bitCount: Int): Int = impl.nextInt() ushr (32 - bitCount).coerceAtLeast(0)
+    override fun nextBits(bitCount: Int): Int =
+        impl.nextInt().takeUpperBits(bitCount)
 
     override fun nextInt(): Int = impl.nextInt()
     override fun nextInt(bound: Int): Int = impl.nextInt(bound)
@@ -75,5 +76,3 @@ private class KotlinRandom(val impl: Random) : java.util.Random() {
         throw UnsupportedOperationException("Setting seed is not supported.")
     }
 }
-
-

@@ -123,15 +123,21 @@ public abstract class Random {
         if (n > 0) {
             val rnd: Long
             if (n and -n == n) {
-                val bitCount = fastLog2((n ushr 32).toInt())
+                val nLow = n.toInt()
+                val nHigh = (n ushr 32).toInt()
                 rnd = when {
-                    bitCount < 0 ->
+                    nLow != 0 -> {
+                        val bitCount = fastLog2(nLow)
                         // toUInt().toLong()
-                        nextBits(fastLog2(n.toInt())).toLong() and 0xFFFFFFFF
-                    bitCount == 0 ->
-                        nextBits(32).toLong() and 0xFFFFFFFF
-                    else ->
-                        nextBits(bitCount).toLong().shl(32) + nextBits(32)
+                        nextBits(bitCount).toLong() and 0xFFFF_FFFF
+                    }
+                    nHigh == 1 ->
+                        // toUInt().toLong()
+                        nextInt().toLong() and 0xFFFF_FFFF
+                    else -> {
+                        val bitCount = fastLog2(nHigh)
+                        nextBits(bitCount).toLong().shl(32) + nextInt()
+                    }
                 }
             } else {
                 var v: Long
@@ -195,7 +201,14 @@ public abstract class Random {
      */
     public open fun nextDouble(origin: Double, bound: Double): Double {
         checkRangeBounds(origin, bound)
-        return (origin + nextDouble() * (bound - origin)).let { if (it >= bound) bound.nextDown() else it }
+        val size = bound - origin
+        val r = if (size.isInfinite() && origin.isFinite() && bound.isFinite()) {
+            val r1 = nextDouble() * (bound / 2 - origin / 2)
+            origin + r1 + r1
+        } else {
+            origin + nextDouble() * size
+        }
+        return if (r >= bound) bound.nextDown() else r
     }
 
     /**
@@ -315,3 +328,6 @@ public fun Random(seed: Long): Random = XorWowRandom(seed.toInt(), seed.shr(32).
 internal expect fun defaultPlatformRandom(): Random
 internal expect fun fastLog2(value: Int): Int //  31 - Integer.numberOfLeadingZeros(value)
 
+/** Takes upper [bitCount] bits (0..32) from this number. */
+internal fun Int.takeUpperBits(bitCount: Int): Int =
+    this.ushr(32 - bitCount) and (-bitCount).shr(31)
