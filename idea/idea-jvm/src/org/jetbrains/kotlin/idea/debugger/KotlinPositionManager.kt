@@ -101,7 +101,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     override fun getSourcePosition(location: Location?): SourcePosition? {
         if (location == null) throw NoDataException.INSTANCE
 
-        val fileName = location.safeSourceName ?: throw NoDataException.INSTANCE
+        val fileName = location.safeSourceName() ?: throw NoDataException.INSTANCE
         val lineNumber = location.safeLineNumber()
         if (lineNumber < 0) {
             throw NoDataException.INSTANCE
@@ -157,7 +157,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
 
         val sameLineLocations = location.safeMethod()?.safeAllLineLocations()?.filter {
-            it.safeLineNumber() == lineNumber && it.safeSourceName == fileName
+            it.safeLineNumber() == lineNumber && it.safeSourceName() == fileName
         }
 
         if (sameLineLocations != null) {
@@ -253,20 +253,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         return null
     }
 
-    private val Location.safeSourceName: String? get() {
-        return try {
-            sourceName()
-        }
-        catch (e: AbsentInformationException) {
-            null
-        }
-        catch (e: InternalError) {
-            null
-        }
-    }
-
     private fun getPsiFileByLocation(location: Location): PsiFile? {
-        val sourceName = location.safeSourceName ?: return null
+        val sourceName = location.safeSourceName() ?: return null
 
         val referenceInternalName = try {
             if (location.declaringType().containsKotlinStrata()) {
