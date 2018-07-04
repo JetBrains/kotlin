@@ -63,7 +63,7 @@ fun <T> async(c: suspend () -> T): CompletableFuture<T> {
     return future
 }
 
-suspend fun <V> await(f: CompletableFuture<V>) = suspendCoroutineOrReturn<V> { machine ->
+suspend fun <V> await(f: CompletableFuture<V>) = suspendCoroutineUninterceptedOrReturn<V> { machine ->
     f.whenComplete { value, throwable ->
         if (throwable == null)
             machine.resume(value)

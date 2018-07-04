@@ -11,7 +11,7 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 object Host {
-    suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
+    suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume("OK")
         COROUTINE_SUSPENDED
     }

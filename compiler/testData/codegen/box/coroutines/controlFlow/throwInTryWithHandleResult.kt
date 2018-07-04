@@ -10,7 +10,7 @@ import COROUTINES_PACKAGE.intrinsics.*
 class Controller {
     var result = ""
 
-    suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineOrReturn { c ->
+    suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineUninterceptedOrReturn { c ->
         result += "suspend($value);"
         c.resume(value)
         COROUTINE_SUSPENDED

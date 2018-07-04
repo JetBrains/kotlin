@@ -3,7 +3,7 @@
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 class Controller {
-    suspend fun suspendHere() = suspendCoroutineOrReturn<String> { x ->
+    suspend fun suspendHere() = suspendCoroutineUninterceptedOrReturn<String> { x ->
         x.resume("OK")
     }
 

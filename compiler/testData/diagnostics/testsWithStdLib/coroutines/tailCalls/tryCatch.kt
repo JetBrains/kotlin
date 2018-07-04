@@ -9,7 +9,7 @@ suspend fun baz(): Int = 1
 
 suspend fun tryCatch(): Int {
     return try {
-        suspendCoroutineOrReturn { x: Continuation<Int> -> }
+        suspendCoroutineUninterceptedOrReturn { x: Continuation<Int> -> }
     } catch (e: Exception) {
         baz() // another suspend function
     }
@@ -17,7 +17,7 @@ suspend fun tryCatch(): Int {
 
 suspend fun tryFinally(): Int {
     return try {
-        suspendCoroutineOrReturn { x: Continuation<Int> -> }
+        suspendCoroutineUninterceptedOrReturn { x: Continuation<Int> -> }
     } finally {
         nonSuspend()
     }
@@ -33,7 +33,7 @@ suspend fun returnInFinally(): Int {
 
 suspend fun tryCatchFinally(): Int {
     return try {
-        suspendCoroutineOrReturn { x: Continuation<Int> -> }
+        suspendCoroutineUninterceptedOrReturn { x: Continuation<Int> -> }
     } catch (e: Exception) {
         baz() // another suspend function
     } finally {

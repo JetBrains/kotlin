@@ -9,7 +9,7 @@ import COROUTINES_PACKAGE.intrinsics.*
 
 var res = "FAIL"
 
-suspend fun suspendHere() = suspendCoroutineOrReturn<Unit> {
+suspend fun suspendHere() = suspendCoroutineUninterceptedOrReturn<Unit> {
     res = "OK"
     it.resume(Unit)
     COROUTINE_SUSPENDED

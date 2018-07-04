@@ -3,7 +3,7 @@
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
-suspend fun suspendLogAndThrow(exception: Throwable): Nothing = suspendCoroutineOrReturn { c ->
+suspend fun suspendLogAndThrow(exception: Throwable): Nothing = suspendCoroutineUninterceptedOrReturn { c ->
     c.resumeWithException(exception)
     COROUTINE_SUSPENDED
 }

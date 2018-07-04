@@ -9,7 +9,7 @@ import COROUTINES_PACKAGE.intrinsics.*
 class Controller {
     var lastSuspension: Continuation<String>? = null
     var result = "fail"
-    suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
+    suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
         lastSuspension = x
         COROUTINE_SUSPENDED
     }

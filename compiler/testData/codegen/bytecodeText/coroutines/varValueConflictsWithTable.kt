@@ -5,7 +5,7 @@ import helpers.*
 // TREAT_AS_ONE_FILE
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
-suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
+suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume("OK")
 }
 

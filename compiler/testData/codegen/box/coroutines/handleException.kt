@@ -10,7 +10,7 @@ class Controller {
     var exception: Throwable? = null
     val postponedActions = ArrayList<() -> Unit>()
 
-    suspend fun suspendWithValue(v: String): String = suspendCoroutineOrReturn { x ->
+    suspend fun suspendWithValue(v: String): String = suspendCoroutineUninterceptedOrReturn { x ->
         postponedActions.add {
             x.resume(v)
         }
@@ -18,7 +18,7 @@ class Controller {
         COROUTINE_SUSPENDED
     }
 
-    suspend fun suspendWithException(e: Exception): String = suspendCoroutineOrReturn { x ->
+    suspend fun suspendWithException(e: Exception): String = suspendCoroutineUninterceptedOrReturn { x ->
         postponedActions.add {
             x.resumeWithException(e)
         }

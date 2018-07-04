@@ -6,7 +6,7 @@ import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
-suspend fun suspendHere(): Unit = suspendCoroutineOrReturn { x ->
+suspend fun suspendHere(): Unit = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(Unit)
     COROUTINE_SUSPENDED
 }

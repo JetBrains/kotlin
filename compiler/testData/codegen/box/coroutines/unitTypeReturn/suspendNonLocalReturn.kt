@@ -16,7 +16,7 @@ suspend fun suspendHere(x: Int): Unit {
     }
 
     result = "OK"
-    return suspendCoroutineOrReturn { x ->
+    return suspendCoroutineUninterceptedOrReturn { x ->
         x.resume(Unit)
         COROUTINE_SUSPENDED
     }
