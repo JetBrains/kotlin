@@ -16,5 +16,7 @@ internal class PlatformThreadLocalRandom : kotlin.random.AbstractPlatformRandom(
     override fun nextLong(bound: Long): Long = ThreadLocalRandom.current().nextLong(bound)
     override fun nextLong(origin: Long, bound: Long): Long = ThreadLocalRandom.current().nextLong(origin, bound)
     override fun nextDouble(bound: Double): Double = ThreadLocalRandom.current().nextDouble(bound)
-    override fun nextDouble(origin: Double, bound: Double): Double = ThreadLocalRandom.current().nextDouble(origin, bound)
+
+//     do not delegate this, as it's buggy in JDK8+ (up to 11 at the moment of writing)
+//     override fun nextDouble(origin: Double, bound: Double): Double = ThreadLocalRandom.current().nextDouble(origin, bound)
 }
