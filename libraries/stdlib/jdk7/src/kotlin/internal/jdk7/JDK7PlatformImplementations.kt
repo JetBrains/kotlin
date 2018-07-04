@@ -18,13 +18,9 @@
 package kotlin.internal.jdk7
 
 import kotlin.internal.PlatformImplementations
-import kotlin.random.Random
-import kotlin.random.jdk7.PlatformThreadLocalRandom
 
 internal open class JDK7PlatformImplementations : PlatformImplementations() {
 
     override fun addSuppressed(cause: Throwable, exception: Throwable) = cause.addSuppressed(exception)
-
-    override fun defaultPlatformRandom(): Random = PlatformThreadLocalRandom()
 
 }
