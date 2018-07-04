@@ -19,6 +19,7 @@ open class BaseClass {
 }
 
 class Class {
+    @konan.ThreadLocal
     companion object C: BaseClass(), I<String> {
         fun f(s: Int) = 1
         fun f(s: String) = 2

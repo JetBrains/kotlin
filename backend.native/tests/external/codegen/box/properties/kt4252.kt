@@ -2,6 +2,7 @@ class CallbackBlock {}
 
 public class Foo
 {
+    @konan.ThreadLocal
     companion object {
         private var bar = 0
     }

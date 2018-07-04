@@ -1,4 +1,5 @@
 class C {
+    @konan.ThreadLocal
     companion object {
         private val s: String
         private var s2: String

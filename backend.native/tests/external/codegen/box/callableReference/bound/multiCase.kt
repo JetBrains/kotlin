@@ -10,6 +10,7 @@ var A.w: Int
         v = c + 10
     }
 
+@konan.ThreadLocal
 object F {
     var u = 0
 }

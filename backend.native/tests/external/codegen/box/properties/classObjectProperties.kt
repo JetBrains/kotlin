@@ -1,5 +1,6 @@
 class Test {
 
+    @konan.ThreadLocal
     companion object {
 
         public val prop1 : Int = 10

@@ -1,5 +1,6 @@
 // See KT-14999
 
+@konan.ThreadLocal
 object Obj {
     var key = ""
     var value = ""

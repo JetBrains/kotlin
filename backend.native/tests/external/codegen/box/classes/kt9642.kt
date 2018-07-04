@@ -6,6 +6,7 @@ class Outer {
         }
     }
 
+    @konan.ThreadLocal
     companion object {
         public var s = "fail"
             private set

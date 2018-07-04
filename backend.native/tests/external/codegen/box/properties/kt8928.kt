@@ -2,6 +2,7 @@ class App {
     fun init() {
         s = "OK"
     }
+    @konan.ThreadLocal
     companion object {
         var s: String = "Fail"
             private set

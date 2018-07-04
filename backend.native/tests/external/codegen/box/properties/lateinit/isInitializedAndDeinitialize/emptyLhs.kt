@@ -14,6 +14,7 @@ class Foo {
     }
 }
 
+@konan.ThreadLocal
 object Bar {
     lateinit var p: String
 

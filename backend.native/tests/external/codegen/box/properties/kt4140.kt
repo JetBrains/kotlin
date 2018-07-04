@@ -1,5 +1,6 @@
 class TestObject()
 {
+    @konan.ThreadLocal
     companion object {
         var prop: Int = 1
             get() = field++

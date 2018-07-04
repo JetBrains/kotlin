@@ -8,6 +8,7 @@ public class A {
         return str
     }
 
+    @konan.ThreadLocal
     private companion object {
         private lateinit var str: String
     }

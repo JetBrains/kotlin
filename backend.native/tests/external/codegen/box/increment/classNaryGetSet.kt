@@ -1,3 +1,4 @@
+@konan.ThreadLocal
 object A {
     var x = 0
 

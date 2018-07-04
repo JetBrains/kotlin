@@ -7,6 +7,7 @@ class Delegate<T>(var inner: T) {
 
 
 class Foo (val f: Int) {
+    @konan.ThreadLocal
     companion object {
         val A: Foo by Delegate(Foo(11))
         var B: Foo by Delegate(Foo(11))
@@ -14,6 +15,7 @@ class Foo (val f: Int) {
 }
 
 interface FooTrait {
+    @konan.ThreadLocal
     companion object {
         val A: Foo by Delegate(Foo(11))
         var B: Foo by Delegate(Foo(11))

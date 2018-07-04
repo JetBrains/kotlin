@@ -1,4 +1,5 @@
 class A {
+    @konan.ThreadLocal
     companion object {
         private var r: Int = 1;
 
