@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 class Outer {
     fun String.id(): String {
         class Local(unused: Long) {

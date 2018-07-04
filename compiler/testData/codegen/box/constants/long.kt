@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box(): String {
     if (1L != 1.toLong()) return "fail 1"
     if (0x1L != 0x1.toLong()) return "fail 2"

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun foo(x: Long, y: Int, z: Double, s: String) {}
 
 fun box(): String {

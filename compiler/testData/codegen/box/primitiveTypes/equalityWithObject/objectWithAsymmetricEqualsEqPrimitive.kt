@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // Strictly speaking, asymmetric equals violates contract for 'Object#equals'.
 // However, we don't rely on this contract so far.
 class FakeInt(val value: Int) {
