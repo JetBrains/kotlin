@@ -273,6 +273,7 @@ public final class kotlin/UByte$Erased {
 }
 
 public final class kotlin/UByteArray : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> (I)V
 	public fun <init> ([B)V
 	public fun add (B)Z
 	public synthetic fun add (Ljava/lang/Object;)Z
@@ -299,6 +300,7 @@ public final class kotlin/UByteArray : java/util/Collection, kotlin/jvm/internal
 
 public final class kotlin/UByteArray$Erased {
 	public static final fun box ([B)Lkotlin/UByteArray;
+	public static fun constructor (I)[B
 	public static fun constructor ([B)[B
 	public static fun contains ([BB)Z
 	public static fun containsAll ([BLjava/util/Collection;)Z
@@ -391,6 +393,7 @@ public final class kotlin/UInt$Erased {
 }
 
 public final class kotlin/UIntArray : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> (I)V
 	public fun <init> ([I)V
 	public fun add (I)Z
 	public synthetic fun add (Ljava/lang/Object;)Z
@@ -417,6 +420,7 @@ public final class kotlin/UIntArray : java/util/Collection, kotlin/jvm/internal/
 
 public final class kotlin/UIntArray$Erased {
 	public static final fun box ([I)Lkotlin/UIntArray;
+	public static fun constructor (I)[I
 	public static fun constructor ([I)[I
 	public static fun contains ([II)Z
 	public static fun containsAll ([ILjava/util/Collection;)Z
@@ -509,6 +513,7 @@ public final class kotlin/ULong$Erased {
 }
 
 public final class kotlin/ULongArray : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> (I)V
 	public fun <init> ([J)V
 	public fun add (J)Z
 	public synthetic fun add (Ljava/lang/Object;)Z
@@ -535,6 +540,7 @@ public final class kotlin/ULongArray : java/util/Collection, kotlin/jvm/internal
 
 public final class kotlin/ULongArray$Erased {
 	public static final fun box ([J)Lkotlin/ULongArray;
+	public static fun constructor (I)[J
 	public static fun constructor ([J)[J
 	public static fun contains ([JJ)Z
 	public static fun containsAll ([JLjava/util/Collection;)Z
@@ -625,6 +631,7 @@ public final class kotlin/UShort$Erased {
 }
 
 public final class kotlin/UShortArray : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> (I)V
 	public fun <init> ([S)V
 	public synthetic fun add (Ljava/lang/Object;)Z
 	public fun add (S)Z
@@ -651,6 +658,7 @@ public final class kotlin/UShortArray : java/util/Collection, kotlin/jvm/interna
 
 public final class kotlin/UShortArray$Erased {
 	public static final fun box ([S)Lkotlin/UShortArray;
+	public static fun constructor (I)[S
 	public static fun constructor ([S)[S
 	public static fun contains ([SS)Z
 	public static fun containsAll ([SLjava/util/Collection;)Z
