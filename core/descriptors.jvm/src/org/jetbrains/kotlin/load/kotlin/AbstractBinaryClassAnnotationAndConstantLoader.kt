@@ -387,9 +387,12 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
             proto is ProtoBuf.Property -> {
                 val signature = proto.getExtensionOrNull(propertySignature) ?: return null
                 when (kind) {
-                    AnnotatedCallableKind.PROPERTY_GETTER -> MemberSignature.fromMethod(nameResolver, signature.getter)
-                    AnnotatedCallableKind.PROPERTY_SETTER -> MemberSignature.fromMethod(nameResolver, signature.setter)
-                    AnnotatedCallableKind.PROPERTY -> getPropertySignature(proto, nameResolver, typeTable, true, true)
+                    AnnotatedCallableKind.PROPERTY_GETTER ->
+                        if (signature.hasGetter()) MemberSignature.fromMethod(nameResolver, signature.getter) else null
+                    AnnotatedCallableKind.PROPERTY_SETTER ->
+                        if (signature.hasSetter()) MemberSignature.fromMethod(nameResolver, signature.setter) else null
+                    AnnotatedCallableKind.PROPERTY ->
+                        getPropertySignature(proto, nameResolver, typeTable, true, true)
                     else -> null
                 }
             }
