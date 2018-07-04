@@ -1,5 +1,4 @@
 // !LANGUAGE: -NullabilityAssertionOnExtensionReceiver
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // FILE: test.kt
 // WITH_RUNTIME
