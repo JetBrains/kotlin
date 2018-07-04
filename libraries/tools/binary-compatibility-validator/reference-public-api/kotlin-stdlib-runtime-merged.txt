@@ -3881,6 +3881,8 @@ public abstract class kotlin/random/Random {
 	public fun nextBytes ([BII)[B
 	public static synthetic fun nextBytes$default (Lkotlin/random/Random;[BIIILjava/lang/Object;)[B
 	public fun nextDouble ()D
+	public fun nextDouble (D)D
+	public fun nextDouble (DD)D
 	public fun nextFloat ()F
 	public fun nextInt ()I
 	public fun nextInt (I)I
@@ -3894,6 +3896,22 @@ public abstract class kotlin/random/Random {
 
 public final class kotlin/random/Random$Companion : kotlin/random/Random {
 	public fun nextBits (I)I
+	public fun nextBoolean ()Z
+	public fun nextBytes (I)[B
+	public fun nextBytes ([B)[B
+	public fun nextBytes ([BII)[B
+	public fun nextDouble ()D
+	public fun nextDouble (D)D
+	public fun nextDouble (DD)D
+	public fun nextFloat ()F
+	public fun nextInt ()I
+	public fun nextInt (I)I
+	public fun nextInt (II)I
+	public fun nextInt (Lkotlin/ranges/IntRange;)I
+	public fun nextLong ()J
+	public fun nextLong (J)J
+	public fun nextLong (JJ)J
+	public fun nextLong (Lkotlin/ranges/LongRange;)J
 }
 
 public final class kotlin/random/RandomKt {
