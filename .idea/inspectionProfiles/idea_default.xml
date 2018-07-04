@@ -312,7 +312,9 @@
       <option name="fromVersion" value="2.4" />
       <option name="toVersion" value="3.1" />
     </inspection_tool>
-    <inspection_tool class="Reformat" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="Reformat" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="processChangedFilesOnly" value="true" />
+    </inspection_tool>
     <inspection_tool class="ReplaceAssignmentWithOperatorAssignment" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreLazyOperators" value="true" />
       <option name="ignoreObscureOperators" value="true" />
