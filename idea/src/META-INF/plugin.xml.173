@@ -2957,6 +2957,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      language="kotlin"
     />
 
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantWithInspection"
                      displayName="Redundant 'with' call"
                      groupPath="Kotlin"
@@ -2972,6 +2973,15 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantAsDynamicInspection"
+                     displayName="Redundant 'asDynamic' call"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 
