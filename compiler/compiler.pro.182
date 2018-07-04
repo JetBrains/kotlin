@@ -58,6 +58,12 @@ messages/**)
 # Depends on apache batick which has lots of dependencies
 -dontwarn com.intellij.util.SVGLoader*
 
+-dontwarn org.jdom.xpath.jaxen.*
+-dontwarn com.intellij.util.io.Decompressor*
+-dontwarn org.w3c.dom.Location
+-dontwarn org.w3c.dom.Window
+
+
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
 #-libraryjars '<bootstrap.runtime>'
@@ -199,6 +205,10 @@ messages/**)
     *** SKIP_CODE;
     *** SKIP_DEBUG;
     *** SKIP_FRAMES;
+}
+
+-keepclassmembers class com.intellij.openapi.project.Project {
+    ** getBasePath();
 }
 
 # for kotlin-android-extensions in maven

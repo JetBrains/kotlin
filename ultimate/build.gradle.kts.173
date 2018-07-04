@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm")
 }
 
-val ideaProjectResources =  project(":idea").the<JavaPluginConvention>().sourceSets["main"].output.resourcesDir
+val ideaProjectResources =  project(":idea").mainSourceSet.output.resourcesDir
 
 evaluationDependsOn(":prepare:idea-plugin")
 
@@ -86,6 +86,8 @@ dependencies {
     testRuntime(project(":kotlin-noarg-compiler-plugin")) { isTransitive = false }
     testRuntime(project(":allopen-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
+    testRuntime(project(":kotlin-scripting-idea")) { isTransitive = false }
+    testRuntime(project(":kotlin-scripting-compiler")) { isTransitive = false }
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":plugins:uast-kotlin"))
     testRuntime(project(":plugins:uast-kotlin-idea"))
@@ -168,7 +170,7 @@ val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
     val communityPluginJar = project(communityPluginProject).configurations["runtimeJar"].artifacts.files.singleFile
     from(zipTree(communityPluginJar), { exclude("META-INF/plugin.xml") })
     from(preparedResources, { include("META-INF/plugin.xml") })
-    from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
+    from(mainSourceSet.output)
     archiveName = "kotlin-plugin.jar"
 }
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -50,10 +51,18 @@ object OperatorModifierChecker {
                     checkSupportsFeature(LanguageFeature.OperatorProvideDelegate, languageVersionSettings, diagnosticHolder, modifier)
             }
 
-            if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values
-                && languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)) {
+            if (functionDescriptor.name in REM_TO_MOD_OPERATION_NAMES.values &&
+                languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
+            ) {
+                val diagnosticFactory = if (!KotlinBuiltIns.isUnderKotlinPackage(descriptor) &&
+                    languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOperatorMod)
+                )
+                    Errors.FORBIDDEN_BINARY_MOD
+                else
+                    Errors.DEPRECATED_BINARY_MOD
+
                 val newNameConvention = REM_TO_MOD_OPERATION_NAMES.inverse()[functionDescriptor.name]
-                diagnosticHolder.report(Errors.DEPRECATED_BINARY_MOD.on(modifier, functionDescriptor, newNameConvention!!.asString()))
+                diagnosticHolder.report(diagnosticFactory.on(modifier, functionDescriptor, newNameConvention!!.asString()))
             }
 
             return

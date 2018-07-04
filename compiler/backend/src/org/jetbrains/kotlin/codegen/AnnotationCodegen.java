@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.AnnotationChecker;
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.FlexibleType;
@@ -228,8 +229,6 @@ public abstract class AnnotationCodegen {
         annotationTargetMap.put(KotlinTarget.PROPERTY_SETTER, ElementType.METHOD);
         annotationTargetMap.put(KotlinTarget.FIELD, ElementType.FIELD);
         annotationTargetMap.put(KotlinTarget.VALUE_PARAMETER, ElementType.PARAMETER);
-        annotationTargetMap.put(KotlinTarget.TYPE_PARAMETER, ElementType.TYPE_PARAMETER);
-        annotationTargetMap.put(KotlinTarget.TYPE, ElementType.TYPE_USE);
     }
 
     private void generateTargetAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
@@ -302,7 +301,10 @@ public abstract class AnnotationCodegen {
             return null;
         }
 
-        if (classDescriptor.isExpect()) {
+        // We do not generate annotations whose classes are optional (annotated with `@OptionalExpectation`) because if an annotation entry
+        // is resolved to the expected declaration, this means that annotation has no actual class, and thus should not be generated.
+        // (Otherwise we would've resolved the entry to the actual annotation class.)
+        if (ExpectedActualDeclarationChecker.isOptionalAnnotationClass(classDescriptor)) {
             return null;
         }
 

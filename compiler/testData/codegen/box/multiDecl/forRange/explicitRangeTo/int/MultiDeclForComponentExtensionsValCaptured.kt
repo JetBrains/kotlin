@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 operator fun Int.component1() = this + 1
 operator fun Int.component2() = this + 2
 

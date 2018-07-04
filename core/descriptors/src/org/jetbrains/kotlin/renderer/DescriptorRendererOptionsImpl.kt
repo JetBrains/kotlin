@@ -115,4 +115,6 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var parameterNamesInFunctionalTypes: Boolean by property(true)
 
     override var renderFunctionContracts: Boolean by property(false)
+
+    override var presentableUnresolvedTypes: Boolean by property(false)
 }

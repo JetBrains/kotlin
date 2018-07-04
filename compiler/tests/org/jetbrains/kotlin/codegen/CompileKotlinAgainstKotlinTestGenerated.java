@@ -25,6 +25,10 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
+    private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+        KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInCompileKotlinAgainstKotlin() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
@@ -37,6 +41,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("annotationsOnTypeAliases.kt")
     public void testAnnotationsOnTypeAliases() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/annotationsOnTypeAliases.kt");
+    }
+
+    @TestMetadata("callDeserializedPropertyOnInlineClassType.kt")
+    public void testCallDeserializedPropertyOnInlineClassType() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/callDeserializedPropertyOnInlineClassType.kt");
     }
 
     @TestMetadata("callsToMultifileClassFromOtherPackage.kt")
@@ -81,14 +90,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
 
     @TestMetadata("coroutinesBinary.kt")
     public void testCoroutinesBinary_1_2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt");
-        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+        runTestWithPackageReplacement("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt", "kotlin.coroutines.experimental");
     }
 
     @TestMetadata("coroutinesBinary.kt")
     public void testCoroutinesBinary_1_3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt");
-        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+        runTestWithPackageReplacement("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt", "kotlin.coroutines");
     }
 
     @TestMetadata("defaultConstructor.kt")
@@ -206,6 +213,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/nestedObject.kt");
     }
 
+    @TestMetadata("optionalAnnotation.kt")
+    public void testOptionalAnnotation() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/optionalAnnotation.kt");
+    }
+
     @TestMetadata("platformTypes.kt")
     public void testPlatformTypes() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/platformTypes.kt");
@@ -219,6 +231,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("recursiveGeneric.kt")
     public void testRecursiveGeneric() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/recursiveGeneric.kt");
+    }
+
+    @TestMetadata("reflectTopLevelFunctionOtherFile.kt")
+    public void testReflectTopLevelFunctionOtherFile() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/reflectTopLevelFunctionOtherFile.kt");
     }
 
     @TestMetadata("sealedClass.kt")

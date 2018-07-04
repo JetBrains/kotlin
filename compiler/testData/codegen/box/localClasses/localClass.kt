@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class A {
     fun a () : String {
         class B() {

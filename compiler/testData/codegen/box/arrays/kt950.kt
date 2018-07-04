@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 operator fun <K, V> MutableMap<K, V>.set(k : K, v : V) = put(k, v)
 
 fun box() : String {

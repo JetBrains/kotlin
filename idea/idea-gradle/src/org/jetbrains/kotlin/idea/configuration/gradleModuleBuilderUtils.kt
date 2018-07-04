@@ -9,25 +9,24 @@ import com.intellij.framework.addSupport.FrameworkSupportInModuleConfigurable
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
 import com.intellij.openapi.externalSystem.model.project.ProjectId
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
+import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import java.io.File
 
 internal var Module.gradleModuleBuilder: GradleModuleBuilder? by UserDataProperty(Key.create("GRADLE_MODULE_BUILDER"))
-private var Module.editableSettingsPsiFileCopy: PsiFile? by UserDataProperty(Key.create("EDITABLE_SETTINGS_PSI_FILE_COPY"))
+private var Module.settingsScriptBuilder: SettingsScriptBuilder? by UserDataProperty(Key.create("SETTINGS_SCRIPT_BUILDER"))
 
 internal fun findSettingsGradleFile(module: Module): VirtualFile? {
     val contentEntryPath = module.gradleModuleBuilder?.contentEntryPath ?: return null
@@ -38,28 +37,112 @@ internal fun findSettingsGradleFile(module: Module): VirtualFile? {
             ?: module.project.baseDir.findChild(GradleConstants.SETTINGS_FILE_NAME)
 }
 
+class SettingsScriptBuilder(scriptFile: GroovyFile) {
+    private val builder = StringBuilder(scriptFile.text)
+
+    private fun findBlockBody(blockName: String, startFrom: Int = 0): Int {
+        val blockOffset = builder.indexOf(blockName, startFrom)
+        if (blockOffset < 0) return -1
+        return builder.indexOf('{', blockOffset + 1) + 1
+    }
+
+    private fun getOrPrependTopLevelBlockBody(blockName: String): Int {
+        val blockBody = findBlockBody(blockName)
+        if (blockBody >= 0) return blockBody
+        builder.insert(0, "$blockName {}\n")
+        return findBlockBody(blockName)
+    }
+
+    private fun getOrAppendInnerBlockBody(blockName: String, offset: Int): Int {
+        val repositoriesBody = findBlockBody(blockName, offset)
+        if (repositoriesBody >= 0) return repositoriesBody
+        builder.insert(offset, "\n$blockName {}\n")
+        return findBlockBody(blockName, offset)
+    }
+
+    private fun appendExpressionToBlockIfAbsent(expression: String, offset: Int) {
+        var braceCount = 1
+        var blockEnd = offset
+        for (i in offset..builder.lastIndex) {
+            when (builder[i]) {
+                '{' -> braceCount++
+                '}' -> braceCount--
+            }
+            if (braceCount == 0) {
+                blockEnd = i
+                break
+            }
+        }
+        if (!builder.substring(offset, blockEnd).contains(expression.trim())) {
+            builder.insert(blockEnd, "\n$expression\n")
+        }
+    }
+
+    private fun getOrCreatePluginManagementBody() = getOrPrependTopLevelBlockBody("pluginManagement")
+
+    private fun addPluginRepositoryExpression(expression: String) {
+        val repositoriesBody = getOrAppendInnerBlockBody("repositories", getOrCreatePluginManagementBody())
+        appendExpressionToBlockIfAbsent(expression, repositoriesBody)
+    }
+
+    fun addMavenCentralPluginRepository() {
+        addPluginRepositoryExpression("mavenCentral()")
+    }
+
+    fun addPluginRepository(repository: RepositoryDescription) {
+        addPluginRepositoryExpression(repository.toGroovyRepositorySnippet())
+    }
+
+    fun addResolutionStrategy(pluginId: String) {
+        val resolutionStrategyBody = getOrAppendInnerBlockBody("resolutionStrategy", getOrCreatePluginManagementBody())
+        val eachPluginBody = getOrAppendInnerBlockBody("eachPlugin", resolutionStrategyBody)
+        appendExpressionToBlockIfAbsent(
+            """
+                if (requested.id.id == "$pluginId") {
+                    useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}{requested.version}")
+                }
+            """.trimIndent(),
+            eachPluginBody
+        )
+    }
+
+    fun addIncludedModules(modules: List<String>) {
+        builder.append(modules.joinToString(prefix = "include ", postfix = "\n") { "'$it'" })
+    }
+
+    fun build() = builder.toString()
+}
+
 // Circumvent write actions and modify the file directly
 // TODO: Get rid of this hack when IDEA API allows manipulation of settings script similarly to the main script itself
-internal fun updateSettingsScript(module: Module, updater: (PsiFile) -> Unit) {
-    val storedCopy = module.editableSettingsPsiFileCopy
-    val settingsPsiCopy = storedCopy ?: findSettingsGradleFile(module)?.toPsiFile(module.project)?.copied() ?: return
-    if (storedCopy == null) {
-        module.editableSettingsPsiFileCopy = settingsPsiCopy
+internal fun updateSettingsScript(module: Module, updater: (SettingsScriptBuilder) -> Unit) {
+    val storedSettingsBuilder = module.settingsScriptBuilder
+    val settingsBuilder =
+        storedSettingsBuilder
+                ?: (findSettingsGradleFile(module)?.toPsiFile(module.project) as? GroovyFile)?.let { SettingsScriptBuilder(it) }
+                ?: return
+    if (storedSettingsBuilder == null) {
+        module.settingsScriptBuilder = settingsBuilder
     }
-    DumbService.getInstance(module.project).runWithAlternativeResolveEnabled<Throwable> { updater(settingsPsiCopy) }
+    updater(settingsBuilder)
 }
 
 internal fun flushSettingsGradleCopy(module: Module) {
     try {
         val settingsFile = findSettingsGradleFile(module)
-        val settingsPsiCopy = module.editableSettingsPsiFileCopy
-        if (settingsPsiCopy != null && settingsFile != null) {
-            CodeStyleManager.getInstance(module.project).reformat(settingsPsiCopy)
-            VfsUtil.saveText(settingsFile, settingsPsiCopy.text)
+        val settingsScriptBuilder = module.settingsScriptBuilder
+        if (settingsScriptBuilder != null && settingsFile != null) {
+            val project = module.project
+            val tmpFile =
+                GroovyPsiElementFactory
+                .getInstance(project)
+                .createGroovyFile(settingsScriptBuilder.build(), false, null)
+            CodeStyleManager.getInstance(project).reformat(tmpFile)
+            VfsUtil.saveText(settingsFile, tmpFile.text)
         }
     } finally {
         module.gradleModuleBuilder = null
-        module.editableSettingsPsiFileCopy = null
+        module.settingsScriptBuilder = null
     }
 }
 

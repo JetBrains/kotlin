@@ -4,14 +4,14 @@ FILE fqName:<root> fileName:/fileWithAnnotations.kt
   annotations:
     CALL 'constructor JvmName(String)' type=kotlin.jvm.JvmName origin=null
       name: CONST String type=kotlin.String value=FileWithAnnotations
-  FUN name:foo visibility:public modality:FINAL <> () returnType:Unit flags:
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
-  PROPERTY name:bar type:kotlin.Int visibility:public modality:FINAL flags:val
+  PROPERTY name:bar visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=42
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> () returnType:Int flags:
-      correspondingProperty: PROPERTY name:bar type:kotlin.Int visibility:public modality:FINAL flags:val
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-bar>(): Int'
           GET_FIELD 'bar: Int' type=kotlin.Int origin=null

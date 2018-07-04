@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.js
 
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.isPreRelease
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -27,9 +26,10 @@ import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.filterOutSourceAnnotations
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
@@ -191,21 +191,28 @@ object KotlinJavascriptSerializationUtil {
     ): ProtoBuf.PackageFragment {
         val builder = ProtoBuf.PackageFragment.newBuilder()
 
-        // TODO: ModuleDescriptor should be able to return the package only with the contents of that module, without dependencies
-        val skip: (DeclarationDescriptor) -> Boolean = {
-            DescriptorUtils.getContainingModule(it) != module || (it is MemberDescriptor && it.isExpect)
+        val skip = fun(descriptor: DeclarationDescriptor): Boolean {
+            // TODO: ModuleDescriptor should be able to return the package only with the contents of that module, without dependencies
+            if (descriptor.module != module) return true
+
+            if (descriptor is MemberDescriptor && descriptor.isExpect) {
+                return !(descriptor is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor))
+            }
+
+            return false
         }
 
         val fileRegistry = KotlinFileRegistry()
-        val serializerExtension = KotlinJavascriptSerializerExtension(fileRegistry)
-        val serializer = DescriptorSerializer.createTopLevel(serializerExtension)
+        val extension = KotlinJavascriptSerializerExtension(fileRegistry)
 
         val classDescriptors = scope.filterIsInstance<ClassDescriptor>().sortedBy { it.fqNameSafe.asString() }
 
         fun serializeClasses(descriptors: Collection<DeclarationDescriptor>) {
             fun serializeClass(classDescriptor: ClassDescriptor) {
                 if (skip(classDescriptor)) return
-                val classProto = serializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
+                val classProto =
+                    DescriptorSerializer.create(classDescriptor, extension).classProto(classDescriptor).build()
+                            ?: error("Class not serialized: $classDescriptor")
                 builder.addClass_(classProto)
                 serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getContributedDescriptors())
             }
@@ -219,10 +226,10 @@ object KotlinJavascriptSerializationUtil {
 
         serializeClasses(classDescriptors)
 
-        val stringTable = serializerExtension.stringTable
+        val stringTable = extension.stringTable
 
         val members = scope.filterNot(skip)
-        builder.`package` = serializer.packagePartProto(fqName, members).build()
+        builder.`package` = DescriptorSerializer.createTopLevel(extension).packagePartProto(fqName, members).build()
 
         builder.setExtension(
                 JsProtoBuf.packageFragmentFiles,

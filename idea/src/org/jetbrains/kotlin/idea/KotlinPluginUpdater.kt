@@ -27,6 +27,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.text.VersionComparatorUtil
+import org.jetbrains.kotlin.idea.update.PluginUpdateVerifier
+import org.jetbrains.kotlin.idea.update.verify
 import java.io.File
 import java.io.IOException
 import java.io.PrintWriter
@@ -39,17 +41,32 @@ sealed class PluginUpdateStatus {
 
     object LatestVersionInstalled : PluginUpdateStatus()
 
-    class Update(val pluginDescriptor: IdeaPluginDescriptor,
-                 val hostToInstallFrom: String?) : PluginUpdateStatus()
+    class Update(
+        val pluginDescriptor: IdeaPluginDescriptor,
+        val hostToInstallFrom: String?
+    ) : PluginUpdateStatus()
 
     class CheckFailed(val message: String, val detail: String? = null) : PluginUpdateStatus()
 
+    class Unverified(val verifierName: String, val reason: String?, val updateStatus: Update) : PluginUpdateStatus()
+
     fun mergeWith(other: PluginUpdateStatus): PluginUpdateStatus {
-        if (other is Update && (this is LatestVersionInstalled ||
-                                (this is Update && VersionComparatorUtil.compare(other.pluginDescriptor.version,
-                                                                                 pluginDescriptor.version) > 0))) {
-            return other
+        if (other is Update) {
+            when (this) {
+                is LatestVersionInstalled -> {
+                    return other
+                }
+                is Update -> {
+                    if (VersionComparatorUtil.compare(other.pluginDescriptor.version, pluginDescriptor.version) > 0) {
+                        return other
+                    }
+                }
+                is CheckFailed, is Unverified -> {
+                    // proceed to return this
+                }
+            }
         }
+
         return this
     }
 
@@ -63,15 +80,14 @@ sealed class PluginUpdateStatus {
 }
 
 class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Disposable {
-    private val INITIAL_UPDATE_DELAY = 2000L
-    private val CACHED_REQUEST_DELAY = TimeUnit.DAYS.toMillis(1)
-
     private var updateDelay = INITIAL_UPDATE_DELAY
     private val alarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, this)
-    private val notificationGroup = NotificationGroup("Kotlin plugin updates",  NotificationDisplayType.STICKY_BALLOON, true)
+    private val notificationGroup = NotificationGroup("Kotlin plugin updates", NotificationDisplayType.STICKY_BALLOON, true)
 
-    @Volatile private var checkQueued = false
-    @Volatile private var lastUpdateStatus: PluginUpdateStatus? = null
+    @Volatile
+    private var checkQueued = false
+    @Volatile
+    private var lastUpdateStatus: PluginUpdateStatus? = null
 
     fun kotlinFileEdited(file: VirtualFile) {
         if (!file.isInLocalFileSystem) return
@@ -122,8 +138,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         var updateStatus: PluginUpdateStatus
         if (KotlinPluginUtil.isSnapshotVersion()) {
             updateStatus = PluginUpdateStatus.LatestVersionInstalled
-        }
-        else {
+        } else {
             try {
                 updateStatus = checkUpdatesInMainRepository()
 
@@ -131,8 +146,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                     val customUpdateStatus = checkUpdatesInCustomRepository(host)
                     updateStatus = updateStatus.mergeWith(customUpdateStatus)
                 }
-            }
-            catch(e: Exception) {
+            } catch (e: Exception) {
                 updateStatus = PluginUpdateStatus.fromException("Kotlin plugin update check failed", e)
             }
         }
@@ -140,12 +154,17 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         lastUpdateStatus = updateStatus
         checkQueued = false
 
+        if (updateStatus is PluginUpdateStatus.Update) {
+            updateStatus = verify(updateStatus)
+        }
+
         if (updateStatus !is PluginUpdateStatus.CheckFailed) {
             recordSuccessfulUpdateCheck()
         }
+
         ApplicationManager.getApplication().invokeLater({
-            callback(updateStatus)
-        }, ModalityState.any())
+                                                            callback(updateStatus)
+                                                        }, ModalityState.any())
     }
 
     private fun initPluginDescriptor(newVersion: String): IdeaPluginDescriptor {
@@ -163,7 +182,8 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         val os = URLEncoder.encode(SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION, CharsetToolkit.UTF8)
         val uid = PermanentInstallationID.get()
         val pluginId = KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString
-        val url = "https://plugins.jetbrains.com/plugins/list?pluginId=$pluginId&build=$buildNumber&pluginVersion=$currentVersion&os=$os&uuid=$uid"
+        val url =
+            "https://plugins.jetbrains.com/plugins/list?pluginId=$pluginId&build=$buildNumber&pluginVersion=$currentVersion&os=$os&uuid=$uid"
         val responseDoc = HttpRequests.request(url).connect {
             JDOMUtil.load(it.inputStream)
         }
@@ -176,21 +196,24 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         }
         val newVersion = responseDoc.getChild("category")?.getChild("idea-plugin")?.getChild("version")?.text
         if (newVersion == null) {
-            return PluginUpdateStatus.CheckFailed("Couldn't find plugin version in repository response", JDOMUtil.writeElement(responseDoc, "\n"))
+            return PluginUpdateStatus.CheckFailed(
+                "Couldn't find plugin version in repository response",
+                JDOMUtil.writeElement(responseDoc, "\n")
+            )
         }
         val pluginDescriptor = initPluginDescriptor(newVersion)
-         return updateIfNotLatest(pluginDescriptor, null)
+        return updateIfNotLatest(pluginDescriptor, null)
     }
 
     private fun checkUpdatesInCustomRepository(host: String): PluginUpdateStatus {
         val plugins = try {
             RepositoryHelper.loadPlugins(host, null)
-        }
-        catch(e: Exception) {
+        } catch (e: Exception) {
             return PluginUpdateStatus.fromException("Checking custom plugin repository $host failed", e)
         }
 
-        val kotlinPlugin = plugins.find { it.pluginId == KotlinPluginUtil.KOTLIN_PLUGIN_ID } ?: return PluginUpdateStatus.LatestVersionInstalled
+        val kotlinPlugin =
+            plugins.find { it.pluginId == KotlinPluginUtil.KOTLIN_PLUGIN_ID } ?: return PluginUpdateStatus.LatestVersionInstalled
         return updateIfNotLatest(kotlinPlugin, host)
     }
 
@@ -209,9 +232,10 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
     private fun notifyPluginUpdateAvailable(update: PluginUpdateStatus.Update) {
         val notification = notificationGroup.createNotification(
-                "Kotlin",
-                "A new version ${update.pluginDescriptor.version} of the Kotlin plugin is available. <b><a href=\"#\">Install</a></b>",
-                NotificationType.INFORMATION) { notification, event ->
+            "Kotlin",
+            "A new version ${update.pluginDescriptor.version} of the Kotlin plugin is available. <b><a href=\"#\">Install</a></b>",
+            NotificationType.INFORMATION
+        ) { notification, _ ->
             notification.expire()
             installPluginUpdate(update) {
                 notifyPluginUpdateAvailable(update)
@@ -289,7 +313,10 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
     }
 
     companion object {
-        private val PROPERTY_NAME = "kotlin.lastUpdateCheck"
+        private const val INITIAL_UPDATE_DELAY = 2000L
+        private val CACHED_REQUEST_DELAY = TimeUnit.DAYS.toMillis(1)
+
+        private const val PROPERTY_NAME = "kotlin.lastUpdateCheck"
         private val LOG = Logger.getInstance(KotlinPluginUpdater::class.java)
 
         fun getInstance(): KotlinPluginUpdater = ServiceManager.getService(KotlinPluginUpdater::class.java)

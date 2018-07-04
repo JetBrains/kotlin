@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 var state = 23
 
 fun box(): String {

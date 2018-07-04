@@ -1,0 +1,8 @@
+package foo
+
+class Bar {
+    fun someFun() {
+
+    }
+
+}

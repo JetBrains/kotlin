@@ -66,7 +66,7 @@ class ConstraintSystemTestData(
         val matcher = INTEGER_VALUE_TYPE_PATTERN.matcher(name)
         if (matcher.find()) {
             val number = matcher.group(1)!!
-            val parameters = CompileTimeConstant.Parameters(false, false, false, false, false)
+            val parameters = CompileTimeConstant.Parameters(false, false, false, false, false, false)
             return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 Annotations.EMPTY,
                 IntegerValueTypeConstructor(number.toLong(), functionFoo.module, parameters),

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 open class A1(y: String) {
     val x = "A1.x,$y"
 }

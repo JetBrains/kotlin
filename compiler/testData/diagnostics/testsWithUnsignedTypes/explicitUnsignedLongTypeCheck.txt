@@ -1,0 +1,9 @@
+package
+
+public val a0: kotlin.Int = 1.toULong()
+public val a1: kotlin.UInt = 1.toULong()
+public val a3: kotlin.ULong = 1.toULong()
+public val a4: kotlin.ULong
+public val a5: [ERROR : Type for -1UL]
+public fun takeULong(/*0*/ u: kotlin.ULong): kotlin.Unit
+public fun test(): kotlin.Unit

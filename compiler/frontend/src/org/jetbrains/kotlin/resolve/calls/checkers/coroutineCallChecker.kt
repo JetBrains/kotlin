@@ -8,13 +8,10 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.restrictsSuspensionFqName
 import org.jetbrains.kotlin.config.isBuiltInCoroutineContext
+import org.jetbrains.kotlin.config.restrictsSuspensionFqName
 import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
@@ -23,7 +20,6 @@ import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
@@ -131,36 +127,59 @@ fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, dia
 }
 
 private fun checkRestrictsSuspension(
-    enclosingCallableDescriptor: CallableDescriptor,
+    enclosingSuspendCallableDescriptor: CallableDescriptor,
     resolvedCall: ResolvedCall<*>,
     reportOn: PsiElement,
     context: CallCheckerContext
 ) {
-    val enclosingSuspendReceiverValue = enclosingCallableDescriptor.extensionReceiverParameter?.value ?: return
-
-    fun ReceiverValue.isRestrictsSuspensionReceiver() = (type.supertypes() + type).any {
+    fun ReceiverValue.isRestrictsSuspensionReceiver() = (listOf(type) + type.supertypes()).any {
         it.constructor.declarationDescriptor?.annotations?.hasAnnotation(context.languageVersionSettings.restrictsSuspensionFqName()) == true
     }
 
     infix fun ReceiverValue.sameInstance(other: ReceiverValue?): Boolean {
         if (other == null) return false
-        if (this === other) return true
+        // Implicit receiver should be reference equal
+        if (this.original === other.original) return true
 
         val referenceExpression = ((other as? ExpressionReceiver)?.expression as? KtThisExpression)?.instanceReference
         val referenceTarget = referenceExpression?.let {
             context.trace.get(BindingContext.REFERENCE_TARGET, referenceExpression)
         }
 
-        return this === (referenceTarget as? CallableDescriptor)?.extensionReceiverParameter?.value
+        val referenceReceiverValue = when (referenceTarget) {
+            is CallableDescriptor -> referenceTarget.extensionReceiverParameter?.value
+            is ClassDescriptor -> referenceTarget.thisAsReceiverParameter.value
+            else -> null
+        }
+
+        return this === referenceReceiverValue
     }
 
-    if (!enclosingSuspendReceiverValue.isRestrictsSuspensionReceiver()) return
+    fun reportError() {
+        context.trace.report(Errors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL.on(reportOn))
+    }
+
+    val enclosingSuspendExtensionReceiverValue = enclosingSuspendCallableDescriptor.extensionReceiverParameter?.value
+    val enclosingSuspendDispatchReceiverValue = enclosingSuspendCallableDescriptor.dispatchReceiverParameter?.value
+
+    val receivers = listOfNotNull(resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver)
+    for (receiverValue in receivers) {
+        if (!receiverValue.isRestrictsSuspensionReceiver()) continue
+        if (enclosingSuspendExtensionReceiverValue?.sameInstance(receiverValue) == true) continue
+        if (enclosingSuspendDispatchReceiverValue?.sameInstance(receiverValue) == true) continue
+
+        reportError()
+        return
+    }
+
+    if (enclosingSuspendExtensionReceiverValue?.isRestrictsSuspensionReceiver() != true) return
 
     // member of suspend receiver
-    if (enclosingSuspendReceiverValue sameInstance resolvedCall.dispatchReceiver?.original) return
+    if (enclosingSuspendExtensionReceiverValue sameInstance resolvedCall.dispatchReceiver) return
 
-    if (enclosingSuspendReceiverValue sameInstance resolvedCall.extensionReceiver?.original &&
-        resolvedCall.candidateDescriptor.extensionReceiverParameter!!.value.isRestrictsSuspensionReceiver()) return
+    if (enclosingSuspendExtensionReceiverValue sameInstance resolvedCall.extensionReceiver &&
+        resolvedCall.candidateDescriptor.extensionReceiverParameter!!.value.isRestrictsSuspensionReceiver()
+    ) return
 
-    context.trace.report(Errors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL.on(reportOn))
+    reportError()
 }

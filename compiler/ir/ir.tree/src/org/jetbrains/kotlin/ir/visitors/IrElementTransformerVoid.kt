@@ -99,6 +99,13 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitSyntheticBody(body: IrSyntheticBody) = visitBody(body)
     override final fun visitSyntheticBody(body: IrSyntheticBody, data: Nothing?) = visitSyntheticBody(body)
 
+    open fun visitSuspendableExpression(expression: IrSuspendableExpression) = visitExpression(expression)
+    override final fun visitSuspendableExpression(expression: IrSuspendableExpression, data: Nothing?) =
+        visitSuspendableExpression(expression)
+
+    open fun visitSuspensionPoint(expression: IrSuspensionPoint) = visitExpression(expression)
+    override final fun visitSuspensionPoint(expression: IrSuspensionPoint, data: Nothing?) = visitSuspensionPoint(expression)
+
     open fun visitExpression(expression: IrExpression): IrExpression = expression.transformChildren()
     override final fun visitExpression(expression: IrExpression, data: Nothing?): IrExpression = visitExpression(expression)
 
@@ -162,7 +169,7 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitCall(expression: IrCall) = visitFunctionAccess(expression)
     override final fun visitCall(expression: IrCall, data: Nothing?) = visitCall(expression)
 
-    open fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitMemberAccess(expression)
+    open fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitFunctionAccess(expression)
     override final fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?) =
         visitDelegatingConstructorCall(expression)
 

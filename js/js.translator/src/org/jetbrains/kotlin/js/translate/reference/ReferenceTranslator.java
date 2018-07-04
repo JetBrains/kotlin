@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Arrays;
@@ -220,7 +221,9 @@ public final class ReferenceTranslator {
         DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), simpleNameExpression);
 
         // Skip ValueParameterDescriptor because sometime we can miss resolved call for it, e.g. when set something to delegated property.
-        return descriptor instanceof VariableDescriptor && !(descriptor instanceof ValueParameterDescriptor);
+        return descriptor instanceof VariableDescriptor &&
+               !(descriptor instanceof ValueParameterDescriptor) &&
+               !(descriptor instanceof FakeCallableDescriptorForTypeAliasObject);
     }
 
 }

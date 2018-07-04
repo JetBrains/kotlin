@@ -28,7 +28,6 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
-import com.intellij.lang.jvm.facade.JvmElementProvider
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.TransactionGuardImpl
@@ -44,7 +43,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.psi.FileContextProvider
-import com.intellij.psi.JavaModuleSystem
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
 import com.intellij.psi.augment.PsiAugmentProvider
@@ -53,7 +51,6 @@ import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.JavaClassSupersImpl
 import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
-import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.search.GlobalSearchScope
@@ -118,41 +115,46 @@ import java.io.File
 import java.util.zip.ZipFile
 
 class KotlinCoreEnvironment private constructor(
-        parentDisposable: Disposable,
-        applicationEnvironment: JavaCoreApplicationEnvironment,
-        initialConfiguration: CompilerConfiguration,
-        configFiles: EnvironmentConfigFiles
+    parentDisposable: Disposable,
+    applicationEnvironment: JavaCoreApplicationEnvironment,
+    initialConfiguration: CompilerConfiguration,
+    configFiles: EnvironmentConfigFiles
 ) {
-    private val projectEnvironment: JavaCoreProjectEnvironment = object : KotlinCoreProjectEnvironment(parentDisposable, applicationEnvironment) {
-        override fun preregisterServices() {
-            registerProjectExtensionPoints(Extensions.getArea(project))
-        }
-
-        override fun registerJavaPsiFacade() {
-            with (project) {
-                registerService(CoreJavaFileManager::class.java, ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager)
-
-                val traceHolder = CliTraceHolder()
-                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(traceHolder)
-                val kotlinAsJavaSupport = CliKotlinAsJavaSupport(this, traceHolder)
-                registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
-                registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
-                registerService(KotlinAsJavaSupport::class.java, kotlinAsJavaSupport)
-                registerService(CodeAnalyzerInitializer::class.java, traceHolder)
-
-                registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
-                registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
-
-                val area = Extensions.getArea(this)
-
-                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, kotlinAsJavaSupport))
-                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(
-                        PsiElementFinderImpl(this, ServiceManager.getService(this, JavaFileManager::class.java)))
+    private val projectEnvironment: JavaCoreProjectEnvironment =
+        object : KotlinCoreProjectEnvironment(parentDisposable, applicationEnvironment) {
+            override fun preregisterServices() {
+                registerProjectExtensionPoints(Extensions.getArea(project))
             }
 
-            super.registerJavaPsiFacade()
+            override fun registerJavaPsiFacade() {
+                with(project) {
+                    registerService(
+                        CoreJavaFileManager::class.java,
+                        ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager
+                    )
+
+                    val traceHolder = CliTraceHolder()
+                    val cliLightClassGenerationSupport = CliLightClassGenerationSupport(traceHolder)
+                    val kotlinAsJavaSupport = CliKotlinAsJavaSupport(this, traceHolder)
+                    registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
+                    registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
+                    registerService(KotlinAsJavaSupport::class.java, kotlinAsJavaSupport)
+                    registerService(CodeAnalyzerInitializer::class.java, traceHolder)
+
+                    registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
+                    registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
+
+                    val area = Extensions.getArea(this)
+
+                    area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, kotlinAsJavaSupport))
+                    area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(
+                        PsiElementFinderImpl(this, ServiceManager.getService(this, JavaFileManager::class.java))
+                    )
+                }
+
+                super.registerJavaPsiFacade()
+            }
         }
-    }
 
     private val sourceFiles = mutableListOf<KtFile>()
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
@@ -165,8 +167,8 @@ class KotlinCoreEnvironment private constructor(
 
     init {
         PersistentFSConstants::class.java.getDeclaredField("ourMaxIntellisenseFileSize")
-                .apply { isAccessible = true }
-                .setInt(null, FileUtilRt.LARGE_FOR_CONTENT_LOADING)
+            .apply { isAccessible = true }
+            .setInt(null, FileUtilRt.LARGE_FOR_CONTENT_LOADING)
 
         val project = projectEnvironment.project
 
@@ -185,41 +187,41 @@ class KotlinCoreEnvironment private constructor(
             try {
                 registrar.registerProjectComponents(project, configuration)
             } catch (e: AbstractMethodError) {
-                throw IllegalStateException("The provided plugin ${registrar.javaClass.name} is not compatible with this version of compiler", e)
+                throw IllegalStateException(
+                    "The provided plugin ${registrar.javaClass.name} is not compatible with this version of compiler", e
+                )
             }
         }
 
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
-        project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(configFiles == EnvironmentConfigFiles.JVM_CONFIG_FILES))
+
+        val isJvm = configFiles == EnvironmentConfigFiles.JVM_CONFIG_FILES
+        project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(isJvm))
 
         registerProjectServicesForCLI(projectEnvironment)
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         registerProjectServices(projectEnvironment, messageCollector)
 
-        CompilerConfigurationExtension.getInstances(project).forEach {
-            it.updateConfiguration(configuration)
+        for (extension in CompilerConfigurationExtension.getInstances(project)) {
+            extension.updateConfiguration(configuration)
         }
 
-        sourceFiles += CompileEnvironmentUtil.getKtFiles(project, getSourceRootsCheckingForDuplicates(), this.configuration, {
-            message ->
+        sourceFiles += CompileEnvironmentUtil.getKtFiles(project, getSourceRootsCheckingForDuplicates(), this.configuration) { message ->
             report(ERROR, message)
-        })
+        }
         sourceFiles.sortBy { it.virtualFile.path }
 
         val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider
         if (scriptDefinitionProvider != null) {
-            scriptDefinitionProvider.setScriptDefinitionsSources(
-                configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
-            )
-            scriptDefinitionProvider.setScriptDefinitions(
-                    configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS))
+            scriptDefinitionProvider.setScriptDefinitionsSources(configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
+            scriptDefinitionProvider.setScriptDefinitions(configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS))
 
             ScriptDependenciesProvider.getInstance(project).let { importsProvider ->
                 configuration.addJvmClasspathRoots(
-                        sourceFiles.mapNotNull(importsProvider::getScriptDependencies)
-                                .flatMap { it.classpath }
-                                .distinctBy { it.absolutePath })
+                    sourceFiles.mapNotNull(importsProvider::getScriptDependencies)
+                        .flatMap { it.classpath }
+                        .distinctBy { it.absolutePath })
             }
         }
 
@@ -230,17 +232,17 @@ class KotlinCoreEnvironment private constructor(
         })
 
         val outputDirectory =
-                configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
-                ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
+            configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
+                    ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
 
         classpathRootsResolver = ClasspathRootsResolver(
-                PsiManager.getInstance(project),
-                messageCollector,
-                configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
-                this::contentRootToVirtualFile,
-                javaModuleFinder,
-                !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
-                outputDirectory?.let(this::findLocalFile)
+            PsiManager.getInstance(project),
+            messageCollector,
+            configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
+            this::contentRootToVirtualFile,
+            javaModuleFinder,
+            !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
+            outputDirectory?.let(this::findLocalFile)
         )
 
         val (initialRoots, javaModules) =
@@ -249,9 +251,9 @@ class KotlinCoreEnvironment private constructor(
 
         if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK) && messageCollector != null) {
             JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(
-                    messageCollector,
-                    configuration,
-                    initialRoots.mapNotNull { (file, type) -> if (type == JavaRoot.RootType.BINARY) file else null }
+                messageCollector,
+                configuration,
+                initialRoots.mapNotNull { (file, type) -> if (type == JavaRoot.RootType.BINARY) file else null }
             )
         }
 
@@ -265,15 +267,15 @@ class KotlinCoreEnvironment private constructor(
         }
 
         (ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl).initialize(
-                rootsIndex,
-                packagePartProviders,
-                SingleJavaFileRootsIndex(singleJavaFileRoots),
-                configuration.getBoolean(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING)
+            rootsIndex,
+            packagePartProviders,
+            SingleJavaFileRootsIndex(singleJavaFileRoots),
+            configuration.getBoolean(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING)
         )
 
         project.registerService(
-                JavaModuleResolver::class.java,
-                CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList())
+            JavaModuleResolver::class.java,
+            CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList())
         )
 
         val finderFactory = CliVirtualFileFinderFactory(rootsIndex)
@@ -305,18 +307,21 @@ class KotlinCoreEnvironment private constructor(
 
     private val allJavaFiles: List<File>
         get() = configuration.javaSourceRoots
-                .mapNotNull(this::findLocalFile)
-                .flatMap { it.javaFiles }
-                .map { File(it.canonicalPath) }
+            .mapNotNull(this::findLocalFile)
+            .flatMap { it.javaFiles }
+            .map { File(it.canonicalPath) }
 
     fun registerJavac(
-            javaFiles: List<File> = allJavaFiles,
-            kotlinFiles: List<KtFile> = sourceFiles,
-            arguments: Array<String>? = null,
-            bootClasspath: List<File>? = null,
-            sourcePath: List<File>? = null
+        javaFiles: List<File> = allJavaFiles,
+        kotlinFiles: List<KtFile> = sourceFiles,
+        arguments: Array<String>? = null,
+        bootClasspath: List<File>? = null,
+        sourcePath: List<File>? = null
     ): Boolean {
-        return JavacWrapperRegistrar.registerJavac(projectEnvironment.project, configuration, javaFiles, kotlinFiles, arguments, bootClasspath, sourcePath, LightClassGenerationSupport.getInstance(project))
+        return JavacWrapperRegistrar.registerJavac(
+            projectEnvironment.project, configuration, javaFiles, kotlinFiles, arguments, bootClasspath, sourcePath,
+            LightClassGenerationSupport.getInstance(project)
+        )
     }
 
     private val applicationEnvironment: CoreApplicationEnvironment
@@ -325,11 +330,11 @@ class KotlinCoreEnvironment private constructor(
     val project: Project
         get() = projectEnvironment.project
 
-    internal fun countLinesOfCode(sourceFiles: List<KtFile>): Int  =
-            sourceFiles.sumBy { sourceFile ->
-                val text = sourceFile.text
-                StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
-            }
+    internal fun countLinesOfCode(sourceFiles: List<KtFile>): Int =
+        sourceFiles.sumBy { sourceFile ->
+            val text = sourceFile.text
+            StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
+        }
 
     private fun updateClasspathFromRootsIndex(index: JvmDependenciesIndex) {
         index.indexedRoots.forEach {
@@ -353,28 +358,31 @@ class KotlinCoreEnvironment private constructor(
         }.orEmpty()
     }
 
-    private fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
-        return when (root) {
-            is JvmClasspathRoot -> if (root.file.isFile) findJarRoot(root.file) else findLocalFile(root)
-            is JvmModulePathRoot -> if (root.file.isFile) findJarRoot(root.file) else findLocalFile(root)
-            is JavaSourceRoot -> findLocalFile(root)
-            else -> throw IllegalStateException("Unexpected root: $root")
+    private fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? =
+        when (root) {
+            is JvmClasspathRoot ->
+                if (root.file.isFile) findJarRoot(root.file) else findExistingRoot(root, "Classpath entry")
+            is JvmModulePathRoot ->
+                if (root.file.isFile) findJarRoot(root.file) else findExistingRoot(root, "Java module root")
+            is JavaSourceRoot ->
+                findExistingRoot(root, "Java source root")
+            else ->
+                throw IllegalStateException("Unexpected root: $root")
         }
-    }
 
     internal fun findLocalFile(path: String): VirtualFile? =
-            applicationEnvironment.localFileSystem.findFileByPath(path)
+        applicationEnvironment.localFileSystem.findFileByPath(path)
 
-    private fun findLocalFile(root: JvmContentRoot): VirtualFile? {
+    private fun findExistingRoot(root: JvmContentRoot, rootDescription: String): VirtualFile? {
         return findLocalFile(root.file.absolutePath).also {
             if (it == null) {
-                report(STRONG_WARNING, "Classpath entry points to a non-existent location: ${root.file}")
+                report(STRONG_WARNING, "$rootDescription points to a non-existent location: ${root.file}")
             }
         }
     }
 
     private fun findJarRoot(file: File): VirtualFile? =
-            applicationEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
+        applicationEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
 
     private fun getSourceRootsCheckingForDuplicates(): Collection<String> {
         val uniqueSourceRoots = linkedSetOf<String>()
@@ -395,8 +403,6 @@ class KotlinCoreEnvironment private constructor(
     }
 
     companion object {
-        private val ideaCompatibleBuildNumber = "181.3"
-
         init {
             setCompatibleBuild()
         }
@@ -407,7 +413,7 @@ class KotlinCoreEnvironment private constructor(
 
         @JvmStatic
         fun createForProduction(
-                parentDisposable: Disposable, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
+            parentDisposable: Disposable, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
             setCompatibleBuild()
             // If not disabled explicitly, we should always support at least the standard script definition
@@ -423,7 +429,7 @@ class KotlinCoreEnvironment private constructor(
                 // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
                 // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
                 Disposer.register(parentDisposable, Disposable {
-                    synchronized (APPLICATION_LOCK) {
+                    synchronized(APPLICATION_LOCK) {
                         if (--ourProjectCount <= 0) {
                             disposeApplicationEnvironment()
                         }
@@ -432,7 +438,7 @@ class KotlinCoreEnvironment private constructor(
             }
             val environment = KotlinCoreEnvironment(parentDisposable, appEnv, configuration, configFiles)
 
-            synchronized (APPLICATION_LOCK) {
+            synchronized(APPLICATION_LOCK) {
                 ourProjectCount++
             }
             return environment
@@ -440,14 +446,16 @@ class KotlinCoreEnvironment private constructor(
 
         @JvmStatic
         private fun setCompatibleBuild() {
-            PluginManagerCore.BUILD_NUMBER = ideaCompatibleBuildNumber
-            System.getProperties().setProperty("idea.plugins.compatible.build", ideaCompatibleBuildNumber)
+            IdeaExtensionPoints.IDEA_COMPATIBLE_BUILD_NUMBER.let { buildNumber ->
+                PluginManagerCore.BUILD_NUMBER = buildNumber
+                System.getProperties().setProperty("idea.plugins.compatible.build", buildNumber)
+            }
         }
 
         @TestOnly
         @JvmStatic
         fun createForTests(
-                parentDisposable: Disposable, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
+            parentDisposable: Disposable, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
             val configuration = initialConfiguration.copy()
             // in tests we assume that standard definition should only be added if no other explicit defs are already added
@@ -458,10 +466,10 @@ class KotlinCoreEnvironment private constructor(
             }
             // Tests are supposed to create a single project and dispose it right after use
             return KotlinCoreEnvironment(
-                    parentDisposable,
-                    createApplicationEnvironment(parentDisposable, configuration, unitTestMode = true),
-                    configuration,
-                    extensionConfigs
+                parentDisposable,
+                createApplicationEnvironment(parentDisposable, configuration, unitTestMode = true),
+                configuration,
+                extensionConfigs
             )
         }
 
@@ -469,7 +477,7 @@ class KotlinCoreEnvironment private constructor(
         val applicationEnvironment: JavaCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
         private fun getOrCreateApplicationEnvironmentForProduction(configuration: CompilerConfiguration): JavaCoreApplicationEnvironment {
-            synchronized (APPLICATION_LOCK) {
+            synchronized(APPLICATION_LOCK) {
                 if (ourApplicationEnvironment != null)
                     return ourApplicationEnvironment!!
 
@@ -477,7 +485,7 @@ class KotlinCoreEnvironment private constructor(
                 ourApplicationEnvironment = createApplicationEnvironment(parentDisposable, configuration, unitTestMode = false)
                 ourProjectCount = 0
                 Disposer.register(parentDisposable, Disposable {
-                    synchronized (APPLICATION_LOCK) {
+                    synchronized(APPLICATION_LOCK) {
                         ourApplicationEnvironment = null
                     }
                 })
@@ -486,7 +494,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun disposeApplicationEnvironment() {
-            synchronized (APPLICATION_LOCK) {
+            synchronized(APPLICATION_LOCK) {
                 val environment = ourApplicationEnvironment ?: return
                 ourApplicationEnvironment = null
                 Disposer.dispose(environment.parentDisposable)
@@ -495,9 +503,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun createApplicationEnvironment(
-                parentDisposable: Disposable,
-                configuration: CompilerConfiguration,
-                unitTestMode: Boolean
+            parentDisposable: Disposable, configuration: CompilerConfiguration, unitTestMode: Boolean
         ): JavaCoreApplicationEnvironment {
             Extensions.cleanRootArea(parentDisposable)
             registerAppExtensionPoints()
@@ -514,44 +520,47 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerAppExtensionPoints() {
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), BinaryFileStubBuilders.EP_NAME, FileTypeExtensionPoint::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), FileContextProvider.EP_NAME, FileContextProvider::class.java)
-            //
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaDataContributor.EP_NAME, MetaDataContributor::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), PsiAugmentProvider.EP_NAME, PsiAugmentProvider::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider::class.java)
-            //
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ContainerProvider.EP_NAME, ContainerProvider::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME, ClsCustomNavigationPolicy::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler::class.java)
-            //
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), TypeAnnotationModifier.EP_NAME, TypeAnnotationModifier::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaLanguage.EP_NAME, MetaLanguage::class.java)
-            //
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), JavaModuleSystem.EP_NAME, JavaModuleSystem::class.java)
+            val area = Extensions.getRootArea()
+
+            CoreApplicationEnvironment.registerExtensionPoint(area, BinaryFileStubBuilders.EP_NAME, FileTypeExtensionPoint::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(area, FileContextProvider.EP_NAME, FileContextProvider::class.java)
+
+            CoreApplicationEnvironment.registerExtensionPoint(area, MetaDataContributor.EP_NAME, MetaDataContributor::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(area, PsiAugmentProvider.EP_NAME, PsiAugmentProvider::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(area, JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider::class.java)
+
+            CoreApplicationEnvironment.registerExtensionPoint(area, ContainerProvider.EP_NAME, ContainerProvider::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(
+                area, ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler::class.java
+            )
+
+            CoreApplicationEnvironment.registerExtensionPoint(area, TypeAnnotationModifier.EP_NAME, TypeAnnotationModifier::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(area, MetaLanguage.EP_NAME, MetaLanguage::class.java)
+
+            IdeaExtensionPoints.registerVersionSpecificAppExtensionPoints(area)
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
             fun File.hasConfigFile(configFile: String): Boolean =
-                    if (isDirectory) File(this, "META-INF" + File.separator + configFile).exists()
-                    else try {
-                        ZipFile(this).use {
-                            it.getEntry("META-INF/" + configFile) != null
-                        }
+                if (isDirectory) File(this, "META-INF" + File.separator + configFile).exists()
+                else try {
+                    ZipFile(this).use {
+                        it.getEntry("META-INF/$configFile") != null
                     }
-                    catch (e: Throwable) {
-                        false
-                    }
+                } catch (e: Throwable) {
+                    false
+                }
 
             val pluginRoot =
-                    configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
-                    ?: configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)?.compilerJar
-                    ?: PathUtil.getResourcePathForClass(this::class.java).takeIf { it.hasConfigFile(configFilePath) }
-                    // hack for load extensions when compiler run directly from project directory (e.g. in tests)
-                    ?: File("idea/src").takeIf { it.hasConfigFile(configFilePath) }
-                    ?: throw IllegalStateException(
-                                "Unable to find extension point configuration $configFilePath " +
-                                "(cp:\n  ${(Thread.currentThread().contextClassLoader as? UrlClassLoader)?.urls?.joinToString("\n  ") { it.file }})")
+                configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
+                        ?: configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)?.compilerJar
+                        ?: PathUtil.getResourcePathForClass(this::class.java).takeIf { it.hasConfigFile(configFilePath) }
+                        // hack for load extensions when compiler run directly from project directory (e.g. in tests)
+                        ?: File("idea/src").takeIf { it.hasConfigFile(configFilePath) }
+                        ?: throw IllegalStateException(
+                            "Unable to find extension point configuration $configFilePath " +
+                                    "(cp:\n  ${(Thread.currentThread().contextClassLoader as? UrlClassLoader)?.urls?.joinToString("\n  ") { it.file }})"
+                        )
 
             CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, Extensions.getRootArea())
         }
@@ -563,7 +572,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         // made public for Upsource
-        @Suppress("MemberVisibilityCanPrivate")
+        @Suppress("MemberVisibilityCanBePrivate")
         @JvmStatic
         fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
             with(applicationEnvironment) {
@@ -577,18 +586,24 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerProjectExtensionPoints(area: ExtensionsArea) {
-            CoreApplicationEnvironment.registerExtensionPoint(area, PsiTreeChangePreprocessor.EP_NAME, PsiTreeChangePreprocessor::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(
+                area, PsiTreeChangePreprocessor.EP_NAME, PsiTreeChangePreprocessor::class.java
+            )
             CoreApplicationEnvironment.registerExtensionPoint(area, PsiElementFinder.EP_NAME, PsiElementFinder::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(area, JvmElementProvider.EP_NAME, JvmElementProvider::class.java)
+
+            IdeaExtensionPoints.registerVersionSpecificProjectExtensionPoints(area)
         }
 
         // made public for Upsource
         @JvmStatic
         fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment, messageCollector: MessageCollector?) {
-            with (projectEnvironment.project) {
+            with(projectEnvironment.project) {
                 val scriptDefinitionProvider = CliScriptDefinitionProvider()
                 registerService(ScriptDefinitionProvider::class.java, scriptDefinitionProvider)
-                registerService(ScriptDependenciesProvider::class.java, CliScriptDependenciesProvider(projectEnvironment.project, scriptDefinitionProvider))
+                registerService(
+                    ScriptDependenciesProvider::class.java,
+                    CliScriptDependenciesProvider(projectEnvironment.project, scriptDefinitionProvider)
+                )
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))
                 registerService(ModuleAnnotationsResolver::class.java, CliModuleAnnotationsResolver())
@@ -603,7 +618,6 @@ class KotlinCoreEnvironment private constructor(
              * Note that Kapt may restart code analysis process, and CLI services should be aware of that.
              * Use PsiManager.getModificationTracker() to ensure that all the data you cached is still valid.
              */
-
         }
 
         private fun CompilerConfiguration.setupJdkClasspathRoots(configFiles: EnvironmentConfigFiles) {
@@ -618,8 +632,7 @@ class KotlinCoreEnvironment private constructor(
                 put(JVMConfigurationKeys.JDK_HOME, javaHome)
 
                 javaHome to PathUtil.getJdkClassesRootsFromCurrentJre()
-            }
-            else {
+            } else {
                 jdkHome to PathUtil.getJdkClassesRoots(jdkHome)
             }
 
@@ -627,12 +640,10 @@ class KotlinCoreEnvironment private constructor(
                 if (classesRoots.isEmpty()) {
                     val messageCollector = get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                     messageCollector?.report(ERROR, "No class roots are found in the JDK path: $javaRoot")
-                }
-                else {
+                } else {
                     addJvmSdkRoots(classesRoots)
                 }
             }
         }
-
     }
 }

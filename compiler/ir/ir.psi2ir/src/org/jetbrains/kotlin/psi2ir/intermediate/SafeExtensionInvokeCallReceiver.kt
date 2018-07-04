@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
-import org.jetbrains.kotlin.ir.builders.constNull
-import org.jetbrains.kotlin.ir.builders.equalsNull
+import org.jetbrains.kotlin.ir.builders.irBlock
+import org.jetbrains.kotlin.ir.builders.irIfNull
+import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class SafeExtensionInvokeCallReceiver(
     val generator: GeneratorWithScope,
@@ -33,6 +32,7 @@ class SafeExtensionInvokeCallReceiver(
     val functionReceiver: IntermediateValue,
     val extensionInvokeReceiver: IntermediateValue
 ) : CallReceiver {
+
     override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
         // extensionInvokeReceiver is actually a first argument:
         //      receiver?.extFun(p1, ..., pN)
@@ -42,7 +42,7 @@ class SafeExtensionInvokeCallReceiver(
 
         val irTmp = generator.scope.createTemporaryVariable(extensionInvokeReceiver.load(), "safe_receiver")
 
-        val safeReceiverValue = VariableLValue(irTmp)
+        val safeReceiverValue = VariableLValue(generator.context, irTmp)
 
         // Patch call and generate it
         assert(callBuilder.irValueArgumentsByIndex[0] == null) {
@@ -53,19 +53,14 @@ class SafeExtensionInvokeCallReceiver(
 
         val resultType = irResult.type.makeNullable()
 
-        return IrBlockImpl(
-            startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL,
-            arrayListOf(
-                irTmp,
-                IrIfThenElseImpl(
-                    startOffset, endOffset, resultType,
-                    generator.context.equalsNull(startOffset, endOffset, safeReceiverValue.load()),
-                    generator.context.constNull(startOffset, endOffset),
-                    irResult,
-                    IrStatementOrigin.SAFE_CALL
-                )
+        return generator.irBlock(startOffset, endOffset, IrStatementOrigin.SAFE_CALL, resultType) {
+            +irTmp
+            +irIfNull(
+                resultType,
+                safeReceiverValue.load(), irNull(),
+                irResult
             )
-        )
+        }
     }
 }
 

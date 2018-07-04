@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 private fun <T> upcast(value: T): T = value
 
 fun box(): String {

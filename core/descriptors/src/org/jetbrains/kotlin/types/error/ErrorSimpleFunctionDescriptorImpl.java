@@ -170,7 +170,7 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
 
             @NotNull
             @Override
-            public CopyBuilder<SimpleFunctionDescriptor> setDropSuspend() {
+            public CopyBuilder<SimpleFunctionDescriptor> setIsSuspend(boolean isSuspend) {
                 return this;
             }
 

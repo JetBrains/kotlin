@@ -9,7 +9,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.name.FqName
@@ -50,4 +55,19 @@ fun createValueParameter(containingDeclaration: CallableDescriptor, index: Int, 
         varargElementType = null,
         source = SourceElement.NO_SOURCE
     )
+}
+val CallableMemberDescriptor.propertyIfAccessor
+    get() = if (this is PropertyAccessorDescriptor)
+        this.correspondingProperty
+    else this
+
+val IrTypeParameter.isReified
+    get() = descriptor.isReified
+
+// Return is method has no real implementation except fake overrides from Any
+fun CallableMemberDescriptor.isFakeOverriddenFromAny(): Boolean {
+    if (kind.isReal) {
+        return (containingDeclaration is ClassDescriptor) && KotlinBuiltIns.isAny(containingDeclaration as ClassDescriptor)
+    }
+    return overriddenDescriptors.all { it.isFakeOverriddenFromAny() }
 }

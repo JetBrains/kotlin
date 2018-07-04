@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun box() : String {
     230?.toByte()?.hashCode()
     9.hashCode()

@@ -158,7 +158,7 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
         }
 
         private fun serializeClass(classDescriptor: ClassDescriptor) {
-            val classProto = DescriptorSerializer.createTopLevel(extension).classProto(classDescriptor).build()
+            val classProto = DescriptorSerializer.create(classDescriptor, extension).classProto(classDescriptor).build()
             proto.addClass_(classProto)
 
             serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))

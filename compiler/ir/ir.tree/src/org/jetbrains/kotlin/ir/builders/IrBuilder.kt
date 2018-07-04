@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 abstract class IrBuilder(
@@ -78,11 +79,14 @@ open class IrBlockBodyBuilder(
 }
 
 class IrBlockBuilder(
-    context: IrGeneratorContext, scope: Scope,
-    startOffset: Int, endOffset: Int,
+    context: IrGeneratorContext,
+    scope: Scope,
+    startOffset: Int,
+    endOffset: Int,
     val origin: IrStatementOrigin? = null,
-    var resultType: KotlinType? = null
+    var resultType: IrType? = null
 ) : IrStatementsBuilder<IrBlock>(context, scope, startOffset, endOffset) {
+
     private val statements = ArrayList<IrStatement>()
 
     inline fun block(body: IrBlockBuilder.() -> Unit): IrBlock {
@@ -95,22 +99,52 @@ class IrBlockBuilder(
     }
 
     override fun doBuild(): IrBlock {
-        val resultType = this.resultType ?: (statements.lastOrNull() as? IrExpression)?.type ?: context.builtIns.unitType
+        val resultType = this.resultType
+                ?: statements.lastOrNull().safeAs<IrExpression>()?.type
+                ?: context.irBuiltIns.unitType
         val irBlock = IrBlockImpl(startOffset, endOffset, resultType, origin)
         irBlock.statements.addAll(statements)
         return irBlock
     }
 }
 
-fun <T : IrBuilder> T.at(startOffset: Int, endOffset: Int): T {
+class IrSingleStatementBuilder(
+    context: IrGeneratorContext,
+    scope: Scope,
+    startOffset: Int,
+    endOffset: Int,
+    val origin: IrStatementOrigin? = null
+) : IrBuilderWithScope(context, scope, startOffset, endOffset) {
+
+    inline fun <T : IrElement> build(statementBuilder: IrSingleStatementBuilder.() -> T): T =
+        statementBuilder()
+}
+
+inline fun <T : IrElement> IrGeneratorWithScope.buildStatement(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrStatementOrigin?,
+    builder: IrSingleStatementBuilder.() -> T
+) =
+    IrSingleStatementBuilder(context, scope, startOffset, endOffset, origin).builder()
+
+inline fun <T : IrElement> IrGeneratorWithScope.buildStatement(
+    startOffset: Int,
+    endOffset: Int,
+    builder: IrSingleStatementBuilder.() -> T
+) =
+    IrSingleStatementBuilder(context, scope, startOffset, endOffset).builder()
+
+fun <T : IrBuilder> T.at(startOffset: Int, endOffset: Int) = apply {
     this.startOffset = startOffset
     this.endOffset = endOffset
-    return this
 }
 
 inline fun IrGeneratorWithScope.irBlock(
-    startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET,
-    origin: IrStatementOrigin? = null, resultType: KotlinType? = null,
+    startOffset: Int = UNDEFINED_OFFSET,
+    endOffset: Int = UNDEFINED_OFFSET,
+    origin: IrStatementOrigin? = null,
+    resultType: IrType? = null,
     body: IrBlockBuilder.() -> Unit
 ): IrExpression =
     IrBlockBuilder(
@@ -129,3 +163,4 @@ inline fun IrGeneratorWithScope.irBlockBody(
         startOffset,
         endOffset
     ).blockBody(body)
+

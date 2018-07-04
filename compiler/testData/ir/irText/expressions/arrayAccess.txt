@@ -1,18 +1,18 @@
 FILE fqName:<root> fileName:/arrayAccess.kt
-  PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:val
+  PROPERTY name:p visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Int flags:
-      correspondingProperty: PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:val
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:p visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>(): Int'
           GET_FIELD 'p: Int' type=kotlin.Int origin=null
-  FUN name:foo visibility:public modality:FINAL <> () returnType:Int flags:
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='foo(): Int'
         CONST Int type=kotlin.Int value=1
-  FUN name:test visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:Int flags:
+  FUN name:test visibility:public modality:FINAL <> (a:kotlin.IntArray) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.IntArray flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(IntArray): Int'

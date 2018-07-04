@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.resolve.ModifierCheckerCore;
 import org.jetbrains.kotlin.resolve.ModifiersChecker;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.checkers.LambdaWithSuspendModifierCallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
+import org.jetbrains.kotlin.serialization.deserialization.SuspendFunctionTypeUtilKt;
 import org.jetbrains.kotlin.types.CommonSupertypes;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -665,7 +665,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                         !KtPsiUtil.isLabeledFunctionLiteral((KtFunctionLiteral) labelTargetElement) &&
                         Objects.equals(
                                 DescriptorUtilsKt.fqNameOrNull(resolvedCall.getResultingDescriptor()),
-                                LambdaWithSuspendModifierCallChecker.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
+                                SuspendFunctionTypeUtilKt.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
                         )
                     ) {
                         context.trace.report(RETURN_FOR_BUILT_IN_SUSPEND.on(expression));

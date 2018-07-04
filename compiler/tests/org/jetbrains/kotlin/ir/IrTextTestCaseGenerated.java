@@ -737,6 +737,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/callableReferenceToImportedFromObject.kt");
         }
 
+        @TestMetadata("callableReferenceTypeArguments.kt")
+        public void testCallableReferenceTypeArguments() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/callableReferenceTypeArguments.kt");
+        }
+
         @TestMetadata("calls.kt")
         public void testCalls() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/calls.kt");
@@ -1077,6 +1082,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/typeParameterClassLiteral.kt");
         }
 
+        @TestMetadata("unsignedIntegerLiterals.kt")
+        public void testUnsignedIntegerLiterals() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/unsignedIntegerLiterals.kt");
+        }
+
         @TestMetadata("useImportedMember.kt")
         public void testUseImportedMember() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/useImportedMember.kt");
@@ -1120,6 +1130,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("whenReturn.kt")
         public void testWhenReturn() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/whenReturn.kt");
+        }
+
+        @TestMetadata("whenWithSubjectVariable.kt")
+        public void testWhenWithSubjectVariable() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/whenWithSubjectVariable.kt");
         }
 
         @TestMetadata("whileDoWhile.kt")

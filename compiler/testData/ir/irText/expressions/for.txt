@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/for.kt
-  FUN name:testEmpty visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:Unit flags:
+  FUN name:testEmpty visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String> flags:
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/for.kt
             VAR FOR_LOOP_VARIABLE name:s type:kotlin.String flags:val
               CALL 'next(): String' type=kotlin.String origin=FOR_LOOP_NEXT
                 $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
-  FUN name:testIterable visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:Unit flags:
+  FUN name:testIterable visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String> flags:
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/for.kt
             BLOCK type=kotlin.Unit origin=null
               CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
                 message: GET_VAR 's: String' type=kotlin.String origin=null
-  FUN name:testDestructuring visibility:public modality:FINAL <> (pp:kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>>) returnType:Unit flags:
+  FUN name:testDestructuring visibility:public modality:FINAL <> (pp:kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>>) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:pp index:0 type:kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>> flags:
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP

@@ -81,10 +81,10 @@ fun makeCompileServices(
     }
 
 fun updateIncrementalCache(
-        generatedFiles: Iterable<GeneratedFile>,
-        cache: IncrementalJvmCache,
-        changesCollector: ChangesCollector,
-        javaChangesTracker: JavaClassesTrackerImpl?
+    generatedFiles: Iterable<GeneratedFile>,
+    cache: IncrementalJvmCache,
+    changesCollector: ChangesCollector,
+    javaChangesTracker: JavaClassesTrackerImpl?
 ) {
     for (generatedFile in generatedFiles) {
         when {
@@ -119,8 +119,8 @@ data class DirtyData(
 )
 
 fun ChangesCollector.getDirtyData(
-        caches: Iterable<IncrementalCacheCommon<*>>,
-        reporter: ICReporter
+    caches: Iterable<IncrementalCacheCommon>,
+    reporter: ICReporter
 ): DirtyData {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
     val dirtyClassesFqNames = HashSet<FqName>()
@@ -173,10 +173,10 @@ fun mapLookupSymbolsToFiles(
 }
 
 fun mapClassesFqNamesToFiles(
-        caches: Iterable<IncrementalCacheCommon<*>>,
-        classesFqNames: Iterable<FqName>,
-        reporter: ICReporter,
-        excludes: Set<File> = emptySet()
+    caches: Iterable<IncrementalCacheCommon>,
+    classesFqNames: Iterable<FqName>,
+    reporter: ICReporter,
+    excludes: Set<File> = emptySet()
 ): Set<File> {
     val dirtyFiles = HashSet<File>()
 
@@ -195,7 +195,7 @@ fun mapClassesFqNamesToFiles(
 
 fun withSubtypes(
         typeFqName: FqName,
-        caches: Iterable<IncrementalCacheCommon<*>>
+        caches: Iterable<IncrementalCacheCommon>
 ): Set<FqName> {
     val types = LinkedList(listOf(typeFqName))
     val subtypes = hashSetOf<FqName>()

@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -285,7 +286,7 @@ class DumpIrTreeWithDescriptorsVisitor(out: Appendable): IrElementVisitor<Unit, 
         for (typeParameter in expression.descriptor.original.typeParameters) {
             val typeArgument = expression.getTypeArgument(typeParameter) ?: continue
             val renderedParameter = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(typeParameter)
-            val renderedType = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.renderType(typeArgument)
+            val renderedType = typeArgument.render()
             printer.println("$renderedParameter: $renderedType")
         }
     }

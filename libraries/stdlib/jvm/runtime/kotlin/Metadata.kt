@@ -27,20 +27,20 @@ internal annotation class Metadata(
     /**
      * The version of the metadata provided in the arguments of this annotation.
      */
-    val mv: IntArray = intArrayOf(),
+    val mv: IntArray = [],
     /**
      * The version of the bytecode interface (naming conventions, signatures) of the class file annotated with this annotation.
      */
-    val bv: IntArray = intArrayOf(),
+    val bv: IntArray = [],
     /**
      * Metadata in a custom format. The format may be different (or even absent) for different kinds.
      */
-    val d1: Array<String> = arrayOf(),
+    val d1: Array<String> = [],
     /**
      * An addition to [d1]: array of strings which occur in metadata, written in plain text so that strings already present
      * in the constant pool are reused. These strings may be then indexed in the metadata by an integer index in this array.
      */
-    val d2: Array<String> = arrayOf(),
+    val d2: Array<String> = [],
     /**
      * An extra string. For a multi-file part class, internal name of the facade class.
      */

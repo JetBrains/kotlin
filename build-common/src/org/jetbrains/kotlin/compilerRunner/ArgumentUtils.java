@@ -46,6 +46,7 @@ public class ArgumentUtils {
         Class<? extends CommonToolArguments> argumentsClass = arguments.getClass();
         convertArgumentsToStringList(arguments, argumentsClass.newInstance(), JvmClassMappingKt.getKotlinClass(argumentsClass), result);
         result.addAll(arguments.getFreeArgs());
+        result.addAll(arguments.getInternalArguments());
         return result;
     }
 

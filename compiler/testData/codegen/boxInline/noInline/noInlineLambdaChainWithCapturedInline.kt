@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 // FILE: 1.kt
 
 package test
@@ -80,4 +82,5 @@ fun box(): String {
         else "OK"
     } ()
 
+    return "OK"
 }

@@ -45,6 +45,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/addActualToTopLevelMember/");
     }
 
+    @TestMetadata("addFunctionToCommonClassFromJavaUsage")
+    public void testAddFunctionToCommonClassFromJavaUsage() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/addFunctionToCommonClassFromJavaUsage/");
+    }
+
     @TestMetadata("addOperatorByHeader")
     public void testAddOperatorByHeader() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/addOperatorByHeader/");
@@ -74,14 +79,39 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/classFunction/");
     }
 
+    @TestMetadata("classFunctionWithConstructor")
+    public void testClassFunctionWithConstructor() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/classFunctionWithConstructor/");
+    }
+
+    @TestMetadata("classFunctionWithConstructorAndParameters")
+    public void testClassFunctionWithConstructorAndParameters() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/classFunctionWithConstructorAndParameters/");
+    }
+
+    @TestMetadata("classFunctionWithIncompatibleConstructor")
+    public void testClassFunctionWithIncompatibleConstructor() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/classFunctionWithIncompatibleConstructor/");
+    }
+
     @TestMetadata("classOverloadedFunction")
     public void testClassOverloadedFunction() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/classOverloadedFunction/");
     }
 
+    @TestMetadata("classPropertyInConstructor")
+    public void testClassPropertyInConstructor() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/classPropertyInConstructor/");
+    }
+
     @TestMetadata("classSomeProperties")
     public void testClassSomeProperties() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/classSomeProperties/");
+    }
+
+    @TestMetadata("classWithIncompilableFunction")
+    public void testClassWithIncompilableFunction() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/classWithIncompilableFunction/");
     }
 
     @TestMetadata("companionAbsence")
@@ -122,6 +152,16 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("createVarInExpectClass")
     public void testCreateVarInExpectClass() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/createVarInExpectClass/");
+    }
+
+    @TestMetadata("defaultParameterInExpected")
+    public void testDefaultParameterInExpected() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/defaultParameterInExpected/");
+    }
+
+    @TestMetadata("defaultParameterInExpectedClass")
+    public void testDefaultParameterInExpectedClass() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/defaultParameterInExpectedClass/");
     }
 
     @TestMetadata("deprecatedHeader")
@@ -177,6 +217,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("functionTypeReceiverToParameterByImpl")
     public void testFunctionTypeReceiverToParameterByImpl() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/functionTypeReceiverToParameterByImpl/");
+    }
+
+    @TestMetadata("implementAbstractExpectMemberInheritedFromInterface")
+    public void testImplementAbstractExpectMemberInheritedFromInterface() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/implementAbstractExpectMemberInheritedFromInterface/");
     }
 
     @TestMetadata("implementMembersInImplClassNonImplInheritor")
@@ -322,6 +367,21 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("property")
     public void testProperty() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/property/");
+    }
+
+    @TestMetadata("safeDeleteForbiddenFromActual")
+    public void testSafeDeleteForbiddenFromActual() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/safeDeleteForbiddenFromActual/");
+    }
+
+    @TestMetadata("safeDeleteFromActual")
+    public void testSafeDeleteFromActual() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/safeDeleteFromActual/");
+    }
+
+    @TestMetadata("safeDeleteUsedInAnotherPlatform")
+    public void testSafeDeleteUsedInAnotherPlatform() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/safeDeleteUsedInAnotherPlatform/");
     }
 
     @TestMetadata("sealed")

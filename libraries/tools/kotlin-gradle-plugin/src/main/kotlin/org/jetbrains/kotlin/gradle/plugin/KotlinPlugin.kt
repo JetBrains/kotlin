@@ -16,17 +16,22 @@ import org.gradle.api.plugins.InvalidPluginException
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.CompileClasspathNormalizer
+import org.gradle.api.tasks.Delete
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
+import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.KaptVariantData
+import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
+import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -387,6 +392,7 @@ internal abstract class AbstractKotlinPlugin(
             return
         }
         val inspectTask = project.tasks.create("inspectClassesForKotlinIC", InspectClassesForMultiModuleIC::class.java)
+        inspectTask.sourceSetName = SourceSet.MAIN_SOURCE_SET_NAME
         inspectTask.jarTask = jarTask
         inspectTask.dependsOn(classesTask)
         jarTask.dependsOn(inspectTask)
@@ -473,12 +479,12 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     protected val logger = Logging.getLogger(this.javaClass)
 
     abstract fun forEachVariant(project: Project, action: (V) -> Unit): Unit
+    abstract fun getVariantName(variant: V): String
     abstract fun getTestedVariantData(variantData: V): V?
     abstract fun getResDirectories(variantData: V): List<File>
 
     protected abstract fun getSourceProviders(variantData: V): Iterable<SourceProvider>
     protected abstract fun getAllJavaSources(variantData: V): Iterable<File>
-    protected abstract fun getVariantName(variant: V): String
     protected abstract fun getJavaTask(variantData: V): AbstractCompile?
     protected abstract fun addJavaSourceDirectoryToVariantModel(variantData: V, javaSourceDirectory: File): Unit
 
@@ -694,7 +700,8 @@ internal class SubpluginEnvironment(
             project.logger.kotlinDebug { "Loading subplugin $pluginId" }
 
             val artifact = subplugin.getPluginArtifact()
-            val mavenCoordinate = "${artifact.groupId}:${artifact.artifactId}:$kotlinPluginVersion"
+            val artifactVersion = artifact.version ?: kotlinPluginVersion
+            val mavenCoordinate = "${artifact.groupId}:${artifact.artifactId}:$artifactVersion"
             project.logger.kotlinDebug { "Adding '$mavenCoordinate' to '$PLUGIN_CLASSPATH_CONFIGURATION_NAME' configuration" }
             project.dependencies.add(PLUGIN_CLASSPATH_CONFIGURATION_NAME, mavenCoordinate)
 
@@ -720,6 +727,8 @@ internal fun Task.registerSubpluginOptionsAsInputs(subpluginId: String, subplugi
         optionsGroup.forEachIndexed { index, option ->
             val indexSuffix = if (optionsGroup.size > 1) ".$index" else ""
             when (option) {
+                is InternalSubpluginOption -> Unit
+
                 is CompositeSubpluginOption -> {
                     val subpluginIdWithWrapperKey = "$subpluginId.${optionKey}$indexSuffix"
                     registerSubpluginOptionsAsInputs(subpluginIdWithWrapperKey, option.originalOptions)

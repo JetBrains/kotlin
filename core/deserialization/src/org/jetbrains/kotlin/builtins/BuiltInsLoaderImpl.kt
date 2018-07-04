@@ -88,7 +88,7 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
         )
 
         for (packageFragment in packageFragments) {
-            packageFragment.components = components
+            packageFragment.initialize(components)
         }
 
         return provider

@@ -71,7 +71,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
 
     additionalAnnotationCheckers = listOf(
         RepeatableAnnotationChecker,
-        FileClassAnnotationsChecker
+        FileClassAnnotationsChecker,
+        ExplicitMetadataChecker
     ),
 
     identifierChecker = JvmSimpleNameBacktickChecker,

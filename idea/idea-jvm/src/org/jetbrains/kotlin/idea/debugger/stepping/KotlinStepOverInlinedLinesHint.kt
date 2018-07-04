@@ -16,22 +16,20 @@
 
 package org.jetbrains.kotlin.idea.debugger.stepping
 
-import com.intellij.debugger.SourcePosition
-import com.intellij.debugger.engine.*
+import com.intellij.debugger.engine.RequestHint
+import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.evaluation.EvaluateException
-import com.intellij.debugger.engine.jdi.StackFrameProxy
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.Computable
 import com.sun.jdi.VMDisconnectedException
 import com.sun.jdi.request.StepRequest
 
 // Originally copied from RequestHint
 class KotlinStepOverInlinedLinesHint(
-        stepThread: ThreadReferenceProxyImpl,
-        suspendContext: SuspendContextImpl,
-        methodFilter: KotlinMethodFilter) : RequestHint(stepThread, suspendContext, methodFilter) {
+    stepThread: ThreadReferenceProxyImpl,
+    suspendContext: SuspendContextImpl,
+    methodFilter: KotlinMethodFilter
+) : RequestHint(stepThread, suspendContext, methodFilter) {
 
     private val LOG = Logger.getInstance(KotlinStepOverInlinedLinesHint::class.java)
 
@@ -46,8 +44,7 @@ class KotlinStepOverInlinedLinesHint(
                 if (isTheSameFrame(context)) {
                     return if (filter.locationMatches(context, frameProxy.location())) {
                         STOP
-                    }
-                    else {
+                    } else {
                         StepRequest.STEP_OVER
                     }
                 }
@@ -58,10 +55,8 @@ class KotlinStepOverInlinedLinesHint(
 
                 return StepRequest.STEP_OUT
             }
-        }
-        catch (ignored: VMDisconnectedException) {
-        }
-        catch (e: EvaluateException) {
+        } catch (ignored: VMDisconnectedException) {
+        } catch (e: EvaluateException) {
             LOG.error(e)
         }
 

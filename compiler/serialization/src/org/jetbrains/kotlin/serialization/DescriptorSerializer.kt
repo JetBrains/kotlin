@@ -89,8 +89,10 @@ class DescriptorSerializer private constructor(
             }
         }
 
-        for (descriptor in classDescriptor.constructors) {
-            builder.addConstructor(constructorProto(descriptor))
+        if (!DescriptorUtils.isAnonymousObject(classDescriptor) && classDescriptor.kind != ClassKind.ENUM_ENTRY) {
+            for (descriptor in classDescriptor.constructors) {
+                builder.addConstructor(constructorProto(descriptor))
+            }
         }
 
         val callableMembers =

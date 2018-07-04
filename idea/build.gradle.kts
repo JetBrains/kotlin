@@ -8,7 +8,7 @@ plugins {
 dependencies {
     testRuntime(intellijDep())
 
-    compile(projectDist(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-stdlib-jre8"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
@@ -42,7 +42,6 @@ dependencies {
 
     compileOnly(project(":kotlin-daemon-client"))
 
-
     compileOnly(intellijDep())
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     compileOnly(intellijPluginDep("IntelliLang"))
@@ -71,6 +70,8 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-noarg-compiler-plugin"))
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
+    testRuntime(project(":kotlin-scripting-idea")) { isTransitive = false }
+    testRuntime(project(":kotlin-scripting-compiler"))
     testRuntime(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
     testRuntime(project(":plugins:lint")) { isTransitive = false }
@@ -129,7 +130,6 @@ val performanceTestRuntime by configurations.creating {
 }
 
 val performanceTest by run {
-    val sourceSets = the<JavaPluginConvention>().sourceSets
     sourceSets.creating {
         compileClasspath += sourceSets["test"].output
         compileClasspath += sourceSets["main"].output
@@ -152,10 +152,23 @@ projectTest(taskName = "performanceTest") {
     classpath = performanceTest.runtimeClasspath
     workingDir = rootDir
 
-    jvmArgs.removeAll { it.startsWith("-Xmx") }
+    jvmArgs?.removeAll { it.startsWith("-Xmx") }
 
     maxHeapSize = "3g"
     jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")
+    jvmArgs(
+        "-XX:ReservedCodeCacheSize=240m",
+        "-XX:+UseCompressedOops",
+        "-XX:+UseConcMarkSweepGC"
+    )
+    jvmArgs("-XX:+UnlockCommercialFeatures", "-XX:+FlightRecorder")
+
+    if (hasProperty("perf.flight.recorder.override")) {
+        jvmArgs(property("perf.flight.recorder.override"))
+    } else {
+        val settings = if (hasProperty("perf.flight.recorder.settings")) ",settings=${property("perf.flight.recorder.settings")}" else ""
+        jvmArgs("-XX:StartFlightRecording=delay=15m,duration=5h,filename=perf.jfr$settings")
+    }
 
     doFirst {
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)

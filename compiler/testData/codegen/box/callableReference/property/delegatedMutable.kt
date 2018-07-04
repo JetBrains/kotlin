@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 import kotlin.reflect.KProperty
 
 var result: String by Delegate

@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 fun test1(f: (Int) -> Int) = f(1)
 
 fun test2(f: Int.() -> Int) = 2.f()

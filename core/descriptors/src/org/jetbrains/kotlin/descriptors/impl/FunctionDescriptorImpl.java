@@ -376,7 +376,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         private Map<UserDataKey<?>, Object> userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
         private Boolean newHasSynthesizedParameterNames = null;
         protected boolean justForTypeSubstitution = false;
-        private boolean dropSuspend = false;
+        private boolean isSuspend;
 
         public CopyConfiguration(
                 @NotNull TypeSubstitution substitution,
@@ -387,7 +387,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors,
                 @Nullable KotlinType newExtensionReceiverParameterType,
                 @NotNull KotlinType newReturnType,
-                @Nullable Name name
+                @Nullable Name name,
+                boolean isSuspend
         ) {
             this.substitution = substitution;
             this.newOwner = newOwner;
@@ -398,6 +399,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             this.newExtensionReceiverParameterType = newExtensionReceiverParameterType;
             this.newReturnType = newReturnType;
             this.name = name;
+            this.isSuspend = isSuspend;
         }
 
         @Override
@@ -507,8 +509,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         @Override
         @NotNull
-        public CopyConfiguration setDropSuspend() {
-            this.dropSuspend = true;
+        public CopyConfiguration setIsSuspend(boolean isSuspend) {
+            this.isSuspend = isSuspend;
             return this;
         }
 
@@ -586,7 +588,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         return new CopyConfiguration(
                 substitutor.getSubstitution(),
                 getContainingDeclaration(), getModality(), getVisibility(), getKind(), getValueParameters(),
-                getExtensionReceiverParameterType(), getReturnType(), null);
+                getExtensionReceiverParameterType(), getReturnType(), null, isSuspend);
     }
 
     @Nullable
@@ -676,11 +678,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setExternal(isExternal);
         substitutedDescriptor.setInline(isInline);
         substitutedDescriptor.setTailrec(isTailrec);
-        if (configuration.dropSuspend) {
-            substitutedDescriptor.setSuspend(false);
-        } else {
-            substitutedDescriptor.setSuspend(isSuspend);
-        }
+        substitutedDescriptor.setSuspend(configuration.isSuspend);
         substitutedDescriptor.setExpect(isExpect);
         substitutedDescriptor.setActual(isActual);
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);

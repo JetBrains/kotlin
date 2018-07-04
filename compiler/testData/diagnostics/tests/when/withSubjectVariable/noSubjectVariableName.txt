@@ -1,0 +1,3 @@
+package
+
+public fun testNoSubjectVariableName(/*0*/ x: kotlin.Int?): kotlin.Unit

@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 open class Bar<T>(val prop: String)
 object Foo : Bar<Foo>("OK") {
 

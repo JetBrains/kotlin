@@ -13,6 +13,7 @@ import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.command.CommandAdapter
 import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.command.CommandProcessor
@@ -25,6 +26,7 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JavaProjectRootsUtil
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.*
 import com.intellij.openapi.util.Pass
@@ -652,38 +654,60 @@ fun PsiMember.j2k(): KtNamedDeclaration? {
     return KtPsiFactory(project).createDeclaration(text)
 }
 
-fun (() -> Any).runRefactoringWithPostprocessing(
-        project: Project,
-        targetRefactoringId: String,
-        finishAction: () -> Unit
+internal fun broadcastRefactoringExit(project: Project, refactoringId: String) {
+    project.messageBus.syncPublisher(KotlinRefactoringEventListener.EVENT_TOPIC).onRefactoringExit(refactoringId)
+}
+
+// IMPORTANT: Target refactoring must support KotlinRefactoringEventListener
+internal abstract class CompositeRefactoringRunner(
+    val project: Project,
+    val refactoringId: String
 ) {
-    val connection = project.messageBus.connect()
-    connection.subscribe(RefactoringEventListener.REFACTORING_EVENT_TOPIC,
-                         object : RefactoringEventListener {
-                             override fun undoRefactoring(refactoringId: String) {
+    protected abstract fun runRefactoring()
 
-                             }
+    protected open fun onRefactoringDone() {}
+    protected open fun onExit() {}
 
-                             override fun refactoringStarted(refactoringId: String, beforeData: RefactoringEventData?) {
+    fun run() {
+        val connection = project.messageBus.connect()
+        connection.subscribe(
+                RefactoringEventListener.REFACTORING_EVENT_TOPIC,
+                object : RefactoringEventListener {
+                    override fun undoRefactoring(refactoringId: String) {
 
-                             }
+                    }
 
-                             override fun conflictsDetected(refactoringId: String, conflictsData: RefactoringEventData) {
+                    override fun refactoringStarted(refactoringId: String, beforeData: RefactoringEventData?) {
 
-                             }
+                    }
 
-                             override fun refactoringDone(refactoringId: String, afterData: RefactoringEventData?) {
-                                 if (refactoringId == targetRefactoringId) {
-                                     try {
-                                         finishAction()
-                                     }
-                                     finally {
-                                         connection.disconnect()
-                                     }
-                                 }
-                             }
-                         })
-    this()
+                    override fun conflictsDetected(refactoringId: String, conflictsData: RefactoringEventData) {
+
+                    }
+
+                    override fun refactoringDone(refactoringId: String, afterData: RefactoringEventData?) {
+                        if (refactoringId == this@CompositeRefactoringRunner.refactoringId) {
+                            onRefactoringDone()
+                        }
+                    }
+                }
+        )
+        connection.subscribe(
+                KotlinRefactoringEventListener.EVENT_TOPIC,
+                object : KotlinRefactoringEventListener {
+                    override fun onRefactoringExit(refactoringId: String) {
+                        if (refactoringId == this@CompositeRefactoringRunner.refactoringId) {
+                            try {
+                                onExit()
+                            } finally {
+                                connection.disconnect()
+                            }
+                        }
+                    }
+                }
+        )
+        runRefactoring()
+    }
 }
 
 @Throws(ConfigurationException::class) fun KtElement?.validateElement(errorMessage: String) {
@@ -990,4 +1014,8 @@ internal fun KtDeclaration.withExpectedActuals(): List<KtDeclaration> {
 internal fun KtDeclaration.resolveToExpectedDescriptorIfPossible(): DeclarationDescriptor {
     val descriptor = unsafeResolveToDescriptor()
     return descriptor.liftToExpected() ?: descriptor
+}
+
+fun DialogWrapper.showWithTransaction() {
+    TransactionGuard.submitTransaction(disposable, Runnable { show() })
 }

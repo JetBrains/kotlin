@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -1407,13 +1408,11 @@ compileTestKotlin {
             buildscript {
                 repositories {
                     jcenter()
-                    maven {
-                        url='https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
+                    mavenCentral()
                 }
                 dependencies {
                     classpath "com.android.tools.build:gradle:2.3.0"
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
+                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50"
                 }
             }
 
@@ -1451,6 +1450,12 @@ compileTestKotlin {
                     }
                 }
             }
+
+            tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+                kotlinOptions {
+                    freeCompilerArgs = ['-Xprogressive']
+                }
+            }
         """
         )
         createProjectSubFile(
@@ -1468,7 +1473,8 @@ compileTestKotlin {
         )
         importProject()
 
-        Assert.assertNotNull(KotlinFacet.get(getModule("project")))
+        val kotlinFacet = KotlinFacet.get(getModule("project"))!!
+        Assert.assertTrue(kotlinFacet.configuration.settings.mergedCompilerArguments!!.progressiveMode)
     }
 
     @Test
@@ -2095,6 +2101,53 @@ compileTestKotlin {
                        "file:///src/test/resources" to KotlinResourceRootType.TestResource),
                 getSourceRootInfos("project_test")
         )
+    }
+
+    @Test
+    fun testInternalArgumentsFacetImporting() {
+        createProjectSubFile(
+            "build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            repositories {
+                mavenCentral()
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.50"
+            }
+
+            compileKotlin {
+                kotlinOptions.freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
+                kotlinOptions.languageVersion = "1.2"
+            }
+        """
+        )
+        importProject()
+
+        // Version is indeed 1.2
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_2, facetSettings.languageLevel)
+
+        // We haven't lost internal argument during importing to facet
+        Assert.assertEquals("-XXLanguage:+InlineClasses", facetSettings.compilerSettings?.additionalArguments)
+
+        // Inline classes are enabled even though LV = 1.2
+        Assert.assertEquals(
+            LanguageFeature.State.ENABLED,
+            getModule("project_main").languageVersionSettings.getFeatureSupport(LanguageFeature.InlineClasses)
+        )
+
+        assertAllModulesConfigured()
     }
 
     private fun assertAllModulesConfigured() {

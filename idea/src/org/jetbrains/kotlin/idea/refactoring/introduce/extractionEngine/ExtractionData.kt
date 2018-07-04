@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.ExtractableSubstringInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractableSubstringInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.substringContextOrThis
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.psi.*
@@ -270,6 +271,8 @@ data class ExtractionData(
 }
 
 fun unmarkReferencesInside(root: PsiElement) {
-    if (!root.isValid) return
-    root.forEachDescendantOfType<KtSimpleNameExpression> { it.resolveResult = null }
+    runReadAction {
+        if (!root.isValid) return@runReadAction
+        root.forEachDescendantOfType<KtSimpleNameExpression> { it.resolveResult = null }
+    }
 }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
 
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
@@ -39,12 +40,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.refactoring.CompositeRefactoringRunner
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.removeTemplateEntryBracesIfPossible
-import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
+import org.jetbrains.kotlin.idea.refactoring.showWithTransaction
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -130,7 +132,7 @@ fun getParametersToRemove(
             .map { it.key }
 }
 
-fun IntroduceParameterDescriptor.performRefactoring() {
+fun IntroduceParameterDescriptor.performRefactoring(onExit: (() -> Unit)? = null) {
     val config = object : KotlinChangeSignatureConfiguration {
         override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
             return originalDescriptor.modify { methodDescriptor ->
@@ -162,18 +164,19 @@ fun IntroduceParameterDescriptor.performRefactoring() {
     }
 
     val project = callable.project
-    val changeSignature = { runChangeSignature(project, callableDescriptor, config, callable, INTRODUCE_PARAMETER) }
+    object : CompositeRefactoringRunner(project, "refactoring.changeSignature") {
+        override fun runRefactoring() {
+            runChangeSignature(project, callableDescriptor, config, callable, INTRODUCE_PARAMETER)
+        }
 
-    changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
-        try {
+        override fun onRefactoringDone() {
             occurrencesToReplace.forEach { occurrenceReplacer(it) }
         }
-        finally {
-            project.messageBus
-                    .syncPublisher(RefactoringEventListener.REFACTORING_EVENT_TOPIC)
-                    .refactoringDone(INTRODUCE_PARAMETER_REFACTORING_ID, null)
+
+        override fun onExit() {
+            onExit?.invoke()
         }
-    }
+    }.run()
 }
 
 fun selectNewParameterContext(
@@ -187,6 +190,7 @@ fun selectNewParameterContext(
             file = file,
             title = "Introduce parameter to declaration",
             elementKinds = listOf(CodeInsightUtils.ElementKind.EXPRESSION),
+            elementValidator = ::validateExpressionElements,
             getContainers = { _, parent ->
                 val parents = parent.parents
                 val stopAt = (parent.parents.zip(parent.parents.drop(1)))
@@ -354,12 +358,15 @@ open class KotlinIntroduceParameterHandler(
                         if (introducer.startInplaceIntroduceTemplate()) return
                     }
 
-                    KotlinIntroduceParameterDialog(project,
-                                                   editor,
-                                                   introduceParameterDescriptor,
-                                                   suggestedNames.toTypedArray(),
-                                                   listOf(replacementType) + replacementType.supertypes(),
-                                                   helper).show()
+                    val dialog = KotlinIntroduceParameterDialog(
+                            project,
+                            editor,
+                            introduceParameterDescriptor,
+                            suggestedNames.toTypedArray(),
+                            listOf(replacementType) + replacementType.supertypes(),
+                            helper
+                    )
+                    dialog.showWithTransaction()
                 }
         )
     }
@@ -507,7 +514,7 @@ open class KotlinIntroduceLambdaParameterHandler(
                 dialog.performRefactoring()
             }
             else {
-                dialog.show()
+                dialog.showWithTransaction()
             }
         }
     }

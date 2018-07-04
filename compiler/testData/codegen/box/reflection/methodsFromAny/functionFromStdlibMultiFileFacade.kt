@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 // KT-12630 KotlinReflectionInternalError on referencing some functions from stdlib
 
 // IGNORE_BACKEND: JS, NATIVE

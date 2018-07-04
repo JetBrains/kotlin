@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
@@ -23,13 +12,11 @@ import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
-import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.DefaultImplsClassDescriptor
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmFunctionDescriptorImpl
-import org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag
 import org.jetbrains.kotlin.codegen.AsmUtil.isAbstractMethod
 import org.jetbrains.kotlin.codegen.BuiltinSpecialBridgesUtil
 import org.jetbrains.kotlin.codegen.FunctionCodegen.isMethodOfAny
@@ -37,6 +24,7 @@ import org.jetbrains.kotlin.codegen.FunctionCodegen.isThereOverriddenInKotlinCla
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDirectMember
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.descriptors.FileClassDescriptor
+import org.jetbrains.kotlin.codegen.isToArrayFromCollection
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.*
@@ -53,19 +41,21 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.typeParametersCount
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.*
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.getSuperClassDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -170,12 +160,18 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
                         ?: error("Expect to find overridden descriptors for $descriptor")
 
                 if (!isThereOverriddenInKotlinClass(descriptor)) {
-                    val flags = Opcodes.ACC_ABSTRACT or getVisibilityAccessFlag(descriptor)
-                    val bridgeDescriptor = JvmFunctionDescriptorImpl(
-                        descriptor.containingDeclaration as ClassDescriptor, null, Annotations.EMPTY,
-                        descriptor.name, CallableMemberDescriptor.Kind.SYNTHESIZED, descriptor.source, flags
+                    // TODO: reimplement getVisibilityAccessFlag(descriptor)
+                    val visibility = if (descriptor.isToArrayFromCollection()) Visibilities.PUBLIC else descriptor.visibility
+                    val irFunction = IrFunctionImpl(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        IrDeclarationOrigin.DEFINED,
+                        IrSimpleFunctionSymbolImpl(descriptor),
+                        visibility = visibility,
+                        modality = Modality.ABSTRACT
                     )
-                    val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, bridgeDescriptor)
+                    irFunction.createParameterDeclarations()
+
                     irClass.declarations.add(irFunction)
                 }
             }
@@ -206,7 +202,8 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
             bridge.descriptor.returnType, Modality.OPEN, descriptor.visibility
         )
 
-        val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, bridgeDescriptorForIrFunction)
+        val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.BRIDGE, bridgeDescriptorForIrFunction)
+        irFunction.returnType = bridgeDescriptorForIrFunction.returnType!!.toIrType()!!
         irFunction.createParameterDeclarations()
 
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
@@ -216,11 +213,16 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 generateTypeCheckBarrierIfNeeded(descriptor, bridgeDescriptorForIrFunction, irFunction, delegateTo.method.argumentTypes)
             }
 
-            val implementation = if (isSpecialBridge) delegateTo.descriptor.copyAsDeclaration() else delegateTo.descriptor
+            val implementation = if (isSpecialBridge) delegateTo.copyAsDeclaration() else delegateTo.descriptor
             val call = IrCallImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                implementation.returnType!!.toIrType()!!,
                 implementation,
-                null, JvmLoweredStatementOrigin.BRIDGE_DELEGATION, null
+                implementation.typeParametersCount,
+                JvmLoweredStatementOrigin.BRIDGE_DELEGATION,
+                if (isStubDeclarationWithDelegationToSuper) getSuperClassDescriptor(
+                    descriptor.containingDeclaration as ClassDescriptor
+                ) else null
             )
             call.dispatchReceiver = IrGetValueImpl(
                 UNDEFINED_OFFSET,
@@ -247,7 +249,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
                     )
                 )
             }
-            +IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.symbol, call)
+            +IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.returnType, irFunction.symbol, call)
         }.apply {
             irFunction.body = this
         }
@@ -282,7 +284,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
             if (delegateParameterTypes == null || OBJECT_TYPE == delegateParameterTypes[i]) {
                 irNotEquals(checkValue, irNull())
             } else {
-                irIs(checkValue, overrideDescriptor.valueParameters[i].type)
+                irIs(checkValue, overrideDescriptor.valueParameters[i].type.toIrType()!!)
             }
         }
 
@@ -291,21 +293,25 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 context.andand(arg, result)
             }
 
-            +irIfThen(irNot(condition), irBlock {
+            +irIfThen(context.irBuiltIns.unitType, irNot(condition), irBlock {
                 +irReturn(
                     when (typeSafeBarrierDescription) {
-                        MAP_GET_OR_DEFAULT -> irGet(IrVariableSymbolImpl(bridgeDescriptor.valueParameters[1]))
-                        BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.NULL -> irNull()
-                        INDEX -> IrConstImpl.int(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.builtIns.intType, typeSafeBarrierDescription.defaultValue as Int
+                        BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT -> irGet(
+                            bridgeDescriptor.valueParameters[1].type.toIrType()!!,
+                            IrVariableSymbolImpl(
+                                bridgeDescriptor.valueParameters[1]
+                            )
                         )
-                        FALSE -> irFalse()
+                        BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.NULL -> irNull()
+                        BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.INDEX -> IrConstImpl.int(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, typeSafeBarrierDescription.defaultValue as Int
+                        )
+                        BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.FALSE -> irFalse()
                     }
                 )
             }
             )
         }
-
     }
 
 
@@ -315,17 +321,19 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 SignatureAndDescriptor(typeMapper.mapAsmMethod(descriptor), descriptor)
         }
 
-        fun FunctionDescriptor.copyAsDeclaration(): FunctionDescriptor {
-            val isGetter = this is PropertyGetterDescriptor
-            val isAccessor = this is PropertyAccessorDescriptor
-            val directMember = getDirectMember(this)
-            val copy =
-                directMember.copy(directMember.containingDeclaration, directMember.modality, directMember.visibility, DECLARATION, false)
-            if (isAccessor) {
-                val property = copy as PropertyDescriptor
-                return if (isGetter) property.getter!! else property.setter!!
-            }
-            return copy as FunctionDescriptor
+        fun SignatureAndDescriptor.copyAsDeclaration(): FunctionDescriptor {
+            val containingClass = getDirectMember(descriptor).containingDeclaration as ClassDescriptor
+            val delegationDescriptor = JvmFunctionDescriptorImpl(
+                containingClass, null, Annotations.EMPTY, Name.identifier(method.name),
+                CallableMemberDescriptor.Kind.SYNTHESIZED, descriptor.source, 0
+            )
+
+            delegationDescriptor.initialize(
+                descriptor.extensionReceiverParameter?.returnType, containingClass.thisAsReceiverParameter, emptyList(),
+                descriptor.valueParameters.map { it.copy(delegationDescriptor, it.name, it.index) },
+                descriptor.returnType, Modality.OPEN, descriptor.visibility
+            )
+            return delegationDescriptor
         }
     }
 

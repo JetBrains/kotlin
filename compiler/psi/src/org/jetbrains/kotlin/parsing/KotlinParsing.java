@@ -460,6 +460,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return parseModifierList(null, annotationParsingMode, noModifiersBefore);
     }
 
+    boolean parseAnnotationsList(
+            @NotNull AnnotationParsingMode annotationParsingMode,
+            @NotNull TokenSet noModifiersBefore
+    ) {
+        return doParseModifierList(null, TokenSet.EMPTY, annotationParsingMode, noModifiersBefore);
+    }
+
     /**
      * (modifier | annotation)*
      *

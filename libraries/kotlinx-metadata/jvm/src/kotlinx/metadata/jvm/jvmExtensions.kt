@@ -9,17 +9,53 @@ import kotlinx.metadata.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 
 /**
- * A visitor to visit JVM extensions for a function.
+ * A visitor containing the common code to visit JVM extensions for Kotlin declaration containers, such as classes and package fragments.
+ */
+abstract class JvmDeclarationContainerExtensionVisitor @JvmOverloads constructor(
+    protected open val delegate: JvmDeclarationContainerExtensionVisitor? = null
+) : KmDeclarationContainerExtensionVisitor {
+    /**
+     * Visits the metadata of a local delegated property used somewhere inside this container (but not in a nested declaration container).
+     * Note that for classes produced by the Kotlin compiler, such properties will have default accessors.
+     *
+     * The order of visited local delegated properties is important. The Kotlin compiler generates the corresponding property's index
+     * at the call site, so that reflection would be able to load the metadata of the property with that index at runtime.
+     * If an incorrect index is used, either the `KProperty<*>` object passed to delegate methods will point to the wrong property
+     * at runtime, or an exception will be thrown.
+     *
+     * @param flags property flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Property] flags
+     * @param name the name of the property
+     * @param getterFlags property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
+     *   and [Flag.PropertyAccessor] flags
+     * @param setterFlags property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
+     *   and [Flag.PropertyAccessor] flags
+     */
+    open fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
+        delegate?.visitLocalDelegatedProperty(flags, name, getterFlags, setterFlags)
+}
+
+/**
+ * A visitor to visit JVM extensions for a class.
  */
 open class JvmClassExtensionVisitor @JvmOverloads constructor(
-    private val delegate: JvmClassExtensionVisitor? = null
-) : KmClassExtensionVisitor {
+    delegate: JvmClassExtensionVisitor? = null
+) : KmClassExtensionVisitor, JvmDeclarationContainerExtensionVisitor(delegate) {
+    override val delegate: JvmClassExtensionVisitor?
+        get() = super.delegate as JvmClassExtensionVisitor?
+
     /**
      * Visits the JVM internal name of the original class this anonymous object is copied from. This method is called for
      * anonymous objects copied from bodies of inline functions to the use site by the Kotlin compiler.
      */
     open fun visitAnonymousObjectOriginName(internalName: String) {
         delegate?.visitAnonymousObjectOriginName(internalName)
+    }
+
+    /**
+     * Visits the end of JVM extensions for the class.
+     */
+    open fun visitEnd() {
+        delegate?.visitEnd()
     }
 
     companion object {
@@ -30,6 +66,33 @@ open class JvmClassExtensionVisitor @JvmOverloads constructor(
          */
         @JvmField
         val TYPE: KmExtensionType = KmExtensionType(JvmClassExtensionVisitor::class)
+    }
+}
+
+/**
+ * A visitor to visit JVM extensions for a package fragment.
+ */
+open class JvmPackageExtensionVisitor @JvmOverloads constructor(
+    delegate: JvmPackageExtensionVisitor? = null
+) : KmPackageExtensionVisitor, JvmDeclarationContainerExtensionVisitor(delegate) {
+    override val delegate: JvmPackageExtensionVisitor?
+        get() = super.delegate as JvmPackageExtensionVisitor?
+
+    /**
+     * Visits the end of JVM extensions for the package fragment.
+     */
+    open fun visitEnd() {
+        delegate?.visitEnd()
+    }
+
+    companion object {
+        /**
+         * The type of this extension visitor.
+         *
+         * @see KmExtensionType
+         */
+        @JvmField
+        val TYPE: KmExtensionType = KmExtensionType(JvmPackageExtensionVisitor::class)
     }
 }
 
@@ -57,6 +120,13 @@ open class JvmFunctionExtensionVisitor @JvmOverloads constructor(
      */
     open fun visitLambdaClassOriginName(internalName: String) {
         delegate?.visitLambdaClassOriginName(internalName)
+    }
+
+    /**
+     * Visits the end of JVM extensions for the function.
+     */
+    open fun visitEnd() {
+        delegate?.visitEnd()
     }
 
     companion object {

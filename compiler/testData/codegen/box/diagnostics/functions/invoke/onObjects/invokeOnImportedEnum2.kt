@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 import A.ONE
 
 enum class A {

@@ -6,7 +6,7 @@ fun f() {
     val unull = UInt(1) ?: null
 }
 
-// 1 INVOKESTATIC UInt\$Erased.box
+// 0 INVOKESTATIC UInt\$Erased.box
 // 0 INVOKEVIRTUAL UInt.unbox
 
 // 0 valueOf

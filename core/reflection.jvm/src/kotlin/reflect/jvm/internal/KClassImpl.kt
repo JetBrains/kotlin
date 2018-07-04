@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -46,8 +47,8 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
             val moduleData = data().moduleData
 
             val descriptor =
-                    if (classId.isLocal) moduleData.deserialization.deserializeClass(classId)
-                    else moduleData.module.findClassAcrossModuleDependencies(classId)
+                if (classId.isLocal) moduleData.deserialization.deserializeClass(classId)
+                else moduleData.module.findClassAcrossModuleDependencies(classId)
 
             descriptor ?: reportUnresolvedClass()
         }
@@ -93,11 +94,11 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
 
         val nestedClasses: Collection<KClass<*>> by ReflectProperties.lazySoft {
-            descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry).mapNotNull {
-                nestedClass ->
-                val jClass = (nestedClass as ClassDescriptor).toJavaClass()
-                jClass?.let { KClassImpl(it) }
-            }
+            descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry)
+                .mapNotNull { nestedClass ->
+                    val jClass = (nestedClass as ClassDescriptor).toJavaClass()
+                    jClass?.let { KClassImpl(it) }
+                }
         }
 
         @Suppress("UNCHECKED_CAST")
@@ -107,8 +108,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
 
             val field = if (descriptor.isCompanionObject && !CompanionObjectMapping.isMappedIntrinsicCompanionObject(descriptor)) {
                 jClass.enclosingClass.getDeclaredField(descriptor.name.asString())
-            }
-            else {
+            } else {
                 jClass.getDeclaredField(JvmAbi.INSTANCE_FIELD)
             }
             field.get(null) as T
@@ -127,12 +127,11 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
                     if (superClass !is ClassDescriptor) throw KotlinReflectionInternalError("Supertype not a class: $superClass")
 
                     val superJavaClass = superClass.toJavaClass()
-                                         ?: throw KotlinReflectionInternalError("Unsupported superclass of $this: $superClass")
+                            ?: throw KotlinReflectionInternalError("Unsupported superclass of $this: $superClass")
 
                     if (jClass.superclass == superJavaClass) {
                         jClass.genericSuperclass
-                    }
-                    else {
+                    } else {
                         val index = jClass.interfaces.indexOf(superJavaClass)
                         if (index < 0) throw KotlinReflectionInternalError("No superclass of $this in Java reflection for $superClass")
                         jClass.genericInterfaces[index]
@@ -150,11 +149,11 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
 
         val declaredNonStaticMembers: Collection<KCallableImpl<*>>
                 by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
-        val declaredStaticMembers: Collection<KCallableImpl<*>>
+        private val declaredStaticMembers: Collection<KCallableImpl<*>>
                 by ReflectProperties.lazySoft { getMembers(staticScope, DECLARED) }
-        val inheritedNonStaticMembers: Collection<KCallableImpl<*>>
+        private val inheritedNonStaticMembers: Collection<KCallableImpl<*>>
                 by ReflectProperties.lazySoft { getMembers(memberScope, INHERITED) }
-        val inheritedStaticMembers: Collection<KCallableImpl<*>>
+        private val inheritedStaticMembers: Collection<KCallableImpl<*>>
                 by ReflectProperties.lazySoft { getMembers(staticScope, INHERITED) }
 
         val allNonStaticMembers: Collection<KCallableImpl<*>>
@@ -191,12 +190,12 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
 
     override fun getProperties(name: Name): Collection<PropertyDescriptor> =
-            (memberScope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION) +
-             staticScope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION))
+        (memberScope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION) +
+                staticScope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION))
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> =
-            memberScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION) +
-            staticScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
+        memberScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION) +
+                staticScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override fun getLocalProperty(index: Int): PropertyDescriptor? {
         // TODO: also check that this is a synthetic class (Metadata.k == 3)
@@ -209,9 +208,9 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
 
         return (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
-            val proto = descriptor.classProto.getExtension(JvmProtoBuf.classLocalVariable, index)
-            val nameResolver = descriptor.c.nameResolver
-            deserializeToDescriptor(jClass, proto, nameResolver, descriptor.c.typeTable, MemberDeserializer::loadProperty)
+            descriptor.classProto.getExtensionOrNull(JvmProtoBuf.classLocalVariable, index)?.let { proto ->
+                deserializeToDescriptor(jClass, proto, descriptor.c.nameResolver, descriptor.c.typeTable, MemberDeserializer::loadProperty)
+            }
         }
     }
 
@@ -262,10 +261,10 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         get() = descriptor.isCompanionObject
 
     override fun equals(other: Any?): Boolean =
-            other is KClassImpl<*> && javaObjectType == other.javaObjectType
+        other is KClassImpl<*> && javaObjectType == other.javaObjectType
 
     override fun hashCode(): Int =
-            javaObjectType.hashCode()
+        javaObjectType.hashCode()
 
     override fun toString(): String {
         return "class " + classId.let { classId ->
@@ -281,15 +280,15 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         when (kind) {
             KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                 throw UnsupportedOperationException(
-                        "Packages and file facades are not yet supported in Kotlin reflection. " +
-                        "Meanwhile please use Java reflection to inspect this class: $jClass"
+                    "Packages and file facades are not yet supported in Kotlin reflection. " +
+                            "Meanwhile please use Java reflection to inspect this class: $jClass"
                 )
             }
             KotlinClassHeader.Kind.SYNTHETIC_CLASS -> {
                 throw UnsupportedOperationException(
-                        "This class is an internal synthetic class generated by the Kotlin compiler, such as an anonymous class " +
-                        "for a lambda, a SAM wrapper, a callable reference, etc. It's not a Kotlin class or interface, so the reflection " +
-                        "library has no idea what declarations does it have. Please use Java reflection to inspect this class: $jClass"
+                    "This class is an internal synthetic class generated by the Kotlin compiler, such as an anonymous class " +
+                            "for a lambda, a SAM wrapper, a callable reference, etc. It's not a Kotlin class or interface, so the reflection " +
+                            "library has no idea what declarations does it have. Please use Java reflection to inspect this class: $jClass"
                 )
             }
             KotlinClassHeader.Kind.UNKNOWN -> {

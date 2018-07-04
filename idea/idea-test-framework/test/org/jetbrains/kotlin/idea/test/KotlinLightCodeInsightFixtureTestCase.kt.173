@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.codeInsight.CodeInsightTestCase
 import com.intellij.codeInsight.daemon.impl.EditorTracker
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -22,6 +23,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.ProjectScope
@@ -227,5 +229,14 @@ fun Project.allKotlinFiles(): List<KtFile> {
         .filterIsInstance<KtFile>()
 }
 
+fun Project.allJavaFiles(): List<PsiJavaFile> {
+    val virtualFiles = FileTypeIndex.getFiles(JavaFileType.INSTANCE, ProjectScope.getProjectScope(this))
+    return virtualFiles
+        .map { PsiManager.getInstance(this).findFile(it) }
+        .filterIsInstance<PsiJavaFile>()
+}
+
 fun Project.findFileWithCaret() =
-    allKotlinFiles().single { "<caret>" in VfsUtilCore.loadText(it.virtualFile) }
+    (allKotlinFiles() + allJavaFiles()).single {
+        "<caret>" in VfsUtilCore.loadText(it.virtualFile) && !it.virtualFile.name.endsWith(".after")
+    }

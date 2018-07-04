@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.*
 
@@ -14,6 +15,17 @@ class IrModuleToJsTransformer(val backendContext: JsIrBackendContext) : BaseIrEl
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): JsNode {
         val program = JsProgram()
         val rootContext = JsGenerationContext(JsRootScope(program), backendContext)
+
+        // TODO: fix it up with new name generator
+        val symbolTable = backendContext.symbolTable
+
+        val anySymbol = symbolTable.referenceClass(backendContext.builtIns.any)
+        val throwableSymbol = symbolTable.referenceClass(backendContext.builtIns.throwable)
+        val anyName = rootContext.getNameForSymbol(anySymbol)
+        val throwableName = rootContext.getNameForSymbol(throwableSymbol)
+
+        program.globalBlock.statements += JsVars(JsVars.JsVar(anyName, Namer.JS_OBJECT))
+        program.globalBlock.statements += JsVars(JsVars.JsVar(throwableName, Namer.JS_ERROR))
 
         declaration.files.forEach {
             program.globalBlock.statements.add(it.accept(IrFileToJsTransformer(), rootContext))
@@ -38,7 +50,12 @@ class IrModuleToJsTransformer(val backendContext: JsIrBackendContext) : BaseIrEl
         return statements
     }
 
-    private fun addPostDeclaration(name: JsName, visited: MutableSet<JsName>, statements: MutableList<JsStatement>, classModels: Map<JsName, JsClassModel>) {
+    private fun addPostDeclaration(
+        name: JsName,
+        visited: MutableSet<JsName>,
+        statements: MutableList<JsStatement>,
+        classModels: Map<JsName, JsClassModel>
+    ) {
         if (visited.add(name)) {
             classModels[name]?.run {
                 superName?.let { addPostDeclaration(it, visited, statements, classModels) }

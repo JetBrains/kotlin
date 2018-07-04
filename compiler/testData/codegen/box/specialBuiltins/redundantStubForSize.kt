@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 open class A1 {
     open val size: Int = 56
 }

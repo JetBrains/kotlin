@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -606,23 +607,27 @@ private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<In
     return instructions
 }
 
-fun ExtractionData.isVisibilityApplicable(): Boolean {
+fun ExtractionData.isLocal(): Boolean {
     val parent = targetSibling.parent
-    if (parent !is KtClassBody && (parent !is KtFile || parent.isScript())) return false
+    return parent !is KtClassBody && (parent !is KtFile || parent.isScript())
+}
+
+fun ExtractionData.isVisibilityApplicable(): Boolean {
+    if (isLocal()) return false
     if (commonParent.parentsWithSelf.any { it is KtNamedFunction && it.hasModifier(KtTokens.INLINE_KEYWORD) && it.isPublic }) return false
     return true
 }
 
-fun ExtractionData.getDefaultVisibility(): String {
-    if (!isVisibilityApplicable()) return ""
+fun ExtractionData.getDefaultVisibility(): KtModifierKeywordToken? {
+    if (!isVisibilityApplicable()) return null
 
     val parent = targetSibling.getStrictParentOfType<KtDeclaration>()
     if (parent is KtClass) {
-        if (parent.isInterface()) return ""
-        if (parent.isEnum() && commonParent.getNonStrictParentOfType<KtEnumEntry>()?.getStrictParentOfType<KtClass>() == parent) return ""
+        if (parent.isInterface()) return null
+        if (parent.isEnum() && commonParent.getNonStrictParentOfType<KtEnumEntry>()?.getStrictParentOfType<KtClass>() == parent) return null
     }
 
-    return "private"
+    return KtTokens.PRIVATE_KEYWORD
 }
 
 fun ExtractionData.performAnalysis(): AnalysisResult {

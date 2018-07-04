@@ -15,14 +15,18 @@
  */
 
 @file:JvmName("KTypesJvm")
+
 package kotlin.reflect.jvm
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS
 import org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE
-import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.KClass
+import kotlin.reflect.KClassifier
+import kotlin.reflect.KType
+import kotlin.reflect.KTypeParameter
 import kotlin.reflect.jvm.internal.KTypeImpl
+import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
 /**
  * Returns the [KClass] instance representing the runtime class to which this type is erased to on JVM.

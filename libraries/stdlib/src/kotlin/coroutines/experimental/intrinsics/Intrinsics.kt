@@ -57,5 +57,4 @@ public inline fun <T> Continuation<T>.intercepted(): Continuation<T> =
  * the execution was suspended and will not return any result immediately.
  */
 @SinceKotlin("1.1")
-public val COROUTINE_SUSPENDED: Any = Any()
-
+public expect val COROUTINE_SUSPENDED: Any // get() = CoroutineSuspendedMarker

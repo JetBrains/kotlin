@@ -29,6 +29,21 @@ public class DiagnosticsWithUnsignedTypesGenerated extends AbstractDiagnosticsWi
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithUnsignedTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("allowedVarargsOfUnsignedTypes.kt")
+    public void testAllowedVarargsOfUnsignedTypes() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/allowedVarargsOfUnsignedTypes.kt");
+    }
+
+    @TestMetadata("explicitUnsignedLongTypeCheck.kt")
+    public void testExplicitUnsignedLongTypeCheck() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/explicitUnsignedLongTypeCheck.kt");
+    }
+
+    @TestMetadata("forbiddenEqualsOnUnsignedTypes.kt")
+    public void testForbiddenEqualsOnUnsignedTypes() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/forbiddenEqualsOnUnsignedTypes.kt");
+    }
+
     @TestMetadata("overloadResolutionOfBasicOperations.kt")
     public void testOverloadResolutionOfBasicOperations() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/overloadResolutionOfBasicOperations.kt");
@@ -47,5 +62,15 @@ public class DiagnosticsWithUnsignedTypesGenerated extends AbstractDiagnosticsWi
     @TestMetadata("unsignedLiteralsTypeCheck.kt")
     public void testUnsignedLiteralsTypeCheck() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/unsignedLiteralsTypeCheck.kt");
+    }
+
+    @TestMetadata("varargTypeToArrayTypeCheck.kt")
+    public void testVarargTypeToArrayTypeCheck() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/varargTypeToArrayTypeCheck.kt");
+    }
+
+    @TestMetadata("wrongLongSuffixForULong.kt")
+    public void testWrongLongSuffixForULong() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/wrongLongSuffixForULong.kt");
     }
 }

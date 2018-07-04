@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/forWithBreakContinue.kt
-  FUN name:testForBreak1 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:Unit flags:
+  FUN name:testForBreak1 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String> flags:
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
                 $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
             BLOCK type=kotlin.Nothing origin=null
               BREAK label=null loop.label=null
-  FUN name:testForBreak2 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:Unit flags:
+  FUN name:testForBreak2 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String> flags:
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
                       BREAK label=INNER loop.label=INNER
                       BREAK label=null loop.label=INNER
               BREAK label=OUTER loop.label=OUTER
-  FUN name:testForContinue1 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:Unit flags:
+  FUN name:testForContinue1 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String> flags:
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/forWithBreakContinue.kt
                 $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
             BLOCK type=kotlin.Nothing origin=null
               CONTINUE label=null loop.label=null
-  FUN name:testForContinue2 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:Unit flags:
+  FUN name:testForContinue2 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String> flags:
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP

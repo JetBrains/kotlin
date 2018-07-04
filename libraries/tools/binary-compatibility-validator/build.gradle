@@ -6,10 +6,13 @@ configurations {
 
 dependencies {
     compile project(':kotlin-stdlib')
-    compile project(':kotlinx-metadata')
-    compile project(':kotlinx-metadata-jvm')
+    compileOnly project(':kotlinx-metadata')
+    compileOnly project(':kotlinx-metadata-jvm')
     compile 'org.ow2.asm:asm:6.0'
     compile 'org.ow2.asm:asm-tree:6.0'
+
+    runtime project(path: ':kotlinx-metadata-jvm', configuration: 'runtime')
+
     testCompile project(':kotlin-test:kotlin-test-junit')
 
     testArtifacts project(':kotlin-stdlib')

@@ -154,7 +154,7 @@ open class KotlinUSimpleReferenceExpression(
 
         override fun resolve(): PsiMethod? {
             val source = accessorDescriptor.toSource()
-            return KotlinUFunctionCallExpression.resolveSource(accessorDescriptor, source)
+            return resolveSource(psi, accessorDescriptor, source)
         }
     }
 

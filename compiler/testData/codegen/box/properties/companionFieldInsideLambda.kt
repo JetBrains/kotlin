@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class My {
     companion object {
         val my: String = "O"

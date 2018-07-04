@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun aa(vararg a : String): String = a[0]
 
 fun box(): String {

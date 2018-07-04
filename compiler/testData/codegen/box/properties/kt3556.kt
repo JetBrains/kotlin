@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class Test {
     val a : String = "1"
     private val b : String get() = a

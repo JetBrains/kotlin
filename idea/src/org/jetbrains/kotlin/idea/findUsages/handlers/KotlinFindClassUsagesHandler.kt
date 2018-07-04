@@ -135,9 +135,14 @@ class KotlinFindClassUsagesHandler(
         }
 
         private fun processClassReferencesLater(classOrObject: KtClassOrObject) {
-            val searchParameters = KotlinReferencesSearchParameters(classOrObject,
-                                                                    scope = options.searchScope,
-                                                                    kotlinOptions = KotlinReferencesSearchOptions(acceptCompanionObjectMembers = true))
+            val searchParameters = KotlinReferencesSearchParameters(
+                classOrObject,
+                scope = options.searchScope,
+                kotlinOptions = KotlinReferencesSearchOptions(
+                    acceptCompanionObjectMembers = true,
+                    searchForExpectedUsages = kotlinOptions.searchExpected
+                )
+            )
             var usagesQuery = ReferencesSearch.search(searchParameters)
 
             if (kotlinOptions.isSkipImportStatements) {
@@ -146,8 +151,7 @@ class KotlinFindClassUsagesHandler(
 
             if (!kotlinOptions.searchConstructorUsages) {
                 usagesQuery = FilteredQuery(usagesQuery) { !it.isConstructorUsage(classOrObject) }
-            }
-            else if (!options.isUsages) {
+            } else if (!options.isUsages) {
                 usagesQuery = FilteredQuery(usagesQuery) { it.isConstructorUsage(classOrObject) }
             }
             addTask { usagesQuery.forEach(referenceProcessor) }

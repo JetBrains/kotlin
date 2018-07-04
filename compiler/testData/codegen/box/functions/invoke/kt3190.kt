@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 //KT-3190 Compiler crash if function called 'invoke' calls a closure
 // IGNORE_BACKEND: JS
 // JS backend does not allow to implement Function{N} interfaces

@@ -22,7 +22,6 @@ import com.intellij.openapi.externalSystem.service.project.wizard.ExternalModule
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -35,6 +34,7 @@ import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsContro
 import javax.swing.Icon
 
 class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
+    var commonModuleIsParent = false
     var commonModuleName: String? = null
     var jvmModuleName: String? = null
     var jdk: Sdk? = null
@@ -59,29 +59,23 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
         )
     }
 
-    override fun setupRootModel(modifiableRootModel: ModifiableRootModel) {
-        super.setupRootModel(modifiableRootModel)
-        if (commonModuleName.isNullOrEmpty()) {
-            val module = modifiableRootModel.module
-            val buildScriptData = getBuildScriptData(module) ?: return
-            val sdk = modifiableRootModel.sdk
-            GradleKotlinMPPCommonFrameworkSupportProvider().addSupport(buildScriptData, module, sdk, true)
-        }
-    }
-
     override fun setupModule(module: Module) {
         super.setupModule(module)
 
-        val contentRoot = module.rootManager.contentRoots.firstOrNull() ?: return
-        setupCommonModule(module, contentRoot)
-        setupPlatformModule(module, contentRoot, jvmModuleName, GradleKotlinMPPJavaFrameworkSupportProvider(), jdk)
-        setupPlatformModule(module, contentRoot, jsModuleName, GradleKotlinMPPJSFrameworkSupportProvider())
+        val rootDir = module.rootManager.contentRoots.firstOrNull() ?: return
+        val commonDir = setupCommonModule(module, rootDir)
+        val platformRootDir = if (commonModuleIsParent) commonDir else rootDir
+        setupPlatformModule(module, platformRootDir, jvmModuleName, GradleKotlinMPPJavaFrameworkSupportProvider(), jdk)
+        setupPlatformModule(module, platformRootDir, jsModuleName, GradleKotlinMPPJSFrameworkSupportProvider())
 
-        val settingsGradle = contentRoot.findChild("settings.gradle")
+        val settingsGradle = rootDir.findChild("settings.gradle")
         settingsGradle?.let {
             module.project.executeCommand("Update settings.gradle") {
                 val doc = FileDocumentManager.getInstance().getDocument(it) ?: return@executeCommand
-                val includedModules = listOfNotNull(commonModuleName, jvmModuleName, jsModuleName).filter { it.isNotEmpty() }
+                val includedModules = listOfNotNull(commonModuleName, jvmModuleName, jsModuleName).filter { it.isNotEmpty() }.map {
+                    if (!commonModuleIsParent || it == commonModuleName) it
+                    else "$commonModuleName:$it"
+                }
                 if (includedModules.isNotEmpty()) {
                     doc.insertString(doc.textLength, includedModules.joinToString(prefix = "include ") { "'$it'" })
                 }
@@ -92,34 +86,35 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
 
     private fun setupChildModule(
         rootModule: Module,
-        contentRoot: VirtualFile,
+        parentDir: VirtualFile?,
         childModuleName: String?,
         sdk: Sdk? = null,
         extendScript: (BuildScriptDataBuilder, Sdk?) -> Unit = { _, _ -> }
-    ) {
-        if (childModuleName.isNullOrEmpty()) return
+    ): VirtualFile? {
+        if (parentDir == null || childModuleName.isNullOrEmpty()) return null
 
-        val moduleDir = contentRoot.createChildDirectory(this, childModuleName!!)
+        val moduleDir = parentDir.createChildDirectory(this, childModuleName!!)
         val buildGradle = moduleDir.createChildData(null, "build.gradle")
         val buildScriptData = BuildScriptDataBuilder(buildGradle)
         extendScript(buildScriptData, sdk ?: rootModule.rootManager.sdk)
         VfsUtil.saveText(buildGradle, buildScriptData.build())
+        return moduleDir
     }
 
     private fun setupCommonModule(
         rootModule: Module,
-        contentRoot: VirtualFile
-    ) = setupChildModule(rootModule, contentRoot, commonModuleName) { builder, sdk ->
+        parentDir: VirtualFile?
+    ) = setupChildModule(rootModule, parentDir, commonModuleName) { builder, sdk ->
         GradleKotlinMPPCommonFrameworkSupportProvider().addSupport(builder, rootModule, sdk, true)
     }
 
     private fun setupPlatformModule(
         rootModule: Module,
-        contentRoot: VirtualFile,
+        parentDir: VirtualFile?,
         platformModuleName: String?,
         supportProvider: GradleKotlinFrameworkSupportProvider,
         sdk: Sdk? = null
-    ) = setupChildModule(rootModule, contentRoot, platformModuleName, sdk) { builder, finalSdk ->
+    ) = setupChildModule(rootModule, parentDir, platformModuleName, sdk) { builder, finalSdk ->
         supportProvider.addSupport(builder, rootModule, finalSdk, true)
         val dependency = commonModuleName ?: ""
         builder.addDependencyNotation("expectedBy project(\":$dependency\")")

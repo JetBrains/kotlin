@@ -132,7 +132,7 @@ abstract class BasicBoxTest(
             }
 
             val mainModuleName = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
-            val mainModule = modules[mainModuleName]!!
+            val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
 
             val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
                     TEST_DATA_DIR_PATH + COMMON_FILES_DIR, JavaScript.EXTENSION)
@@ -545,7 +545,11 @@ abstract class BasicBoxTest(
         val psiManager = PsiManager.getInstance(project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
-        return psiManager.findFile(fileSystem.findFileByPath(fileName)!!) as KtFile
+        val file = fileSystem.findFileByPath(fileName)
+        if (file == null)
+            error("File not found: ${fileName}")
+
+        return psiManager.findFile(file) as KtFile
     }
 
     private fun createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)

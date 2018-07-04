@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.types.expressions;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Ref;
@@ -233,7 +232,7 @@ public class ControlStructureTypingUtils {
             @NotNull DataFlowInfo thenInfo,
             @NotNull DataFlowInfo elseInfo
     ) {
-        Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap = Maps.newHashMap();
+        Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap = new HashMap<>();
         dataFlowInfoForArgumentsMap.put(callForIf.getValueArguments().get(0), thenInfo);
         dataFlowInfoForArgumentsMap.put(callForIf.getValueArguments().get(1), elseInfo);
         return createIndependentDataFlowInfoForArgumentsForCall(conditionInfo, dataFlowInfoForArgumentsMap);
@@ -244,7 +243,7 @@ public class ControlStructureTypingUtils {
             @NotNull DataFlowInfo subjectDataFlowInfo,
             @NotNull List<DataFlowInfo> entryDataFlowInfos
     ) {
-        Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap = Maps.newHashMap();
+        Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap = new HashMap<>();
         int i = 0;
         for (ValueArgument argument : callForWhen.getValueArguments()) {
             DataFlowInfo entryDataFlowInfo = entryDataFlowInfos.get(i++);

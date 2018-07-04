@@ -355,15 +355,15 @@ fun main(args: Array<String>) {
 
     testGroup("compiler/tests-ir-jvm/tests", "compiler/testData") {
         testClass<AbstractIrBlackBoxCodegenTest> {
-            model("codegen/box", targetBackend = TargetBackend.JVM)
+            model("codegen/box", targetBackend = TargetBackend.JVM_IR)
         }
 
         testClass<AbstractIrBlackBoxInlineCodegenTest> {
-            model("codegen/boxInline")
+            model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
         }
 
         testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
-            model("codegen/boxInline")
+            model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
         }
     }
 }

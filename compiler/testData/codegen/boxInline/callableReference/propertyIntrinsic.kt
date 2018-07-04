@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 // Enable when callable references to builtin members and using lambdas as extension lambdas (KT-13312) is supported
 // FILE: 1.kt
 

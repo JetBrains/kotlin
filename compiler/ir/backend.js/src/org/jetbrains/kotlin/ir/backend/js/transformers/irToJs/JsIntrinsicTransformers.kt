@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.js.backend.ast.*
 
 typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpression
@@ -37,6 +36,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             binOp(intrinsics.jsLtEq, JsBinaryOperator.LTE)
 
             prefixOp(intrinsics.jsNot, JsUnaryOperator.NOT)
+            binOp(intrinsics.jsAnd, JsBinaryOperator.AND)
+            binOp(intrinsics.jsOr, JsBinaryOperator.OR)
 
             prefixOp(intrinsics.jsUnaryPlus, JsUnaryOperator.POS)
             prefixOp(intrinsics.jsUnaryMinus, JsUnaryOperator.NEG)
@@ -63,9 +64,11 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             binOp(intrinsics.jsInstanceOf, JsBinaryOperator.INSTANCEOF)
 
+            prefixOp(intrinsics.jsTypeOf, JsUnaryOperator.TYPEOF)
+
             add(intrinsics.jsObjectCreate) { call, context ->
                 val classToCreate = call.getTypeArgument(0)!!
-                val className = context.getNameForSymbol(IrClassSymbolImpl(classToCreate.constructor.declarationDescriptor as ClassDescriptor))
+                val className = context.getNameForSymbol(classToCreate.classifierOrFail)
                 val prototype = prototypeOf(className.makeRef())
                 JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototype)
             }
@@ -79,6 +82,11 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val fieldNameLiteral = fieldName.value!!
 
                 jsAssignment(JsNameRef(fieldNameLiteral, receiver), fieldValue)
+            }
+
+            add(intrinsics.jsToJsType) { call, context ->
+                val typeName = context.getNameForSymbol(call.getTypeArgument(0)!!.classifierOrFail)
+                typeName.makeRef()
             }
 
             add(backendContext.sharedVariablesManager.closureBoxConstructorTypeSymbol) { call, context ->

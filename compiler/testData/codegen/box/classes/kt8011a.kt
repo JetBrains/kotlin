@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun testFun1(str: String): String {
     val capture = str
 

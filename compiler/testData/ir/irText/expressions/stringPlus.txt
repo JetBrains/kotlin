@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/stringPlus.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Any) returnType:String flags:
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Any) returnType:kotlin.String flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Any flags:
     BLOCK_BODY
@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/stringPlus.kt
         CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
           $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
           other: GET_VAR 'value-parameter b: Any' type=kotlin.Any origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:String flags:
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/stringPlus.kt
             $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
             other: CONST String type=kotlin.String value=+
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:String flags:
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY

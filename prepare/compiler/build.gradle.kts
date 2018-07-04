@@ -30,14 +30,14 @@ val compile by configurations
 
 val compilerBaseName = name
 
-val outputJar = File(buildDir, "libs", "$compilerBaseName.jar")
+val outputJar = fileFrom(buildDir, "libs", "$compilerBaseName.jar")
 
 val compilerModules: Array<String> by rootProject.extra
 
 compilerModules.forEach { evaluationDependsOn(it) }
 
 val compiledModulesSources = compilerModules.map {
-    project(it).the<JavaPluginConvention>().sourceSets.getByName("main").allSource
+    project(it).mainSourceSet.allSource
 }
 
 dependencies {
@@ -97,7 +97,7 @@ val proguard by task<ProGuardTask> {
     dependsOn(packCompiler)
     configuration("$rootDir/compiler/compiler.pro")
 
-    val outputJar = File(buildDir, "libs", "$compilerBaseName-after-proguard.jar")
+    val outputJar = fileFrom(buildDir, "libs", "$compilerBaseName-after-proguard.jar")
 
     inputs.files(packCompiler.outputs.files.singleFile)
     outputs.file(outputJar)

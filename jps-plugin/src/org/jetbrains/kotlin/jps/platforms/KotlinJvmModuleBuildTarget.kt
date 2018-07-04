@@ -9,42 +9,81 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.util.containers.MultiMap
 import com.intellij.util.io.URLUtil
+import gnu.trove.THashSet
 import org.jetbrains.jps.ModuleChunk
-import org.jetbrains.jps.builders.DirtyFilesHolder
-import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
+import org.jetbrains.jps.builders.java.JavaBuilderUtil
+import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsSdkDependency
+import org.jetbrains.kotlin.build.GeneratedFile
+import org.jetbrains.kotlin.build.GeneratedJvmClass
+import org.jetbrains.kotlin.build.JvmBuildMetaInfo
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.jps.build.FSOperationsHelper
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.ChangesCollector
+import org.jetbrains.kotlin.incremental.IncrementalCompilationComponentsImpl
+import org.jetbrains.kotlin.incremental.IncrementalJvmCache
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.updateIncrementalCache
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
-import org.jetbrains.kotlin.jps.build.KotlinSourceFileCollector
-import org.jetbrains.kotlin.jps.build.processedTargetsWithRemovedFilesContainer
+import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
+import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
+import org.jetbrains.kotlin.jps.incremental.JpsIncrementalJvmCache
 import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
+import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.utils.keysToMap
+import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.io.IOException
 
+private const val JVM_BUILD_META_INFO_FILE_NAME = "jvm-build-meta-info.txt"
+
 class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
-    KotlinModuleBuilderTarget(compileContext, jpsModuleBuildTarget) {
+    KotlinModuleBuildTarget<JvmBuildMetaInfo>(compileContext, jpsModuleBuildTarget) {
+
+    override fun createCacheStorage(paths: BuildDataPaths) = JpsIncrementalJvmCache(jpsModuleBuildTarget, paths)
+
+    override val buildMetaInfoFactory
+        get() = JvmBuildMetaInfo
+
+    override val buildMetaInfoFileName
+        get() = JVM_BUILD_META_INFO_FILE_NAME
+
+    override fun makeServices(
+        builder: Services.Builder,
+        incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCache>,
+        lookupTracker: LookupTracker,
+        exceptActualTracer: ExpectActualTracker
+    ) {
+        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer)
+
+        with(builder) {
+            register(
+                IncrementalCompilationComponents::class.java,
+                IncrementalCompilationComponentsImpl(
+                    incrementalCaches.mapKeys { context.kotlinBuildTargets[it.key]!!.targetId } as Map<TargetId, IncrementalCache>
+                )
+            )
+        }
+    }
 
     override fun compileModuleChunk(
-        allCompiledFiles: MutableSet<File>,
         chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
-        dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-        environment: JpsCompilerEnvironment,
-        filesToCompile: MultiMap<ModuleBuildTarget, File>,
-        fsOperations: FSOperationsHelper
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
+        environment: JpsCompilerEnvironment
     ): Boolean {
         if (chunk.modules.size > 1) {
             environment.messageCollector.report(
@@ -55,34 +94,28 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
             )
         }
 
-        allCompiledFiles.addAll(filesToCompile.values())
+        val filesSet = dirtyFilesHolder.allDirtyFiles
 
-        val processedTargetsWithRemoved = context.processedTargetsWithRemovedFilesContainer
-
-        var totalRemovedFiles = 0
-        for (target in chunk.targets) {
-            val removedFilesInTarget = KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target)
-            if (!removedFilesInTarget.isEmpty()) {
-                if (processedTargetsWithRemoved.add(target)) {
-                    totalRemovedFiles += removedFilesInTarget.size
-                }
-            }
-        }
-
-        val moduleFile = generateModuleDescription(context, chunk, filesToCompile, totalRemovedFiles != 0)
+        val moduleFile = generateModuleDescription(chunk, dirtyFilesHolder)
         if (moduleFile == null) {
-            KotlinBuilder.LOG.debug(
-                "Not compiling, because no files affected: " + filesToCompile.keySet().joinToString { it.presentableName }
-            )
+            if (KotlinBuilder.LOG.isDebugEnabled) {
+                KotlinBuilder.LOG.debug(
+                    "Not compiling, because no files affected: " + chunk.targets.joinToString { it.presentableName }
+                )
+            }
+
             // No Kotlin sources found
             return false
         }
 
         val module = chunk.representativeTarget().module
 
-        KotlinBuilder.LOG.debug("Compiling to JVM ${filesToCompile.values().size} files"
-                                        + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
-                                        + " in " + filesToCompile.keySet().joinToString { it.presentableName })
+        if (KotlinBuilder.LOG.isDebugEnabled) {
+            val totalRemovedFiles = dirtyFilesHolder.allRemovedFilesFiles.size
+            KotlinBuilder.LOG.debug("Compiling to JVM ${filesSet.size} files"
+                                            + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
+                                            + " in " + chunk.targets.joinToString { it.presentableName })
+        }
 
         try {
             val compilerRunner = JpsKotlinCompilerRunner()
@@ -102,39 +135,22 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
         return true
     }
 
-    fun generateModuleDescription(
-        context: CompileContext,
-        chunk: ModuleChunk,
-        sourceFiles: MultiMap<ModuleBuildTarget, File>, // ignored for non-incremental compilation
-        hasRemovedFiles: Boolean
-    ): File? {
+    private fun generateModuleDescription(chunk: ModuleChunk, dirtyFilesHolder: KotlinDirtySourceFilesHolder): File? {
         val builder = KotlinModuleXmlBuilder()
 
-        var noSources = true
+        var hasDirtySources = false
 
         val targets = chunk.targets.mapNotNull { this.context.kotlinBuildTargets[it] as? KotlinJvmModuleBuildTarget }
 
         val outputDirs = targets.map { it.outputDir }.toSet()
 
-        val logger = context.loggingManager.projectBuilderLogger
         for (target in targets) {
             val outputDir = target.outputDir
             val friendDirs = target.friendOutputDirs
 
-            val moduleSources =
-                if (IncrementalCompilation.isEnabled() && target.expectedBy.isEmpty()) {
-                    sourceFiles.get(target.jpsModuleBuildTarget)
-                } else {
-                    target.sources
-                }
-
-            if (moduleSources.isNotEmpty() || hasRemovedFiles) {
-                noSources = false
-
-                if (logger.isEnabled) {
-                    logger.logCompiledFiles(moduleSources, KotlinBuilder.KOTLIN_BUILDER_NAME, "Compiling files:")
-                }
-            }
+            val moduleSources = collectSourcesToCompile(target, dirtyFilesHolder)
+            val hasDirtyOrRemovedSources = checkShouldCompileAndLog(target, dirtyFilesHolder, moduleSources)
+            if (hasDirtyOrRemovedSources) hasDirtySources = true
 
             val kotlinModuleId = target.targetId
             builder.addModule(
@@ -152,7 +168,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
             )
         }
 
-        if (noSources) return null
+        if (!hasDirtySources) return null
 
         val scriptFile = createTempFileForModuleDesc(chunk)
         FileUtil.writeToFile(scriptFile, builder.asText().toString())
@@ -186,13 +202,13 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
         }
     }
 
-    fun findClassPathRoots(): Collection<File> {
+    private fun findClassPathRoots(): Collection<File> {
         return allDependencies.classes().roots.filter { file ->
             if (!file.exists()) {
                 val extension = file.extension
 
                 // Don't filter out files, we want to report warnings about absence through the common place
-                if (!(extension == "class" || extension == "jar")) {
+                if (extension != "class" && extension != "jar") {
                     return@filter false
                 }
             }
@@ -201,7 +217,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
         }
     }
 
-    fun findModularJdkRoot(): File? {
+    private fun findModularJdkRoot(): File? {
         // List of paths to JRE modules in the following format:
         // jrt:///Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home!/java.base
         val urls = JpsJavaExtensionService.dependencies(module)
@@ -213,7 +229,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
         return File(url.substringAfter(StandardFileSystems.JRT_PROTOCOL_PREFIX).substringBeforeLast(URLUtil.JAR_SEPARATOR))
     }
 
-    fun findSourceRoots(context: CompileContext): List<JvmSourceRoot> {
+    private fun findSourceRoots(context: CompileContext): List<JvmSourceRoot> {
         val roots = context.projectDescriptor.buildRootIndex.getTargetRoots(jpsModuleBuildTarget, context)
         val result = ContainerUtil.newArrayList<JvmSourceRoot>()
         for (root in roots) {
@@ -224,5 +240,65 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
             }
         }
         return result
+    }
+
+    override fun updateCaches(
+        jpsIncrementalCache: JpsIncrementalCache,
+        files: List<GeneratedFile>,
+        changesCollector: ChangesCollector,
+        environment: JpsCompilerEnvironment
+    ) {
+        super.updateCaches(jpsIncrementalCache, files, changesCollector, environment)
+
+        updateIncrementalCache(files, jpsIncrementalCache as IncrementalJvmCache, changesCollector, null)
+    }
+
+    override fun updateChunkMappings(
+        chunk: ModuleChunk,
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
+        outputItems: Map<ModuleBuildTarget, Iterable<GeneratedFile>>,
+        incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCache>
+    ) {
+        val previousMappings = context.projectDescriptor.dataManager.mappings
+        val callback = JavaBuilderUtil.getDependenciesRegistrar(context)
+
+        val targetDirtyFiles: Map<ModuleBuildTarget, Set<File>> = chunk.targets.keysToMap {
+            val files = HashSet<File>()
+            files.addAll(dirtyFilesHolder.getRemovedFiles(it))
+            files.addAll(dirtyFilesHolder.getDirtyFiles(it))
+            files
+        }
+
+        fun getOldSourceFiles(target: ModuleBuildTarget, generatedClass: GeneratedJvmClass): Set<File> {
+            val cache = incrementalCaches[target] ?: return emptySet()
+            cache as JpsIncrementalJvmCache
+
+            val className = generatedClass.outputClass.className
+            if (!cache.isMultifileFacade(className)) return emptySet()
+
+            val name = previousMappings.getName(className.internalName)
+            return previousMappings.getClassSources(name)?.toSet() ?: emptySet()
+        }
+
+        for ((target, outputs) in outputItems) {
+            for (output in outputs) {
+                if (output !is GeneratedJvmClass) continue
+
+                val sourceFiles = THashSet(FileUtil.FILE_HASHING_STRATEGY)
+                sourceFiles.addAll(getOldSourceFiles(target, output))
+                sourceFiles.removeAll(targetDirtyFiles[target] ?: emptySet())
+                sourceFiles.addAll(output.sourceFiles)
+
+                callback.associate(
+                    FileUtil.toSystemIndependentName(output.outputFile.canonicalPath),
+                    sourceFiles.map { FileUtil.toSystemIndependentName(it.canonicalPath) },
+                    ClassReader(output.outputClass.fileContents)
+                )
+            }
+        }
+
+        val allCompiled = dirtyFilesHolder.allDirtyFiles
+        JavaBuilderUtil.registerFilesToCompile(context, allCompiled)
+        JavaBuilderUtil.registerSuccessfullyCompiled(context, allCompiled)
     }
 }

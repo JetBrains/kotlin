@@ -102,7 +102,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         if (location == null) throw NoDataException.INSTANCE
 
         val fileName = location.safeSourceName ?: throw NoDataException.INSTANCE
-        val lineNumber = location.safeLineNumber
+        val lineNumber = location.safeLineNumber()
         if (lineNumber < 0) {
             throw NoDataException.INSTANCE
         }
@@ -136,7 +136,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         if (psiFile !is KtFile) throw NoDataException.INSTANCE
 
-        val sourceLineNumber = location.safeSourceLineNumber
+        val sourceLineNumber = location.safeSourceLineNumber()
         if (sourceLineNumber < 0) {
             throw NoDataException.INSTANCE
         }
@@ -156,7 +156,10 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             return SourcePosition.createFromLine(ktFile ?: psiFile, line - 1)
         }
 
-        val sameLineLocations = location.safeMethod?.safeAllLineLocations?.filter { it.safeLineNumber == lineNumber && it.safeSourceName == fileName }
+        val sameLineLocations = location.safeMethod()?.safeAllLineLocations()?.filter {
+            it.safeLineNumber() == lineNumber && it.safeSourceName == fileName
+        }
+
         if (sameLineLocations != null) {
             // There're several locations for same source line. If same source position would be created for all of them,
             // breakpoints at this line will stop on every location.
@@ -261,11 +264,6 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             null
         }
     }
-
-    private val Location.safeLineNumber: Int get() = DebuggerUtilsEx.getLineNumber(this, false)
-    private val Location.safeSourceLineNumber: Int get() = DebuggerUtilsEx.getLineNumber(this, true)
-    private val Location.safeMethod: Method? get() = DebuggerUtilsEx.getMethod(this)
-    private val Method.safeAllLineLocations: MutableList<Location>? get() = DebuggerUtilsEx.allLineLocations(this)
 
     private fun getPsiFileByLocation(location: Location): PsiFile? {
         val sourceName = location.safeSourceName ?: return null

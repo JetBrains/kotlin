@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 // FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: lParams$default
 package test

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS, NATIVE
 // reason - multifile tests are not supported in JS tests
 //FILE: Holder.java

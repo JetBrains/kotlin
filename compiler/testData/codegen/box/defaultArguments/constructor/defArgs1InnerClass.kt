@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class A {
     inner class B(val a: String = "a", val b: Int = 55, val c: String = "c")
 }

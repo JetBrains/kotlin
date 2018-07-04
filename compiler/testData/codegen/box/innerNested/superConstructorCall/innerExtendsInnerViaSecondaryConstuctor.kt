@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 open class Father(val param: String) {
     abstract inner class InClass {
         fun work(): String {

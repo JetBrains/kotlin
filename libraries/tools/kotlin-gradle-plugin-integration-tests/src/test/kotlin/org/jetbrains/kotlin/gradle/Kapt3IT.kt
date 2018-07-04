@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
+import org.junit.Assert
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
@@ -121,24 +122,6 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @Test
-    fun testArguments() {
-        Project("arguments", directoryPrefix = "kapt2").build("build") {
-            assertSuccessful()
-            assertKaptSuccessful()
-            assertContains(
-                "Options: {suffix=Customized, justColon=:, justEquals==, containsColon=a:b, " +
-                        "containsEquals=a=b, startsWithColon=:a, startsWithEquals==a, endsWithColon=a:, " +
-                        "endsWithEquals=a:, withSpace=a b c,"
-            )
-            assertContains("-Xmaxerrs=500, -Xlint:all=-Xlint:all") // Javac options test
-            assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
-            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
-            assertFileExists(javaClassesDir() + "example/TestClassCustomized.class")
-            assertContains("Annotation processor class names are set, skip AP discovery")
-        }
-    }
-
-    @Test
     fun testInheritedAnnotations() {
         Project("inheritedAnnotations", directoryPrefix = "kapt2").build("build") {
             assertSuccessful()
@@ -147,6 +130,24 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertFileExists("build/generated/source/kapt/main/example/AncestorClassGenerated.java")
             assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
             assertFileExists(javaClassesDir() + "example/AncestorClassGenerated.class")
+        }
+    }
+
+    @Test
+    fun testArguments() {
+        Project("arguments", directoryPrefix = "kapt2").build("build") {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertContains(
+                "AP options: {suffix=Customized, justColon=:, justEquals==, containsColon=a:b, " +
+                        "containsEquals=a=b, startsWithColon=:a, startsWithEquals==a, endsWithColon=a:, " +
+                        "endsWithEquals=a:, withSpace=a b c,"
+            )
+            assertContains("-Xmaxerrs=500, -Xlint:all=-Xlint:all") // Javac options test
+            assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            assertFileExists(javaClassesDir() + "example/TestClassCustomized.class")
+            assertContains("Annotation processor class names are set, skip AP discovery")
         }
     }
 
@@ -346,13 +347,22 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testLocationMapping() {
+        fun String.modifyNumbers(fn: (Int) -> Int): String =
+            replace("\\d+".toRegex()) { fn(it.value.toInt()).toString() }
+
         val project = Project("locationMapping", directoryPrefix = "kapt2")
+        val regex = "((Test\\.java)|(test\\.kt)):(\\d+): error: GenError element".toRegex()
+
+        fun CompiledProject.getErrorMessages(): String =
+            regex.findAll(output)
+                .map { it.value }
+                .joinToString("\n") { if (isWindows) it.modifyNumbers { it + 1 } else it }
 
         project.build("build") {
             assertFailed()
 
-            assertContains("Test.java:9: error: GenError element")
-            assertContains("Test.java:17: error: GenError element")
+            val expected = arrayOf(9, 17).joinToString("\n") { "Test.java:$it: error: GenError element" }
+            Assert.assertEquals(expected, getErrorMessages())
         }
 
         project.projectDir.getFileByName("build.gradle").modify {
@@ -362,11 +372,8 @@ open class Kapt3IT : Kapt3BaseIT() {
         project.build("build") {
             assertFailed()
 
-            assertNotContains("Test.java:9: error: GenError element")
-            assertNotContains("Test.java:17: error: GenError element")
-
-            assertContains("test.kt:3: error: GenError element")
-            assertContains("test.kt:7: error: GenError element")
+            val expected = arrayOf(3, 7).joinToString("\n") { "test.kt:$it: error: GenError element" }
+            Assert.assertEquals(expected, getErrorMessages())
         }
     }
 

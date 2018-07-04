@@ -31,6 +31,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
   <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>
   <depends optional="true" config-file="decompiler.xml">org.jetbrains.java.decompiler</depends>
+  <depends optional="true" config-file="git4idea.xml">Git4Idea</depends>
 
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
@@ -121,12 +122,6 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceField"/>
     </action>
 
-    <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
-            text="Copy Current File As Diagnostic Test">
-      <keyboard-shortcut keymap="$default" first-keystroke="control alt shift T"/>
-      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
-    </action>
-
     <group id="InternalKotlin" text="IDEA Internal Actions" internal="true">
       <separator/>
       <group id="KotlinInternalGroup" text="Kotlin" popup="true">
@@ -159,6 +154,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
         <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
                 text="Throw cached PCE"/>
+
+        <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
+                text="Copy Current File As Diagnostic Test"/>
       </group>
       <separator/>
 
@@ -477,6 +475,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <codeInsight.template.postfixTemplateProvider language="kotlin"
                                                   implementationClass="org.jetbrains.kotlin.idea.codeInsight.postfix.KtPostfixTemplateProvider"/>
 
+    <codeInsight.linkHandler prefix="#kotlinClass/" handlerClass="org.jetbrains.kotlin.idea.highlighter.markers.KotlinClassTooltipLinkHandler"/>
+
+    <defaultHighlightingSettingProvider language="kotlin" implementation="org.jetbrains.kotlin.idea.highlighter.KotlinDefaultHighlightingSettingsProvider"/>
 
     <typeDeclarationProvider implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinTypeDeclarationProvider"/>
 
@@ -1643,6 +1644,8 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
       <category>Kotlin</category>
     </intentionAction>
 
+    <lang.inspectionSuppressor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInspectionSuppressor"/>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupPath="Kotlin"
@@ -1887,7 +1890,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      shortName="KotlinDeprecation"
                      displayName="Usage of redundant or deprecated syntax or deprecated symbols"
                      groupPath="Kotlin"
-                     groupName="Other problems"
+                     groupName="Migration"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WARNING"
@@ -2836,11 +2839,11 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanSealedSubClassBeObjectInspection"
-                     displayName="Refactor Sealed Sub-class to Object"
+                     displayName="Sealed sub-class without state and overridden equals"
                      groupPath="Kotlin"
-                     groupName="Style issues"
+                     groupName="Probable bugs"
                      enabledByDefault="true"
-                     level="INFO"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 
@@ -2854,7 +2857,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MainFunctionReturnUnitInspection"
-                     displayName="Main function should return Unit"
+                     displayName="Entry point function should return Unit"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
@@ -2863,7 +2866,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.RedundantAsyncInspection"
-                     displayName="Redundant async call"
+                     displayName="Redundant 'async' call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
@@ -2877,6 +2880,33 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceStringFormatWithLiteralInspection"
+                     displayName="Replace with string templates"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+    
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.NestedLambdaShadowedImplicitParameterInspection"
+                     displayName="Nested lambda has shadowed implicit parameter"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceToStringWithStringTemplateInspection"
+                     displayName="Replace 'toString' with string template"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
                      language="kotlin"
     />
 
@@ -2919,6 +2949,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
   <extensionPoints>
     <xi:include href="extensions/compiler.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
+
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.pluginUpdateVerifier"
+                    interface="org.jetbrains.kotlin.idea.update.PluginUpdateVerifier"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">

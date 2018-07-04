@@ -74,9 +74,8 @@ projectTest("quickTest") {
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 
-val install by task<NpmTask> {
+val npmInstall by tasks.getting(NpmTask::class) {
     setWorkingDir(testDataDir)
-    setArgs(listOf("install"))
 }
 
 val runMocha by task<NpmTask> {
@@ -85,7 +84,8 @@ val runMocha by task<NpmTask> {
     val target = if (project.hasProperty("teamcity")) "runOnTeamcity" else "test"
     setArgs(listOf("run", target))
 
-    dependsOn(install, "test")
+
+    dependsOn(npmInstall, "test")
 
     val check by tasks
     check.dependsOn(this)

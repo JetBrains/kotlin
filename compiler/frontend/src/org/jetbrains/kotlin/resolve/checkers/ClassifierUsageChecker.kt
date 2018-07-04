@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DeprecationResolver
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 
 interface ClassifierUsageChecker {
     fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext)
@@ -55,16 +56,9 @@ fun checkClassifierUsages(
                 return
             }
 
-            val target = getReferencedClassifier(expression) ?: return
-
-            runCheckersWithTarget(target, expression)
-
-            getReferenceToCompanionViaClassifier(expression, target)?.let { referenceClassifier ->
-                val outerClass = target.containingDeclaration as ClassDescriptor
-                runCheckersWithTarget(outerClass, expression)
-                if (referenceClassifier is TypeAliasDescriptor) {
-                    runCheckersWithTarget(referenceClassifier, expression)
-                }
+            val targets = getReferencedClassifiers(expression)
+            for (target in targets) {
+                runCheckersWithTarget(target, expression)
             }
         }
 
@@ -74,28 +68,49 @@ fun checkClassifierUsages(
             }
         }
 
-        private fun getReferencedClassifier(expression: KtReferenceExpression): ClassifierDescriptor? {
+        private fun getReferencedClassifiers(expression: KtReferenceExpression): List<ClassifierDescriptor> {
             val target = context.trace.get(BindingContext.REFERENCE_TARGET, expression)
-            if (target is ClassifierDescriptor) return target
-            if (target is ClassConstructorDescriptor) return target.constructedClass
 
-            // "Comparable" in "import java.lang.Comparable" references both a class and a SAM constructor and prevents
-            // REFERENCE_TARGET from being recorded in favor of AMBIGUOUS_REFERENCE_TARGET. But we must still run checkers
-            // to report if there's something wrong with the class. We characterize this case below by the following properties:
-            // 1) Exactly one of the references is a classifier
-            // 2) All references refer to the same source element, i.e. their source is the same
-            val targets = context.trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression) ?: return null
-            if (targets.groupBy { (it as? DeclarationDescriptorWithSource)?.source }.size != 1) return null
-            return targets.filterIsInstance<ClassifierDescriptor>().singleOrNull()
+            return when (target) {
+                is ClassifierDescriptor ->
+                    listOfNotNull(
+                        target,
+                        getClassifierUsedToReferenceCompanionObject(target, expression)
+                    )
+
+                is ClassConstructorDescriptor -> listOf(target.constructedClass)
+
+                is FakeCallableDescriptorForTypeAliasObject -> {
+                    val referencedObject = target.getReferencedObject()
+                    val referencedTypeAlias = target.typeAliasDescriptor
+                    if (referencedObject != referencedTypeAlias.classDescriptor)
+                        listOf(referencedObject, referencedTypeAlias)
+                    else
+                        listOf(referencedTypeAlias)
+                }
+
+                else -> {
+                    // "Comparable" in "import java.lang.Comparable" references both a class and a SAM constructor and prevents
+                    // REFERENCE_TARGET from being recorded in favor of AMBIGUOUS_REFERENCE_TARGET. But we must still run checkers
+                    // to report if there's something wrong with the class. We characterize this case below by the following properties:
+                    // 1) Exactly one of the references is a classifier
+                    // 2) All references refer to the same source element, i.e. their source is the same
+                    val targets = context.trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression) ?: return emptyList()
+                    if (targets.groupBy { (it as? DeclarationDescriptorWithSource)?.source }.size != 1) return emptyList()
+                    val targetClassifiers = targets.filterIsInstance<ClassifierDescriptor>()
+                    if (targetClassifiers.size == 1) targetClassifiers else emptyList()
+                }
+            }
         }
 
-        private fun getReferenceToCompanionViaClassifier(
-            expression: KtReferenceExpression,
-            target: ClassifierDescriptor
-        ): ClassifierDescriptor? {
-            if (!DescriptorUtils.isCompanionObject(target)) return null
-            return context.trace.get(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression)
-        }
+        private fun getClassifierUsedToReferenceCompanionObject(
+            referencedObject: ClassifierDescriptor,
+            expression: KtReferenceExpression
+        ): ClassifierDescriptor? =
+            if (referencedObject.isCompanionObject())
+                context.trace.get(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression)
+            else
+                null
     }
 
     for (declaration in declarations) {

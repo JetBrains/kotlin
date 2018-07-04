@@ -302,9 +302,9 @@ class C(param1: String = "", param2: Int = 0) {
 
     fun testFullResolvedCachedWhenPartialForConstructorInvoked() {
         doTest {
-            val defaultValue1 = klass.getPrimaryConstructorParameters()[0].defaultValue!!
-            val defaultValue2 = klass.getPrimaryConstructorParameters()[1].defaultValue!!
-            val bindingContext1 = defaultValue1.analyze(BodyResolveMode.PARTIAL)
+            val defaultValue1 = klass.primaryConstructorParameters[0].defaultValue!!
+            val defaultValue2 = klass.primaryConstructorParameters[1].defaultValue!!
+            val bindingContext1 = defaultValue1.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
             val bindingContext2 = defaultValue2.analyze(BodyResolveMode.FULL)
             assert(bindingContext1 === bindingContext2)
         }

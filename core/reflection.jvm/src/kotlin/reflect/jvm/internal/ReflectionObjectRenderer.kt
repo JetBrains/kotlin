@@ -44,7 +44,7 @@ internal object ReflectionObjectRenderer {
         if (addParentheses) append(")")
     }
 
-    fun renderCallable(descriptor: CallableDescriptor): String {
+    private fun renderCallable(descriptor: CallableDescriptor): String {
         return when (descriptor) {
             is PropertyDescriptor -> renderProperty(descriptor)
             is FunctionDescriptor -> renderFunction(descriptor)
@@ -108,7 +108,8 @@ internal object ReflectionObjectRenderer {
     fun renderTypeParameter(typeParameter: TypeParameterDescriptor): String {
         return buildString {
             when (typeParameter.variance) {
-                Variance.INVARIANT -> {}
+                Variance.INVARIANT -> {
+                }
                 Variance.IN_VARIANCE -> append("in ")
                 Variance.OUT_VARIANCE -> append("out ")
             }

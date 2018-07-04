@@ -411,11 +411,13 @@ class KotlinUEnumConstant(
     override val valueArgumentCount: Int
         get() = psi.argumentList?.expressions?.size ?: 0
 
-    override val valueArguments by lz {
-        psi.argumentList?.expressions?.map {
-            getLanguagePlugin().convertElement(it, this) as? UExpression ?: UastEmptyExpression
-        } ?: emptyList()
+    override val valueArguments by lz(fun(): List<UExpression> {
+        val ktEnumEntry = sourcePsi as? KtEnumEntry ?: return emptyList()
+        val ktSuperTypeCallEntry = ktEnumEntry.initializerList?.initializers?.firstOrNull() as? KtSuperTypeCallEntry ?: return emptyList()
+        return ktSuperTypeCallEntry.valueArguments.map {
+            it.getArgumentExpression()?.let { getLanguagePlugin().convertElement(it, this) } as? UExpression ?: UastEmptyExpression
     }
+    })
 
     override val returnType: PsiType?
         get() = uastParent?.getAsJavaPsiElement(PsiClass::class.java)?.let { PsiTypesUtil.getClassType(it) }

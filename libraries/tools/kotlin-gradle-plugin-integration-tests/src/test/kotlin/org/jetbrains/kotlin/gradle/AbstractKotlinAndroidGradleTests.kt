@@ -26,17 +26,20 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtL
             apply plugin: 'kotlin-kapt'
 
             class MyNested implements org.gradle.process.CommandLineArgumentProvider {
-                String value = ""
 
                 @InputFile
                 File inputFile = null
 
                 @Override
-                Iterable<String> asArguments() { return [value] }
+                @Internal
+                Iterable<String> asArguments() {
+                    // Read the arguments from a file, because changing them in a build script is treated as an
+                    // implementation change by Gradle:
+                    return [new File('args.txt').text]
+                }
             }
 
             def nested = new MyNested()
-            nested.value = '123'
             nested.inputFile = file("${'$'}projectDir/in.txt")
 
             android.applicationVariants.all {
@@ -46,6 +49,7 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtL
         )
 
         File(projectDir, "Android/in.txt").appendText("1234")
+        File(projectDir, "args.txt").appendText("1234")
 
         val kaptTasks = listOf(":Android:kaptFlavor1DebugKotlin")
         val javacTasks = listOf(":Android:compileFlavor1DebugJavaWithJavac")
@@ -65,14 +69,13 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtL
             assertTasksUpToDate(javacTasks)
         }
 
-        gradleBuildScript(subproject = "Android").modify {
-            it.replace("nested.value = '123'", "nested.value = '456'")
-        }
+        // Changing only the annotation provider arguments should not trigger the tasks to run, as the arguments may be outputs,
+        // internals or neither:
+        File(projectDir, "args.txt").appendText("5678")
 
         build(*buildTasks) {
             assertSuccessful()
-            assertTasksExecuted(kaptTasks)
-            assertTasksUpToDate(javacTasks)
+            assertTasksUpToDate(javacTasks + kaptTasks)
         }
     }
 }
@@ -99,13 +102,13 @@ abstract class KotlinAndroid3GradleIT(
 
         // Check that Kotlin tasks were created for both lib and feature variants:
         val kotlinTaskNames =
-            listOf("Debug", "Release").flatMap { buildType ->
+            listOf("Debug").flatMap { buildType ->
                 listOf("Flavor1", "Flavor2").flatMap { flavor ->
                     listOf("", "Feature").map { isFeature -> ":Lib:compile$flavor$buildType${isFeature}Kotlin" }
                 }
             }
 
-        project.build(":Lib:assemble") {
+        project.build(":Lib:assembleDebug") {
             assertSuccessful()
             assertTasksExecuted(*kotlinTaskNames.toTypedArray())
         }
@@ -236,6 +239,32 @@ fun getSomething() = 10
     }
 
     @Test
+    fun testMultiModuleICNonAndroidModuleIsChanged() {
+        val project = Project("AndroidIncrementalMultiModule", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = true, kotlinDaemonDebugPort = null)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+        }
+
+        val libAndroidUtilKt = project.projectDir.getFileByName("libAndroidUtil.kt")
+        libAndroidUtilKt.modify { it.replace("fun libAndroidUtil(): String", "fun libAndroidUtil(): CharSequence") }
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("libAndroidUtil.kt", "useLibAndroidUtil.kt")
+            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+        }
+
+        val libJvmUtilKt = project.projectDir.getFileByName("LibJvmUtil.kt")
+        libJvmUtilKt.modify { it.replace("fun libJvmUtil(): String", "fun libJvmUtil(): CharSequence") }
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("LibJvmUtil.kt", "useLibJvmUtil.kt")
+            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+        }
+    }
+
+    @Test
     fun testIncrementalBuildWithNoChanges() {
         val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val tasksToExecute = listOf(
@@ -331,8 +360,44 @@ fun getSomething() = 10
 
     @Test
     fun testAndroidExtensionsManyVariants() {
+        if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+            // Library dependencies are not supported in older versions of Android Gradle plugin (< 3.0)
+            return
+        }
+
         val project = Project("AndroidExtensionsManyVariants", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assemble", options = options) {
+            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+                // Library dependencies are not supported in older versions of Android Gradle plugin (< 3.0)
+                assertFailed()
+                assertContains("Unresolved reference: layout_in_library")
+                assertContains("Unresolved reference: text_view")
+            } else {
+                assertSuccessful()
+            }
+        }
+    }
+
+    @Test
+    fun testAndroidExtensionsSpecificFeatures() {
+        val project = Project("AndroidExtensionsSpecificFeatures", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assemble", options = options) {
+            assertFailed()
+            assertContains("Unresolved reference: textView")
+        }
+
+        File(project.projectDir, "app/build.gradle").modify { it.replace("[\"parcelize\"]", "[\"views\"]") }
+
+        project.build("assemble", options = options) {
+            assertFailed()
+            assertContains("Class 'User' is not abstract and does not implement abstract member public abstract fun writeToParcel")
+        }
+
+        File(project.projectDir, "app/build.gradle").modify { it.replace("[\"views\"]", "[\"parcelize\", \"views\"]") }
 
         project.build("assemble", options = options) {
             assertSuccessful()

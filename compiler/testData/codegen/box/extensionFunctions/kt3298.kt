@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 var result = ""
 fun result(r: String) { result = r }
 

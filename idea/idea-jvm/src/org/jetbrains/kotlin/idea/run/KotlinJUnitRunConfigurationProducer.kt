@@ -120,6 +120,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         val implModule = ktFile.module?.findJvmImplementationModule() ?: return
         val sdk = ModuleRootManager.getInstance(implModule).sdk
         if (sdk != null) {
+            configuration.setModule(implModule)
             configuration.isAlternativeJrePathEnabled = true
             configuration.alternativeJrePath = sdk.homePath
         }

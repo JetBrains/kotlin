@@ -24,11 +24,13 @@ import kotlin.reflect.KProperty0
 internal open class KProperty0Impl<out R> : KProperty0<R>, KPropertyImpl<R> {
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(container, name, signature, boundReceiver)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
+        container, name, signature, boundReceiver
+    )
 
-    private val getter_ = ReflectProperties.lazy { Getter(this) }
+    private val _getter = ReflectProperties.lazy { Getter(this) }
 
-    override val getter: Getter<R> get() = getter_()
+    override val getter: Getter<R> get() = _getter()
 
     override fun get(): R = getter.call()
 
@@ -46,11 +48,13 @@ internal open class KProperty0Impl<out R> : KProperty0<R>, KPropertyImpl<R> {
 internal class KMutableProperty0Impl<R> : KProperty0Impl<R>, KMutableProperty0<R> {
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
-    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(container, name, signature, boundReceiver)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
+        container, name, signature, boundReceiver
+    )
 
-    private val setter_ = ReflectProperties.lazy { Setter(this) }
+    private val _setter = ReflectProperties.lazy { Setter(this) }
 
-    override val setter: Setter<R> get() = setter_()
+    override val setter: Setter<R> get() = _setter()
 
     override fun set(value: R) = setter.call(value)
 

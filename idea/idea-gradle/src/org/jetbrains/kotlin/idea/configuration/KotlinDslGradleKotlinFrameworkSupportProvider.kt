@@ -63,9 +63,10 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
             if (additionalRepository != null) {
                 val repository = additionalRepository.toKotlinRepositorySnippet()
                 updateSettingsScript(module) {
-                    with(KotlinWithGradleConfigurator.getManipulator(it)) {
+                    with(it) {
                         addPluginRepository(additionalRepository)
                         addMavenCentralPluginRepository()
+                        addPluginRepository(DEFAULT_GRADLE_PLUGIN_REPOSITORY)
                     }
                 }
                 buildScriptData.addRepositoriesDefinition("mavenCentral()")
@@ -148,7 +149,7 @@ class KotlinDslGradleKotlinJSFrameworkSupportProvider :
     ) {
         super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
         updateSettingsScript(module) {
-            KotlinWithGradleConfigurator.getManipulator(it).addResolutionStrategy("kotlin2js")
+            it.addResolutionStrategy("kotlin2js")
         }
     }
 }

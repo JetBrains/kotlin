@@ -34,12 +34,20 @@ class IrFileImpl(
     override val fileEntry: SourceManager.FileEntry,
     override val symbol: IrFileSymbol,
     override val fqName: FqName
-) : IrElementBase(0, fileEntry.maxOffset), IrFile {
+) :
+    IrElementBase(0, fileEntry.maxOffset),
+    IrFile {
 
-    constructor(fileEntry: SourceManager.FileEntry, symbol: IrFileSymbol) :
+    constructor(
+        fileEntry: SourceManager.FileEntry,
+        symbol: IrFileSymbol
+    ) :
             this(fileEntry, symbol, symbol.descriptor.fqName)
 
-    constructor(fileEntry: SourceManager.FileEntry, packageFragmentDescriptor: PackageFragmentDescriptor) :
+    constructor(
+        fileEntry: SourceManager.FileEntry,
+        packageFragmentDescriptor: PackageFragmentDescriptor
+    ) :
             this(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName)
 
     constructor(

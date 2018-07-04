@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class Test {
     var doubleStorage = "fail"
     var longStorage = "fail"

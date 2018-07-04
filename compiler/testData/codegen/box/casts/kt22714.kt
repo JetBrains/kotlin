@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun <T> Array<T>.getLength(): Int {
     return this.size
 }

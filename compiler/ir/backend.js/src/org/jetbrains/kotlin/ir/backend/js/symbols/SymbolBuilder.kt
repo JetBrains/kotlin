@@ -14,15 +14,17 @@ import org.jetbrains.kotlin.ir.backend.js.utils.createValueParameter
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 
 object JsSymbolBuilder {
-    fun buildValueParameter(containingSymbol: IrSimpleFunctionSymbol, index: Int, type: KotlinType, name: String? = null) =
-        IrValueParameterSymbolImpl(createValueParameter(containingSymbol.descriptor, index, name ?: "param$index", type))
+    fun buildValueParameter(containingSymbol: IrSimpleFunctionSymbol, index: Int, type: IrType, name: String? = null) =
+        IrValueParameterSymbolImpl(createValueParameter(containingSymbol.descriptor, index, name ?: "param$index", type.toKotlinType()))
 
     fun buildSimpleFunction(
         containingDeclaration: DeclarationDescriptor,
@@ -52,7 +54,7 @@ object JsSymbolBuilder {
 
     fun buildVar(
         containingDeclaration: DeclarationDescriptor,
-        type: KotlinType,
+        type: IrType,
         name: String,
         mutable: Boolean = false
     ) = IrVariableSymbolImpl(
@@ -60,39 +62,42 @@ object JsSymbolBuilder {
             containingDeclaration,
             Annotations.EMPTY,
             Name.identifier(name),
-            type,
+            type.toKotlinType(),
             mutable,
             false,
             SourceElement.NO_SOURCE
         )
     )
 
-    fun buildTempVar(containingSymbol: IrFunctionSymbol, type: KotlinType, name: String? = null, mutable: Boolean = false) =
+    fun buildTempVar(containingSymbol: IrSymbol, type: IrType, name: String? = null, mutable: Boolean = false) =
+        buildTempVar(containingSymbol.descriptor, type, name, mutable)
+
+    fun buildTempVar(containingDeclaration: DeclarationDescriptor, type: IrType, name: String? = null, mutable: Boolean = false) =
         IrVariableSymbolImpl(
             IrTemporaryVariableDescriptorImpl(
-                containingSymbol.descriptor,
+                containingDeclaration,
                 Name.identifier(name ?: "tmp"),
-                type, mutable
+                type.toKotlinType(), mutable
             )
         )
 }
 
 
 fun IrSimpleFunctionSymbol.initialize(
-    receiverParameterType: KotlinType? = null,
+    receiverParameterType: IrType? = null,
     dispatchParameterDescriptor: ReceiverParameterDescriptor? = null,
     typeParameters: List<TypeParameterDescriptor> = emptyList(),
     valueParameters: List<ValueParameterDescriptor> = emptyList(),
-    type: KotlinType? = null,
+    returnType: IrType? = null,
     modality: Modality = Modality.FINAL,
     visibility: Visibility = Visibilities.LOCAL
 ) = this.apply {
     (descriptor as FunctionDescriptorImpl).initialize(
-        receiverParameterType,
+        receiverParameterType?.toKotlinType(),
         dispatchParameterDescriptor,
         typeParameters,
         valueParameters,
-        type,
+        returnType?.toKotlinType(),
         modality,
         visibility
     )

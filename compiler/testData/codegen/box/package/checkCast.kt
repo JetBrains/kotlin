@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class C(val x: Int) {
   override fun equals(rhs: Any?): Boolean {
     if (rhs is C) {

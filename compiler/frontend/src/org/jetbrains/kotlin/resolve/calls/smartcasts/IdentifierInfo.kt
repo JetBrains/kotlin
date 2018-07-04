@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -124,20 +125,21 @@ interface IdentifierInfo {
 internal fun getIdForStableIdentifier(
     expression: KtExpression?,
     bindingContext: BindingContext,
-    containingDeclarationOrModule: DeclarationDescriptor
+    containingDeclarationOrModule: DeclarationDescriptor,
+    languageVersionSettings: LanguageVersionSettings
 ): IdentifierInfo {
     if (expression != null) {
         val deparenthesized = KtPsiUtil.deparenthesize(expression)
         if (expression !== deparenthesized) {
-            return getIdForStableIdentifier(deparenthesized, bindingContext, containingDeclarationOrModule)
+            return getIdForStableIdentifier(deparenthesized, bindingContext, containingDeclarationOrModule, languageVersionSettings)
         }
     }
     return when (expression) {
         is KtQualifiedExpression -> {
             val receiverExpression = expression.receiverExpression
             val selectorExpression = expression.selectorExpression
-            val receiverInfo = getIdForStableIdentifier(receiverExpression, bindingContext, containingDeclarationOrModule)
-            val selectorInfo = getIdForStableIdentifier(selectorExpression, bindingContext, containingDeclarationOrModule)
+            val receiverInfo = getIdForStableIdentifier(receiverExpression, bindingContext, containingDeclarationOrModule, languageVersionSettings)
+            val selectorInfo = getIdForStableIdentifier(selectorExpression, bindingContext, containingDeclarationOrModule, languageVersionSettings)
 
             qualified(
                 receiverInfo, bindingContext.getType(receiverExpression),
@@ -153,7 +155,7 @@ internal fun getIdForStableIdentifier(
                 IdentifierInfo.NO
             } else {
                 IdentifierInfo.SafeCast(
-                    getIdForStableIdentifier(subjectExpression, bindingContext, containingDeclarationOrModule),
+                    getIdForStableIdentifier(subjectExpression, bindingContext, containingDeclarationOrModule, languageVersionSettings),
                     bindingContext.getType(subjectExpression),
                     bindingContext[BindingContext.TYPE, targetTypeReference]
                 )
@@ -161,7 +163,7 @@ internal fun getIdForStableIdentifier(
         }
 
         is KtSimpleNameExpression ->
-            getIdForSimpleNameExpression(expression, bindingContext, containingDeclarationOrModule)
+            getIdForSimpleNameExpression(expression, bindingContext, containingDeclarationOrModule, languageVersionSettings)
 
         is KtThisExpression -> {
             val declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.instanceReference)
@@ -171,7 +173,15 @@ internal fun getIdForStableIdentifier(
         is KtPostfixExpression -> {
             val operationType = expression.operationReference.getReferencedNameElementType()
             if (operationType === KtTokens.PLUSPLUS || operationType === KtTokens.MINUSMINUS)
-                postfix(getIdForStableIdentifier(expression.baseExpression, bindingContext, containingDeclarationOrModule), operationType)
+                postfix(
+                    getIdForStableIdentifier(
+                        expression.baseExpression,
+                        bindingContext,
+                        containingDeclarationOrModule,
+                        languageVersionSettings
+                    ),
+                    operationType
+                )
             else
                 IdentifierInfo.NO
         }
@@ -183,7 +193,8 @@ internal fun getIdForStableIdentifier(
 private fun getIdForSimpleNameExpression(
     simpleNameExpression: KtSimpleNameExpression,
     bindingContext: BindingContext,
-    containingDeclarationOrModule: DeclarationDescriptor
+    containingDeclarationOrModule: DeclarationDescriptor,
+    languageVersionSettings: LanguageVersionSettings
 ): IdentifierInfo {
     val declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, simpleNameExpression)
     return when (declarationDescriptor) {
@@ -197,7 +208,7 @@ private fun getIdForSimpleNameExpression(
             val usageModuleDescriptor = DescriptorUtils.getContainingModuleOrNull(containingDeclarationOrModule)
             val selectorInfo = IdentifierInfo.Variable(
                 declarationDescriptor,
-                declarationDescriptor.variableKind(usageModuleDescriptor, bindingContext, simpleNameExpression),
+                declarationDescriptor.variableKind(usageModuleDescriptor, bindingContext, simpleNameExpression, languageVersionSettings),
                 bindingContext[BindingContext.BOUND_INITIALIZER_VALUE, declarationDescriptor]
             )
 

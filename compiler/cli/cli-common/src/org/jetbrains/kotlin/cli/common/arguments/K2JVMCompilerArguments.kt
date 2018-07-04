@@ -231,7 +231,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                 "-Xjvm-default=enable          Allow usages of @JvmDefault; only generate the default method\n" +
                 "                              in the interface (annotating an existing method can break binary compatibility)\n" +
                 "-Xjvm-default=compatibility   Allow usages of @JvmDefault; generate a compatibility accessor\n" +
-                "                              in the 'DefaultImpls' class in addition to the interface method\n"
+                "                              in the 'DefaultImpls' class in addition to the interface method"
     )
     var jvmDefault: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
 

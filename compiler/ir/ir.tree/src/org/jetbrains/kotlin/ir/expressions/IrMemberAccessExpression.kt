@@ -1,23 +1,14 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.types.KotlinType
 
 interface IrMemberAccessExpression : IrExpression {
@@ -28,8 +19,8 @@ interface IrMemberAccessExpression : IrExpression {
     val origin: IrStatementOrigin?
 
     val typeArgumentsCount: Int
-    fun getTypeArgument(index: Int): KotlinType?
-    fun putTypeArgument(index: Int, type: KotlinType?)
+    fun getTypeArgument(index: Int): IrType?
+    fun putTypeArgument(index: Int, type: IrType?)
 
     val valueArgumentsCount: Int
     fun getValueArgument(index: Int): IrExpression?
@@ -37,7 +28,7 @@ interface IrMemberAccessExpression : IrExpression {
     fun removeValueArgument(index: Int)
 }
 
-fun IrMemberAccessExpression.getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType? =
+fun IrMemberAccessExpression.getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): IrType? =
     getTypeArgument(typeParameterDescriptor.index)
 
 fun IrMemberAccessExpression.copyTypeArgumentsFrom(other: IrMemberAccessExpression) {
@@ -49,20 +40,17 @@ fun IrMemberAccessExpression.copyTypeArgumentsFrom(other: IrMemberAccessExpressi
     }
 }
 
-fun IrMemberAccessExpression.copyTypeArgumentsFrom(source: Map<TypeParameterDescriptor, KotlinType>?) {
-    if (source == null) return
-    for ((typeParameter, typeArgument) in source) {
-        val index = typeParameter.index
-        assert(index < typeArgumentsCount) {
-            "Index out of range for type parameter $typeParameter; " +
-                    "containingDeclaration: ${typeParameter.containingDeclaration}; " +
-                    "callee: $descriptor"
-        }
-        putTypeArgument(index, typeArgument)
+inline fun IrMemberAccessExpression.putTypeArguments(
+    typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+    toIrType: (KotlinType) -> IrType
+) {
+    if (typeArguments == null) return
+    for ((typeParameter, typeArgument) in typeArguments) {
+        putTypeArgument(typeParameter.index, toIrType(typeArgument))
     }
 }
 
-val CallableDescriptor.typeArgumentsCount: Int
+val CallableDescriptor.typeParametersCount: Int
     get() =
         when (this) {
             is PropertyAccessorDescriptor -> correspondingProperty.typeParameters.size
@@ -70,7 +58,7 @@ val CallableDescriptor.typeArgumentsCount: Int
         }
 
 fun IrMemberAccessExpression.getTypeArgumentOrDefault(typeParameterDescriptor: TypeParameterDescriptor) =
-    getTypeArgument(typeParameterDescriptor) ?: typeParameterDescriptor.defaultType
+    getTypeArgument(typeParameterDescriptor)?.toKotlinType() ?: typeParameterDescriptor.defaultType
 
 interface IrFunctionAccessExpression : IrMemberAccessExpression, IrDeclarationReference {
     override val descriptor: FunctionDescriptor
@@ -88,17 +76,24 @@ fun IrMemberAccessExpression.removeValueArgument(valueParameterDescriptor: Value
     removeValueArgument(valueParameterDescriptor.index)
 }
 
-inline fun <T : IrMemberAccessExpression> T.mapValueParameters(transform: (ValueParameterDescriptor) -> IrExpression?): T {
-    descriptor.valueParameters.forEach {
-        putValueArgument(it.index, transform(it))
+inline fun <T : IrMemberAccessExpression> T.mapTypeParameters(transform: (TypeParameterDescriptor) -> IrType) : T =
+    apply {
+        descriptor.typeParameters.forEach {
+            putTypeArgument(it.index, transform(it))
+        }
     }
-    return this
-}
 
-inline fun <T : IrMemberAccessExpression> T.mapValueParametersIndexed(transform: (Int, ValueParameterDescriptor) -> IrExpression?): T {
-    descriptor.valueParameters.forEach {
-        putValueArgument(it.index, transform(it.index, it))
+inline fun <T : IrMemberAccessExpression> T.mapValueParameters(transform: (ValueParameterDescriptor) -> IrExpression?): T =
+    apply {
+        descriptor.valueParameters.forEach {
+            putValueArgument(it.index, transform(it))
+        }
     }
-    return this
-}
+
+inline fun <T : IrMemberAccessExpression> T.mapValueParametersIndexed(transform: (Int, ValueParameterDescriptor) -> IrExpression?): T =
+    apply {
+        descriptor.valueParameters.forEach {
+            putValueArgument(it.index, transform(it.index, it))
+        }
+    }
 

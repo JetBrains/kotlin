@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 open class SomeClass(val some: Double, val other: Int, vararg val args: String) {
     fun result() = args[1]
 }

@@ -9,7 +9,9 @@ public final class StringTemplateComplexKt {
     public static final fun getCase5() : java.lang.String = UastEmptyExpression
     public static final fun getLiteralInLiteral() : java.lang.String = UastEmptyExpression
     public static final fun getLiteralInLiteral2() : java.lang.String = UastEmptyExpression
-    public static final fun simpleForTemplate(i: int) : java.lang.String = i
+    public static final fun simpleForTemplate(i: int) : java.lang.String {
+        return i
+    }
     public static final fun foo() : void {
         println(baz)
         var template1: java.lang.String = simpleForTemplate()

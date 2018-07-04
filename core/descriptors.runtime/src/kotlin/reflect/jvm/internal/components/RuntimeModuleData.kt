@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.SamConversionResolver
 import org.jetbrains.kotlin.load.java.components.SignaturePropagator
 import org.jetbrains.kotlin.load.java.lazy.JavaResolverComponents
+import org.jetbrains.kotlin.load.java.lazy.JavaResolverSettings
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
@@ -72,7 +73,8 @@ class RuntimeModuleData private constructor(
                     ReflectionTypes(module, notFoundClasses),
                     annotationTypeQualifierResolver,
                     SignatureEnhancement(annotationTypeQualifierResolver, Jsr305State.DISABLED),
-                    JavaClassesTracker.Default
+                    JavaClassesTracker.Default,
+                    JavaResolverSettings.Default
             )
 
             val lazyJavaPackageFragmentProvider = LazyJavaPackageFragmentProvider(globalJavaResolverContext)

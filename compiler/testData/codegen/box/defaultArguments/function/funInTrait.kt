@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface Foo {
     fun foo(a: Double = 1.0): Double
 }

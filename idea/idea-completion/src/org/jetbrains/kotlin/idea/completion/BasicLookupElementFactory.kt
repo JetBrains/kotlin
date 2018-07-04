@@ -124,15 +124,14 @@ class BasicLookupElementFactory(
             includeClassTypeArguments: Boolean,
             parametersAndTypeGrayed: Boolean
     ): LookupElement {
-        val declarationLazy by lazy { DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) }
-
-        if (descriptor is JavaClassDescriptor &&
-            declarationLazy is PsiClass &&
-            declarationLazy !is KtLightClass) {
-            // for java classes we create special lookup elements
-            // because they must be equal to ones created in TypesCompletion
-            // otherwise we may have duplicates
-            return createLookupElementForJavaClass(declarationLazy, qualifyNestedClasses, includeClassTypeArguments)
+        if (descriptor is JavaClassDescriptor) {
+            val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+            if (declaration is PsiClass && declaration !is KtLightClass) {
+                // for java classes we create special lookup elements
+                // because they must be equal to ones created in TypesCompletion
+                // otherwise we may have duplicates
+                return createLookupElementForJavaClass(declaration, qualifyNestedClasses, includeClassTypeArguments)
+            }
         }
 
         if (descriptor is PackageViewDescriptor) {

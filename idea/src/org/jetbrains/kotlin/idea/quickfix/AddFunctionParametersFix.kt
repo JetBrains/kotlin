@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -89,6 +90,7 @@ class AddFunctionParametersFix(
             override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                 return originalDescriptor.modify {
                     val callElement = callElement ?: return@modify
+                    val call = callElement.getCall(callElement.analyze()) ?: return@modify
                     val parameters = functionDescriptor.valueParameters
                     val arguments = callElement.valueArguments
                     val validator = CollectingNameValidator()
@@ -101,7 +103,8 @@ class AddFunctionParametersFix(
                             validator.addName(parameters[i].name.asString())
                             val argumentType = expression?.let {
                                 val bindingContext = it.analyze()
-                                bindingContext[BindingContext.SMARTCAST, it]?.defaultType ?: bindingContext.getType(it)
+                                val smartCasts = bindingContext[BindingContext.SMARTCAST, it]
+                                smartCasts?.defaultType ?: smartCasts?.type(call) ?: bindingContext.getType(it)
                             }
                             val parameterType = parameters[i].type
 

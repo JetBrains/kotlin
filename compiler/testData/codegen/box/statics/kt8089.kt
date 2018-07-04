@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class C {
     companion object {
         private val s: String

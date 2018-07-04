@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
-import org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingFunctionShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingPropertyShortNameIndex
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
@@ -179,16 +177,23 @@ class ResolveElementCache(
 
                 val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, contextElements, bodyResolveMode)
 
-                if (statementFilter == StatementFilter.NONE) { // partial resolve is not supported for the given declaration - full resolve performed instead
+                if (statementFilter == StatementFilter.NONE &&
+                    bodyResolveMode.doControlFlowAnalysis && !bodyResolveMode.bindingTraceFilter.ignoreDiagnostics
+                ) {
+                    // Without statement filter, we analyze everything, so we can count partial resolve result as full resolve
+                    // But we can do this only if our resolve mode also provides *both* CFA and diagnostics
+                    // This is true only for PARTIAL_WITH_DIAGNOSTICS resolve mode
                     fullResolveMap[resolveElement] = CachedFullResolve(bindingContext, resolveElement)
                     return bindingContext
                 }
 
                 val resolveToCache = CachedPartialResolve(bindingContext, file, bodyResolveMode)
 
-                for (statement in (statementFilter as PartialBodyResolveFilter).allStatementsToResolve) {
-                    if (bindingContext[BindingContext.PROCESSED, statement] == true) {
-                        partialResolveMap.putIfAbsent(statement, resolveToCache)
+                if (statementFilter is PartialBodyResolveFilter) {
+                    for (statement in statementFilter.allStatementsToResolve) {
+                        if (bindingContext[BindingContext.PROCESSED, statement] == true) {
+                            partialResolveMap.putIfAbsent(statement, resolveToCache)
+                        }
                     }
                 }
 
@@ -542,12 +547,12 @@ class ResolveElementCache(
         val descriptor = resolveSession.resolveToDescriptor(property) as PropertyDescriptor
         ForceResolveUtil.forceResolveAllContents(descriptor)
 
-        val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisMode.LocalDeclarations, { declaration ->
+        val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisMode.LocalDeclarations) { declaration ->
             assert(declaration.parent == property || declaration == property) {
                 "Must be called only for property accessors or for property, but called for $declaration"
             }
             resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(declaration)
-        })
+        }
 
         bodyResolver.resolveProperty(bodyResolveContext, property, descriptor)
 
@@ -696,7 +701,7 @@ class ResolveElementCache(
             statementFilter,
             file.jvmTarget,
             file.languageVersionSettings
-        ).get<BodyResolver>()
+        ).get()
     }
 
     // All additional resolve should be done to separate trace

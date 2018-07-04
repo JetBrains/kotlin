@@ -40,24 +40,28 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
             false, false, variableDescriptor.isLateInit, variableDescriptor.source
         )
 
-        val valueType = originalDeclaration.descriptor.type
+        val valueType = originalDeclaration.type
         val boxConstructor = closureBoxConstructorTypeDescriptor
         val boxConstructorSymbol = closureBoxConstructorTypeSymbol
-        val constructorTypeParam = closureBoxConstructorTypeDescriptor.typeParameters[0]
-        val boxConstructorTypeArgument = mapOf(constructorTypeParam to valueType)
         val initializer = originalDeclaration.initializer ?: IrConstImpl.constNull(
             originalDeclaration.startOffset,
             originalDeclaration.endOffset,
             valueType
         )
+        // TODO use buildCall?
         val constructorCall = IrCallImpl(
             originalDeclaration.startOffset,
             originalDeclaration.endOffset,
+            // TODO wrong type
+            originalDeclaration.type,
             boxConstructorSymbol,
             boxConstructor,
-            boxConstructorTypeArgument,
+            1,
             JsLoweredDeclarationOrigin.JS_CLOSURE_BOX_CLASS
-        ).apply { putValueArgument(0, initializer) }
+        ).apply {
+            putTypeArgument(0, valueType)
+            putValueArgument(0, initializer)
+        }
 
 
         return IrVariableImpl(
@@ -65,6 +69,8 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
             originalDeclaration.endOffset,
             originalDeclaration.origin,
             sharedVariableDescriptor,
+            // TODO wrong type ?
+            originalDeclaration.type,
             constructorCall
         )
     }
@@ -75,9 +81,11 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
         IrGetFieldImpl(
             originalGet.startOffset, originalGet.endOffset,
             closureBoxFieldSymbol,
+            originalGet.type,
             IrGetValueImpl(
                 originalGet.startOffset,
                 originalGet.endOffset,
+                originalGet.type,
                 sharedVariableSymbol
             ),
             originalGet.origin
@@ -90,9 +98,11 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
             IrGetValueImpl(
                 originalSet.startOffset,
                 originalSet.endOffset,
+                originalSet.type,
                 sharedVariableSymbol
             ),
             originalSet.value,
+            originalSet.type,
             originalSet.origin
         )
 

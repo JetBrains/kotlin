@@ -36,6 +36,9 @@ import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.demangleInternalName
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.getModuleNameSuffix
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.mangleInternalName
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -323,16 +326,21 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         }
 
         for (propertyMethod in propertyMethods) {
-            if (element is KtDeclaration && newPropertyName != null) {
+            val mangledPropertyName = if (propertyMethod is KtLightMethod && propertyMethod.isMangled) {
+                val suffix = getModuleNameSuffix(propertyMethod.name)
+                if (suffix != null && newPropertyName != null) mangleInternalName(newPropertyName, suffix) else null
+            } else null
+            val adjustedPropertyName = mangledPropertyName ?: newPropertyName
+            if (element is KtDeclaration && adjustedPropertyName != null) {
                 val wrapper = PropertyMethodWrapper(propertyMethod)
                 when {
                     JvmAbi.isGetterName(propertyMethod.name) && getterJvmName == null ->
-                        allRenames[wrapper] = JvmAbi.getterName(newPropertyName)
+                        allRenames[wrapper] = JvmAbi.getterName(adjustedPropertyName)
                     JvmAbi.isSetterName(propertyMethod.name) && setterJvmName == null ->
-                        allRenames[wrapper] = JvmAbi.setterName(newPropertyName)
+                        allRenames[wrapper] = JvmAbi.setterName(adjustedPropertyName)
                 }
             }
-            addRenameElements(propertyMethod, (element as PsiNamedElement).name, newPropertyName, allRenames, scope)
+            addRenameElements(propertyMethod, (element as PsiNamedElement).name, adjustedPropertyName, allRenames, scope)
         }
     }
 
@@ -389,7 +397,10 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         val refKindUsages = adjustedUsages.groupBy { usage: UsageInfo ->
             val refElement = usage.reference?.resolve()
             if (refElement is PsiMethod) {
-                when (refElement.name) {
+                val refElementName = refElement.name
+                val refElementNameToCheck =
+                    (if (usage is MangledJavaRefUsageInfo) demangleInternalName(refElementName) else null) ?: refElementName
+                when (refElementNameToCheck) {
                     oldGetterName -> UsageKind.GETTER_USAGE
                     oldSetterName -> UsageKind.SETTER_USAGE
                     else -> UsageKind.SIMPLE_PROPERTY_USAGE
@@ -441,7 +452,9 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
                     }
                 }
                 else {
-                    val newOverriderName = RefactoringUtil.suggestNewOverriderName(overriderName, oldName, newName)
+                    val demangledName = if (newName != null && overrider is KtLightMethod && overrider.isMangled) demangleInternalName(newName) else null
+                    val adjustedName = demangledName ?: newName
+                    val newOverriderName = RefactoringUtil.suggestNewOverriderName(overriderName, oldName, adjustedName)
                     if (newOverriderName != null) {
                         allRenames[overriderElement] = newOverriderName
                     }

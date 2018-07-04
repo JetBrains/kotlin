@@ -50,7 +50,7 @@ fun Project.preloadedDeps(vararg artifactBaseNames: String, baseDir: File = File
 }
 
 fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: String? = null): ConfigurableFileCollection {
-    val ultimateDepsDir = File(rootDir, "ultimate", "dependencies")
+    val ultimateDepsDir = fileFrom(rootDir, "ultimate", "dependencies")
     return if (ultimateDepsDir.isDirectory) preloadedDeps(*artifactBaseNames, baseDir = ultimateDepsDir, subdir = subdir)
     else files()
 }

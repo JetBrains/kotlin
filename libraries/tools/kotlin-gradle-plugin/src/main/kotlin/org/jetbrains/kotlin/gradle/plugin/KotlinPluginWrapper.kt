@@ -82,6 +82,15 @@ open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver
             Kotlin2JsPlugin(Kotlin2JsTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
 }
 
+fun Project.getKotlinPluginVersion(): String? {
+    val kotlinPluginWrapper = plugins.findPlugin(KotlinAndroidPluginWrapper::class.java) ?: run {
+        project.logger.error("'kotlin-android' plugin should be enabled before 'kotlin-android-extensions'")
+        return null
+    }
+
+    return kotlinPluginWrapper.kotlinPluginVersion
+}
+
 private fun Any.loadKotlinVersionFromResource(log: Logger): String {
     log.kotlinDebug("Loading version information")
     val props = Properties()

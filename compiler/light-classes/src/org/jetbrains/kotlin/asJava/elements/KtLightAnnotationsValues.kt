@@ -10,7 +10,6 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.LanguageConstantExpressionEvaluator
 import com.intellij.psi.impl.light.LightIdentifier
 import com.intellij.psi.impl.light.LightTypeElement
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -83,7 +82,7 @@ private fun psiType(kotlinType: KotlinType, context: PsiElement): PsiType? {
         "kotlin.Char" -> PsiType.CHAR
         "kotlin.Double" -> PsiType.DOUBLE
         "kotlin.Float" -> PsiType.FLOAT
-        "kotlin.String" -> PsiType.getJavaLangString(context.manager, GlobalSearchScope.projectScope(context.project))
+        "kotlin.String" -> PsiType.getJavaLangString(context.manager, context.resolveScope)
         else -> PsiType.getTypeByName(typeFqName, context.project, context.resolveScope)
     }
 }

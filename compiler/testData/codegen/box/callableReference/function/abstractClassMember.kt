@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 abstract class A {
     abstract fun foo(): String
 }

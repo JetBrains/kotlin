@@ -36,6 +36,7 @@ interface IrDeclarationOrigin {
     object IR_TEMPORARY_VARIABLE : IrDeclarationOriginImpl("IR_TEMPORARY_VARIABLE")
     object IR_EXTERNAL_DECLARATION_STUB : IrDeclarationOriginImpl("IR_EXTERNAL_DECLARATION_STUB")
     object IR_BUILTINS_STUB : IrDeclarationOriginImpl("IR_BUILTINS_STUB")
+    object BRIDGE : IrDeclarationOriginImpl("BRIDGE")
 }
 
 abstract class IrDeclarationOriginImpl(val name: String) : IrDeclarationOrigin {

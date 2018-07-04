@@ -12,4 +12,7 @@ public final class AnonymousKt {
         var closeableRunnable: <ErrorType> = anonymous object : Runnable, Closeable { override fun close() {} override fun run() {} }
         var runnableIs: <ErrorType> = anonymous object : InputStream(), Runnable { override fun read(): Int = 0; override fun run() {} }
     }
+    public static final fun withErr() : void {
+        var runnable: <ErrorType> = anonymous null
+    }
 }

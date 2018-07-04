@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 inline fun bar(block: () -> String) : String {
     return block()
 }

@@ -82,7 +82,7 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 //    val getProgressionLast = context.getInternalFunctions("getProgressionLast")
 //            .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
 
-    val defaultConstructorMarker = calc { symbolTable.referenceClass(context.getInternalClass("DefaultConstructorMarker")) }
+    val defaultConstructorMarker = symbolTable.referenceClass(context.getInternalClass("DefaultConstructorMarker"))
 
     val any = symbolTable.referenceClass(builtIns.any)
     val unit = symbolTable.referenceClass(builtIns.unit)

@@ -104,16 +104,13 @@ public class JvmSerializerExtension extends SerializerExtension {
             @NotNull Type classAsmType,
             @NotNull GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Property>> extension
     ) {
-        List<VariableDescriptorWithAccessors> localVariables = codegenBinding.get(CodegenBinding.DELEGATED_PROPERTIES, classAsmType);
+        List<LocalVariableDescriptor> localVariables = CodegenBinding.getLocalDelegatedProperties(codegenBinding, classAsmType);
         if (localVariables == null) return;
 
-        for (VariableDescriptorWithAccessors localVariable : localVariables) {
-            if (localVariable instanceof LocalVariableDescriptor) {
-                PropertyDescriptor propertyDescriptor =
-                        FakeDescriptorsForReferencesKt.createFreeFakeLocalPropertyDescriptor((LocalVariableDescriptor) localVariable);
-                DescriptorSerializer serializer = DescriptorSerializer.createForLambda(this);
-                proto.addExtension(extension, serializer.propertyProto(propertyDescriptor).build());
-            }
+        for (LocalVariableDescriptor localVariable : localVariables) {
+            PropertyDescriptor propertyDescriptor = FakeDescriptorsForReferencesKt.createFreeFakeLocalPropertyDescriptor(localVariable);
+            DescriptorSerializer serializer = DescriptorSerializer.createForLambda(this);
+            proto.addExtension(extension, serializer.propertyProto(propertyDescriptor).build());
         }
     }
 

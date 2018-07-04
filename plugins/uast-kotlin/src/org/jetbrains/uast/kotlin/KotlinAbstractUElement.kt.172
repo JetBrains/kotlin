@@ -133,6 +133,10 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         return result.initializingClass
     }
 
+    if (result is UCallExpression && result.uastParent is UEnumConstant) {
+        return result.uastParent
+    }
+
     if (result is USwitchClauseExpressionWithBody && !isInConditionBranch(element, result)) {
         return result.body
     }

@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 fun <T> get(t: T): () -> String {
     return t::toString
 }

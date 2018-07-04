@@ -26,33 +26,40 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.lang.AssertionError
 
 class ArrayAccessAssignmentReceiver(
-    val irArray: IrExpression,
-    val irIndices: List<IrExpression>,
-    val indexedGetCall: CallBuilder?,
-    val indexedSetCall: CallBuilder?,
-    val callGenerator: CallGenerator,
-    val startOffset: Int,
-    val endOffset: Int,
-    val origin: IrStatementOrigin
+    private val irArray: IrExpression,
+    private val irIndices: List<IrExpression>,
+    private val indexedGetCall: CallBuilder?,
+    private val indexedSetCall: CallBuilder?,
+    private val callGenerator: CallGenerator,
+    private val startOffset: Int,
+    private val endOffset: Int,
+    private val origin: IrStatementOrigin
 ) : AssignmentReceiver {
-    private val type: KotlinType =
+
+    private val kotlinType: KotlinType =
         indexedGetCall?.run { descriptor.returnType!! } ?: indexedSetCall?.run { descriptor.valueParameters.last().type }
         ?: throw AssertionError("Array access should have either indexed-get call or indexed-set call")
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression {
         val hasResult = origin.isAssignmentOperatorWithResult()
-        val resultType = if (hasResult) type else callGenerator.context.builtIns.unitType
-        val irBlock = IrBlockImpl(startOffset, endOffset, resultType, origin)
+        val resultType = if (hasResult) kotlinType else callGenerator.context.builtIns.unitType
+        val irResultType = callGenerator.translateType(resultType)
+        val irBlock = IrBlockImpl(startOffset, endOffset, irResultType, origin)
 
-        val irArrayValue = callGenerator.scope.createTemporaryVariableInBlock(irArray, irBlock, "array")
+        val irArrayValue = callGenerator.scope.createTemporaryVariableInBlock(callGenerator.context, irArray, irBlock, "array")
 
         val irIndexValues = irIndices.mapIndexed { i, irIndex ->
-            callGenerator.scope.createTemporaryVariableInBlock(irIndex, irBlock, "index$i")
+            callGenerator.scope.createTemporaryVariableInBlock(callGenerator.context, irIndex, irBlock, "index$i")
         }
 
         indexedGetCall?.fillArrayAndIndexArguments(irArrayValue, irIndexValues)
         indexedSetCall?.fillArrayAndIndexArguments(irArrayValue, irIndexValues)
-        val irLValue = LValueWithGetterAndSetterCalls(callGenerator, indexedGetCall, indexedSetCall, type, startOffset, endOffset, origin)
+        val irLValue = LValueWithGetterAndSetterCalls(
+            callGenerator,
+            indexedGetCall, indexedSetCall,
+            callGenerator.translateType(kotlinType),
+            startOffset, endOffset, origin
+        )
         irBlock.inlineStatement(withLValue(irLValue))
 
         return irBlock

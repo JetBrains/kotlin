@@ -184,6 +184,14 @@ public class DescriptorUtils {
         return null;
     }
 
+    @Nullable
+    public static ModuleDescriptor getContainingModuleOrNull(@NotNull KotlinType kotlinType) {
+        ClassifierDescriptor descriptor = kotlinType.getConstructor().getDeclarationDescriptor();
+        if (descriptor == null) return null;
+
+        return getContainingModuleOrNull(descriptor);
+    }
+
     @NotNull
     public static ModuleDescriptor getContainingModule(@NotNull DeclarationDescriptor descriptor) {
         ModuleDescriptor module = getContainingModuleOrNull(descriptor);

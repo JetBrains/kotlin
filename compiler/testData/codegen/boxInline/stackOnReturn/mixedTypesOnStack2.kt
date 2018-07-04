@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 fun foo2(x: Int, xx: Long, y: Any?) = null
 

@@ -2,8 +2,8 @@ LineBreakpoint created at stepOutInlineFunctionStdlib.kt:6
 Run Java
 Connected to the target VM
 stepOutInlineFunctionStdlib.kt:6
-_Collections.!EXT!
-stepOutInlineFunctionStdlib.kt:9
+stepOutInlineFunctionStdlib.kt:1
+Thread.!EXT!
 Disconnected from the target VM
 
 Process finished with exit code 0

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 interface A<T> {
     var result: T
 }

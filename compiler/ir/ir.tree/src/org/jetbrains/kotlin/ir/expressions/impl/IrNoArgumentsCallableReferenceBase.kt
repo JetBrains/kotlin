@@ -19,15 +19,16 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.ir.types.IrType
 
 abstract class IrNoArgumentsCallableReferenceBase(
     startOffset: Int,
     endOffset: Int,
-    type: KotlinType,
+    type: IrType,
     typeArgumentsCount: Int,
     origin: IrStatementOrigin? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, 0, origin),
+) :
+    IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, 0, origin),
     IrCallableReference {
 
     private fun throwNoValueArguments(): Nothing {
