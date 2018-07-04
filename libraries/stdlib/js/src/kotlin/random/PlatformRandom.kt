@@ -13,7 +13,6 @@ internal actual fun defaultPlatformRandom(): Random =
 
 internal actual fun fastLog2(value: Int): Int {
     // TODO: not so fast, make faster
-    require(value > 0)
     var v = value
     var log = -1
     while (v != 0) {

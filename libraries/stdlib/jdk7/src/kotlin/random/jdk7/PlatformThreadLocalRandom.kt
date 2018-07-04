@@ -11,8 +11,9 @@ import java.util.concurrent.ThreadLocalRandom
 internal class PlatformThreadLocalRandom : kotlin.random.AbstractPlatformRandom() {
     override val impl: ThreadLocalRandom get() = ThreadLocalRandom.current()
 
+    override fun nextInt(origin: Int, bound: Int): Int = impl.nextInt(origin, bound)
     override fun nextLong(bound: Long): Long = impl.nextLong(bound)
     override fun nextLong(origin: Long, bound: Long): Long = impl.nextLong(origin, bound)
-    override fun nextInt(bound: Int): Int = impl.nextInt(bound)
-    override fun nextInt(origin: Int, bound: Int): Int = impl.nextInt(origin, bound)
+    override fun nextDouble(bound: Double): Double = impl.nextDouble(bound)
+    override fun nextDouble(origin: Double, bound: Double): Double = impl.nextDouble(origin, bound)
 }
