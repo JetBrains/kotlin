@@ -4487,21 +4487,29 @@ The "returned" value of try expression with no finally is either the last expres
         return negated ? StackValue.not(value) : value;
     }
 
-    private StackValue generateIsCheck(StackValue expressionToGen, KotlinType kotlinType, boolean leaveExpressionOnStack) {
+    private StackValue generateIsCheck(StackValue expressionToGen, KotlinType rhsKotlinType, boolean leaveExpressionOnStack) {
+        KotlinType lhsKotlinType = expressionToGen.kotlinType;
+        Type lhsBoxedType;
+        if (lhsKotlinType != null && InlineClassesUtilsKt.isInlineClassType(lhsKotlinType)) {
+            lhsBoxedType = typeMapper.mapTypeAsDeclaration(lhsKotlinType);
+        }
+        else {
+            lhsBoxedType = OBJECT_TYPE;
+        }
         return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
-            expressionToGen.put(OBJECT_TYPE, kotlinType, v);
+            expressionToGen.put(lhsBoxedType, expressionToGen.kotlinType, v);
             if (leaveExpressionOnStack) {
                 v.dup();
             }
 
-            Type type = boxType(typeMapper.mapTypeAsDeclaration(kotlinType));
-            if (TypeUtils.isReifiedTypeParameter(kotlinType)) {
-                putReifiedOperationMarkerIfTypeIsReifiedParameter(kotlinType, ReifiedTypeInliner.OperationKind.IS);
+            Type type = boxType(typeMapper.mapTypeAsDeclaration(rhsKotlinType));
+            if (TypeUtils.isReifiedTypeParameter(rhsKotlinType)) {
+                putReifiedOperationMarkerIfTypeIsReifiedParameter(rhsKotlinType, ReifiedTypeInliner.OperationKind.IS);
                 v.instanceOf(type);
                 return null;
             }
 
-            CodegenUtilKt.generateIsCheck(v, kotlinType, type);
+            CodegenUtilKt.generateIsCheck(v, rhsKotlinType, type);
             return null;
         });
     }
