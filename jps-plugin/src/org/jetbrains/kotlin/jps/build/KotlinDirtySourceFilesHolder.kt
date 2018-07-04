@@ -97,4 +97,4 @@ class KotlinDirtySourceFilesHolder(
 }
 
 val File.isKotlinSourceFile: Boolean
-    get() = FileUtilRt.extensionEquals(name, "kt")
+    get() = FileUtilRt.extensionEquals(name, "kt") || FileUtilRt.extensionEquals(name, "kts")
