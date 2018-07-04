@@ -34,23 +34,23 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 
 internal abstract class ConstantStringBasedPostfixTemplate(
-        name: String,
-        desc: String,
-        private val template: String,
-        selector: PostfixTemplateExpressionSelector
-) :  StringBasedPostfixTemplate(name, desc, selector) {
+    name: String,
+    desc: String,
+    private val template: String,
+    selector: PostfixTemplateExpressionSelector
+) : StringBasedPostfixTemplate(name, desc, selector) {
     override fun getTemplateString(element: PsiElement) = template
 
     override fun getElementToRemove(expr: PsiElement?) = expr
 }
 
 internal class KtForEachPostfixTemplate(
-        name: String
+    name: String
 ) : ConstantStringBasedPostfixTemplate(
-        name,
-        "for (item in expr)",
-        "for (\$name$ in \$expr$) {\n    \$END$\n}",
-        createExpressionSelectorWithComplexFilter(statementsOnly = true, predicate = KtExpression::hasIterableType)
+    name,
+    "for (item in expr)",
+    "for (\$name$ in \$expr$) {\n    \$END$\n}",
+    createExpressionSelectorWithComplexFilter(statementsOnly = true, predicate = KtExpression::hasIterableType)
 ) {
     override fun setVariables(template: Template, element: PsiElement) {
         val name = MacroCallNode(SuggestVariableNameMacro())
@@ -67,35 +67,35 @@ private fun KtExpression.hasIterableType(bindingContext: BindingContext): Boolea
 }
 
 internal object KtAssertPostfixTemplate : ConstantStringBasedPostfixTemplate(
-        "assert",
-        "assert(expr) { \"\" }",
-        "assert(\$expr$) { \"\$END$\" }",
-        createExpressionSelector(statementsOnly = true, typePredicate = KotlinType::isBoolean)
+    "assert",
+    "assert(expr) { \"\" }",
+    "assert(\$expr$) { \"\$END$\" }",
+    createExpressionSelector(statementsOnly = true, typePredicate = KotlinType::isBoolean)
 )
 
 internal object KtParenthesizedPostfixTemplate : ConstantStringBasedPostfixTemplate(
-        "par", "(expr)",
-        "(\$expr$)\$END$",
-        createExpressionSelector()
+    "par", "(expr)",
+    "(\$expr$)\$END$",
+    createExpressionSelector()
 )
 
 internal object KtSoutPostfixTemplate : ConstantStringBasedPostfixTemplate(
-        "sout",
-        "println(expr)",
-        "println(\$expr$)\$END$",
-        createExpressionSelector(statementsOnly = true)
+    "sout",
+    "println(expr)",
+    "println(\$expr$)\$END$",
+    createExpressionSelector(statementsOnly = true)
 )
 
 internal object KtReturnPostfixTemplate : ConstantStringBasedPostfixTemplate(
-        "return",
-        "return expr",
-        "return \$expr$\$END$",
-        createExpressionSelector(statementsOnly = true)
+    "return",
+    "return expr",
+    "return \$expr$\$END$",
+    createExpressionSelector(statementsOnly = true)
 )
 
 internal object KtWhilePostfixTemplate : ConstantStringBasedPostfixTemplate(
-        "while",
-        "while (expr) {}",
-        "while (\$expr$) {\n\$END$\n}",
-        createExpressionSelector(statementsOnly = true, typePredicate = KotlinType::isBoolean)
+    "while",
+    "while (expr) {}",
+    "while (\$expr$) {\n\$END$\n}",
+    createExpressionSelector(statementsOnly = true, typePredicate = KotlinType::isBoolean)
 )
