@@ -271,6 +271,9 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
         out.println("internal constructor(private val storage: $storageArrayType) : Collection<$elementType> {")
         out.println(
             """
+    /** Creates a new array of the specified [size], with all elements initialized to zero. */
+    public constructor(size: Int) : this($storageArrayType(size))
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): $elementType = storage[index].to$elementType()
 
@@ -301,10 +304,10 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
         out.println("}")
 
         // TODO: Make inline constructor, like in ByteArray
-        out.println()
-        out.println("@SinceKotlin(\"1.3\")")
-        out.println("@ExperimentalUnsignedTypes")
-        out.println("""public inline fun $arrayType(size: Int, init: (Int) -> $elementType): $arrayType {
+        out.println("""
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public inline fun $arrayType(size: Int, init: (Int) -> $elementType): $arrayType {
     return $arrayType($storageArrayType(size) { index -> init(index).to$storageElementType() })
 }
 
