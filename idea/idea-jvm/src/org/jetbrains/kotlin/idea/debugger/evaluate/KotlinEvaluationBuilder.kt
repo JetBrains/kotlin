@@ -166,7 +166,6 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             throw e
         }
         catch (e: ProcessCanceledException) {
-            LOG.debug(e)
             exception(e)
         }
         catch (e: Eval4JInterpretingException) {
