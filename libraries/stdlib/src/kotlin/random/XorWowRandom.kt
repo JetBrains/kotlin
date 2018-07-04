@@ -5,6 +5,9 @@
 
 package kotlin.random
 
+/**
+ * Random number generator, algorithm "xorwow" from p. 5 of Marsaglia, "Xorshift RNGs"
+ */
 internal class XorWowRandom internal constructor(
     private var s0: Int,
     private var s1: Int,
@@ -20,7 +23,6 @@ internal class XorWowRandom internal constructor(
         require((s0 or s1 or s2 or s3) != 0) { "Initial state must have at least one non-zero element" }
     }
 
-    /* Algorithm "xorwow" from p. 5 of Marsaglia, "Xorshift RNGs" */
     override fun nextInt(): Int {
         var t = s3
         t = t xor (t shr 2)
