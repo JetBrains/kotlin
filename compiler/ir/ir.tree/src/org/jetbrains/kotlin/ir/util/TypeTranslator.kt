@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 
 class TypeTranslator(
     private val symbolTable: SymbolTable,
-    val languageVersionSettings: LanguageVersionSettings
+    val languageVersionSettings: LanguageVersionSettings,
+    private val typeParametersResolver: TypeParametersResolver = ScopedTypeParametersResolver()
 ) {
 
-    private val typeParametersResolver = ScopedTypeParametersResolver()
     private val typeApproximatorForNI = TypeApproximator()
     lateinit var constantValueGenerator: ConstantValueGenerator
 
