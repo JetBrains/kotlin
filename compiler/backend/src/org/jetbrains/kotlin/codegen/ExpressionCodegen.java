@@ -1124,7 +1124,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 if (!isCrossinlineLambda) {
                     v.aconst(null);
                 }
-            } else if (DescriptorUtilsKt.isCallableReferenceToSuspend(classDescriptor, state.getJvmRuntimeTypes().getFunctionReference())) {
+            }
+            else if (classDescriptor instanceof SyntheticClassDescriptorForLambda &&
+                     ((SyntheticClassDescriptorForLambda) classDescriptor).isCallableReference()) {
                 // Constructor of callable reference to suspend function does not accept continuation:
                 // do nothing.
             }

@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.descriptorUtil
 
-import org.jetbrains.kotlin.builtins.*
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
@@ -148,10 +147,6 @@ fun ClassDescriptor.getSuperInterfaces(): List<ClassDescriptor> =
             if (DescriptorUtils.isInterface(superClassifier)) superClassifier as ClassDescriptor
             else null
         }
-
-fun ClassDescriptor.isCallableReferenceToSuspend(functionReference: ClassDescriptor) =
-    getSuperClassNotAny() == functionReference &&
-            getSuperInterfaces().singleOrNull()?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.SuspendFunction
 
 val ClassDescriptor.secondaryConstructors: List<ClassConstructorDescriptor>
     get() = constructors.filterNot { it.isPrimary }

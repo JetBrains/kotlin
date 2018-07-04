@@ -6298,6 +6298,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
                 }
 
+                @TestMetadata("fromJava.kt")
+                public void testFromJava_1_2() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/fromJava.kt");
+                    doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                }
+
+                @TestMetadata("fromJava.kt")
+                public void testFromJava_1_3() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/fromJava.kt");
+                    doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+                }
+
                 @TestMetadata("longArgs.kt")
                 public void testLongArgs_1_2() throws Exception {
                     runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/longArgs.kt", "kotlin.coroutines.experimental");

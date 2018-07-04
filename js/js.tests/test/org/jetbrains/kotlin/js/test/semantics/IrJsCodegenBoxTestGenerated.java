@@ -5503,6 +5503,18 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
                 }
 
+                @TestMetadata("fromJava.kt")
+                public void testFromJava_1_2() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/fromJava.kt");
+                    try {
+                        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+                    }
+                    catch (Throwable ignore) {
+                        return;
+                    }
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                }
+
                 @TestMetadata("longArgs.kt")
                 public void testLongArgs_1_2() throws Exception {
                     runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/longArgs.kt", "kotlin.coroutines.experimental");
