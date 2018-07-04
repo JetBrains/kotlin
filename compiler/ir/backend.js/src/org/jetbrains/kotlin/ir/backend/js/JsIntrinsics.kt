@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.js.resolve.JsPlatform.builtIns
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.Variance
@@ -96,8 +98,10 @@ class JsIntrinsics(
     val jsNumberToDouble = getInternalFunction("numberToDouble")
     val jsNumberToInt = getInternalFunction("numberToInt")
     val jsNumberToShort = getInternalFunction("numberToShort")
+    val jsNumberToLong = getInternalFunction("numberToLong")
     val jsToByte = getInternalFunction("toByte")
     val jsToShort = getInternalFunction("toShort")
+    val jsToLong = getInternalFunction("toLong")
 
 
     // Other:
@@ -112,6 +116,18 @@ class JsIntrinsics(
     val jsEquals = getInternalFunction("equals")
 
 
+    val longConstructor =
+        context.symbolTable.referenceConstructor(context.getClass(FqName("kotlin.Long")).constructors.single())
+    val longToDouble = context.symbolTable.referenceSimpleFunction(
+        context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(
+            Name.identifier("toDouble")
+        )
+    )
+    val longToFloat = context.symbolTable.referenceSimpleFunction(
+        context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(
+            Name.identifier("toFloat")
+        )
+    )
 
     // Helpers:
 
