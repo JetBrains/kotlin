@@ -10,8 +10,8 @@ import COROUTINES_PACKAGE.*
 
 class A {
     var isMinusAssignCalled = false
-    operator suspend fun minusAssign(y: String): Unit = suspendCoroutineOrReturn { x ->
-        if (y != "56") return@suspendCoroutineOrReturn Unit
+    operator suspend fun minusAssign(y: String): Unit = suspendCoroutineUninterceptedOrReturn { x ->
+        if (y != "56") return@suspendCoroutineUninterceptedOrReturn Unit
         isMinusAssignCalled = true
         x.resume(Unit)
         COROUTINE_SUSPENDED

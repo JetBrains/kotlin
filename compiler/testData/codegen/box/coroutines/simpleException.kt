@@ -8,7 +8,7 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 class Controller {
-    suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
+    suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
         x.resumeWithException(RuntimeException("OK"))
         COROUTINE_SUSPENDED
     }

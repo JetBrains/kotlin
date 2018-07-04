@@ -40,14 +40,14 @@ class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuati
 
     override val context = EmptyCoroutineContext
 
-    suspend fun computeHasNext(): Boolean = suspendCoroutineOrReturn { c ->
+    suspend fun computeHasNext(): Boolean = suspendCoroutineUninterceptedOrReturn { c ->
         computesNext = false
         computeContinuation = c
         nextStep!!.resume(Unit)
         COROUTINE_SUSPENDED
     }
 
-    suspend fun computeNext(): T = suspendCoroutineOrReturn { c ->
+    suspend fun computeNext(): T = suspendCoroutineUninterceptedOrReturn { c ->
         computesNext = true
         computeContinuation = c
         nextStep!!.resume(Unit)
@@ -97,7 +97,7 @@ class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuati
     }
 
     // Generator implementation
-    override suspend fun yield(value: T): Unit = suspendCoroutineOrReturn { c ->
+    override suspend fun yield(value: T): Unit = suspendCoroutineUninterceptedOrReturn { c ->
         computedNext = true
         nextValue = value
         nextStep = c

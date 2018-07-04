@@ -7,7 +7,7 @@ import helpers.*
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
-suspend fun suspendWithValue(result: () -> String): String = suspendCoroutineOrReturn { x ->
+suspend fun suspendWithValue(result: () -> String): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(result())
     COROUTINE_SUSPENDED
 }

@@ -15,7 +15,7 @@ suspend fun foo(x: Any): Int {
     }
 }
 
-suspend fun suspendHere(): Int = suspendCoroutineOrReturn { x ->
+suspend fun suspendHere(): Int = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(56)
     COROUTINE_SUSPENDED
 }

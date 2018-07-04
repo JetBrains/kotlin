@@ -11,7 +11,7 @@ class A<T : String> {
 
     suspend fun bar(): T {
         foo()
-        return suspendCoroutineOrReturn { x ->
+        return suspendCoroutineUninterceptedOrReturn { x ->
             x.resume(x.toString() as T)
             COROUTINE_SUSPENDED
         }

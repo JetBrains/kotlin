@@ -8,7 +8,7 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 import kotlin.reflect.KProperty
 
-suspend fun suspendThere(v: String): String = suspendCoroutineOrReturn { x ->
+suspend fun suspendThere(v: String): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(v)
     COROUTINE_SUSPENDED
 }
@@ -20,14 +20,14 @@ class A(val x: String) {
     var isIncCalled = false
     operator suspend fun component1() = suspendThere(x + "K")
     operator suspend fun getValue(thisRef: Any?, property: KProperty<*>) = suspendThere(x + "K")
-    operator suspend fun setValue(thisRef: Any?, property: KProperty<*>, value: String): Unit = suspendCoroutineOrReturn { x ->
-        if (value != "56") return@suspendCoroutineOrReturn Unit
+    operator suspend fun setValue(thisRef: Any?, property: KProperty<*>, value: String): Unit = suspendCoroutineUninterceptedOrReturn { x ->
+        if (value != "56") return@suspendCoroutineUninterceptedOrReturn Unit
         isSetValueCalled = true
         x.resume(Unit)
         COROUTINE_SUSPENDED
     }
 
-    operator suspend fun provideDelegate(host: Any?, p: Any): A = suspendCoroutineOrReturn { x ->
+    operator suspend fun provideDelegate(host: Any?, p: Any): A = suspendCoroutineUninterceptedOrReturn { x ->
         isProvideDelegateCalled = true
         x.resume(this)
         COROUTINE_SUSPENDED
@@ -36,25 +36,25 @@ class A(val x: String) {
     operator suspend fun plus(y: String) = suspendThere(x + y)
     operator suspend fun unaryPlus() = suspendThere(x + "K")
 
-    operator suspend fun inc(): A = suspendCoroutineOrReturn { x ->
+    operator suspend fun inc(): A = suspendCoroutineUninterceptedOrReturn { x ->
         isIncCalled = true
         x.resume(this)
         COROUTINE_SUSPENDED
     }
 
-    operator suspend fun minusAssign(y: String): Unit = suspendCoroutineOrReturn { x ->
-        if (y != "56") return@suspendCoroutineOrReturn Unit
+    operator suspend fun minusAssign(y: String): Unit = suspendCoroutineUninterceptedOrReturn { x ->
+        if (y != "56") return@suspendCoroutineUninterceptedOrReturn Unit
         isMinusAssignCalled = true
         x.resume(Unit)
         COROUTINE_SUSPENDED
     }
 // See KT-16221
-//    operator suspend fun contains(y: String): Boolean = suspendCoroutineOrReturn { x ->
+//    operator suspend fun contains(y: String): Boolean = suspendCoroutineUninterceptedOrReturn { x ->
 //        x.resume(y == "56")
 //        COROUTINE_SUSPENDED
 //    }
 
-    operator suspend fun compareTo(y: String): Int = suspendCoroutineOrReturn { x ->
+    operator suspend fun compareTo(y: String): Int = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume("56".compareTo(y))
         COROUTINE_SUSPENDED
     }

@@ -9,7 +9,7 @@ import COROUTINES_PACKAGE.intrinsics.*
 import kotlin.test.assertEquals
 
 class A(val w: String) {
-    suspend fun String.ext(): String = suspendCoroutineOrReturn {
+    suspend fun String.ext(): String = suspendCoroutineUninterceptedOrReturn {
         x ->
         x.resume(this + w)
         COROUTINE_SUSPENDED

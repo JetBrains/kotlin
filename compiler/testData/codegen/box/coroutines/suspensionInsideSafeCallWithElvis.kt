@@ -8,7 +8,7 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 class TestClass {
-    suspend fun toInt(): Int = suspendCoroutineOrReturn { x ->
+    suspend fun toInt(): Int = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume(14)
         COROUTINE_SUSPENDED
     }

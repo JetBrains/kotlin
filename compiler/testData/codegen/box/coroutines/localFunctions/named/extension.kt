@@ -9,7 +9,7 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 suspend fun callLocal(): String {
-    suspend fun String.local() = suspendCoroutineOrReturn<String> {
+    suspend fun String.local() = suspendCoroutineUninterceptedOrReturn<String> {
         it.resume(this)
         COROUTINE_SUSPENDED
     }

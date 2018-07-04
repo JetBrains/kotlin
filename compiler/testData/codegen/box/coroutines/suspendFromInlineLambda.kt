@@ -8,7 +8,7 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 class Controller {
-    suspend fun suspendHere(v: Int): Int = suspendCoroutineOrReturn { x ->
+    suspend fun suspendHere(v: Int): Int = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume(v * 2)
         COROUTINE_SUSPENDED
     }

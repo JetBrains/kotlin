@@ -7,7 +7,7 @@ import helpers.*
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
-suspend fun suspendHere(r: LongRange): Long = suspendCoroutineOrReturn { x ->
+suspend fun suspendHere(r: LongRange): Long = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(r.start + r.endInclusive)
     COROUTINE_SUSPENDED
 }

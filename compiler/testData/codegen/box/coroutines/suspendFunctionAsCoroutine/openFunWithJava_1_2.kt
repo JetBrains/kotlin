@@ -10,7 +10,7 @@ import kotlin.coroutines.experimental.intrinsics.*
 
 
 open class A(val v: String) {
-    suspend fun suspendThere(v: String): String = suspendCoroutineOrReturn { x ->
+    suspend fun suspendThere(v: String): String = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume(v)
         COROUTINE_SUSPENDED
     }

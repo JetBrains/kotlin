@@ -11,7 +11,7 @@ import COROUTINES_PACKAGE.intrinsics.*
 var x = true
 private suspend fun foo(): String  {
     if (x) {
-        return suspendCoroutineOrReturn<String> {
+        return suspendCoroutineUninterceptedOrReturn<String> {
             it.resume("OK")
             COROUTINE_SUSPENDED
         }

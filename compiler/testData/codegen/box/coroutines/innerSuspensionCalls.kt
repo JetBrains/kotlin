@@ -9,7 +9,7 @@ import COROUTINES_PACKAGE.intrinsics.*
 
 class Controller {
     var i = 0
-    suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
+    suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume((i++).toString())
         COROUTINE_SUSPENDED
     }

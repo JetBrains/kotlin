@@ -41,7 +41,7 @@ fun box(): String {
     return "OK"
 }
 
-suspend fun suspendAndContinue(): Unit = suspendCoroutineOrReturn { c ->
+suspend fun suspendAndContinue(): Unit = suspendCoroutineUninterceptedOrReturn { c ->
     postponed = {
         c.resume(Unit)
     }

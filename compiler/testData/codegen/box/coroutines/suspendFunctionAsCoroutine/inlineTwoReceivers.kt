@@ -6,10 +6,10 @@
 import helpers.*
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.COROUTINE_SUSPENDED
-import COROUTINES_PACKAGE.intrinsics.suspendCoroutineOrReturn
+import COROUTINES_PACKAGE.intrinsics.suspendCoroutineUninterceptedOrReturn
 
 class MyTest {
-    suspend fun act(value: String): String = suspendCoroutineOrReturn {
+    suspend fun act(value: String): String = suspendCoroutineUninterceptedOrReturn {
         it.resume(value)
         COROUTINE_SUSPENDED
     }

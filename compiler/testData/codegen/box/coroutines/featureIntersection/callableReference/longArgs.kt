@@ -6,7 +6,7 @@ import helpers.*
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
-suspend inline fun Long.longArgs(a: Long, b: Long, c: Long) = suspendCoroutineOrReturn<Long> {
+suspend inline fun Long.longArgs(a: Long, b: Long, c: Long) = suspendCoroutineUninterceptedOrReturn<Long> {
     it.resume(this + a + b + c)
     COROUTINE_SUSPENDED
 }

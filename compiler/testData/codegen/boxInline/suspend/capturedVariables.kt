@@ -26,7 +26,7 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-suspend fun calculate() = suspendCoroutineOrReturn<String> {
+suspend fun calculate() = suspendCoroutineUninterceptedOrReturn<String> {
     it.resume("OK")
     COROUTINE_SUSPENDED
 }

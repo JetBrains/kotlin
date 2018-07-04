@@ -8,7 +8,7 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 interface TestInterface {
-    suspend fun toInt(): Int = suspendCoroutineOrReturn { x ->
+    suspend fun toInt(): Int = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume(56)
         COROUTINE_SUSPENDED
     }

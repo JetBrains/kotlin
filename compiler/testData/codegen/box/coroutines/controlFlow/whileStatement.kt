@@ -12,7 +12,7 @@ import COROUTINES_PACKAGE.intrinsics.*
 class Controller {
     var result = ""
 
-    suspend fun <T> suspendWithResult(value: T): T = suspendCoroutineOrReturn { c ->
+    suspend fun <T> suspendWithResult(value: T): T = suspendCoroutineUninterceptedOrReturn { c ->
         c.resume(value)
         COROUTINE_SUSPENDED
     }

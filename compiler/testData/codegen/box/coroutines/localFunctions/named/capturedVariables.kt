@@ -11,7 +11,7 @@ import COROUTINES_PACKAGE.intrinsics.*
 suspend fun callLocal(): String {
     val a = "O"
     val b = "K"
-    suspend fun local() = suspendCoroutineOrReturn<String> {
+    suspend fun local() = suspendCoroutineUninterceptedOrReturn<String> {
         it.resume(a + b)
         COROUTINE_SUSPENDED
     }

@@ -8,12 +8,12 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 import kotlin.test.assertEquals
 
-suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
+suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume("OK")
     COROUTINE_SUSPENDED
 }
 
-suspend fun suspendWithException(): String = suspendCoroutineOrReturn { x ->
+suspend fun suspendWithException(): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resumeWithException(RuntimeException("OK"))
     COROUTINE_SUSPENDED
 }

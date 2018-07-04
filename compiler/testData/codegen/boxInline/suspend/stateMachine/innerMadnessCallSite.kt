@@ -28,7 +28,7 @@ fun builder(c: suspend () -> Unit) {
 
 var i = 0;
 
-suspend fun suspendHere() = suspendCoroutineOrReturn<Unit> {
+suspend fun suspendHere() = suspendCoroutineUninterceptedOrReturn<Unit> {
     i++
     COROUTINE_SUSPENDED
 }

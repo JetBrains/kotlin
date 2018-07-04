@@ -11,14 +11,14 @@ import COROUTINES_PACKAGE.intrinsics.*
 class Controller {
     var result = ""
 
-    suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineOrReturn { c ->
+    suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineUninterceptedOrReturn { c ->
         result += "suspend($value);"
         c.resume(value)
         COROUTINE_SUSPENDED
     }
 
     // Tail calls are not allowed to be Nothing typed. See KT-15051
-    suspend fun suspendLogAndThrow(exception: Throwable): Any? = suspendCoroutineOrReturn { c ->
+    suspend fun suspendLogAndThrow(exception: Throwable): Any? = suspendCoroutineUninterceptedOrReturn { c ->
         result += "throw(${exception.message});"
         c.resumeWithException(exception)
         COROUTINE_SUSPENDED
