@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -96,7 +99,7 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
         else -> null
     }
 
-    if (visibility != null && !visibility.isPublicAPI) {
+    if (visibility != null && !visibility.isPublicAPI && visibility != Visibilities.INTERNAL) {
         // If the declaration is explicitly marked as non-public,
         // then it must not be accessible from other modules.
         return false
@@ -194,9 +197,21 @@ internal val FunctionDescriptor.functionName: String
                 }
             }
 
+            val name = this.name.mangleIfInternal(this.module, this.visibility)
+
             return "$name$signature"
         }
     }
+
+private fun Name.mangleIfInternal(moduleDescriptor: ModuleDescriptor, visibility: Visibility): String =
+        if (visibility != Visibilities.INTERNAL) {
+            this.asString()
+        } else {
+            val moduleName = moduleDescriptor.name.asString()
+                    .let { it.substring(1, it.lastIndex) } // Remove < and >.
+
+            "$this\$$moduleName"
+        }
 
 internal val FunctionDescriptor.symbolName: String
     get() {
