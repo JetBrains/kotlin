@@ -4188,8 +4188,23 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
 
+        @TestMetadata("afterElvis.kt")
+        public void testAfterElvis() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/afterElvis.kt");
+        }
+
+        @TestMetadata("afterElvis2.kt")
+        public void testAfterElvis2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/afterElvis2.kt");
+        }
+
         public void testAllFilesPresentInReplacePutWithAssignment() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replacePutWithAssignment"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("beforeElvis.kt")
+        public void testBeforeElvis() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/beforeElvis.kt");
         }
 
         @TestMetadata("nonMap.kt")
