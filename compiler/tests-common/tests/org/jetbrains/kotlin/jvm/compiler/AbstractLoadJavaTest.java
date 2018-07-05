@@ -10,6 +10,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static java.util.Collections.emptyMap;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.*;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesAllowed;
@@ -146,7 +148,17 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     private static void updateConfigurationWithDirectives(String content, CompilerConfiguration configuration) {
         Map<String, String> directives = KotlinTestUtils.parseDirectives(content);
-        LanguageVersionSettings languageVersionSettings = CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettingsOrDefault(directives);
+        LanguageVersionSettings languageVersionSettings = CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettings(directives);
+        if (languageVersionSettings == null) {
+            if (InTextDirectivesUtils.isDirectiveDefined(content, "WITH_UNSIGNED")) {
+                languageVersionSettings = new CompilerTestLanguageVersionSettings(
+                        emptyMap(), ApiVersion.KOTLIN_1_3, LanguageVersion.KOTLIN_1_3, emptyMap()
+                );
+            }
+            else {
+                languageVersionSettings = CompilerTestLanguageVersionSettingsKt.defaultLanguageVersionSettings();
+            }
+        }
 
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, languageVersionSettings);
 

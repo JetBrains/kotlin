@@ -46,11 +46,10 @@ private fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.Sta
         emptyMap()
 }
 
-fun parseLanguageVersionSettingsOrDefault(directiveMap: Map<String, String>): LanguageVersionSettings =
-    parseLanguageVersionSettings(directiveMap)
-        ?: CompilerTestLanguageVersionSettings(emptyMap(), ApiVersion.LATEST_STABLE, LanguageVersion.LATEST_STABLE)
+fun parseLanguageVersionSettingsOrDefault(directiveMap: Map<String, String>): CompilerTestLanguageVersionSettings =
+    parseLanguageVersionSettings(directiveMap) ?: defaultLanguageVersionSettings()
 
-fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVersionSettings? {
+fun parseLanguageVersionSettings(directiveMap: Map<String, String>): CompilerTestLanguageVersionSettings? {
     val apiVersionString = directiveMap[API_VERSION_DIRECTIVE]
     val languageFeaturesString = directiveMap[LANGUAGE_DIRECTIVE]
     val experimental = directiveMap[EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.experimental to it }
@@ -77,6 +76,9 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVer
         )
     )
 }
+
+fun defaultLanguageVersionSettings(): CompilerTestLanguageVersionSettings =
+    CompilerTestLanguageVersionSettings(emptyMap(), ApiVersion.LATEST_STABLE, LanguageVersion.LATEST_STABLE)
 
 fun setupLanguageVersionSettingsForCompilerTests(originalFileText: String, environment: KotlinCoreEnvironment) {
     val directives = KotlinTestUtils.parseDirectives(originalFileText)
