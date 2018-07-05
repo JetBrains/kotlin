@@ -10,7 +10,7 @@ import COROUTINES_PACKAGE.intrinsics.COROUTINE_SUSPENDED
 fun runCustomLambdaAsCoroutine(e: Throwable? = null, x: (Continuation<String>) -> Any?): String {
     var result = "fail"
     var wasIntercepted = false
-    val c = (x as suspend () -> String).createCoroutine(object: ContinuationAdapter() {
+    val c = (x as suspend () -> String).createCoroutine(object: helpers.ContinuationAdapter<String>() {
         override fun resumeWithException(exception: Throwable) {
             throw exception
         }

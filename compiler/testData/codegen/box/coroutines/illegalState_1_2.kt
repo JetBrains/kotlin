@@ -1,12 +1,10 @@
-// LANGUAGE_VERSION: 1.3
 // IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
-// TARGET_BACKEND: JVM
 import helpers.*
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+// TARGET_BACKEND: JVM
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 suspend fun suspendHere(): Unit = suspendCoroutineOrReturn { x ->
     x.resume(Unit)
@@ -24,7 +22,7 @@ fun builder2(c: suspend () -> Unit) {
     delegateField.setAccessible(true)
     val originalContinuation = delegateField.get(continuation)
 
-    val declaredField = originalContinuation.javaClass.getDeclaredField("label")
+    val declaredField = originalContinuation.javaClass.superclass.getDeclaredField("label")
     declaredField.setAccessible(true)
     declaredField.set(originalContinuation, -3)
     continuation.resume(Unit)

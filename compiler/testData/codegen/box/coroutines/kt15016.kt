@@ -7,7 +7,7 @@ import helpers.*
 
 import COROUTINES_PACKAGE.intrinsics.COROUTINE_SUSPENDED
 import COROUTINES_PACKAGE.intrinsics.suspendCoroutineOrReturn
-import COROUTINES_PACKAGE.startCoroutine
+import COROUTINES_PACKAGE.*
 
 class Bar(val x: Any)
 inline fun Any.map(transform: (Any) -> Any) {

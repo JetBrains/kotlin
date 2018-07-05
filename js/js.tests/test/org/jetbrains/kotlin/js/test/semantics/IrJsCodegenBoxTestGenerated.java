@@ -5932,8 +5932,13 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             }
 
             @TestMetadata("inlineWithJava.kt")
+            public void testInlineWithJava() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineWithJava.kt");
+            }
+
+            @TestMetadata("inlineWithJava_1_2.kt")
             public void testInlineWithJava_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineWithJava.kt", "kotlin.coroutines.experimental");
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineWithJava_1_2.kt");
             }
 
             @TestMetadata("simple.kt")

@@ -1,12 +1,10 @@
-// LANGUAGE_VERSION: 1.3
 // IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // WITH_COROUTINES
 import helpers.*
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 class A<T : String> {
     suspend fun foo() {}
@@ -31,5 +29,5 @@ fun box(): String {
         result = A<String>().bar()
     }
 
-    return if (result == "Continuation @ A\$bar\$1") "OK" else "Fail: $result"
+    return if (result == "(kotlin.coroutines.experimental.Continuation<T>) -> kotlin.Any?") "OK" else "Fail: $result"
 }

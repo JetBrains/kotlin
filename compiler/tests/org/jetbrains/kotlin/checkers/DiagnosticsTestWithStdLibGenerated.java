@@ -1479,13 +1479,13 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         }
 
         @TestMetadata("suspendCoroutineOrReturn.kt")
-        public void testSuspendCoroutineOrReturn_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCoroutineOrReturn.kt", "kotlin.coroutines.experimental");
+        public void testSuspendCoroutineOrReturn() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCoroutineOrReturn.kt");
         }
 
-        @TestMetadata("suspendCoroutineOrReturn.kt")
-        public void testSuspendCoroutineOrReturn_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCoroutineOrReturn.kt", "kotlin.coroutines");
+        @TestMetadata("suspendCoroutineOrReturn_1_2.kt")
+        public void testSuspendCoroutineOrReturn_1_2() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCoroutineOrReturn_1_2.kt");
         }
 
         @TestMetadata("suspendCoroutineUnavailableWithNewAPI.kt")
