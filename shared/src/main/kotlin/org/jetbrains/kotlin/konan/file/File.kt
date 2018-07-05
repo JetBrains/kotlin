@@ -152,10 +152,17 @@ data class File constructor(internal val javaPath: Path) {
 
         val javaHome
             get() = File(System.getProperty("java.home"))
-
+        val pathSeparator = java.io.File.pathSeparator
     }
 
     fun readStrings() = mutableListOf<String>().also { list -> forEachLine{list.add(it)}}
+
+    override fun equals(other: Any?): Boolean {
+        val otherFile = other as? File ?: return false
+        return otherFile.javaPath.toAbsolutePath() == javaPath.toAbsolutePath()
+    }
+
+    override fun hashCode() = javaPath.toAbsolutePath().hashCode()
 }
 
 fun String.File(): File = File(this)
