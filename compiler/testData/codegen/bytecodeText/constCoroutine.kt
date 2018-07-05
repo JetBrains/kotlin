@@ -24,5 +24,4 @@ fun box(): String {
 
 // 2 GETSTATIC kotlin/Unit.INSTANCE
 // 1 GETSTATIC helpers/EmptyContinuation.Companion
-// 4 GETSTATIC kotlin\/coroutines\/experimental\/EmptyCoroutineContext.INSTANCE
-// 7 GETSTATIC
+// 3 GETSTATIC
