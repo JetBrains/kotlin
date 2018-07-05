@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProhibitNonConstValuesAsVarargsInAnnotations
+// !LANGUAGE: +ProhibitNonConstValuesAsVarargsInAnnotations, +ProhibitAssigningSingleElementsToVarargsInNamedForm
 
 val nonConstArray = longArrayOf(0)
 fun nonConstFun(): LongArray = TODO()

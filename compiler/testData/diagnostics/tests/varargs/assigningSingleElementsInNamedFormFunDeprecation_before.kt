@@ -1,4 +1,4 @@
-// !LANGUAGE: +AssigningArraysToVarargsInNamedFormInAnnotations
+// !LANGUAGE: +AssigningArraysToVarargsInNamedFormInAnnotations, -ProhibitAssigningSingleElementsToVarargsInNamedForm
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 // !WITH_NEW_INFERENCE
 

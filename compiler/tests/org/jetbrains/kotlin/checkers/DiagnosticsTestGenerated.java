@@ -22065,14 +22065,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/varargs/assigningArraysToVarargsInAnnotations.kt");
             }
 
-            @TestMetadata("assigningSingleElementsInNamedFormAnnDeprecation.kt")
-            public void testAssigningSingleElementsInNamedFormAnnDeprecation() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormAnnDeprecation.kt");
+            @TestMetadata("assigningSingleElementsInNamedFormAnnDeprecation_after.kt")
+            public void testAssigningSingleElementsInNamedFormAnnDeprecation_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormAnnDeprecation_after.kt");
             }
 
-            @TestMetadata("assigningSingleElementsInNamedFormFunDeprecation.kt")
-            public void testAssigningSingleElementsInNamedFormFunDeprecation() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormFunDeprecation.kt");
+            @TestMetadata("assigningSingleElementsInNamedFormAnnDeprecation_before.kt")
+            public void testAssigningSingleElementsInNamedFormAnnDeprecation_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormAnnDeprecation_before.kt");
+            }
+
+            @TestMetadata("assigningSingleElementsInNamedFormFunDeprecation_after.kt")
+            public void testAssigningSingleElementsInNamedFormFunDeprecation_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormFunDeprecation_after.kt");
+            }
+
+            @TestMetadata("assigningSingleElementsInNamedFormFunDeprecation_before.kt")
+            public void testAssigningSingleElementsInNamedFormFunDeprecation_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormFunDeprecation_before.kt");
             }
 
             @TestMetadata("kt1781.kt")
