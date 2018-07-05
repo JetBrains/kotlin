@@ -41,6 +41,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("annotatedAnnotationParameter.kt")
+        public void testAnnotatedAnnotationParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/annotatedAnnotationParameter.kt");
+        }
+
         @TestMetadata("annotatedEnumEntry.kt")
         public void testAnnotatedEnumEntry() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/annotatedEnumEntry.kt");

@@ -266,14 +266,19 @@ public class PropertyCodegen {
             @Nullable FunctionDescriptor expectedAnnotationConstructor
     ) {
         JvmMethodGenericSignature signature = typeMapper.mapAnnotationParameterSignature(descriptor);
-        String name = parameter.getName();
-        if (name == null) return;
+        Method asmMethod = signature.getAsmMethod();
         MethodVisitor mv = v.newMethod(
-                JvmDeclarationOriginKt.OtherOrigin(parameter, descriptor), ACC_PUBLIC | ACC_ABSTRACT, name,
-                signature.getAsmMethod().getDescriptor(),
+                JvmDeclarationOriginKt.OtherOrigin(parameter, descriptor),
+                ACC_PUBLIC | ACC_ABSTRACT,
+                asmMethod.getName(),
+                asmMethod.getDescriptor(),
                 signature.getGenericsSignature(),
                 null
         );
+
+        PropertyGetterDescriptor getter = descriptor.getGetter();
+        assert getter != null : "Annotation property should have a getter: " + descriptor;
+        FunctionCodegen.generateMethodAnnotations(getter, asmMethod, mv, memberCodegen, typeMapper);
 
         KtExpression defaultValue = loadAnnotationArgumentDefaultValue(parameter, descriptor, expectedAnnotationConstructor);
         if (defaultValue != null) {

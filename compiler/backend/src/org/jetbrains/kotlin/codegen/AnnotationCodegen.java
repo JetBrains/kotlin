@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.AnnotationChecker;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -164,10 +165,17 @@ public abstract class AnnotationCodegen {
             if (isInvisibleFromTheOutside(descriptor)) return;
             if (descriptor instanceof ValueParameterDescriptor && isInvisibleFromTheOutside(descriptor.getContainingDeclaration())) return;
 
+            // No need to annotate annotation methods since they're always non-null
+            if (descriptor instanceof PropertyGetterDescriptor &&
+                DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration())) {
+                return;
+            }
+
             if (returnType != null && !AsmUtil.isPrimitive(returnType)) {
                 generateNullabilityAnnotation(descriptor.getReturnType(), annotationDescriptorsAlreadyPresent);
             }
         }
+
         if (unwrapped instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) unwrapped;
             if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
