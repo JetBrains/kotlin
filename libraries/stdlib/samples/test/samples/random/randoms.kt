@@ -28,7 +28,7 @@ class Randoms {
 
         val randomValues1 = getRandomList(Random(42))
         // prints the same sequence every time
-        assertPrints(randomValues1, "[44, 34, 69, 67, 22, 16, 67, 45, 95, 10]")
+        assertPrints(randomValues1, "[33, 40, 41, 2, 41, 32, 21, 40, 69, 87]")
 
         val randomValues2 = getRandomList(Random(42))
         // random with the same seed produce the same sequence
@@ -36,6 +36,6 @@ class Randoms {
 
         val randomValues3 = getRandomList(Random(0))
         // random with another seed produce another sequence
-        assertPrints(randomValues3, "[20, 63, 41, 28, 0, 99, 35, 42, 72, 13]")
+        assertPrints(randomValues3, "[14, 48, 57, 67, 82, 7, 61, 27, 14, 59]")
     }
 }
