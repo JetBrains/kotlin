@@ -5,10 +5,8 @@
 
 package kotlin.random
 
-import kotlin.math.pow
-
 internal actual fun defaultPlatformRandom(): Random =
-    XorWowRandom((js("Math").random().unsafeCast<Double>() * (2.0.pow(32.0))).toInt())
+    Random(js("(Math.random() * Math.pow(2, 32)) | 0").unsafeCast<Int>())
 
 
 internal actual fun fastLog2(value: Int): Int {

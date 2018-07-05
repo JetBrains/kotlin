@@ -299,7 +299,7 @@ public abstract class Random {
  * @sample samples.random.Randoms.seededRandom
  */
 @SinceKotlin("1.3")
-public fun Random(seed: Int): Random = XorWowRandom(seed)
+public fun Random(seed: Int): Random = XorWowRandom(seed, seed.shr(31))
 
 /**
  * Returns a repeatable random number generator seeded with the given [seed] `Long` value.
@@ -309,7 +309,7 @@ public fun Random(seed: Int): Random = XorWowRandom(seed)
  * @sample samples.random.Randoms.seededRandom
  */
 @SinceKotlin("1.3")
-public fun Random(seed: Long): Random = XorWowRandom(seed)
+public fun Random(seed: Long): Random = XorWowRandom(seed.toInt(), seed.shr(32).toInt())
 
 
 internal expect fun defaultPlatformRandom(): Random

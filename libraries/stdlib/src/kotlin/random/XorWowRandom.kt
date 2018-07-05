@@ -6,36 +6,44 @@
 package kotlin.random
 
 /**
- * Random number generator, algorithm "xorwow" from p. 5 of Marsaglia, "Xorshift RNGs"
+ * Random number generator, algorithm "xorwow" from p. 5 of Marsaglia, "Xorshift RNGs".
+ *
+ * Cycles after 2^160 * (2^32-1) repetitions.
+ *
+ * See http://www.jstatsoft.org/v08/i14/paper for details.
  */
-internal class XorWowRandom internal constructor(
-    private var s0: Int,
-    private var s1: Int,
-    private var s2: Int,
-    private var s3: Int,
-    private var addent: Int
+internal class XorWowRandom
+internal constructor(
+    private var x: Int,
+    private var y: Int,
+    private var z: Int,
+    private var w: Int,
+    private var v: Int,
+    private var addend: Int
 ) : Random() {
 
-    public constructor(seed: Long) : this(seed.toInt(), (seed ushr 32).toInt(), 0, if (seed == 0L) 1 else 0, 1)
-    public constructor(seed: Int) : this(seed, 0, 0, if (seed == 0) 1 else 0, 1)
+    internal constructor(seed1: Int, seed2: Int) :
+            this(seed1, seed2, 0, 0, seed1.inv(), (seed1 shl 10) xor (seed2 ushr 4))
 
     init {
-        require((s0 or s1 or s2 or s3) != 0) { "Initial state must have at least one non-zero element" }
+        require((x or y or z or w or v) != 0) { "Initial state must have at least one non-zero element." }
+
+        // some trivial seeds can produce several values with zeroes in upper bits, so we discard first 64
+        repeat(64) { nextInt() }
     }
 
     override fun nextInt(): Int {
-        var t = s3
-        t = t xor (t shr 2)
-        t = t xor (t shl 1)
-        s3 = s2
-        s2 = s1
-        val s = s0
-        s1 = s
-        t = t xor s
-        t = t xor (s shl 4)
-        s0 = t
-        addent += 362437
-        return t + addent
+        var t = x
+        t = t xor (t ushr 2)
+        x = y
+        y = z
+        z = w
+        val v0 = v
+        w = v0
+        t = (t xor (t shl 1)) xor v0 xor (v0 shl 4)
+        v = t
+        addend += 362437
+        return t + addend
     }
 
     override fun nextBits(bitCount: Int): Int = nextInt() ushr (32 - bitCount)
