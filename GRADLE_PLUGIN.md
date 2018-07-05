@@ -1,6 +1,10 @@
 # Kotlin/Native Gradle plugin
 
-#### __Note__: The plugin DSL was changed in v0.3.4. See the details below.
+_Note: In the version 0.8 a new experimental plugin has been introduced. It is integrated with new Gradle support
+for native languages and provides a new DSL which is much closer to the DSL of Kotlin/JVM and Kotlin/JS
+plugins than the old one. The plugin is at an early stage so some things may be changed in upcoming releases. See
+[this demo project](https://github.com/ilmat192/Kotlin-Native-Gradle-Experiments) or
+[MPP http client](https://github.com/e5l/http-client-common/tree/master/samples/ios-test-application) for DSL example._
 
 ## Overview
 
