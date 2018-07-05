@@ -5,16 +5,29 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
 
 abstract class AbstractBytecodeListingTest : CodegenTestCase() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
-        val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
+
         compile(files, javaFilesDir)
         val actualTxt = BytecodeListingTextCollectingVisitor.getText(classFileFactory, withSignatures = isWithSignatures(wholeFile))
+
+        val prefixes =
+            if (coroutinesPackage == DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString()) {
+                listOf("_1_3", "")
+            } else listOf("")
+
+        val txtFile =
+            prefixes.firstNotNullResult { File(wholeFile.parentFile, wholeFile.nameWithoutExtension + "$it.txt").takeIf(File::exists) }
+                .sure { "No testData file exists: ${wholeFile.nameWithoutExtension}.txt" }
+
         KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt) {
             it.replace("COROUTINES_PACKAGE", coroutinesPackage)
         }

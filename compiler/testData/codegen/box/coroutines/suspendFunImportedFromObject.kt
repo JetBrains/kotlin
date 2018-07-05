@@ -7,6 +7,7 @@
 package stuff
 import helpers.*
 
+import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 object Host {

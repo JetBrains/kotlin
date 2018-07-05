@@ -1053,13 +1053,13 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @TestMetadata("doNotReassignContinuation.kt")
-        public void testDoNotReassignContinuation_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/doNotReassignContinuation.kt", "kotlin.coroutines.experimental");
+        public void testDoNotReassignContinuation() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/doNotReassignContinuation.kt");
         }
 
-        @TestMetadata("doNotReassignContinuation.kt")
-        public void testDoNotReassignContinuation_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/doNotReassignContinuation.kt", "kotlin.coroutines");
+        @TestMetadata("doNotReassignContinuation_1_2.kt")
+        public void testDoNotReassignContinuation_1_2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/doNotReassignContinuation_1_2.kt");
         }
 
         @TestMetadata("returnUnitInLambda.kt")
@@ -1072,24 +1072,24 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/returnUnitInLambda.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("varValueConflictsWithTable.kt")
+        public void testVarValueConflictsWithTable() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTable.kt");
+        }
+
         @TestMetadata("varValueConflictsWithTableSameSort.kt")
+        public void testVarValueConflictsWithTableSameSort() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTableSameSort.kt");
+        }
+
+        @TestMetadata("varValueConflictsWithTableSameSort_1_2.kt")
         public void testVarValueConflictsWithTableSameSort_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTableSameSort.kt", "kotlin.coroutines.experimental");
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTableSameSort_1_2.kt");
         }
 
-        @TestMetadata("varValueConflictsWithTableSameSort.kt")
-        public void testVarValueConflictsWithTableSameSort_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTableSameSort.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("varValueConflictsWithTable.kt")
+        @TestMetadata("varValueConflictsWithTable_1_2.kt")
         public void testVarValueConflictsWithTable_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTable.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("varValueConflictsWithTable.kt")
-        public void testVarValueConflictsWithTable_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTable.kt", "kotlin.coroutines");
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTable_1_2.kt");
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/destructuringInLambda")
