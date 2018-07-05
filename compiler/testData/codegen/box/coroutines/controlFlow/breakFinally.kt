@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
@@ -47,8 +47,8 @@ fun box(): String {
                     result += "@"
                     for (y in listOf("F", "G")) {
                         try {
-                            result += suspendWithResult(z)
-                            if (z == "G") {
+                            result += suspendWithResult(y)
+                            if (y == "G") {
                                 break
                             }
                         }
