@@ -488,7 +488,13 @@ public class KotlinTypeMapper {
         sw.writeReturnType();
         mapType(descriptor.getType(), sw, TypeMappingMode.VALUE_FOR_ANNOTATION);
         sw.writeReturnTypeEnd();
-        return sw.makeJvmMethodSignature(descriptor.getName().asString());
+        return sw.makeJvmMethodSignature(mapAnnotationParameterName(descriptor));
+    }
+
+    @NotNull
+    public String mapAnnotationParameterName(@NotNull PropertyDescriptor descriptor) {
+        PropertyGetterDescriptor getter = descriptor.getGetter();
+        return getter != null ? mapFunctionName(getter, OwnerKind.IMPLEMENTATION) : descriptor.getName().asString();
     }
 
     @NotNull
