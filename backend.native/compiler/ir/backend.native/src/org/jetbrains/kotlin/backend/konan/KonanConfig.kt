@@ -108,6 +108,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     private val loadedDescriptors = loadLibMetadata()
 
+    internal lateinit var friends:Set<ModuleDescriptorImpl>
+
     internal val defaultNativeLibraries = 
         if (produce == CompilerOutputKind.PROGRAM) 
             File(distribution.defaultNatives(target)).listFiles.map { it.absolutePath } 
@@ -125,13 +127,20 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         val specifics = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
 
         val libraries = immediateLibraries.withResolvedDependencies()
+        val friendLibsSet = configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map{File(it)}?.toSet()
+        val friends = mutableListOf<ModuleDescriptorImpl>()
         for (klib in libraries) {
             profile("Loading ${klib.libraryName}") {
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
                 val moduleDescriptor = klib.moduleDescriptor(specifics)
                 allMetadata.add(moduleDescriptor)
+                friendLibsSet?.apply {
+                    if (contains(klib.libraryFile))
+                        friends.add(moduleDescriptor)
+                }
             }
         }
+        this.friends = friends.toSet()
         return allMetadata
     }
 

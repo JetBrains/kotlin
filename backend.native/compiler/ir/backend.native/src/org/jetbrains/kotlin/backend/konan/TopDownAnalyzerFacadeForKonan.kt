@@ -39,8 +39,9 @@ object TopDownAnalyzerFacadeForKonan {
         val context = MutableModuleContextImpl(module, projectContext)
 
         if (!module.isStdlib()) {
-            context.setDependencies(listOf(module) + config.moduleDescriptors +
-                    config.getOrCreateForwardDeclarationsModule(module.builtIns, projectContext.storageManager))
+            val dependencies = listOf(module) + config.moduleDescriptors +
+                    config.getOrCreateForwardDeclarationsModule(module.builtIns, projectContext.storageManager)
+            module.setDependencies(dependencies, config.friends)
         } else {
             assert (config.moduleDescriptors.isEmpty())
             context.setDependencies(module)

@@ -16,23 +16,27 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.cValuesOf
+import kotlinx.cinterop.get
+import kotlinx.cinterop.memScoped
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.CurrentKonanModule
 import org.jetbrains.kotlin.backend.konan.descriptors.DeserializedKonanModule
 import org.jetbrains.kotlin.backend.konan.descriptors.LlvmSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.backend.konan.isNativeBinary
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
 import org.jetbrains.kotlin.backend.konan.library.withResolvedDependencies
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.properties.ReadOnlyProperty

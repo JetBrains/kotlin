@@ -105,6 +105,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("verify ir")
         val VERBOSE_PHASES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("verbose backend phases")
+        val FRIEND_MODULES: CompilerConfigurationKey<List<String>>
+                = CompilerConfigurationKey.create<List<String>>("friend module paths")
     }
 }
 

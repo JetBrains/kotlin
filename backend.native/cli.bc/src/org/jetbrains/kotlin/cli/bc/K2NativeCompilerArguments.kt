@@ -141,5 +141,11 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "--verify_ir", description = "Verify IR")
     var verifyIr: Boolean = false
 
+    @Argument(
+            value = "-friend-modules",
+            valueDescription = "<path>",
+            description = "Paths to friend modules"
+    )
+    var friendModules: String? = null
 }
 

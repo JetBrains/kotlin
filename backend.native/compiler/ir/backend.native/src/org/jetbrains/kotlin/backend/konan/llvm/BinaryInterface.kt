@@ -99,6 +99,9 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
         else -> null
     }
 
+    /**
+     * note: about INTERNAL - with support of friend modules we let frontend to deal with internal declarations.
+     */
     if (visibility != null && !visibility.isPublicAPI && visibility != Visibilities.INTERNAL) {
         // If the declaration is explicitly marked as non-public,
         // then it must not be accessible from other modules.

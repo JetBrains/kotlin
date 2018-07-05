@@ -20,18 +20,19 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.konan.util.profile
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.util.profile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.KotlinPaths
 
@@ -172,6 +173,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     } else {
                         arguments.checkDependencies
                     })
+                if (arguments.friendModules != null)
+                    put(FRIEND_MODULES, arguments.friendModules!!.split(File.pathSeparator).filterNot(String::isEmpty))
             }
         }
     }
