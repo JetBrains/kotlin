@@ -272,4 +272,9 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     public void testTypeAliasesKt13181() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/typeAliasesKt13181.kt");
     }
+
+    @TestMetadata("unsignedTypesInAnnotations.kt")
+    public void testUnsignedTypesInAnnotations() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/unsignedTypesInAnnotations.kt");
+    }
 }

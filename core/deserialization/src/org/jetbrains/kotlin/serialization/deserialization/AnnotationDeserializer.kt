@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -67,12 +68,14 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
             value: Value,
             nameResolver: NameResolver
     ): ConstantValue<*> {
+        val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
+
         val result: ConstantValue<*> = when (value.type) {
-            Type.BYTE -> ByteValue(value.intValue.toByte())
+            Type.BYTE -> value.intValue.toByte().letIf(isUnsigned, ::UByteValue, ::ByteValue)
             Type.CHAR -> CharValue(value.intValue.toChar())
-            Type.SHORT -> ShortValue(value.intValue.toShort())
-            Type.INT -> IntValue(value.intValue.toInt())
-            Type.LONG -> LongValue(value.intValue)
+            Type.SHORT -> value.intValue.toShort().letIf(isUnsigned, ::UShortValue, ::ShortValue)
+            Type.INT -> value.intValue.toInt().letIf(isUnsigned, ::UIntValue, ::IntValue)
+            Type.LONG -> value.intValue.letIf(isUnsigned, ::ULongValue, ::LongValue)
             Type.FLOAT -> FloatValue(value.floatValue)
             Type.DOUBLE -> DoubleValue(value.doubleValue)
             Type.BOOLEAN -> BooleanValue(value.intValue != 0L)
@@ -125,6 +128,9 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
             ErrorValue.create("Unexpected argument value")
         }
     }
+
+    private inline fun <T, R> T.letIf(predicate: Boolean, f: (T) -> R, g: (T) -> R): R =
+        if (predicate) f(this) else g(this)
 
     private fun resolveClassLiteralValue(classId: ClassId): ConstantValue<*> {
         // If value refers to a class named test.Foo.Bar where both Foo and Bar have generic type parameters,

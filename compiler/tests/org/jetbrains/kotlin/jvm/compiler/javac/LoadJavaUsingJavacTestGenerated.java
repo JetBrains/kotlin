@@ -4557,6 +4557,11 @@ public class LoadJavaUsingJavacTestGenerated extends AbstractLoadJavaUsingJavacT
             public void testConstValInMultifileClass() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/ConstValInMultifileClass.kt");
             }
+
+            @TestMetadata("WithUnsignedTypeParameters.kt")
+            public void testWithUnsignedTypeParameters() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/WithUnsignedTypeParameters.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts")
