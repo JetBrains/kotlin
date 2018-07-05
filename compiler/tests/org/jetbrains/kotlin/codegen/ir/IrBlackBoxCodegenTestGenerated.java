@@ -3974,6 +3974,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/sharedSlotsWithCapturedVars.kt");
             }
 
+            @TestMetadata("withCoroutinesNoStdLib.kt")
+            public void testWithCoroutinesNoStdLib_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutinesNoStdLib.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("withCoroutinesNoStdLib.kt")
+            public void testWithCoroutinesNoStdLib_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutinesNoStdLib.kt", "kotlin.coroutines");
+            }
+
             @TestMetadata("withCoroutines.kt")
             public void testWithCoroutines_1_2() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutines.kt", "kotlin.coroutines.experimental");
@@ -5942,6 +5952,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/statementLikeLastExpression.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("suspendCallsInArguments.kt")
+        public void testSuspendCallsInArguments_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendCallsInArguments.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("suspendCallsInArguments.kt")
+        public void testSuspendCallsInArguments_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendCallsInArguments.kt", "kotlin.coroutines");
+        }
+
         @TestMetadata("suspendCoroutineFromStateMachine.kt")
         public void testSuspendCoroutineFromStateMachine_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendCoroutineFromStateMachine.kt", "kotlin.coroutines.experimental");
@@ -6168,6 +6188,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/breakStatement.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("complexChainSuspend.kt")
+            public void testComplexChainSuspend_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/complexChainSuspend.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("complexChainSuspend.kt")
+            public void testComplexChainSuspend_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/complexChainSuspend.kt", "kotlin.coroutines");
+            }
+
             @TestMetadata("doWhileStatement.kt")
             public void testDoWhileStatement_1_2() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/doWhileStatement.kt", "kotlin.coroutines.experimental");
@@ -6176,6 +6206,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("doWhileStatement.kt")
             public void testDoWhileStatement_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/doWhileStatement.kt", "kotlin.coroutines");
+            }
+
+            @TestMetadata("finallyCatch.kt")
+            public void testFinallyCatch_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/finallyCatch.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("finallyCatch.kt")
+            public void testFinallyCatch_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/finallyCatch.kt", "kotlin.coroutines");
             }
 
             @TestMetadata("forContinue.kt")
@@ -6236,6 +6276,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("labeledWhile.kt")
             public void testLabeledWhile_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/labeledWhile.kt", "kotlin.coroutines");
+            }
+
+            @TestMetadata("multipleCatchBlocksSuspend.kt")
+            public void testMultipleCatchBlocksSuspend_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/multipleCatchBlocksSuspend.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("multipleCatchBlocksSuspend.kt")
+            public void testMultipleCatchBlocksSuspend_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/multipleCatchBlocksSuspend.kt", "kotlin.coroutines");
             }
 
             @TestMetadata("returnFromFinally.kt")
@@ -7153,6 +7203,83 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("simple.kt")
             public void testSimple_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/simple.kt", "kotlin.coroutines");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/coroutines/noStdLib")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class NoStdLib extends AbstractIrBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInNoStdLib() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/noStdLib"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("breakFinally.kt")
+            public void testBreakFinally_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/breakFinally.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("breakFinally.kt")
+            public void testBreakFinally_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/breakFinally.kt", "kotlin.coroutines");
+            }
+
+            @TestMetadata("breakStatement.kt")
+            public void testBreakStatement_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/breakStatement.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("breakStatement.kt")
+            public void testBreakStatement_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/breakStatement.kt", "kotlin.coroutines");
+            }
+
+            @TestMetadata("crossinline.kt")
+            public void testCrossinline_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/crossinline.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("crossinline.kt")
+            public void testCrossinline_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/crossinline.kt", "kotlin.coroutines");
+            }
+
+            @TestMetadata("ifStatement.kt")
+            public void testIfStatement_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/ifStatement.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("ifStatement.kt")
+            public void testIfStatement_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/ifStatement.kt", "kotlin.coroutines");
+            }
+
+            @TestMetadata("stateMachine.kt")
+            public void testStateMachine_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/stateMachine.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("stateMachine.kt")
+            public void testStateMachine_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/stateMachine.kt", "kotlin.coroutines");
+            }
+
+            @TestMetadata("switchLikeWhen.kt")
+            public void testSwitchLikeWhen_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/switchLikeWhen.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("switchLikeWhen.kt")
+            public void testSwitchLikeWhen_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noStdLib/switchLikeWhen.kt", "kotlin.coroutines");
             }
         }
 
