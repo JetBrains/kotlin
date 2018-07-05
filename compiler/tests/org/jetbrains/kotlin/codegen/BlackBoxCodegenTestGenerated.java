@@ -12648,6 +12648,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/jvmName"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("annotationProperties.kt")
+        public void testAnnotationProperties() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmName/annotationProperties.kt");
+        }
+
         @TestMetadata("callableReference.kt")
         public void testCallableReference() throws Exception {
             runTest("compiler/testData/codegen/box/jvmName/callableReference.kt");

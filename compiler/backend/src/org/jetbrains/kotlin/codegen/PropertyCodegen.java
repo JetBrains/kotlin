@@ -55,8 +55,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAn
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROPERTIES;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER;
-import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.FIELD_FOR_PROPERTY;
-import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY;
+import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
@@ -278,6 +277,7 @@ public class PropertyCodegen {
 
         PropertyGetterDescriptor getter = descriptor.getGetter();
         assert getter != null : "Annotation property should have a getter: " + descriptor;
+        v.getSerializationBindings().put(METHOD_FOR_FUNCTION, getter, asmMethod);
         FunctionCodegen.generateMethodAnnotations(getter, asmMethod, mv, memberCodegen, typeMapper);
 
         KtExpression defaultValue = loadAnnotationArgumentDefaultValue(parameter, descriptor, expectedAnnotationConstructor);
