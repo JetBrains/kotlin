@@ -31,6 +31,7 @@ import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
@@ -46,6 +47,9 @@ import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.projectLibrary
 import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR
+import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
+import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_JVM_JAR
 import org.junit.Assert
 import org.junit.ComparisonFailure
 import java.io.File
@@ -63,7 +67,8 @@ abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfi
         checkHighlighting(
             editor,
             InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_WARNINGS"),
-            InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_INFOS"))
+            InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_INFOS")
+        )
     }
 
     fun doComplexTest(path: String) {
@@ -131,8 +136,13 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         // do not create default module
     }
 
-    private fun findMainScript(testDir: String) = File(testDir).walkTopDown().find { it.name == SCRIPT_NAME }
+    private fun findMainScript(testDir: String): File {
+        val scriptFile = File(testDir).walkTopDown().find { it.name == SCRIPT_NAME }
+        if (scriptFile != null) return scriptFile
+
+        return File(testDir).walkTopDown().singleOrNull { it.name.contains("script") }
             ?: error("Couldn't find $SCRIPT_NAME file in $testDir")
+    }
 
     protected fun configureScriptFile(path: String) {
         val mainScriptFile = findMainScript(path)
@@ -217,9 +227,9 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     private fun defaultEnvironment(path: String): Map<String, File?> {
         val templateOutDir = File("${path}template").takeIf { it.isDirectory }?.let {
-            compileLibToDir(it, PathUtil.kotlinPathsForDistDirectory.scriptRuntimePath.path)
+            compileLibToDir(it, *scriptClasspath())
         } ?: File("idea/testData/script/definition/defaultTemplate").takeIf { it.isDirectory }?.let {
-            compileLibToDir(it, PathUtil.kotlinPathsForDistDirectory.scriptRuntimePath.path)
+            compileLibToDir(it, *scriptClasspath())
         }
 
         val libSrcDir = File("${path}lib").takeIf { it.isDirectory }
@@ -235,14 +245,24 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         )
     }
 
+    private fun scriptClasspath(): Array<String> {
+        return with(PathUtil.kotlinPathsForDistDirectory) {
+            arrayOf(
+                File(libPath, KOTLIN_JAVA_SCRIPT_RUNTIME_JAR).path,
+                File(libPath, KOTLIN_SCRIPTING_COMMON_JAR).path,
+                File(libPath, KOTLIN_SCRIPTING_JVM_JAR).path
+            )
+        }
+    }
+
     private fun createFileAndSyncDependencies(scriptFile: File) {
         var script: VirtualFile? = null
         if (module != null) {
-            script = module.moduleFile?.parent?.findChild(SCRIPT_NAME)
+            script = module.moduleFile?.parent?.findChild(scriptFile.name)
         }
 
         if (script == null) {
-            val target = File(project.basePath, SCRIPT_NAME)
+            val target = File(project.basePath, scriptFile.name)
             scriptFile.copyTo(target)
             script = LocalFileSystem.getInstance().findFileByPath(target.path)
         }
@@ -287,6 +307,9 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             provider,
             testRootDisposable
         )
+
         ScriptDefinitionsManager.getInstance(project).reloadScriptDefinitions()
+
+        UIUtil.dispatchAllInvocationEvents()
     }
 }

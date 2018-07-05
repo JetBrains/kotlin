@@ -27,6 +27,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.psi.PsiManager
 import com.intellij.testFramework.ModuleTestCase
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
@@ -429,7 +430,9 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
 
     private val VirtualFile.moduleInfo: IdeaModuleInfo
-        get() = getModuleInfoByVirtualFile(project, this)!!
+        get() {
+            return PsiManager.getInstance(project).findFile(this)!!.getModuleInfo()
+        }
 
     private val Module.production: ModuleProductionSourceInfo
         get() = productionSourceInfo()!!

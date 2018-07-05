@@ -18,10 +18,13 @@ package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.ide.projectView.impl.ProjectRootsUtil.isInTestSource
 import com.intellij.ide.scratch.ScratchFileService
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
@@ -29,21 +32,18 @@ import com.intellij.openapi.projectRoots.ex.PathUtilEx
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
-import org.jetbrains.kotlin.script.*
-import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil.isInContent
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
-import org.jetbrains.kotlin.script.ScriptTemplatesProvider
+import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
+import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPIBase
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
-import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import kotlin.concurrent.write
 import kotlin.script.dependencies.Environment
@@ -133,6 +133,25 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     private fun updateDefinitions() {
         assert(lock.isWriteLocked) { "updateDefinitions should only be called under the write lock" }
         definitions = definitionsByContributor.values.flattenTo(mutableListOf()).asSequence()
+
+        // Register new file extensions
+        val fileTypeManager = FileTypeManager.getInstance()
+        val extensions = definitions?.mapNotNull { definition ->
+            (definition as? KotlinScriptDefinitionAdapterFromNewAPIBase)
+                ?.scriptFileExtensionWithDot?.removePrefix(".")
+                ?.takeIf { fileTypeManager.getFileTypeByExtension(it) != KotlinFileType.INSTANCE }
+        }?.toList()
+
+        if (extensions?.isNotEmpty() == true) {
+            ApplicationManager.getApplication().invokeLater {
+                runWriteAction {
+                    extensions.forEach {
+                        fileTypeManager.associateExtension(KotlinFileType.INSTANCE, it)
+                    }
+                }
+            }
+        }
+
         clearCache()
         // TODO: clear by script type/definition
         ServiceManager.getService(project, ScriptDependenciesCache::class.java).clear()
