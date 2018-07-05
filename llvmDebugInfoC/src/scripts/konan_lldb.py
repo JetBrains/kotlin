@@ -101,17 +101,18 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
                                  6: lambda address, error: self.__read_memory(address, "<f", 4, error),
                                  7: lambda address, error: self.__read_memory(address, "<d", 8, error),
                                  8: lambda address, _: "(void *){:#x}".format(address),
+                                 # TODO: or 1?
                                  9: lambda address, error: self.__read_memory(address, "<?", 4, error)}
 
     def update(self):
         self._children_count = int(evaluate("(int)Konan_DebugGetFieldCount({})".format(self._ptr)).GetValue())
 
     def _read_string(self, expr, error):
-        return self._process.ReadCStringFromMemory(int(evaluate(expr).GetValue(), 0), 0x1000, error)
+        return self._process.ReadCStringFromMemory(long(evaluate(expr).GetValue(), 0), 0x1000, error)
 
     def _read_value(self, index, error):
         value_type = evaluate("(int)Konan_DebugGetFieldType({}, {})".format(self._ptr, index)).GetValue()
-        address = int(evaluate("(void *)Konan_DebugGetFieldAddress({}, {})".format(self._ptr, index)).GetValue(), 0)
+        address = long(evaluate("(void *)Konan_DebugGetFieldAddress({}, {})".format(self._ptr, index)).GetValue(), 0)
         return self._type_conversion[int(value_type)](address, error)
 
     def __read_memory(self, address, fmt, size, error):
@@ -134,7 +135,7 @@ class KonanStringSyntheticProvider(KonanHelperProvider):
         buff_addr = evaluate("(char *)Konan_DebugBuffer()").unsigned
 
         error = lldb.SBError()
-        s = self._process.ReadCStringFromMemory(int(buff_addr), int(buff_len), error)
+        s = self._process.ReadCStringFromMemory(long(buff_addr), int(buff_len), error)
         self._representation = s if error.Success() else fallback
 
     def update(self):
@@ -160,7 +161,6 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
     def __init__(self, valobj):
         super(KonanObjectSyntheticProvider, self).__init__(valobj)
         self.update()
-        pass
 
     def update(self):
         super(KonanObjectSyntheticProvider, self).update()
@@ -168,6 +168,7 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
         self._children = [
             self._read_string("(const char *)Konan_DebugGetFieldName({}, (int){})".format(self._ptr, i), error) for i in
             range(0, self._children_count) if error.Success()]
+        return True
 
     def num_children(self):
         return self._children_count
@@ -176,15 +177,21 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
         return self._children_count > 0
 
     def get_child_index(self, name):
+        if not name in self._children:
+            return -1
         return self._children.index(name)
 
     def get_child_at_index(self, index):
-        return evaluate("(void *)Konan_DebugGetFieldAddress({}, {})".format(self._ptr, index)).GetValue()
+        if index < 0 or index >= self._children_count:
+            return None
+        error = lldb.SBError()
+        value = self._read_value(index, error)
+        return value if error.Success() else None
 
+    # TODO: fix cyclic structures stringification.
     def to_string(self):
         error = lldb.SBError()
         return dict([(self._children[i], self._read_value(i, error)) for i in range(0, self._children_count)])
-
 
 
 class KonanArraySyntheticProvider(KonanHelperProvider):
@@ -197,6 +204,7 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
     def update(self):
         super(KonanArraySyntheticProvider, self).update()
         self._children = [x for x in range(0, self.num_children())]
+        return True
 
     def num_children(self):
         return self._children_count
@@ -206,9 +214,11 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
 
     def get_child_index(self, name):
         index = int(name)
-        return index if (0 <= index < self._num_children) else None
+        return index if (0 <= index < self._children_count) else -1
 
     def get_child_at_index(self, index):
+        if index < 0 or index >= self._children_count:
+            return None
         error = lldb.SBError()
         return self._read_value(index, error) if error.Success() else None
 
