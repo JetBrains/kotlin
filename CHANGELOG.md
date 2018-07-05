@@ -1,3 +1,15 @@
+## v0.8 (Jul 2018)
+  * Singleton objects are frozen after creation, and shared between threads
+  * String and primitives types are frozen by default
+  * Common stdlib with Kotlin/JVM and Kotlin/JS
+  * Implemented `kotlin.random.*` and `Collection.shuffle`
+  * Implemented atomic integers and atomic references
+  * Multiple bugfixes in compiler (coroutines, inliner)
+  * Support 32-bit iOS (target `ios_arm32`)
+  * New experimental Gradle plugin
+  * Support XCode 9.4.1
+  * Optimizations (switch by enum, memory management)
+
 ## v0.7.1 (Jun 2018)
   * Bugfixes in the runtime (indexOf, GC for kotlin.Array, enum equality) and the compiler
   * Fix NSBlock problem, preventing upload of binaries to the AppStore

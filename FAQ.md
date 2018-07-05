@@ -20,17 +20,20 @@ C language header, allowing to use all public APIs available in your Kotlin/Nati
 See `samples/python_extension` as an example of using such shared object to provide a bridge between Python and
 Kotlin/Native.
 
+
 Q: How do I create static library or an object file?
 
 A: Use `-produce static` compiler switch, or `konanArtifacts { static('foo') {} }` in Gradle.
 It will produce platform-specific static object (.a library format) and C language header, allowing to
 use all public APIs available in your Kotlin/Native program from C/C++ code.
 
+
 Q: How do I run Kotlin/Native behind corporate proxy?
 
 A: As Kotlin/Native need to download platform specific toolchain, you need to specify
 `-Dhttp.proxyHost=xxx -Dhttp.proxyPort=xxx` as compiler's or `gradlew` arguments,
 or set it via `JAVA_OPTS` environment variable.
+
 
 Q: How do I specify custom Objective-C prefix/name for my Kotlin framework?
 
@@ -40,3 +43,18 @@ framework("MyCustomFramework") {
     extraOpts '-module_name', 'TheName'
 }
 ```
+
+
+Q: Why do I see `InvalidMutabilityException`?
+
+A: It likely happens, because you are trying to mutate a frozen object. Object could transfer to the
+frozen state either explicitly, as objects reachable from objects on which `konan.worker.freeze` is called,
+or implicitly (i.e. reachable from `enum` or global singleton object - see next question).
+
+
+Q: How do I make a singleton object mutable?
+
+A: Currently, singleton objects are immutable (i.e. frozen after creation), and it's generally considered
+a good practise to have global state immutable. If for some reasons you need mutable state inside such an
+object, use `@konan.ThreadLocal` annotation on the object. Also `konan.worker.AtomicReference` class could be
+used to store different pointers to frozen objects in a frozen object and atomically update those.

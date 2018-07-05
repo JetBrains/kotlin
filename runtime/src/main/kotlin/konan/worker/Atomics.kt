@@ -117,6 +117,11 @@ class AtomicNativePtr(private var value: NativePtr) {
 @SymbolName("Kotlin_AtomicReference_checkIfFrozen")
 external private fun checkIfFrozen(ref: Any?)
 
+/**
+ * An atomic reference to a frozen Kotlin object. Can be used in concurrent scenarious
+ * and must be zeroed out (with `compareAndSwap(get(), null)`) once no longer needed.
+ * Otherwise memory leak could happen.
+ */
 @Frozen
 class AtomicReference<T>(private var value: T? = null) {
     // A spinlock to fix potential ARC race. Not an AtomicInt just for the effeciency sake.

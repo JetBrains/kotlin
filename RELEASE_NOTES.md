@@ -25,11 +25,12 @@ the following platforms:
    (`-target linux`, default on Linux hosts)
  * Microsoft Windows x86-64 (tested on Windows 7 and Windows 10), host and target (`-target mingw`,
    default on Windows hosts)
- * Apple iOS (armv7 and arm64 devices, x86 simulator), cross-compiled target (`-target ios_arm64`), hosted on macOS
+ * Apple iOS (armv7 and arm64 devices, x86 simulator), cross-compiled target
+   (`-target ios_arm32|ios_arm64|ios_x64`), hosted on macOS
  * Linux arm32 hardfp, Raspberry Pi, cross-compiled target (`-target raspberrypi`), hosted on Linux
- * Linux mips big endian, cross-compiled target (`-target mips`), hosted on Linux
- * Linux mips little endian, cross-compiled target (`-target mipsel`), hosted on Linux
- * Android arm32 and arm64 (`-target android_arm32` and `-target android_arm64`) target, hosted on Linux or macOS
+ * Linux MIPS big endian, cross-compiled target (`-target mips`), hosted on Linux
+ * Linux MIPS little endian, cross-compiled target (`-target mipsel`), hosted on Linux
+ * Android arm32 and arm64 (`-target android_arm32|android_arm64`) target, hosted on Linux or macOS
  * WebAssembly (`-target wasm32`) target, hosted on Linux, Windows or macOS
 
  Adding support for other target platforms shouldn't be too hard, if LLVM support is available.
