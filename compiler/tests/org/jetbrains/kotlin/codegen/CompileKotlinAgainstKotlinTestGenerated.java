@@ -290,6 +290,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("builder.kt")
+        public void testBuilder() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/builder.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/simple.kt");

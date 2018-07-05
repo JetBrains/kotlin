@@ -89,7 +89,7 @@ fun transformRuntimeFunctionTypeToSuspendFunction(funType: KotlinType, isRelease
     if (!isContinuation(continuationArgumentType.constructor.declarationDescriptor?.fqNameSafe, isReleaseCoroutines) ||
         continuationArgumentType.arguments.size != 1
     ) {
-        return null
+        return funType as? SimpleType
     }
 
     val suspendReturnType = continuationArgumentType.arguments.single().type
