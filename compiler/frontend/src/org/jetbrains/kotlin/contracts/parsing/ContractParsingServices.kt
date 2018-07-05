@@ -48,7 +48,17 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
                 languageVersionSettings.getFlag(AnalysisFlag.Flags.allowKotlinPackage)
 
         val contractDescriptor = when {
-            !isFeatureTurnedOn || !isContractDescriptionCallPreciseCheck(expression, trace.bindingContext) -> null
+            !isContractDescriptionCallPreciseCheck(expression, trace.bindingContext) -> null
+
+            !isFeatureTurnedOn -> {
+                trace.report(
+                    Errors.UNSUPPORTED_FEATURE.on(
+                        expression,
+                        LanguageFeature.AllowContractsForCustomFunctions to languageVersionSettings
+                    )
+                )
+                null
+            }
 
             !isContractAllowedHere(scope) || !isFirstStatement -> {
                 trace.report(Errors.CONTRACT_NOT_ALLOWED.on(expression))

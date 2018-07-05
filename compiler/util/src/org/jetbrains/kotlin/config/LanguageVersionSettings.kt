@@ -74,7 +74,6 @@ enum class LanguageFeature(
     UseReturnsEffect(KOTLIN_1_3),
     UseCallsInPlaceEffect(KOTLIN_1_3),
     VariableDeclarationInWhenSubject(KOTLIN_1_3),
-    AllowContractsForCustomFunctions(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
     ProhibitLocalAnnotations(KOTLIN_1_3, kind = BUG_FIX),
     ProhibitSmartcastsOnLocalDelegatedProperty(KOTLIN_1_3, kind = BUG_FIX),
     ProhibitOperatorMod(KOTLIN_1_3, kind = BUG_FIX),
@@ -89,6 +88,8 @@ enum class LanguageFeature(
         "https://kotlinlang.org/docs/diagnostics/experimental-coroutines",
         State.ENABLED_WITH_WARNING
     ),
+
+    AllowContractsForCustomFunctions(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
 
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
 
