@@ -11736,6 +11736,84 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WrapWithCollectionLiteral extends AbstractQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWrapWithCollectionLiteral() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("noMutableList.kt")
+            public void testNoMutableList() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/noMutableList.kt");
+            }
+
+            @TestMetadata("nullToListOfNullable.kt")
+            public void testNullToListOfNullable() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/nullToListOfNullable.kt");
+            }
+
+            @TestMetadata("returnEmptyArray.kt")
+            public void testReturnEmptyArray() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/returnEmptyArray.kt");
+            }
+
+            @TestMetadata("returnEmptyCollection.kt")
+            public void testReturnEmptyCollection() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/returnEmptyCollection.kt");
+            }
+
+            @TestMetadata("returnEmptyList.kt")
+            public void testReturnEmptyList() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/returnEmptyList.kt");
+            }
+
+            @TestMetadata("returnEmptySequence.kt")
+            public void testReturnEmptySequence() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/returnEmptySequence.kt");
+            }
+
+            @TestMetadata("returnEmptySet.kt")
+            public void testReturnEmptySet() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/returnEmptySet.kt");
+            }
+
+            @TestMetadata("toArray.kt")
+            public void testToArray() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/toArray.kt");
+            }
+
+            @TestMetadata("toCollection.kt")
+            public void testToCollection() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/toCollection.kt");
+            }
+
+            @TestMetadata("toList.kt")
+            public void testToList() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/toList.kt");
+            }
+
+            @TestMetadata("toListInapplicableType.kt")
+            public void testToListInapplicableType() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/toListInapplicableType.kt");
+            }
+
+            @TestMetadata("toSequence.kt")
+            public void testToSequence() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/toSequence.kt");
+            }
+
+            @TestMetadata("toSet.kt")
+            public void testToSet() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/toSet.kt");
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/typeMismatch/wrongPrimitive")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
