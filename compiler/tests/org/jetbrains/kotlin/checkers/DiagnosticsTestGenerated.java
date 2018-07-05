@@ -22130,6 +22130,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/varargs/NullableTypeForVarargArgument.kt");
             }
 
+            @TestMetadata("prohibitAssigningSingleElementsInNamedForm.kt")
+            public void testProhibitAssigningSingleElementsInNamedForm() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/prohibitAssigningSingleElementsInNamedForm.kt");
+            }
+
             @TestMetadata("UnaryVsVararg.kt")
             public void testUnaryVsVararg() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/varargs/UnaryVsVararg.kt");
