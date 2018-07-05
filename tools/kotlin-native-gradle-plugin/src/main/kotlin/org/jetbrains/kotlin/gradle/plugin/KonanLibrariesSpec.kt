@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.konan.library.SearchPathResolver
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.File
 
 open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val project: Project) {
@@ -56,6 +55,11 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
     val target: KonanTarget
         @Internal get() = task.konanTarget
 
+    private val friendsTasks = mutableSetOf<KonanBuildingTask>()
+    val friends:Set<File> get() = mutableSetOf<File>().apply {
+        addAll(friendsTasks.map { it.artifact })
+    }
+
     // DSL Methods
 
     /** Absolute path */
@@ -68,7 +72,7 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
     fun klibs(vararg libs: String)    = namedKlibs.addAll(libs)
     fun klibs(libs: Iterable<String>) = namedKlibs.addAll(libs)
 
-    private fun klibInternal(lib: KonanBuildingConfig<*>) {
+    private fun klibInternal(lib: KonanBuildingConfig<*>, friend: Boolean) {
         if (!(lib is KonanLibrary || lib is KonanInteropLibrary)) {
             throw InvalidUserDataException("Config ${lib.name} is not a library")
         }
@@ -82,21 +86,25 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
         }
         artifacts.add(libraryTask)
         task.dependsOn(libraryTask)
+        if (friend) friendsTasks.add(libraryTask)
     }
 
     /** Direct link to a config */
-    fun klib(lib: KonanLibrary) = klibInternal(lib)
+    fun klib(lib: KonanLibrary) = klibInternal(lib, false)
     /** Direct link to a config */
-    fun klib(lib: KonanInteropLibrary) = klibInternal(lib)
+    fun klib(lib: KonanInteropLibrary) = klibInternal(lib, false)
 
     /** Artifact in the specified project by name */
-    fun artifact(libraryProject: Project, name: String) {
+    fun artifact(libraryProject: Project, name: String, friend: Boolean) {
         project.evaluationDependsOn(libraryProject)
-        klibInternal(libraryProject.konanArtifactsContainer.getByName(name))
+        klibInternal(libraryProject.konanArtifactsContainer.getByName(name), friend)
     }
 
+    fun artifact(libraryProject: Project, name: String) = artifact(libraryProject, name, false)
     /** Artifact in the current project by name */
-    fun artifact(name: String) = artifact(project, name)
+    fun artifact(name: String, friend: Boolean) = artifact(project, name, friend)
+
+    fun artifact(name: String) = artifact(project, name, false)
 
     /** Artifact by direct link */
     fun artifact(artifact: KonanLibrary) = klib(artifact)
@@ -108,7 +116,7 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
         libraryProjects.forEach { prj ->
             project.evaluationDependsOn(prj)
             prj.konanArtifactsContainer.filter(filter).forEach {
-                klibInternal(it)
+                klibInternal(it, false)
             }
         }
     }
