@@ -68,7 +68,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, true)
         }
 
-        val pluginLoadResult = loadPlugins(paths, arguments, configuration)
+        val pluginLoadResult = loadPlugins(arguments, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         if (!arguments.script && arguments.buildFile == null) {
@@ -217,7 +217,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     override fun getPerformanceManager(): CommonCompilerPerformanceManager = performanceManager
 
-    private fun loadPlugins(paths: KotlinPaths?, arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration): ExitCode {
+    private fun loadPlugins(arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration): ExitCode {
         var pluginClasspaths: Iterable<String> = arguments.pluginClasspaths?.asIterable() ?: emptyList()
         val pluginOptions = arguments.pluginOptions?.toMutableList() ?: ArrayList()
 
@@ -233,7 +233,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             // if scripting plugin is not enabled explicitly (probably from another path) and not in the classpath already,
             // try to find and enable it implicitly
             if (!explicitOrLoadedScriptingPlugin) {
-                val libPath = paths?.libPath?.takeIf { it.exists() } ?: File(".")
+                val libPath = PathUtil.kotlinPathsForCompiler.libPath.takeIf { it.exists() && it.isDirectory } ?: File(".")
                 with(PathUtil) {
                     val jars = arrayOf(
                         KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR,
