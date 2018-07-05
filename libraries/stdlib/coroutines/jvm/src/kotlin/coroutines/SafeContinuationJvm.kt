@@ -36,7 +36,7 @@ internal actual constructor(
         while (true) { // lock-free loop
             val cur = this.result // atomic read
             when {
-                cur === UNDECIDED -> if (RESULT.compareAndSet(this, UNDECIDED, result._value)) return
+                cur === UNDECIDED -> if (RESULT.compareAndSet(this, UNDECIDED, result.value)) return
                 cur === COROUTINE_SUSPENDED -> if (RESULT.compareAndSet(this, COROUTINE_SUSPENDED, RESUMED)) {
                     delegate.resumeWith(result)
                     return
@@ -55,7 +55,7 @@ internal actual constructor(
         }
         return when {
             result === RESUMED -> COROUTINE_SUSPENDED // already called continuation, indicate COROUTINE_SUSPENDED upstream
-            result is Failure -> throw result.exception
+            result is SuccessOrFailure.Failure -> throw result.exception
             else -> result // either COROUTINE_SUSPENDED or data
         }
     }
