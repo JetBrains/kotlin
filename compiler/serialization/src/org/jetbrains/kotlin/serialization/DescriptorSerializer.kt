@@ -312,7 +312,8 @@ class DescriptorSerializer private constructor(
         if (requirement != null) {
             builder.versionRequirement = requirement
         } else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
+            builder.versionRequirement =
+                    writeVersionRequirement(if (this.extension.releaseCoroutines()) LanguageFeature.ReleaseCoroutines else LanguageFeature.Coroutines)
         }
 
         contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)

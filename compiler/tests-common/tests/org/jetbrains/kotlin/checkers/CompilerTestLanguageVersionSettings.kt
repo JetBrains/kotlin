@@ -28,7 +28,7 @@ data class CompilerTestLanguageVersionSettings(
         private val analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()
 ) : LanguageVersionSettings {
     private val languageFeatures = specificFeaturesForTests() + initialLanguageFeatures
-    private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion)
+    private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion, emptyMap(), languageFeatures)
 
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
             languageFeatures[feature] ?: delegate.getFeatureSupport(feature)

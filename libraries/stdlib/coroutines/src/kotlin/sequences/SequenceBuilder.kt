@@ -3,6 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SequenceBuilderKt")
 
@@ -54,6 +55,7 @@ public abstract class SequenceBuilder<in T> internal constructor() {
      * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      * @sample samples.collections.Sequences.Building.buildFibonacciSequence
      */
+    @kotlin.internal.RequireKotlin("1.3")
     public abstract suspend fun yield(value: T)
 
     /**
@@ -63,6 +65,7 @@ public abstract class SequenceBuilder<in T> internal constructor() {
      *
      * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      */
+    @kotlin.internal.RequireKotlin("1.3")
     public abstract suspend fun yieldAll(iterator: Iterator<T>)
 
     /**
@@ -70,6 +73,7 @@ public abstract class SequenceBuilder<in T> internal constructor() {
      *
      * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      */
+    @kotlin.internal.RequireKotlin("1.3")
     public suspend fun yieldAll(elements: Iterable<T>) {
         if (elements is Collection && elements.isEmpty()) return
         return yieldAll(elements.iterator())
@@ -82,6 +86,7 @@ public abstract class SequenceBuilder<in T> internal constructor() {
      *
      * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      */
+    @kotlin.internal.RequireKotlin("1.3")
     public suspend fun yieldAll(sequence: Sequence<T>) = yieldAll(sequence.iterator())
 }
 

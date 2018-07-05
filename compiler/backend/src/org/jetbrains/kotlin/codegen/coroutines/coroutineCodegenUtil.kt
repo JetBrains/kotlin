@@ -302,17 +302,6 @@ fun <D : FunctionDescriptor> D.createCustomCopy(
 private fun FunctionDescriptor.getContinuationParameterTypeOfSuspendFunction(isReleaseCoroutines: Boolean) =
     module.getContinuationOfTypeOrAny(returnType!!, isReleaseCoroutines)
 
-fun ModuleDescriptor.getContinuationOfTypeOrAny(kotlinType: KotlinType, isReleaseCoroutines: Boolean) =
-    module.findContinuationClassDescriptorOrNull(
-        NoLookupLocation.FROM_BACKEND,
-        isReleaseCoroutines
-    )?.defaultType?.let {
-        KotlinTypeFactory.simpleType(
-            it,
-            arguments = listOf(kotlinType.asTypeProjection())
-        )
-    } ?: module.builtIns.nullableAnyType
-
 fun ModuleDescriptor.getSuccessOrFailure(kotlinType: KotlinType) =
     module.resolveTopLevelClass(
         DescriptorUtils.SUCCESS_OR_FAILURE_FQ_NAME,

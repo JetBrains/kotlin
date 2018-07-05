@@ -138,6 +138,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
  */
 @SinceKotlin("1.3")
 @InlineOnly
+@kotlin.internal.RequireKotlin("1.3")
 public suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<T>) -> Unit): T =
     suspendCoroutineUninterceptedOrReturn { c: Continuation<T> ->
         val safe = SafeContinuation(c.intercepted())

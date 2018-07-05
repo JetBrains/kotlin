@@ -26,9 +26,13 @@ import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
+import org.jetbrains.kotlin.types.KotlinType
 
 class MemberDeserializer(private val c: DeserializationContext) {
     private val annotationDeserializer = AnnotationDeserializer(c.components.moduleDescriptor, c.components.notFoundClasses)
@@ -159,12 +163,15 @@ class MemberDeserializer(private val c: DeserializationContext) {
         )
         val local = c.childContext(function, proto.typeParameterList)
 
+        val returnType = local.typeDeserializer.type(proto.returnType(c.typeTable))
+        val valueParameters = local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION)
+        val continuationParameter = createContinuationParameterIfNeeded(function, returnType, valueParameters, flags)
         function.initialize(
             proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) },
             getDispatchReceiverParameter(),
             local.typeDeserializer.ownTypeParameters,
-            local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
-            local.typeDeserializer.type(proto.returnType(c.typeTable)),
+            valueParameters + listOfNotNull(continuationParameter),
+            if (continuationParameter == null) returnType else function.builtIns.nullableAnyType,
             ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
             ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
             emptyMap<FunctionDescriptor.UserDataKey<*>, Any?>()
@@ -174,7 +181,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         function.isExternal = Flags.IS_EXTERNAL_FUNCTION.get(flags)
         function.isInline = Flags.IS_INLINE.get(flags)
         function.isTailrec = Flags.IS_TAILREC.get(flags)
-        function.isSuspend = Flags.IS_SUSPEND.get(flags)
+        function.isSuspend = Flags.IS_SUSPEND.get(flags) && loadAsSuspend(function.versionRequirement)
         function.isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
 
         val mapValueForContract =
@@ -185,6 +192,30 @@ class MemberDeserializer(private val c: DeserializationContext) {
 
         return function
     }
+
+    private fun loadAsSuspend(versionRequirement: VersionRequirement?): Boolean =
+        if (c.components.configuration.releaseCoroutines) {
+            versionRequirement?.version == VersionRequirement.Version(1, 3)
+        } else true
+
+    private fun createContinuationParameterIfNeeded(
+        functionDescriptor: DeserializedSimpleFunctionDescriptor,
+        returnType: KotlinType,
+        valueParameters: List<ValueParameterDescriptor>,
+        flags: Int
+    ): ValueParameterDescriptor? =
+        if (!Flags.IS_SUSPEND.get(flags) || loadAsSuspend(functionDescriptor.versionRequirement)) null
+        else ValueParameterDescriptorImpl(
+            containingDeclaration = functionDescriptor,
+            original = null,
+            index = valueParameters.size,
+            annotations = Annotations.EMPTY,
+            name = Name.identifier("continuation"),
+            outType = functionDescriptor.module.getContinuationOfTypeOrAny(returnType, isReleaseCoroutines = false),
+            declaresDefaultValue = false, isCrossinline = false,
+            isNoinline = false, varargElementType = null,
+            source = SourceElement.NO_SOURCE
+        )
 
     fun loadTypeAlias(proto: ProtoBuf.TypeAlias): TypeAliasDescriptor {
         val annotations = AnnotationsImpl(proto.annotationList.map { annotationDeserializer.deserializeAnnotation(it, c.nameResolver) })

@@ -241,6 +241,12 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State {
         specificFeatures[feature]?.let { return it }
 
+        if (feature == LanguageFeature.Coroutines) {
+            if (getFeatureSupport(LanguageFeature.ReleaseCoroutines) == LanguageFeature.State.ENABLED) {
+                return LanguageFeature.State.ENABLED
+            }
+        }
+
         val since = feature.sinceVersion
         if (since != null && languageVersion >= since && apiVersion >= feature.sinceApiVersion) {
             return feature.defaultState
