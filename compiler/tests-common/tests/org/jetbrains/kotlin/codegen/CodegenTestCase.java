@@ -480,10 +480,15 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     @NotNull
     protected String generateToText() {
+        return generateToText(null);
+    }
+
+    @NotNull
+    protected String generateToText(@Nullable String ignorePathPrefix) {
         if (classFileFactory == null) {
             classFileFactory = generateFiles(myEnvironment, myFiles);
         }
-        return classFileFactory.createText();
+        return classFileFactory.createText(ignorePathPrefix);
     }
 
     @NotNull

@@ -185,9 +185,16 @@ public class ClassFileFactory implements OutputFileCollection {
     @NotNull
     @TestOnly
     public String createText() {
+        return createText(null);
+    }
+
+    @NotNull
+    @TestOnly
+    public String createText(@Nullable String ignorePrefixPath) {
         StringBuilder answer = new StringBuilder();
 
         for (OutputFile file : asList()) {
+            if (ignorePrefixPath != null && file.getRelativePath().startsWith(ignorePrefixPath)) continue;
             File relativePath = new File(file.getRelativePath());
             answer.append("@").append(relativePath).append('\n');
             switch (FilesKt.getExtension(relativePath)) {

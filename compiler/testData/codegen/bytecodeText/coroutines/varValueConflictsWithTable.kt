@@ -1,10 +1,10 @@
+// LANGUAGE_VERSION: 1.3
 // WITH_RUNTIME
-// COMMON_COROUTINES_TEST
 // WITH_COROUTINES
 import helpers.*
 // TREAT_AS_ONE_FILE
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
     x.resume("OK")
 }
@@ -42,8 +42,8 @@ fun box(): String {
     return result
 }
 
-// 1 LOCALVARIABLE i I L.* 3
-// 1 LOCALVARIABLE s Ljava/lang/String; L.* 3
+// 1 LOCALVARIABLE i I L.* 2
+// 1 LOCALVARIABLE s Ljava/lang/String; L.* 2
 // 0 PUTFIELD VarValueConflictsWithTableKt\$box\$1.I\$0 : I
 /* 2 loads in cycle */
-// 2 ILOAD 3
+// 2 ILOAD 2
