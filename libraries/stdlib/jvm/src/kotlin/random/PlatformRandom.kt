@@ -31,6 +31,9 @@ internal actual inline fun defaultPlatformRandom(): Random =
 internal actual fun fastLog2(value: Int): Int =
     31 - Integer.numberOfLeadingZeros(value)
 
+internal actual fun doubleFromParts(hi26: Int, low27: Int): Double =
+    (hi26.toLong().shl(27) + low27) / (1L shl 53).toDouble()
+
 
 internal abstract class AbstractPlatformRandom : Random() {
     abstract val impl: java.util.Random

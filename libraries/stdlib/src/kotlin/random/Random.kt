@@ -179,7 +179,7 @@ public abstract class Random {
     /**
      * Gets the next random [Double] value uniformly distributed between 0 (inclusive) and 1 (exclusive).
      */
-    public open fun nextDouble(): Double = (nextBits(26).toLong().shl(27) + nextBits(27)) / (1L shl 53).toDouble()
+    public open fun nextDouble(): Double = doubleFromParts(nextBits(26), nextBits(27))
 
     /**
      * Gets the next random non-negative `Double` from the random number generator not greater than the specified [bound].
@@ -327,6 +327,7 @@ public fun Random(seed: Long): Random = XorWowRandom(seed.toInt(), seed.shr(32).
 
 internal expect fun defaultPlatformRandom(): Random
 internal expect fun fastLog2(value: Int): Int //  31 - Integer.numberOfLeadingZeros(value)
+internal expect fun doubleFromParts(hi26: Int, low27: Int): Double
 
 /** Takes upper [bitCount] bits (0..32) from this number. */
 internal fun Int.takeUpperBits(bitCount: Int): Int =
