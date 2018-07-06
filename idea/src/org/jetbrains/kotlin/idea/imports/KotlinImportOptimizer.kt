@@ -122,9 +122,11 @@ class KotlinImportOptimizer : ImportOptimizer {
                 return when (target) {
                     is FunctionDescriptor ->
                         scope.findFunction(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
+                            && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
 
                     is PropertyDescriptor ->
                         scope.findVariable(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
+                            && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
 
                     is ClassDescriptor ->
                         scope.findClassifier(target.name, NoLookupLocation.FROM_IDE) == target

@@ -892,6 +892,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             public void testAllFilesPresentInKt21515() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports/kt21515"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
             }
+
+            @TestMetadata("staticFromJava.test")
+            public void testStaticFromJava() throws Exception {
+                runTest("idea/testData/quickfix/autoImports/kt21515/staticFromJava.test");
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/autoImports/mismatchingArgs")

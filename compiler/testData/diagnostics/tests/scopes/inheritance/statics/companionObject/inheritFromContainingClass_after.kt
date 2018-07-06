@@ -1,3 +1,4 @@
+// !LANGUAGE: +ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
