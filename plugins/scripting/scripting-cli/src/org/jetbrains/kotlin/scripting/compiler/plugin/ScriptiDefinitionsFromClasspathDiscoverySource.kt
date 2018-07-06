@@ -65,7 +65,7 @@ internal fun discoverScriptTemplatesInClasspath(
                                 if (it.isDirectory || !it.name.startsWith(SCRIPT_DEFINITION_MARKERS_PATH)) null
                                 else it.name.removePrefix(SCRIPT_DEFINITION_MARKERS_PATH)
                             }.toList()
-                            val (loadedDefinitions, _, notFoundClasses) =
+                            val (loadedDefinitions, notFoundClasses) =
                                     definitionNames.partitionLoadJarDefinitions(jar, loader, scriptResolverEnv, messageCollector)
                             if (notFoundClasses.isNotEmpty()) {
                                 messageCollector.report(
@@ -83,7 +83,7 @@ internal fun discoverScriptTemplatesInClasspath(
                     defferedDirDependencies.add(dep) // there is no way to know that the dependency is fully "used" so we add it to the list anyway
                     val discoveryDir = File(dep, SCRIPT_DEFINITION_MARKERS_PATH)
                     if (discoveryDir.isDirectory) {
-                        val (foundDefinitionClasses, _, notFoundDefinitions) = discoveryDir.listFiles().map { it.name }
+                        val (foundDefinitionClasses, notFoundDefinitions) = discoveryDir.listFiles().map { it.name }
                             .partitionLoadDirDefinitions(dep, loader, scriptResolverEnv, messageCollector)
                         foundDefinitionClasses.forEach {
                             yield(it)
@@ -97,7 +97,9 @@ internal fun discoverScriptTemplatesInClasspath(
                 }
             }
         } catch (e: IOException) {
-            messageCollector.report(CompilerMessageSeverity.WARNING, "Configure scripting: unable to process classpath entry $dep: $e")
+            messageCollector.report(
+                CompilerMessageSeverity.STRONG_WARNING, "Configure scripting: unable to process classpath entry $dep: $e"
+            )
         }
     }
     var remainingDefinitionCandidates: List<String> = defferedDefinitionCandidates
@@ -111,7 +113,9 @@ internal fun discoverScriptTemplatesInClasspath(
             }
             remainingDefinitionCandidates = notFoundDefinitions
         } catch (e: IOException) {
-            messageCollector.report(CompilerMessageSeverity.WARNING, "Configure scripting: unable to process classpath entry $dep: $e")
+            messageCollector.report(
+                CompilerMessageSeverity.STRONG_WARNING, "Configure scripting: unable to process classpath entry $dep: $e"
+            )
         }
     }
     if (remainingDefinitionCandidates.isNotEmpty()) {
@@ -147,7 +151,7 @@ internal fun loadScriptTemplatesFromClasspath(
             if (remainingTemplates.isEmpty()) break
 
             try {
-                val (loadedDefinitions, _, notFoundTemplates) = when {
+                val (loadedDefinitions, notFoundTemplates) = when {
                     dep.isFile && dep.extension == "jar" -> { // checking for extension is the compiler current behaviour, so the same logic is implemented here
                         JarFile(dep).use { jar ->
                             remainingTemplates.partitionLoadJarDefinitions(jar, classpathAndLoader, scriptResolverEnv, messageCollector)
@@ -159,7 +163,7 @@ internal fun loadScriptTemplatesFromClasspath(
                     else -> {
                         // assuming that invalid classpath entries will be reported elsewhere anyway, so do not spam user with additional warnings here
                         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configure scripting: Unknown classpath entry $dep")
-                        DefinitionsLoadPartitionResult(listOf(), listOf(), remainingTemplates)
+                        DefinitionsLoadPartitionResult(listOf(), remainingTemplates)
                     }
                 }
                 if (loadedDefinitions.isNotEmpty()) {
@@ -170,7 +174,7 @@ internal fun loadScriptTemplatesFromClasspath(
                 }
             } catch (e: IOException) {
                 messageCollector.report(
-                    CompilerMessageSeverity.WARNING,
+                    CompilerMessageSeverity.STRONG_WARNING,
                     "Configure scripting: unable to process classpath entry $dep: $e"
                 )
             }
@@ -186,7 +190,6 @@ internal fun loadScriptTemplatesFromClasspath(
 
 private data class DefinitionsLoadPartitionResult(
     val loaded: List<KotlinScriptDefinition>,
-    val notLoaded: List<String>,
     val notFound: List<String>
 )
 
@@ -197,7 +200,6 @@ private inline fun List<String>.partitionLoadDefinitions(
     getBytes: (String) -> ByteArray?
 ): DefinitionsLoadPartitionResult {
     val loaded = ArrayList<KotlinScriptDefinition>()
-    val notLoaded = ArrayList<String>()
     val notFound = ArrayList<String>()
     for (definitionName in this) {
         val classBytes = getBytes(definitionName)
@@ -206,11 +208,11 @@ private inline fun List<String>.partitionLoadDefinitions(
         }
         when {
             definition != null -> loaded.add(definition)
-            classBytes != null -> notLoaded.add(definitionName)
+            classBytes != null -> {}
             else -> notFound.add(definitionName)
         }
     }
-    return DefinitionsLoadPartitionResult(loaded, notLoaded, notFound)
+    return DefinitionsLoadPartitionResult(loaded, notFound)
 }
 
 private fun List<String>.partitionLoadJarDefinitions(
@@ -302,8 +304,8 @@ private fun loadScriptDefinition(
 }
 
 private class LazyClasspathWithClassLoader(baseClassLoader: ClassLoader, getClasspath: () -> List<File>) {
-    val classpath by lazy(LazyThreadSafetyMode.PUBLICATION) { getClasspath() }
-    val classLoader by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    val classpath by lazy { getClasspath() }
+    val classLoader by lazy {
         URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), baseClassLoader)
     }
 }

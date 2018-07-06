@@ -54,7 +54,7 @@ class LazyScriptClassMemberScope(
             val constructorDescriptor = ClassConstructorDescriptorImpl.create(
                 scriptDescriptor, annotations, baseConstructorDescriptor.isPrimary, scriptDescriptor.source
             )
-            var paramsIndexBase = baseConstructorDescriptor.valueParameters.let { if (it.isEmpty()) 0 else it.last().index + 1 }
+            var paramsIndexBase = baseConstructorDescriptor.valueParameters.lastIndex + 1
             val syntheticParameters =
                 listOf(implicitReceiversParamType, environmentVarsParamType).mapNotNull { param: Pair<String, KotlinType>? ->
                     if (param == null) null
