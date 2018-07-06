@@ -1,3 +1,4 @@
+// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // FILE: J.java
 public class J {
     public static void foo() {}
@@ -17,20 +18,20 @@ open class A {
 
 class B : J2() {
     init {
-        foo()
+        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
         bar()
         boo()
     }
 
     fun test2() {
-        foo()
+        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
         bar()
         boo()
     }
 
     object O {
         fun test() {
-            foo()
+            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
             bar()
             boo()
         }
@@ -38,13 +39,13 @@ class B : J2() {
 
     companion object {
         init {
-            foo()
+            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
             bar()
             boo()
         }
 
         fun test() {
-            foo()
+            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
             bar()
             boo()
         }

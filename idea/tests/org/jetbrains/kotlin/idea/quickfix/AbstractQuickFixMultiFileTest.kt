@@ -127,11 +127,10 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                 multifileText,
                 object : KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
                     override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
-                        if (text.startsWith("// FILE")) {
-                            // Drop the first line
-                            return TestFile(fileName, StringUtil.substringAfter(text, "\n")!!)
+                        val linesWithoutDirectives = text.lines().filter {
+                            !it.startsWith("// LANGUAGE_VERSION") && !it.startsWith("// FILE")
                         }
-                        return TestFile(fileName, text)
+                        return TestFile(fileName, linesWithoutDirectives.joinToString(separator = "\n"))
                     }
                 }, "")
 
@@ -144,6 +143,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         }
 
         configureMultiFileTest(subFiles, beforeFile)
+        configureCompilerOptions(multifileText, project, module)
 
         CommandProcessor.getInstance().executeCommand(project, {
             try {
@@ -167,6 +167,10 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                     TestCase.assertNotNull(".after file should exist", afterFile)
                     if (afterText != afterFile!!.content) {
                         val actualTestFile = StringBuilder()
+                        if (multifileText.startsWith("// LANGUAGE_VERSION")) {
+                            actualTestFile.append(multifileText.lineSequence().first())
+                        }
+
                         actualTestFile.append("// FILE: ").append(beforeFile.path).append("\n").append(beforeFile.content)
                         for (file in subFiles) {
                             actualTestFile.append("// FILE: ").append(file.path).append("\n").append(file.content)

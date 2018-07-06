@@ -1,34 +1,29 @@
+// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // FILE: J.java
 public class J {
     public static void foo() {}
 }
 
 // FILE: test.kt
-open class A {
-    companion object : J() {
-        fun bar() {}
-    }
-}
-
-class B : A() {
+class A {
     init {
-        foo()
+        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
         bar()
     }
 
-    fun test2() {
-        foo()
+    fun test1() {
+        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
         bar()
     }
 
     object O {
         fun test() {
-            foo()
+            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
             bar()
         }
     }
 
-    companion object {
+    companion object : J() {
         init {
             foo()
             bar()
@@ -42,4 +37,3 @@ class B : A() {
         fun bar() {}
     }
 }
-
