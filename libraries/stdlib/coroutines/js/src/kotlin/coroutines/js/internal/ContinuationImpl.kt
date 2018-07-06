@@ -5,7 +5,7 @@
 
 package kotlin.coroutines
 
-import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.CoroutineSingletons
 
 @SinceKotlin("1.3")
 @JsName("CoroutineImpl")
@@ -26,21 +26,72 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
                     .also { intercepted_ = it }
 
     override fun resumeWith(result: SuccessOrFailure<Any?>) {
+        var current = this
+        var currentResult: Any? = null
+        var currentException: Throwable? = null
         if (result.isSuccess) {
-            this.result = result.value
+            currentResult = result.value
         } else {
-            state = exceptionState
-            this.exception = result.exception
+            currentException = result.exception
         }
-        try {
-            val resumeResult = doResume()
-            if (resumeResult !== COROUTINE_SUSPENDED) {
-                resultContinuation.resume(resumeResult)
+
+        // This loop unrolls recursion in current.resumeWith(param) to make saner and shorter stack traces on resume
+        while (true) {
+            with(current) {
+                val completion = resultContinuation
+
+                // Set result and exception fields in the current continuation
+                if (currentException == null) {
+                    this.result = currentResult
+                } else {
+                    state = exceptionState
+                    exception = currentException
+                }
+
+                try {
+                    val outcome = doResume()
+                    if (outcome === CoroutineSingletons.COROUTINE_SUSPENDED) return
+                    currentResult = outcome
+                    currentException = null
+                } catch (exception: dynamic) { // Catch all exceptions
+                    currentResult = null
+                    currentException = exception.unsafeCast<Throwable>()
+                }
+
+                releaseIntercepted() // this state machine instance is terminating
+
+                if (completion is CoroutineImpl) {
+                    // unrolling recursion via loop
+                    current = completion
+                } else {
+                    // top-level completion reached -- invoke and return
+                    currentException?.let {
+                        completion.resumeWithException(it)
+                    } ?: completion.resume(currentResult)
+                    return
+                }
             }
-        } catch (t: Throwable) {
-            resultContinuation.resumeWithException(t)
         }
     }
 
+    private fun releaseIntercepted() {
+        val intercepted = intercepted_
+        if (intercepted != null && intercepted !== this) {
+            context[ContinuationInterceptor]!!.releaseInterceptedContinuation(intercepted)
+        }
+        this.intercepted_ = CompletedContinuation // just in case
+    }
+
     protected abstract fun doResume(): Any?
+}
+
+internal object CompletedContinuation : Continuation<Any?> {
+    override val context: CoroutineContext
+        get() = error("This continuation is already complete")
+
+    override fun resumeWith(result: SuccessOrFailure<Any?>) {
+        error("This continuation is already complete")
+    }
+
+    override fun toString(): String = "This continuation is already complete"
 }
