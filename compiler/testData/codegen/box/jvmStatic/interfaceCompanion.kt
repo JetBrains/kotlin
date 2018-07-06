@@ -1,3 +1,5 @@
+// !LANGUAGE: +JvmStaticInInterface
+// JVM_TARGET: 1.8
 // IGNORE_BACKEND: JS_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS, NATIVE
@@ -25,19 +27,20 @@ class Test {
 
 }
 
-// FILE: simpleObject.kt
+// FILE: simpleCompanionObject.kt
 
-object A {
+interface A {
+    companion object {
+        val b: String = "OK"
 
-    val b: String = "OK"
+        @JvmStatic val c: String = "OK"
 
-    @JvmStatic val c: String = "OK"
+        @JvmStatic fun test1() = b
 
-    @JvmStatic fun test1() = b
+        @JvmStatic fun test2() = b
 
-    @JvmStatic fun test2() = b
-
-    @JvmStatic fun String.test3() = this + b
+        @JvmStatic fun String.test3() = this + b
+    }
 }
 
 fun box(): String {

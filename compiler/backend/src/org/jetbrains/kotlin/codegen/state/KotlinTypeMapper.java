@@ -977,7 +977,7 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    private String mapFunctionName(@NotNull FunctionDescriptor descriptor) {
+    public String mapFunctionName(@NotNull FunctionDescriptor descriptor) {
         if (!(descriptor instanceof JavaCallableMemberDescriptor)) {
             String platformName = getJvmName(descriptor);
             if (platformName != null) return platformName;

@@ -12240,6 +12240,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/jvmStatic/inlinePropertyAccessors.kt");
         }
 
+        @TestMetadata("interfaceCompanion.kt")
+        public void testInterfaceCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmStatic/interfaceCompanion.kt");
+        }
+
         @TestMetadata("kt21246.kt")
         public void testKt21246() throws Exception {
             runTest("compiler/testData/codegen/box/jvmStatic/kt21246.kt");
@@ -12313,6 +12318,19 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("syntheticAccessor.kt")
         public void testSyntheticAccessor() throws Exception {
             runTest("compiler/testData/codegen/box/jvmStatic/syntheticAccessor.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/jvmStatic/META-INF")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class META_INF extends AbstractBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInMETA_INF() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/jvmStatic/META-INF"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
         }
     }
 

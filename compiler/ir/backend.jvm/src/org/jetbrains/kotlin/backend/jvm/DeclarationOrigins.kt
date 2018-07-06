@@ -30,6 +30,7 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
     object SYNTHETIC_ACCESSOR : IrDeclarationOriginImpl("SYNTHETIC_ACCESSOR")
     object TO_ARRAY : IrDeclarationOriginImpl("TO_ARRAY")
+    object JVM_STATIC_WRAPPER : IrDeclarationOriginImpl("JVM_STATIC_WRAPPER")
 }
 
 interface JvmLoweredStatementOrigin : IrStatementOrigin {
