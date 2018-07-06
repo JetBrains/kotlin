@@ -8,4 +8,6 @@ fun bar(): java.lang.Runnable {
     return {/* Return */}
 }
 
+val baz = java.lang.Runnable { /* SAM */ }
+
 fun runRunnable(r: java.lang.Runnable) = r()
