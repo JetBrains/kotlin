@@ -37,10 +37,9 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
             val rootUri = URI.create(StandardFileSystems.JRT_PROTOCOL + ":/")
             val jrtFsJar = loadJrtFsJar(jdkHome) ?: return@createMap null
             val fileSystem =
-                if (SystemInfo.isJavaVersionAtLeast(9, 0, 0)) {
+                if (isAtLeastJava9()) {
                     FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath))
-                }
-                else {
+                } else {
                     val classLoader = URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
                     FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
                 }
