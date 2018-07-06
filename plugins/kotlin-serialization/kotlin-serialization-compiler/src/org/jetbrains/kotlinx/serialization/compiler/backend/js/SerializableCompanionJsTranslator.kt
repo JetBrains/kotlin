@@ -29,9 +29,11 @@ import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
-class SerializableCompanionJsTranslator(declaration: KtPureClassOrObject,
-                                        val translator: DeclarationBodyVisitor,
-                                        val context: TranslationContext): SerializableCompanionCodegen(declaration, context.bindingContext()) {
+class SerializableCompanionJsTranslator(
+    declaration: ClassDescriptor,
+    val translator: DeclarationBodyVisitor,
+    val context: TranslationContext): SerializableCompanionCodegen(declaration) {
+
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) {
         val f = context.buildFunction(methodDescriptor) {jsFun, context ->
             val serializer = serializableDescriptor.classSerializer?.toClassDescriptor!!
@@ -52,7 +54,7 @@ class SerializableCompanionJsTranslator(declaration: KtPureClassOrObject,
         fun translate(declaration: KtPureClassOrObject, descriptor: ClassDescriptor, translator: DeclarationBodyVisitor, context: TranslationContext) {
             val serializableClass = getSerializableClassDescriptorByCompanion(descriptor) ?: return
             if (serializableClass.isInternalSerializable)
-                SerializableCompanionJsTranslator(declaration, translator, context).generate()
+                SerializableCompanionJsTranslator(descriptor, translator, context).generate()
         }
     }
 }

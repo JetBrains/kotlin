@@ -51,7 +51,8 @@ fun getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
         T.isTypeParameter() -> SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", null)
         T.isPrimitiveNumberType() or T.isBoolean() -> SerialTypeInfo(
             property,
-            T.nameIfStandardType.toString().capitalize()
+            T.getJetTypeFqName(false).removePrefix("kotlin.") // i don't feel so good about it...
+//          alternative:  KotlinBuiltIns.getPrimitiveType(T)!!.typeName.identifier
         )
         KotlinBuiltIns.isString(T) -> SerialTypeInfo(property, "String")
         KotlinBuiltIns.isUnit(T) -> SerialTypeInfo(property, "Unit", unit = true)

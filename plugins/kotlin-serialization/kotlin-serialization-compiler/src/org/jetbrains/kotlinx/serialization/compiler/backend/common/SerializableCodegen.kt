@@ -19,14 +19,14 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.common
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperties
-import org.jetbrains.kotlin.psi.KtPureClassOrObject
-import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
 
-abstract class SerializableCodegen(declaration: KtPureClassOrObject, private val bindingContext: BindingContext) {
-    protected val serializableDescriptor: ClassDescriptor = declaration.findClassDescriptor(bindingContext)
+abstract class SerializableCodegen(
+    protected val serializableDescriptor: ClassDescriptor,
+    private val bindingContext: BindingContext
+) {
     protected val properties = SerializableProperties(serializableDescriptor, bindingContext)
 
     fun generate() {

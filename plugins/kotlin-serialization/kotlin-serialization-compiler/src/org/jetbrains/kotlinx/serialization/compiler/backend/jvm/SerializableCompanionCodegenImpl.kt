@@ -23,7 +23,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableC
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 class SerializableCompanionCodegenImpl(private val codegen: ImplementationBodyCodegen) :
-        SerializableCompanionCodegen(codegen.myClass, codegen.bindingContext) {
+        SerializableCompanionCodegen(codegen.descriptor) {
 
     companion object {
         fun generateSerializableExtensions(codegen: ImplementationBodyCodegen) {

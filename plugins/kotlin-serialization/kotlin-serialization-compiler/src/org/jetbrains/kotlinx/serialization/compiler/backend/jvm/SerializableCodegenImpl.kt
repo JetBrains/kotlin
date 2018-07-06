@@ -41,7 +41,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 class SerializableCodegenImpl(
         private val classCodegen: ImplementationBodyCodegen,
         serializableClass: ClassDescriptor
-) : SerializableCodegen(classCodegen.myClass, classCodegen.bindingContext) {
+) : SerializableCodegen(classCodegen.descriptor, classCodegen.bindingContext) {
 
     private val thisAsmType = classCodegen.typeMapper.mapClass(serializableDescriptor)
 

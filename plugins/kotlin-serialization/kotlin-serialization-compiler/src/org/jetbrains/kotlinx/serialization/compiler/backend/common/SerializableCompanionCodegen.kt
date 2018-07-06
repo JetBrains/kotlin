@@ -18,19 +18,18 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.common
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.psi.KtPureClassOrObject
-import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
+import org.jetbrains.kotlin.psi2ir.findSingleFunction
+import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.SERIALIZER_PROVIDER_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
 
-abstract class SerializableCompanionCodegen(declaration: KtPureClassOrObject, bindingContext: BindingContext) {
-    protected val companionDescriptor: ClassDescriptor = declaration.findClassDescriptor(bindingContext)
+abstract class SerializableCompanionCodegen(
+    protected val companionDescriptor: ClassDescriptor /*declaration: KtPureClassOrObject*/
+) {
     protected val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorByCompanion(companionDescriptor)!!
 
     fun generate() {
-        val fser = KSerializerDescriptorResolver.createSerializerGetterDescriptor(companionDescriptor, serializableDescriptor)
-        generateSerializerGetter(fser)
+        val serializerGetterDescriptor = companionDescriptor.unsubstitutedMemberScope.findSingleFunction(SERIALIZER_PROVIDER_NAME)
+        generateSerializerGetter(serializerGetterDescriptor)
     }
 
     protected abstract fun generateSerializerGetter(methodDescriptor: FunctionDescriptor)

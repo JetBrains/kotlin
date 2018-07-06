@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor
 
@@ -36,11 +37,12 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
 
     fun generate() {
         check(properties.isExternallySerializable) { "Class ${serializableDescriptor.name} is not externally serializable" }
+        generateSerialDesc()
         val prop = generateSerializableClassPropertyIfNeeded()
         val save = generateSaveIfNeeded()
         val load = generateLoadIfNeeded()
-        if (save || load || prop)
-            generateSerialDesc()
+//        if (save || load || prop)
+//            generateSerialDesc()
         if (serializableDescriptor.declaredTypeParameters.isNotEmpty() && typedSerializerConstructorNotDeclared()) {
             generateGenericFieldsAndConstructor(createTypedSerializerConstructorDescriptor(serializerDescriptor, serializableDescriptor))
         }
@@ -111,4 +113,7 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
                         property.returnType != null &&
                         isReturnTypeOk(property)
                     }
+
+    protected fun ClassDescriptor.getFuncDesc(funcName: String): Sequence<FunctionDescriptor> =
+            unsubstitutedMemberScope.getDescriptorsFiltered { it == Name.identifier(funcName) }.asSequence().filterIsInstance<FunctionDescriptor>()
 }

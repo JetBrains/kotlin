@@ -119,13 +119,10 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         context.addDeclarationStatement(f.makeStmt())
     }
 
-    private fun ClassDescriptor.getFuncDesc(funcName: String) =
-            unsubstitutedMemberScope.getDescriptorsFiltered { it == Name.identifier(funcName) }
-
     override fun generateSave(function: FunctionDescriptor) = generateFunction(function) { jsFun, ctx ->
         val kOutputClass = serializerDescriptor.getClassFromSerializationPackage("StructureEncoder")
         val wBeginFunc = ctx.getNameForDescriptor(
-                kOutputClass.getFuncDesc("beginStructure").single { (it as FunctionDescriptor).valueParameters.size == 2 })
+                kOutputClass.getFuncDesc("beginStructure").single { it.valueParameters.size == 2 })
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(serialDescPropertyDescriptor!!), JsThisRef())
 
         // output.writeBegin(desc, [])

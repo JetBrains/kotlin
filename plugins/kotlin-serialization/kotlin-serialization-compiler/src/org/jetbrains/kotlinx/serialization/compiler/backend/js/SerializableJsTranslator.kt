@@ -37,9 +37,10 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializab
 
 class SerializableJsTranslator(
     val declaration: KtPureClassOrObject,
+    val descriptor: ClassDescriptor,
     val translator: DeclarationBodyVisitor,
     val context: TranslationContext
-) : SerializableCodegen(declaration, context.bindingContext()) {
+) : SerializableCodegen(descriptor, context.bindingContext()) {
 
     private val initMap: Map<PropertyDescriptor, KtExpression?> = declaration.run {
         (bodyPropertiesDescriptorsMap(context.bindingContext()).mapValues { it.value.delegateExpressionOrInitializer } +
@@ -109,7 +110,7 @@ class SerializableJsTranslator(
             context: TranslationContext
         ) {
             if (descriptor.isInternalSerializable)
-                SerializableJsTranslator(declaration, translator, context).generate()
+                SerializableJsTranslator(declaration, descriptor, translator, context).generate()
         }
     }
 }

@@ -280,7 +280,7 @@ object KSerializerDescriptorResolver {
     fun createTypedSerializerConstructorDescriptor(
         classDescriptor: ClassDescriptor,
         serializableDescriptor: ClassDescriptor
-    ): ConstructorDescriptor {
+    ): ClassConstructorDescriptor {
         val constrDesc = ClassConstructorDescriptorImpl.createSynthesized(
             classDescriptor,
             Annotations.EMPTY,
