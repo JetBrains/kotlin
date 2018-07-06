@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea
 
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.util.parentOfType
 import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.test.util.elementByOffset
 import org.jetbrains.kotlin.types.typeUtil.containsError
 
 class ResolveElementCacheTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -384,11 +386,11 @@ class C(param1: String = "", param2: Int = 0) {
     }
 
     fun testPrimaryConstructorParameterFullAnalysis() {
-        val file = myFixture.configureByText("Test.kt", """
-        class My(param: Int = 0)
+        myFixture.configureByText("Test.kt", """
+        class My(param: Int = <caret>0)
         """) as KtFile
 
-        val defaultValue = ((file.declarations[0]) as KtClass).getPrimaryConstructor()!!.valueParameters[0].defaultValue!!
+        val defaultValue = myFixture.elementByOffset.parentOfType<KtExpression>()!!
         // Kept to preserve correct behaviour of analyzeFully() on class internal elements
 
         @Suppress("DEPRECATION")
@@ -396,11 +398,13 @@ class C(param1: String = "", param2: Int = 0) {
     }
 
     fun testPrimaryConstructorAnnotationFullAnalysis() {
-        val file = myFixture.configureByText("Test.kt", """
-        class My @Deprecated("xyz") protected constructor(param: Int)
-        """) as KtFile
+        myFixture.configureByText(
+            "Test.kt", """
+        class My @Deprecated("<caret>xyz") protected constructor(param: Int)
+        """
+        ) as KtFile
 
-        val annotationArguments = ((file.declarations[0]) as KtClass).getPrimaryConstructor()!!.annotationEntries[0].valueArgumentList!!
+        val annotationArguments = myFixture.elementByOffset.parentOfType<KtValueArgumentList>()!!
 
         @Suppress("DEPRECATION")
         annotationArguments.analyzeWithAllCompilerChecks()
@@ -409,14 +413,13 @@ class C(param1: String = "", param2: Int = 0) {
     fun testFunctionParameterAnnotation() {
         val file = myFixture.configureByText("Test.kt", """
         annotation class Ann
-        fun foo(@Ann p: Int) {
+        fun foo(@<caret>Ann p: Int) {
             bar()
         }
         """) as KtFile
 
         val function = (file.declarations[1]) as KtFunction
-        val annotationEntry = function.valueParameters[0].annotationEntries[0]
-        val typeRef = annotationEntry.typeReference!!
+        val typeRef = myFixture.elementByOffset.parentOfType<KtTypeReference>()!!
 
         val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
 
@@ -429,14 +432,12 @@ class C(param1: String = "", param2: Int = 0) {
     }
 
     fun testPrimaryConstructorParameterAnnotation() {
-        val file = myFixture.configureByText("Test.kt", """
+        myFixture.configureByText("Test.kt", """
         annotation class Ann
-        class X(@set:Ann var p: Int)
+        class X(@set:<caret>Ann var p: Int)
         """) as KtFile
 
-        val constructor = ((file.declarations[1]) as KtClass).getPrimaryConstructor()!!
-        val annotationEntry = constructor.valueParameters[0].annotationEntries[0]
-        val typeRef = annotationEntry.typeReference!!
+        val typeRef = myFixture.elementByOffset.parentOfType<KtTypeReference>()!!
 
         val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
 
@@ -449,15 +450,14 @@ class C(param1: String = "", param2: Int = 0) {
         val file = myFixture.configureByText("Test.kt", """
         annotation class Ann
         class X {
-            constructor(@Ann p: Int) {
+            constructor(@<caret>Ann p: Int) {
                 foo()
             }
         }
         """) as KtFile
 
         val constructor = ((file.declarations[1]) as KtClass).getSecondaryConstructors()[0]
-        val annotationEntry = constructor.valueParameters[0].annotationEntries[0]
-        val typeRef = annotationEntry.typeReference!!
+        val typeRef = myFixture.elementByOffset.parentOfType<KtTypeReference>()!!
 
         val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
 
@@ -518,10 +518,10 @@ class C(param1: String = "", param2: Int = 0) {
     }
 
     fun testResolveDefaultValueInPrimaryConstructor() {
-        val file = myFixture.configureByText("Test.kt", """
+        myFixture.configureByText("Test.kt", """
         class ClassA<N> (
                 messenger: ClassB<N> = object : ClassB<N> {
-                    override fun methodOne(param: List<N>) {
+                    override fun methodOne<caret>(param: List<N>) {
                     }
                 }
         )
@@ -531,9 +531,7 @@ class C(param1: String = "", param2: Int = 0) {
         }
         """) as KtFile
 
-        val classA = file.declarations[0] as KtClass
-        val defaultValue = classA.primaryConstructor!!.valueParameters[0].defaultValue as KtObjectLiteralExpression
-        val methodOne = defaultValue.objectDeclaration.declarations[0] as KtFunction
+        val methodOne = myFixture.elementByOffset.parentOfType<KtFunction>()!!
 
         val bindingContext = methodOne.analyze(BodyResolveMode.FULL)
 
