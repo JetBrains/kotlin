@@ -114,6 +114,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         runTest("idea/idea-completion/testData/handlers/basic/KT14130.kt");
     }
 
+    @TestMetadata("KT23627.kt")
+    public void testKT23627() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/basic/KT23627.kt");
+    }
+
+
     @TestMetadata("NestedTypeArg.kt")
     public void testNestedTypeArg() throws Exception {
         runTest("idea/idea-completion/testData/handlers/basic/NestedTypeArg.kt");

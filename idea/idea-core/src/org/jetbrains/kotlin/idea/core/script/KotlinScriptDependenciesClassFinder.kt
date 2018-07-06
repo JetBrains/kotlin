@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.idea.caches.project.ScriptModuleSearchScope
 import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
 import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
 
+
+
 class KotlinScriptDependenciesClassFinder(project: Project,
                                           private val scriptDependenciesManager: ScriptDependenciesManager
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
