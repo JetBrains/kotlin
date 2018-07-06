@@ -20,9 +20,6 @@ import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_MISC_JAR
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.annotations.KotlinScriptDefaultCompilationConfiguration
-import kotlin.script.experimental.api.ScriptCompileConfigurationProperties
-import kotlin.script.experimental.util.TypedKey
 
 
 class CustomScriptCodegenTest : CodegenTestCase() {
@@ -54,7 +51,7 @@ class CustomScriptCodegenTest : CodegenTestCase() {
                     arrayOf(
                         KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR,
                         KOTLIN_SCRIPTING_JVM_JAR, KOTLIN_SCRIPTING_MISC_JAR
-                    ).mapNotNull { File(libPath, it).takeIf { it.exists() } }
+                    ).mapNotNull { File(libPath, it).also { assertTrue("$it not found", it.exists()) } }
                 }
 
         val configuration = createConfiguration(

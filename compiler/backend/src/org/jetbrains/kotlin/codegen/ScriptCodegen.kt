@@ -111,12 +111,10 @@ class ScriptCodegen private constructor(
 
             fun genFieldFromArrayElement(descriptor: ClassDescriptor, paramIndex: Int, elementIndex: Int, name: String) {
                 val elementClassType = typeMapper.mapClass(descriptor)
-                iv.load(0, classType)
-                iv.load(paramIndex, elementClassType)
-                iv.aconst(elementIndex)
-                iv.aload(OBJECT_TYPE)
-                iv.checkcast(elementClassType)
-                iv.putfield(classType.internalName, name, elementClassType.descriptor)
+                val array = StackValue.local(paramIndex, AsmUtil.getArrayType(OBJECT_TYPE))
+                val value = StackValue.arrayElement(OBJECT_TYPE, null, array, StackValue.constant(elementIndex, Type.INT_TYPE))
+                val field = StackValue.field(elementClassType, classType, name, false, StackValue.local(0, classType))
+                field.store(value, iv)
             }
 
             if (!scriptContext.earlierScripts.isEmpty()) {
