@@ -66,19 +66,15 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
         argumentExpression: KtExpression,
         context: ResolutionContext<*>
     ) {
-        fun report(onlyWarning: Boolean = false) {
-            reportMigrationDiagnostic(migrationDiagnosticsForAnnotation, context, onlyWarning) { diagnostic ->
-                context.trace.report(diagnostic.on(argumentExpression))
-            }
-        }
-
         if (isArrayOrArrayLiteral(argument, context.trace)) {
             if (argument.hasSpread()) {
                 // We want to make calls @Foo(value = [A]) and @Foo(value = *[A]) equivalent
-                report(onlyWarning = true)
+                context.trace.report(Errors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION.on(argumentExpression))
             }
         } else {
-            report()
+            reportMigrationDiagnostic(migrationDiagnosticsForAnnotation, context) { diagnostic ->
+                context.trace.report(diagnostic.on(argumentExpression))
+            }
         }
     }
 
@@ -100,11 +96,10 @@ class AssigningNamedArgumentToVarargChecker : CallChecker {
     private inline fun <T : DiagnosticFactory<*>> reportMigrationDiagnostic(
         migrationDiagnostics: MigrationDiagnostics<T>,
         context: ResolutionContext<*>,
-        onlyWarning: Boolean = false,
         report: (T) -> Unit
     ) {
         val (warning, error) = migrationDiagnostics
-        if (!onlyWarning && context.languageVersionSettings.supportsFeature(ProhibitAssigningSingleElementsToVarargsInNamedForm)) {
+        if (context.languageVersionSettings.supportsFeature(ProhibitAssigningSingleElementsToVarargsInNamedForm)) {
             report(error)
         } else {
             report(warning)

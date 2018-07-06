@@ -14,10 +14,10 @@ annotation class Ann(vararg val s: String)
 @Ann(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION!>"value"<!>)
 fun test1() {}
 
-@Ann(s = *<!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION!>arrayOf("value")<!>)
+@Ann(s = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION!>arrayOf("value")<!>)
 fun test2() {}
 
-@Ann(s = *<!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION!>["value"]<!>)
+@Ann(s = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION!>["value"]<!>)
 fun test3() {}
 
 @JavaAnn(value = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION!>"value"<!>)
