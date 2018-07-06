@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen.coroutines
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
-import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineOrReturn
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
@@ -219,9 +218,7 @@ fun ResolvedCall<*>.isSuspendNoInlineCall(codegen: ExpressionCodegen, languageVe
 
     val functionDescriptor = resultingDescriptor as? FunctionDescriptor ?: return false
     if (!functionDescriptor.unwrapInitialDescriptorForSuspendFunction().isSuspend) return false
-    if (functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm(languageVersionSettings) ||
-        functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings)
-    ) return true
+    if (functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings)) return true
     return !(functionDescriptor.isInline || isInlineLambda)
 }
 
@@ -312,44 +309,6 @@ fun ModuleDescriptor.getSuccessOrFailure(kotlinType: KotlinType) =
             arguments = listOf(kotlinType.asTypeProjection())
         )
     } ?: ErrorUtils.createErrorType("For SuccessOrFailure")
-
-fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm(languageVersionSettings: LanguageVersionSettings) =
-    getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)?.isBuiltInSuspendCoroutineOrReturn(languageVersionSettings) == true
-
-fun createMethodNodeForSuspendCoroutineOrReturn(
-    functionDescriptor: FunctionDescriptor,
-    typeMapper: KotlinTypeMapper,
-    languageVersionSettings: LanguageVersionSettings
-): MethodNode {
-    assert(functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm(languageVersionSettings)) {
-        "functionDescriptor must be kotlin.coroutines.intrinsics.suspendOrReturn"
-    }
-
-    val node =
-        MethodNode(
-            Opcodes.ASM5,
-            Opcodes.ACC_STATIC,
-            "fake",
-            typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
-        )
-
-    node.visitVarInsn(Opcodes.ALOAD, 0)
-    node.visitVarInsn(Opcodes.ALOAD, 1)
-
-    node.invokeNormalizeContinuation(languageVersionSettings)
-
-    node.visitMethodInsn(
-        Opcodes.INVOKEINTERFACE,
-        typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,
-        OperatorNameConventions.INVOKE.identifier,
-        "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}",
-        true
-    )
-    node.visitInsn(Opcodes.ARETURN)
-    node.visitMaxs(2, 2)
-
-    return node
-}
 
 private fun MethodNode.invokeNormalizeContinuation(languageVersionSettings: LanguageVersionSettings) {
     visitMethodInsn(
