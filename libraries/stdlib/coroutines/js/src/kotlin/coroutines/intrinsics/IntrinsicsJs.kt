@@ -68,8 +68,14 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> =
-    createCoroutineFromSuspendFunction(completion) {
-        this.asDynamic()(completion)
+    // Kotlin/JS suspend lambdas have an extra parameter `suspended`
+    if (this.asDynamic().length == 2) {
+        // When `suspended` is true the continuation is created, but not executed
+        this.asDynamic()(completion, true)
+    } else {
+        createCoroutineFromSuspendFunction(completion) {
+            this.asDynamic()(completion)
+        }
     }
 
 /**
@@ -93,8 +99,14 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     receiver: R,
     completion: Continuation<T>
 ): Continuation<Unit> =
-    createCoroutineFromSuspendFunction(completion) {
-        this.asDynamic()(receiver, completion)
+    // Kotlin/JS suspend lambdas have an extra parameter `suspended`
+    if (this.asDynamic().length == 3) {
+        // When `suspended` is true the continuation is created, but not executed
+        this.asDynamic()(receiver, completion, true)
+    } else {
+        createCoroutineFromSuspendFunction(completion) {
+            this.asDynamic()(receiver, completion)
+        }
     }
 
 /**
