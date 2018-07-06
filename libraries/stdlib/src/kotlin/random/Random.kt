@@ -87,6 +87,7 @@ public abstract class Random {
      * @throws IllegalArgumentException if [range] is empty.
      */
     public open fun nextInt(range: IntRange): Int = when {
+        range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
         range.last < Int.MAX_VALUE -> nextInt(range.first, range.last + 1)
         range.first > Int.MIN_VALUE -> nextInt(range.first - 1, range.last) + 1
         else -> nextInt()
@@ -165,7 +166,7 @@ public abstract class Random {
      * @throws IllegalArgumentException if [range] is empty.
      */
     public open fun nextLong(range: LongRange): Long = when {
-//        range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
+        range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
         range.last < Long.MAX_VALUE -> nextLong(range.start, range.endInclusive + 1)
         range.start > Long.MIN_VALUE -> nextLong(range.start - 1, range.endInclusive) + 1
         else -> nextLong()
@@ -296,11 +297,6 @@ public abstract class Random {
         override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray = defaultRandom.nextBytes(array, fromIndex, toIndex)
 
 
-        internal fun checkRangeBounds(origin: Int, bound: Int) = require(bound > origin) { boundsErrorMessage(origin, bound) }
-        internal fun checkRangeBounds(origin: Long, bound: Long) = require(bound > origin) { boundsErrorMessage(origin, bound) }
-        internal fun checkRangeBounds(origin: Double, bound: Double) = require(bound > origin) { boundsErrorMessage(origin, bound) }
-
-        private fun boundsErrorMessage(origin: Any, bound: Any) = "Random range is empty: [$origin, $bound)."
     }
 }
 
@@ -332,3 +328,9 @@ internal expect fun doubleFromParts(hi26: Int, low27: Int): Double
 /** Takes upper [bitCount] bits (0..32) from this number. */
 internal fun Int.takeUpperBits(bitCount: Int): Int =
     this.ushr(32 - bitCount) and (-bitCount).shr(31)
+
+internal fun checkRangeBounds(origin: Int, bound: Int) = require(bound > origin) { boundsErrorMessage(origin, bound) }
+internal fun checkRangeBounds(origin: Long, bound: Long) = require(bound > origin) { boundsErrorMessage(origin, bound) }
+internal fun checkRangeBounds(origin: Double, bound: Double) = require(bound > origin) { boundsErrorMessage(origin, bound) }
+
+private fun boundsErrorMessage(origin: Any, bound: Any) = "Random range is empty: [$origin, $bound)."
