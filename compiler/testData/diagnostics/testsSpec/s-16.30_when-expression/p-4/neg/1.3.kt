@@ -10,7 +10,6 @@
  DESCRIPTION: 'When' with bound value and with invalid list of the conditions in 'when entry'.
  */
 
-
 class A {
     fun getInt(number: Int): Int {
         return number + 11

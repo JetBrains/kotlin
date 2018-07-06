@@ -32,7 +32,9 @@ fun case_1(value: Int?, value1: List<Int>, value2: A, value3: A?): String {
         fun_1() -> ""
         value2.mul(value!!) -> ""
         value2.nestedMul(value)(value) -> ""
+        <!UNSAFE_IMPLICIT_INVOKE_CALL!>value3?.nestedMul(value)<!>(value) -> ""
         value3?.nestedMul(value)?.invoke(value) -> ""
+        value3!!.nestedMul(value)(value) -> ""
         value3?.mul(value) -> ""
         else -> ""
     }
