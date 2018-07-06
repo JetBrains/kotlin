@@ -233,7 +233,7 @@ class KtLightNullabilityAnnotation(val member: KtLightElement<*, PsiModifierList
     override fun findAttributeValue(attributeName: String?) = null
 
     override fun getQualifiedName(): String? {
-        val annotatedElement = member.kotlinOrigin
+        val annotatedElement = member.takeIf(::isFromSources)?.kotlinOrigin
                 ?: // it is out of our hands
                 return getClsNullabilityAnnotation(member)?.qualifiedName
 
@@ -309,7 +309,7 @@ class KtLightNullabilityAnnotation(val member: KtLightElement<*, PsiModifierList
 }
 
 private fun getClsNullabilityAnnotation(member: KtLightElement<*, PsiModifierListOwner>): PsiAnnotation? {
-    if (!accessAnnotationsClsDelegateIsAllowed && ApplicationManager.getApplication().isUnitTestMode && member.kotlinOrigin != null)
+    if (!accessAnnotationsClsDelegateIsAllowed && ApplicationManager.getApplication().isUnitTestMode && isFromSources(member) && member.kotlinOrigin != null)
         LOG.error("nullability should be retrieved from `kotlinOrigin`")
     return member.clsDelegate.modifierList?.annotations?.findLast {
         isNullabilityAnnotation(it.qualifiedName)

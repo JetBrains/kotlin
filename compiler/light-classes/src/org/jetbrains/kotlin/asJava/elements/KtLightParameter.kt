@@ -30,7 +30,7 @@ class KtLightParameter(
         KtLightDeclaration<KtParameter, PsiParameter> {
 
     private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
-    
+
     private var lightIdentifier: KtLightIdentifier? = null
 
     override val kotlinOrigin: KtParameter?
