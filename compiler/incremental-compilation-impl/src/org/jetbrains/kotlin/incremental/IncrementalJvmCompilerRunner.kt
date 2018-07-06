@@ -150,7 +150,7 @@ class IncrementalJvmCompilerRunner(
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild { "No information on previous build" }
         reporter.report { "Last Kotlin Build info -- $lastBuildInfo" }
 
-        val classpathChanges = getClasspathChanges(args.classpathAsList, changedFiles, lastBuildInfo)
+        val classpathChanges = getClasspathChanges(args.classpathAsList, changedFiles, lastBuildInfo, modulesApiHistory, reporter)
 
         @Suppress("UNUSED_VARIABLE") // for sealed when
         val unused = when (classpathChanges) {
@@ -240,58 +240,6 @@ class IncrementalJvmCompilerRunner(
         }
 
         return result
-    }
-
-    private fun getClasspathChanges(
-        classpath: List<File>,
-        changedFiles: ChangedFiles.Known,
-        lastBuildInfo: BuildInfo
-    ): ChangesEither {
-        val classpathSet = HashSet<File>()
-        for (file in classpath) {
-            when {
-                file.isFile -> classpathSet.add(file)
-                file.isDirectory -> file.walk().filterTo(classpathSet) { it.isFile }
-            }
-        }
-
-        val modifiedClasspath = changedFiles.modified.filterTo(HashSet()) { it in classpathSet }
-        val removedClasspath = changedFiles.removed.filterTo(HashSet()) { it in classpathSet }
-
-        // todo: removed classes could be processed normally
-        if (removedClasspath.isNotEmpty()) return ChangesEither.Unknown("Some files are removed from classpath $removedClasspath")
-
-        if (modifiedClasspath.isEmpty()) return ChangesEither.Known()
-
-        val lastBuildTS = lastBuildInfo.startTS
-
-        val symbols = HashSet<LookupSymbol>()
-        val fqNames = HashSet<FqName>()
-
-        val historyFilesEither = modulesApiHistory.historyFilesForChangedFiles(modifiedClasspath)
-        val historyFiles = when (historyFilesEither) {
-            is Either.Success<Set<File>> -> historyFilesEither.value
-            is Either.Error -> return ChangesEither.Unknown(historyFilesEither.reason)
-        }
-
-        for (historyFile in historyFiles) {
-            val allBuilds = BuildDiffsStorage.readDiffsFromFile(historyFile, reporter = reporter)
-                    ?: return ChangesEither.Unknown("Could not read diffs from $historyFile")
-            val (knownBuilds, newBuilds) = allBuilds.partition { it.ts <= lastBuildTS }
-            if (knownBuilds.isEmpty()) {
-                return ChangesEither.Unknown("No previously known builds for $historyFile")
-            }
-
-            for (buildDiff in newBuilds) {
-                if (!buildDiff.isIncremental) return ChangesEither.Unknown("Non-incremental build from dependency $historyFile")
-
-                val dirtyData = buildDiff.dirtyData
-                symbols.addAll(dirtyData.dirtyLookupSymbols)
-                fqNames.addAll(dirtyData.dirtyClassesFqNames)
-            }
-        }
-
-        return ChangesEither.Known(symbols, fqNames)
     }
 
     override fun preBuildHook(args: K2JVMCompilerArguments, compilationMode: CompilationMode) {
@@ -439,3 +387,57 @@ var K2JVMCompilerArguments.destinationAsFile: File
 var K2JVMCompilerArguments.classpathAsList: List<File>
     get() = classpath.orEmpty().split(File.pathSeparator).map(::File)
     set(value) { classpath = value.joinToString(separator = File.pathSeparator, transform = { it.path }) }
+
+private fun getClasspathChanges(
+    classpath: List<File>,
+    changedFiles: ChangedFiles.Known,
+    lastBuildInfo: BuildInfo,
+    modulesApiHistory: ModulesApiHistory,
+    reporter: ICReporter?
+): ChangesEither {
+    val classpathSet = HashSet<File>()
+    for (file in classpath) {
+        when {
+            file.isFile -> classpathSet.add(file)
+            file.isDirectory -> file.walk().filterTo(classpathSet) { it.isFile }
+        }
+    }
+
+    val modifiedClasspath = changedFiles.modified.filterTo(HashSet()) { it in classpathSet }
+    val removedClasspath = changedFiles.removed.filterTo(HashSet()) { it in classpathSet }
+
+    // todo: removed classes could be processed normally
+    if (removedClasspath.isNotEmpty()) return ChangesEither.Unknown("Some files are removed from classpath $removedClasspath")
+
+    if (modifiedClasspath.isEmpty()) return ChangesEither.Known()
+
+    val lastBuildTS = lastBuildInfo.startTS
+
+    val symbols = HashSet<LookupSymbol>()
+    val fqNames = HashSet<FqName>()
+
+    val historyFilesEither = modulesApiHistory.historyFilesForChangedFiles(modifiedClasspath)
+    val historyFiles = when (historyFilesEither) {
+        is Either.Success<Set<File>> -> historyFilesEither.value
+        is Either.Error -> return ChangesEither.Unknown(historyFilesEither.reason)
+    }
+
+    for (historyFile in historyFiles) {
+        val allBuilds = BuildDiffsStorage.readDiffsFromFile(historyFile, reporter = reporter)
+            ?: return ChangesEither.Unknown("Could not read diffs from $historyFile")
+        val (knownBuilds, newBuilds) = allBuilds.partition { it.ts <= lastBuildTS }
+        if (knownBuilds.isEmpty()) {
+            return ChangesEither.Unknown("No previously known builds for $historyFile")
+        }
+
+        for (buildDiff in newBuilds) {
+            if (!buildDiff.isIncremental) return ChangesEither.Unknown("Non-incremental build from dependency $historyFile")
+
+            val dirtyData = buildDiff.dirtyData
+            symbols.addAll(dirtyData.dirtyLookupSymbols)
+            fqNames.addAll(dirtyData.dirtyClassesFqNames)
+        }
+    }
+
+    return ChangesEither.Known(symbols, fqNames)
+}
