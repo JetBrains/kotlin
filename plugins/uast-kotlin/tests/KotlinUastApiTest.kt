@@ -98,6 +98,11 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
             assertEquals("java.lang.Runnable",
                          file.findElementByText<ULambdaExpression>("{/* Return */}").functionalInterfaceType?.canonicalText)
+
+            assertEquals(
+                "java.lang.Runnable",
+                file.findElementByText<ULambdaExpression>("{ /* SAM */ }").functionalInterfaceType?.canonicalText
+            )
         }
     }
 
