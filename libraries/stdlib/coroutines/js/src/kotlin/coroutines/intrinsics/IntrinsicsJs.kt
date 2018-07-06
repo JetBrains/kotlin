@@ -114,7 +114,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
  */
 @SinceKotlin("1.3")
 public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
-    (this as? CoroutineImpl)?.facade ?: this
+    (this as? CoroutineImpl)?.intercepted() ?: this
 
 
 private inline fun <T> createCoroutineFromSuspendFunction(
