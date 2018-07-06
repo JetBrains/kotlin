@@ -1,5 +1,3 @@
-import java.util.Arrays
-
 class EqKotlin(val a: Array<Array<String>>) {
     <caret>override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -7,12 +5,12 @@ class EqKotlin(val a: Array<Array<String>>) {
 
         other as EqKotlin
 
-        if (!Arrays.deepEquals(a, other.a)) return false
+        if (!a.contentDeepEquals(other.a)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return Arrays.deepHashCode(a)
+        return a.contentDeepHashCode()
     }
 }
