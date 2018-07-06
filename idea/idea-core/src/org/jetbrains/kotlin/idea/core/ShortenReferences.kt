@@ -430,7 +430,12 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
         override val collectElementsVisitor = object : MyVisitor(elementFilter) {
             override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-                if (expression.receiverExpression is KtThisExpression && !options.removeThis) return
+                if (expression.receiverExpression is KtThisExpression && !options.removeThis) {
+                    val filterResult = elementFilter(expression)
+                    if (filterResult == FilterResult.SKIP) return
+                    expression.selectorExpression?.acceptChildren(this)
+                    return
+                }
                 super.visitDotQualifiedExpression(expression)
             }
         }
