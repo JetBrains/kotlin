@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -297,10 +298,14 @@ internal fun KotlinType.getFunctionalInterfaceType(source: UElement, element: Kt
 
 internal fun KotlinULambdaExpression.getFunctionalInterfaceType(): PsiType? {
     val parent = psi.parent
-    return when (parent) {
-        is KtBinaryExpressionWithTypeRHS -> parent.right?.getType()?.getFunctionalInterfaceType(this, psi)
-        else -> psi.getExpectedType()?.getFunctionalInterfaceType(this, psi)
+    if (parent is KtBinaryExpressionWithTypeRHS) return parent.right?.getType()?.getFunctionalInterfaceType(this, psi)
+    if (parent is KtLambdaArgument) run {
+        val callExpression = parent.parent as? KtCallExpression ?: return@run
+        val resolvedCall = callExpression.getResolvedCall(callExpression.analyze()) ?: return@run
+        val samConstructorDescriptor = resolvedCall.candidateDescriptor as? SamConstructorDescriptor ?: return@run
+        return samConstructorDescriptor.returnType?.getFunctionalInterfaceType(this, psi)
     }
+    return psi.getExpectedType()?.getFunctionalInterfaceType(this, psi)
 }
 
 internal fun unwrapFakeFileForLightClass(file: PsiFile): PsiFile = (file as? FakeFileForLightClass)?.ktFile ?: file
