@@ -50,7 +50,6 @@ import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLITool<A> {
 
     public static String KOTLIN_HOME_PROPERTY = "kotlin.home";
-    public static String KOTLIN_HOME_ENV_VAR = "KOTLIN_HOME";
 
     // Used in CompilerRunnerUtil#invokeExecMethod, in Eclipse plugin (KotlinCLICompiler) and in kotlin-gradle-plugin (GradleCompilerRunner)
     @NotNull
@@ -165,16 +164,13 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, arguments.configureLanguageVersionSettings(collector));
     }
 
-    private static final String kotlinHomeEnvVar = System.getenv(KOTLIN_HOME_ENV_VAR);
-
     @Nullable
     private static KotlinPaths computeKotlinPaths(@NotNull MessageCollector messageCollector, @NotNull CommonCompilerArguments arguments) {
         KotlinPaths paths;
         String kotlinHomeProperty = System.getProperty(KOTLIN_HOME_PROPERTY);
         File kotlinHome =
                 arguments.getKotlinHome() != null ? new File(arguments.getKotlinHome()) :
-                kotlinHomeProperty != null        ? new File(kotlinHomeProperty) :
-                kotlinHomeEnvVar != null          ? new File(kotlinHomeEnvVar)
+                kotlinHomeProperty != null        ? new File(kotlinHomeProperty)
                                                   : null;
         if (kotlinHome != null) {
             if (kotlinHome.isDirectory()) {
