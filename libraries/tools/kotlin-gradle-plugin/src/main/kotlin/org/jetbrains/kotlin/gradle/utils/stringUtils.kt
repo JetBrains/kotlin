@@ -5,5 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-internal fun lowerCamelCaseName(vararg nameParts: String) =
-        nameParts.drop(1).joinToString(separator = "", prefix = nameParts.first(), transform = String::capitalize)
+internal fun lowerCamelCaseName(vararg nameParts: String?): String {
+    val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty) }
+    return nonEmptyParts.drop(1).joinToString(
+        separator = "",
+        prefix = nonEmptyParts.firstOrNull().orEmpty(),
+        transform = String::capitalize
+    )
+}

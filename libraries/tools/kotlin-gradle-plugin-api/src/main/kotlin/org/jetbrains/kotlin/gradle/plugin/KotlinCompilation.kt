@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.Named
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.SourceSetOutput
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 
-interface KotlinCompilation: HasAttributes {
+interface KotlinCompilation: Named, HasAttributes, HasKotlinDependencies {
     val target: KotlinTarget
 
-    val name: String
+    val compilationName: String
 
     val kotlinSourceSets: List<KotlinSourceSet>
 
@@ -36,6 +36,8 @@ interface KotlinCompilation: HasAttributes {
     }
 
     fun source(sourceSet: KotlinSourceSet)
+
+    override fun getName(): String = compilationName
 }
 
 interface KotlinCompilationToRunnableFiles : KotlinCompilation {
@@ -45,7 +47,5 @@ interface KotlinCompilationToRunnableFiles : KotlinCompilation {
 }
 
 interface KotlinCompilationWithResources : KotlinCompilation {
-    val resources: SourceDirectorySet
-
     val processResourcesTaskName: String
 }

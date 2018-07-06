@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
-import org.gradle.api.internal.file.FileResolver
-import org.gradle.internal.reflect.Instantiator
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -19,10 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.base.KotlinJvmWithJavaCompilationFacto
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 abstract class AbstractKotlinTarget (
-    override val project: Project,
-    val projectExtension: KotlinProjectExtension,
-    val instantiator: Instantiator,
-    val fileResolver: FileResolver
+    override val project: Project
 ) : KotlinTarget {
     private val attributeContainer = HierarchyAttributeContainer(parent = null)
 
@@ -36,20 +30,17 @@ abstract class AbstractKotlinTarget (
 
     override val runtimeElementsConfigurationName: String
         get() = disambiguateName("runtimeElements")
+
+    override val artifactsTaskName: String
+        get() = disambiguateName("jar")
 }
 
 internal fun KotlinTarget.disambiguateName(simpleName: String) =
     lowerCamelCaseName(targetName, simpleName)
 
-open class KotlinAndroidTarget(
-    project: Project,
-    projectExtension: KotlinProjectExtension,
-    instantiator: Instantiator,
-    fileResolver: FileResolver
-) : AbstractKotlinTarget(project, projectExtension, instantiator, fileResolver) {
-
+open class KotlinAndroidTarget(project: Project) : AbstractKotlinTarget(project) {
     override val targetName: String
-        get() = ""
+        get() = "android"
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.jvm
@@ -60,12 +51,8 @@ open class KotlinAndroidTarget(
         project.container(compilationFactory.itemClass, compilationFactory)
 }
 
-open class KotlinWithJavaTarget(
-    project: Project,
-    projectExtension: KotlinProjectExtension,
-    instantiator: Instantiator,
-    fileResolver: FileResolver
-) : AbstractKotlinTarget(project, projectExtension, instantiator, fileResolver) {
+//FIXME split back into the extension and target classes
+open class KotlinWithJavaTarget(project: Project) : AbstractKotlinTarget(project) {
 
     override var targetName: String = "kotlin"
         internal set
@@ -83,15 +70,11 @@ open class KotlinWithJavaTarget(
 
 open class KotlinOnlyTarget<T : KotlinCompilation>(
     project: Project,
-    projectExtension: KotlinProjectExtension,
-    compilationFactory: KotlinCompilationFactory<T>,
-    instantiator: Instantiator,
-    fileResolver: FileResolver,
     override val platformType: KotlinPlatformType
-) : AbstractKotlinTarget(project, projectExtension, instantiator, fileResolver) {
+) : AbstractKotlinTarget(project) {
 
-    override val compilations: NamedDomainObjectContainer<T> =
-        project.container(compilationFactory.itemClass, compilationFactory)
+    override lateinit var compilations: NamedDomainObjectContainer<T>
+        internal set
 
     override lateinit var targetName: String
         internal set

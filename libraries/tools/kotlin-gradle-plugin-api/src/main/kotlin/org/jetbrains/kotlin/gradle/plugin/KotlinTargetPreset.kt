@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-interface KotlinTargetPreset<T: KotlinTarget> {
-    fun configureTarget(name: String, kotlinTarget: T): Unit
+import org.gradle.api.Named
+
+interface KotlinTargetPreset<T: KotlinTarget> : Named {
+    fun createTarget(name: String): T
 }

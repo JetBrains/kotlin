@@ -183,8 +183,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         else {
             if (kotlinCompilation == null) error("Java source set should not be null")
 
-            handleSourceSet(kotlinCompilation.name)
-            kotlinCompilation.name
+            handleSourceSet(kotlinCompilation.compilationName)
+            kotlinCompilation.compilationName
         }
 
         val kaptExtension = project.extensions.getByType(KaptExtension::class.java)

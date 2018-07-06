@@ -5,29 +5,24 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources
 
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
-import org.gradle.api.internal.AbstractNamedDomainObjectContainer
 import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.internal.tasks.DefaultSourceSetOutput
-import org.gradle.api.internal.tasks.TaskResolver
-import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.internal.reflect.Instantiator
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProvider
-import org.jetbrains.kotlin.gradle.plugin.addConvention
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import java.io.File
 
-abstract class KotlinSourceSetContainer<T : KotlinSourceSet> internal constructor(
-    itemClass: Class<T>,
-    instantiator: Instantiator,
+internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal constructor(
     protected val fileResolver: FileResolver,
     protected val project: Project
-) : AbstractNamedDomainObjectContainer<T>(itemClass, instantiator), KotlinSourceSetProvider {
+) : NamedDomainObjectFactory<T> {
 
-    // Needs setting when the plugin is applied. See `registerKotlinSourceSetsIfAbsent`.
-    lateinit var kotlinProjectExtension: KotlinProjectExtension
+    abstract val itemClass: Class<T>
+
+    override fun create(name: String): T {
+        val result = doCreateSourceSet(name)
+        setUpSourceSetDefaults(result)
+        return result
+    }
 
     protected open fun defaultSourceLocation(sourceSetName: String): File =
         project.file("src/$sourceSetName")
@@ -39,24 +34,15 @@ abstract class KotlinSourceSetContainer<T : KotlinSourceSet> internal constructo
     }
 
     protected abstract fun doCreateSourceSet(name: String): T
-
-    final override fun doCreate(name: String): T {
-        val result = doCreateSourceSet(name)
-        setUpSourceSetDefaults(result)
-        return result
-    }
-
-    final override fun provideSourceSet(displayName: String): T =
-        maybeCreate(displayName)
 }
 
-// TODO maybe simplify to Project.container(<...>, factory)
-class DefaultKotlinSourceSetContainer(
+internal class DefaultKotlinSourceSetFactory(
     project: Project,
-    fileResolver: FileResolver,
-    instantiator: Instantiator,
-    private val taskResolver: TaskResolver
-) : KotlinSourceSetContainer<DefaultKotlinSourceSet>(DefaultKotlinSourceSet::class.java, instantiator, fileResolver, project) {
+    fileResolver: FileResolver
+) : KotlinSourceSetFactory<DefaultKotlinSourceSet>(fileResolver, project) {
+
+    override val itemClass: Class<DefaultKotlinSourceSet>
+        get() = DefaultKotlinSourceSet::class.java
 
     override fun setUpSourceSetDefaults(sourceSet: DefaultKotlinSourceSet) {
         super.setUpSourceSetDefaults(sourceSet)
@@ -64,7 +50,6 @@ class DefaultKotlinSourceSetContainer(
     }
 
     override fun doCreateSourceSet(name: String): DefaultKotlinSourceSet {
-        val newSourceSetOutput = instantiator.newInstance(DefaultSourceSetOutput::class.java, name, fileResolver, taskResolver)
         return DefaultKotlinSourceSet(project, name, fileResolver)
     }
 }

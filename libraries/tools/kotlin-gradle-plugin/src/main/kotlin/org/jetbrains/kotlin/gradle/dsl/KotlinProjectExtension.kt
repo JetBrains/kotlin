@@ -16,17 +16,22 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
+import org.gradle.api.reflect.TypeOf
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProvider
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetContainer
 import kotlin.reflect.KClass
 
 private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
 
-internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProjectExtension>) {
+internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProjectExtension>): KotlinProjectExtension {
     val kotlinExt = extensions.create(KOTLIN_PROJECT_EXTENSION_NAME, extensionClass.java)
     DslObject(kotlinExt).extensions.create("experimental", ExperimentalExtension::class.java)
+    return kotlinExtension
 }
 
 internal val Project.kotlinExtension: KotlinProjectExtension
@@ -36,9 +41,18 @@ open class KotlinProjectExtension {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
 
-    val sourceSets: KotlinSourceSetContainer<out KotlinSourceSet>
-        get() = DslObject(this).extensions.getByType(KotlinSourceSetContainer::class.java)
+    var sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>
+        get() = DslObject(this).extensions.getByType(object : TypeOf<NamedDomainObjectContainer<out KotlinSourceSet>>() { })
+        internal set(value) { DslObject(this).extensions.add("sourceSets", value) }
+
+    lateinit var targets: NamedDomainObjectCollection<KotlinTarget>
+        internal set
 }
+
+internal val KotlinProjectExtension.sourceSetProvider
+    get() = object : KotlinSourceSetProvider {
+        override fun provideSourceSet(displayName: String): KotlinSourceSet = sourceSets.maybeCreate(displayName)
+    }
 
 open class ExperimentalExtension {
     var coroutines: Coroutines? = null

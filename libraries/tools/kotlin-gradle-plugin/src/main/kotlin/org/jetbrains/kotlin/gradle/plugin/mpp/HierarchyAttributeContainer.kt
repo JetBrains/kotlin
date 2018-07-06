@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import java.util.*
 
-// TODO thorough implementation: attribute invariants (no attrs with same name and different type), thread safety?
+// TODO better implementation: attribute invariants (no attrs with same name and different types), thread safety?
 class HierarchyAttributeContainer(val parent: AttributeContainer?) : AttributeContainer {
-    private val attributesMap = mutableMapOf<Attribute<*>, Any>()
+    private val attributesMap = Collections.synchronizedMap(mutableMapOf<Attribute<*>, Any>())
 
-    override fun contains(key: Attribute<*>?): Boolean =
+    override fun contains(key: Attribute<*>): Boolean =
         attributesMap.contains(key) || parent?.contains(key) ?: false
 
     @Suppress("UNCHECKED_CAST")

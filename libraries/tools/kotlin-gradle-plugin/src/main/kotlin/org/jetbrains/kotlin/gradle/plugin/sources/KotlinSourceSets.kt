@@ -11,9 +11,11 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.file.DefaultSourceDirectorySet
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.executeClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSetWithResources
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.lang.reflect.Constructor
 
@@ -46,8 +48,8 @@ internal fun KotlinSourceSet.composeName(prefix: String? = null, suffix: String?
 class DefaultKotlinSourceSet(
     private val project: Project,
     val displayName: String,
-    val fileResolver: FileResolver
-) : KotlinSourceSet {
+    fileResolver: FileResolver
+) : KotlinSourceSetWithResources {
 
     override val apiConfigurationName: String
         get() = disambiguateName("api")
@@ -63,95 +65,27 @@ class DefaultKotlinSourceSet(
 
     override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(displayName + ".kotlin", fileResolver)
 
-    val resources: SourceDirectorySet = createDefaultSourceDirectorySet(displayName + ".resources", fileResolver)
+    override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(displayName + ".resources", fileResolver)
 
     override fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet = kotlin.apply { executeClosure(configureClosure) }
 
     override fun getName(): String = displayName
 
-    override fun dependencies(configure: KotlinSourceSetDependencyHandler.() -> Unit) {
-
-    }
-
-    private inner class DepenencyHandler : KotlinSourceSetDependencyHandler {
-        override fun api(dependencyNotation: Any) = addDependency(apiConfigurationName, dependencyNotation)
-
-        override fun implementation(dependencyNotation: Any) = addDependency(implementationConfigurationName, dependencyNotation)
-
-        override fun compileOnly(dependencyNotation: Any) = addDependency(compileOnlyConfigurationName, dependencyNotation)
-
-        override fun runtimeOnly(dependencyNotation: Any) = addDependency(runtimeOnlyConfigurationName, dependencyNotation)
-
-        private fun addDependency(configurationName: String, dependencyNotation: Any) {
-            project.dependencies.add(configurationName, dependencyNotation)
-        }
-    }
+    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
+        DefaultKotlinDependencyHandler(this, project).run(configure)
 
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ this@f.executeClosure(configureClosure) }
+
+    override fun toString(): String = "source set $name"
 }
 
-internal fun KotlinSourceSet.disambiguateName(simpleName: String) =
-    lowerCamelCaseName(simpleName, name)
+class AndroidSourceSet
 
-//open class KotlinOnlySourceSet(
-//    name: String,
-//    fileResolver: FileResolver,
-//    newSourceSetOutput: SourceSetOutput,
-//    val project: Project,
-//) : KotlinSourceSet(name, fileResolver), KotlinBaseSourceSet {
-//
-//    override fun toString(): String =
-//        "source set '$name'" +
-//                kotlinTarget.disambiguationClassifier?.let { " ($it)" }.orEmpty()
-//
-//    override var compileClasspath: FileCollection = project.files()
-//
-//    override var runtimeClasspath: FileCollection = project.files()
-//
-//    override val output: SourceSetOutput = newSourceSetOutput
-//
-//    override val resources: SourceDirectorySet = createDefaultSourceDirectorySet("$name.resources", fileResolver)
-//
-//    override val allSource: SourceDirectorySet =
-//        createDefaultSourceDirectorySet("$name.allSource", fileResolver).apply {
-//            source(kotlin)
-//            source(resources)
-//        }
-//
-//    override val classesTaskName: String get() = composeName(kotlinTarget.classesTaskName)
-//
-//    override val jarTaskName: String get() = composeName(suffix = "jar")
-//
-//    override val processResourcesTaskName: String get() = composeName(kotlinTarget.processResourcesTaskName)
-//
-//    override val compileKotlinTaskName: String get() = composeName("compile", kotlinTarget.targetName)
-//
-//    override val compileConfigurationName: String
-//        get() = kotlinTarget.disambiguateName(composeName(suffix = "compile"))
-//
-//    override val runtimeConfigurationName: String
-//        get() = kotlinTarget.disambiguateName(composeName(suffix = "runtime"))
-//
-//    override val compileOnlyConfigurationName: String
-//        get() = kotlinTarget.disambiguateName(composeName(suffix = "compileOnly"))
-//
-//    override val runtimeOnlyConfigurationName: String
-//        get() = kotlinTarget.disambiguateName(composeName(suffix = "runtimeOnly"))
-//
-//    override val implementationConfigurationName: String
-//        get() = kotlinTarget.disambiguateName(composeName(suffix = "implementation"))
-//
-//    override val compileClasspathConfigurationName: String
-//        get() = kotlinTarget.disambiguateName(composeName(suffix = "compileClasspath"))
-//
-//    override val runtimeClasspathConfigurationName: String
-//        get() = kotlinTarget.disambiguateName(composeName(suffix = "runtimeClasspath"))
-//
-//    override fun compiledBy(vararg taskPaths: Any) {
-//        (output.classesDirs as ConfigurableFileCollection).from(project.files().builtBy(*taskPaths))
-//    }
-//}
+internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
+    val nameParts = listOfNotNull(this.name.takeIf { it != "main" }, simpleName)
+    return lowerCamelCaseName(*nameParts.toTypedArray())
+}
 
 private val createDefaultSourceDirectorySet: (name: String?, resolver: FileResolver?) -> SourceDirectorySet = run {
     val klass = DefaultSourceDirectorySet::class.java

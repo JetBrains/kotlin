@@ -11,18 +11,23 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.HasAttributes
 import java.io.Serializable
 
-interface KotlinTarget: HasAttributes {
+interface KotlinTarget: Named, HasAttributes {
     val targetName: String
-    val disambiguationClassifier: String? get() = null
+    val disambiguationClassifier: String? get() = targetName
 
     val platformType: KotlinPlatformType
 
     val compilations: NamedDomainObjectContainer<out KotlinCompilation>
+
     val project: Project
+
+    val artifactsTaskName: String
 
     val defaultConfigurationName: String
     val apiElementsConfigurationName: String
     val runtimeElementsConfigurationName: String
+
+    override fun getName(): String = targetName
 }
 
 enum class KotlinPlatformType: Named, Serializable {

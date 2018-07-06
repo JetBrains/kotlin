@@ -16,29 +16,46 @@ import org.gradle.api.capabilities.Capability
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.base.runtimeConfigurationName
 
 internal class KotlinPlatformSoftwareComponent(
     private val project: Project,
-    private val kotlinTargets: List<KotlinTarget>
+    private val kotlinTargets: Iterable<KotlinTarget>
 ) : SoftwareComponentInternal {
-    override fun getUsages(): Set<UsageContext> = kotlinTargets.map(::KotlinPlatformUsageContext).toSet()
+    override fun getUsages(): Set<UsageContext> = kotlinTargets.flatMap {
+        // TODO create both api and runtime usage contexts
+        listOf(
+            KotlinPlatformUsageContext(it, kotlinApiUsage, KotlinTarget::apiElementsConfigurationName),
+            KotlinPlatformUsageContext(it, kotlinRuntimeUsage, KotlinTarget::runtimeElementsConfigurationName)
+        )
+    }.toSet()
 
     override fun getName(): String = project.name
 
     companion object {
-        val kotlinUsage = object : Usage {
-            override fun getName(): String = "java-api" // TODO maybe it's better to have a Kotlin-specific usage here
+        val kotlinApiUsage = object : Usage {
+            override fun getName(): String = "java-api"
+        }
+
+        val kotlinRuntimeUsage = object : Usage {
+            override fun getName(): String = "java-runtime"
         }
     }
 
-    private inner class KotlinPlatformUsageContext(val kotlinTarget: KotlinTarget) : UsageContext {
-        override fun getUsage(): Usage = kotlinUsage
+    private inner class KotlinPlatformUsageContext(
+        val kotlinTarget: KotlinTarget,
+        private val usage: Usage,
+        val dependencyConfigurationNameProvider: (KotlinTarget) -> String
+    ) : UsageContext {
+        override fun getUsage(): Usage = usage
 
-        override fun getName(): String = kotlinTarget.targetName
+        override fun getName(): String = kotlinTarget.targetName + when (usage) {
+            kotlinApiUsage -> "-api"
+            kotlinRuntimeUsage -> "-runtime"
+            else -> error("unexpected usage")
+        }
 
         private val configuration: Configuration
-            get() = project.configurations.getByName(kotlinTarget.runtimeConfigurationName)
+            get() = project.configurations.getByName(dependencyConfigurationNameProvider(kotlinTarget))
 
         override fun getDependencies(): MutableSet<out ModuleDependency> =
             configuration.incoming.dependencies.withType(ModuleDependency::class.java)
@@ -53,7 +70,6 @@ internal class KotlinPlatformSoftwareComponent(
         override fun getAttributes(): AttributeContainer =
             configuration.outgoing.attributes
 
-        // FIXME this is a stub for a function that is not present in the Gradle API that we compile against
         override fun getCapabilities(): Set<Capability> = emptySet()
 
         // FIXME this is a stub for a function that is not present in the Gradle API that we compile against

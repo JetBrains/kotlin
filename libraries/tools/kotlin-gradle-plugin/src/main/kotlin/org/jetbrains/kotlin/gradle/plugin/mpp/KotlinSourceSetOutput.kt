@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
+import org.gradle.api.internal.file.FileCollectionInternal
+import org.gradle.api.internal.file.FileCollectionVisitor
+import org.gradle.api.internal.file.FileSystemSubset
 import org.gradle.api.tasks.SourceSetOutput
 import java.io.File
 import java.util.concurrent.Callable
@@ -16,15 +19,21 @@ private class MutableReference<T>(var item: T)
 
 class KotlinSourceSetOutput constructor(
     private val project: Project,
-    private var resourcesDir: Any
-) : SourceSetOutput, ConfigurableFileCollection by project.files() {
+    private var resourcesDir: Any,
+    private var backingFileCollection: ConfigurableFileCollection = project.files() // must be a parameter since it is used in delegation
+) : SourceSetOutput, ConfigurableFileCollection by backingFileCollection, FileCollectionInternal {
+
+    /* TODO report Gradle bug: cannot implement SourceSetOutput without also implementing FileCollectionInternal, there's a cast to the latter
+     inside the Gradle logic for resolving file collections */
+    override fun registerWatchPoints(p0: FileSystemSubset.Builder) = (backingFileCollection as FileCollectionInternal).registerWatchPoints(p0)
+    override fun visitRootElements(p0: FileCollectionVisitor) = (backingFileCollection as FileCollectionInternal).visitRootElements(p0)
 
     private val classesDirs: FileCollection = project.files()
     private val otherDirs: ConfigurableFileCollection = project.files()
 
     init {
         this.from(classesDirs)
-        this.from(otherDirs)
+        this.from(Callable { resourcesDir })
     }
 
     override fun setResourcesDir(dirNotation: Any) {
@@ -33,7 +42,7 @@ class KotlinSourceSetOutput constructor(
 
     override fun setResourcesDir(dir: File): Unit = setResourcesDir(dir as Any)
 
-    override fun getDirs(): FileCollection = this
+    override fun getDirs(): FileCollection = otherDirs
 
     override fun isLegacyLayout(): Boolean = false
 

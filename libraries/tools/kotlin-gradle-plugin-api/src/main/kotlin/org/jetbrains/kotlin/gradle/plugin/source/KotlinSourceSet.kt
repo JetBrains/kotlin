@@ -8,18 +8,14 @@ package org.jetbrains.kotlin.gradle.plugin.source
 import groovy.lang.Closure
 import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 
-interface KotlinSourceSet: Named {
+interface KotlinSourceSet : Named, HasKotlinDependencies {
     val kotlin: SourceDirectorySet
 
     fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet
+}
 
-    fun dependencies(configure: KotlinSourceSetDependencyHandler.() -> Unit)
-    fun dependencies(configureClosure: Closure<Any?>)
-
-    val apiConfigurationName: String
-    val implementationConfigurationName: String
-    val compileOnlyConfigurationName: String
-    val runtimeOnlyConfigurationName: String
+interface KotlinSourceSetWithResources : KotlinSourceSet {
+    val resources: SourceDirectorySet
 }
