@@ -25,7 +25,9 @@ buildscript {
 apply plugin: 'kotlin'
 
 repositories {
-    mavenCentral()
+    maven {
+        url 'https://cache-redirector.jetbrains.com/maven-central'
+    }
 }
 
 dependencies {

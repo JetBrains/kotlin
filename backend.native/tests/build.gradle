@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 buildscript {
     repositories {
-        mavenCentral()
+        maven {
+            url 'https://cache-redirector.jetbrains.com/maven-central'
+        }
         maven {
             url kotlinCompilerRepo
         }

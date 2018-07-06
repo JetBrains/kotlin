@@ -18,10 +18,6 @@ buildscript {
    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
    apply plugin: 'project-report'
 
-   repositories {
-       mavenCentral()
-   }
-
    dependencies {
        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.0"
    }

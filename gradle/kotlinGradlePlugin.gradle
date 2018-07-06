@@ -3,7 +3,9 @@ if (!hasProperty('buildKotlinVersion')) {
 }
 
 project.buildscript.repositories {
-    mavenCentral()
+    maven {
+        url = 'https://cache-redirector.jetbrains.com/maven-central'
+    }
 }
 
 project.buildscript.dependencies {

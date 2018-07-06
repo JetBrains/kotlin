@@ -33,12 +33,14 @@ buildscript {
     apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
 
     repositories {
-        jcenter()
+        maven {
+            url = 'https://cache-redirector.jetbrains.com/jcenter'
+        }
     }
 }
 
 abstract class NativeDep extends DefaultTask {
-    static final String baseUrl = "https://download.jetbrains.com/kotlin/native"
+    static final String baseUrl = "https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native"
 
     @Input
     abstract String getFileName()

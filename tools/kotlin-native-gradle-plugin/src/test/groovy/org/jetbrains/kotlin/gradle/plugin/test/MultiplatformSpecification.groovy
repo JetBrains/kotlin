@@ -25,7 +25,9 @@ class MultiplatformSpecification extends BaseKonanSpecification {
     public static final String DEFAULT_COMMON_BUILD_FILE_CONTENT = """\
         buildscript {
             repositories {
-                jcenter()
+                maven {
+                   url = 'https://cache-redirector.jetbrains.com/jcenter'
+                }
             }
             dependencies {
                 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
@@ -35,7 +37,9 @@ class MultiplatformSpecification extends BaseKonanSpecification {
         apply plugin: 'kotlin-platform-common'
         
         repositories {
-            jcenter()
+            maven {
+               url = 'https://cache-redirector.jetbrains.com/jcenter'
+            }
         }
 
         dependencies {
