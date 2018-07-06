@@ -257,12 +257,7 @@ public abstract class Random {
      */
     companion object : Random() {
 
-        private var _defaultRandom: Random? = null
-        private val defaultRandom: Random
-            get() = _defaultRandom ?: initialize()
-
-        private fun initialize(): Random = defaultPlatformRandom().also { _defaultRandom = it }
-
+        private val defaultRandom: Random = defaultPlatformRandom()
 
         override fun nextBits(bitCount: Int): Int = defaultRandom.nextBits(bitCount)
         override fun nextInt(): Int = defaultRandom.nextInt()
