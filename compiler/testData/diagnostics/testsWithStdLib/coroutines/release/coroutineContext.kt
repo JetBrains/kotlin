@@ -4,5 +4,5 @@
 import kotlin.coroutines.experimental.coroutineContext
 
 suspend fun test() {
-    coroutineContext
+    <!UNSUPPORTED!>coroutineContext<!>
 }

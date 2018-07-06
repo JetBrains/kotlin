@@ -1871,6 +1871,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             public void testCoroutineContext() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/release/coroutineContext.kt");
             }
+
+            @TestMetadata("suspend.kt")
+            public void testSuspend() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/release/suspend.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension")

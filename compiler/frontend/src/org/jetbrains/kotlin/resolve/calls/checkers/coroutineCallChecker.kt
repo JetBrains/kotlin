@@ -37,6 +37,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 val COROUTINE_CONTEXT_1_2_20_FQ_NAME =
     DescriptorUtils.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("coroutineContext"))
 
+val COROUTINE_CONTEXT_1_2_30_FQ_NAME =
+    DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("coroutineContext"))
+
+val COROUTINE_CONTEXT_1_3_FQ_NAME =
+    DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("coroutineContext"))
+
 fun FunctionDescriptor.isBuiltInCoroutineContext(languageVersionSettings: LanguageVersionSettings) =
     (this as? PropertyGetterDescriptor)?.correspondingProperty?.fqNameSafe?.isBuiltInCoroutineContext(languageVersionSettings) == true
 
@@ -50,8 +56,11 @@ object CoroutineSuspendCallChecker : CallChecker {
         val descriptor = resolvedCall.candidateDescriptor
         when (descriptor) {
             is FunctionDescriptor -> if (!descriptor.isSuspend) return
-            is PropertyDescriptor ->
-                if (descriptor.fqNameSafe != COROUTINE_CONTEXT_1_2_20_FQ_NAME && !descriptor.isBuiltInCoroutineContext(context.languageVersionSettings)) return
+            is PropertyDescriptor -> when (descriptor.fqNameSafe) {
+                COROUTINE_CONTEXT_1_2_20_FQ_NAME, COROUTINE_CONTEXT_1_2_30_FQ_NAME, COROUTINE_CONTEXT_1_3_FQ_NAME -> {
+                }
+                else -> return
+            }
             else -> return
         }
 
@@ -69,6 +78,17 @@ object CoroutineSuspendCallChecker : CallChecker {
                     context.trace.report(Errors.NON_LOCAL_SUSPENSION_POINT.on(reportOn))
                 } else if (context.scope.parentsWithSelf.any { it.isScopeForDefaultParameterValuesOf(enclosingSuspendFunction) }) {
                     context.trace.report(Errors.UNSUPPORTED.on(reportOn, "suspend function calls in a context of default parameter value"))
+                }
+
+                if ((descriptor.fqNameSafe == COROUTINE_CONTEXT_1_2_20_FQ_NAME || descriptor.fqNameSafe == COROUTINE_CONTEXT_1_2_30_FQ_NAME) &&
+                    context.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+                ) {
+                    context.trace.report(
+                        Errors.UNSUPPORTED.on(
+                            reportOn,
+                            "experimental coroutineContext of release coroutine: use kotlin.coroutines.coroutineContext instead"
+                        )
+                    )
                 }
 
                 context.trace.record(
