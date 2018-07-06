@@ -696,6 +696,12 @@ task atomic0(type: RunKonanTest) {
     source = "runtime/workers/atomic0.kt"
 }
 
+task lazy0(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
+    goldValue = "OK\n"
+    source = "runtime/workers/lazy0.kt"
+}
+
 task enumIdentity(type: RunKonanTest) {
     disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
     goldValue = "true\n"

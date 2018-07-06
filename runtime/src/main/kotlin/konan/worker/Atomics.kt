@@ -150,3 +150,49 @@ class AtomicReference<T>(private var value: T? = null) {
     @SymbolName("Kotlin_AtomicReference_get")
     external public fun get(): T?
 }
+
+internal object UNINITIALIZED
+
+internal object INITIALIZING
+
+@Frozen
+internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
+    private val initializer_ = AtomicReference<Function0<T>?>(initializer.freeze())
+    private val value_ = AtomicReference<Any?>(UNINITIALIZED)
+
+    override val value: T
+        get() {
+            if (value_.compareAndSwap(UNINITIALIZED, INITIALIZING) === UNINITIALIZED) {
+                // We execute exclusively here.
+                val ctor = initializer_.get()
+                if (ctor != null && initializer_.compareAndSwap(ctor, null) === ctor) {
+                    value_.compareAndSwap(INITIALIZING, ctor().freeze())
+                } else {
+                    // Something wrong.
+                    assert(false)
+                }
+            }
+            var result: Any?
+            do {
+                result = value_.get()
+            } while (result === INITIALIZING)
+
+            assert(result !== UNINITIALIZED && result != INITIALIZING)
+            @Suppress("UNCHECKED_CAST")
+            return result as T
+        }
+
+    // Racy!
+    override fun isInitialized(): Boolean = value_.get() !== UNINITIALIZED
+
+    override fun toString(): String = if (isInitialized())
+        value_.get().toString() else "Lazy value not initialized yet."
+}
+
+/**
+ * Atomic lazy initializer, could be used in frozen objects, freezes initializing lambda,
+ * so use very carefully. Also, as with other uses of an @AtomicReference may potentially
+ * leak memory, so it is recommended to use `atomicLazy` in cases of objects living forever,
+ * such as object signletons, or in cases where it's guaranteed not to have cyclical garbage.
+ */
+public fun <T> atomicLazy(initializer: () -> T): Lazy<T> = AtomicLazyImpl(initializer)
