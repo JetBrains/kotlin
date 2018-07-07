@@ -54,8 +54,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
 
     abstract fun applyTo(element: TElement, editor: Editor?)
 
-    private fun getTarget(editor: Editor, file: PsiFile): TElement? {
-        val offset = editor.caretModel.offset
+    fun getTarget(offset: Int, file: PsiFile): TElement? {
         val leaf1 = file.findElementAt(offset)
         val leaf2 = file.findElementAt(offset - 1)
         val commonParent = if (leaf1 != null && leaf2 != null) PsiTreeUtil.findCommonParent(leaf1, leaf2) else null
@@ -79,6 +78,11 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
             if (!allowCaretInsideElement(element) && element.textRange.containsInside(offset)) break
         }
         return null
+    }
+
+    fun getTarget(editor: Editor, file: PsiFile): TElement? {
+        val offset = editor.caretModel.offset
+        return getTarget(offset, file)
     }
 
     protected open fun allowCaretInsideElement(element: PsiElement): Boolean =
