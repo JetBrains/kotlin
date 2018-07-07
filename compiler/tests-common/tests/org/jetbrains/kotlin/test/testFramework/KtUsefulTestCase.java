@@ -29,6 +29,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.TestLoggerFactory;
+import com.intellij.testFramework.VfsTestUtil;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.HashMap;
