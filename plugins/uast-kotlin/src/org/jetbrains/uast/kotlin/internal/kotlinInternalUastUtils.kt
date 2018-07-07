@@ -46,10 +46,12 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.type.MapPsiToAsmDesc
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isInterface
@@ -302,8 +304,15 @@ internal fun KotlinULambdaExpression.getFunctionalInterfaceType(): PsiType? {
     if (parent is KtLambdaArgument) run {
         val callExpression = parent.parent as? KtCallExpression ?: return@run
         val resolvedCall = callExpression.getResolvedCall(callExpression.analyze()) ?: return@run
-        val samConstructorDescriptor = resolvedCall.candidateDescriptor as? SamConstructorDescriptor ?: return@run
-        return samConstructorDescriptor.returnType?.getFunctionalInterfaceType(this, psi)
+        val candidateDescriptor = resolvedCall.candidateDescriptor
+        when (candidateDescriptor) {
+            is SamConstructorDescriptor -> return candidateDescriptor.returnType?.getFunctionalInterfaceType(this, psi)
+            is SamAdapterExtensionFunctionDescriptor -> {
+                val index = (resolvedCall.getArgumentMapping(parent) as? ArgumentMatch)?.valueParameter?.index ?: return@run
+                val parameterDescriptor = candidateDescriptor.baseDescriptorForSynthetic.valueParameters.getOrNull(index) ?: return@run
+                return parameterDescriptor.type.getFunctionalInterfaceType(this, psi)
+            }
+        }
     }
     return psi.getExpectedType()?.getFunctionalInterfaceType(this, psi)
 }
