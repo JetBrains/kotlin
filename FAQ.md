@@ -58,3 +58,36 @@ A: Currently, singleton objects are immutable (i.e. frozen after creation), and 
 a good practise to have global state immutable. If for some reasons you need mutable state inside such an
 object, use `@konan.ThreadLocal` annotation on the object. Also `konan.worker.AtomicReference` class could be
 used to store different pointers to frozen objects in a frozen object and atomically update those.
+
+Q: How can I compile my project against Kotlin/Native master?
+
+A: We release dev builds frequently, usually at least once a week. You can check the [list of available versions](https://bintray.com/jetbrains/kotlin-native-dependencies/kotlin-native-gradle-plugin). But in the case we recently fixed an issue and you want to check before a release is done, you can do:
+
+<details>
+    
+<summary>For the CLI, you can compile using gradle as stated in the README (and if you get errors, you can try to do a <code>./gradlew clean</code>):</summary>
+
+```
+./gradlew dependencies:update
+./gradlew dist distPlatformLibs
+```
+
+You can then set the `KONAN_HOME` env variable to the generated `dist` folder in the git repository.
+
+</details>
+
+<details>
+<summary>For Gradle, you can use <a href="https://docs.gradle.org/current/userguide/composite_builds.html">Gradle composite builds</a> like this:</summary>
+
+```
+# Set with the path of your kotlin-native clone
+export KONAN_REPO=$PWD/../kotlin-native
+
+# Run this once since it is costly, you can remove the `clean` task if not big changes were made from the last time you did this
+pushd $KONAN_REPO && git pull && ./gradlew clean dependencies:update dist distPlatformLibs && popd
+
+# In your project, you set have to the konan.home property, and include as composite the shared and gradle-plugin builds
+./gradlew check -Pkonan.home=$KONAN_REPO/dist --include-build $KONAN_REPO/shared --include-build $KONAN_REPO/tools/kotlin-native-gradle-plugin
+```
+
+</details>
