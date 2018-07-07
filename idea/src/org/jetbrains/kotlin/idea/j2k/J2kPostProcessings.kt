@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.j2k
 
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.LocalInspectionToolSession
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.*
+import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -83,6 +83,8 @@ object J2KPostProcessingRegistrar {
         registerInspectionBasedProcessing(UnnecessaryVariableInspection())
         registerGeneralInspectionBasedProcessing(RedundantModalityModifierInspection())
         registerGeneralInspectionBasedProcessing(RedundantVisibilityModifierInspection())
+        registerGeneralInspectionBasedProcessing(RedundantExplicitTypeInspection())
+        registerGeneralInspectionBasedProcessing(RedundantUnitReturnTypeInspection())
 
         registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
 
@@ -178,6 +180,30 @@ object J2KPostProcessingRegistrar {
         _processings.add(object : J2kPostProcessing {
             override val writeActionNeeded = false
 
+            fun <D : CommonProblemDescriptor> QuickFix<D>.applyFixSmart(project: Project, descriptor: D) {
+                if (descriptor is ProblemDescriptor) {
+                    if (this is IntentionWrapper) {
+                        @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
+                        fun applyIntention() {
+                            val action = this.action as? SelfTargetingIntention<PsiElement> ?: return
+                            val target = action.getTarget(descriptor.psiElement.startOffset, descriptor.psiElement.containingFile) ?: return
+                            if (!action.isApplicableTo(target, descriptor.psiElement.startOffset)) return
+                            action.applyTo(target, null)
+                        }
+
+                        if (this.startInWriteAction()) {
+                            ApplicationManager.getApplication().runWriteAction(::applyIntention)
+                        } else {
+                            applyIntention()
+                        }
+
+                    }
+                }
+
+                ApplicationManager.getApplication().runWriteAction {
+                    this.applyFix(project, descriptor)
+                }
+            }
 
             override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
                 val holder = ProblemsHolder(InspectionManager.getInstance(element.project), element.containingFile, false)
@@ -192,11 +218,9 @@ object J2KPostProcessingRegistrar {
                     holder.results.clear()
                     element.accept(visitor)
                     if (holder.hasResults()) {
-                        ApplicationManager.getApplication().runWriteAction {
-                            holder.results
-                                .filter { acceptInformationLevel || it.highlightType != ProblemHighlightType.INFORMATION }
-                                .forEach { it.fixes?.firstOrNull()?.applyFix(element.project, it) }
-                        }
+                        holder.results
+                            .filter { acceptInformationLevel || it.highlightType != ProblemHighlightType.INFORMATION }
+                            .forEach { it.fixes?.firstOrNull()?.applyFixSmart(element.project, it) }
                     }
                 }
             }
