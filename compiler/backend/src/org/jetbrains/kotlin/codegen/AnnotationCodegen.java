@@ -349,7 +349,7 @@ public abstract class AnnotationCodegen {
     private String getAnnotationArgumentJvmName(@Nullable ClassDescriptor annotationClass, @NotNull Name parameterName) {
         if (annotationClass == null) return parameterName.asString();
 
-        Collection<PropertyDescriptor> variables =
+        Collection<? extends PropertyDescriptor> variables =
                 annotationClass.getUnsubstitutedMemberScope().getContributedVariables(parameterName, NoLookupLocation.FROM_BACKEND);
         if (variables.size() != 1) return parameterName.asString();
 

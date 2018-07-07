@@ -39,9 +39,9 @@ interface ResolutionScope {
     fun getContributedClassifierIncludeDeprecated(name: Name, location: LookupLocation): DescriptorWithDeprecation<ClassifierDescriptor>? =
         getContributedClassifier(name, location)?.let { DescriptorWithDeprecation.createNonDeprecated(it) }
 
-    fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor>
+    fun getContributedVariables(name: Name, location: LookupLocation): Collection<@JvmWildcard VariableDescriptor>
 
-    fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    fun getContributedFunctions(name: Name, location: LookupLocation): Collection<@JvmWildcard FunctionDescriptor>
 
     /**
      * All visible descriptors from current scope possibly filtered by the given name and kind filters
