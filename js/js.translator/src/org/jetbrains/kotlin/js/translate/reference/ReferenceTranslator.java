@@ -49,7 +49,7 @@ import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptor
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 
 public final class ReferenceTranslator {
-    private static final Set<FqNameUnsafe> DECLARATIONS_WITHOUT_SIZE_EFFECTS = new HashSet<>(Arrays.asList(
+    private static final Set<FqNameUnsafe> DECLARATIONS_WITHOUT_SIDE_EFFECTS = new HashSet<>(Arrays.asList(
             new FqNameUnsafe("kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED"),
             new FqNameUnsafe("kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED"),
             KotlinBuiltIns.FQ_NAMES.unit
@@ -145,7 +145,7 @@ public final class ReferenceTranslator {
     }
 
     private static boolean isValueWithoutSideEffect(@NotNull DeclarationDescriptor descriptor) {
-        return DECLARATIONS_WITHOUT_SIZE_EFFECTS.contains(DescriptorUtils.getFqName(descriptor));
+        return DECLARATIONS_WITHOUT_SIDE_EFFECTS.contains(DescriptorUtils.getFqName(descriptor));
     }
 
     @NotNull
