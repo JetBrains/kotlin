@@ -121,7 +121,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                     val javaClassName = JvmClassName.byInternalName(defaultInternalName(location))
                     val project = myDebugProcess.project
 
-                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, sourceSearchScopes, javaClassName, javaSourceFileName)
+                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(
+                        project, sourceSearchScopes, javaClassName, javaSourceFileName, location)
+
                     if (defaultPsiFile != null) {
                         return SourcePosition.createFromLine(defaultPsiFile, 0)
                     }
@@ -273,7 +275,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         val project = myDebugProcess.project
 
-        return DebuggerUtils.findSourceFileForClass(project, sourceSearchScopes, className, sourceName)
+        return DebuggerUtils.findSourceFileForClass(project, sourceSearchScopes, className, sourceName, location)
     }
 
     private fun defaultInternalName(location: Location): String {

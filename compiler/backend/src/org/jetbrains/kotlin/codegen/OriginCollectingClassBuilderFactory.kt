@@ -1,43 +1,28 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt3
+package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.codegen.AbstractClassBuilder
-import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.ClassBuilderFactory
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.*
 
-internal class Kapt3BuilderFactory : ClassBuilderFactory {
-    internal val compiledClasses = mutableListOf<ClassNode>()
-    internal val origins = mutableMapOf<Any, JvmDeclarationOrigin>()
+class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderMode) : ClassBuilderFactory {
+    val compiledClasses = mutableListOf<ClassNode>()
+    val origins = mutableMapOf<Any, JvmDeclarationOrigin>()
 
-    override fun getClassBuilderMode(): ClassBuilderMode = ClassBuilderMode.KAPT3
+    override fun getClassBuilderMode(): ClassBuilderMode = builderMode
 
     override fun newClassBuilder(origin: JvmDeclarationOrigin): AbstractClassBuilder.Concrete {
         val classNode = ClassNode()
         compiledClasses += classNode
-        origins.put(classNode, origin)
-        return Kapt3ClassBuilder(classNode)
+        origins[classNode] = origin
+        return OriginCollectingClassBuilder(classNode)
     }
 
-    private inner class Kapt3ClassBuilder(val classNode: ClassNode) : AbstractClassBuilder.Concrete(classNode) {
+    private inner class OriginCollectingClassBuilder(val classNode: ClassNode) : AbstractClassBuilder.Concrete(classNode) {
         override fun newField(
                 origin: JvmDeclarationOrigin,
                 access: Int,
@@ -47,7 +32,7 @@ internal class Kapt3BuilderFactory : ClassBuilderFactory {
                 value: Any?
         ): FieldVisitor {
             val fieldNode = super.newField(origin, access, name, desc, signature, value) as FieldNode
-            origins.put(fieldNode, origin)
+            origins[fieldNode] = origin
             return fieldNode
         }
 
@@ -60,7 +45,7 @@ internal class Kapt3BuilderFactory : ClassBuilderFactory {
                 exceptions: Array<out String>?
         ): MethodVisitor {
             val methodNode = super.newMethod(origin, access, name, desc, signature, exceptions) as MethodNode
-            origins.put(methodNode, origin)
+            origins[methodNode] = origin
 
             // ASM doesn't read information about local variables for the `abstract` methods so we need to get it manually
             if ((access and Opcodes.ACC_ABSTRACT) != 0 && methodNode.localVariables == null) {
@@ -73,7 +58,7 @@ internal class Kapt3BuilderFactory : ClassBuilderFactory {
 
     override fun asBytes(builder: ClassBuilder): ByteArray {
         val classWriter = ClassWriter(0)
-        (builder as Kapt3ClassBuilder).classNode.accept(classWriter)
+        (builder as OriginCollectingClassBuilder).classNode.accept(classWriter)
         return classWriter.toByteArray()
     }
 

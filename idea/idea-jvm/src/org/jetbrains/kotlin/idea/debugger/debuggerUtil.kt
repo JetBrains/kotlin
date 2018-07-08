@@ -46,11 +46,27 @@ fun Method.safeLocationsOfLine(line: Int): List<Location> {
     }
 }
 
-fun Method.safeVariables(): List<LocalVariable> {
+fun Method.safeVariables(): List<LocalVariable>? {
     return try {
         variables()
     } catch (e: AbsentInformationException) {
-        emptyList()
+        null
+    }
+}
+
+fun Method.safeArguments(): List<LocalVariable>? {
+    return try {
+        arguments()
+    } catch (e: AbsentInformationException) {
+        null
+    }
+}
+
+fun Method.safeReturnType(): Type? {
+    return try {
+        returnType()
+    } catch (e: ClassNotLoadedException) {
+        null
     }
 }
 
@@ -156,7 +172,7 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
 
     private fun createVisibleVariables() {
         if (visibleVariables == null) {
-            val allVariables = location.method().safeVariables()
+            val allVariables = location.method().safeVariables() ?: emptyList()
             val map = HashMap<String, LocalVariable>(allVariables.size)
 
             for (allVariable in allVariables) {
