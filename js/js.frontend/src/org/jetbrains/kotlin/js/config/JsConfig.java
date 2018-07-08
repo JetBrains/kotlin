@@ -87,8 +87,6 @@ public class JsConfig {
             @Nullable Set<String> librariesToSkip) {
         this.project = project;
         this.configuration = configuration.copy();
-        CommonConfigurationKeysKt.setLanguageVersionSettings(this.configuration, new ReleaseCoroutinesDisabledLanguageVersionSettings(
-                CommonConfigurationKeysKt.getLanguageVersionSettings(this.configuration)));
         this.metadataCache = metadataCache;
         this.librariesToSkip = librariesToSkip;
     }

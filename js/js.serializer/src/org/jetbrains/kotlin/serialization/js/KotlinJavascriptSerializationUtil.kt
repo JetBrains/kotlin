@@ -101,7 +101,7 @@ object KotlinJavascriptSerializationUtil {
         val module = jsDescriptor.data
 
         for (fqName in getPackagesFqNames(module).sortedBy { it.asString() }) {
-            val fragment = serializePackageFragment(bindingContext, module, fqName)
+            val fragment = serializePackageFragment(bindingContext, module, fqName, languageVersionSettings)
 
             if (!fragment.isEmpty()) {
                 serializedFragments[fqName] = fragment
@@ -178,16 +178,28 @@ object KotlinJavascriptSerializationUtil {
         }
     }
 
-    private fun serializePackageFragment(bindingContext: BindingContext, module: ModuleDescriptor, fqName: FqName): ProtoBuf.PackageFragment {
+    private fun serializePackageFragment(
+        bindingContext: BindingContext,
+        module: ModuleDescriptor,
+        fqName: FqName,
+        languageVersionSettings: LanguageVersionSettings
+    ): ProtoBuf.PackageFragment {
         val packageView = module.getPackage(fqName)
-        return serializeDescriptors(bindingContext, module, packageView.memberScope.getContributedDescriptors(), fqName)
+        return serializeDescriptors(
+            bindingContext,
+            module,
+            packageView.memberScope.getContributedDescriptors(),
+            fqName,
+            languageVersionSettings
+        )
     }
 
     fun serializeDescriptors(
-            bindingContext: BindingContext,
-            module: ModuleDescriptor,
-            scope: Collection<DeclarationDescriptor>,
-            fqName: FqName
+        bindingContext: BindingContext,
+        module: ModuleDescriptor,
+        scope: Collection<DeclarationDescriptor>,
+        fqName: FqName,
+        languageVersionSettings: LanguageVersionSettings
     ): ProtoBuf.PackageFragment {
         val builder = ProtoBuf.PackageFragment.newBuilder()
 
@@ -203,7 +215,7 @@ object KotlinJavascriptSerializationUtil {
         }
 
         val fileRegistry = KotlinFileRegistry()
-        val extension = KotlinJavascriptSerializerExtension(fileRegistry)
+        val extension = KotlinJavascriptSerializerExtension(fileRegistry, languageVersionSettings)
 
         val classDescriptors = scope.filterIsInstance<ClassDescriptor>().sortedBy { it.fqNameSafe.asString() }
 
@@ -232,8 +244,8 @@ object KotlinJavascriptSerializationUtil {
         builder.`package` = DescriptorSerializer.createTopLevel(extension).packagePartProto(fqName, members).build()
 
         builder.setExtension(
-                JsProtoBuf.packageFragmentFiles,
-                serializeFiles(fileRegistry, bindingContext, AnnotationSerializer(stringTable))
+            JsProtoBuf.packageFragmentFiles,
+            serializeFiles(fileRegistry, bindingContext, AnnotationSerializer(stringTable))
         )
 
         val (strings, qualifiedNames) = stringTable.buildProto()
