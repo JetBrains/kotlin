@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
-
+// TARGET_BACKEND: JVM
 object Result {
     var a: String = ""
     var b: Int = 0
