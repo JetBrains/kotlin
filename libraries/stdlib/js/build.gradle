@@ -15,10 +15,12 @@ def builtinsSrcDir = "${buildDir}/builtin-sources"
 def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
 def commonSrcDir = "${projectDir}/../src/kotlin"
 def commonSrcDir2 = "${projectDir}/../common/src"
+def coroutinesJsSrcDir = "${projectDir}/../coroutines/js/src"
 
 def builtinsDir = "${rootDir}/core/builtins"
 def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
 def experimentalJsModuleName = 'kotlin-experimental'
+def coroutinesJsModuleName = 'kotlin-stdlib-coroutines'
 def jsSrcDir = "src"
 def jsTestSrcDir = "test"
 def jsSrcJsDir = "${jsSrcDir}/js"
@@ -59,6 +61,12 @@ sourceSets {
             srcDir jsTestSrcDir
         }
     }
+
+    coroutines {
+        kotlin {
+            srcDir coroutinesJsSrcDir
+        }
+    }
 }
 
 configurations {
@@ -70,6 +78,7 @@ dependencies {
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
     testCompile project(':kotlin-test:kotlin-test-js')
     merger project(":tools:kotlin-stdlib-js-merger")
+    coroutinesCompile sourceSets.main.output
 }
 
 task prepareComparableSource(type: Copy) {
@@ -156,6 +165,16 @@ compileExperimentalKotlin2Js {
     }
 }
 
+compileCoroutinesKotlin2Js {
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        outputFile = "${buildDir}/classes/coroutines/kotlin.js"
+        sourceMap = true
+        sourceMapPrefix = "./"
+    }
+}
+
 compileTestKotlin2Js {
     kotlinOptions {
         moduleKind = "umd"
@@ -163,10 +182,11 @@ compileTestKotlin2Js {
 }
 
 task compileJs(type: JavaExec) {
-    dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js, compileExperimentalKotlin2Js
+    dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js, compileExperimentalKotlin2Js, compileCoroutinesKotlin2Js
     inputs.files(compileBuiltinsKotlin2Js.outputs.files)
     inputs.files(compileKotlin2Js.outputs.files)
     inputs.files(compileExperimentalKotlin2Js.outputs.files)
+    inputs.files(compileCoroutinesKotlin2Js.outputs.files)
     inputs.dir(jsSrcDir)
     outputs.file(jsOutputFile)
     outputs.file("${jsOutputFile}.map")
@@ -179,7 +199,8 @@ task compileJs(type: JavaExec) {
     doFirst {
         args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path }.sort() +
                (compileBuiltinsKotlin2Js.outputs.files.collect { it.path }.sort() +
-                compileKotlin2Js.outputs.files.collect { it.path }.sort() /* +
+                compileKotlin2Js.outputs.files.collect { it.path }.sort() +
+                compileCoroutinesKotlin2Js.outputs.files.collect { it.path }.sort() /* +
                 compileExperimentalKotlin2Js.outputs.files.collect { it.path }.sort() */).findAll {
                    it.endsWith(".js") && !it.endsWith(".meta.js")
                }
@@ -226,20 +247,21 @@ task compileJs(type: JavaExec) {
 
         sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
 
-        file(jsOutputMetaFile).text = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text /* +
+        file(jsOutputMetaFile).text = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text +
+                                      file(compileCoroutinesKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text /* +
                                       file(compileExperimentalKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text
                                               .replaceFirst(experimentalJsModuleName, 'kotlin') */
     }
 }
 
-classes.dependsOn compileJs
+//classes.dependsOn compileJs
 
 
 jar {
     enabled false
 }
 
-task mergedJar(type: Jar, dependsOn: classes) {
+task mergedJar(type: Jar, dependsOn: compileJs) {
     classifier = null
     manifestAttributes(manifest, project, 'Main')
 
@@ -257,10 +279,13 @@ task mergedJar(type: Jar, dependsOn: classes) {
     from "${jsOutputFile}.map"
     from sourceSets.main.output
     from sourceSets.experimental.output
+    from("${buildDir}/classes/coroutines/kotlin") {
+        into coroutinesJsModuleName
+    }
     exclude "${experimentalJsModuleName}.*"
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+task sourcesJar(type: Jar, dependsOn: compileJs) {
     classifier = 'sources'
     includeEmptyDirs false
     from(sourceSets.builtins.allSource) {
@@ -276,6 +301,12 @@ task sourcesJar(type: Jar, dependsOn: classes) {
         include 'org.w3c/**'
     }
     from(sourceSets.experimental.allSource) {
+        into 'kotlin'
+    }
+    from(sourceSets.coroutines.allSource) {
+        into 'kotlin'
+    }
+    from(project(":kotlin-stdlib-common").sourceSets.coroutines.allSource) {
         into 'kotlin'
     }
 }
