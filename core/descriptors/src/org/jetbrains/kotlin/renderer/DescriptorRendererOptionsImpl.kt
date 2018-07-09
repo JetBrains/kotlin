@@ -119,4 +119,6 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var renderFunctionContracts: Boolean by property(false)
 
     override var presentableUnresolvedTypes: Boolean by property(false)
+
+    override var boldForNamesInHtml: Boolean by property(false)
 }
