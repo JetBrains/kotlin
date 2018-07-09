@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.qualifiedExpressionVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
@@ -25,11 +26,7 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
                 if (firstReceiverType != null) {
                     if (conversion.replacement == "mapNotNull" && KotlinBuiltIns.isPrimitiveArray(firstReceiverType)) return@check false
                     val firstReceiverRawType = firstReceiverType.constructor.declarationDescriptor?.defaultType
-                    if (firstReceiverRawType != null) {
-                        if (firstReceiverRawType.isSubtypeOf(builtIns.map.defaultType) ||
-                            firstReceiverRawType.isSubtypeOf(builtIns.mutableMap.defaultType)
-                        ) return@check false
-                    }
+                    if (firstReceiverRawType.isMap(builtIns)) return@check false
                 }
                 if (conversion.replacement.startsWith("joinTo")) {
                     // Function parameter in map must have String result type
@@ -83,4 +80,19 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
             Conversion("kotlin.collections.listOf", "kotlin.collections.filterNotNull", "listOfNotNull")
         )
     }
+}
+
+private fun KotlinType?.isMap(builtIns: KotlinBuiltIns): Boolean {
+    if (this == null) return false
+
+    val map = builtIns.map.defaultType
+    val mutableMap = builtIns.mutableMap.defaultType
+
+    fun isMap(type: KotlinType?): Boolean {
+        if (type == null) return false
+        return type.isSubtypeOf(map) || type.isSubtypeOf(mutableMap) || type.constructor.supertypes.reversed().any {
+            isMap(it.constructor.declarationDescriptor?.defaultType)
+        }
+    }
+    return isMap(this)
 }
