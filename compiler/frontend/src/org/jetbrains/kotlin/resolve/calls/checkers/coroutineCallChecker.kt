@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.isBuiltInCoroutineContext
-import org.jetbrains.kotlin.config.restrictsSuspensionFqName
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -62,6 +59,10 @@ object CoroutineSuspendCallChecker : CallChecker {
                 else -> return
             }
             else -> return
+        }
+
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines) && context.languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_3) {
+            context.trace.report(Errors.UNSUPPORTED.on(reportOn, "cannot use release coroutines API version less than 1.3"))
         }
 
         val enclosingSuspendFunction = context.scope

@@ -1872,6 +1872,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/release/coroutineContext.kt");
             }
 
+            @TestMetadata("languageVersionIsNotEqualToApiVersion.kt")
+            public void testLanguageVersionIsNotEqualToApiVersion() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/release/languageVersionIsNotEqualToApiVersion.kt");
+            }
+
             @TestMetadata("suspend.kt")
             public void testSuspend() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/release/suspend.kt");
