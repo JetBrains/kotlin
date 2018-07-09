@@ -163,7 +163,10 @@ class BasicLookupElementFactory(
 
             else -> {
                 lookupObject = object : DeclarationLookupObjectImpl(descriptor) {
-                    override val psiElement by lazy { DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) }
+                    override val psiElement by lazy {
+                        DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)
+                                ?: DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+                    }
 
                     override fun getIcon(flags: Int) = KotlinDescriptorIconProvider.getIcon(descriptor, psiElement, flags)
                 }
