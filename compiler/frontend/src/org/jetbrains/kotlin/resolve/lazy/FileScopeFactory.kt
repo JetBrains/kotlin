@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
+import org.jetbrains.kotlin.psi.KtImportInfo
 import org.jetbrains.kotlin.psi.KtImportsFactory
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.*
@@ -48,15 +49,19 @@ class FileScopeFactory(
     private val languageVersionSettings: LanguageVersionSettings,
     private val deprecationResolver: DeprecationResolver
 ) {
-    /* avoid constructing psi for default imports prematurely (time consuming in some scenarios) */
-    private val defaultImports by storageManager.createLazyValue {
-        ktImportsFactory.createImportDirectivesNotCached(
-            targetPlatform.getDefaultImports(languageVersionSettings, includeLowPriorityImports = false)
-        )
-    }
+    private val defaultImports =
+        targetPlatform.getDefaultImports(languageVersionSettings, includeLowPriorityImports = false).map(::DefaultImportImpl)
 
-    private val defaultLowPriorityImports by storageManager.createLazyValue {
-        ktImportsFactory.createImportDirectivesNotCached(targetPlatform.defaultLowPriorityImports)
+    private val defaultLowPriorityImports = targetPlatform.defaultLowPriorityImports.map(::DefaultImportImpl)
+
+    private class DefaultImportImpl(private val importPath: ImportPath) : KtImportInfo {
+        override val isAllUnder: Boolean get() = importPath.isAllUnder
+
+        override val importContent = KtImportInfo.ImportContent.FqNameBased(importPath.fqName)
+
+        override val aliasName: String? get() = importPath.alias?.asString()
+
+        override val importedFqName: FqName? get() = importPath.fqName
     }
 
     fun createScopesForFile(file: KtFile, existingImports: ImportingScope? = null): FileScopes {
@@ -73,7 +78,7 @@ class FileScopeFactory(
     )
 
     private fun createDefaultImportResolvers(
-        extraImports: Collection<KtImportDirective>,
+        extraImports: Collection<KtImportInfo>,
         aliasImportNames: Collection<FqName>
     ): DefaultImportResolvers {
         val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve", false)
@@ -160,7 +165,7 @@ class FileScopeFactory(
                 allUnderImportResolver.forceResolveAllImports()
             }
 
-            override fun forceResolveImport(importDirective: KtImportDirective) {
+            override fun forceResolveImport(importDirective: KtImportInfo) {
                 if (importDirective.isAllUnder) {
                     allUnderImportResolver.forceResolveImport(importDirective)
                 } else {
@@ -174,7 +179,7 @@ class FileScopeFactory(
         private fun createDefaultImportResolversForFile(): DefaultImportResolvers {
             val extraImports = file.takeIf { it.isScript() }?.originalFile?.virtualFile?.let { vFile ->
                 val scriptExternalDependencies = getScriptExternalDependencies(vFile, file.project)
-                ktImportsFactory.createImportDirectives(scriptExternalDependencies?.imports?.map { ImportPath.fromString(it) }.orEmpty())
+                scriptExternalDependencies?.imports?.map { DefaultImportImpl(ImportPath.fromString(it)) }.orEmpty()
             }.orEmpty()
 
             if (extraImports.isEmpty() && aliasImportNames.isEmpty()) {
