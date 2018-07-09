@@ -65,7 +65,7 @@ fun hashCode(obj: dynamic): Int {
     var POW_2_32 = 4294967296;
     // TODO: consider switching to Symbol type once we are on ES6.
     /** @const */
-    var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue${'$'}";
+    var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue${"$"}";
 
     function getObjectHashCode(obj) {
         if (!(OBJECT_HASH_CODE_PROPERTY_NAME in obj)) {

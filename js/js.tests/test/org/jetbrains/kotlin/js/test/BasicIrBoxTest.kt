@@ -51,6 +51,7 @@ abstract class BasicIrBoxTest(
             "libraries/stdlib/js/irRuntime/numberConversion.kt",
             "libraries/stdlib/js/irRuntime/compareTo.kt",
             "libraries/stdlib/js/irRuntime/annotations.kt",
+            "libraries/stdlib/js/irRuntime/char.kt",
             "libraries/stdlib/js/irRuntime/DefaultConstructorMarker.kt",
             "libraries/stdlib/js/irRuntime/exceptions.kt",
             "libraries/stdlib/js/irRuntime/internalAnnotations.kt",

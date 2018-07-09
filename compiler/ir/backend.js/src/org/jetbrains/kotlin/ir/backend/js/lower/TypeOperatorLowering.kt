@@ -45,7 +45,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     private val isInterfaceSymbol = getInternalFunction("isInterface")
     private val isArraySymbol = getInternalFunction("isArray")
-    private val isCharSymbol = getInternalFunction("isChar")
+//    private val isCharSymbol = getInternalFunction("isChar")
     private val isObjectSymbol = getInternalFunction("isObject")
 
     private val instanceOfIntrinsicSymbol = context.intrinsics.jsInstanceOf.symbol
@@ -199,7 +199,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 return when {
                     toType.isAny() -> generateIsObjectCheck(argument)
                     isTypeOfCheckingType(toType) -> generateTypeOfCheck(argument, toType)
-                    toType.isChar() -> generateCheckForChar(argument)
+//                    toType.isChar() -> generateCheckForChar(argument)
                     toType.isArray() -> generateGenericArrayCheck(argument)
                     toType.isPrimitiveArray() -> generatePrimitiveArrayTypeCheck(argument, toType)
                     toType.isTypeParameter() -> generateTypeCheckWithTypeParameter(argument, toType)
@@ -224,8 +224,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 }
             }
 
-            private fun generateCheckForChar(argument: IrExpression) =
-                JsIrBuilder.buildCall(isCharSymbol).apply { dispatchReceiver = argument }
+//            private fun generateCheckForChar(argument: IrExpression) =
+//                JsIrBuilder.buildCall(isCharSymbol).apply { dispatchReceiver = argument }
 
             private fun generateTypeOfCheck(argument: IrExpression, toType: IrType): IrExpression {
                 val marker = when {
