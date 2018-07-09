@@ -55,7 +55,10 @@ class KotlinFilePasteProvider : PasteProvider {
         val ideView = ideView(dataContext)
         if (project == null || ideView == null || ideView.directories.isEmpty()) return false
         val text = CopyPasteManager.getInstance().getContents<String>(DataFlavor.stringFlavor) ?: return false
-        if (text.contains(";\n")) return false //Optimisation for Java. Kotlin doesn't need that...
+        //todo: KT-25329, to remove these heuristics
+        if (text.contains(";\n") ||
+            ((text.contains("public interface") || text.contains("public class")) &&
+                    !text.contains("fun "))) return false //Optimisation for Java. Kotlin doesn't need that...
         val file = KtPsiFactory(project).createFile(text)
         return !PsiTreeUtil.hasErrorElements(file)
     }
