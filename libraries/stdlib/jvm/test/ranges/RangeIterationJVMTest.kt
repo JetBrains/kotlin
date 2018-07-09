@@ -93,6 +93,11 @@ public class RangeIterationJVMTest : RangeIterationTestBase() {
         doTest((MaxC - 5)..MaxC step 3, (MaxC - 5), (MaxC - 2), 3, listOf((MaxC - 5), (MaxC - 2)))
     }
 
+    @Test fun overflowZeroToMinValue() {
+        doTest(0..MinI step 3, 0, MinI, 3, listOf())
+        doTest(0L..MinL step 3, 0, MinL, 3.toLong(), listOf())
+    }
+
     @Test fun progressionDownToMinValue() {
         doTest((MinI + 2) downTo MinI step 1, MinI + 2, MinI, -1, listOf(MinI + 2, MinI + 1, MinI))
         doTest((MinB + 2).toByte() downTo MinB step 1, (MinB + 2).toInt(), MinB.toInt(), -1, listOf((MinB + 2).toInt(), (MinB + 1).toInt(), MinB.toInt()))
@@ -109,5 +114,10 @@ public class RangeIterationJVMTest : RangeIterationTestBase() {
         doTest((MinL + 5).toLong() downTo MinL step 3, (MinL + 5).toLong(), (MinL + 2).toLong(), -3.toLong(), listOf((MinL + 5).toLong(), (MinL + 2).toLong()))
 
         doTest((MinC + 5) downTo MinC step 3, (MinC + 5), (MinC + 2), -3, listOf((MinC + 5), (MinC + 2)))
+    }
+
+    @Test fun overflowZeroDownToMaxValue() {
+        doTest(0 downTo MaxI step 3, 0, MaxI, -3, listOf())
+        doTest(0 downTo MaxL step 3, 0, MaxL, -3.toLong(), listOf())
     }
 }
