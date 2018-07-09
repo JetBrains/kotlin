@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.configuration.ui;
 
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.ui.AsyncProcessIcon;
+import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 
 import javax.swing.*;
 
@@ -19,6 +20,7 @@ public class ConfigurePluginUpdatesForm {
     public JButton installButton;
     public JLabel installStatusLabel;
     private JLabel verifierDisabledText;
+    private JTextPane currentVersion;
 
     public ConfigurePluginUpdatesForm() {
         int size = channelCombo.getModel().getSize();
@@ -31,6 +33,7 @@ public class ConfigurePluginUpdatesForm {
         }
         channelCombo.setPrototypeDisplayValue(maxLengthItem + " ");
         showVerifierDisabledStatus();
+        currentVersion.setText(KotlinPluginUtil.getPluginVersion());
     }
 
     private void createUIComponents() {

@@ -138,7 +138,7 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
             when (pluginUpdateStatus) {
                 PluginUpdateStatus.LatestVersionInstalled -> {
                     form.setUpdateStatus(
-                        "You have the latest version of the plugin (${KotlinPluginUtil.getPluginVersion()}) installed.",
+                        "You have the latest version of the plugin installed.",
                         false
                     )
                 }
