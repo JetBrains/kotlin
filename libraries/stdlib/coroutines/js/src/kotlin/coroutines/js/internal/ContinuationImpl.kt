@@ -27,13 +27,8 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
 
     override fun resumeWith(result: SuccessOrFailure<Any?>) {
         var current = this
-        var currentResult: Any? = null
-        var currentException: Throwable? = null
-        if (result.isSuccess) {
-            currentResult = result.value
-        } else {
-            currentException = result.exception
-        }
+        var currentResult: Any? = result.getOrNull()
+        var currentException: Throwable? = result.exceptionOrNull()
 
         // This loop unrolls recursion in current.resumeWith(param) to make saner and shorter stack traces on resume
         while (true) {

@@ -45,7 +45,7 @@ internal actual constructor(
         val result = this.result
         return when {
             result === RESUMED -> COROUTINE_SUSPENDED // already called continuation, indicate COROUTINE_SUSPENDED upstream
-            result is Failure -> throw result.exception
+            result is SuccessOrFailure.Failure -> throw result.exception
             else -> result // either COROUTINE_SUSPENDED or data
         }
     }
