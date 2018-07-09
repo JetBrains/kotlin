@@ -2,12 +2,17 @@
 // COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JS
 import COROUTINES_PACKAGE.*
 import helpers.*
 
 // Block is allowed to be called inside the body of owner inline function
 // Block is allowed to be called from nested classes/lambdas (as common crossinlines)
+
+// Needed for JS compatibility
+interface Runnable {
+    fun run(): Unit
+}
 
 suspend inline fun test1(crossinline c: () -> Unit) {
     c()

@@ -3,10 +3,14 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
-// TARGET_BACKEND: JVM
 object Result {
     var a: String = ""
     var b: Int = 0
+}
+
+// Needed for JS compatibility
+interface Runnable {
+    fun run(): Unit
 }
 
 suspend inline fun inlineMe(c: suspend () -> Unit) {

@@ -73,6 +73,16 @@ public class InlineSuspendTestsGenerated extends AbstractInlineSuspendTests {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineOrdinaryOfNoinlineSuspend.kt", "kotlin.coroutines");
     }
 
+    @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
+    public void testInlineSuspendOfCrossinlineOrdinary_1_2() throws Exception {
+        runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfCrossinlineOrdinary.kt", "kotlin.coroutines.experimental");
+    }
+
+    @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
+    public void testInlineSuspendOfCrossinlineOrdinary_1_3() throws Exception {
+        runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfCrossinlineOrdinary.kt", "kotlin.coroutines");
+    }
+
     @TestMetadata("inlineSuspendOfCrossinlineSuspend.kt")
     public void testInlineSuspendOfCrossinlineSuspend_1_2() throws Exception {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfCrossinlineSuspend.kt", "kotlin.coroutines.experimental");
@@ -81,6 +91,16 @@ public class InlineSuspendTestsGenerated extends AbstractInlineSuspendTests {
     @TestMetadata("inlineSuspendOfCrossinlineSuspend.kt")
     public void testInlineSuspendOfCrossinlineSuspend_1_3() throws Exception {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfCrossinlineSuspend.kt", "kotlin.coroutines");
+    }
+
+    @TestMetadata("inlineSuspendOfNoinlineOrdinary.kt")
+    public void testInlineSuspendOfNoinlineOrdinary_1_2() throws Exception {
+        runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfNoinlineOrdinary.kt", "kotlin.coroutines.experimental");
+    }
+
+    @TestMetadata("inlineSuspendOfNoinlineOrdinary.kt")
+    public void testInlineSuspendOfNoinlineOrdinary_1_3() throws Exception {
+        runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfNoinlineOrdinary.kt", "kotlin.coroutines");
     }
 
     @TestMetadata("inlineSuspendOfNoinlineSuspend.kt")
@@ -113,6 +133,16 @@ public class InlineSuspendTestsGenerated extends AbstractInlineSuspendTests {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfSuspend.kt", "kotlin.coroutines");
     }
 
+    @TestMetadata("multipleLocals.kt")
+    public void testMultipleLocals_1_2() throws Exception {
+        runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/multipleLocals.kt", "kotlin.coroutines.experimental");
+    }
+
+    @TestMetadata("multipleLocals.kt")
+    public void testMultipleLocals_1_3() throws Exception {
+        runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/multipleLocals.kt", "kotlin.coroutines");
+    }
+
     @TestMetadata("multipleSuspensionPoints.kt")
     public void testMultipleSuspensionPoints_1_2() throws Exception {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/multipleSuspensionPoints.kt", "kotlin.coroutines.experimental");
@@ -141,6 +171,43 @@ public class InlineSuspendTestsGenerated extends AbstractInlineSuspendTests {
     @TestMetadata("tryCatchStackTransform.kt")
     public void testTryCatchStackTransform_1_3() throws Exception {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/tryCatchStackTransform.kt", "kotlin.coroutines");
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxInline/suspend/callableReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CallableReference extends AbstractInlineSuspendTests {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+            KotlinTestUtils.runTest0(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCallableReference() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("ordinaryParameter.kt")
+        public void testOrdinaryParameter() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/callableReference/ordinaryParameter.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt", "kotlin.coroutines");
+        }
+
+        @TestMetadata("suspendOfOrdinary.kt")
+        public void testSuspendOfOrdinary() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/callableReference/suspendOfOrdinary.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/suspend/defaultParameter")
@@ -239,6 +306,16 @@ public class InlineSuspendTestsGenerated extends AbstractInlineSuspendTests {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/receiver/inlineOrdinaryOfNoinlineSuspend.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
+        public void testInlineSuspendOfCrossinlineOrdinary_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/receiver/inlineSuspendOfCrossinlineOrdinary.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
+        public void testInlineSuspendOfCrossinlineOrdinary_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/receiver/inlineSuspendOfCrossinlineOrdinary.kt", "kotlin.coroutines");
+        }
+
         @TestMetadata("inlineSuspendOfCrossinlineSuspend.kt")
         public void testInlineSuspendOfCrossinlineSuspend_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/receiver/inlineSuspendOfCrossinlineSuspend.kt", "kotlin.coroutines.experimental");
@@ -247,6 +324,16 @@ public class InlineSuspendTestsGenerated extends AbstractInlineSuspendTests {
         @TestMetadata("inlineSuspendOfCrossinlineSuspend.kt")
         public void testInlineSuspendOfCrossinlineSuspend_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/receiver/inlineSuspendOfCrossinlineSuspend.kt", "kotlin.coroutines");
+        }
+
+        @TestMetadata("inlineSuspendOfNoinlineOrdinary.kt")
+        public void testInlineSuspendOfNoinlineOrdinary_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/receiver/inlineSuspendOfNoinlineOrdinary.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("inlineSuspendOfNoinlineOrdinary.kt")
+        public void testInlineSuspendOfNoinlineOrdinary_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/receiver/inlineSuspendOfNoinlineOrdinary.kt", "kotlin.coroutines");
         }
 
         @TestMetadata("inlineSuspendOfNoinlineSuspend.kt")
