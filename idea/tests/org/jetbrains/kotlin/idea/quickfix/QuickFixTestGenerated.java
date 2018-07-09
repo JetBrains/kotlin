@@ -8146,6 +8146,44 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/obsoleteCoroutines")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ObsoleteCoroutines extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInObsoleteCoroutines() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/obsoleteCoroutines"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("buildSequence.kt")
+        public void testBuildSequence() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteCoroutines/buildSequence.kt");
+        }
+
+        @TestMetadata("resume.kt")
+        public void testResume() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteCoroutines/resume.kt");
+        }
+
+        @TestMetadata("resumeWithException.kt")
+        public void testResumeWithException() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteCoroutines/resumeWithException.kt");
+        }
+
+        @TestMetadata("starImport.kt")
+        public void testStarImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteCoroutines/starImport.kt");
+        }
+
+        @TestMetadata("unresolvedKotlinxImport.kt")
+        public void testUnresolvedKotlinxImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteCoroutines/unresolvedKotlinxImport.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/optimizeImports")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
