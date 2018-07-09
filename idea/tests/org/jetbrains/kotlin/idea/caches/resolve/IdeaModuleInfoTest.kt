@@ -338,7 +338,6 @@ class IdeaModuleInfoTest : ModuleTestCase() {
             dependencies().contains(a.production)
             dependencies().contains(a.test)
             !dependencies().contains(b.production)
-            dependencies().firstIsInstance<ScriptDependenciesInfo.ForFile>()
         }
     }
 
