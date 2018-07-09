@@ -101,6 +101,11 @@ class NewCodeBuilder {
             printer.print(classKindString(klass.classKind))
             builder.append(" ")
             printer.printWithNoIndent(klass.name.value)
+            if (klass.inheritance.inherit.isNotEmpty()) {
+                printer.printWithNoIndent(" : ")
+                klass.inheritance.inherit.forEach { it.accept(this) }
+            }
+
             if (klass.declarationList.isNotEmpty()) {
                 printer.println(" {")
                 printer.pushIndent()
@@ -214,6 +219,28 @@ class NewCodeBuilder {
             declarationStatement.declaredStatements.forEach {
                 it.accept(this)
             }
+        }
+
+        override fun visitTypeCastExpression(typeCastExpression: JKTypeCastExpression) {
+            typeCastExpression.expression.accept(this)
+            printer.printWithNoIndent(" as ")
+            typeCastExpression.type.accept(this)
+        }
+
+        override fun visitWhileStatement(whileStatement: JKWhileStatement) {
+            printer.print("while(")
+            whileStatement.condition.accept(this)
+            printer.printlnWithNoIndent(")", "{")
+            printer.pushIndent()
+            val body = whileStatement.body
+            if (body is JKBlockStatement) {
+                body.block.statements.forEach { it.accept(this) }
+            } else {
+                body.accept(this)
+            }
+            printer.popIndent()
+            printer.println("}")
+
         }
 
         override fun visitLocalVariable(localVariable: JKLocalVariable) {
