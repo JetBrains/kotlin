@@ -705,11 +705,7 @@ private class ConstantExpressionEvaluatorVisitor(
                 // TODO: FIXME: see KT-10425
                 if (callableDescriptor is PropertyDescriptor && callableDescriptor.modality != Modality.FINAL) return null
 
-                val variableInitializer = callableDescriptor.compileTimeInitializer ?: return null
-
-                return createConstant(
-                    variableInitializer.value,
-                    expectedType,
+                return callableDescriptor.compileTimeInitializer?.wrap(
                     CompileTimeConstant.Parameters(
                         canBeUsedInAnnotation = isPropertyCompileTimeConstant(callableDescriptor),
                         isPure = false,
