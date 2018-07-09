@@ -391,9 +391,9 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                         if (!fqName.isRoot) {
                             append(" ")
                         }
-                        append("(")
-                        append(fileName)
-                        append(")")
+                        wrap("<font color=\"808080\"><i>", "</i></font>") {
+                            append(fileName)
+                        }
                     }
                     if (fileName != null || !fqName.isRoot) {
                         append("<br>")

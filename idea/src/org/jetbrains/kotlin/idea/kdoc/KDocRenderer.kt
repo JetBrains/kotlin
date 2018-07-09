@@ -166,7 +166,7 @@ object KDocRenderer {
     private fun renderTag(tag: KDocTag?, title: String, to: StringBuilder) {
         if (tag != null) {
             to.renderSection(title) {
-                markdownToHtml(tag.getContent())
+                append(markdownToHtml(tag.getContent()))
             }
         }
     }
