@@ -35,7 +35,8 @@ artifacts {
 compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs = [
-                "-module-name", project.name
+                "-module-name", project.name,
+                "-Xallow-kotlin-package"
         ]
     }
 }

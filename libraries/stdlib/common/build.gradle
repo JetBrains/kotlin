@@ -57,7 +57,8 @@ compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs = [
                 "-module-name", project.name,
-                "-Xuse-experimental=kotlin.Experimental"
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xallow-kotlin-package"
         ]
     }
 }
@@ -69,7 +70,8 @@ compileUnsignedKotlinCommon {
         freeCompilerArgs += [
                 "-Xuse-experimental=kotlin.Experimental",
                 "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
-                "-XXLanguage:+InlineClasses"
+                "-XXLanguage:+InlineClasses",
+                "-Xallow-kotlin-package"
         ]
     }
 }
