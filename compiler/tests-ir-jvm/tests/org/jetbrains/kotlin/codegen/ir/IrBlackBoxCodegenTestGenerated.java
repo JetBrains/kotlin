@@ -19390,6 +19390,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/sam/kt22906_2.kt");
         }
 
+        @TestMetadata("kt24825.kt")
+        public void testKt24825() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt24825.kt");
+        }
+
         @TestMetadata("partialSam.kt")
         public void testPartialSam() throws Exception {
             runTest("compiler/testData/codegen/box/sam/partialSam.kt");
