@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTabl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.RequireKotlinNames
 import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithAnyExpectedDefault
@@ -709,10 +709,14 @@ class DescriptorSerializer private constructor(
         }
 
         @JvmStatic
-        fun create(descriptor: ClassDescriptor, extension: SerializerExtension): DescriptorSerializer {
+        fun create(
+            descriptor: ClassDescriptor,
+            extension: SerializerExtension,
+            parentSerializer: DescriptorSerializer?
+        ): DescriptorSerializer {
             val container = descriptor.containingDeclaration
-            val parentSerializer = if (container is ClassDescriptor)
-                create(container, extension)
+            val parent = if (container is ClassDescriptor)
+                parentSerializer ?: create(container, extension, null)
             else
                 createTopLevel(extension)
 
@@ -720,12 +724,12 @@ class DescriptorSerializer private constructor(
             // serializing outer classes before nested classes.
             // Otherwise our interner can get wrong ids because we may serialize classes in any order.
             val serializer = DescriptorSerializer(
-                    descriptor,
-                    Interner(parentSerializer.typeParameters),
-                    parentSerializer.extension,
-                    MutableTypeTable(),
-                    MutableVersionRequirementTable(),
-                    serializeTypeTableToFunction = false
+                descriptor,
+                Interner(parent.typeParameters),
+                extension,
+                MutableTypeTable(),
+                if (container is ClassDescriptor) parent.versionRequirementTable else MutableVersionRequirementTable(),
+                serializeTypeTableToFunction = false
             )
             for (typeParameter in descriptor.declaredTypeParameters) {
                 serializer.typeParameters.intern(typeParameter)

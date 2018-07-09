@@ -192,29 +192,24 @@ object KotlinJavascriptSerializationUtil {
 
         val classDescriptors = scope.filterIsInstance<ClassDescriptor>().sortedBy { it.fqNameSafe.asString() }
 
-        fun serializeClasses(descriptors: Collection<DeclarationDescriptor>) {
-            fun serializeClass(classDescriptor: ClassDescriptor) {
-                if (skip(classDescriptor)) return
-                val classProto =
-                    DescriptorSerializer.create(classDescriptor, extension).classProto(classDescriptor).build()
-                            ?: error("Class not serialized: $classDescriptor")
-                builder.addClass_(classProto)
-                serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getContributedDescriptors())
-            }
-
+        fun serializeClasses(descriptors: Collection<DeclarationDescriptor>, parentSerializer: DescriptorSerializer) {
             for (descriptor in descriptors) {
-                if (descriptor is ClassDescriptor) {
-                    serializeClass(descriptor)
-                }
+                if (descriptor !is ClassDescriptor || skip(descriptor)) continue
+
+                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer)
+                serializeClasses(descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(), serializer)
+                val classProto = serializer.classProto(descriptor).build() ?: error("Class not serialized: $descriptor")
+                builder.addClass_(classProto)
             }
         }
 
-        serializeClasses(classDescriptors)
+        val serializer = DescriptorSerializer.createTopLevel(extension)
+        serializeClasses(classDescriptors, serializer)
 
         val stringTable = extension.stringTable
 
         val members = scope.filterNot(skip)
-        builder.`package` = DescriptorSerializer.createTopLevel(extension).packagePartProto(fqName, members).build()
+        builder.`package` = serializer.packagePartProto(fqName, members).build()
 
         builder.setExtension(
             JsProtoBuf.packageFragmentFiles,

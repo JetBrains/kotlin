@@ -5,29 +5,22 @@
 
 package org.jetbrains.kotlin.serialization
 
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirement.VersionKind.*
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
-import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 
-class VersionRequirementTest : TestCaseWithTmpdir() {
+abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
     fun doTest(
         expectedVersionRequirement: VersionRequirement.Version,
         expectedLevel: DeprecationLevel,
@@ -37,47 +30,23 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
         customLanguageVersion: LanguageVersion = LanguageVersionSettingsImpl.DEFAULT.languageVersion,
         fqNames: List<String>
     ) {
-        LoadDescriptorUtil.compileKotlinToDirAndGetModule(
-            listOf(File("compiler/testData/versionRequirement/${getTestName(true)}.kt")), tmpdir,
-            KotlinCoreEnvironment.createForTests(
-                testRootDisposable,
-                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir).apply {
-                    put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
-                    languageVersionSettings = LanguageVersionSettingsImpl(
-                        customLanguageVersion,
-                        ApiVersion.createByLanguageVersion(customLanguageVersion),
-                        mapOf(AnalysisFlag.jvmDefaultMode to JvmDefaultMode.ENABLE),
-                        emptyMap()
-                    )
-                },
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
-            )
-        )
+        compileFiles(listOf(File("compiler/testData/versionRequirement/${getTestName(true)}.kt")), tmpdir, customLanguageVersion)
+        val module = loadModule(tmpdir)
 
-        val (_, module) = JvmResolveUtil.analyze(
-                KotlinCoreEnvironment.createForTests(
-                        testRootDisposable,
-                        KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
-                        EnvironmentConfigFiles.JVM_CONFIG_FILES
-                )
-        )
+        for (fqName in fqNames) {
+            val descriptor = module.findUnambiguousDescriptorByFqName(fqName)
 
-        fun check(descriptor: DeclarationDescriptor) {
             val requirement = when (descriptor) {
                 is DeserializedMemberDescriptor -> descriptor.versionRequirement
                 is DeserializedClassDescriptor -> descriptor.versionRequirement
                 else -> throw AssertionError("Unknown descriptor: $descriptor")
             } ?: throw AssertionError("No VersionRequirement for $descriptor")
 
-            assertEquals(expectedVersionRequirement, requirement.version)
-            assertEquals(expectedLevel, requirement.level)
-            assertEquals(expectedMessage, requirement.message)
-            assertEquals(expectedVersionKind, requirement.kind)
-            assertEquals(expectedErrorCode, requirement.errorCode)
-        }
-
-        for (fqName in fqNames) {
-            check(module.findUnambiguousDescriptorByFqName(fqName))
+            assertEquals("Incorrect version for $fqName", expectedVersionRequirement, requirement.version)
+            assertEquals("Incorrect level for $fqName", expectedLevel, requirement.level)
+            assertEquals("Incorrect message for $fqName", expectedMessage, requirement.message)
+            assertEquals("Incorrect versionKind for $fqName", expectedVersionKind, requirement.kind)
+            assertEquals("Incorrect errorCode for $fqName", expectedErrorCode, requirement.errorCode)
         }
     }
 
@@ -102,9 +71,13 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
         return descriptor
     }
 
+    protected abstract fun compileFiles(files: List<File>, outputDirectory: File, languageVersion: LanguageVersion)
+
+    protected abstract fun loadModule(directory: File): ModuleDescriptor
+
     fun testSuspendFun() {
         doTest(
-            VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,
+            VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
             fqNames = listOf(
                 "test.topLevel",
                 "test.Foo.member",
@@ -118,7 +91,7 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
         )
 
         doTest(
-            VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,
+            VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
             customLanguageVersion = LanguageVersion.KOTLIN_1_3,
             fqNames = listOf(
                 "test.topLevel",
@@ -135,7 +108,8 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
 
     fun testLanguageVersionViaAnnotation() {
         doTest(
-            VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", LANGUAGE_VERSION, 42,
+            VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message",
+            ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, 42,
             fqNames = listOf(
                 "test.Klass",
                 "test.Konstructor.<init>",
@@ -148,7 +122,7 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
 
     fun testApiVersionViaAnnotation() {
         doTest(
-            VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", API_VERSION, 42,
+            VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", ProtoBuf.VersionRequirement.VersionKind.API_VERSION, 42,
             fqNames = listOf(
                 "test.Klass",
                 "test.Konstructor.<init>",
@@ -161,7 +135,8 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
 
     fun testCompilerVersionViaAnnotation() {
         doTest(
-            VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", COMPILER_VERSION, 42,
+            VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message",
+            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, 42,
             fqNames = listOf(
                 "test.Klass",
                 "test.Konstructor.<init>",
@@ -174,25 +149,24 @@ class VersionRequirementTest : TestCaseWithTmpdir() {
 
     fun testPatchVersion() {
         doTest(
-            VersionRequirement.Version(1, 1, 50), DeprecationLevel.HIDDEN, null, LANGUAGE_VERSION, null,
+            VersionRequirement.Version(1, 1, 50), DeprecationLevel.HIDDEN, null,
+            ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
             fqNames = listOf("test.Klass")
         )
     }
 
-    fun testJvmDefault() {
+    fun testNestedClassMembers() {
         doTest(
-            VersionRequirement.Version(1, 2, 40), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
+            VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
             fqNames = listOf(
-                "test.Base",
-                "test.Derived"
+                "test.Outer.Inner.Deep",
+                "test.Outer.Inner.Deep.<init>",
+                "test.Outer.Inner.Deep.f",
+                "test.Outer.Inner.Deep.x",
+                "test.Outer.Inner.Deep.s",
+                "test.Outer.Nested.g",
+                "test.Outer.Companion"
             )
-        )
-    }
-
-    fun testJvmFieldInInterfaceCompanion() {
-        doTest(
-            VersionRequirement.Version(1, 2, 70), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
-            fqNames = listOf("test.Base.Companion.foo")
         )
     }
 }

@@ -151,29 +151,29 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
         private val extension = createSerializerExtension()
 
         fun run() {
-            serializeClasses(classes)
-            serializeMembers(members)
+            val serializer = DescriptorSerializer.createTopLevel(extension)
+            serializeClasses(classes, serializer)
+            serializeMembers(members, serializer)
             serializeStringTable()
             serializeBuiltInsFile()
         }
 
-        private fun serializeClass(classDescriptor: ClassDescriptor) {
-            val classProto = DescriptorSerializer.create(classDescriptor, extension).classProto(classDescriptor).build()
-            proto.addClass_(classProto)
-
-            serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
-        }
-
-        private fun serializeClasses(classes: Collection<DeclarationDescriptor>) {
+        private fun serializeClasses(classes: Collection<DeclarationDescriptor>, parentSerializer: DescriptorSerializer) {
             for (descriptor in DescriptorSerializer.sort(classes)) {
-                if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.ENUM_ENTRY) {
-                    serializeClass(descriptor)
-                }
+                if (descriptor !is ClassDescriptor || descriptor.kind == ClassKind.ENUM_ENTRY) continue
+
+                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer)
+                serializeClasses(
+                    descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS),
+                    serializer
+                )
+
+                proto.addClass_(serializer.classProto(descriptor).build())
             }
         }
 
-        private fun serializeMembers(members: Collection<DeclarationDescriptor>) {
-            proto.`package` = DescriptorSerializer.createTopLevel(extension).packagePartProto(packageFqName, members).build()
+        private fun serializeMembers(members: Collection<DeclarationDescriptor>, serializer: DescriptorSerializer) {
+            proto.`package` = serializer.packagePartProto(packageFqName, members).build()
         }
 
         private fun serializeStringTable() {

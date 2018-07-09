@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -30,8 +31,11 @@ import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode;
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
+import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -52,6 +56,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
@@ -97,6 +102,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private final List<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>> additionalTasks = new ArrayList<>();
 
+    private final DescriptorSerializer serializer;
+
     public ImplementationBodyCodegen(
             @NotNull KtPureClassOrObject aClass,
             @NotNull ClassContext context,
@@ -108,7 +115,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         super(aClass, context, v, state, parentCodegen);
         this.classAsmType = getObjectType(typeMapper.classInternalName(descriptor));
         this.isLocal = isLocal;
-        delegationFieldsInfo = getDelegationFieldsInfo(myClass.getSuperTypeListEntries());
+        this.delegationFieldsInfo = getDelegationFieldsInfo(myClass.getSuperTypeListEntries());
+
+        JvmSerializerExtension extension = new JvmSerializerExtension(v.getSerializationBindings(), state);
+        this.serializer = DescriptorSerializer.create(
+                descriptor, extension,
+                parentCodegen instanceof ImplementationBodyCodegen
+                ? ((ImplementationBodyCodegen) parentCodegen).serializer
+                : DescriptorSerializer.createTopLevel(extension)
+        );
     }
 
     @Override
@@ -282,7 +297,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinMetadataAnnotation() {
-        generateKotlinClassMetadataAnnotation(descriptor, false);
+        ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
+
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, 0, av -> {
+            writeAnnotationData(av, serializer, classProto);
+            return Unit.INSTANCE;
+        });
     }
 
     private void writeEnclosingMethod() {
