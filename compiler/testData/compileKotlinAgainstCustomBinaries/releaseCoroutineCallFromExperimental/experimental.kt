@@ -1,0 +1,3 @@
+suspend fun callRelease() {
+    dummy()
+}

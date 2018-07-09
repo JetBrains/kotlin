@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -430,6 +430,16 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     fun testClassFromJdkInLibrary() {
         val library = compileLibrary("library")
         compileKotlin("source.kt", tmpdir, listOf(library))
+    }
+
+    fun testReleaseCoroutineCallFromExperimental() {
+        val library = compileLibrary("library", additionalOptions = listOf("-language-version", "1.3"), checkKotlinOutput = {})
+        compileKotlin(
+            "experimental.kt",
+            tmpdir,
+            listOf(library),
+            additionalOptions = listOf("-language-version", "1.2", "-Xskip-metadata-version-check")
+        )
     }
 
     companion object {
