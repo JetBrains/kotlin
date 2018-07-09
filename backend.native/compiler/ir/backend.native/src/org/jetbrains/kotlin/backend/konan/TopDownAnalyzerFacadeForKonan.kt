@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.konan.descriptors.createKonanModuleDescriptor
 import org.jetbrains.kotlin.backend.konan.descriptors.CurrentKonanModule
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
@@ -65,7 +64,7 @@ object TopDownAnalyzerFacadeForKonan {
         val analyzerForKonan = createTopDownAnalyzerForKonan(
                 moduleContext, trace,
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
-                config.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
+                config.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
         )
 
         analyzerForKonan.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)

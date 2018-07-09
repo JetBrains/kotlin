@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.addKotlinSourceRoots
-import org.jetbrains.kotlin.config.kotlinSourceRoots
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind

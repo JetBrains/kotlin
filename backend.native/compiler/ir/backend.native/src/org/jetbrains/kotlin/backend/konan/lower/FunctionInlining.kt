@@ -65,7 +65,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
     private val deserializer = DeserializerDriver(context)
     private val globalSubstituteMap = mutableMapOf<DeclarationDescriptor, SubstitutedDescriptor>()
-    private val languageVersionSettings = context.config.configuration.languageVersionSettings
 
     //-------------------------------------------------------------------------//
 

@@ -18,9 +18,9 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
 import org.jetbrains.kotlin.resolve.calls.components.SamConversionTransformer

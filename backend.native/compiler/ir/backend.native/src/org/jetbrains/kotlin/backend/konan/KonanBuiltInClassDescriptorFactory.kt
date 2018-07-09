@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
-import org.jetbrains.kotlin.builtins.CloneableClassScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+/* moved from o.j.k.builtins to o.j.k.builtins.jvm in 959c2f4843803c3b699e3e081d8afd0e433249dc */
+import org.jetbrains.kotlin.builtins.jvm.CloneableClassScope
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl

@@ -189,7 +189,7 @@ targetList.each { target ->
         jvmArgs = konanJvmArgs
         args = [*konanArgs,
                 '-output', project(':runtime').file("build/${target}Stdlib"),
-                '-produce', 'library', '-module_name', 'stdlib',
+                '-produce', 'library', '-module_name', 'stdlib', '-XXLanguage:+AllowContractsForCustomFunctions',
                 '-Xmulti-platform', '-Xuse-experimental=kotlin.Experimental',
                 commonSrc.absolutePath,
                 project(':Interop:Runtime').file('src/main/kotlin'),
