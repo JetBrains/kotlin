@@ -89,7 +89,6 @@ abstract class BasicBoxTest(
     }
 
     fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
-//        if (packageName == "kotlin.coroutines") return // TODO: Support JS in kotlin-stdlib-coroutines
         doTest(filePath, "OK", MainCallParameters.noCall(), coroutinesPackage)
     }
 
