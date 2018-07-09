@@ -91,7 +91,7 @@
           <component id="c7546" class="javax.swing.JButton" binding="reCheckButton">
             <constraints/>
             <properties>
-              <text value="&amp;Recheck now"/>
+              <text value="Chec&amp;k again"/>
             </properties>
           </component>
           <component id="3b585" class="com.intellij.util.ui.AsyncProcessIcon" binding="updateCheckProgressIcon" custom-create="true">
