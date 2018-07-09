@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
-import org.gradle.api.reflect.TypeOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
@@ -42,11 +40,22 @@ open class KotlinProjectExtension {
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
 
     var sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>
-        get() = DslObject(this).extensions.getByType(object : TypeOf<NamedDomainObjectContainer<out KotlinSourceSet>>() { })
+        @Suppress("UNCHECKED_CAST")
+        get() = DslObject(this).extensions.getByName("sourceSets") as NamedDomainObjectContainer<out KotlinSourceSet>
         internal set(value) { DslObject(this).extensions.add("sourceSets", value) }
+}
 
-    lateinit var targets: NamedDomainObjectCollection<KotlinTarget>
+open class KotlinSingleTargetProjectExtension : KotlinProjectExtension() {
+    lateinit var target: KotlinTarget
         internal set
+}
+
+open class KotlinJvmProjectExtension : KotlinSingleTargetProjectExtension() {
+    /**
+     * With Gradle 4.0+, disables the separate output directory for Kotlin, falling back to sharing the deprecated
+     * single classes directory per source set. With Gradle < 4.0, has no effect.
+     * */
+    var copyClassesToJavaOutput = false
 }
 
 internal val KotlinProjectExtension.sourceSetProvider

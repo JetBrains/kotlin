@@ -9,6 +9,7 @@ import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -48,8 +49,7 @@ abstract class AbstractKotlinCompilation(
 
     override fun getAttributes(): AttributeContainer = attributeContainer
 
-    override val kotlinSourceSets: MutableList<KotlinSourceSet>
-        get() = mutableListOf()
+    override val kotlinSourceSets: MutableList<KotlinSourceSet> = mutableListOf()
 
     override fun source(sourceSet: KotlinSourceSet) {
         kotlinSourceSets += sourceSet
@@ -78,7 +78,7 @@ abstract class AbstractKotlinCompilation(
         get() = lowerCamelCaseName(compilationName.takeIf { it != "main" }.orEmpty(), target.disambiguationClassifier, "compileClasspath")
 
     override val compileKotlinTaskName: String
-        get() = lowerCamelCaseName("compile", compilationName.takeIf { it != "main" }.orEmpty(), "Kotlin", target.targetName)
+        get() = lowerCamelCaseName("compile", compilationName.takeIf { it != "main" }.orEmpty(), "Kotlin", target.disambiguationClassifier)
 
     override val compileAllTaskName: String
         get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName.takeIf { it != "main" }.orEmpty(), "classes")
@@ -131,22 +131,62 @@ open class KotlinJvmCompilation(
         get() = disambiguateName("processResources")
 }
 
-class KotlinJvmWithJavaCompilation(
+class KotlinWithJavaCompilation(
     target: KotlinWithJavaTarget,
     name: String,
     val javaSourceSet: SourceSet
 ) : KotlinJvmCompilation(target, name, javaSourceSet.output) {
     override val output: SourceSetOutput
         get() = javaSourceSet.output
+
+    override val processResourcesTaskName: String
+        get() = javaSourceSet.processResourcesTaskName
+
+    override var runtimeDependencyFiles: FileCollection
+        get() = javaSourceSet.runtimeClasspath
+        set(value) { javaSourceSet.runtimeClasspath = value }
+
+    override val runtimeDependencyConfigurationName: String
+        get() = javaSourceSet.runtimeClasspathConfigurationName
+
+    override val compileDependencyConfigurationName: String
+        get() = javaSourceSet.compileClasspathConfigurationName
+
+    override val runtimeOnlyConfigurationName: String
+        get() = javaSourceSet.runtimeOnlyConfigurationName
+
+    override val implementationConfigurationName: String
+        get() = javaSourceSet.implementationConfigurationName
+
+    override val apiConfigurationName: String
+        get() = javaSourceSet.apiConfigurationName
+
+    override val compileOnlyConfigurationName: String
+        get() = javaSourceSet.compileOnlyConfigurationName
+
+    override val compileAllTaskName: String
+        get() = javaSourceSet.classesTaskName
+
+    override var compileDependencyFiles: FileCollection
+        get() = javaSourceSet.compileClasspath
+        set(value) { javaSourceSet.compileClasspath = value }
+
+    override fun source(sourceSet: KotlinSourceSet) {
+        with(target.project) {
+            afterEvaluate {
+                val otherJavaSourceSet = convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName(sourceSet.name)
+                (tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).source(otherJavaSourceSet.java)
+            }
+        }
+        super.source(sourceSet)
+    }
 }
 
 class KotlinJvmAndroidCompilation(
     target: KotlinAndroidTarget,
     name: String,
     override val output: SourceSetOutput
-): AbstractKotlinCompilation(target, name) {
-
-}
+): AbstractKotlinCompilation(target, name)
 
 class KotlinJsCompilation(
     target: KotlinTarget,

@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
-import org.gradle.api.*
+import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.BasePlugin
@@ -15,7 +17,8 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 
@@ -50,6 +53,7 @@ internal class KotlinMultiplatformPlugin(
 
         val kotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java).apply {
             DslObject(targetsContainer).addConvention("fromPreset", targetsFromPreset)
+
             targets = targetsContainer
             addExtension("targets", targets)
 

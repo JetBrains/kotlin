@@ -44,19 +44,19 @@ class KotlinJvmCompilationFactory(
     )
 }
 
-class KotlinJvmWithJavaCompilationFactory(
+class KotlinWithJavaCompilationFactory(
     val project: Project,
     val target: KotlinWithJavaTarget
-) : KotlinCompilationFactory<KotlinJvmWithJavaCompilation> {
+) : KotlinCompilationFactory<KotlinWithJavaCompilation> {
     private val javaSourceSets: SourceSetContainer
         get() = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
-    override val itemClass: Class<KotlinJvmWithJavaCompilation>
-        get() = KotlinJvmWithJavaCompilation::class.java
+    override val itemClass: Class<KotlinWithJavaCompilation>
+        get() = KotlinWithJavaCompilation::class.java
 
-    override fun create(name: String): KotlinJvmWithJavaCompilation {
+    override fun create(name: String): KotlinWithJavaCompilation {
         val javaSourceSet = javaSourceSets.maybeCreate(name)
-        val result = KotlinJvmWithJavaCompilation(target, name, javaSourceSet)
+        val result = KotlinWithJavaCompilation(target, name, javaSourceSet)
         return result
     }
 }

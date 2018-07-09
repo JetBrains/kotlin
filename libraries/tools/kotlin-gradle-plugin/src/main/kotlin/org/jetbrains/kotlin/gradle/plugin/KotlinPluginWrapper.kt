@@ -23,10 +23,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.createKotlinExtension
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
@@ -83,6 +80,9 @@ open class KotlinPluginWrapper @Inject constructor(
 ): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
             KotlinPlugin(KotlinTasksProvider(), kotlinPluginVersion)
+
+    override val projectExtensionClass: KClass<out KotlinJvmProjectExtension>
+        get() = KotlinJvmProjectExtension::class
 }
 
 open class KotlinCommonPluginWrapper @Inject constructor(
@@ -90,7 +90,10 @@ open class KotlinCommonPluginWrapper @Inject constructor(
     private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry
 ): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-            KotlinCommonPlugin(KotlinCommonTasksProvider(), kotlinPluginVersion, buildOutputCleanupRegistry)
+            KotlinCommonPlugin(KotlinCommonTasksProvider(), kotlinPluginVersion)
+
+    override val projectExtensionClass: KClass<out KotlinSingleTargetProjectExtension>
+        get() = KotlinSingleTargetProjectExtension::class
 }
 
 open class KotlinMultiplatformPluginWrapper @Inject constructor(
@@ -127,7 +130,10 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
     private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry
 ): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-            Kotlin2JsPlugin(Kotlin2JsTasksProvider(), kotlinPluginVersion, buildOutputCleanupRegistry)
+        Kotlin2JsPlugin(Kotlin2JsTasksProvider(), kotlinPluginVersion, buildOutputCleanupRegistry)
+
+    override val projectExtensionClass: KClass<out KotlinSingleTargetProjectExtension>
+        get() = KotlinSingleTargetProjectExtension::class
 }
 
 fun Project.getKotlinPluginVersion(): String? {

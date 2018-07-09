@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
@@ -47,7 +48,6 @@ open class KotlinOnlyTargetConfigurator(
         configureArchivesAndComponent(project, target)
         configureBuild(project, target)
 
-        // TODO: find a more reasonable workaround?
         setCompatibilityOfAbstractCompileTasks(project)
     }
 
@@ -74,7 +74,7 @@ open class KotlinOnlyTargetConfigurator(
         target.compilations.all { compilation ->
             defineConfigurationsForCompilation(compilation, target, project.configurations)
 
-            project.kotlinExtension.sourceSets.create(lowerCamelCaseName(target.targetName, compilation.compilationName)).also { sourceSet ->
+            project.kotlinExtension.sourceSets.create(lowerCamelCaseName(target.disambiguationClassifier, compilation.compilationName)).also { sourceSet ->
                 compilation.source(sourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
             }
 
@@ -332,6 +332,7 @@ open class KotlinOnlyTargetConfigurator(
 
     private fun setCompatibilityOfAbstractCompileTasks(project: Project) = with (project) {
         tasks.withType(AbstractCompile::class.java).all {
+            // Workaround: these are input properties and should not hold null values:
             it.targetCompatibility = ""
             it.sourceCompatibility = ""
         }
@@ -349,7 +350,14 @@ open class KotlinOnlyTargetConfigurator(
     }
 }
 
-private fun Project.usageByName(usageName: String) : Usage = project.objects.named(Usage::class.java, usageName)
+private fun Project.usageByName(usageName: String) : Usage =
+    if (isGradleVersionAtLeast(4, 0)) {
+        project.objects.named(Usage::class.java, usageName)
+    } else {
+        val usagesClass = Class.forName("org.gradle.api.internal.attributes")
+        val usagesMethod = usagesClass.getMethod("usage", String::class.java)
+        usagesMethod(null, usageName) as Usage
+    }
 
 internal fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     if (target is KotlinOnlyTarget<*>) {

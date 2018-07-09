@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectCollection
 
 /**
  * Applies [whenMatched] to pairs of items with the same name in [containerA] and [containerB],
  * regardless of the order in which they are added to the containers.
  */
 internal fun <A, B> matchSymmetricallyByNames(
-    containerA: NamedDomainObjectContainer<A>,
-    containerB: NamedDomainObjectContainer<B>,
+    containerA: NamedDomainObjectCollection<out A>,
+    containerB: NamedDomainObjectCollection<out B>,
     whenMatched: (A, B) -> Unit
 ) {
     val matchedNames = mutableSetOf<String>()
 
-    fun <T, R> NamedDomainObjectContainer<T>.matchAllWith(other: NamedDomainObjectContainer<R>, match: (T, R) -> Unit) {
+    fun <T, R> NamedDomainObjectCollection<T>.matchAllWith(other: NamedDomainObjectCollection<R>, match: (T, R) -> Unit) {
         this@matchAllWith.all { item ->
             val itemName = this@matchAllWith.namer.determineName(item)
             if (itemName !in matchedNames) {

@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.NamedDomainObjectCollection
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 
 open class KotlinMultiplatformExtension : KotlinProjectExtension() {
     lateinit var presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>
+        internal set
+
+    lateinit var targets: NamedDomainObjectCollection<KotlinTarget>
         internal set
 }

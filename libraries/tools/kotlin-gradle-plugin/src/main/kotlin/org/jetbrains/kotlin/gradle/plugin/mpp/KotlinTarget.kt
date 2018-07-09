@@ -6,13 +6,14 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.plugins.JavaPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.base.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.base.KotlinJvmAndroidCompilationFactory
-import org.jetbrains.kotlin.gradle.plugin.base.KotlinJvmWithJavaCompilationFactory
+import org.jetbrains.kotlin.gradle.plugin.base.KotlinWithJavaCompilationFactory
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 abstract class AbstractKotlinTarget (
@@ -42,6 +43,8 @@ open class KotlinAndroidTarget(project: Project) : AbstractKotlinTarget(project)
     override val targetName: String
         get() = "android"
 
+    override val disambiguationClassifier: String? get() = null
+
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.jvm
 
@@ -51,21 +54,30 @@ open class KotlinAndroidTarget(project: Project) : AbstractKotlinTarget(project)
         project.container(compilationFactory.itemClass, compilationFactory)
 }
 
-//FIXME split back into the extension and target classes
-open class KotlinWithJavaTarget(project: Project) : AbstractKotlinTarget(project) {
+open class KotlinWithJavaTarget(
+    project: Project,
+    override val platformType: KotlinPlatformType
+) : AbstractKotlinTarget(project) {
+    override var disambiguationClassifier: String? = null
+        internal set
 
     override var targetName: String = "kotlin"
         internal set
 
-    override val compilations: NamedDomainObjectContainer<KotlinJvmWithJavaCompilation> =
-        project.container(KotlinJvmWithJavaCompilation::class.java, KotlinJvmWithJavaCompilationFactory(project, this))
+    override val defaultConfigurationName: String
+        get() = Dependency.DEFAULT_CONFIGURATION
 
-    override val platformType = KotlinPlatformType.jvm
-    /**
-     * With Gradle 4.0+, disables the separate output directory for Kotlin, falling back to sharing the deprecated
-     * single classes directory per source set. With Gradle < 4.0, has no effect.
-     * */
-    var copyClassesToJavaOutput = false
+    override val apiElementsConfigurationName: String
+        get() = JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME
+
+    override val runtimeElementsConfigurationName: String
+        get() = JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME
+
+    override val artifactsTaskName: String
+        get() = JavaPlugin.JAR_TASK_NAME
+
+    override val compilations: NamedDomainObjectContainer<KotlinWithJavaCompilation> =
+        project.container(KotlinWithJavaCompilation::class.java, KotlinWithJavaCompilationFactory(project, this))
 }
 
 open class KotlinOnlyTarget<T : KotlinCompilation>(
@@ -79,8 +91,6 @@ open class KotlinOnlyTarget<T : KotlinCompilation>(
     override lateinit var targetName: String
         internal set
 
-    /** A non-null value if all project-global entities connected to this extension, such as configurations, should contain the
-     * platform classifier in their names. Null otherwise. */
     override var disambiguationClassifier: String? = null
         internal set
 
