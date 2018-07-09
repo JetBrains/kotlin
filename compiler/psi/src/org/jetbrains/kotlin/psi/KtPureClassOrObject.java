@@ -57,5 +57,8 @@ public interface KtPureClassOrObject extends KtPureElement, KtDeclarationContain
     @NotNull
     @ReadOnly
     List<KtSecondaryConstructor> getSecondaryConstructors();
+
+    @Nullable
+    KtClassBody getBody();
 }
 
