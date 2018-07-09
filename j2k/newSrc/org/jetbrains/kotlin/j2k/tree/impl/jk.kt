@@ -32,6 +32,7 @@ class JKFileImpl : JKFile, JKBranchElementBase() {
 class JKClassImpl(
     modifierList: JKModifierList,
     name: JKNameIdentifier,
+    inheritance: JKInheritanceInfo,
     override var classKind: JKClass.ClassKind
 ) : JKClass, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
@@ -39,7 +40,7 @@ class JKClassImpl(
     override var name by child(name)
     override var modifierList by child(modifierList)
     override var declarationList by children<JKDeclaration>()
-
+    override val inheritance by child(inheritance)
 }
 
 class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKElementBase() {}
@@ -317,4 +318,8 @@ class JKLambdaExpressionImpl(parameters: List<JKParameter>, returnType: JKTypeEl
     override val returnType by child(returnType)
     override var parameters by children(parameters)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLambdaExpression(this, data)
+}
+
+class JKInheritanceInfoImpl(implements: List<JKTypeElement>) : JKInheritanceInfo, JKBranchElementBase() {
+    override val inherit: List<JKTypeElement> by children(implements)
 }

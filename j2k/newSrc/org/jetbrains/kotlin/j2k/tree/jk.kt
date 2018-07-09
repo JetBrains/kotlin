@@ -39,12 +39,19 @@ interface JKFile : JKTreeElement, JKBranchElement {
 
 interface JKClass : JKDeclaration, JKModifierListOwner {
     val name: JKNameIdentifier
+
+    val inheritance: JKInheritanceInfo
+
     var declarationList: List<JKDeclaration>
     var classKind: ClassKind
 
     enum class ClassKind {
         ABSTRACT, ANNOTATION, CLASS, ENUM, INTERFACE
     }
+}
+
+interface JKInheritanceInfo : JKTreeElement, JKBranchElement {
+    val inherit: List<JKTypeElement>
 }
 
 interface JKMethod : JKDeclaration, JKModifierListOwner {
@@ -124,7 +131,7 @@ interface JKPrefixExpression : JKUnaryExpression
 
 interface JKPostfixExpression : JKUnaryExpression
 
-interface JKQualifiedExpression : JKExpression {
+interface JKQualifiedExpression : JKExpression, JKAssignableExpression {
     val receiver: JKExpression
     val operator: JKQualifier
     val selector: JKExpression

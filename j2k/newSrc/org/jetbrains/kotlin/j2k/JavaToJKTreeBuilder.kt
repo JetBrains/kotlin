@@ -76,7 +76,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiAssignmentExpression.toJK(): JKJavaAssignmentExpression {
             return JKJavaAssignmentExpressionImpl(
-                lExpression.toJK() as? JKAssignableExpression ?: error("Its possible?"),
+                lExpression.toJK() as? JKAssignableExpression ?: error("Its possible? ${lExpression.toJK().prettyDebugPrintTree()}"),
                 rExpression.toJK(),
                 operationSign.toJK()
             )
@@ -238,7 +238,12 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 isInterface -> JKClass.ClassKind.INTERFACE
                 else -> JKClass.ClassKind.CLASS
             }
-            return JKClassImpl(with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name!!), classKind).also { jkClassImpl ->
+            val implTypes = this.implementsList?.referencedTypes?.map { with(expressionTreeMapper) { JKTypeElementImpl(it.toJK()) } }.orEmpty()
+            val extTypes = this.extendsList?.referencedTypes?.map { with(expressionTreeMapper) { JKTypeElementImpl(it.toJK()) } }.orEmpty()
+            return JKClassImpl(
+                with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name!!), JKInheritanceInfoImpl(extTypes + implTypes),
+                classKind
+            ).also { jkClassImpl ->
                 jkClassImpl.declarationList = children.mapNotNull {
                     ElementVisitor().apply { it.accept(this) }.resultElement as? JKDeclaration
                 }
