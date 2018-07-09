@@ -135,6 +135,7 @@ object BuilderFunctionsCallChecker : CallChecker {
 }
 
 fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, diagnosticHolder: DiagnosticSink, reportOn: PsiElement) {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) return
     val diagnosticData = LanguageFeature.Coroutines to languageVersionSettings
     when (languageVersionSettings.getFeatureSupport(LanguageFeature.Coroutines)) {
         LanguageFeature.State.ENABLED -> {

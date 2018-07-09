@@ -338,6 +338,9 @@ object ModifierCheckerCore {
 
         val dependencies = featureDependencies[modifier] ?: return true
         for (dependency in dependencies) {
+            if (dependency == LanguageFeature.Coroutines && languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) {
+                continue
+            }
             val restrictedTargets = featureDependenciesTargets[dependency]
             if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
                 continue
