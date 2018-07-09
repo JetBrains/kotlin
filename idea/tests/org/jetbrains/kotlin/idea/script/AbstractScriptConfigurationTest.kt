@@ -157,6 +157,24 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             module.addDependency(projectLibrary("sharedLib", classesRoot = sharedLib))
         }
 
+        if (module != null) {
+            module.addDependency(
+                projectLibrary(
+                    "script-runtime",
+                    classesRoot = VfsUtil.findFileByIoFile(PathUtil.kotlinPathsForDistDirectory.scriptRuntimePath, true)
+                )
+            )
+
+            if (environment["template-classes"] != null) {
+                module.addDependency(
+                    projectLibrary(
+                        "script-template-library",
+                        classesRoot = VfsUtil.findFileByIoFile(environment["template-classes"] as File, true)
+                    )
+                )
+            }
+        }
+
         createFileAndSyncDependencies(mainScriptFile)
     }
 
@@ -192,15 +210,15 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
                 }
             }
         }
-        if (env[useDefaultTemplate] == true && defaultEnvironment["template-classes"] != null) {
-            error("Script configuration should be defined by either '$useDefaultTemplate' clause or via template in 'template' directory")
-        }
+
         env.putAll(defaultEnvironment)
         return env
     }
 
     private fun defaultEnvironment(path: String): Map<String, File?> {
         val templateOutDir = File("${path}template").takeIf { it.isDirectory }?.let {
+            compileLibToDir(it, PathUtil.kotlinPathsForDistDirectory.scriptRuntimePath.path)
+        } ?: File("idea/testData/script/definition/defaultTemplate").takeIf { it.isDirectory }?.let {
             compileLibToDir(it, PathUtil.kotlinPathsForDistDirectory.scriptRuntimePath.path)
         }
 
