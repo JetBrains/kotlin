@@ -106,6 +106,7 @@ public class GenerateRangesCodegenTestData {
 
     private static final List<String> INTEGER_PRIMITIVES = Arrays.asList("Integer", "Byte", "Short", "Long", "Character");
 
+    // TODO: Use common MIN_VALUE/MAX_VALUE constants and remove these exclusions
     private static final List<String> IGNORED_FOR_JS_BACKEND = Arrays.asList(
             "inexactDownToMinValue.kt",
             "inexactToMaxValue.kt",
@@ -116,7 +117,10 @@ public class GenerateRangesCodegenTestData {
             "progressionMaxValueMinusTwoToMaxValue.kt",
             "progressionMaxValueToMaxValue.kt",
             "progressionMaxValueToMinValue.kt",
-            "progressionMinValueToMinValue.kt");
+            "progressionMinValueToMinValue.kt",
+            "overflowZeroToMinValue.kt",
+            "overflowZeroDownToMaxValue.kt"
+    );
 
     private static final List<String> IGNORED_FOR_NATIVE_BACKEND = Arrays.asList(
             "inexactDownToMinValue.kt",
@@ -128,7 +132,9 @@ public class GenerateRangesCodegenTestData {
             "progressionMaxValueMinusTwoToMaxValue.kt",
             "progressionMaxValueToMaxValue.kt",
             "progressionMaxValueToMinValue.kt",
-            "progressionMinValueToMinValue.kt"
+            "progressionMinValueToMinValue.kt",
+            "overflowZeroToMinValue.kt",
+            "overflowZeroDownToMaxValue.kt"
     );
 
     private static void writeIgnoreBackendDirective(PrintWriter out, String backendName) {
