@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -47,6 +48,8 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
     }
 
     protected abstract fun loadConstant(desc: String, initializer: Any): C?
+
+    protected abstract fun transformToUnsignedConstant(constant: C): C?
 
     protected abstract fun loadAnnotation(
             annotationClassId: ClassId,
@@ -202,7 +205,8 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
         val specialCase = getSpecialCaseContainerClass(container, property = true, field = true, isConst = Flags.IS_CONST.get(proto.flags))
         val kotlinClass = findClassWithAnnotationsAndInitializers(container, specialCase) ?: return null
 
-        return storage(kotlinClass).propertyConstants[signature]
+        val constant = storage(kotlinClass).propertyConstants[signature] ?: return null
+        return if (UnsignedTypes.isUnsignedType(expectedType)) transformToUnsignedConstant(constant) else constant
     }
 
     private fun findClassWithAnnotationsAndInitializers(
