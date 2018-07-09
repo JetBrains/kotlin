@@ -37,7 +37,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlo
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrCallExpression
 
-private val LibInfo.gradleMarker get() = "$groupId:$name:"
+private val LibInfo.gradleMarker get() = "$groupId:$name"
 
 class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
     override fun buildVisitor(): BaseInspectionVisitor = DependencyFinder()
@@ -62,6 +62,11 @@ class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
                 val libMarker = outdatedInfo.old.gradleMarker
 
                 if (dependencyText.contains(libMarker)) {
+                    val afterMarkerChar = dependencyText.substringAfter(libMarker).getOrNull(0)
+                    if (!(afterMarkerChar == '\'' || afterMarkerChar == '"' || afterMarkerChar == ':')) {
+                        continue
+                    }
+
                     val libVersion =
                         DifferentStdlibGradleVersionInspection.getResolvedLibVersion(
                             dependencyStatement.containingFile, outdatedInfo.old.groupId, listOf(outdatedInfo.old.name)
