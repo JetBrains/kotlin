@@ -72,6 +72,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
+    @Argument(value = "-Xuse-ir", description = "Use the IR backend")
+    var useIR: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
     var javaModulePath: String? by FreezableVar(null)
 
