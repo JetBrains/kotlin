@@ -1,3 +1,5 @@
+// RUNTIME_WITH_SCRIPT_RUNTIME
+
 fun f() {
 }
 
