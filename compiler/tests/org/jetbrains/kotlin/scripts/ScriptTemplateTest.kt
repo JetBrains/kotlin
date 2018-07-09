@@ -354,6 +354,7 @@ class ScriptTemplateTest : KtUsefulTestCase() {
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             configuration.addKotlinSourceRoot(scriptPath)
             configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
+            configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, true)
             configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
             val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
