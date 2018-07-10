@@ -221,14 +221,12 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         doTest("Lambdas") { _, file ->
             val lambda = file.findElementByTextFromPsi<ULambdaExpression>("{ it.isEmpty() }")
             assertEquals(
-                "java.util.function.Predicate<? super java.lang.String>",
-                lambda.functionalInterfaceType?.canonicalText
-            )
-            assertEquals(
                 "kotlin.jvm.functions.Function1<? super java.lang.String,? extends java.lang.Boolean>",
                 lambda.getExpressionType()?.canonicalText
             )
             val uCallExpression = lambda.uastParent.assertedCast<UCallExpression> { "UCallExpression expected" }
             assertTrue(uCallExpression.valueArguments.contains(lambda))
         }
+
+    }
 }
