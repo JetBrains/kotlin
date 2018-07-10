@@ -13,6 +13,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
+private val runtimeSources = listOfKtFilesFrom(
+    "libraries/stdlib/js/src/kotlin/core.kt",
+    "core/builtins/native/kotlin/Number.kt",
+    "core/builtins/native/kotlin/Comparable.kt",
+    "libraries/stdlib/js/irRuntime"
+)
+
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
@@ -43,22 +50,7 @@ abstract class BasicIrBoxTest(
         testPackage: String?,
         testFunction: String
     ) {
-        val runtime = listOf(
-            "libraries/stdlib/js/src/kotlin/core.kt",
-            "libraries/stdlib/js/irRuntime/core.kt",
-            "libraries/stdlib/js/irRuntime/long.kt",
-            "libraries/stdlib/js/irRuntime/longjs.kt",
-            "libraries/stdlib/js/irRuntime/numberConversion.kt",
-            "libraries/stdlib/js/irRuntime/compareTo.kt",
-            "libraries/stdlib/js/irRuntime/annotations.kt",
-            "libraries/stdlib/js/irRuntime/char.kt",
-            "libraries/stdlib/js/irRuntime/DefaultConstructorMarker.kt",
-            "libraries/stdlib/js/irRuntime/exceptions.kt",
-            "libraries/stdlib/js/irRuntime/internalAnnotations.kt",
-            "libraries/stdlib/js/irRuntime/typeCheckUtils.kt",
-            "core/builtins/native/kotlin/Number.kt",
-            "core/builtins/native/kotlin/Comparable.kt"
-        ).map { createPsiFile(it) }
+        val runtime = runtimeSources.map { createPsiFile(it) }
 
         val filesToIgnore = listOf(
             // TODO: temporary ignore some files from _commonFiles directory since they can't be compiled correctly by JS IR BE yet.
@@ -91,5 +83,16 @@ abstract class BasicIrBoxTest(
     ) {
         // TODO: should we do anything special for module systems?
         super.runGeneratedCode(jsFiles, null, null, testFunction, expectedResult, false)
+    }
+}
+
+private fun listOfKtFilesFrom(vararg paths: String): List<String> {
+    val currentDir = File(".")
+    return paths.flatMap { path ->
+        File(path)
+            .walkTopDown()
+            .filter { it.extension == "kt" }
+            .map { it.relativeToOrSelf(currentDir).path }
+            .asIterable()
     }
 }
