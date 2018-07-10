@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.*
@@ -149,4 +150,18 @@ private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElemen
 }
 
 fun PsiElement.javaResolutionFacade() =
-    KotlinCacheService.getInstance(project).getResolutionFacadeByFile(this.originalElement.containingFile, JvmPlatform)
+    KotlinCacheService.getInstance(project).getResolutionFacadeByFile(
+        this.originalElement.containingFile ?: reportCouldNotCreateJavaFacade(),
+        JvmPlatform
+    )
+
+private fun PsiElement.reportCouldNotCreateJavaFacade(): Nothing =
+    runReadAction {
+        error(
+            "Could not get javaResolutionFacade for element:\n" +
+                    "same as originalElement = ${this === this.originalElement}" +
+                    "class = ${javaClass.name}, text = $text, containingFile = ${containingFile?.name}\n" +
+                    "originalElement.class = ${originalElement.javaClass.name}, originalElement.text = ${originalElement.text}), " +
+                    "originalElement.containingFile = ${originalElement.containingFile?.name}"
+        )
+    }
