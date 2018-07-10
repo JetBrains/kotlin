@@ -61,7 +61,7 @@ internal fun Long.toString(radix: Int): String {
         if (rem.isZero()) {
             return digits + result
         } else {
-            while (digits.length < 6) {
+            while (js("digits.length").unsafeCast<Int>() < 6) {
                 digits = "0" + digits
             }
             result = digits + result
@@ -109,7 +109,7 @@ internal fun Long.add(other: Long): Long {
 
     val a48 = high ushr 16
     val a32 = high and 0xFFFF
-    val a16 = high ushr 16
+    val a16 = low ushr 16
     val a00 = low and 0xFFFF
 
     val b48 = other.high ushr 16
@@ -253,20 +253,20 @@ internal fun Long.divide(other: Long): Long {
         // Approximate the result of division. This may be a little greater or
         // smaller than the actual value.
         val approxDouble = rem.toNumber() / other.toNumber()
-        var approx = js("Math.max(1, Math.floor(approxDouble))").unsafeCast<Double>()
+        var approx2 = js("Math.max(1, Math.floor(approxDouble))").unsafeCast<Double>()
 
         // We will tweak the approximate result by changing it in the 48-th digit or
         // the smallest non-fractional digit, whichever is larger.
-        val log2 = js("Math.ceil(Math.log(approx) / Math.LN2)").unsafeCast<Int>()
+        val log2 = js("Math.ceil(Math.log(approx2) / Math.LN2)").unsafeCast<Int>()
         val delta = if (log2 <= 48) 1.0 else js("Math.pow(2, log2 - 48)").unsafeCast<Double>()
 
         // Decrease the approximation until it is smaller than the remainder.  Note
         // that if it is too large, the product overflows and is negative.
-        var approxRes = fromNumber(approx)
+        var approxRes = fromNumber(approx2)
         var approxRem = approxRes.multiply(other)
         while (approxRem.isNegative() || approxRem.greaterThan(rem)) {
-            approx -= delta
-            approxRes = fromNumber(approx)
+            approx2 -= delta
+            approxRes = fromNumber(approx2)
             approxRem = approxRes.multiply(other)
         }
 

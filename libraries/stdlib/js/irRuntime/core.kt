@@ -67,6 +67,10 @@ fun hashCode(obj: dynamic): Int {
     /** @const */
     var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue${"$"}";
 
+    var byteBuffer = new ArrayBuffer(8);
+    var bufFloat64 = new Float64Array(byteBuffer);
+    var bufInt32 = new Int32Array(byteBuffer);
+
     function getObjectHashCode(obj) {
         if (!(OBJECT_HASH_CODE_PROPERTY_NAME in obj)) {
             var hash = (Math.random() * POW_2_32) | 0; // Make 32-bit singed integer.
@@ -90,7 +94,7 @@ fun hashCode(obj: dynamic): Int {
         }
         else {
             bufFloat64[0] = obj;
-            return (bufInt32[highIndex] * 31 | 0) + bufInt32[lowIndex] | 0;
+            return (bufInt32[1] * 31 | 0) + bufInt32[0] | 0;
         }
     }
 
