@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val a1: Any = 1.toByte() + 1
     val a2: Any = 1.toShort() + 1

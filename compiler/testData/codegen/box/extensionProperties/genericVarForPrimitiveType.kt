@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 var <T> T.varProp: T
     get() = this
     set(value: T) {}

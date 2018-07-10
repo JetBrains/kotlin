@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 val zint : Int? = 1
 val zlong : Long? = 2
 val zbyte : Byte? = 3
