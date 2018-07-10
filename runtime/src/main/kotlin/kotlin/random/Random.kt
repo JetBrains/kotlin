@@ -15,9 +15,7 @@
  */
 package kotlin.random
 
-import konan.internal.*
 import konan.worker.AtomicLong
-import kotlin.random.Random.Companion.MULTIPLIER
 import kotlin.system.getTimeNanos
 
 abstract class Random {
@@ -61,12 +59,12 @@ abstract class Random {
             if (bound <= 0) throw IllegalArgumentException("Incorrect bound: $bound")
 
             if (bound and (bound - 1) == 0) {
-                return ((bound * nextInt().toLong()) shr 31).toInt();
+                return ((bound * (nextInt() ushr 1).toLong()) ushr 31).toInt();
             }
 
             var m: Int
             do {
-                var r = nextInt()
+                var r = nextInt() ushr 1
                 m = r % bound
             } while (r - m + (bound - 1) < 0)
             return m

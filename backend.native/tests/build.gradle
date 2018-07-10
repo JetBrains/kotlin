@@ -499,8 +499,13 @@ task runtime_random(type: RunKonanTest) {
     source = "runtime/basic/random.kt"
 }
 
+task runtime_random_bound(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions.
+    source = "runtime/basic/random_bound.kt"
+}
+
 task runtime_worker_random(type: RunKonanTest) {
-    disabled = (project.testTarget == 'wasm32')
+    disabled = (project.testTarget == 'wasm32') // Uses workers.
     source = "runtime/basic/worker_random.kt"
 }
 
