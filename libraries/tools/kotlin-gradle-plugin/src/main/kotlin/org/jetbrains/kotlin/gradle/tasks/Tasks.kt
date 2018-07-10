@@ -527,7 +527,9 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
                         computedCompilerClasspath,
                         if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
                         taskBuildDirectory,
-                        messageCollector, outputItemCollector, args,
+                        messageCollector,
+                        outputItemCollector,
+                        args,
                         multiModuleICSettings = multiModuleICSettings
                 )
             }

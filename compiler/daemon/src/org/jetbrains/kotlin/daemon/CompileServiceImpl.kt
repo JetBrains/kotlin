@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
+import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
@@ -475,8 +476,14 @@ class CompileServiceImpl(
                                           incrementalCompilationOptions.customCacheVersionFileName,
                                           workingDir,
                                           enabled = true)
-
-        val compiler = IncrementalJsCompilerRunner(workingDir, versions, reporter)
+        val modulesApiHistory = ModulesApiHistoryJs(incrementalCompilationOptions.modulesInfo)
+        val compiler = IncrementalJsCompilerRunner(
+            workingDir = workingDir,
+            cacheVersions = versions,
+            reporter = reporter,
+            buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
+            modulesApiHistory = modulesApiHistory
+        )
         return compiler.compile(allKotlinFiles, args, compilerMessageCollector, changedFiles)
     }
 

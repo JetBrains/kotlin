@@ -41,6 +41,7 @@ abstract class IncrementalCompilerRunner<
         cacheDirName: String,
         protected val cacheVersions: List<CacheVersion>,
         protected val reporter: ICReporter,
+        private val buildHistoryFile: File,
         private val localStateDirs: Collection<File> = emptyList()
 ) {
 
@@ -299,11 +300,20 @@ abstract class IncrementalCompilerRunner<
 
     open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
 
-    protected open fun processChangesAfterBuild(
+    private fun processChangesAfterBuild(
         compilationMode: CompilationMode,
         currentBuildInfo: BuildInfo,
         dirtyData: DirtyData
     ) {
+        val prevDiffs = BuildDiffsStorage.readFromFile(buildHistoryFile, reporter)?.buildDiffs ?: emptyList()
+        val newDiff = if (compilationMode is CompilationMode.Incremental) {
+            BuildDifference(currentBuildInfo.startTS, true, dirtyData)
+        } else {
+            val emptyDirtyData = DirtyData()
+            BuildDifference(currentBuildInfo.startTS, false, emptyDirtyData)
+        }
+
+        BuildDiffsStorage.writeToFile(buildHistoryFile, BuildDiffsStorage(prevDiffs + newDiff), reporter)
     }
 
     companion object {
