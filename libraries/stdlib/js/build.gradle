@@ -78,7 +78,7 @@ dependencies {
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
     testCompile project(':kotlin-test:kotlin-test-js')
     merger project(":tools:kotlin-stdlib-js-merger")
-    coroutinesCompile sourceSets.main.output
+    coroutinesCompile project.files { sourceSets.main.output.files }.builtBy(compileKotlin2Js)
 }
 
 task prepareComparableSource(type: Copy) {
@@ -254,7 +254,7 @@ task compileJs(type: JavaExec) {
     }
 }
 
-//classes.dependsOn compileJs
+classes.dependsOn compileJs
 
 
 jar {
@@ -306,9 +306,6 @@ task sourcesJar(type: Jar, dependsOn: compileJs) {
     from(sourceSets.coroutines.allSource) {
         into 'kotlin'
     }
-    from(project(":kotlin-stdlib-common").sourceSets.coroutines.allSource) {
-        into 'kotlin'
-    }
 }
 
 task distSourcesJar(type: Jar) {
@@ -323,6 +320,10 @@ task distSourcesJar(type: Jar) {
         it.includeEmptyDirs = false
         exclude 'META-INF/*'
         into 'common'
+    }
+
+    from(project(":kotlin-stdlib-common").sourceSets.coroutines.allSource) {
+        into 'kotlin'
     }
 }
 
