@@ -4573,8 +4573,9 @@ The "returned" value of try expression with no finally is either the last expres
 
     public StackValue generateWhenExpression(KtWhenExpression expression, boolean isStatement) {
         Type resultType = isStatement ? Type.VOID_TYPE : expressionType(expression);
+        KotlinType resultKotlinType = isStatement ? null : kotlinType(expression);
 
-        return StackValue.operation(resultType, v -> {
+        return StackValue.operation(resultType, resultKotlinType, v -> {
             KtProperty subjectVariable = expression.getSubjectVariable();
             KtExpression subjectExpression = expression.getSubjectExpression();
 
@@ -4637,7 +4638,7 @@ The "returned" value of try expression with no finally is either the last expres
                 }
 
                 v.visitLabel(thisEntry);
-                gen(whenEntry.getExpression(), resultType);
+                gen(whenEntry.getExpression(), resultType, resultKotlinType);
                 mark.dropTo();
                 if (!whenEntry.isElse()) {
                     v.goTo(end);
