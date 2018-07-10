@@ -437,18 +437,6 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         }
     }
 
-    fun createImportDirectives(paths: Collection<ImportPath>): List<KtImportDirective> {
-        val fileContent = buildString {
-            for (path in paths) {
-                appendImport(path)
-                append('\n')
-            }
-        }
-
-        val file = createFile(fileContent)
-        return file.importDirectives
-    }
-
     fun createPrimaryConstructor(text: String = ""): KtPrimaryConstructor {
         return createClass(if (text.isNotEmpty()) "class A $text" else "class A()").primaryConstructor!!
     }

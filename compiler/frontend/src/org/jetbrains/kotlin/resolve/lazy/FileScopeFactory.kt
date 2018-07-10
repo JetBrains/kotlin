@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportInfo
-import org.jetbrains.kotlin.psi.KtImportsFactory
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -43,7 +41,6 @@ class FileScopeFactory(
     private val moduleDescriptor: ModuleDescriptor,
     private val qualifiedExpressionResolver: QualifiedExpressionResolver,
     private val bindingTrace: BindingTrace,
-    private val ktImportsFactory: KtImportsFactory,
     private val platformToKotlinClassMap: PlatformToKotlinClassMap,
     private val targetPlatform: TargetPlatform,
     private val languageVersionSettings: LanguageVersionSettings,
