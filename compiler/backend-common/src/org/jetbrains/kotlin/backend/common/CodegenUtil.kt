@@ -98,9 +98,8 @@ object CodegenUtil {
     @JvmStatic
     fun getSuperClassBySuperTypeListEntry(specifier: KtSuperTypeListEntry, bindingContext: BindingContext): ClassDescriptor? {
         val superType = bindingContext.get(BindingContext.TYPE, specifier.typeReference!!)
-                        ?: error("superType should not be null: ${specifier.text}")
 
-        return superType.constructor.declarationDescriptor as? ClassDescriptor
+        return superType?.constructor?.declarationDescriptor as? ClassDescriptor
     }
 
     @JvmStatic
