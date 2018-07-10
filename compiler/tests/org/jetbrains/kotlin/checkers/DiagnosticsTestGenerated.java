@@ -9385,6 +9385,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inference/listConstructor.kt");
             }
 
+            @TestMetadata("localFunctionInsideIfBlock.kt")
+            public void testLocalFunctionInsideIfBlock() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/localFunctionInsideIfBlock.kt");
+            }
+
             @TestMetadata("mapFunction.kt")
             public void testMapFunction() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/mapFunction.kt");
