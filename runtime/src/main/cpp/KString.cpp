@@ -13,16 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#include <limits.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-#include <unistd.h>
-
-#include <iterator>
-#include <string>
 
 #include "Assert.h"
 #include "City.h"
@@ -713,7 +704,7 @@ int iswlower_Konan(KChar ch) {
 extern "C" {
 
 OBJ_GETTER(CreateStringFromCString, const char* cstring) {
-  RETURN_RESULT_OF(utf8ToUtf16, cstring, strlen(cstring));
+  RETURN_RESULT_OF(utf8ToUtf16, cstring, cstring ? strlen(cstring) : 0);
 }
 
 OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes) {
