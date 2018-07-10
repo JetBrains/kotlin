@@ -216,6 +216,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         val moduleDependencyData = ModuleDependencyData(ideModule.data, targetModule.data)
         moduleDependencyData.scope = DependencyScope.COMPILE
         moduleDependencyData.isExported = false
+        moduleDependencyData.isProductionOnTestDependency = targetModule.sourceSetName == "test"
         ideModule.createChild(ProjectKeys.MODULE_DEPENDENCY, moduleDependencyData)
     }
 
