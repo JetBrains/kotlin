@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.inspections.gradle.DeprecatedGradleDependencyInspection
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection
+import org.jetbrains.kotlin.idea.inspections.gradle.GradleKotlinxCoroutinesDeprecationInspection
 import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.junit.Assert
 import org.junit.Test
@@ -339,6 +340,51 @@ class GradleInspectionTest : GradleImportingTestCase() {
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals(
             "kotlin-stdlib-jre7 is deprecated since 1.2.0 and should be replaced with kotlin-stdlib-jdk7",
+            problems.single()
+        )
+    }
+
+    @Test
+    fun testObsoleteCoroutinesUsage() {
+        val localFile = createProjectSubFile(
+            "build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            repositories {
+                mavenCentral()
+                maven { url "https://kotlin.bintray.com/kotlinx" }
+            }
+
+            dependencies {
+                compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4'
+            }
+
+            compileKotlin {
+                kotlinOptions.languageVersion = "1.3"
+            }
+        """
+        )
+        importProject()
+
+        val tool = GradleKotlinxCoroutinesDeprecationInspection()
+        val problems = getInspectionResult(tool, localFile)
+
+        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals(
+            "Library should be updated to be compatible with Kotlin 1.3",
             problems.single()
         )
     }
