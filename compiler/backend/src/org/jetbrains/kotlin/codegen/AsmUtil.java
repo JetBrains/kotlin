@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.builtins.UnsignedTypes;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.intrinsics.HashCode;
@@ -113,8 +114,27 @@ public class AsmUtil {
 
     @NotNull
     public static Type boxType(@NotNull Type type) {
+        Type boxedType = boxPrimitiveType(type);
+        return boxedType != null ? boxedType : type;
+    }
+
+    @NotNull
+    public static Type boxType(@NotNull Type type, @NotNull KotlinType kotlinType, @NotNull GenerationState state) {
+        Type boxedPrimitiveType = boxPrimitiveType(type);
+        if (boxedPrimitiveType != null) return boxedPrimitiveType;
+
+        if (InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
+            return state.getTypeMapper().mapTypeAsDeclaration(kotlinType);
+        }
+        else {
+            return type;
+        }
+    }
+
+    @Nullable
+    private static Type boxPrimitiveType(@NotNull Type type) {
         JvmPrimitiveType jvmPrimitiveType = primitiveTypeByAsmSort.get(type.getSort());
-        return jvmPrimitiveType != null ? asmTypeByFqNameWithoutInnerClasses(jvmPrimitiveType.getWrapperFqName()) : type;
+        return jvmPrimitiveType != null ? asmTypeByFqNameWithoutInnerClasses(jvmPrimitiveType.getWrapperFqName()) : null;
     }
 
     @NotNull
