@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea
 
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.util.parentOfType
 import junit.framework.TestCase
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -390,7 +390,7 @@ class C(param1: String = "", param2: Int = 0) {
         class My(param: Int = <caret>0)
         """) as KtFile
 
-        val defaultValue = myFixture.elementByOffset.parentOfType<KtExpression>()!!
+        val defaultValue = myFixture.elementByOffset.getParentOfType<KtExpression>(true)!!
         // Kept to preserve correct behaviour of analyzeFully() on class internal elements
 
         @Suppress("DEPRECATION")
@@ -404,7 +404,7 @@ class C(param1: String = "", param2: Int = 0) {
         """
         ) as KtFile
 
-        val annotationArguments = myFixture.elementByOffset.parentOfType<KtValueArgumentList>()!!
+        val annotationArguments = myFixture.elementByOffset.getParentOfType<KtValueArgumentList>(true)!!
 
         @Suppress("DEPRECATION")
         annotationArguments.analyzeWithAllCompilerChecks()
@@ -419,7 +419,7 @@ class C(param1: String = "", param2: Int = 0) {
         """) as KtFile
 
         val function = (file.declarations[1]) as KtFunction
-        val typeRef = myFixture.elementByOffset.parentOfType<KtTypeReference>()!!
+        val typeRef = myFixture.elementByOffset.getParentOfType<KtTypeReference>(true)!!
 
         val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
 
@@ -437,7 +437,7 @@ class C(param1: String = "", param2: Int = 0) {
         class X(@set:<caret>Ann var p: Int)
         """) as KtFile
 
-        val typeRef = myFixture.elementByOffset.parentOfType<KtTypeReference>()!!
+        val typeRef = myFixture.elementByOffset.getParentOfType<KtTypeReference>(true)!!
 
         val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
 
@@ -457,7 +457,7 @@ class C(param1: String = "", param2: Int = 0) {
         """) as KtFile
 
         val constructor = ((file.declarations[1]) as KtClass).getSecondaryConstructors()[0]
-        val typeRef = myFixture.elementByOffset.parentOfType<KtTypeReference>()!!
+        val typeRef = myFixture.elementByOffset.getParentOfType<KtTypeReference>(true)!!
 
         val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
 
@@ -531,7 +531,7 @@ class C(param1: String = "", param2: Int = 0) {
         }
         """) as KtFile
 
-        val methodOne = myFixture.elementByOffset.parentOfType<KtFunction>()!!
+        val methodOne = myFixture.elementByOffset.getParentOfType<KtFunction>(true)!!
 
         val bindingContext = methodOne.analyze(BodyResolveMode.FULL)
 
