@@ -27,6 +27,6 @@ fun ok(continuation: Continuation<String>): Any? {
 fun box(): String {
     if ((::ok).builder() != "OK") return "FAIL 1"
     if (({ cont: Continuation<String> -> "OK" }).builder() != "OK") return "FAIL 2"
-    if ((fun (cont: Continuation<String>): Any? = "OK").builder() != "OK") return "FAIL 2"
+    if ((fun (cont: Continuation<String>): Any? = "OK").builder() != "OK") return "FAIL 3"
     return "OK"
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.resolve.calls.checkers.checkCoroutinesFeature
 import java.util.*
 
 object ModifierCheckerCore {
@@ -338,15 +339,17 @@ object ModifierCheckerCore {
 
         val dependencies = featureDependencies[modifier] ?: return true
         for (dependency in dependencies) {
-            if (dependency == LanguageFeature.Coroutines && languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) {
-                continue
-            }
             val restrictedTargets = featureDependenciesTargets[dependency]
             if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
                 continue
             }
 
             val featureSupport = languageVersionSettings.getFeatureSupport(dependency)
+
+            if (dependency == LanguageFeature.Coroutines) {
+                checkCoroutinesFeature(languageVersionSettings, trace, node.psi)
+                continue
+            }
 
             val diagnosticData = dependency to languageVersionSettings
             when (featureSupport) {

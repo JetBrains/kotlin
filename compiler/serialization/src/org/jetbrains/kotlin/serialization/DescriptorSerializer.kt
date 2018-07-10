@@ -240,9 +240,8 @@ class DescriptorSerializer private constructor(
         val requirement = serializeVersionRequirement(descriptor)
         if (requirement != null) {
             builder.versionRequirement = requirement
-        }
-        else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
+        } else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+            builder.versionRequirement = writeVersionRequirementDependingOnCoroutinesVersion()
         }
 
         extension.serializeProperty(descriptor, builder)
@@ -312,8 +311,7 @@ class DescriptorSerializer private constructor(
         if (requirement != null) {
             builder.versionRequirement = requirement
         } else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.versionRequirement =
-                    writeVersionRequirement(if (this.extension.releaseCoroutines()) LanguageFeature.ReleaseCoroutines else LanguageFeature.Coroutines)
+            builder.versionRequirement = writeVersionRequirementDependingOnCoroutinesVersion()
         }
 
         contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)
@@ -342,15 +340,17 @@ class DescriptorSerializer private constructor(
         val requirement = serializeVersionRequirement(descriptor)
         if (requirement != null) {
             builder.versionRequirement = requirement
-        }
-        else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
+        } else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+            builder.versionRequirement = writeVersionRequirementDependingOnCoroutinesVersion()
         }
 
         extension.serializeConstructor(descriptor, builder)
 
         return builder
     }
+
+    private fun writeVersionRequirementDependingOnCoroutinesVersion(): Int =
+        writeVersionRequirement(if (this.extension.releaseCoroutines()) LanguageFeature.ReleaseCoroutines else LanguageFeature.Coroutines)
 
     private fun CallableMemberDescriptor.isSuspendOrHasSuspendTypesInSignature(): Boolean {
         if (this is FunctionDescriptor && isSuspend) return true

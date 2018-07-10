@@ -461,6 +461,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/progressiveModeOn.args");
         }
 
+        @TestMetadata("releaseCoroutinesApiVersion1.2.args")
+        public void testReleaseCoroutinesApiVersion1_2() throws Exception {
+            runTest("compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.args");
+        }
+
         @TestMetadata("returnAsWhenKey.args")
         public void testReturnAsWhenKey() throws Exception {
             runTest("compiler/testData/cli/jvm/returnAsWhenKey.args");

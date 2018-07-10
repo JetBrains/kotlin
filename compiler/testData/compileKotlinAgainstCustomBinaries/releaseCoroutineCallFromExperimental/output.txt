@@ -1,4 +1,7 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/releaseCoroutineCallFromExperimental/experimental.kt:2:5: error: 'dummy(): Unit' is only available since Kotlin 1.3 and cannot be used in Kotlin 1.2
     dummy()
     ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCoroutineCallFromExperimental/experimental.kt:4:9: error: 'dummy(): String' is only available since Kotlin 1.3 and cannot be used in Kotlin 1.2
+    C().dummy()
+        ^
 COMPILATION_ERROR

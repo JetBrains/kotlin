@@ -61,10 +61,6 @@ object CoroutineSuspendCallChecker : CallChecker {
             else -> return
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines) && context.languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_3) {
-            context.trace.report(Errors.UNSUPPORTED.on(reportOn, "cannot use release coroutines API version less than 1.3"))
-        }
-
         val enclosingSuspendFunction = context.scope
             .parentsWithSelf.firstOrNull {
             it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS &&
@@ -136,7 +132,12 @@ object BuilderFunctionsCallChecker : CallChecker {
 }
 
 fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, diagnosticHolder: DiagnosticSink, reportOn: PsiElement) {
-    if (languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) return
+    if (languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) {
+        if (languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_3) {
+            diagnosticHolder.report(Errors.UNSUPPORTED.on(reportOn, "cannot use release coroutines with api version less than 1.3"))
+        }
+        return
+    }
     val diagnosticData = LanguageFeature.Coroutines to languageVersionSettings
     when (languageVersionSettings.getFeatureSupport(LanguageFeature.Coroutines)) {
         LanguageFeature.State.ENABLED -> {

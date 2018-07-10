@@ -37,7 +37,7 @@ fun ModuleDescriptor.findContinuationClassDescriptor(lookupLocation: LookupLocat
 
 fun ModuleDescriptor.getContinuationOfTypeOrAny(kotlinType: KotlinType, isReleaseCoroutines: Boolean) =
     module.findContinuationClassDescriptorOrNull(
-        NoLookupLocation.FROM_BACKEND,
+        NoLookupLocation.FROM_DESERIALIZATION,
         isReleaseCoroutines
     )?.defaultType?.let {
         KotlinTypeFactory.simpleType(

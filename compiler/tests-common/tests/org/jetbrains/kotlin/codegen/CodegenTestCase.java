@@ -61,7 +61,10 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -660,33 +663,12 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             classpath.add(ForTestCompileRuntime.androidAnnotationsForTests());
         }
 
-        ApiVersion av = ApiVersion.LATEST_STABLE;
-        boolean explicitApiVersion = false;
-
-        for (TestFile tf : files) {
-            Map<String, String> directives = KotlinTestUtils.parseDirectives(tf.content);
-            if (directives.containsKey(API_VERSION_DIRECTIVE)) {
-                assert !explicitApiVersion : "multiple API_VERSIONs";
-                explicitApiVersion = true;
-                av = ApiVersion.Companion.parse(directives.get(API_VERSION_DIRECTIVE));
-                assert av != null : "incorrect API_VERSION";
-            }
-        }
-
         CompilerConfiguration configuration = createConfiguration(
                 configurationKind, getJdkKind(files),
                 classpath,
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),
                 files
         );
-
-        if (explicitApiVersion) {
-            CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
-                    CommonConfigurationKeysKt.getLanguageVersionSettings(configuration).getLanguageVersion(), av,
-                    new HashMap<AnalysisFlag<?>, Object>() {{
-                        put(AnalysisFlag.getExplicitApiVersion(), true);
-                    }}));
-        }
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
