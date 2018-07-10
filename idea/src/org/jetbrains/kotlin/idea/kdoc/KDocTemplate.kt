@@ -12,10 +12,18 @@ open class KDocTemplate : Template<StringBuilder> {
 
     val description = Placeholder<StringBuilder>()
 
+    val deprecation = Placeholder<StringBuilder>()
+
     override fun StringBuilder.apply() {
         append(DEFINITION_START)
         insert(definition)
         append(DEFINITION_END)
+
+        if (!deprecation.isEmpty()) {
+            append(SECTIONS_START)
+            insert(deprecation)
+            append(SECTIONS_END)
+        }
 
         insert(description)
     }

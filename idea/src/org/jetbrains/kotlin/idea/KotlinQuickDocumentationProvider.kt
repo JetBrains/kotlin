@@ -20,8 +20,7 @@ import com.google.common.html.HtmlEscapers
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.codeInsight.javadoc.JavaDocInfoGeneratorFactory
 import com.intellij.lang.documentation.AbstractDocumentationProvider
-import com.intellij.lang.documentation.DocumentationMarkup.DEFINITION_END
-import com.intellij.lang.documentation.DocumentationMarkup.DEFINITION_START
+import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.lang.java.JavaDocumentationProvider
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
@@ -346,8 +345,10 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             return KDocTemplate().apply {
                 definition {
                     renderDefinition(declarationDescriptor, DESCRIPTOR_RENDERER)
-                    renderDeprecationInfo(declarationDescriptor, deprecationProvider)
                 }
+
+                insertDeprecationInfo(declarationDescriptor, deprecationProvider)
+
                 if (!quickNavigation) {
                     description {
                         val comment = declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }
@@ -420,25 +421,26 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             return ""
         }
 
-        private fun StringBuilder.renderDeprecationInfo(
+        private fun KDocTemplate.insertDeprecationInfo(
             declarationDescriptor: DeclarationDescriptor,
             deprecationResolver: DeprecationResolver
         ) {
-            val deprecation = deprecationResolver.getDeprecations(declarationDescriptor).firstOrNull() ?: return
+            val deprecationInfo = deprecationResolver.getDeprecations(declarationDescriptor).firstOrNull() ?: return
 
-
-            wrapTag("DL") {
-                deprecation.message?.let { message ->
-                    wrapTag("DT") { wrapTag("b") { append("Deprecated:") } }
-                    wrapTag("DD") {
-                        append(message.htmlEscape())
-                    }
+            deprecation {
+                deprecationInfo.message?.let { message ->
+                    append(SECTION_HEADER_START)
+                    append("Deprecated:")
+                    append(SECTION_SEPARATOR)
+                    append(message.htmlEscape())
+                    append(SECTION_END)
                 }
-                deprecation.deprecatedByAnnotationReplaceWithExpression()?.let { replaceWith ->
-                    wrapTag("DT") { wrapTag("b") { append("Replace with:") } }
-                    wrapTag("DD") {
-                        wrapTag("code") { append(replaceWith.htmlEscape()) }
-                    }
+                deprecationInfo.deprecatedByAnnotationReplaceWithExpression()?.let { replaceWith ->
+                    append(SECTION_HEADER_START)
+                    append("Replace with:")
+                    append(SECTION_SEPARATOR)
+                    wrapTag("code") { append(replaceWith.htmlEscape()) }
+                    append(SECTION_END)
                 }
             }
         }
