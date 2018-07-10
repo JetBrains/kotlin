@@ -44,6 +44,12 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
         return initializer()
     }
 
+    /**
+     * Use this table to reference external dependencies.
+     */
+    open val externalSymbolTable: ReferenceSymbolTable
+        get() = symbolTable
+
 //    val refClass = calc { symbolTable.referenceClass(context.getInternalClass("Ref")) }
 
     //abstract val areEqualByValue: List<IrFunctionSymbol>
