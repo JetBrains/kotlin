@@ -577,4 +577,8 @@ KBoolean Kotlin_Worker_isFrozenInternal(KRef object) {
   return object == nullptr || object->container()->permanentOrFrozen();
 }
 
+void Kotlin_Worker_ensureNeverFrozen(KRef object) {
+  EnsureNeverFrozen(object);
+}
+
 }  // extern "C"

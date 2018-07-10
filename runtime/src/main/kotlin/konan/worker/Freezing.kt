@@ -21,7 +21,8 @@ import konan.internal.ExportForCppRuntime
 /**
  * Exception thrown whenever freezing is not possible.
  */
-public class FreezingException() : RuntimeException()
+public class FreezingException(toFreeze: Any, blocker: Any) :
+        RuntimeException("freezing of $toFreeze has failed, first blocker is $blocker")
 
 /**
  * Exception thrown whenever we attempt to mutate frozen objects.
@@ -41,6 +42,14 @@ fun <T> T.freeze(): T {
 val Any?.isFrozen
     get() = isFrozenInternal(this)
 
+
+/**
+ * This function ensures that if we see such an object during freezing attempt - freeze fails and FreezingException
+ * is thrown. Is object is already frozen - FreezingException is thrown immediately.
+ */
+@SymbolName("Kotlin_Worker_ensureNeverFrozen")
+external fun Any.ensureNeverFrozen()
+
 @SymbolName("Kotlin_Worker_freezeInternal")
 internal external fun freezeInternal(it: Any?)
 
@@ -48,7 +57,8 @@ internal external fun freezeInternal(it: Any?)
 internal external fun isFrozenInternal(it: Any?): Boolean
 
 @ExportForCppRuntime
-internal fun ThrowFreezingException(): Nothing = throw FreezingException()
+internal fun ThrowFreezingException(toFreeze: Any, blocker: Any): Nothing =
+        throw FreezingException(toFreeze, blocker)
 
 @ExportForCppRuntime
 internal fun ThrowInvalidMutabilityException(where: Any): Nothing = throw InvalidMutabilityException(where)

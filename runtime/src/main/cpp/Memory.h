@@ -246,6 +246,8 @@ struct MetaObjHeader {
   const TypeInfo* typeInfo_;
   // Strong reference to counter object.
   ObjHeader* counter_;
+  // Flags for object state.
+  int32_t flags_;
 
 #ifdef KONAN_OBJC_INTEROP
   void* associatedObject_;
@@ -470,7 +472,9 @@ OBJ_GETTER(AdoptStablePointer, void*) RUNTIME_NOTHROW;
 // Check mutability state.
 void MutationCheck(ObjHeader* obj);
 // Freeze object subgraph.
-void FreezeSubgraph(ObjHeader* root);
+void FreezeSubgraph(ObjHeader* obj);
+// Ensure this object shall block freezing.
+void EnsureNeverFrozen(ObjHeader* obj);
 #ifdef __cplusplus
 }
 #endif

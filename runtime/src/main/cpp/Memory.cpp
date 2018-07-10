@@ -223,7 +223,6 @@ constexpr const char* MemoryStatistic::indexToName[];
 #endif  // COLLECT_STATISTIC
 
 struct MemoryState {
-
 #if TRACE_MEMORY
   // Set of all containers.
   ContainerHeaderSet* containers;
@@ -419,7 +418,7 @@ RUNTIME_USED ContainerHeader theStaticObjectsContainer = {
 
 void objc_release(void* ptr);
 void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
-RUNTIME_NORETURN void ThrowFreezingException();
+RUNTIME_NORETURN void ThrowFreezingException(KRef toFreeze, KRef blocker);
 
 }  // extern "C"
 
@@ -1536,11 +1535,18 @@ bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
   *  - not 'marked' and not 'seen' as WHITE marker (object is unprocessed)
   * When we see GREY during DFS, it means we see cycle.
   */
-void depthFirstTraversal(ContainerHeader* container, bool* hasCycles, KStdVector<ContainerHeader*>& order) {
+void depthFirstTraversal(ContainerHeader* container, bool* hasCycles,
+                         KRef* firstBlocker, KStdVector<ContainerHeader*>& order) {
   // Mark GRAY.
   container->setSeen();
 
-  traverseContainerReferredObjects(container, [hasCycles, &order](ObjHeader* obj) {
+  traverseContainerReferredObjects(container, [hasCycles, firstBlocker, &order](ObjHeader* obj) {
+      if (*firstBlocker != nullptr)
+        return;
+      if (obj->has_meta_object() && ((obj->meta_object()->flags_ & MF_NEVER_FROZEN) != 0)) {
+          *firstBlocker = obj;
+          return;
+      }
       ContainerHeader* objContainer = obj->container();
       if (!objContainer->permanentOrFrozen()) {
         // Marked GREY, there's cycle.
@@ -1548,7 +1554,7 @@ void depthFirstTraversal(ContainerHeader* container, bool* hasCycles, KStdVector
 
         // Go deeper if WHITE.
         if (!objContainer->seen() && !objContainer->marked()) {
-          depthFirstTraversal(objContainer, hasCycles, order);
+          depthFirstTraversal(objContainer, hasCycles, firstBlocker, order);
         }
       }
   });
@@ -1687,8 +1693,12 @@ void FreezeSubgraph(ObjHeader* root) {
 
   // Do DFS cycle detection.
   bool hasCycles = false;
+  KRef firstBlocker = nullptr;
   KStdVector<ContainerHeader*> order;
-  depthFirstTraversal(rootContainer, &hasCycles, order);
+  depthFirstTraversal(rootContainer, &hasCycles, &firstBlocker, order);
+  if (firstBlocker != nullptr) {
+    ThrowFreezingException(root, firstBlocker);
+  }
   // Now unmark all marked objects, and freeze them, if no cycles detected.
   if (hasCycles) {
     freezeCyclic(rootContainer, order);
@@ -1741,6 +1751,14 @@ OBJ_GETTER(ReadRefLocked, ObjHeader** location, int32_t* spinlock) {
   unlock(spinlock);
   updateReturnRefAdded(OBJ_RESULT, value);
   return value;
+}
+
+void EnsureNeverFrozen(KRef object) {
+   if (object->container()->frozen())
+      ThrowFreezingException(object, object);
+   // TODO: note, that this API could not not be called on frozen objects, so no need to care much about concurrency,
+   // although there's subtle race with case, where other thread freezes the same object after check.
+   object->meta_object()->flags_ |= MF_NEVER_FROZEN;
 }
 
 } // extern "C"

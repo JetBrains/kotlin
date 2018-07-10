@@ -692,6 +692,12 @@ task freeze3(type: RunKonanTest) {
     source = "runtime/workers/freeze3.kt"
 }
 
+task freeze4(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // No exceptions on WASM.
+    goldValue = "OK\n"
+    source = "runtime/workers/freeze4.kt"
+}
+
 task atomic0(type: RunKonanTest) {
     disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
     goldValue = "35\n" + "20\n" + "OK\n"

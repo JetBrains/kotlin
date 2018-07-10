@@ -61,6 +61,10 @@ enum Konan_TypeFlags {
   TF_IMMUTABLE = 1 << 0
 };
 
+enum Konan_MetaFlags {
+  MF_NEVER_FROZEN = 1 << 0
+};
+
 // Extended information about a type.
 struct ExtendedTypeInfo {
   // Number of fields (negated Konan_RuntimeType for array types).
