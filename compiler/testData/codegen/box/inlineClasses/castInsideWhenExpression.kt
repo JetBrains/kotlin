@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JS_IR
 
 inline class Foo<T>(val x: Any) {
     fun bar() {}
