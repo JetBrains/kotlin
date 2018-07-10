@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
 import org.jetbrains.kotlin.idea.caches.project.forcedModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.implementedModules
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -483,8 +484,8 @@ class MoveConflictChecker(
         for (memberToCheck in membersToCheck) {
             for (reference in ReferencesSearch.search(memberToCheck)) {
                 val element = reference.element ?: continue
-                val usageModule = ModuleUtilCore.findModuleForPsiElement(element)
-                if (usageModule != targetModule && !isToBeMoved(element)) {
+                val usageModule = ModuleUtilCore.findModuleForPsiElement(element) ?: continue
+                if (usageModule != targetModule && targetModule !in usageModule.implementedModules && !isToBeMoved(element)) {
                     val container = element.getUsageContext()
                     val message = "${render(container)} uses internal ${render(memberToCheck)} which will be inaccessible after move"
                     conflicts.putValue(element, message.capitalize())
