@@ -1,4 +1,5 @@
 // LANGUAGE_VERSION: 1.0
+// IGNORE_BACKEND: JS_IR
 fun myNotEquals(a: Double?, b: Double?) = a != b
 
 fun myNotEquals1(a: Double?, b: Double) = a != b

@@ -1,4 +1,5 @@
 // LANGUAGE_VERSION: 1.0
+// IGNORE_BACKEND: JS_IR
 fun myNotEquals(a: Float?, b: Float?) = a != b
 
 fun myNotEquals1(a: Float?, b: Float) = a != b
