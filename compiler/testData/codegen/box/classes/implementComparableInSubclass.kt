@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // See KT-12865
 
 package foo
