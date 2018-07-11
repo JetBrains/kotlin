@@ -33,6 +33,7 @@ class DeserializedClassDescriptor(
     outerContext: DeserializationContext,
     val classProto: ProtoBuf.Class,
     nameResolver: NameResolver,
+    val metadataVersion: BinaryVersion,
     private val sourceElement: SourceElement
 ) : AbstractClassDescriptor(
     outerContext.storageManager,
@@ -44,7 +45,7 @@ class DeserializedClassDescriptor(
     private val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(classProto.flags))
     private val kind = ProtoEnumFlags.classKind(Flags.CLASS_KIND.get(classProto.flags))
 
-    val c = outerContext.childContext(this, classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable))
+    val c = outerContext.childContext(this, classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable), metadataVersion)
 
     private val staticScope = if (kind == ClassKind.ENUM_CLASS) StaticScopeForKotlinEnum(c.storageManager, this) else MemberScope.Empty
     private val typeConstructor = DeserializedClassTypeConstructor()

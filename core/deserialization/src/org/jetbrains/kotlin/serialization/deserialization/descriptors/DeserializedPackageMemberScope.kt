@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
@@ -35,13 +36,14 @@ open class DeserializedPackageMemberScope(
     private val packageDescriptor: PackageFragmentDescriptor,
     proto: ProtoBuf.Package,
     nameResolver: NameResolver,
+    metadataVersion: BinaryVersion,
     containerSource: DeserializedContainerSource?,
     components: DeserializationComponents,
     classNames: () -> Collection<Name>
 ) : DeserializedMemberScope(
     components.createContext(
         packageDescriptor, nameResolver, TypeTable(proto.typeTable),
-        VersionRequirementTable.create(proto.versionRequirementTable), containerSource
+        VersionRequirementTable.create(proto.versionRequirementTable), metadataVersion, containerSource
     ),
     proto.functionList, proto.propertyList, proto.typeAliasList, classNames
 ) {

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class MemberDeserializer(private val c: DeserializationContext) {
     private val annotationDeserializer = AnnotationDeserializer(c.components.moduleDescriptor, c.components.notFoundClasses)
+
     fun loadProperty(proto: ProtoBuf.Property): PropertyDescriptor {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
 

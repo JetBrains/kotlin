@@ -39,7 +39,7 @@ class ClassDeserializer(private val components: DeserializationComponents) {
         }
         if (classId in BLACK_LIST) return null
 
-        val (nameResolver, classProto, sourceElement) = key.classData
+        val (nameResolver, classProto, metadataVersion, sourceElement) = key.classData
             ?: components.classDataFinder.findClassData(classId)
             ?: return null
 
@@ -60,11 +60,12 @@ class ClassDeserializer(private val components: DeserializationComponents) {
                 fragment, nameResolver,
                 TypeTable(classProto.typeTable),
                 VersionRequirementTable.create(classProto.versionRequirementTable),
+                metadataVersion,
                 containerSource = null
             )
         }
 
-        return DeserializedClassDescriptor(outerContext, classProto, nameResolver, sourceElement)
+        return DeserializedClassDescriptor(outerContext, classProto, nameResolver, metadataVersion, sourceElement)
     }
 
     private class ClassKey(val classId: ClassId, val classData: ClassData?) {

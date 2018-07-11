@@ -18,12 +18,14 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 
 class ProtoBasedClassDataFinder(
     proto: ProtoBuf.PackageFragment,
     private val nameResolver: NameResolver,
+    private val metadataVersion: BinaryVersion,
     private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE }
 ) : ClassDataFinder {
     private val classIdToProto =
@@ -35,6 +37,6 @@ class ProtoBasedClassDataFinder(
 
     override fun findClassData(classId: ClassId): ClassData? {
         val classProto = classIdToProto[classId] ?: return null
-        return ClassData(nameResolver, classProto, classSource(classId))
+        return ClassData(nameResolver, classProto, metadataVersion, classSource(classId))
     }
 }

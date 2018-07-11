@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 
 object TopDownAnalyzerFacadeForJS {
     @JvmStatic
@@ -85,8 +86,12 @@ object TopDownAnalyzerFacadeForJS {
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
         val expectActualTracker = configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER) ?: ExpectActualTracker.DoNothing
         val languageVersionSettings = configuration.languageVersionSettings
-        val packageFragment = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER]?.let {
-            val metadata = PackagesWithHeaderMetadata(it.headerMetadata, it.compiledPackageParts.values.map { it.metadata })
+        val packageFragment = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER]?.let { incrementalData ->
+            val metadata = PackagesWithHeaderMetadata(
+                incrementalData.headerMetadata,
+                incrementalData.compiledPackageParts.values.map { it.metadata },
+                JsMetadataVersion(*incrementalData.metadataVersion)
+            )
             KotlinJavascriptSerializationUtil.readDescriptors(
                     metadata, moduleContext.storageManager, moduleContext.module,
                     CompilerDeserializationConfiguration(languageVersionSettings), lookupTracker

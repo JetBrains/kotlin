@@ -51,7 +51,7 @@ open class KotlinMetadataStubBuilder(
                 val packageFqName = file.packageFqName
                 val nameResolver = file.nameResolver
                 val components = ClsStubBuilderComponents(
-                        ProtoBasedClassDataFinder(file.proto, nameResolver),
+                        ProtoBasedClassDataFinder(file.proto, nameResolver, file.version),
                         AnnotationLoaderForStubBuilderImpl(serializerProtocol),
                         virtualFile
                 )

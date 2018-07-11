@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
@@ -60,10 +61,11 @@ class DeserializationComponents(
         nameResolver: NameResolver,
         typeTable: TypeTable,
         versionRequirementTable: VersionRequirementTable,
+        metadataVersion: BinaryVersion,
         containerSource: DeserializedContainerSource?
     ): DeserializationContext =
         DeserializationContext(
-            this, nameResolver, descriptor, typeTable, versionRequirementTable, containerSource,
+            this, nameResolver, descriptor, typeTable, versionRequirementTable, metadataVersion, containerSource,
             parentTypeDeserializer = null, typeParameters = listOf()
         )
 }
@@ -75,6 +77,7 @@ class DeserializationContext(
     val containingDeclaration: DeclarationDescriptor,
     val typeTable: TypeTable,
     val versionRequirementTable: VersionRequirementTable,
+    val metadataVersion: BinaryVersion,
     val containerSource: DeserializedContainerSource?,
     parentTypeDeserializer: TypeDeserializer?,
     typeParameters: List<ProtoBuf.TypeParameter>
@@ -92,9 +95,10 @@ class DeserializationContext(
         descriptor: DeclarationDescriptor,
         typeParameterProtos: List<ProtoBuf.TypeParameter>,
         nameResolver: NameResolver = this.nameResolver,
-        typeTable: TypeTable = this.typeTable
+        typeTable: TypeTable = this.typeTable,
+        metadataVersion: BinaryVersion = this.metadataVersion
     ): DeserializationContext = DeserializationContext(
-        components, nameResolver, descriptor, typeTable, versionRequirementTable, this.containerSource,
+        components, nameResolver, descriptor, typeTable, versionRequirementTable, metadataVersion, this.containerSource,
         parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos
     )
 }

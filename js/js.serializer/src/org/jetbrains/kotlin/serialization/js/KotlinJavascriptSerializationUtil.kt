@@ -62,7 +62,9 @@ object KotlinJavascriptSerializationUtil {
             ProtoBuf.PackageFragment.parseFrom(it, JsSerializerProtocol.extensionRegistry)
         }
         val headerProto = JsProtoBuf.Header.parseFrom(CodedInputStream.newInstance(metadata.header), JsSerializerProtocol.extensionRegistry)
-        return createKotlinJavascriptPackageFragmentProvider(storageManager, module, headerProto, scopeProto, configuration, lookupTracker)
+        return createKotlinJavascriptPackageFragmentProvider(
+            storageManager, module, headerProto, scopeProto, metadata.metadataVersion, configuration, lookupTracker
+        )
     }
 
     fun serializeMetadata(
@@ -302,7 +304,7 @@ object KotlinJavascriptSerializationUtil {
     }
 
     @JvmStatic
-    fun readModuleAsProto(metadata: ByteArray): KotlinJavaScriptLibraryParts {
+    fun readModuleAsProto(metadata: ByteArray, metadataVersion: JsMetadataVersion): KotlinJavaScriptLibraryParts {
         val (header, content) = GZIPInputStream(ByteArrayInputStream(metadata)).use { stream ->
             JsProtoBuf.Header.parseDelimitedFrom(stream, JsSerializerProtocol.extensionRegistry) to
                     JsProtoBuf.Library.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
@@ -315,7 +317,7 @@ object KotlinJavascriptSerializationUtil {
             JsProtoBuf.Library.Kind.UMD -> ModuleKind.UMD
         }
 
-        return KotlinJavaScriptLibraryParts(header, content.packageFragmentList, moduleKind, content.importedModuleList)
+        return KotlinJavaScriptLibraryParts(header, content.packageFragmentList, moduleKind, content.importedModuleList, metadataVersion)
     }
 }
 
@@ -323,7 +325,8 @@ data class KotlinJavaScriptLibraryParts(
     val header: JsProtoBuf.Header,
     val body: List<ProtoBuf.PackageFragment>,
     val kind: ModuleKind,
-    val importedModules: List<String>
+    val importedModules: List<String>,
+    val metadataVersion: JsMetadataVersion
 )
 
 internal fun DeclarationDescriptor.extractFileId(): Int? = when (this) {

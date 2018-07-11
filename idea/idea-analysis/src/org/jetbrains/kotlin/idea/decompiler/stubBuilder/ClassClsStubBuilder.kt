@@ -247,7 +247,7 @@ private class ClassClsStubBuilder(
     }
 
     private fun createNestedClassStub(classBody: StubElement<out PsiElement>, nestedClassId: ClassId) {
-        val (nameResolver, classProto, sourceElement) =
+        val (nameResolver, classProto, _, sourceElement) =
                 c.components.classDataFinder.findClassData(nestedClassId)
                         ?: c.components.virtualFileForDebug.let { rootFile ->
                             LOG.error(

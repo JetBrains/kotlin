@@ -73,9 +73,10 @@ object JsAnalyzerFacade : ResolverForModuleFactory() {
                 .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it) }
                 .filter { it.version.isCompatible() }
                 .map { metadata ->
-                    val (header, packageFragmentProtos) = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body)
+                    val (header, packageFragmentProtos) =
+                            KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
                     createKotlinJavascriptPackageFragmentProvider(
-                        moduleContext.storageManager, moduleDescriptor, header, packageFragmentProtos,
+                        moduleContext.storageManager, moduleDescriptor, header, packageFragmentProtos, metadata.version,
                         container.get(), LookupTracker.DO_NOTHING
                     )
                 }

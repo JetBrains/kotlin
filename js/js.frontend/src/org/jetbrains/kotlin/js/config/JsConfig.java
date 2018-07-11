@@ -250,8 +250,9 @@ public class JsConfig {
                         Name.special("<" + cached.getName() + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns()
                 );
 
+                KotlinJavaScriptLibraryParts parts = cached.getData();
                 PackageFragmentProvider provider = KotlinJavascriptPackageFragmentProviderKt.createKotlinJavascriptPackageFragmentProvider(
-                        storageManager, moduleDescriptor, cached.getData().getHeader(), cached.getData().getBody(),
+                        storageManager, moduleDescriptor, parts.getHeader(), parts.getBody(), parts.getMetadataVersion(),
                         new CompilerDeserializationConfiguration(languageVersionSettings),
                         LookupTracker.DO_NOTHING.INSTANCE
                 );
@@ -309,9 +310,9 @@ public class JsConfig {
             );
 
             LookupTracker lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER, LookupTracker.DO_NOTHING.INSTANCE);
-            KotlinJavaScriptLibraryParts parts = KotlinJavascriptSerializationUtil.readModuleAsProto(m.getBody());
+            KotlinJavaScriptLibraryParts parts = KotlinJavascriptSerializationUtil.readModuleAsProto(m.getBody(), m.getVersion());
             PackageFragmentProvider provider = KotlinJavascriptPackageFragmentProviderKt.createKotlinJavascriptPackageFragmentProvider(
-                    storageManager, moduleDescriptor, parts.getHeader(), parts.getBody(),
+                    storageManager, moduleDescriptor, parts.getHeader(), parts.getBody(), m.getVersion(),
                     new CompilerDeserializationConfiguration(languageVersionSettings),
                     lookupTracker
             );

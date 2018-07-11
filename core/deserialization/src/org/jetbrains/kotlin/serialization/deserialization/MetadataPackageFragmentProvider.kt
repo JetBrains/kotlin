@@ -78,11 +78,11 @@ class MetadataPackageFragment(
     override val classDataFinder = ClassDataFinder { classId ->
         val topLevelClassId = generateSequence(classId, ClassId::getOuterClassId).last()
         val stream = finder.findMetadata(topLevelClassId) ?: return@ClassDataFinder null
-        val (message, nameResolver) = readProto(stream)
+        val (message, nameResolver, version) = readProto(stream)
         message.class_List.firstOrNull { classProto ->
             nameResolver.getClassId(classProto.fqName) == classId
         }?.let { classProto ->
-            ClassData(nameResolver, classProto, SourceElement.NO_SOURCE)
+            ClassData(nameResolver, classProto, version, SourceElement.NO_SOURCE)
         }
     }
 
@@ -101,10 +101,11 @@ class MetadataPackageFragment(
         val scopes = arrayListOf<DeserializedPackageMemberScope>()
         for (partName in packageParts) {
             val stream = finder.findMetadata(ClassId(fqName, Name.identifier(partName))) ?: continue
-            val (proto, nameResolver) = readProto(stream)
+            val (proto, nameResolver, version) = readProto(stream)
 
             scopes.add(DeserializedPackageMemberScope(
-                this, proto.`package`, nameResolver, containerSource = null, components = components, classNames = { emptyList() }
+                this, proto.`package`, nameResolver, version, containerSource = null, components = components,
+                classNames = { emptyList() }
             ))
         }
 
@@ -112,6 +113,7 @@ class MetadataPackageFragment(
         scopes.add(object : DeserializedPackageMemberScope(
             this, ProtoBuf.Package.getDefaultInstance(),
             NameResolverImpl(ProtoBuf.StringTable.getDefaultInstance(), ProtoBuf.QualifiedNameTable.getDefaultInstance()),
+            BuiltInsBinaryVersion.INSTANCE, // Exact version does not matter here
             containerSource = null, components = components, classNames = { emptyList() }
         ) {
             override fun hasClass(name: Name): Boolean = hasTopLevelClass(name)
@@ -129,7 +131,7 @@ class MetadataPackageFragment(
         return true
     }
 
-    private fun readProto(stream: InputStream): Pair<ProtoBuf.PackageFragment, NameResolverImpl> {
+    private fun readProto(stream: InputStream): Triple<ProtoBuf.PackageFragment, NameResolverImpl, BuiltInsBinaryVersion> {
         val version = BuiltInsBinaryVersion.readFrom(stream)
 
         if (!version.isCompatible()) {
@@ -143,7 +145,7 @@ class MetadataPackageFragment(
 
         val message = ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
         val nameResolver = NameResolverImpl(message.strings, message.qualifiedNames)
-        return Pair(message, nameResolver)
+        return Triple(message, nameResolver, version)
     }
 
     companion object {

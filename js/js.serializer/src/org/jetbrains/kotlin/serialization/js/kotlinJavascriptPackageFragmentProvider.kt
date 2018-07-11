@@ -28,18 +28,20 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 
 fun createKotlinJavascriptPackageFragmentProvider(
     storageManager: StorageManager,
     module: ModuleDescriptor,
     header: JsProtoBuf.Header,
     packageFragmentProtos: List<ProtoBuf.PackageFragment>,
+    metadataVersion: JsMetadataVersion,
     configuration: DeserializationConfiguration,
     lookupTracker: LookupTracker
 ): PackageFragmentProvider {
     val packageFragments: MutableList<PackageFragmentDescriptor> = packageFragmentProtos.mapNotNullTo(mutableListOf()) { proto ->
         proto.fqName?.let { fqName ->
-            KotlinJavascriptPackageFragment(fqName, storageManager, module, proto, header, configuration)
+            KotlinJavascriptPackageFragment(fqName, storageManager, module, proto, header, metadataVersion, configuration)
         }
     }
 

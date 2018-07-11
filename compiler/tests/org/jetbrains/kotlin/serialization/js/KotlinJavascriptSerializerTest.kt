@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
@@ -92,12 +93,12 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
 
     private fun deserialize(metaFile: File): ModuleDescriptorImpl {
         val module = KotlinTestUtils.createEmptyModule("<${KotlinTestUtils.TEST_MODULE_NAME}>", JsPlatform.builtIns)
-        val metadata = KotlinJavascriptMetadataUtils.loadMetadata(metaFile)
-        assert(metadata.size == 1)
+        val metadata = KotlinJavascriptMetadataUtils.loadMetadata(metaFile).single()
 
-        val (header, packageFragmentProtos) = readModuleAsProto(metadata.single().body)
+        val (header, packageFragmentProtos) = readModuleAsProto(metadata.body, metadata.version)
         val provider = createKotlinJavascriptPackageFragmentProvider(
-            LockBasedStorageManager(), module, header, packageFragmentProtos, DeserializationConfiguration.Default, LookupTracker.DO_NOTHING
+            LockBasedStorageManager(), module, header, packageFragmentProtos, metadata.version,
+            DeserializationConfiguration.Default, LookupTracker.DO_NOTHING
         ).sure { "No package fragment provider was created" }
 
         module.initialize(provider)

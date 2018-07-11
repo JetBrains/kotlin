@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
-import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.FqName
@@ -158,6 +155,7 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
     proto: M,
     nameResolver: NameResolver,
     typeTable: TypeTable,
+    metadataVersion: BinaryVersion,
     createDescriptor: MemberDeserializer.(M) -> D
 ): D? {
     val moduleData = moduleAnchor.getOrCreateModule()
@@ -169,7 +167,7 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
     }
 
     val context = DeserializationContext(
-        moduleData.deserialization, nameResolver, moduleData.module, typeTable, VersionRequirementTable.EMPTY,
+        moduleData.deserialization, nameResolver, moduleData.module, typeTable, VersionRequirementTable.EMPTY, metadataVersion,
         containerSource = null, parentTypeDeserializer = null, typeParameters = typeParameters
     )
     return MemberDeserializer(context).createDescriptor(proto)

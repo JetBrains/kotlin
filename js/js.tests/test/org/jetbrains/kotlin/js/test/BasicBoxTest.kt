@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactory
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.*
@@ -409,10 +410,11 @@ abstract class BasicBoxTest(
         return String(out.toByteArray(), Charset.forName("UTF-8"))
     }
 
-    private fun metadataAsString(metadata: String): String {
-        val containers = mutableListOf<KotlinJavascriptMetadata>()
-        KotlinJavascriptMetadataUtils.parseMetadata(metadata, containers)
-        val metadataParts = KotlinJavascriptSerializationUtil.readModuleAsProto(containers.single().body).body
+    private fun metadataAsString(metadataText: String): String {
+        val metadata = mutableListOf<KotlinJavascriptMetadata>().apply {
+            KotlinJavascriptMetadataUtils.parseMetadata(metadataText, this)
+        }.single()
+        val metadataParts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version).body
         return metadataParts.joinToString("-----\n") {
             val binary = it.toByteArray()
             DebugProtoBuf.PackageFragment.parseFrom(binary, JsSerializerProtocol.extensionRegistry).toString()
@@ -576,8 +578,10 @@ abstract class BasicBoxTest(
         if (hasFilesToRecompile) {
             val header = incrementalData?.header
             if (header != null) {
-                configuration.put(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER,
-                                  IncrementalDataProviderImpl(header, incrementalData.translatedFiles))
+                configuration.put(
+                    JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER,
+                    IncrementalDataProviderImpl(header, incrementalData.translatedFiles, JsMetadataVersion.INSTANCE.toArray())
+                )
             }
 
             configuration.put(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, IncrementalResultsConsumerImpl())
@@ -743,7 +747,7 @@ abstract class BasicBoxTest(
     companion object {
         val METADATA_CACHE = (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).flatMap { path ->
             KotlinJavascriptMetadataUtils.loadMetadata(path).map { metadata ->
-                val parts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body)
+                val parts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
                 JsModuleDescriptor(metadata.moduleName, parts.kind, parts.importedModules, parts)
             }
         }
