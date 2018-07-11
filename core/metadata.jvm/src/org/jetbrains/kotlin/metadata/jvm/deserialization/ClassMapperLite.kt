@@ -63,7 +63,9 @@ object ClassMapperLite {
             add("reflect/KFunction$i", "kotlin/reflect/KFunction")
         }
 
-        for (klass in listOf("Char", "Byte", "Short", "Int", "Float", "Long", "Double", "String", "Enum", "Boolean")) {
+        //Boolean is purposefully omitted from this list, even though it has a Companion Object.
+        //This assures that an older compiler won't get confused by the new signature, preventing a bug in compatibility.
+        for (klass in listOf("Char", "Byte", "Short", "Int", "Float", "Long", "Double", "String", "Enum")) {
             add("$klass.Companion", "kotlin/jvm/internal/${klass}CompanionObject")
         }
     }
