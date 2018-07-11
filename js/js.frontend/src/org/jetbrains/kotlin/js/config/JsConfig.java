@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
-import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
-import org.jetbrains.kotlin.serialization.js.KotlinJavaScriptLibraryParts;
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
-import org.jetbrains.kotlin.serialization.js.ModuleKind;
+import org.jetbrains.kotlin.serialization.js.*;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.utils.JsMetadataVersion;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
@@ -64,11 +61,8 @@ public class JsConfig {
     private final List<KotlinJavascriptMetadata> metadata = new SmartList<>();
     private final List<KotlinJavascriptMetadata> friends = new SmartList<>();
 
-    @Nullable
-    private List<JsModuleDescriptor<ModuleDescriptorImpl>> moduleDescriptors = null;
-
-    @Nullable
-    private List<JsModuleDescriptor<ModuleDescriptorImpl>> friendModuleDescriptors = null;
+    private List<ModuleDescriptorImpl> moduleDescriptors;
+    private List<ModuleDescriptorImpl> friendModuleDescriptors;
 
     private boolean initialized = false;
 
@@ -237,19 +231,16 @@ public class JsConfig {
     }
 
     @NotNull
-    public List<JsModuleDescriptor<ModuleDescriptorImpl>> getModuleDescriptors() {
+    public List<ModuleDescriptorImpl> getModuleDescriptors() {
         init();
         return moduleDescriptors;
     }
 
     @NotNull
-    private List<JsModuleDescriptor<ModuleDescriptorImpl>> createModuleDescriptors() {
-        List<JsModuleDescriptor<ModuleDescriptorImpl>> moduleDescriptors = new SmartList<>();
-        List<ModuleDescriptorImpl> kotlinModuleDescriptors = new ArrayList<>();
+    private List<ModuleDescriptorImpl> createModuleDescriptors() {
+        List<ModuleDescriptorImpl> moduleDescriptors = new SmartList<>();
         for (KotlinJavascriptMetadata metadataEntry : metadata) {
-            JsModuleDescriptor<ModuleDescriptorImpl> descriptor = createModuleDescriptor(metadataEntry);
-            moduleDescriptors.add(descriptor);
-            kotlinModuleDescriptors.add(descriptor.getData());
+            moduleDescriptors.add(createModuleDescriptor(metadataEntry));
         }
 
         if (metadataCache != null) {
@@ -259,47 +250,27 @@ public class JsConfig {
                         Name.special("<" + cached.getName() + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns()
                 );
 
-                JsModuleDescriptor<PackageFragmentProvider> rawDescriptor = KotlinJavascriptSerializationUtil.readModuleFromProto(
-                        cached, storageManager, moduleDescriptor,
+                PackageFragmentProvider provider = KotlinJavascriptPackageFragmentProviderKt.createKotlinJavascriptPackageFragmentProvider(
+                        storageManager, moduleDescriptor, cached.getData().getHeader(), cached.getData().getBody(),
                         new CompilerDeserializationConfiguration(languageVersionSettings),
                         LookupTracker.DO_NOTHING.INSTANCE
                 );
 
-                PackageFragmentProvider provider = rawDescriptor.getData();
-                moduleDescriptor.initialize(provider != null ? provider : PackageFragmentProvider.Empty.INSTANCE);
-
-                JsModuleDescriptor<ModuleDescriptorImpl> jsModuleDescriptor = cached.copy(moduleDescriptor);
-                moduleDescriptors.add(jsModuleDescriptor);
-                kotlinModuleDescriptors.add(jsModuleDescriptor.getData());
+                moduleDescriptor.initialize(provider);
+                moduleDescriptors.add(moduleDescriptor);
             }
         }
 
-        for (JsModuleDescriptor<ModuleDescriptorImpl> module : moduleDescriptors) {
-            // TODO: remove downcast
-            setDependencies(module.getData(), kotlinModuleDescriptors);
+        for (ModuleDescriptorImpl module : moduleDescriptors) {
+            setDependencies(module, moduleDescriptors);
         }
 
-        moduleDescriptors = Collections.unmodifiableList(moduleDescriptors);
-
-        return moduleDescriptors;
+        return Collections.unmodifiableList(moduleDescriptors);
     }
 
     @NotNull
-    public List<JsModuleDescriptor<ModuleDescriptorImpl>> getFriendModuleDescriptors() {
+    public List<ModuleDescriptorImpl> getFriendModuleDescriptors() {
         init();
-        return friendModuleDescriptors;
-    }
-
-    @NotNull
-    private List<JsModuleDescriptor<ModuleDescriptorImpl>> createFriendModuleDescriptors() {
-        List<JsModuleDescriptor<ModuleDescriptorImpl>> friendModuleDescriptors = new SmartList<>();
-        for (KotlinJavascriptMetadata metadataEntry : friends) {
-            JsModuleDescriptor<ModuleDescriptorImpl> descriptor = createModuleDescriptor(metadataEntry);
-            friendModuleDescriptors.add(descriptor);
-        }
-
-        friendModuleDescriptors = Collections.unmodifiableList(friendModuleDescriptors);
-
         return friendModuleDescriptors;
     }
 
@@ -320,13 +291,13 @@ public class JsConfig {
         }
 
         if (friendModuleDescriptors == null) {
-            friendModuleDescriptors = createFriendModuleDescriptors();
+            friendModuleDescriptors = CollectionsKt.map(friends, this::createModuleDescriptor);
         }
     }
 
-    private final IdentityHashMap<KotlinJavascriptMetadata, JsModuleDescriptor<ModuleDescriptorImpl>> factoryMap = new IdentityHashMap<>();
+    private final IdentityHashMap<KotlinJavascriptMetadata, ModuleDescriptorImpl> factoryMap = new IdentityHashMap<>();
 
-    private JsModuleDescriptor<ModuleDescriptorImpl> createModuleDescriptor(KotlinJavascriptMetadata metadata) {
+    private ModuleDescriptorImpl createModuleDescriptor(KotlinJavascriptMetadata metadata) {
         return factoryMap.computeIfAbsent(metadata, m -> {
             LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
             assert m.getVersion().isCompatible() ||
@@ -338,16 +309,15 @@ public class JsConfig {
             );
 
             LookupTracker lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER, LookupTracker.DO_NOTHING.INSTANCE);
-            JsModuleDescriptor<PackageFragmentProvider> rawDescriptor = KotlinJavascriptSerializationUtil.readModule(
-                    m.getBody(), storageManager, moduleDescriptor,
+            KotlinJavaScriptLibraryParts parts = KotlinJavascriptSerializationUtil.readModuleAsProto(m.getBody());
+            PackageFragmentProvider provider = KotlinJavascriptPackageFragmentProviderKt.createKotlinJavascriptPackageFragmentProvider(
+                    storageManager, moduleDescriptor, parts.getHeader(), parts.getBody(),
                     new CompilerDeserializationConfiguration(languageVersionSettings),
                     lookupTracker
             );
 
-            PackageFragmentProvider provider = rawDescriptor.getData();
-            moduleDescriptor.initialize(provider != null ? provider : PackageFragmentProvider.Empty.INSTANCE);
-
-            return rawDescriptor.copy(moduleDescriptor);
+            moduleDescriptor.initialize(provider);
+            return moduleDescriptor;
         });
     }
 

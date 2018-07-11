@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil.readModuleAsProto
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -94,9 +95,10 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(metaFile)
         assert(metadata.size == 1)
 
-        val provider = KotlinJavascriptSerializationUtil.readModule(
-                metadata.single().body, LockBasedStorageManager(), module, DeserializationConfiguration.Default, LookupTracker.DO_NOTHING
-        ).data.sure { "No package fragment provider was created" }
+        val (header, packageFragmentProtos) = readModuleAsProto(metadata.single().body)
+        val provider = createKotlinJavascriptPackageFragmentProvider(
+            LockBasedStorageManager(), module, header, packageFragmentProtos, DeserializationConfiguration.Default, LookupTracker.DO_NOTHING
+        ).sure { "No package fragment provider was created" }
 
         module.initialize(provider)
         module.setDependencies(module, module.builtIns.builtInsModule)

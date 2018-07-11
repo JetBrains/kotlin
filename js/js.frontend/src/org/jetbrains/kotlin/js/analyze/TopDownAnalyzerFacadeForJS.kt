@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
@@ -56,8 +55,8 @@ object TopDownAnalyzerFacadeForJS {
         files: Collection<KtFile>,
         project: Project,
         configuration: CompilerConfiguration,
-        moduleDescriptors: List<JsModuleDescriptor<ModuleDescriptorImpl>>,
-        friendModuleDescriptors: List<JsModuleDescriptor<ModuleDescriptorImpl>>
+        moduleDescriptors: List<ModuleDescriptorImpl>,
+        friendModuleDescriptors: List<ModuleDescriptorImpl>
     ): JsAnalysisResult {
 
         val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
@@ -65,9 +64,9 @@ object TopDownAnalyzerFacadeForJS {
 
         context.module.setDependencies(
             listOf(context.module) +
-                    moduleDescriptors.map { it.data } +
+                    moduleDescriptors +
                     listOf(JsPlatform.builtIns.builtInsModule),
-            friendModuleDescriptors.map { it.data }.toSet()
+            friendModuleDescriptors.toSet()
         )
 
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)

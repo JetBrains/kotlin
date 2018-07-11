@@ -51,34 +51,6 @@ import java.util.zip.GZIPOutputStream
 object KotlinJavascriptSerializationUtil {
     const val CLASS_METADATA_FILE_EXTENSION: String = "kjsm"
 
-    @JvmStatic
-    fun readModule(
-        metadata: ByteArray,
-        storageManager: StorageManager,
-        module: ModuleDescriptor,
-        configuration: DeserializationConfiguration,
-        lookupTracker: LookupTracker
-    ): JsModuleDescriptor<PackageFragmentProvider?> =
-        readModuleFromProto(readModuleAsProto(metadata, module.name.asString()), storageManager, module, configuration, lookupTracker)
-
-    fun readModuleAsProto(metadata: ByteArray, name: String): JsModuleDescriptor<KotlinJavaScriptLibraryParts> =
-        metadata.deserializeToLibraryParts(name)
-
-    @JvmStatic
-    fun readModuleFromProto(
-        jsModule: JsModuleDescriptor<KotlinJavaScriptLibraryParts>,
-        storageManager: StorageManager, module: ModuleDescriptor,
-        configuration: DeserializationConfiguration,
-        lookupTracker: LookupTracker
-    ): JsModuleDescriptor<PackageFragmentProvider?> {
-        val (header, packageFragmentProtos) = jsModule.data
-        return jsModule.copy(
-            createKotlinJavascriptPackageFragmentProvider(
-                storageManager, module, header, packageFragmentProtos, configuration, lookupTracker
-            )
-        )
-    }
-
     fun readDescriptors(
         metadata: PackagesWithHeaderMetadata,
         storageManager: StorageManager,
@@ -334,27 +306,30 @@ object KotlinJavascriptSerializationUtil {
         }
     }
 
-    private fun ByteArray.deserializeToLibraryParts(name: String): JsModuleDescriptor<KotlinJavaScriptLibraryParts> {
-        val (header, content) = GZIPInputStream(ByteArrayInputStream(this)).use { stream ->
+    @JvmStatic
+    fun readModuleAsProto(metadata: ByteArray): KotlinJavaScriptLibraryParts {
+        val (header, content) = GZIPInputStream(ByteArrayInputStream(metadata)).use { stream ->
             JsProtoBuf.Header.parseDelimitedFrom(stream, JsSerializerProtocol.extensionRegistry) to
                     JsProtoBuf.Library.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
         }
 
-        return JsModuleDescriptor(
-            name = name,
-            data = KotlinJavaScriptLibraryParts(header, content.packageFragmentList),
-            kind = when (content.kind) {
-                null, JsProtoBuf.Library.Kind.PLAIN -> ModuleKind.PLAIN
-                JsProtoBuf.Library.Kind.AMD -> ModuleKind.AMD
-                JsProtoBuf.Library.Kind.COMMON_JS -> ModuleKind.COMMON_JS
-                JsProtoBuf.Library.Kind.UMD -> ModuleKind.UMD
-            },
-            imported = content.importedModuleList
-        )
+        val moduleKind = when (content.kind) {
+            null, JsProtoBuf.Library.Kind.PLAIN -> ModuleKind.PLAIN
+            JsProtoBuf.Library.Kind.AMD -> ModuleKind.AMD
+            JsProtoBuf.Library.Kind.COMMON_JS -> ModuleKind.COMMON_JS
+            JsProtoBuf.Library.Kind.UMD -> ModuleKind.UMD
+        }
+
+        return KotlinJavaScriptLibraryParts(header, content.packageFragmentList, moduleKind, content.importedModuleList)
     }
 }
 
-data class KotlinJavaScriptLibraryParts(val header: JsProtoBuf.Header, val body: List<ProtoBuf.PackageFragment>)
+data class KotlinJavaScriptLibraryParts(
+    val header: JsProtoBuf.Header,
+    val body: List<ProtoBuf.PackageFragment>,
+    val kind: ModuleKind,
+    val importedModules: List<String>
+)
 
 internal fun DeclarationDescriptor.extractFileId(): Int? = when (this) {
     is DeserializedClassDescriptor -> classProto.getExtension(JsProtoBuf.classContainingFileId)

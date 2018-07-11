@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-class JsModuleDescriptor<out T>(val name: String, val kind: ModuleKind, val imported: List<String>, val data: T) {
-    fun <S> copy(newData: S) = JsModuleDescriptor(name, kind, imported, newData)
-}
+class JsModuleDescriptor<out T>(
+    val name: String,
+    val kind: ModuleKind,
+    val imported: List<String>,
+    val data: T
+)

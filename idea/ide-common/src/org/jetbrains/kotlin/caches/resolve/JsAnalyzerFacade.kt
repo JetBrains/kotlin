@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
+import org.jetbrains.kotlin.serialization.js.createKotlinJavascriptPackageFragmentProvider
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
 object JsAnalyzerFacade : ResolverForModuleFactory() {
@@ -72,11 +72,12 @@ object JsAnalyzerFacade : ResolverForModuleFactory() {
             val providers = moduleInfo.getLibraryRoots()
                 .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it) }
                 .filter { it.version.isCompatible() }
-                .mapNotNull {
-                    KotlinJavascriptSerializationUtil.readModule(
-                        it.body, moduleContext.storageManager, moduleDescriptor, container.get<DeserializationConfiguration>(),
-                        LookupTracker.DO_NOTHING
-                    ).data
+                .map { metadata ->
+                    val (header, packageFragmentProtos) = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body)
+                    createKotlinJavascriptPackageFragmentProvider(
+                        moduleContext.storageManager, moduleDescriptor, header, packageFragmentProtos,
+                        container.get(), LookupTracker.DO_NOTHING
+                    )
                 }
 
             if (providers.isNotEmpty()) {

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -23,8 +22,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
-import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 data class Result(val moduleDescriptor: ModuleDescriptor, val generatedCode: String)
 
@@ -35,12 +32,8 @@ fun compile(
     export: FqName? = null,
     dependencies: List<ModuleDescriptor> = listOf()
 ): Result {
-    val moduleDescriptors =
-        dependencies
-            .filterIsInstance<ModuleDescriptorImpl>()
-            .map { JsModuleDescriptor("", ModuleKind.PLAIN, listOf(), it) }
-
-    val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, project, configuration, moduleDescriptors, emptyList())
+    val analysisResult =
+        TopDownAnalyzerFacadeForJS.analyzeFiles(files, project, configuration, dependencies.filterIsInstance(), emptyList())
 
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
