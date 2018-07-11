@@ -17633,6 +17633,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/mapping/memberProperty.kt");
             }
 
+            @TestMetadata("methodsFromObject.kt")
+            public void testMethodsFromObject() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/mapping/methodsFromObject.kt");
+            }
+
             @TestMetadata("openSuspendFun.kt")
             public void testOpenSuspendFun() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/mapping/openSuspendFun.kt");

@@ -168,9 +168,16 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     private fun Class<*>.lookupMethod(name: String, parameterTypes: List<Class<*>>, returnType: Class<*>, isPublic: Boolean): Method? {
         val parametersArray = parameterTypes.toTypedArray()
 
-        // If we're looking for a public method, just use Java reflection's getMethod/getMethods
+        // If we're looking for a public method, use Java reflection's getMethod/getMethods first
         if (isPublic) {
-            return tryGetMethod(name, parametersArray, returnType, declared = false)
+            val result = tryGetMethod(name, parametersArray, returnType, declared = false)
+            if (result != null) return result
+
+            // Methods from java.lang.Object cannot be found in the interface via Class.getMethod/getDeclaredMethod
+            if (isInterface) {
+                val fromObject = Any::class.java.lookupMethod(name, parameterTypes, returnType, isPublic)
+                if (fromObject != null) return fromObject
+            }
         }
 
         // If we're looking for a non-public method, it might be located not only in this class, but also in any of its superclasses
