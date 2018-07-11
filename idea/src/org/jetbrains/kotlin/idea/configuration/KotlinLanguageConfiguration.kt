@@ -25,15 +25,16 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
                 it.startsWith("https://plugins.jetbrains.com/plugins/") &&
                         (it.endsWith("/6954") || it.endsWith(KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString))
             }
-            when (channel) {
-                EAPChannels.EAP_1_3.uiIndex -> hosts.add(EAPChannels.EAP_1_3.url)
-                EAPChannels.EAP_1_2.uiIndex -> hosts.add(EAPChannels.EAP_1_2.url)
+
+            EAPChannels.values().find { it.uiIndex == channel }?.let { eapChannel ->
+                hosts.add(eapChannel.url)
             }
         }
 
         enum class EAPChannels(val url: String, val uiIndex: Int) {
             EAP_1_2("https://plugins.jetbrains.com/plugins/eap-1.2/${KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString}", 1),
-            EAP_1_3("https://plugins.jetbrains.com/plugins/eap-next/${KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString}", 2);
+            EAP_1_3("https://plugins.jetbrains.com/plugins/eap-1.3/${KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString}", 2),
+            EAP_NEXT("https://plugins.jetbrains.com/plugins/eap-next/${KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString}", 3);
 
             private val hasChannel: Boolean get() = url in UpdateSettings.getInstance().pluginHosts
 
@@ -110,7 +111,12 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
             }
         }
 
-        savedChannel = EAPChannels.EAP_1_3.indexIfAvailable() ?: EAPChannels.EAP_1_2.indexIfAvailable() ?: 0
+        savedChannel = EAPChannels.values().asSequence()
+            .map { eapChannel -> eapChannel.indexIfAvailable() }
+            .filterNotNull()
+            .firstOrNull()
+                ?: 0
+
         form.channelCombo.selectedIndex = savedChannel
 
         form.channelCombo.addActionListener {
