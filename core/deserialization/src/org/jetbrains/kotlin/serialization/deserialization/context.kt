@@ -34,63 +34,67 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.storage.StorageManager
 
 class DeserializationComponents(
-        val storageManager: StorageManager,
-        val moduleDescriptor: ModuleDescriptor,
-        val configuration: DeserializationConfiguration,
-        val classDataFinder: ClassDataFinder,
-        val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget>,
-        val packageFragmentProvider: PackageFragmentProvider,
-        val localClassifierTypeSettings: LocalClassifierTypeSettings,
-        val errorReporter: ErrorReporter,
-        val lookupTracker: LookupTracker,
-        val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-        val fictitiousClassDescriptorFactories: Iterable<ClassDescriptorFactory>,
-        val notFoundClasses: NotFoundClasses,
-        val contractDeserializer: ContractDeserializer,
-        val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
-        val platformDependentDeclarationFilter: PlatformDependentDeclarationFilter = PlatformDependentDeclarationFilter.All,
-        val extensionRegistryLite: ExtensionRegistryLite
+    val storageManager: StorageManager,
+    val moduleDescriptor: ModuleDescriptor,
+    val configuration: DeserializationConfiguration,
+    val classDataFinder: ClassDataFinder,
+    val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget>,
+    val packageFragmentProvider: PackageFragmentProvider,
+    val localClassifierTypeSettings: LocalClassifierTypeSettings,
+    val errorReporter: ErrorReporter,
+    val lookupTracker: LookupTracker,
+    val flexibleTypeDeserializer: FlexibleTypeDeserializer,
+    val fictitiousClassDescriptorFactories: Iterable<ClassDescriptorFactory>,
+    val notFoundClasses: NotFoundClasses,
+    val contractDeserializer: ContractDeserializer,
+    val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
+    val platformDependentDeclarationFilter: PlatformDependentDeclarationFilter = PlatformDependentDeclarationFilter.All,
+    val extensionRegistryLite: ExtensionRegistryLite
 ) {
     val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 
     fun deserializeClass(classId: ClassId): ClassDescriptor? = classDeserializer.deserializeClass(classId)
 
     fun createContext(
-            descriptor: PackageFragmentDescriptor,
-            nameResolver: NameResolver,
-            typeTable: TypeTable,
-            versionRequirementTable: VersionRequirementTable,
-            containerSource: DeserializedContainerSource?
+        descriptor: PackageFragmentDescriptor,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        versionRequirementTable: VersionRequirementTable,
+        containerSource: DeserializedContainerSource?
     ): DeserializationContext =
-            DeserializationContext(this, nameResolver, descriptor, typeTable, versionRequirementTable, containerSource,
-                                   parentTypeDeserializer = null, typeParameters = listOf())
+        DeserializationContext(
+            this, nameResolver, descriptor, typeTable, versionRequirementTable, containerSource,
+            parentTypeDeserializer = null, typeParameters = listOf()
+        )
 }
 
 
 class DeserializationContext(
-        val components: DeserializationComponents,
-        val nameResolver: NameResolver,
-        val containingDeclaration: DeclarationDescriptor,
-        val typeTable: TypeTable,
-        val versionRequirementTable: VersionRequirementTable,
-        val containerSource: DeserializedContainerSource?,
-        parentTypeDeserializer: TypeDeserializer?,
-        typeParameters: List<ProtoBuf.TypeParameter>
+    val components: DeserializationComponents,
+    val nameResolver: NameResolver,
+    val containingDeclaration: DeclarationDescriptor,
+    val typeTable: TypeTable,
+    val versionRequirementTable: VersionRequirementTable,
+    val containerSource: DeserializedContainerSource?,
+    parentTypeDeserializer: TypeDeserializer?,
+    typeParameters: List<ProtoBuf.TypeParameter>
 ) {
-    val typeDeserializer = TypeDeserializer(this, parentTypeDeserializer, typeParameters,
-                                            "Deserializer for ${containingDeclaration.name}")
+    val typeDeserializer: TypeDeserializer = TypeDeserializer(
+        this, parentTypeDeserializer, typeParameters,
+        "Deserializer for ${containingDeclaration.name}"
+    )
 
-    val memberDeserializer = MemberDeserializer(this)
+    val memberDeserializer: MemberDeserializer = MemberDeserializer(this)
 
     val storageManager: StorageManager get() = components.storageManager
 
     fun childContext(
-            descriptor: DeclarationDescriptor,
-            typeParameterProtos: List<ProtoBuf.TypeParameter>,
-            nameResolver: NameResolver = this.nameResolver,
-            typeTable: TypeTable = this.typeTable
-    ) = DeserializationContext(
-            components, nameResolver, descriptor, typeTable, versionRequirementTable, this.containerSource,
-            parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos
+        descriptor: DeclarationDescriptor,
+        typeParameterProtos: List<ProtoBuf.TypeParameter>,
+        nameResolver: NameResolver = this.nameResolver,
+        typeTable: TypeTable = this.typeTable
+    ): DeserializationContext = DeserializationContext(
+        components, nameResolver, descriptor, typeTable, versionRequirementTable, this.containerSource,
+        parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos
     )
 }

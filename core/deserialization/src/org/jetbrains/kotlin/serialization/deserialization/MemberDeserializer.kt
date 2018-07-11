@@ -276,7 +276,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             c.containingDeclaration.asProtoContainer()?.let {
                 c.components.annotationAndConstantLoader
                     .loadExtensionReceiverParameterAnnotations(it, proto, receiverTargetedKind)
-                    .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
+                    .map { annotation -> AnnotationWithTarget(annotation, AnnotationUseSiteTarget.RECEIVER) }
                     .toList()
             }.orEmpty()
         }

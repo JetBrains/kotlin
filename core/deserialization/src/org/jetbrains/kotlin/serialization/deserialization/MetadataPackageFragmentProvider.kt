@@ -36,36 +36,36 @@ import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
 class MetadataPackageFragmentProvider(
-        storageManager: StorageManager,
-        finder: KotlinMetadataFinder,
-        moduleDescriptor: ModuleDescriptor,
-        notFoundClasses: NotFoundClasses,
-        private val metadataPartProvider: MetadataPartProvider
+    storageManager: StorageManager,
+    finder: KotlinMetadataFinder,
+    moduleDescriptor: ModuleDescriptor,
+    notFoundClasses: NotFoundClasses,
+    private val metadataPartProvider: MetadataPartProvider
 ) : AbstractDeserializedPackageFragmentProvider(storageManager, finder, moduleDescriptor) {
     init {
         components = DeserializationComponents(
-                storageManager,
-                moduleDescriptor,
-                DeserializationConfiguration.Default, // TODO
-                DeserializedClassDataFinder(this),
-                AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, BuiltInSerializerProtocol),
-                this,
-                LocalClassifierTypeSettings.Default,
-                ErrorReporter.DO_NOTHING,
-                LookupTracker.DO_NOTHING,
-                FlexibleTypeDeserializer.ThrowException,
-                emptyList(),
-                notFoundClasses,
-                ContractDeserializer.DEFAULT,
-                AdditionalClassPartsProvider.None, PlatformDependentDeclarationFilter.All,
-                BuiltInSerializerProtocol.extensionRegistry
+            storageManager,
+            moduleDescriptor,
+            DeserializationConfiguration.Default, // TODO
+            DeserializedClassDataFinder(this),
+            AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, BuiltInSerializerProtocol),
+            this,
+            LocalClassifierTypeSettings.Default,
+            ErrorReporter.DO_NOTHING,
+            LookupTracker.DO_NOTHING,
+            FlexibleTypeDeserializer.ThrowException,
+            emptyList(),
+            notFoundClasses,
+            ContractDeserializer.DEFAULT,
+            AdditionalClassPartsProvider.None, PlatformDependentDeclarationFilter.All,
+            BuiltInSerializerProtocol.extensionRegistry
         )
     }
 
     override fun findPackage(fqName: FqName): DeserializedPackageFragment? =
-            if (finder.hasMetadataPackage(fqName))
-                MetadataPackageFragment(fqName, storageManager, moduleDescriptor, metadataPartProvider, finder)
-            else null
+        if (finder.hasMetadataPackage(fqName))
+            MetadataPackageFragment(fqName, storageManager, moduleDescriptor, metadataPartProvider, finder)
+        else null
 }
 
 class MetadataPackageFragment(
@@ -104,15 +104,15 @@ class MetadataPackageFragment(
             val (proto, nameResolver) = readProto(stream)
 
             scopes.add(DeserializedPackageMemberScope(
-                    this, proto.`package`, nameResolver, containerSource = null, components = components, classNames = { emptyList() }
+                this, proto.`package`, nameResolver, containerSource = null, components = components, classNames = { emptyList() }
             ))
         }
 
         // Also add the deserialized scope that can load all classes from this package
         scopes.add(object : DeserializedPackageMemberScope(
-                this, ProtoBuf.Package.getDefaultInstance(),
-                NameResolverImpl(ProtoBuf.StringTable.getDefaultInstance(), ProtoBuf.QualifiedNameTable.getDefaultInstance()),
-                containerSource = null, components = components, classNames = { emptyList() }
+            this, ProtoBuf.Package.getDefaultInstance(),
+            NameResolverImpl(ProtoBuf.StringTable.getDefaultInstance(), ProtoBuf.QualifiedNameTable.getDefaultInstance()),
+            containerSource = null, components = components, classNames = { emptyList() }
         ) {
             override fun hasClass(name: Name): Boolean = hasTopLevelClass(name)
             override fun definitelyDoesNotContainName(name: Name) = false
@@ -135,9 +135,9 @@ class MetadataPackageFragment(
         if (!version.isCompatible()) {
             // TODO: report a proper diagnostic
             throw UnsupportedOperationException(
-                    "Kotlin metadata definition format version is not supported: " +
-                    "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
-                    "Please update Kotlin"
+                "Kotlin metadata definition format version is not supported: " +
+                        "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
+                        "Please update Kotlin"
             )
         }
 
@@ -147,7 +147,7 @@ class MetadataPackageFragment(
     }
 
     companion object {
-        val DOT_METADATA_FILE_EXTENSION = ".kotlin_metadata"
-        val METADATA_FILE_EXTENSION = "kotlin_metadata"
+        const val METADATA_FILE_EXTENSION = "kotlin_metadata"
+        const val DOT_METADATA_FILE_EXTENSION = ".$METADATA_FILE_EXTENSION"
     }
 }

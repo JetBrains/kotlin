@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 
 class ProtoBasedClassDataFinder(
-        proto: ProtoBuf.PackageFragment,
-        private val nameResolver: NameResolver,
-        private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE }
+    proto: ProtoBuf.PackageFragment,
+    private val nameResolver: NameResolver,
+    private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE }
 ) : ClassDataFinder {
     private val classIdToProto =
-            proto.class_List.associateBy { klass ->
-                nameResolver.getClassId(klass.fqName)
-            }
+        proto.class_List.associateBy { klass ->
+            nameResolver.getClassId(klass.fqName)
+        }
 
     internal val allClassIds: Collection<ClassId> get() = classIdToProto.keys
 
