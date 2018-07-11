@@ -29,6 +29,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.vfs.VfsUtil
+import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -44,6 +45,7 @@ object ConfigLibraryUtil {
     private val DEFAULT_JAVA_RUNTIME_LIB_NAME = "JAVA_RUNTIME_LIB_NAME"
     private val DEFAULT_KOTLIN_TEST_LIB_NAME = "KOTLIN_TEST_LIB_NAME"
     private val DEFAULT_KOTLIN_JS_STDLIB_NAME = "KOTLIN_JS_STDLIB_NAME"
+    private val DEFAULT_KOTLIN_COMMON_STDLIB_NAME = "KOTLIN_COMMON_STDLIB_NAME"
 
     private fun getKotlinRuntimeLibEditor(libName: String, library: File): NewLibraryEditor {
         val editor = NewLibraryEditor()
@@ -65,6 +67,17 @@ object ConfigLibraryUtil {
                    JSLibraryKind)
     }
 
+    fun configureKotlinCommonRuntime(module: Module) {
+        addLibrary(
+            getKotlinRuntimeLibEditor(
+                DEFAULT_KOTLIN_COMMON_STDLIB_NAME,
+                File("dist/common/kotlin-stdlib-common.jar")
+            ),
+            module,
+            CommonLibraryKind
+        )
+    }
+
     fun configureKotlinRuntime(module: Module) {
         addLibrary(getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, PathUtil.kotlinPathsForDistDirectory.stdlibPath), module)
         addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_TEST_LIB_NAME, PathUtil.kotlinPathsForDistDirectory.kotlinTestPath), module)
@@ -83,6 +96,10 @@ object ConfigLibraryUtil {
     fun unConfigureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
         removeLibrary(module, DEFAULT_KOTLIN_JS_STDLIB_NAME)
+    }
+
+    fun unConfigureKotlinCommonRuntime(module: Module) {
+        removeLibrary(module, DEFAULT_KOTLIN_COMMON_STDLIB_NAME)
     }
 
     fun configureSdk(module: Module, sdk: Sdk) {

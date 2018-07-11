@@ -285,8 +285,6 @@ class MoveConflictChecker(
 
             val fqName = targetDescriptor.importableFqName ?: return true
             val importableDescriptor = targetDescriptor.getImportableDescriptor()
-            val renderedImportableTarget = DESCRIPTOR_RENDERER_FOR_COMPARISON.render(importableDescriptor)
-            val renderedTarget by lazy { DESCRIPTOR_RENDERER_FOR_COMPARISON.render(targetDescriptor) }
 
             val targetModuleInfo = getModuleInfoByVirtualFile(project, targetScope)
             val dummyFile = KtPsiFactory(targetElement.project).createFile("dummy.kt", "").apply {
@@ -295,6 +293,14 @@ class MoveConflictChecker(
             }
 
             val newTargetDescriptors = dummyFile.resolveImportReference(fqName)
+
+            if (importableDescriptor is TypeAliasDescriptor
+                && newTargetDescriptors.any {
+                    it is ClassDescriptor && it.isExpect && it.importableFqName == importableDescriptor.importableFqName
+                }) return true
+
+            val renderedImportableTarget = DESCRIPTOR_RENDERER_FOR_COMPARISON.render(importableDescriptor)
+            val renderedTarget by lazy { DESCRIPTOR_RENDERER_FOR_COMPARISON.render(targetDescriptor) }
 
             return newTargetDescriptors.any {
                 if (DESCRIPTOR_RENDERER_FOR_COMPARISON.render(it) != renderedImportableTarget) return@any false
