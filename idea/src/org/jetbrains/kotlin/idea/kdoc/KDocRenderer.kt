@@ -60,7 +60,7 @@ object KDocRenderer {
     fun StringBuilder.appendKDocSection(section: KDocSection) {
         renderTag(section.findTagByName("receiver"), "Receiver", this)
         val paramTags = section.findTagsByName("param").filter { it.getSubjectName() != null }
-        renderTagList(paramTags, "Parameters", this)
+        renderTagList(paramTags, "Params", this)
 
         renderTag(section.findTagByName("return"), "Returns", this)
 
