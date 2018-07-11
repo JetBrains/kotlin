@@ -53,3 +53,4 @@ internal object CharCompanionObject {
 
 internal object StringCompanionObject {}
 internal object EnumCompanionObject {}
+internal object BooleanCompanionObject {}
