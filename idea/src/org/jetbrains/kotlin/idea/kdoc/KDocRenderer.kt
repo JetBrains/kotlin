@@ -105,7 +105,7 @@ object KDocRenderer {
     }
 
     private fun StringBuilder.renderSection(title: String, content: StringBuilder.() -> Unit) {
-        append(SECTION_HEADER_START, title, SECTION_SEPARATOR)
+        append(SECTION_HEADER_START, title, ":", SECTION_SEPARATOR)
         content()
         append(SECTION_END)
     }
