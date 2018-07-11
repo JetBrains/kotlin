@@ -86,6 +86,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 op(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
                 op(it, ConversionNames.TO_INT, ::useDispatchReceiver)
                 op(it, ConversionNames.TO_SHORT, ::useDispatchReceiver)
+                op(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
             }
 
             for (type in listOf(irBuiltIns.floatType, irBuiltIns.doubleType)) {
@@ -112,6 +113,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 op(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
                 op(it, ConversionNames.TO_INT, ::useDispatchReceiver)
                 op(it, ConversionNames.TO_SHORT, ::useDispatchReceiver)
+                op(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
             }
         }
 
