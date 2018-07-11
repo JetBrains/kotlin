@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.idea.compiler.configuration
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.StoragePathMacros.PROJECT_CONFIG_DIR
 import com.intellij.openapi.project.Project
-import com.intellij.util.messages.Topic
 import com.intellij.util.ReflectionUtil
+import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
@@ -40,7 +41,10 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
         set(value) {
             validateNewSettings(value)
             _settings = value
-            project.messageBus.syncPublisher(KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
+
+            ApplicationManager.getApplication().invokeLater {
+                project.messageBus.syncPublisher(KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
+            }
         }
 
     fun update(changer: T.() -> Unit) {
@@ -73,7 +77,10 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
             }
             XmlSerializer.deserializeInto(this, state)
         }
-        project.messageBus.syncPublisher(KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
+
+        ApplicationManager.getApplication().invokeLater {
+            project.messageBus.syncPublisher(KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
+        }
     }
 
     public override fun clone(): Any = super.clone()
