@@ -365,6 +365,10 @@ public final class kotlin/jvm/internal/ArrayIteratorsKt {
 	public static final fun iterator ([Z)Lkotlin/collections/BooleanIterator;
 }
 
+public final class kotlin/jvm/internal/BooleanCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/BooleanCompanionObject;
+}
+
 public final class kotlin/jvm/internal/BooleanSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
 	public fun <init> (I)V
 	public final fun add (Z)V

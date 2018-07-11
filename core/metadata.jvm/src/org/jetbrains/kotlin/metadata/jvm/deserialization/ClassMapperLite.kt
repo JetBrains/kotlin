@@ -63,7 +63,7 @@ object ClassMapperLite {
             add("reflect/KFunction$i", "kotlin/reflect/KFunction")
         }
 
-        for (klass in listOf("Char", "Byte", "Short", "Int", "Float", "Long", "Double", "String", "Enum")) {
+        for (klass in listOf("Char", "Byte", "Short", "Int", "Float", "Long", "Double", "String", "Enum", "Boolean")) {
             add("$klass.Companion", "kotlin/jvm/internal/${klass}CompanionObject")
         }
     }
