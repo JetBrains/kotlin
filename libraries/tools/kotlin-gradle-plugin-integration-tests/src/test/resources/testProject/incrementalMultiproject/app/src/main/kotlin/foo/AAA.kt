@@ -5,8 +5,4 @@
 
 package foo
 
-import bar.*
-
-class AAA : A() {
-    fun aa() {}
-}
+class AAA : AA()
