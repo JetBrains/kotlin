@@ -30,21 +30,18 @@ object Config {
         val file = fopen("config.txt", "r")
         if (file != null) {
             try {
-                memScoped {
-                    val bufferLength = 2 * 1024
-                    val buffer = allocArray<ByteVar>(bufferLength)
-                    while (true) {
-                        val nextLine = fgets(buffer, bufferLength, file)?.toKString()
-                        if (nextLine == null || nextLine.isEmpty()) break
-                        val records = nextLine.split('=')
-                        if (records.size != 2) continue
-                        val key = records[0].trim()
-                        val value = records[1].trim()
-                        when (key) {
-                            "width" -> width = value.toInt()
-                            "height" -> height = value.toInt()
-                            "startLevel" -> startLevel = value.toInt()
-                        }
+                val buffer = ByteArray(2 * 1024)
+                while (true) {
+                    val nextLine = fgets(buffer.refTo(0), buffer.size, file)?.toKString()
+                    if (nextLine == null || nextLine.isEmpty()) break
+                    val records = nextLine.split('=')
+                    if (records.size != 2) continue
+                    val key = records[0].trim()
+                    val value = records[1].trim()
+                    when (key) {
+                        "width" -> width = value.toInt()
+                        "height" -> height = value.toInt()
+                        "startLevel" -> startLevel = value.toInt()
                     }
                 }
             } finally {
