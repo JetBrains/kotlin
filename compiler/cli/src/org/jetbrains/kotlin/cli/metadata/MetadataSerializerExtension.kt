@@ -16,9 +16,14 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
+import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
 class MetadataSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
+    override val metadataVersion: BinaryVersion
+        get() = BuiltInsBinaryVersion.INSTANCE
+
     override fun shouldUseTypeTable(): Boolean = true
 }

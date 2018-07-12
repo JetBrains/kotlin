@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
+import org.jetbrains.kotlin.metadata.deserialization.isVersionRequirementTableWrittenCorrectly
 import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.metadata.serialization.MutableTypeTable
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
@@ -728,7 +729,8 @@ class DescriptorSerializer private constructor(
                 Interner(parent.typeParameters),
                 extension,
                 MutableTypeTable(),
-                if (container is ClassDescriptor) parent.versionRequirementTable else MutableVersionRequirementTable(),
+                if (container is ClassDescriptor && !isVersionRequirementTableWrittenCorrectly(extension.metadataVersion))
+                    parent.versionRequirementTable else MutableVersionRequirementTable(),
                 serializeTypeTableToFunction = false
             )
             for (typeParameter in descriptor.declaredTypeParameters) {

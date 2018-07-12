@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
+import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
@@ -96,9 +93,12 @@ class DeserializationContext(
         typeParameterProtos: List<ProtoBuf.TypeParameter>,
         nameResolver: NameResolver = this.nameResolver,
         typeTable: TypeTable = this.typeTable,
+        versionRequirementTable: VersionRequirementTable = this.versionRequirementTable,
         metadataVersion: BinaryVersion = this.metadataVersion
     ): DeserializationContext = DeserializationContext(
-        components, nameResolver, descriptor, typeTable, versionRequirementTable, metadataVersion, this.containerSource,
+        components, nameResolver, descriptor, typeTable,
+        if (isVersionRequirementTableWrittenCorrectly(metadataVersion)) versionRequirementTable else this.versionRequirementTable,
+        metadataVersion, this.containerSource,
         parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos
     )
 }

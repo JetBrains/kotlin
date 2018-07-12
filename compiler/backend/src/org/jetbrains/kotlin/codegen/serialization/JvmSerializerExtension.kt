@@ -16,9 +16,11 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.FqName
@@ -37,7 +39,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 class JvmSerializerExtension(private val bindings: JvmSerializationBindings, state: GenerationState) : SerializerExtension() {
-
     private val codegenBinding = state.bindingContext
     private val typeMapper = state.typeMapper
     override val stringTable = JvmCodegenStringTable(typeMapper)
@@ -46,9 +47,10 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     private val classBuilderMode = state.classBuilderMode
     private val isReleaseCoroutines = state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 
-    override fun shouldUseTypeTable(): Boolean {
-        return useTypeTable
-    }
+    override val metadataVersion: BinaryVersion
+        get() = JvmMetadataVersion.INSTANCE
+
+    override fun shouldUseTypeTable(): Boolean = useTypeTable
 
     override fun serializeClass(
         descriptor: ClassDescriptor,

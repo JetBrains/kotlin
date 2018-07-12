@@ -45,7 +45,10 @@ class DeserializedClassDescriptor(
     private val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(classProto.flags))
     private val kind = ProtoEnumFlags.classKind(Flags.CLASS_KIND.get(classProto.flags))
 
-    val c = outerContext.childContext(this, classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable), metadataVersion)
+    val c = outerContext.childContext(
+        this, classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable),
+        VersionRequirementTable.create(classProto.versionRequirementTable), metadataVersion
+    )
 
     private val staticScope = if (kind == ClassKind.ENUM_CLASS) StaticScopeForKotlinEnum(c.storageManager, this) else MemberScope.Empty
     private val typeConstructor = DeserializedClassTypeConstructor()

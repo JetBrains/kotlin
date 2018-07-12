@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.types.KotlinType
 
-open class KotlinSerializerExtensionBase(private val protocol: SerializerExtensionProtocol) : SerializerExtension() {
+abstract class KotlinSerializerExtensionBase(private val protocol: SerializerExtensionProtocol) : SerializerExtension() {
     override val stringTable = StringTableImpl()
 
     override fun serializeClass(
