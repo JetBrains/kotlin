@@ -12,10 +12,10 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.intentions.callExpression
-import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 
 class ConvertCallChainIntoSequenceInspection : AbstractKotlinInspection() {
@@ -51,12 +54,13 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val expression = descriptor.psiElement as? KtQualifiedExpression ?: return
-        val calls = expression.collectCallExpression().reversed()
+        val context = expression.analyze(BodyResolveMode.PARTIAL)
+        val calls = expression.collectCallExpression(context).reversed()
         val firstCall = calls.firstOrNull() ?: return
         val lastCall = calls.lastOrNull() ?: return
         val first = firstCall.getQualifiedExpressionForSelector() ?: return
         val last = lastCall.getQualifiedExpressionForSelector() ?: return
-        val endWithTermination = lastCall.isTermination()
+        val endWithTermination = lastCall.isTermination(context)
 
         val psiFactory = KtPsiFactory(expression)
         val dot = buildString {
@@ -94,17 +98,19 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
 private fun KtQualifiedExpression.findTarget(): Pair<KtQualifiedExpression, KtCallExpression>? {
     if (parent is KtQualifiedExpression) return null
 
-    val calls = collectCallExpression()
+    val context = analyze(BodyResolveMode.PARTIAL)
+    val calls = collectCallExpression(context)
     if (calls.isEmpty()) return null
 
-    val receiverType = (calls.last().getQualifiedExpressionForSelector())?.receiverExpression?.getCallableDescriptor()?.returnType
+    val receiverType =
+        (calls.last().getQualifiedExpressionForSelector())?.receiverExpression?.getResolvedCall(context)?.resultingDescriptor?.returnType
     if (receiverType?.isCollection() != true) return null
 
     val qualified = calls.first().getQualifiedExpressionForSelector() ?: return null
     return qualified to calls.last()
 }
 
-private fun KtQualifiedExpression.collectCallExpression(): List<KtCallExpression> {
+private fun KtQualifiedExpression.collectCallExpression(context: BindingContext): List<KtCallExpression> {
     val calls = mutableListOf<KtCallExpression>()
 
     fun collect(qualified: KtQualifiedExpression) {
@@ -119,8 +125,8 @@ private fun KtQualifiedExpression.collectCallExpression(): List<KtCallExpression
 
     val transformationCalls = calls
         .asSequence()
-        .dropWhile { !it.isTransformationOrTermination() }
-        .takeWhile { it.isTransformationOrTermination() && !it.hasReturn() }
+        .dropWhile { !it.isTransformationOrTermination(context) }
+        .takeWhile { it.isTransformationOrTermination(context) && !it.hasReturn() }
         .toList()
     if (transformationCalls.size < 2) return emptyList()
 
@@ -134,14 +140,14 @@ private fun KtCallExpression.hasReturn(): Boolean = valueArguments.any { arg ->
     arg.anyDescendantOfType<KtReturnExpression> { it.labelQualifier == null }
 }
 
-private fun KtCallExpression.isTransformationOrTermination(): Boolean {
+private fun KtCallExpression.isTransformationOrTermination(context: BindingContext): Boolean {
     val fqName = transformationAndTerminations[calleeExpression?.text] ?: return false
-    return fqName == getCallableDescriptor()?.fqNameSafe
+    return fqName == getResolvedCall(context)?.resultingDescriptor?.fqNameSafe
 }
 
-private fun KtCallExpression.isTermination(): Boolean {
+private fun KtCallExpression.isTermination(context: BindingContext): Boolean {
     val fqName = terminations[calleeExpression?.text] ?: return false
-    return fqName == getCallableDescriptor()?.fqNameSafe
+    return fqName == getResolvedCall(context)?.resultingDescriptor?.fqNameSafe
 }
 
 private val transformations = listOf(
