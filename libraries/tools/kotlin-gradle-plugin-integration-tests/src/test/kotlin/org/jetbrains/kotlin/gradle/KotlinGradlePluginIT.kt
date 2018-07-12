@@ -146,7 +146,7 @@ class KotlinGradleIT : BaseGradleIT() {
                 "Greeter.kt", "KotlinGreetingJoiner.kt",
                 "TestGreeter.kt", "TestKotlinGreetingJoiner.kt"
             )
-            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+            assertCompiledKotlinSources(project.relativize(affectedSources))
         }
     }
 

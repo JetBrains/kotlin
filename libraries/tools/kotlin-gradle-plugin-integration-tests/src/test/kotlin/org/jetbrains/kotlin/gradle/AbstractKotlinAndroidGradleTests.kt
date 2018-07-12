@@ -262,7 +262,7 @@ fun getSomething() = 10
         project.build("assembleDebug", options = options) {
             assertSuccessful()
             val affectedSources = project.projectDir.getFilesByNames("libAndroidUtil.kt", "useLibAndroidUtil.kt")
-            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+            assertCompiledKotlinSources(project.relativize(affectedSources))
         }
 
         val libAndroidClassesOnlyUtilKt = project.projectDir.getFileByName("LibAndroidClassesOnlyUtil.kt")
@@ -270,7 +270,7 @@ fun getSomething() = 10
         project.build("assembleDebug", options = options) {
             assertSuccessful()
             val affectedSources = project.projectDir.getFilesByNames("LibAndroidClassesOnlyUtil.kt", "useLibAndroidClassesOnlyUtil.kt")
-            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+            assertCompiledKotlinSources(project.relativize(affectedSources))
         }
 
         val libJvmUtilKt = project.projectDir.getFileByName("LibJvmUtil.kt")
@@ -278,7 +278,7 @@ fun getSomething() = 10
         project.build("assembleDebug", options = options) {
             assertSuccessful()
             val affectedSources = project.projectDir.getFilesByNames("LibJvmUtil.kt", "useLibJvmUtil.kt")
-            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+            assertCompiledKotlinSources(project.relativize(affectedSources))
         }
     }
 
