@@ -40,9 +40,7 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
             validateNewSettings(value)
             _settings = value
 
-            ApplicationManager.getApplication().invokeLater {
-                project.messageBus.syncPublisher(KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
-            }
+            BackgroundTaskUtil.syncPublisher(project, KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
         }
 
     fun update(changer: T.() -> Unit) {
@@ -76,9 +74,7 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
             XmlSerializer.deserializeInto(this, state)
         }
 
-        ApplicationManager.getApplication().invokeLater {
-            project.messageBus.syncPublisher(KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
-        }
+        BackgroundTaskUtil.syncPublisher(project, KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
     }
 
     public override fun clone(): Any = super.clone()
