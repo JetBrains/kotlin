@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
@@ -58,6 +59,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             println("Kotlin/Native: ${KonanVersion.CURRENT}")
             return ExitCode.OK
         }
+
+        val pluginLoadResult =
+            PluginCliParser.loadPluginsSafe(arguments.pluginClasspaths, arguments.pluginOptions, configuration)
+        if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
             configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES)
@@ -138,7 +143,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 // TODO: Collect all the explicit file names into an object
                 // and teach the compiler to work with temporaries and -save-temps.
 
-                arguments.outputName ?.let { put(OUTPUT, it) } 
+                arguments.outputName ?.let { put(OUTPUT, it) }
                 val outputKind = CompilerOutputKind.valueOf(
                     (arguments.produce ?: "program").toUpperCase())
                 put(PRODUCE, outputKind)

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
 import org.jetbrains.kotlin.backend.konan.llvm.emitLLVM
@@ -81,12 +82,18 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
 
 //        validateIrModule(context, module)
     }
+    phaser.phase(KonanPhase.IR_GENERATOR_PLUGINS) {
+        val extensions = IrGenerationExtension.getInstances(context.config.project)
+        extensions.forEach { extension ->
+            context.irModule!!.files.forEach { irFile -> extension.generate(irFile, context, bindingContext) }
+        }
+    }
     phaser.phase(KonanPhase.GEN_SYNTHETIC_FIELDS) {
         markBackingFields(context)
     }
     phaser.phase(KonanPhase.SERIALIZER) {
         val serializer = KonanSerializationUtil(context, context.config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!)
-        context.serializedLinkData = 
+        context.serializedLinkData =
             serializer.serializeModule(context.moduleDescriptor)
     }
     phaser.phase(KonanPhase.BACKEND) {

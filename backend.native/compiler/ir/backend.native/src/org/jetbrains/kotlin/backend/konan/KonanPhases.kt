@@ -25,6 +25,7 @@ enum class KonanPhase(val description: String,
                       var verbose: Boolean = false) {
     /* */ FRONTEND("Frontend builds AST"),
     /* */ PSI_TO_IR("Psi to IR conversion"),
+    /* */ IR_GENERATOR_PLUGINS("Plugged-in ir generators"),
     /* */ GEN_SYNTHETIC_FIELDS("Generate synthetic fields"),
     /* */ SERIALIZER("Serialize descriptor tree and inline IR bodies", GEN_SYNTHETIC_FIELDS),
     /* */ BACKEND("All backend"),
@@ -86,10 +87,10 @@ object KonanPhases {
     }
 
     fun config(config: KonanConfig) {
-        with (config.configuration) { with (KonanConfigKeys) { 
+        with (config.configuration) { with (KonanConfigKeys) {
 
             // Don't serialize anything to a final executable.
-            KonanPhase.SERIALIZER.enabled = 
+            KonanPhase.SERIALIZER.enabled =
                 (config.produce == CompilerOutputKind.LIBRARY)
             KonanPhase.LINK_STAGE.enabled = config.produce.isNativeBinary
 
@@ -110,7 +111,7 @@ object KonanPhases {
         phases.forEach { key, phase ->
             val enabled = if (phase.enabled) "(Enabled)" else ""
             val verbose = if (phase.verbose) "(Verbose)" else ""
-            
+
             println(String.format("%1$-30s%2$-30s%3$-10s", "${key}:", phase.description, "$enabled $verbose"))
         }
     }

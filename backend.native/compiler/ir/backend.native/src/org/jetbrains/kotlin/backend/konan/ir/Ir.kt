@@ -125,6 +125,8 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
 
     val entryPoint = findMainEntryPoint(context)?.let { symbolTable.referenceSimpleFunction(it) }
 
+    override val externalSymbolTable = lazySymbolTable
+
     val nothing = symbolTable.referenceClass(builtIns.nothing)
     val throwable = symbolTable.referenceClass(builtIns.throwable)
     val string = symbolTable.referenceClass(builtIns.string)
