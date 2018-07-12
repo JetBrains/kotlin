@@ -130,7 +130,7 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
     private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry
 ): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-        Kotlin2JsPlugin(Kotlin2JsTasksProvider(), kotlinPluginVersion, buildOutputCleanupRegistry)
+        Kotlin2JsPlugin(Kotlin2JsTasksProvider(), kotlinPluginVersion)
 
     override val projectExtensionClass: KClass<out KotlinSingleTargetProjectExtension>
         get() = KotlinSingleTargetProjectExtension::class

@@ -65,8 +65,6 @@ class KotlinJvmAndroidCompilationFactory(
     val project: Project,
     val target: KotlinAndroidTarget
 ) : KotlinCompilationFactory<KotlinJvmAndroidCompilation> {
-    private val javaSourceSets: SourceSetContainer
-        get() = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
     override val itemClass: Class<KotlinJvmAndroidCompilation>
         get() = KotlinJvmAndroidCompilation::class.java

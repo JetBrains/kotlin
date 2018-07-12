@@ -16,63 +16,55 @@ import org.gradle.api.capabilities.Capability
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.base.usageByName
 
-internal class KotlinPlatformSoftwareComponent(
+class KotlinSoftwareComponent(
     private val project: Project,
+    private val name: String,
     private val kotlinTargets: Iterable<KotlinTarget>
 ) : SoftwareComponentInternal {
-    override fun getUsages(): Set<UsageContext> = kotlinTargets.flatMap {
-        // TODO create both api and runtime usage contexts
-        listOf(
-            KotlinPlatformUsageContext(it, kotlinApiUsage, KotlinTarget::apiElementsConfigurationName),
-            KotlinPlatformUsageContext(it, kotlinRuntimeUsage, KotlinTarget::runtimeElementsConfigurationName)
-        )
-    }.toSet()
+    override fun getUsages(): Set<UsageContext> = kotlinTargets.flatMap { it.createUsageContexts() }.toSet()
 
-    override fun getName(): String = project.name
+    override fun getName(): String = name
 
     companion object {
-        val kotlinApiUsage = object : Usage {
-            override fun getName(): String = "java-api"
-        }
+        fun kotlinApiUsage(project: Project) = project.usageByName(Usage.JAVA_API)
+        fun kotlinRuntimeUsage(project: Project) = project.usageByName(Usage.JAVA_RUNTIME)
+    }
+}
 
-        val kotlinRuntimeUsage = object : Usage {
-            override fun getName(): String = "java-runtime"
-        }
+internal class KotlinPlatformUsageContext(
+    val project: Project,
+    val kotlinTarget: KotlinTarget,
+    private val usage: Usage,
+    val dependencyConfigurationName: String
+) : UsageContext {
+    override fun getUsage(): Usage = usage
+
+    override fun getName(): String = kotlinTarget.targetName + when (usage.name) {
+        Usage.JAVA_API -> "-api"
+        Usage.JAVA_RUNTIME -> "-runtime"
+        else -> error("unexpected usage")
     }
 
-    private inner class KotlinPlatformUsageContext(
-        val kotlinTarget: KotlinTarget,
-        private val usage: Usage,
-        val dependencyConfigurationNameProvider: (KotlinTarget) -> String
-    ) : UsageContext {
-        override fun getUsage(): Usage = usage
+    private val configuration: Configuration
+        get() = project.configurations.getByName(dependencyConfigurationName)
 
-        override fun getName(): String = kotlinTarget.targetName + when (usage) {
-            kotlinApiUsage -> "-api"
-            kotlinRuntimeUsage -> "-runtime"
-            else -> error("unexpected usage")
-        }
+    override fun getDependencies(): MutableSet<out ModuleDependency> =
+        configuration.incoming.dependencies.withType(ModuleDependency::class.java)
 
-        private val configuration: Configuration
-            get() = project.configurations.getByName(dependencyConfigurationNameProvider(kotlinTarget))
+    override fun getDependencyConstraints(): MutableSet<out DependencyConstraint> =
+        configuration.incoming.dependencyConstraints
 
-        override fun getDependencies(): MutableSet<out ModuleDependency> =
-            configuration.incoming.dependencies.withType(ModuleDependency::class.java)
+    override fun getArtifacts(): MutableSet<out PublishArtifact> =
+    // TODO Gradle Java plugin does that in a different way; check whether we can improve this
+        configuration.artifacts
 
-        override fun getDependencyConstraints(): MutableSet<out DependencyConstraint> =
-            configuration.incoming.dependencyConstraints
+    override fun getAttributes(): AttributeContainer =
+        configuration.outgoing.attributes
 
-        override fun getArtifacts(): MutableSet<out PublishArtifact> =
-            // TODO Gradle does that in a different way; check whether we can improve this
-            configuration.artifacts
+    override fun getCapabilities(): Set<Capability> = emptySet()
 
-        override fun getAttributes(): AttributeContainer =
-            configuration.outgoing.attributes
-
-        override fun getCapabilities(): Set<Capability> = emptySet()
-
-        // FIXME this is a stub for a function that is not present in the Gradle API that we compile against
-        fun getGlobalExcludes(): Set<Any> = emptySet()
-    }
+    // FIXME this is a stub for a function that is not present in the Gradle API that we compile against
+    fun getGlobalExcludes(): Set<Any> = emptySet()
 }

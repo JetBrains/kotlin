@@ -9,6 +9,8 @@ import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.BasePlugin
@@ -51,7 +53,7 @@ internal class KotlinMultiplatformPlugin(
         val targetsContainer = project.container(KotlinTarget::class.java)
         val targetsFromPreset = TargetFromPresetExtension(targetsContainer)
 
-        val kotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java).apply {
+        project.extensions.getByType(KotlinMultiplatformExtension::class.java).apply {
             DslObject(targetsContainer).addConvention("fromPreset", targetsFromPreset)
 
             targets = targetsContainer
@@ -65,44 +67,81 @@ internal class KotlinMultiplatformPlugin(
         configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
         configureSourceSets(project)
 
-        targetsFromPreset.fromPreset(
-            kotlinMultiplatformExtension.presets.getByName(KotlinUniversalTargetPreset.PRESET_NAME),
-            "universal"
-        )
-
+        setUpConfigurationAttributes(project)
         configurePublishingWithMavenPublish(project)
     }
 
     fun setupDefaultPresets(project: Project) {
-        val container = (project.kotlinExtension as KotlinMultiplatformExtension).presets
-        container.add(KotlinUniversalTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
-        container.add(KotlinJvmTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
-        container.add(KotlinJsTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
+        with((project.kotlinExtension as KotlinMultiplatformExtension).presets) {
+            add(KotlinUniversalTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
+            add(KotlinJvmTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
+            add(KotlinJsTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
+            add(KotlinAndroidTargetPreset(project, kotlinPluginVersion, buildOutputCleanupRegistry))
+            add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
+        }
     }
 
     private fun configurePublishingWithMavenPublish(project: Project) = project.pluginManager.withPlugin("maven-publish") {
         val targets = project.multiplatformExtension!!.targets
+        val kotlinSoftwareComponent = KotlinSoftwareComponent(project, "kotlin", targets)
 
-        val platformSoftwareComponent = KotlinPlatformSoftwareComponent(project, targets)
-
-        project.extensions.configure(PublishingExtension::class.java) { publishing ->
-            publishing.publications.create("kotlinCompositeLibrary", MavenPublication::class.java) { publication ->
-                publication.artifactId = project.name
-                publication.groupId = project.group.toString()
-                publication.from(platformSoftwareComponent)
-                (publication as MavenPublicationInternal).publishWithOriginalFileName()
+        project.afterEvaluate { project -> // Use afterEvaluate because publications configuration is no more lazy since Gradle 4.9
+            project.extensions.configure(PublishingExtension::class.java) { publishing ->
+                publishing.publications.create("kotlinCompositeLibrary", MavenPublication::class.java) { publication ->
+                    publication.from(kotlinSoftwareComponent)
+                    (publication as MavenPublicationInternal).publishWithOriginalFileName()
+                    publication.artifactId = project.name
+                    publication.groupId = project.group.toString()
+                }
             }
         }
     }
 
     private fun configureSourceSets(project: Project) = with (project.kotlinExtension as KotlinMultiplatformExtension) {
         sourceSets.all { defineSourceSetConfigurations(project, it) }
-        val main = sourceSets.create("main")
-        val test = sourceSets.create("test")
+        val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
+        val test = sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
 
         targets.all {
-            it.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).source(main)
-            it.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME).source(test)
+            it.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.source(production)
+            it.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.source(test)
+        }
+    }
+
+    private fun setUpConfigurationAttributes(project: Project) {
+        val targets = (project.kotlinExtension as KotlinMultiplatformExtension).targets
+
+        project.afterEvaluate {
+            targets.all { target ->
+                val compilationAttributes = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.attributes
+                    ?: return@all
+
+                fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
+                    to.attribute(key, from.getAttribute(key)!!)
+                }
+
+                listOf(
+                    target.apiElementsConfigurationName,
+                    target.runtimeElementsConfigurationName,
+                    target.defaultConfigurationName
+                )
+                    .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
+                    .forEach { configuration ->
+                        compilationAttributes.keySet().forEach { key ->
+                            copyAttribute(key, compilationAttributes, configuration.attributes)
+                        }
+                    }
+
+                target.compilations.all { compilation ->
+                    compilation.relatedConfigurationNames
+                        .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
+                        .forEach { configuration ->
+                            compilationAttributes.keySet().forEach { key ->
+                                copyAttribute(key, compilationAttributes, configuration.attributes)
+                            }
+                        }
+                }
+            }
         }
     }
 

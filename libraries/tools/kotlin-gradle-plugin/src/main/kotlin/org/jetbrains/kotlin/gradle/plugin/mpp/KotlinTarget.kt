@@ -8,6 +8,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.plugins.JavaPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -34,6 +35,13 @@ abstract class AbstractKotlinTarget (
 
     override val artifactsTaskName: String
         get() = disambiguateName("jar")
+
+    override fun toString(): String = "target $name ($platformType)"
+
+    override fun createUsageContexts(): Set<UsageContext> = setOf(
+        KotlinPlatformUsageContext(project, this, KotlinSoftwareComponent.kotlinApiUsage(project), apiElementsConfigurationName),
+        KotlinPlatformUsageContext(project, this, KotlinSoftwareComponent.kotlinRuntimeUsage(project), runtimeElementsConfigurationName)
+    )
 }
 
 internal fun KotlinTarget.disambiguateName(simpleName: String) =
@@ -43,25 +51,29 @@ open class KotlinAndroidTarget(project: Project) : AbstractKotlinTarget(project)
     override val targetName: String
         get() = "android"
 
-    override val disambiguationClassifier: String? get() = null
+    override var disambiguationClassifier: String? = null
+        internal set
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.jvm
 
     private val compilationFactory = KotlinJvmAndroidCompilationFactory(project, this)
 
-    override val compilations: NamedDomainObjectContainer<out KotlinCompilation> =
+    override val compilations: NamedDomainObjectContainer<out KotlinJvmAndroidCompilation> =
         project.container(compilationFactory.itemClass, compilationFactory)
+
+    override fun createUsageContexts(): Set<UsageContext> {
+        //TODO setup Android libraries publishing. This will likely require new API in the Android Gradle plugin
+        return emptySet()
+    }
 }
 
 open class KotlinWithJavaTarget(
     project: Project,
-    override val platformType: KotlinPlatformType
+    override val platformType: KotlinPlatformType,
+    override val targetName: String
 ) : AbstractKotlinTarget(project) {
     override var disambiguationClassifier: String? = null
-        internal set
-
-    override var targetName: String = "kotlin"
         internal set
 
     override val defaultConfigurationName: String
@@ -93,6 +105,4 @@ open class KotlinOnlyTarget<T : KotlinCompilation>(
 
     override var disambiguationClassifier: String? = null
         internal set
-
-    var userDefinedPlatformId: String? = null
 }

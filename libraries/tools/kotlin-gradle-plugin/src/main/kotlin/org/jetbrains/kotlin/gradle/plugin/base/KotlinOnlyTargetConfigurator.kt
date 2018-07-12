@@ -11,7 +11,6 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.ConfigurableFileCollection
@@ -21,9 +20,7 @@ import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.plugins.ReportingBasePlugin
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
@@ -31,9 +28,11 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.mpp.fullName
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
+import java.util.concurrent.Callable
 
 open class KotlinOnlyTargetConfigurator(
     private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry
@@ -74,7 +73,7 @@ open class KotlinOnlyTargetConfigurator(
         target.compilations.all { compilation ->
             defineConfigurationsForCompilation(compilation, target, project.configurations)
 
-            project.kotlinExtension.sourceSets.create(lowerCamelCaseName(target.disambiguationClassifier, compilation.compilationName)).also { sourceSet ->
+            project.kotlinExtension.sourceSets.maybeCreate(compilation.fullName).also { sourceSet ->
                 compilation.source(sourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
             }
 
@@ -129,10 +128,10 @@ open class KotlinOnlyTargetConfigurator(
         compilation: KotlinCompilationWithResources,
         resourceSet: FileCollection
     ) {
-        DslObject(compilation.output).conventionMapping.map("resourcesDir") {
+        compilation.output.setResourcesDir(Callable {
             val classesDirName = "resources/" + compilation.compilationName
             File(project.buildDir, classesDirName)
-        }
+        })
 
         val resourcesTask = project.tasks.maybeCreate(compilation.processResourcesTaskName, ProcessResources::class.java)
         resourcesTask.description = "Processes $resourceSet."
@@ -162,9 +161,9 @@ open class KotlinOnlyTargetConfigurator(
     private val KotlinCompilationToRunnableFiles.deprecatedRuntimeConfigurationName: String
         get() = disambiguateName("runtime")
 
-    private fun defineConfigurationsForCompilation(
+    internal fun defineConfigurationsForCompilation(
         compilation: KotlinCompilation,
-        target: KotlinOnlyTarget<*>,
+        target: KotlinTarget,
         configurations: ConfigurationContainer
     ) {
         val compileConfiguration = configurations.maybeCreate(compilation.deprecatedCompileConfigurationName).apply {
@@ -331,7 +330,7 @@ open class KotlinOnlyTargetConfigurator(
     }
 
     private fun setCompatibilityOfAbstractCompileTasks(project: Project) = with (project) {
-        tasks.withType(AbstractCompile::class.java).all {
+        tasks.withType(AbstractKotlinCompile::class.java).all {
             // Workaround: these are input properties and should not hold null values:
             it.targetCompatibility = ""
             it.sourceCompatibility = ""
@@ -342,16 +341,12 @@ open class KotlinOnlyTargetConfigurator(
     internal companion object {
         const val buildNeededTaskName = "buildAllNeeded"
         const val buildDependentTaskName = "buildAllDependents"
-
-        // We need both to be able to seamlessly use a single implementation for a certain platform as a dependency in a module which
-        // has more than one implmentation for the same platform
-        val kotlinPlatformTypeAttribute = Attribute.of("org.jetbrains.kotlin.platform.type", KotlinPlatformType::class.java)
-        val kotlinPlatformIdentifierAttribute = Attribute.of("org.jetbrains.kotlin.platform.identifier", String::class.java)
     }
 }
 
-private fun Project.usageByName(usageName: String) : Usage =
+internal fun Project.usageByName(usageName: String): Usage =
     if (isGradleVersionAtLeast(4, 0)) {
+        // `project.objects` is an API introduced in Gradle 4.0
         project.objects.named(Usage::class.java, usageName)
     } else {
         val usagesClass = Class.forName("org.gradle.api.internal.attributes")
@@ -359,25 +354,7 @@ private fun Project.usageByName(usageName: String) : Usage =
         usagesMethod(null, usageName) as Usage
     }
 
-internal fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
-    if (target is KotlinOnlyTarget<*>) {
-        target.userDefinedPlatformId?.let {
-            attributes.attribute(KotlinOnlyTargetConfigurator.kotlinPlatformIdentifierAttribute, it)
-        }
-    }
-    attributes.attribute(KotlinOnlyTargetConfigurator.kotlinPlatformTypeAttribute, target.platformType)
+fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
+    attributes.attribute(KotlinPlatformType.attribute, target.platformType)
     return this
-}
-
-object KotlinOnlyProjectConfigurator {
-    fun <T : KotlinCompilation> applyToTarget(target: KotlinOnlyTarget<T>, buildOutputCleanupRegistry: BuildOutputCleanupRegistry) {
-        val project = target.project
-
-        with(project.pluginManager) {
-            apply(BasePlugin::class.java)
-            apply(ReportingBasePlugin::class.java)
-        }
-
-        KotlinOnlyTargetConfigurator(buildOutputCleanupRegistry).configureTarget(project, target)
-    }
 }

@@ -9,7 +9,7 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.HasAttributes
-import java.io.Serializable
+import org.gradle.api.internal.component.UsageContext
 
 interface KotlinTarget: Named, HasAttributes {
     val targetName: String
@@ -27,13 +27,7 @@ interface KotlinTarget: Named, HasAttributes {
     val apiElementsConfigurationName: String
     val runtimeElementsConfigurationName: String
 
+    fun createUsageContexts(): Set<UsageContext>
+
     override fun getName(): String = targetName
-}
-
-enum class KotlinPlatformType: Named, Serializable {
-    common, jvm, js,
-    native; // TODO: split native into separate entries here or transform the enum to interface and implement entries in K/N
-
-    override fun toString(): String = name
-    override fun getName(): String = name
 }

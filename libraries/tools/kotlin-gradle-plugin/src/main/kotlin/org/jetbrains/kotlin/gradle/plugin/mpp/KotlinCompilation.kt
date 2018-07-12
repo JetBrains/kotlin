@@ -9,7 +9,6 @@ import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -23,6 +22,9 @@ internal fun KotlinCompilation.composeName(prefix: String? = null, suffix: Strin
 
     return lowerCamelCaseName(prefix, targetNamePart, compilationNamePart, suffix)
 }
+
+internal val KotlinCompilation.fullName: String
+    get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName)
 
 internal class DefaultKotlinDependencyHandler(
     val parent: HasKotlinDependencies,
@@ -55,9 +57,8 @@ abstract class AbstractKotlinCompilation(
         kotlinSourceSets += sourceSet
 
         with(target.project) {
-            // TODO: do this in a more lazy and flexible way
-            afterEvaluate {
-                (target.project.tasks.findByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).source(sourceSet.kotlin)
+            whenEvaluated {
+                (target.project.tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).source(sourceSet.kotlin)
             }
             addExtendsFromRelation(apiConfigurationName, sourceSet.apiConfigurationName)
             addExtendsFromRelation(implementationConfigurationName, sourceSet.implementationConfigurationName)
@@ -68,9 +69,10 @@ abstract class AbstractKotlinCompilation(
         }
     }
 
-    private fun Project.addExtendsFromRelation(extendingConfigurationName: String, extendsFromConfigurationName: String) {
+    protected fun Project.addExtendsFromRelation(extendingConfigurationName: String, extendsFromConfigurationName: String) {
         if (extendingConfigurationName != extendsFromConfigurationName) {
-            project.dependencies.add(extendingConfigurationName, project.configurations.getByName(extendsFromConfigurationName))
+            if (project.configurations.findByName(extendingConfigurationName) != null)
+                project.dependencies.add(extendingConfigurationName, project.configurations.getByName(extendsFromConfigurationName))
         }
     }
 
@@ -135,7 +137,7 @@ class KotlinWithJavaCompilation(
     target: KotlinWithJavaTarget,
     name: String,
     val javaSourceSet: SourceSet
-) : KotlinJvmCompilation(target, name, javaSourceSet.output) {
+) : AbstractKotlinCompilationToRunnableFiles(target, name), KotlinCompilationWithResources {
     override val output: SourceSetOutput
         get() = javaSourceSet.output
 
@@ -171,14 +173,12 @@ class KotlinWithJavaCompilation(
         get() = javaSourceSet.compileClasspath
         set(value) { javaSourceSet.compileClasspath = value }
 
-    override fun source(sourceSet: KotlinSourceSet) {
+    fun source(javaSourceSet: SourceSet) {
         with(target.project) {
             afterEvaluate {
-                val otherJavaSourceSet = convention.getPlugin(JavaPluginConvention::class.java).sourceSets.getByName(sourceSet.name)
-                (tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).source(otherJavaSourceSet.java)
+                (tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).source(javaSourceSet.java)
             }
         }
-        super.source(sourceSet)
     }
 }
 

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptTask
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import org.jetbrains.kotlin.gradle.plugin.base.usesPlatformOf
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
@@ -36,13 +38,15 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         }
     }
 
-    override fun wireKotlinTasks(project: Project,
-                                 androidPlugin: BasePlugin,
-                                 androidExt: BaseExtension,
-                                 variantData: BaseVariant,
-                                 javaTask: AbstractCompile,
-                                 kotlinTask: KotlinCompile) {
-
+    override fun wireKotlinTasks(
+        project: Project,
+        compilation: KotlinJvmAndroidCompilation,
+        androidPlugin: BasePlugin,
+        androidExt: BaseExtension,
+        variantData: BaseVariant,
+        javaTask: AbstractCompile,
+        kotlinTask: KotlinCompile
+    ) {
         val preJavaKotlinOutputFiles = mutableListOf<File>().apply {
             add(kotlinTask.destinationDir)
             if (Kapt3GradleSubplugin.isEnabled(project)) {
@@ -57,8 +61,9 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         kotlinTask.dependsOn(variantData.getSourceFolders(SourceKind.JAVA))
 
         kotlinTask.mapClasspath {
+            val kotlinCompilationDependencies = compilation.compileDependencyFiles
             val kotlinClasspath = variantData.getCompileClasspath(preJavaClasspathKey)
-            kotlinClasspath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
+            kotlinClasspath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt)) + kotlinCompilationDependencies
         }
 
         // Find the classpath entries that comes from the tested variant and register it as the friend path, lazily
@@ -93,6 +98,11 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
 
     override fun getResDirectories(variantData: BaseVariant): List<File> {
         return variantData.mergeResources?.computeResourceSetList0() ?: emptyList()
+    }
+
+    override fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinCompilation) {
+        variant.compileConfiguration.usesPlatformOf(compilation.target)
+        variant.runtimeConfiguration.usesPlatformOf(compilation.target)
     }
 
     private inner class KaptVariant(variantData: BaseVariant) : KaptVariantData<BaseVariant>(variantData) {

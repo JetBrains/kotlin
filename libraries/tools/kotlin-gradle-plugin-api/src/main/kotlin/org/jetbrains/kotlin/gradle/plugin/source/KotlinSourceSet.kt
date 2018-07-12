@@ -14,6 +14,11 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
     val kotlin: SourceDirectorySet
 
     fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet
+
+    companion object {
+        const val COMMON_MAIN_SOURCE_SET_NAME = "commonMain"
+        const val COMMON_TEST_SOURCE_SET_NAME = "commonTest"
+    }
 }
 
 interface KotlinSourceSetWithResources : KotlinSourceSet {

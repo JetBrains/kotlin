@@ -46,8 +46,7 @@ open class KotlinProjectExtension {
 }
 
 open class KotlinSingleTargetProjectExtension : KotlinProjectExtension() {
-    lateinit var target: KotlinTarget
-        internal set
+    internal lateinit var target: KotlinTarget
 }
 
 open class KotlinJvmProjectExtension : KotlinSingleTargetProjectExtension() {
