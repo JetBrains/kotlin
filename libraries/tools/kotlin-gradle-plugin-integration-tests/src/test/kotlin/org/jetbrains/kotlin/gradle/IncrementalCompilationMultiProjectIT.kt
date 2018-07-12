@@ -144,7 +144,7 @@ open class A {
 
         project.build("build") {
             assertSuccessful()
-            val affectedSources = project.projectDir.getFilesByNames("A.kt", "B.kt", "AA.kt", "BB.kt")
+            val affectedSources = project.projectDir.getFilesByNames("A.kt", "B.kt", "AA.kt", "AAA.kt", "BB.kt")
             val relativePaths = project.relativize(affectedSources)
             assertCompiledKotlinSources(relativePaths)
         }

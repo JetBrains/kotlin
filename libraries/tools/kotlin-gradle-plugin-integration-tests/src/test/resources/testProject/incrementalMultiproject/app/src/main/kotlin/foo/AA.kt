@@ -2,6 +2,6 @@ package foo
 
 import bar.*
 
-class AA : A() {
+open class AA : A() {
     fun aa() {}
 }
