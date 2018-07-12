@@ -105,7 +105,7 @@ abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking:
             assertSuccessful()
             val affectedSources = project.projectDir.getFilesByNames(*expectedAffectedSources.toTypedArray())
             val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths, weakTesting = false)
+            assertCompiledKotlinSources(relativePaths)
         }
     }
 }

@@ -92,7 +92,7 @@ class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiP
             assertSuccessful()
             val affectedSources = File(project.projectDir, "app").allKotlinFiles()
             val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths, weakTesting = false)
+            assertCompiledKotlinSources(relativePaths)
         }
     }
 }
@@ -119,7 +119,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : BaseGradleIT() {
             assertSuccessful()
             val affectedSources = project.projectDir.getFilesByNames("fooCallUseAB.kt", "barUseAB.kt")
             val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths, weakTesting = false)
+            assertCompiledKotlinSources(relativePaths)
         }
     }
 
@@ -146,7 +146,7 @@ open class A {
             assertSuccessful()
             val affectedSources = project.projectDir.getFilesByNames("A.kt", "B.kt", "AA.kt", "BB.kt")
             val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths, weakTesting = false)
+            assertCompiledKotlinSources(relativePaths)
         }
     }
 
@@ -167,7 +167,7 @@ open class A {
                 "BB.kt", "fooCallUseAB.kt", "fooUseB.kt"
             )
             val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths, weakTesting = false)
+            assertCompiledKotlinSources(relativePaths)
         }
     }
 
@@ -191,14 +191,14 @@ open class A {
             assertSuccessful()
             val affectedSources = project.projectDir.allKotlinFiles()
             val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths, weakTesting = false)
+            assertCompiledKotlinSources(relativePaths)
         }
 
         val aaKt = project.projectFile("AA.kt")
         aaKt.modify { "$it " }
         project.build("build") {
             assertSuccessful()
-            assertCompiledKotlinSources(project.relativize(aaKt), weakTesting = false)
+            assertCompiledKotlinSources(project.relativize(aaKt))
         }
     }
 
@@ -232,14 +232,14 @@ open class A {
             assertSuccessful()
             val affectedSources = project.projectDir.allKotlinFiles()
             val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths, weakTesting = false)
+            assertCompiledKotlinSources(relativePaths)
         }
 
         val aaKt = project.projectFile("AA.kt")
         aaKt.modify { "$it " }
         project.build("build") {
             assertSuccessful()
-            assertCompiledKotlinSources(project.relativize(aaKt), weakTesting = false)
+            assertCompiledKotlinSources(project.relativize(aaKt))
         }
     }
 
@@ -264,7 +264,7 @@ open class A {
             assertFailed()
             val affectedSources = project.projectDir.allKotlinFiles()
             val relativePaths = project.relativize(affectedSources)
-            assertCompiledKotlinSources(relativePaths, weakTesting = false)
+            assertCompiledKotlinSources(relativePaths)
         }
     }
 }
