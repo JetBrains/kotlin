@@ -4,4 +4,4 @@ enum class TestEnum{
 
 
 
-//INFO: <div class='definition'><pre><a href="psi_element://TestEnum"><code>TestEnum</code></a><br><b>enum entry</b> CEnum constant ordinal: 2</pre></div>
+//INFO: <div class='definition'><pre><a href="psi_element://TestEnum"><code>TestEnum</code></a><br>enum entry <b>C</b>Enum constant ordinal: 2</pre></div>

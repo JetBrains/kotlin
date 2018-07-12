@@ -13,6 +13,6 @@ fun test() {
     1.<caret>testMethod("value")
 }
 
-//INFO: <div class='definition'><pre>(OnMethodUsageWithReceiver.kt)<br><b>public</b> <b>fun</b> Int.testMethod(
+//INFO: <div class='definition'><pre><font color="808080"><i>OnMethodUsageWithReceiver.kt</i></font><br>public fun Int.<b>testMethod</b>(
 //INFO:     b: String
-//INFO: ): Unit</pre></div><div class='content'><p>Some documentation</p></div><table class='sections'><tr><td valign='top' class='section'><p>Receiver</td><td></td><tr><td valign='top' class='section'><p>Parameters</td><td><p><code>b</code> - String</td><tr><td valign='top' class='section'><p>Returns</td><td></td></table>
+//INFO: ): Unit</pre></div><div class='content'><p>Some documentation</p></div><table class='sections'><tr><td valign='top' class='section'><p>Receiver:</td><td>Some int</td><tr><td valign='top' class='section'><p>Params:</td><td><p><code>b</code> - String</td><tr><td valign='top' class='section'><p>Returns:</td><td>Return <a href="psi_element://a">a</a> and nothing else</td></table>

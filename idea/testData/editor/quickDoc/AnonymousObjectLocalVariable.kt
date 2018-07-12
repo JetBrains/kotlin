@@ -6,4 +6,4 @@ fun context() {
     v<caret>
 }
 
-//INFO: <div class='definition'><pre><b>val</b> v: &lt;anonymous object : <a href="psi_element://OurClass">OurClass</a>, <a href="psi_element://OurFace">OurFace</a>&gt;</pre></div>
+//INFO: <div class='definition'><pre>val <b>v</b>: &lt;anonymous object : <a href="psi_element://OurClass">OurClass</a>, <a href="psi_element://OurFace">OurFace</a>&gt;</pre></div>

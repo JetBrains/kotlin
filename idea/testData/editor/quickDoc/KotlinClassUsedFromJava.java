@@ -6,4 +6,4 @@ class KotlinClassUsedFromJava {
     }
 }
 
-//INFO: <div class='definition'><pre><a href="psi_element://testing"><code>testing</code></a> (KotlinClassUsedFromJava_Data.kt)<br><b>public</b> <b>final</b> <b>class</b> Test</pre></div><div class='content'><p>Some comment</p></div><table class='sections'></table>
+//INFO: <div class='definition'><pre><a href="psi_element://testing"><code>testing</code></a> <font color="808080"><i>KotlinClassUsedFromJava_Data.kt</i></font><br>public final class <b>Test</b></pre></div><div class='content'><p>Some comment</p></div><table class='sections'></table>

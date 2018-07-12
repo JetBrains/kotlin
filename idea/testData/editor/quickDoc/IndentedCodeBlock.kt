@@ -13,7 +13,7 @@
  */
 class <caret>A
 
-//INFO: <div class='definition'><pre>(IndentedCodeBlock.kt)<br><b>public</b> <b>final</b> <b>class</b> A</pre></div><div class='content'><pre><code>val a = A()
+//INFO: <div class='definition'><pre><font color="808080"><i>IndentedCodeBlock.kt</i></font><br>public final class <b>A</b></pre></div><div class='content'><pre><code>val a = A()
 //INFO: println(a) // comment</code></pre><pre><code>
 //INFO: &lt;fenced&gt;Code_block&lt;/fenced&gt;
 //INFO: </code></pre><pre><code>val b = B()

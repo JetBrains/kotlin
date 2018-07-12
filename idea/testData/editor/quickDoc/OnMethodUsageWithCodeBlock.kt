@@ -24,7 +24,7 @@ fun test() {
     <caret>testMethod(1, "value")
 }
 
-//INFO: <div class='definition'><pre>(OnMethodUsageWithCodeBlock.kt)<br><b>public</b> <b>fun</b> testMethod(): Unit</pre></div><div class='content'><p>Some documentation.</p>
+//INFO: <div class='definition'><pre><font color="808080"><i>OnMethodUsageWithCodeBlock.kt</i></font><br>public fun <b>testMethod</b>(): Unit</pre></div><div class='content'><p>Some documentation.</p>
 //INFO: <pre><code>
 //INFO: Code block
 //INFO:     Second line

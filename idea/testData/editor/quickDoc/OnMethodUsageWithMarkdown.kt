@@ -27,7 +27,7 @@ fun test() {
     <caret>testMethod(1, "value")
 }
 
-//INFO: <div class='definition'><pre>(OnMethodUsageWithMarkdown.kt)<br><b>public</b> <b>fun</b> testMethod(): Unit</pre></div><div class='content'><p>Some documentation. <strong>Bold</strong> <em>underline</em> <code>code</code> foo: bar (baz) <a href="psi_element://quux">quux</a>  'apos'</p>
+//INFO: <div class='definition'><pre><font color="808080"><i>OnMethodUsageWithMarkdown.kt</i></font><br>public fun <b>testMethod</b>(): Unit</pre></div><div class='content'><p>Some documentation. <strong>Bold</strong> <em>underline</em> <code>code</code> foo: bar (baz) <a href="psi_element://quux">quux</a>  'apos'</p>
 //INFO: <p><a href="http://www.kotlinlang.org">Kotlin</a> <a href="http://www.ibm.com">a<strong>b</strong><strong>d</strong> kas</a></p>
 //INFO: <p><a href="psi_element://C">C</a></p>
 //INFO: <p><a href="psi_element://C">See <strong>this</strong> class</a></p>
