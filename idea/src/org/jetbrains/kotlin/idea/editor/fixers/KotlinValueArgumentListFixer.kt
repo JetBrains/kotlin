@@ -18,12 +18,19 @@ class KotlinValueArgumentListFixer : SmartEnterProcessorWithFixers.Fixer<KotlinS
 
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         if (element !is KtValueArgumentList || element.rightParenthesis != null) return
+        val lPar = element.leftParenthesis ?: return
 
         val lastArgument = element.arguments.lastOrNull()
         if (lastArgument != null && PsiUtilCore.hasErrorElementChild(lastArgument)) {
-            val offset = lastArgument.getPrevSiblingIgnoringWhitespace()?.endOffset ?: lastArgument.endOffset
-            editor.document.insertString(offset, ")")
-            editor.caretModel.moveToOffset(offset)
+            val prev = lastArgument.getPrevSiblingIgnoringWhitespace() ?: lPar
+            val offset = prev.endOffset
+            if (prev == lPar) {
+                editor.document.insertString(offset, ")")
+                editor.caretModel.moveToOffset(offset)
+            } else {
+                editor.document.insertString(offset, " )")
+                editor.caretModel.moveToOffset(offset + 1)
+            }
         } else {
             val offset = element.endOffset
             editor.document.insertString(offset, ")")
