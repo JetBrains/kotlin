@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
-import org.jetbrains.kotlin.gradle.incremental.GradleICReporter
 import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAwareWithInput
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
@@ -518,7 +517,6 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = GradleCompilerRunner(project)
-        val reporter = GradleICReporter(project.rootProject.projectDir)
 
         val environment = when {
             incremental -> {
