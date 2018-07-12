@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.kdoc
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
@@ -62,13 +63,16 @@ fun KtElement.findKDoc(descriptorToPsi: (DeclarationDescriptorWithSource) -> Psi
     }
 
 
-    if (this is KtParameter) {
-        val classKDoc = containingClassOrObject?.getChildOfType<KDoc>()
+
+    if (this is KtParameter || this is KtTypeParameter) {
+        val containingDeclaration =
+            PsiTreeUtil.getParentOfType(this, KtDeclarationWithBody::class.java, KtClassOrObject::class.java, KtScript::class.java)
+        val classKDoc = containingDeclaration?.getChildOfType<KDoc>()
         val subjectName = name
         if (classKDoc != null && subjectName != null) {
             val propertySection =
-                classKDoc.findSectionByTag(KDocKnownTag.PROPERTY, subjectName)?.takeIf { this.isPropertyParameter() }
-                        ?: classKDoc.findDescendantOfType<KDocTag> { it.knownTag == KDocKnownTag.PARAM && it.getSubjectName() == subjectName }
+                classKDoc.findSectionByTag(KDocKnownTag.PROPERTY, subjectName)?.takeIf { this is KtParameter && this.isPropertyParameter() }
+                    ?: classKDoc.findDescendantOfType<KDocTag> { it.knownTag == KDocKnownTag.PARAM && it.getSubjectName() == subjectName }
             if (propertySection != null) {
                 return propertySection
             }
