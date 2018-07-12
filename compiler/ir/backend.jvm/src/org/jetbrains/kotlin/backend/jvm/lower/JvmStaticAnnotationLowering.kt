@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -99,45 +98,39 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
         proxyIrFunction.returnType = target.returnType
         proxyIrFunction.createParameterDeclarations()
 
-        val companionInstanceFieldSymbol = context.descriptorsFactory.getSymbolForObjectInstance(companion.symbol)
+        proxyIrFunction.body = createProxyBody(target, proxyIrFunction, companion)
+        return proxyIrFunction
+    }
 
-        context.createIrBuilder(proxyIrFunction.symbol).irBlockBody(proxyIrFunction) {
-            val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
-            call.dispatchReceiver = IrGetFieldImpl(
+    private fun createProxyBody(target: IrFunction, proxy: IrFunction, companion: IrClass): IrBody {
+        val companionInstanceFieldSymbol = context.descriptorsFactory.getSymbolForObjectInstance(companion.symbol)
+        val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
+
+        call.dispatchReceiver = IrGetFieldImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            companionInstanceFieldSymbol,
+            companion.defaultType
+        )
+        proxy.extensionReceiverParameter?.let { extensionReceiver ->
+            call.extensionReceiver = IrGetValueImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
-                companionInstanceFieldSymbol,
-                companion.defaultType
+                extensionReceiver.symbol
             )
-            proxyIrFunction.extensionReceiverParameter?.let {
-                call.extensionReceiver = IrGetValueImpl(
+        }
+        proxy.valueParameters.mapIndexed { i, valueParameter ->
+            call.putValueArgument(
+                i,
+                IrGetValueImpl(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
-                    it.symbol
+                    valueParameter.symbol
                 )
-            }
-            proxyIrFunction.valueParameters.mapIndexed { i, valueParameter ->
-                call.putValueArgument(
-                    i,
-                    IrGetValueImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        valueParameter.symbol
-                    )
-                )
-            }
-            +IrReturnImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                proxyIrFunction.returnType,
-                proxyIrFunction.symbol,
-                call
             )
-        }.apply {
-            proxyIrFunction.body = this
         }
 
-        return proxyIrFunction
+        return IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, call)
     }
 }
 
