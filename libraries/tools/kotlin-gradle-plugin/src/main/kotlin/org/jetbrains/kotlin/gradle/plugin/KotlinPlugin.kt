@@ -458,10 +458,7 @@ internal open class KotlinPlugin(
         get() = KotlinPlatformType.jvm
 
     override fun buildSourceSetProcessor(project: Project, compilation: KotlinCompilation, kotlinPluginVersion: String) =
-            Kotlin2JvmSourceSetProcessor(
-                project, tasksProvider,
-                compilation as KotlinJvmCompilation, kotlinPluginVersion
-            )
+            Kotlin2JvmSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
 
     override fun apply(project: Project) {
         val target = KotlinWithJavaTarget(project, KotlinPlatformType.js, "kotlin").apply {
