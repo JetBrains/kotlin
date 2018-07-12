@@ -173,6 +173,10 @@ task gradlePluginCheck() {
 
 task gradlePluginUpload {
     dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':bintrayUpload')
+    // Don't publish dev builds to the plugin portal.
+    if (konanVersionFull.meta != MetaVersion.DEV) {
+        dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':publishPlugins')
+    }
 }
 
 task dist_compiler(dependsOn: "distCompiler")

@@ -39,6 +39,11 @@ buildscript {
         classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
     }
 }
+
+plugins {
+    id 'com.gradle.plugin-publish' version '0.9.10'
+}
+
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
 apply plugin: 'groovy'
@@ -60,20 +65,23 @@ configurations {
     bundleDependencies {
         transitive = false
     }
+
+    implementation.extendsFrom shadow
+    compileOnly.extendsFrom bundleDependencies
+    testImplementation.extendsFrom bundleDependencies
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-gradle-plugin:$buildKotlinVersion"
+    shadow "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    shadow "org.jetbrains.kotlin:kotlin-gradle-plugin:$buildKotlinVersion"
 
     bundleDependencies "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
 
-    testCompile 'junit:junit:4.12'
-    testCompile "org.jetbrains.kotlin:kotlin-test:$buildKotlinVersion"
-    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$buildKotlinVersion"
-    testCompile "org.tools4j:tools4j-spockito:1.6"
-    testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
+    testImplementation 'junit:junit:4.12'
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$buildKotlinVersion"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$buildKotlinVersion"
+    testImplementation "org.tools4j:tools4j-spockito:1.6"
+    testImplementation('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'
     }
 }
@@ -88,6 +96,11 @@ shadowJar {
 }
 
 assemble.dependsOn shadowJar
+
+pluginUnderTestMetadata {
+    dependsOn shadowJar
+    pluginClasspath = files(shadowJar.archivePath) + configurations.shadow
+}
 
 test {
     systemProperty("kotlin.version", buildKotlinVersion)
@@ -108,12 +121,9 @@ test {
     if (project.hasProperty("filter")) {
         filter.includeTestsMatching project.property("filter")
     }
-
 }
 
 processResources {
-    // We add konanVersion as a task input to avoid considering this task up-to-date when
-    // konanVersion is actually changed and should be updated in the plugin jar.
     from(file("$rootBuildDirectory/utilities/env_blacklist"))
 }
 
@@ -121,24 +131,10 @@ compileTestGroovy.dependsOn.remove('compileTestJava')
 compileTestKotlin.dependsOn compileTestGroovy
 compileTestKotlin.classpath += files(compileTestGroovy.destinationDir)
 
-// TODO: Get rid of manual pom generation.
 publishing {
     publications {
-        gradlePlugin(MavenPublication) {
-            artifact shadowJar
-            pom.withXml { XmlProvider xml ->
-                def deps = xml.asNode().appendNode("dependencies")
-
-                def stdlibDep = deps.appendNode("dependency")
-                stdlibDep.appendNode("groupId", "org.jetbrains.kotlin")
-                stdlibDep.appendNode("artifactId", "kotlin-stdlib")
-                stdlibDep.appendNode("version", "$buildKotlinVersion")
-
-                def kotlinPluginDep = deps.appendNode("dependency")
-                kotlinPluginDep.appendNode("groupId", "org.jetbrains.kotlin")
-                kotlinPluginDep.appendNode("artifactId", "kotlin-gradle-plugin")
-                kotlinPluginDep.appendNode("version", "$buildKotlinVersion")
-            }
+        gradlePlugin(MavenPublication) { publication ->
+            project.shadow.component(publication)
         }
     }
 }
@@ -164,25 +160,76 @@ bintray {
 
 gradlePlugin {
     plugins {
-        create("konan") {
+        create('konan') {
             id = 'konan'
             implementationClass = 'org.jetbrains.kotlin.gradle.plugin.KonanPlugin'
         }
-        create("kotlin-native") {
+        create('kotlin-native') {
             id = 'kotlin-native'
             implementationClass = 'org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinNativePlugin'
         }
-        create("kotlin-platform-native") {
+        create('kotlin-platform-native') {
             id = 'kotlin-platform-native'
             implementationClass = 'org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinPlatformNativePlugin'
         }
-        create("org.jetbrains.kotlin.native"){
+
+        create('org.jetbrains.kotlin.konan') {
+            id = 'org.jetbrains.kotlin.konan'
+            implementationClass = 'org.jetbrains.kotlin.gradle.plugin.KonanPlugin'
+        }
+        create('org.jetbrains.kotlin.native') {
             id = 'org.jetbrains.kotlin.native'
             implementationClass = 'org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinNativePlugin'
         }
-        create("org.jetbrains.kotlin.platform.native") {
+        create('org.jetbrains.kotlin.platform.native') {
             id = 'org.jetbrains.kotlin.platform.native'
             implementationClass = 'org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinPlatformNativePlugin'
+        }
+    }
+}
+
+// Replace the default output jars with the fat-jar created by the shadowJar task.
+configurations.archives.artifacts.clear()
+
+artifacts {
+    archives shadowJar
+}
+
+pluginBundle {
+    website = 'https://kotlinlang.org/'
+    vcsUrl = 'https://github.com/JetBrains/kotlin-native'
+    description = 'Kotlin/Native plugins for Gradle'
+    tags = ['kotlin']
+
+    mavenCoordinates {
+        groupId = "org.jetbrains.kotlin"
+    }
+
+    plugins {
+        konan {
+            id = 'org.jetbrains.kotlin.konan'
+            description = displayName = 'Kotlin/Native plugin'
+        }
+        kotlinNative {
+            id = 'org.jetbrains.kotlin.native'
+            displayName = 'Experimental Kotlin/Native plugin'
+            description = """\
+                An experimental Kotlin/Native plugin integrated with Gradle support for native languages and
+                providing a new DSL which is much closer to the DSL of Kotlin/JVM and Kotlin/JS plugins.
+                
+                The plugin is intended for projects containing only Kotlin/Native code (without common modules).
+                For multiplatform development see https://plugins.gradle.org/plugin/org.jetbrains.kotlin.platform.native.
+                """.stripIndent()
+        }
+        kotlinPlatformNative {
+            id = 'org.jetbrains.kotlin.platform.native'
+            displayName = 'Experimental Kotlin/Native plugin for multiplatform development'
+            description = """\
+                An experimental Kotlin/Native plugin integrated with Gradle support for native languages and
+                providing a new DSL which is much closer to the DSL of Kotlin/JVM and Kotlin/JS plugins.
+                
+                The plugin is intended for native parts of multiplatform projects.
+                """.stripIndent()
         }
     }
 }

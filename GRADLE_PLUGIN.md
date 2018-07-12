@@ -8,8 +8,17 @@ plugins than the old one. The plugin is at an early stage so some things may be 
 
 ## Overview
 
-You may use the Gradle plugin to build _Kotlin/Native_ projects. To use it you need to include the following snippet in a build script
-(see projects in `samples` directory):
+You may use the Gradle plugin to build _Kotlin/Native_ projects. Since version 0.8 release builds of the plugin are
+[available](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.konan) at the Gradle plugin portal so you can apply it
+using Gradle plugin DSL:
+
+    plugins {
+        id "org.jetbrains.kotlin.konan" version "0.8"
+    }
+
+You also can get the plugin from a Bintray repository. In addition to releases this repo contains old and development
+versions of the plugin which are not available at the plugin portal. To get the plugin from the Bintray repo, include
+the following snippet in your build script:
 
     buildscript {
        repositories {
@@ -18,22 +27,22 @@ You may use the Gradle plugin to build _Kotlin/Native_ projects. To use it you n
                url  "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
            }
        }
-
+    
        dependencies {
-           classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:*"
+           classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.8-dev-*"
        }
     }
-
+    
     apply plugin: 'konan'
 
 The Kotlin/Native plugin depends on `org.jetbrains.kotlin:kotlin-gradle-plugin`. So if a build contains both these
 plugins as buildscript dependencies, it's recommended to **declare them in the same `build.gradle`** to avoid issues with
 plugin classpath.
 
-If you already downloaded the compiler manually you may specify the path to its root directory using `konan.home`
-project property (e.g. in `gradle.properties`).
+By default the plugin downloads the Kotlin/Native compiler during the first run. If you already downloaded the compiler
+manually you may specify the path to its root directory using `konan.home` project property (e.g. in `gradle.properties`).
 
-    konan.home=/home/user/kotlin-native-0.5
+    konan.home=/home/user/kotlin-native-0.8
 
 In this case the compiler will not be downloaded by the plugin.
 
