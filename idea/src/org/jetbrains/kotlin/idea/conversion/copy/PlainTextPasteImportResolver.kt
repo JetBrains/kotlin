@@ -176,7 +176,12 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
         runWriteAction {
             elementsWithUnresolvedRef.reversed().forEach {
                 val reference = it.reference as PsiQualifiedReference
-                if (!tryResolveReference(reference)) failedToResolveReferenceNames += reference.referenceName!!
+                if (!tryResolveReference(reference)) {
+                    val referenceName = reference.referenceName
+                    if (referenceName != null) {
+                        failedToResolveReferenceNames += referenceName
+                    }
+                }
             }
         }
     }
