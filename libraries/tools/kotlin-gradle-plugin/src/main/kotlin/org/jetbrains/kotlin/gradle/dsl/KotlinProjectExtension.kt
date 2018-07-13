@@ -25,9 +25,17 @@ internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProj
     DslObject(kotlinExt).extensions.create("experimental", ExperimentalExtension::class.java)
 }
 
+internal val Project.kotlinExtension: KotlinProjectExtension
+    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinProjectExtension
+
 open class KotlinProjectExtension {
     val experimental: ExperimentalExtension
-            get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)!!
+        get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
+
+    var sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>
+        @Suppress("UNCHECKED_CAST")
+        get() = DslObject(this).extensions.getByName("sourceSets") as NamedDomainObjectContainer<out KotlinSourceSet>
+        internal set(value) { DslObject(this).extensions.add("sourceSets", value) }
 }
 
 open class KotlinJvmProjectExtension : KotlinProjectExtension() {

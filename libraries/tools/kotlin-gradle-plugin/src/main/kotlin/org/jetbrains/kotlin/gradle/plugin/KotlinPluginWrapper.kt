@@ -37,6 +37,11 @@ abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver)
     private val log = Logging.getLogger(this.javaClass)
     val kotlinPluginVersion = loadKotlinVersionFromResource(log)
 
+    open val projectExtensionClass: KClass<out KotlinProjectExtension> get() = KotlinProjectExtension::class
+
+    internal open fun kotlinSourceSetFactory(project: Project): KotlinSourceSetFactory<out KotlinSourceSet> =
+        DefaultKotlinSourceSetFactory(project, fileResolver)
+
     override fun apply(project: Project) {
         project.configurations.maybeCreate(COMPILER_CLASSPATH_CONFIGURATION_NAME).defaultDependencies {
             it.add(project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:$kotlinPluginVersion"))
@@ -50,9 +55,14 @@ abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver)
         System.setProperty(org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
         val kotlinGradleBuildServices = KotlinGradleBuildServices.getInstance(project.gradle)
 
-        project.createKotlinExtension(projectExtensionClass)
+        project.createKotlinExtension(projectExtensionClass).apply {
+            fun <T : KotlinSourceSet> kotlinSourceSetContainer(factory: KotlinSourceSetFactory<T>) =
+                project.container(factory.itemClass, factory)
 
-        val plugin = getPlugin(kotlinGradleBuildServices)
+            project.kotlinExtension.sourceSets = kotlinSourceSetContainer(kotlinSourceSetFactory(project))
+        }
+
+        val plugin = getPlugin(project, kotlinGradleBuildServices)
         plugin.apply(project)
     }
 
