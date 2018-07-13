@@ -25,7 +25,6 @@ import com.android.build.gradle.internal.variant.TestVariantData
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
@@ -90,12 +89,12 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     override fun apply(
-            project: Project,
-            kotlinCompile: KotlinCompile,
-            javaCompile: AbstractCompile,
-            variantData: Any?,
-            androidProjectHandler: Any?,
-            javaSourceSet: SourceSet?
+        project: Project,
+        kotlinCompile: KotlinCompile,
+        javaCompile: AbstractCompile?,
+        variantData: Any?,
+        androidProjectHandler: Any?,
+        kotlinCompilation: KotlinCompilation?
     ): List<SubpluginOption> {
         val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return emptyList()
         val androidExtensionsExtension = project.extensions.getByType(AndroidExtensionsExtension::class.java)

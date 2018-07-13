@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.internal.KaptTask
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
 import org.jetbrains.kotlin.gradle.internal.registerGeneratedJavaSource
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.checkedReflection
 import java.io.File
@@ -40,12 +41,14 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
         variantManager.variantDataList.forEach(action)
     }
 
-    override fun wireKotlinTasks(project: Project,
-                                 androidPlugin: BasePlugin,
-                                 androidExt: BaseExtension,
-                                 variantData: BaseVariantData<out BaseVariantOutputData>,
-                                 javaTask: AbstractCompile,
-                                 kotlinTask: KotlinCompile
+    override fun wireKotlinTasks(
+        project: Project,
+        compilation: KotlinJvmAndroidCompilation,
+        androidPlugin: BasePlugin,
+        androidExt: BaseExtension,
+        variantData: BaseVariantData<out BaseVariantOutputData>,
+        javaTask: AbstractCompile,
+        kotlinTask: KotlinCompile
     ) {
         kotlinTask.dependsOn(*javaTask.dependsOn.toTypedArray())
 
