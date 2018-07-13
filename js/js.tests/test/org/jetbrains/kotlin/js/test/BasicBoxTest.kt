@@ -131,8 +131,7 @@ abstract class BasicBoxTest(
             val mainModuleName = if (TEST_MODULE in modules) TEST_MODULE else DEFAULT_MODULE
             val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
 
-            val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
-                    TEST_DATA_DIR_PATH + COMMON_FILES_DIR, JavaScript.EXTENSION)
+            val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(COMMON_FILES_DIR_PATH, JavaScript.EXTENSION)
             val localCommonFile = file.parent + "/" + COMMON_FILES_NAME + JavaScript.DOT_EXTENSION
             val localCommonFiles = if (File(localCommonFile).exists()) listOf(localCommonFile) else emptyList()
 
@@ -305,10 +304,10 @@ abstract class BasicBoxTest(
     ) {
         val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
-        val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(
-                TEST_DATA_DIR_PATH + COMMON_FILES_DIR, KotlinFileType.EXTENSION)
+        val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(COMMON_FILES_DIR_PATH, KotlinFileType.EXTENSION)
         val localCommonFile = directory + "/" + COMMON_FILES_NAME + "." + KotlinFileType.EXTENSION
         val localCommonFiles = if (File(localCommonFile).exists()) listOf(localCommonFile) else emptyList()
+        // TODO probably it's no longer needed.
         val additionalCommonFiles = additionalCommonFileDirectories.flatMap { baseDir ->
             JsTestUtils.getFilesInDirectoryByExtension(baseDir + "/", KotlinFileType.EXTENSION)
         }
@@ -750,9 +749,11 @@ abstract class BasicBoxTest(
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
         const val DIST_DIR_JS_PATH = "dist/js/"
 
-        private val COMMON_FILES_NAME = "_common"
-        private val COMMON_FILES_DIR = "_commonFiles/"
-        private val MODULE_EMULATION_FILE = TEST_DATA_DIR_PATH + "/moduleEmulation.js"
+        private const val COMMON_FILES_NAME = "_common"
+        private const val COMMON_FILES_DIR = "_commonFiles/"
+        const val COMMON_FILES_DIR_PATH = TEST_DATA_DIR_PATH + COMMON_FILES_DIR
+
+        private const val MODULE_EMULATION_FILE = TEST_DATA_DIR_PATH + "/moduleEmulation.js"
 
         private val MODULE_KIND_PATTERN = Pattern.compile("^// *MODULE_KIND: *(.+)$", Pattern.MULTILINE)
         private val NO_MODULE_SYSTEM_PATTERN = Pattern.compile("^// *NO_JS_MODULE_SYSTEM", Pattern.MULTILINE)

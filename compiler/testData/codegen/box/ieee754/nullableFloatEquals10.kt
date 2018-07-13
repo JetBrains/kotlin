@@ -1,5 +1,4 @@
 // LANGUAGE_VERSION: 1.0
-// IGNORE_BACKEND: JS_IR
 fun myEquals(a: Float?, b: Float?) = a == b
 
 fun myEquals1(a: Float?, b: Float) = a == b

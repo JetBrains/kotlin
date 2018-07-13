@@ -43,10 +43,10 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     private val eqeq = context.irBuiltIns.eqeqSymbol
 
-    private val isInterfaceSymbol = getInternalFunction("isInterface")
-    private val isArraySymbol = getInternalFunction("isArray")
-//    private val isCharSymbol = getInternalFunction("isChar")
-    private val isObjectSymbol = getInternalFunction("isObject")
+    private val isInterfaceSymbol get() = context.intrinsics.isInterfaceSymbol
+    private val isArraySymbol get() = context.intrinsics.isArraySymbol
+//    private val isCharSymbol get() = context.intrinsics.isCharSymbol
+    private val isObjectSymbol get() = context.intrinsics.isObjectSymbol
 
     private val instanceOfIntrinsicSymbol = context.intrinsics.jsInstanceOf.symbol
     private val typeOfIntrinsicSymbol = context.intrinsics.jsTypeOf.symbol
@@ -59,8 +59,6 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     private val litTrue: IrExpression = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
     private val litNull: IrExpression = JsIrBuilder.buildNull(context.irBuiltIns.nothingNType)
-
-    private fun getInternalFunction(name: String) = context.symbolTable.referenceSimpleFunction(context.getInternalFunctions(name).single())
 
     override fun lower(irFile: IrFile) {
         // TODO: get rid of descriptors

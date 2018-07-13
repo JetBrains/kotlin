@@ -1,5 +1,4 @@
 // LANGUAGE_VERSION: 1.0
-// IGNORE_BACKEND: JS_IR
 fun myEquals(a: Double?, b: Double?) = a == b
 
 fun myEquals1(a: Double?, b: Double) = a == b

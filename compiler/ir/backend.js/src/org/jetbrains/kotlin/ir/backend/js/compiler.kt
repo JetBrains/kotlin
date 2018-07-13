@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -21,14 +23,25 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
+import org.jetbrains.kotlin.serialization.js.ModuleKind
+
+data class Result(val moduleDescriptor: ModuleDescriptor, val generatedCode: String)
 
 fun compile(
     project: Project,
     files: List<KtFile>,
     configuration: CompilerConfiguration,
-    export: FqName
-): String {
-    val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, project, configuration, emptyList(), emptyList())
+    export: FqName? = null,
+    dependencies: List<ModuleDescriptor> = listOf()
+): Result {
+    val moduleDescriptors =
+        dependencies
+            .filterIsInstance<ModuleDescriptorImpl>()
+            .map { JsModuleDescriptor("", ModuleKind.PLAIN, listOf(), it) }
+
+    val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, project, configuration, moduleDescriptors, emptyList())
+
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
     TopDownAnalyzerFacadeForJS.checkForErrors(files, analysisResult.bindingContext)
@@ -56,10 +69,10 @@ fun compile(
 
     val program = moduleFragment.accept(IrModuleToJsTransformer(context), null)
 
-    return program.toString()
+    return Result(analysisResult.moduleDescriptor, program.toString())
 }
 
-fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment) {
+private fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment) {
     FunctionInlining(this).inline(moduleFragment)
 
     moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
@@ -77,7 +90,7 @@ fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment) {
     }
 }
 
-fun JsIrBackendContext.lower(file: IrFile) {
+private fun JsIrBackendContext.lower(file: IrFile) {
     LateinitLowering(this, true).lower(file)
     DefaultArgumentStubGenerator(this).runOnFilePostfix(file)
     DefaultParameterInjector(this).runOnFilePostfix(file)

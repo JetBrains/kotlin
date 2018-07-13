@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.js.test
 
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.backend.js.Result
 import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
@@ -17,8 +22,12 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/core.kt",
     "core/builtins/native/kotlin/Number.kt",
     "core/builtins/native/kotlin/Comparable.kt",
-    "libraries/stdlib/js/irRuntime"
+    "libraries/stdlib/js/irRuntime",
+    BasicBoxTest.COMMON_FILES_DIR_PATH
 )
+
+private var runtimeResult: Result? = null
+private val runtimeFile = File("js/js.translator/testData/out/irBox/testRuntime.js")
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -50,27 +59,29 @@ abstract class BasicIrBoxTest(
         testPackage: String?,
         testFunction: String
     ) {
-        val runtime = runtimeSources.map { createPsiFile(it) }
-
-        val filesToIgnore = listOf(
-            // TODO: temporary ignore some files from _commonFiles directory since they can't be compiled correctly by JS IR BE yet.
-            // Also, some declarations depends on stdlib but we don't have any library support in JS IR BE yet
-            // and probably it will be better to avoid using stdlib in testData as much as possible.
-            "js/js.translator/testData/_commonFiles/arrayAsserts.kt"
-        )
-
         val filesToCompile = units
             .map { (it as TranslationUnit.SourceFile).file }
-            .filter { file -> filesToIgnore.none { file.virtualFilePath.endsWith(it) } }
+            // TODO: split input files to some parts (global common, local common, test)
+            .filterNot { it.virtualFilePath.contains(BasicBoxTest.COMMON_FILES_DIR_PATH) }
 
-        val code = compile(
+        if (runtimeResult == null) {
+            val myConfiguration = config.configuration.copy()
+
+            // TODO: is it right in general? Maybe sometimes we need to compile with newer versions or with additional language features.
+            myConfiguration.languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
+
+            runtimeResult = compile(config.project, runtimeSources.map(::createPsiFile), myConfiguration)
+            runtimeFile.write(runtimeResult!!.generatedCode)
+        }
+
+        val result = compile(
             config.project,
-            runtime + filesToCompile,
+            filesToCompile,
             config.configuration,
-            FqName((testPackage?.let { "$it." } ?: "") + testFunction))
+            FqName((testPackage?.let { "$it." } ?: "") + testFunction),
+            listOf(runtimeResult!!.moduleDescriptor))
 
-        outputFile.parentFile.mkdirs()
-        outputFile.writeText(code)
+        outputFile.write(result.generatedCode)
     }
 
     override fun runGeneratedCode(
@@ -82,7 +93,9 @@ abstract class BasicIrBoxTest(
         withModuleSystem: Boolean
     ) {
         // TODO: should we do anything special for module systems?
-        super.runGeneratedCode(jsFiles, null, null, testFunction, expectedResult, false)
+        // TODO: return list of js from translateFiles and provide then to this function with other js files
+        // TODO: cache runtime.js and don't cache kotlin.js for IR BE tests
+        super.runGeneratedCode(listOf(runtimeFile.path) + jsFiles, null, null, testFunction, expectedResult, false)
     }
 }
 
@@ -95,4 +108,9 @@ private fun listOfKtFilesFrom(vararg paths: String): List<String> {
             .map { it.relativeToOrSelf(currentDir).path }
             .asIterable()
     }
+}
+
+private fun File.write(text: String) {
+    parentFile.mkdirs()
+    writeText(text)
 }
