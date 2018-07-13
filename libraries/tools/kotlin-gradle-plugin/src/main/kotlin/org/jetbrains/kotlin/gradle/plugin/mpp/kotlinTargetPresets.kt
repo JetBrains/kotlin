@@ -33,7 +33,7 @@ abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
             compilations = project.container(compilationFactory.itemClass, compilationFactory)
         }
 
-        KotlinTargetConfigurator(buildOutputCleanupRegistry).configureTarget(project, result)
+        KotlinTargetConfigurator(buildOutputCleanupRegistry).configureTarget(result)
 
         result.compilations.all { compilation ->
             buildCompilationProcessor(compilation).run()
