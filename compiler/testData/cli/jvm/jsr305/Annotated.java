@@ -5,4 +5,9 @@ public class Annotated {
 
     public void bar(@MyMigrationNonnull String x) {
     }
+
+    @MyNullable
+    public String nullable() {
+        return null;
+    }
 }

@@ -15,7 +15,7 @@ public class J {
 
 fun foo(collection: Collection<J>) {
     val mapped = collection.map { it.method() }
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>mapped[0]<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>mapped[0]<!>.length
 }
 
 public fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {

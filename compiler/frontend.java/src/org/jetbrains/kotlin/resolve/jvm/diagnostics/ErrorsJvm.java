@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm.diagnostics;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.name.FqName;
@@ -125,25 +124,11 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtAnnotationEntry> EXPLICIT_METADATA_IS_DISALLOWED = DiagnosticFactory0.create(ERROR);
 
-    enum NullabilityInformationSource {
-        KOTLIN {
-            @NotNull
-            @Override
-            public String toString() {
-                return "Kotlin";
-            }
-        },
-        JAVA {
-            @NotNull
-            @Override
-            public String toString() {
-                return "Java";
-            }
-        }
-    }
-
-    DiagnosticFactory2<KtElement, NullabilityInformationSource, NullabilityInformationSource> NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+    DiagnosticFactory2<KtElement, KotlinType, KotlinType> NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
             = DiagnosticFactory2.create(WARNING);
+
+    DiagnosticFactory1<KtElement, KotlinType> RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+            = DiagnosticFactory1.create(WARNING);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
