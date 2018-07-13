@@ -134,6 +134,17 @@ public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
 
 // INTERNAL DEFINITIONS
 
+/**
+ * This function is used when [createCoroutineUnintercepted] encounters suspending lambda that does not extend BaseContinuationImpl.
+ *
+ * It happens in two cases:
+ *   1. Callable reference to suspending function,
+ *   2. Suspending function reference implemented by Java code.
+ *
+ * We must wrap it into an instance that extends [BaseContinuationImpl], because that is an expectation of all coroutines machinery.
+ * As an optimization we use lighter-weight [RestrictedContinuationImpl] base class (it has less fields) if the context is
+ * [EmptyCoroutineContext], and a full-blown [ContinuationImpl] class otherwise.
+ */
 @SinceKotlin("1.3")
 private inline fun <T> createCoroutineFromSuspendFunction(
     completion: Continuation<T>,
