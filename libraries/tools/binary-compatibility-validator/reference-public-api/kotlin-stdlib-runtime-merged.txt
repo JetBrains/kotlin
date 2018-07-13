@@ -3172,6 +3172,11 @@ public abstract interface class kotlin/jvm/functions/Function9 : kotlin/Function
 	public abstract fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 }
 
+public abstract interface class kotlin/jvm/functions/FunctionN : kotlin/Function, kotlin/jvm/internal/FunctionBase {
+	public abstract fun getArity ()I
+	public abstract fun invoke ([Ljava/lang/Object;)Ljava/lang/Object;
+}
+
 public final class kotlin/jvm/internal/ArrayIteratorKt {
 	public static final fun iterator ([Ljava/lang/Object;)Ljava/util/Iterator;
 }
