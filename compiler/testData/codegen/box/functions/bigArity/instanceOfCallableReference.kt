@@ -1,5 +1,6 @@
 // !LANGUAGE: +FunctionTypesWithBigArity
 // IGNORE_BACKEND: JS_IR, JS
+// IGNORE_BACKEND: JVM, JVM_IR
 
 class A
 
