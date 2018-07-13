@@ -73,9 +73,13 @@ abstract class AbstractKotlinCompilation(
                 whenEvaluated {
                     (target.project.tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).source(sourceSet.kotlin)
                 }
-                addExtendsFromRelation(apiConfigurationName, sourceSet.apiConfigurationName)
-                addExtendsFromRelation(implementationConfigurationName, sourceSet.implementationConfigurationName)
-                addExtendsFromRelation(compileOnlyConfigurationName, sourceSet.compileOnlyConfigurationName)
+
+                // Use `forced = false` since `api`, `implementation`, and `compileOnly` may be missing in some cases like
+                // old Java & Android projects:
+                addExtendsFromRelation(apiConfigurationName, sourceSet.apiConfigurationName, forced = false)
+                addExtendsFromRelation(implementationConfigurationName, sourceSet.implementationConfigurationName, forced = false)
+                addExtendsFromRelation(compileOnlyConfigurationName, sourceSet.compileOnlyConfigurationName, forced = false)
+
                 if (this is KotlinCompilationToRunnableFiles) {
                     addExtendsFromRelation(runtimeOnlyConfigurationName, sourceSet.runtimeOnlyConfigurationName)
                 }

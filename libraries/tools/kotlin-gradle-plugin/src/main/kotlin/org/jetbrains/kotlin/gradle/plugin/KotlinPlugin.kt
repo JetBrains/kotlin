@@ -626,6 +626,12 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
         project.afterEvaluate { project ->
+            forEachVariant(project) { variant ->
+                val variantName = getVariantName(variant)
+                val compilation = kotlinAndroidTarget.compilations.create(variantName)
+                setUpDependencyResolution(variant, compilation)
+            }
+
             val androidPluginIds = listOf("android", "com.android.application", "android-library", "com.android.library",
                     "com.android.test", "com.android.feature", "com.android.dynamic-feature", "com.android.instantapp")
             val plugin = androidPluginIds.asSequence()
@@ -635,15 +641,19 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                                                          "plugins to be applied to the project:\n\t" +
                                                          androidPluginIds.joinToString("\n\t") { "* $it" })
 
-            val subpluginEnvironment = loadSubplugins(project, kotlinConfigurationTools.kotlinPluginVersion)
-
             checkAndroidAnnotationProcessorDependencyUsage(project)
 
             forEachVariant(project) {
                 processVariant(
-                    it, kotlinAndroidTarget, project, ext, plugin, kotlinOptions, kotlinConfigurationTools.kotlinTasksProvider,
-                    subpluginEnvironment
+                    it, kotlinAndroidTarget, project, ext, plugin, kotlinOptions, kotlinConfigurationTools.kotlinTasksProvider
                 )
+            }
+
+            val subpluginEnvironment = loadSubplugins(project, kotlinConfigurationTools.kotlinPluginVersion)
+
+            forEachVariant(project) { variant ->
+                val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
+                applySubplugins(project, compilation, variant, subpluginEnvironment)
             }
         }
     }
@@ -655,19 +665,11 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         androidExt: BaseExtension,
         androidPlugin: BasePlugin,
         rootKotlinOptions: KotlinJvmOptionsImpl,
-        tasksProvider: KotlinTasksProvider,
-        subpluginEnvironment: SubpluginEnvironment
+        tasksProvider: KotlinTasksProvider
     ) {
-
         checkVariantIsValid(variantData)
         val variantDataName = getVariantName(variantData)
         logger.kotlinDebug("Process variant [$variantDataName]")
-
-        val compilation = target.compilations.create(variantDataName).apply {
-            KotlinTargetConfigurator.defineConfigurationsForCompilation(this, target, project.configurations)
-        }
-
-        setUpDependencyResolution(variantData, compilation)
 
         val javaTask = getJavaTask(variantData)
 
@@ -676,6 +678,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
             return
         }
 
+        val compilation = target.compilations.getByName(variantDataName)
         val kotlinTaskName = compilation.compileKotlinTaskName
         // todo: Investigate possibility of creating and configuring kotlinTask before evaluation
         val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName, variantDataName)
@@ -696,6 +699,16 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         }
 
         wireKotlinTasks(project, compilation, androidPlugin, androidExt, variantData, javaTask, kotlinTask)
+    }
+
+    private fun applySubplugins(
+        project: Project,
+        compilation: KotlinCompilation,
+        variantData: V,
+        subpluginEnvironment: SubpluginEnvironment
+    ) {
+        val kotlinTask = project.tasks.getByName(compilation.compileKotlinTaskName) as KotlinCompile
+        val javaTask = getJavaTask(variantData)
 
         val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
                 project, kotlinTask, javaTask, wrapVariantDataForKapt(variantData), this, null)
