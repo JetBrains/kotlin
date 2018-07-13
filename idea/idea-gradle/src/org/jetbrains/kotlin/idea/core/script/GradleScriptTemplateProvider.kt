@@ -43,6 +43,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.collections.LinkedHashSet
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
@@ -96,24 +97,32 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
         failedToLoad.set(false)
 
-        // KotlinBuildScript should be last because it has wide scriptFilePattern
-        val kotlinDslTemplates = loadGradleTemplates(
+        val kotlinDslTemplates = LinkedHashSet<KotlinScriptDefinition>()
+
+        loadGradleTemplates(
             templateClass = "org.gradle.kotlin.dsl.KotlinInitScript",
             dependencySelector = kotlinDslDependencySelector,
             additionalResolverClasspath = kotlinDslAdditionalResolverCp
 
-        ) + loadGradleTemplates(
+        ).let { kotlinDslTemplates.addAll(it) }
+
+        loadGradleTemplates(
             templateClass = "org.gradle.kotlin.dsl.KotlinSettingsScript",
             dependencySelector = kotlinDslDependencySelector,
             additionalResolverClasspath = kotlinDslAdditionalResolverCp
 
-        ) + loadGradleTemplates(
+        ).let { kotlinDslTemplates.addAll(it) }
+
+        // KotlinBuildScript should be last because it has wide scriptFilePattern
+        loadGradleTemplates(
             templateClass = "org.gradle.kotlin.dsl.KotlinBuildScript",
             dependencySelector = kotlinDslDependencySelector,
             additionalResolverClasspath = kotlinDslAdditionalResolverCp
-        )
+        ).let { kotlinDslTemplates.addAll(it) }
+
+
         if (kotlinDslTemplates.isNotEmpty()) {
-            return kotlinDslTemplates
+            return kotlinDslTemplates.toList()
         }
 
         val default = tryToLoadOldBuildScriptDefinition()
@@ -244,6 +253,10 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
             fileName.endsWith(KOTLIN_DSL_SCRIPT_EXTENSION)
 
         override fun toString(): String = "ErrorGradleScriptDefinition"
+
+        override fun equals(other: Any?): Boolean = other is ErrorGradleScriptDefinition
+
+        override fun hashCode(): Int = name.hashCode()
     }
 
     private class ErrorScriptDependenciesResolver(private val message: String? = null) : DependenciesResolver {
