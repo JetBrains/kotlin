@@ -21,8 +21,6 @@ package kotlin
  * represented as values of the primitive type `boolean`.
  */
 public class Boolean private constructor() : Comparable<Boolean> {
-    companion object {}
-
     /**
      * Returns the inverse of this boolean.
      */
@@ -46,4 +44,7 @@ public class Boolean private constructor() : Comparable<Boolean> {
     public infix fun xor(other: Boolean): Boolean
 
     public override fun compareTo(other: Boolean): Int
+
+    @SinceKotlin("1.3")
+    companion object {}
 }
