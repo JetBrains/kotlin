@@ -40,6 +40,10 @@ public final class Boolean : kotlin.Comparable<kotlin.Boolean>, java.io.Serializ
     public final operator fun not(): kotlin.Boolean
     public final infix fun or(/*0*/ other: kotlin.Boolean): kotlin.Boolean
     public final infix fun xor(/*0*/ other: kotlin.Boolean): kotlin.Boolean
+
+    @kotlin.SinceKotlin(version = "1.3") public companion object Companion {
+        /*primary*/ private constructor Companion()
+    }
 }
 
 public final class BooleanArray : kotlin.Any, kotlin.Cloneable, java.io.Serializable {
