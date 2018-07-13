@@ -66,6 +66,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/annotations/annotationsOnDefault.kt");
         }
 
+        @TestMetadata("annotationsOnNonExistentAccessors.kt")
+        public void testAnnotationsOnNonExistentAccessors() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/annotationsOnNonExistentAccessors.kt");
+        }
+
         @TestMetadata("annotationsOnTypeAliases.kt")
         public void testAnnotationsOnTypeAliases() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/annotationsOnTypeAliases.kt");
