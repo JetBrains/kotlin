@@ -22,17 +22,14 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import org.gradle.tooling.ProjectConnection
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPIBase
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -47,9 +44,12 @@ import kotlin.collections.LinkedHashSet
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 import kotlin.script.experimental.dependencies.ScriptReport
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
@@ -234,28 +234,22 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         ScriptDefinitionsManager.getInstance(project).reloadDefinitionsBy(this)
     }
 
-    private class ErrorGradleScriptDefinition(message: String? = null) : KotlinScriptDefinition(ScriptTemplateWithArgs::class) {
+    private class ErrorGradleScriptDefinition(message: String? = null) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
         companion object {
             private const val KOTLIN_DSL_SCRIPT_EXTENSION = ".gradle.kts"
         }
 
         override val name: String = "Default Kotlin Gradle Script"
-        override val fileType: LanguageFileType = KotlinFileType.INSTANCE
-        override val annotationsForSamWithReceivers: List<String> = emptyList()
-        override val acceptedAnnotations: List<KClass<out Annotation>> = emptyList()
+        override val fileExtension: String = KOTLIN_DSL_SCRIPT_EXTENSION
+
+        override val scriptCompilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration.Default
+        override val hostConfiguration: ScriptingHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration)
+        override val baseClass: KClass<*> = ScriptTemplateWithArgs::class
 
         override val dependencyResolver: DependenciesResolver = ErrorScriptDependenciesResolver(message)
 
-        override fun getScriptName(script: KtScript) =
-            Name.identifier(script.containingKtFile.name.removeSuffix(KOTLIN_DSL_SCRIPT_EXTENSION))
-
-        override fun isScript(fileName: String): Boolean =
-            fileName.endsWith(KOTLIN_DSL_SCRIPT_EXTENSION)
-
         override fun toString(): String = "ErrorGradleScriptDefinition"
-
         override fun equals(other: Any?): Boolean = other is ErrorGradleScriptDefinition
-
         override fun hashCode(): Int = name.hashCode()
     }
 
