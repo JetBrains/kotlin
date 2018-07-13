@@ -10615,44 +10615,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class BigArity extends AbstractLightAnalysisModeTest {
-            @TestMetadata("callWithIncorrectNumberOfArguments.kt")
-            public void ignoreCallWithIncorrectNumberOfArguments() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/bigArity/callWithIncorrectNumberOfArguments.kt");
-            }
-
-            @TestMetadata("function255.kt")
-            public void ignoreFunction255() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/bigArity/function255.kt");
-            }
-
-            @TestMetadata("instanceOfCallableReference.kt")
-            public void ignoreInstanceOfCallableReference() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/bigArity/instanceOfCallableReference.kt");
-            }
-
-            @TestMetadata("invokeCallableReference.kt")
-            public void ignoreInvokeCallableReference() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/bigArity/invokeCallableReference.kt");
-            }
-
-            @TestMetadata("invokeLambda.kt")
-            public void ignoreInvokeLambda() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/bigArity/invokeLambda.kt");
-            }
-
-            @TestMetadata("javaLambda.kt")
-            public void ignoreJavaLambda() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/bigArity/javaLambda.kt");
-            }
-
             @TestMetadata("noBigFunctionTypes.kt")
             public void ignoreNoBigFunctionTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/bigArity/noBigFunctionTypes.kt");
-            }
-
-            @TestMetadata("subclass.kt")
-            public void ignoreSubclass() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/bigArity/subclass.kt");
             }
 
             private void runTest(String testDataFilePath) throws Exception {
@@ -10661,6 +10626,41 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
             public void testAllFilesPresentInBigArity() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions/bigArity"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("callWithIncorrectNumberOfArguments.kt")
+            public void testCallWithIncorrectNumberOfArguments() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/callWithIncorrectNumberOfArguments.kt");
+            }
+
+            @TestMetadata("function255.kt")
+            public void testFunction255() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/function255.kt");
+            }
+
+            @TestMetadata("instanceOfCallableReference.kt")
+            public void testInstanceOfCallableReference() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/instanceOfCallableReference.kt");
+            }
+
+            @TestMetadata("invokeCallableReference.kt")
+            public void testInvokeCallableReference() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/invokeCallableReference.kt");
+            }
+
+            @TestMetadata("invokeLambda.kt")
+            public void testInvokeLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/invokeLambda.kt");
+            }
+
+            @TestMetadata("javaLambda.kt")
+            public void testJavaLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/javaLambda.kt");
+            }
+
+            @TestMetadata("subclass.kt")
+            public void testSubclass() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/subclass.kt");
             }
         }
 
@@ -12319,11 +12319,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NotNullAssertions extends AbstractLightAnalysisModeTest {
-            @TestMetadata("functionWithBigArity.kt")
-            public void ignoreFunctionWithBigArity() throws Exception {
-                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/functionWithBigArity.kt");
-            }
-
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -12340,6 +12335,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("extensionReceiverParameter.kt")
             public void testExtensionReceiverParameter() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/extensionReceiverParameter.kt");
+            }
+
+            @TestMetadata("functionWithBigArity.kt")
+            public void testFunctionWithBigArity() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/functionWithBigArity.kt");
             }
 
             @TestMetadata("incWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv11.kt")
@@ -17389,17 +17389,17 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Call extends AbstractLightAnalysisModeTest {
-            @TestMetadata("bigArity.kt")
-            public void ignoreBigArity() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/call/bigArity.kt");
-            }
-
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
             public void testAllFilesPresentInCall() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/call"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("bigArity.kt")
+            public void testBigArity() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/call/bigArity.kt");
             }
 
             @TestMetadata("callInstanceJavaMethod.kt")
@@ -18845,17 +18845,17 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Parameters extends AbstractLightAnalysisModeTest {
-            @TestMetadata("bigArity.kt")
-            public void ignoreBigArity() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/parameters/bigArity.kt");
-            }
-
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
             public void testAllFilesPresentInParameters() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/parameters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("bigArity.kt")
+            public void testBigArity() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/parameters/bigArity.kt");
             }
 
             @TestMetadata("boundInnerClassConstructor.kt")
