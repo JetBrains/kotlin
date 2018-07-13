@@ -2,7 +2,6 @@
 
 // Implementing function interface is prohibited in JavaScript
 // IGNORE_BACKEND: JS_IR, JS
-// IGNORE_BACKEND: JVM, JVM_IR
 
 class A(val value: String)
 
