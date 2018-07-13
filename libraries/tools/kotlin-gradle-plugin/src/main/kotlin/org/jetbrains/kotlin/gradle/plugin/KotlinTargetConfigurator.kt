@@ -20,7 +20,9 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.fullName
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import java.util.concurrent.Callable
 
@@ -37,22 +40,20 @@ open class KotlinTargetConfigurator(
     private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry
 ) {
     fun <KotlinCompilationType: KotlinCompilation> configureTarget(
-        project: Project,
         target: KotlinOnlyTarget<KotlinCompilationType>
     ) {
-        configureCompilationDefaults(project, target)
-        configureCompilations(project, target)
-        defineConfigurationsForTarget(project, target)
-        configureArchivesAndComponent(project, target)
-        configureBuild(project, target)
+        configureCompilationDefaults(target)
+        configureCompilations(target)
+        defineConfigurationsForTarget(target)
+        configureArchivesAndComponent(target)
+        configureTest(target)
+        configureBuild(target)
 
-        setCompatibilityOfAbstractCompileTasks(project)
+        setCompatibilityOfAbstractCompileTasks(target.project)
     }
 
-    private fun <KotlinCompilationType: KotlinCompilation> configureCompilations(
-        project: Project,
-        platformTarget: KotlinOnlyTarget<KotlinCompilationType>
-    ) {
+    private fun <KotlinCompilationType: KotlinCompilation> configureCompilations(platformTarget: KotlinOnlyTarget<KotlinCompilationType>) {
+        val project = platformTarget.project
         val main = platformTarget.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         platformTarget.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
@@ -68,7 +69,9 @@ open class KotlinTargetConfigurator(
         }
     }
 
-    private fun <KotlinCompilationType: KotlinCompilation> configureCompilationDefaults(project: Project, target: KotlinOnlyTarget<KotlinCompilationType>) {
+    private fun <KotlinCompilationType: KotlinCompilation> configureCompilationDefaults(target: KotlinOnlyTarget<KotlinCompilationType>) {
+        val project = target.project
+
         target.compilations.all { compilation ->
             defineConfigurationsForCompilation(compilation, target, project.configurations)
 
@@ -77,14 +80,16 @@ open class KotlinTargetConfigurator(
             }
 
             if (compilation is KotlinCompilationWithResources) {
-                configureResourceProcessing(project, compilation, project.files())
+                configureResourceProcessing(compilation, project.files())
             }
 
-            createLifecycleTask(compilation, project)
+            createLifecycleTask(compilation)
         }
     }
 
-    private fun configureArchivesAndComponent(project: Project, target: KotlinOnlyTarget<*>) {
+    private fun configureArchivesAndComponent(target: KotlinOnlyTarget<*>) {
+        val project = target.project
+
         val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         val jar = project.tasks.create(target.artifactsTaskName, Jar::class.java)
@@ -92,7 +97,6 @@ open class KotlinTargetConfigurator(
         jar.group = BasePlugin.BUILD_GROUP
         jar.from(mainCompilation.output)
 
-        val jarArtifact = ArchivePublishArtifact(jar)
         val apiElementsConfiguration = project.configurations.getByName(target.apiElementsConfigurationName)
 
         target.disambiguationClassifier?.let { jar.classifier = it }
@@ -125,11 +129,27 @@ open class KotlinTargetConfigurator(
         publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
     }
 
+    private fun configureTest(target: KotlinTarget) {
+        val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME) as? KotlinCompilationToRunnableFiles
+            ?: return // Otherwise, there is no runtime classpath
+
+        target.project.tasks.create(lowerCamelCaseName(target.targetName, testTaskNameSuffix), Test::class.java).apply {
+            project.afterEvaluate { // use afterEvaluate to override the JavaPlugin defaults for Test tasks
+                conventionMapping.map("testClassesDirs") { testCompilation.output.classesDirs }
+                conventionMapping.map("classpath") { testCompilation.runtimeDependencyFiles }
+                description = "Runs the unit tests."
+                group = JavaBasePlugin.VERIFICATION_GROUP
+                target.project.tasks.findByName(JavaBasePlugin.CHECK_TASK_NAME)?.dependsOn(this@apply)
+            }
+        }
+    }
+
     private fun configureResourceProcessing(
-        project: Project,
         compilation: KotlinCompilationWithResources,
         resourceSet: FileCollection
     ) {
+        val project = compilation.target.project
+
         compilation.output.setResourcesDir(Callable {
             val classesDirName = "resources/" + compilation.compilationName
             File(project.buildDir, classesDirName)
@@ -141,7 +161,9 @@ open class KotlinTargetConfigurator(
         resourcesTask.from(resourceSet)
     }
 
-    private fun createLifecycleTask(compilation: KotlinCompilation, project: Project) {
+    private fun createLifecycleTask(compilation: KotlinCompilation) {
+        val project = compilation.target.project
+
         (compilation.output.classesDirs as ConfigurableFileCollection).from(project.files().builtBy(compilation.compileAllTaskName))
 
         project.tasks.create(compilation.compileAllTaskName).apply {
@@ -157,7 +179,9 @@ open class KotlinTargetConfigurator(
         }
     }
 
-    private fun defineConfigurationsForTarget(project: Project, target: KotlinOnlyTarget<*>) {
+    private fun defineConfigurationsForTarget(target: KotlinOnlyTarget<*>) {
+        val project = target.project
+
         val configurations = project.configurations
 
         val defaultConfiguration = configurations.maybeCreate(target.defaultConfigurationName)
@@ -212,7 +236,8 @@ open class KotlinTargetConfigurator(
         defaultConfiguration.extendsFrom(runtimeElementsConfiguration).usesPlatformOf(target)
     }
 
-    private fun configureBuild(project: Project, target: KotlinOnlyTarget<*>) {
+    private fun configureBuild(target: KotlinOnlyTarget<*>) {
+        val project = target.project
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         project.tasks.maybeCreate(buildNeededTaskName, DefaultTask::class.java).apply {
             description = "Assembles and tests this project and all projects it depends on."
@@ -258,6 +283,8 @@ open class KotlinTargetConfigurator(
     companion object {
         const val buildNeededTaskName = "buildAllNeeded"
         const val buildDependentTaskName = "buildAllDependents"
+
+        const val testTaskNameSuffix = "test"
 
         fun defineConfigurationsForCompilation(
             compilation: KotlinCompilation,
