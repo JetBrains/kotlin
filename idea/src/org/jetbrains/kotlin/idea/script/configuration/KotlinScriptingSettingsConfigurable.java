@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collections;
 
 public class KotlinScriptingSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
     private JPanel root;
@@ -61,14 +62,14 @@ public class KotlinScriptingSettingsConfigurable implements SearchableConfigurab
         settings.setAutoReloadEnabled(scriptDependenciesAutoReload.isSelected());
 
 
-        // todo
+        manager.saveNewDefinitions(Collections.unmodifiableList(model.getItems()));
     }
 
     @Override
     public void reset() {
         scriptDependenciesAutoReload.setSelected(settings.isAutoReloadEnabled());
 
-        // todo
+        model.setItems(Lists.newArrayList(manager.getAllDefinitions()));
     }
 
     @Override

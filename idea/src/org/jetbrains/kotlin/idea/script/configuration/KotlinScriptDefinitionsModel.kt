@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPIBase
 
-class KotlinScriptDefinitionsModel(definitions: ArrayList<KotlinScriptDefinition>) :
+class KotlinScriptDefinitionsModel(definitions: MutableList<KotlinScriptDefinition>) :
     ListTableModel<KotlinScriptDefinition>(
         arrayOf(
             ScriptDefinitionName(),
