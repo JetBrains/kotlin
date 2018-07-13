@@ -17,7 +17,7 @@ typealias ProcessedScriptData = ChainedPropertyBag
 
 interface ScriptCompilationConfigurator {
 
-    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
+    // constructor(properties: ScriptDefinitionPropertiesBag) // the constructor is expected from implementations
 
     val defaultConfiguration: ScriptCompileConfiguration
 

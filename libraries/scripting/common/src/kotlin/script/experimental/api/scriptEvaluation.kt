@@ -27,7 +27,7 @@ data class EvaluationResult(val returnValue: Any?, val environment: ScriptEvalua
 // NOTE: name inconsistency: run vs evaluate
 interface ScriptEvaluator<in ScriptBase : Any> {
 
-    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
+    // constructor(properties: ScriptDefinitionPropertiesBag) // the constructor is expected from implementations
 
     suspend fun eval(
         compiledScript: CompiledScript<ScriptBase>,

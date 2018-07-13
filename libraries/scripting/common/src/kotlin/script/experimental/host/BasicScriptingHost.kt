@@ -23,19 +23,20 @@ import kotlinx.coroutines.experimental.runBlocking
 import kotlin.script.experimental.api.*
 
 abstract class BasicScriptingHost<ScriptBase : Any>(
-    val configurator: ScriptCompilationConfigurator,
     val compiler: ScriptCompiler,
+    // TODO: does it belong here or to the definition?
     val evaluator: ScriptEvaluator<ScriptBase>
 ) {
     open fun <T> runInCoroutineContext(block: suspend CoroutineScope.() -> T): T = runBlocking { block() }
 
     open fun eval(
         script: ScriptSource,
+        scriptDefinition: ScriptDefinition,
         compileConfiguration: ScriptCompileConfiguration,
         environment: ScriptEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult> =
         runInCoroutineContext {
-            val compiled = compiler.compile(script, configurator, compileConfiguration)
+            val compiled = compiler.compile(script, scriptDefinition, compileConfiguration)
             when (compiled) {
                 is ResultWithDiagnostics.Failure -> compiled
                 is ResultWithDiagnostics.Success -> {

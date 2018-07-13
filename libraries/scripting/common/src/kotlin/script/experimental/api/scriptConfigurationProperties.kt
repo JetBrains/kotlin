@@ -13,7 +13,7 @@ object ScriptCompileConfigurationProperties {
 
     val sourceFragments by typedKey<List<ScriptSourceNamedFragment>>()
 
-    val baseClass = ScriptingEnvironmentProperties.baseClass
+    val baseClass = ScriptDefinitionProperties.baseClass
 
     val scriptBodyTarget by typedKey<ScriptBodyTarget>()
 

@@ -16,18 +16,18 @@ open class JvmScriptCompiler(
 
     override suspend fun compile(
         script: ScriptSource,
-        configurator: ScriptCompilationConfigurator?,
+        scriptDefinition: ScriptDefinition,
         additionalConfiguration: ScriptCompileConfiguration?
     ): ResultWithDiagnostics<CompiledScript<*>> {
-        val baseConfiguration = additionalConfiguration?.cloneWithNewParent(configurator?.defaultConfiguration)
-                ?: configurator?.defaultConfiguration
+        val baseConfiguration = additionalConfiguration?.cloneWithNewParent(scriptDefinition.compilationConfigurator?.defaultConfiguration)
+                ?: scriptDefinition.compilationConfigurator?.defaultConfiguration
                 ?: ScriptCompileConfiguration()
         val refinedConfiguration =
             if (baseConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineBeforeParsing) == true) {
-                if (configurator == null) {
+                if (scriptDefinition.compilationConfigurator == null) {
                     return ResultWithDiagnostics.Failure("Non-null configurator expected".asErrorDiagnostics())
                 }
-                configurator.refineConfiguration(script, baseConfiguration).let {
+                scriptDefinition.compilationConfigurator!!.refineConfiguration(script, baseConfiguration).let {
                     when (it) {
                         is ResultWithDiagnostics.Failure -> return it
                         is ResultWithDiagnostics.Success -> it.value
@@ -40,7 +40,7 @@ open class JvmScriptCompiler(
 
         if (cached != null) return cached.asSuccess()
 
-        return compilerProxy.compile(script, configurator, refinedConfiguration).also {
+        return compilerProxy.compile(script, scriptDefinition, refinedConfiguration).also {
             if (it is ResultWithDiagnostics.Success) {
                 cache.store(it.value, refinedConfiguration)
             }
@@ -56,7 +56,7 @@ interface CompiledJvmScriptsCache {
 interface KJVMCompilerProxy {
     fun compile(
         script: ScriptSource,
-        configurator: ScriptCompilationConfigurator?,
+        scriptDefinition: ScriptDefinition,
         additionalConfiguration: ScriptCompileConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>>
 }

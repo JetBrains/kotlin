@@ -276,8 +276,8 @@ private fun loadScriptDefinition(
             if (cls.annotations.firstIsInstanceOrNull<KotlinScript>() != null) {
                 KotlinScriptDefinitionAdapterFromNewAPI(
                     ScriptDefinitionFromAnnotatedBaseClass(
+                        KotlinType(cls.kotlin),
                         ScriptingEnvironment(
-                            ScriptingEnvironmentProperties.baseClass to KotlinType(cls.kotlin),
                             ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
                         )
                     )

@@ -7,6 +7,7 @@
 
 package kotlin.script.experimental.api
 
+import kotlin.reflect.KClass
 import kotlin.script.experimental.util.ChainedPropertyBag
 import kotlin.script.experimental.util.typedKey
 
@@ -18,7 +19,7 @@ interface ScriptDefinition {
 
     val properties: ScriptDefinitionPropertiesBag
 
-    val compilationConfigurator: ScriptCompilationConfigurator
+    val compilationConfigurator: ScriptCompilationConfigurator?
 
     val evaluator: ScriptEvaluator<*>?
 }
@@ -28,4 +29,12 @@ object ScriptDefinitionProperties {
     val name by typedKey<String>() // Name of the script type, by default "Kotlin script"
 
     val fileExtension by typedKey<String>() // default: "kts"
+
+    val baseClass by typedKey<KotlinType>() // script base class
 }
+
+fun ScriptDefinitionPropertiesBag.getScriptBaseClass(contextClass: KClass<*>): KClass<*> =
+    getScriptingClass(get(ScriptDefinitionProperties.baseClass), contextClass)
+
+fun ScriptDefinitionPropertiesBag.getScriptBaseClass(context: Any): KClass<*> =
+    getScriptingClass(get(ScriptDefinitionProperties.baseClass), context::class)

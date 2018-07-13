@@ -41,8 +41,8 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         )
         try {
             ScriptDefinitionFromAnnotatedBaseClass(
+                KotlinType(className),
                 ScriptingEnvironment(
-                    ScriptingEnvironmentProperties.baseClass to KotlinType(className),
                     ScriptingEnvironmentProperties.configurationDependencies to listOf(JvmDependency(classpath)),
                     ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
                 )

@@ -9,8 +9,8 @@ interface ScriptCompiler {
 
     suspend fun compile(
         script: ScriptSource,
-        configurator: ScriptCompilationConfigurator? = null,
-        additionalConfiguration: ScriptCompileConfiguration? = null // overrides parameters from configurator.defaultConfiguration
+        scriptDefinition: ScriptDefinition,
+        additionalConfiguration: ScriptCompileConfiguration? = null // overrides properties from definition and configurator.defaultConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>>
 }
 

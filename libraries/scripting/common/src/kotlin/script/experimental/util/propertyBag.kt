@@ -27,8 +27,8 @@ open class ChainedPropertyBag private constructor(private val parent: ChainedPro
 
     fun cloneWithNewParent(newParent: ChainedPropertyBag?): ChainedPropertyBag = when {
         newParent == null -> this
-        parent == null -> ChainedPropertyBag(newParent, data)
-        else -> ChainedPropertyBag(parent.cloneWithNewParent(newParent), data)
+        parent == null -> createOptimized(newParent, data)
+        else -> createOptimized(parent.cloneWithNewParent(newParent), data)
     }
 
     inline operator fun <reified T> get(key: TypedKey<T>): T = getRaw(key) as T
@@ -38,4 +38,16 @@ open class ChainedPropertyBag private constructor(private val parent: ChainedPro
     inline fun <reified T> getOrNull(key: TypedKey<T>): T? = getOrNullRaw(key)?.let { it as T }
 
     fun <T> getOrNullRaw(key: TypedKey<T>): Any? = data[key] ?: parent?.getOrNullRaw(key) ?: key.defaultValue
+
+    companion object {
+        fun createOptimized(parent: ChainedPropertyBag?, data: Map<TypedKey<*>, Any?>): ChainedPropertyBag = when {
+            parent != null && data.isEmpty() -> parent
+            else -> ChainedPropertyBag(parent, data)
+        }
+    }
 }
+
+fun chainPropertyBags(propertyBags: Iterable<ChainedPropertyBag?>): ChainedPropertyBag =
+    propertyBags.fold(ChainedPropertyBag()) { res, next -> if (next == null) res else res.cloneWithNewParent(next) }
+
+fun chainPropertyBags(vararg propertyBags: ChainedPropertyBag?): ChainedPropertyBag = chainPropertyBags(propertyBags.asIterable())

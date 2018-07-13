@@ -13,9 +13,6 @@ typealias ScriptingEnvironment = ChainedPropertyBag
 
 object ScriptingEnvironmentProperties {
 
-    // required by definitions that extract data from script base class annotations
-    val baseClass by typedKey<KotlinType>()
-
     // should contain all dependencies needed for baseClass and compilationConfigurator
     val configurationDependencies by typedKey<List<ScriptDependency>>()
 
@@ -40,8 +37,3 @@ fun ScriptingEnvironment.getScriptingClass(type: KotlinType, contextClass: KClas
 
 fun ScriptingEnvironment.getScriptingClass(type: KotlinType, context: Any): KClass<*> = getScriptingClass(type, context::class)
 
-fun ScriptingEnvironment.getScriptBaseClass(contextClass: KClass<*>): KClass<*> =
-    getScriptingClass(get(ScriptingEnvironmentProperties.baseClass), contextClass)
-
-fun ScriptingEnvironment.getScriptBaseClass(context: Any): KClass<*> =
-    getScriptingClass(get(ScriptingEnvironmentProperties.baseClass), context::class)

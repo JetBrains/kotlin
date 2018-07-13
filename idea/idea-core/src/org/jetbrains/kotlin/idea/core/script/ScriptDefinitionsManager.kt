@@ -210,8 +210,8 @@ fun loadDefinitionsFromTemplates(
                 template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
                     KotlinScriptDefinitionAdapterFromNewAPI(
                         ScriptDefinitionFromAnnotatedBaseClass(
+                            KotlinType(template),
                             ScriptingEnvironment(
-                                ScriptingEnvironmentProperties.baseClass to KotlinType(template),
                                 ScriptingEnvironmentProperties.configurationDependencies to listOf(JvmDependency(classpath)),
                                 ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
                             )

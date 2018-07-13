@@ -16,13 +16,12 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.ScriptReport
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.defaultConfiguration
 import kotlin.script.experimental.jvm.mapToLegacyScriptReportPosition
 import kotlin.script.experimental.jvm.mapToLegacyScriptReportSeverity
 
 class BridgeDependenciesResolver(
-    val scriptConfigurator: ScriptCompilationConfigurator?,
-    val baseScriptCompilerConfiguration: ScriptCompileConfiguration = scriptConfigurator.defaultConfiguration,
+    val scriptDefinition: ScriptDefinition,
+    val calculatedBaseScriptCompilerConfiguration: ScriptCompileConfiguration,
     val onClasspathUpdated: (List<File>) -> Unit = {}
 ) : AsyncDependenciesResolver {
 
@@ -38,10 +37,10 @@ class BridgeDependenciesResolver(
             val processedScriptData =
                 ProcessedScriptData(ProcessedScriptDataProperties.foundAnnotations to scriptContents.annotations)
 
-            val refinedConfiguration = scriptConfigurator?.let {
+            val refinedConfiguration = scriptDefinition.compilationConfigurator?.let { scriptConfigurator ->
                 val res = scriptConfigurator.refineConfiguration(
                     scriptContents.toScriptSource(),
-                    baseScriptCompilerConfiguration,
+                    calculatedBaseScriptCompilerConfiguration,
                     processedScriptData
                 )
                 when (res) {
@@ -52,12 +51,12 @@ class BridgeDependenciesResolver(
                         res.value
                     }
                 }
-            } ?: baseScriptCompilerConfiguration
+            } ?: calculatedBaseScriptCompilerConfiguration
 
             val newClasspath = refinedConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)
                 ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
-            if (refinedConfiguration != baseScriptCompilerConfiguration) {
-                val oldClasspath = baseScriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)
+            if (refinedConfiguration != calculatedBaseScriptCompilerConfiguration) {
+                val oldClasspath = calculatedBaseScriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)
                     ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
                 if (newClasspath != oldClasspath) {
                     onClasspathUpdated(newClasspath)
