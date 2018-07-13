@@ -4,6 +4,7 @@
 // IGNORE_BACKEND: JS_IR
 
 inline class Foo(val arg: Int)
+inline class AsAny(val arg: Any)
 
 fun box(): String {
     val arr = arrayOf(Foo(1), Foo(2))
@@ -12,5 +13,14 @@ fun box(): String {
         sum += el.arg
     }
 
-    return if (sum != 3) "Fail" else "OK"
+    if (sum != 3) return "Fail 1"
+
+    sum = 0
+    for (el in arrayOf(AsAny(42), AsAny(1))) {
+        sum += el.arg as Int
+    }
+
+    if (sum != 43) return "Fail 2"
+
+    return "OK"
 }

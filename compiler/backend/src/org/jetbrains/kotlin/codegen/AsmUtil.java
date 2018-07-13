@@ -120,15 +120,12 @@ public class AsmUtil {
 
     @NotNull
     public static Type boxType(@NotNull Type type, @NotNull KotlinType kotlinType, @NotNull GenerationState state) {
-        Type boxedPrimitiveType = boxPrimitiveType(type);
-        if (boxedPrimitiveType != null) return boxedPrimitiveType;
-
         if (InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
             return state.getTypeMapper().mapTypeAsDeclaration(kotlinType);
         }
-        else {
-            return type;
-        }
+
+        Type boxedPrimitiveType = boxPrimitiveType(type);
+        return boxedPrimitiveType != null ? boxedPrimitiveType : type;
     }
 
     @Nullable
