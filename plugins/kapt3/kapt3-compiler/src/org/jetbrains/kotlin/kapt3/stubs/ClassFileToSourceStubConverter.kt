@@ -107,8 +107,6 @@ class ClassFileToSourceStubConverter(
 
     private val signatureParser = SignatureParser(treeMaker)
 
-    private val anonymousTypeHandler = AnonymousTypeHandler(this)
-
     private val kdocCommentKeeper = KDocCommentKeeper(kaptContext)
 
     private var done = false
@@ -479,16 +477,16 @@ class ClassFileToSourceStubConverter(
         val typeExpression = if (isEnum(field.access))
             treeMaker.SimpleName(treeMaker.getQualifiedName(type).substringAfterLast('.'))
         else
-            anonymousTypeHandler.getNonAnonymousType(descriptor) {
-                getNonErrorType((descriptor as? CallableDescriptor)?.returnType, RETURN_TYPE,
-                                ktTypeProvider = {
-                                    val fieldOrigin = (kaptContext.origins[field]?.element as? KtCallableDeclaration)
-                                            ?.takeIf { it !is KtFunction }
+            getNonErrorType(
+                (descriptor as? CallableDescriptor)?.returnType, RETURN_TYPE,
+                ktTypeProvider = {
+                    val fieldOrigin = (kaptContext.origins[field]?.element as? KtCallableDeclaration)
+                        ?.takeIf { it !is KtFunction }
 
-                                    fieldOrigin?.typeReference
-                                },
-                                ifNonError = { signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type)) })
-            }
+                    fieldOrigin?.typeReference
+                },
+                ifNonError = { signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type)) }
+            )
 
         val value = field.value
 
@@ -646,19 +644,19 @@ class ClassFileToSourceStubConverter(
                     }
                 })
 
-        val returnType = anonymousTypeHandler.getNonAnonymousType(descriptor) {
-            getNonErrorType(descriptor.returnType, RETURN_TYPE,
-                            ktTypeProvider = {
-                                val element = kaptContext.origins[method]?.element
-                                when (element) {
-                                    is KtFunction -> element.typeReference
-                                    is KtProperty -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
-                                    is KtParameter -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
-                                    else -> null
-                                }
-                            },
-                            ifNonError = { genericSignature.returnType })
-        }
+        val returnType = getNonErrorType(
+            descriptor.returnType, RETURN_TYPE,
+            ktTypeProvider = {
+                val element = kaptContext.origins[method]?.element
+                when (element) {
+                    is KtFunction -> element.typeReference
+                    is KtProperty -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
+                    is KtParameter -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
+                    else -> null
+                }
+            },
+            ifNonError = { genericSignature.returnType }
+        )
 
         return Pair(genericSignature, returnType)
     }
