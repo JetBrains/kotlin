@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptTask
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import java.io.File
 
 @Suppress("unused")
@@ -36,13 +38,15 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         }
     }
 
-    override fun wireKotlinTasks(project: Project,
-                                 androidPlugin: BasePlugin,
-                                 androidExt: BaseExtension,
-                                 variantData: BaseVariant,
-                                 javaTask: AbstractCompile,
-                                 kotlinTask: KotlinCompile) {
-
+    override fun wireKotlinTasks(
+        project: Project,
+        compilation: KotlinJvmAndroidCompilation,
+        androidPlugin: BasePlugin,
+        androidExt: BaseExtension,
+        variantData: BaseVariant,
+        javaTask: AbstractCompile,
+        kotlinTask: KotlinCompile
+    ) {
         val preJavaKotlinOutputFiles = mutableListOf<File>().apply {
             add(kotlinTask.destinationDir)
             if (Kapt3GradleSubplugin.isEnabled(project)) {
@@ -93,6 +97,20 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
 
     override fun getResDirectories(variantData: BaseVariant): List<File> {
         return variantData.mergeResources?.computeResourceSetList0() ?: emptyList()
+    }
+
+    override fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmAndroidCompilation) {
+        val project = compilation.target.project
+
+        compilation.compileDependencyFiles = variant.compileConfiguration.apply {
+            usesPlatformOf(compilation.target)
+            project.addExtendsFromRelation(name, compilation.compileDependencyConfigurationName)
+        }
+
+        compilation.runtimeDependencyFiles = variant.runtimeConfiguration.apply {
+            usesPlatformOf(compilation.target)
+            project.addExtendsFromRelation(name, compilation.runtimeDependencyConfigurationName)
+        }
     }
 
     private inner class KaptVariant(variantData: BaseVariant) : KaptVariantData<BaseVariant>(variantData) {
