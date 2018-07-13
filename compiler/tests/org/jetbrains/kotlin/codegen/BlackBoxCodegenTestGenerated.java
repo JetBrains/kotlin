@@ -12319,19 +12319,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testSyntheticAccessor() throws Exception {
             runTest("compiler/testData/codegen/box/jvmStatic/syntheticAccessor.kt");
         }
-
-        @TestMetadata("compiler/testData/codegen/box/jvmStatic/META-INF")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class META_INF extends AbstractBlackBoxCodegenTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInMETA_INF() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/jvmStatic/META-INF"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
-            }
-        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/labels")
