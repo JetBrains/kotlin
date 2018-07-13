@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
 
@@ -46,8 +47,12 @@ inline fun IrBuilderWithScope.irLetS(
 }
 
 
-fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(value: IrExpression, nameHint: String? = null): IrVariable {
-    val temporary = scope.createTemporaryVariable(value, nameHint)
+fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(
+    value: IrExpression,
+    nameHint: String? = null,
+    typeHint: KotlinType? = null
+): IrVariable {
+    val temporary = scope.createTemporaryVariable(value, nameHint, type = typeHint)
     +temporary
     return temporary
 }
@@ -58,8 +63,14 @@ fun <T : IrElement> IrStatementsBuilder<T>.defineTemporary(value: IrExpression, 
     return temporary.descriptor
 }
 
-fun <T : IrElement> IrStatementsBuilder<T>.irTemporaryVar(value: IrExpression, nameHint: String? = null): IrVariable {
-    val temporary = scope.createTemporaryVariable(value, nameHint, isMutable = true)
+fun <T : IrElement> IrStatementsBuilder<T>.irTemporaryVar(
+    value: IrExpression,
+    nameHint: String? = null,
+    typeHint: KotlinType? = null,
+    parent: IrDeclarationParent? = null
+): IrVariable {
+    val temporary = scope.createTemporaryVariable(value, nameHint, isMutable = true, type = typeHint)
+    parent?.let { temporary.parent = it }
     +temporary
     return temporary
 }
@@ -125,7 +136,7 @@ fun IrBuilderWithScope.irIfThenMaybeElse(type: IrType, condition: IrExpression, 
 fun IrBuilderWithScope.irIfNull(type: IrType, subject: IrExpression, thenPart: IrExpression, elsePart: IrExpression) =
     irIfThenElse(type, irEqualsNull(subject), thenPart, elsePart)
 
-fun IrBuilderWithScope.irThrowNpe(origin: IrStatementOrigin) =
+fun IrBuilderWithScope.irThrowNpe(origin: IrStatementOrigin? = null) =
     IrNullaryPrimitiveImpl(startOffset, endOffset, context.irBuiltIns.nothingType, origin, context.irBuiltIns.throwNpeSymbol)
 
 fun IrBuilderWithScope.irIfThenReturnTrue(condition: IrExpression) =
@@ -165,7 +176,7 @@ fun IrBuilderWithScope.irEqualsNull(argument: IrExpression) =
 
 fun IrBuilderWithScope.irEquals(arg1: IrExpression, arg2: IrExpression) =
     primitiveOp2(
-        startOffset, endOffset, context.irBuiltIns.eqeqSymbol, IrStatementOrigin.EXCLEQ,
+        startOffset, endOffset, context.irBuiltIns.eqeqSymbol, IrStatementOrigin.EQEQ,
         arg1, arg2
     )
 
