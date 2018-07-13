@@ -341,6 +341,7 @@ private val backendNullabilityAnnotations = arrayOf(Nullable::class.java.name, N
 private fun KtElement.analyze(): BindingContext = LightClassGenerationSupport.getInstance(this.project).analyze(this)
 
 private fun KtElement.getResolvedCall(): ResolvedCall<out CallableDescriptor>? {
+    if (!isValid) return null
     val context = analyze()
     return this.getResolvedCall(context)
 }
