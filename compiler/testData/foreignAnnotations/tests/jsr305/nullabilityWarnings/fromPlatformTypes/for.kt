@@ -20,7 +20,6 @@ fun test() {
     val platformJ = J.staticJ
 
     for (x in platformNN) {}
-    for (x in <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>) {}
+    for (x in <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>) {}
     for (x in platformJ) {}
 }
-
