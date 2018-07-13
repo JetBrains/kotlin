@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
 
-fun Project.addExtendsFromRelation(extendingConfigurationName: String, extendsFromConfigurationName: String) {
+fun Project.addExtendsFromRelation(extendingConfigurationName: String, extendsFromConfigurationName: String, forced: Boolean = false) {
     if (extendingConfigurationName != extendsFromConfigurationName) {
-        project.dependencies.add(extendingConfigurationName, project.configurations.getByName(extendsFromConfigurationName))
+        if (forced || configurations.findByName(extendingConfigurationName) != null) {
+            project.dependencies.add(extendingConfigurationName, project.configurations.getByName(extendsFromConfigurationName))
+        }
     }
 }
