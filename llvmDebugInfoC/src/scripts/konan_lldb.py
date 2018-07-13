@@ -103,6 +103,19 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
                                  8: lambda address, _: "(void *){:#x}".format(address),
                                  # TODO: or 1?
                                  9: lambda address, error: self.__read_memory(address, "<?", 4, error)}
+        self._types = [
+            valobj.GetType().GetBasicType(lldb.eBasicTypeVoid).GetPointerType(),
+            valobj.GetType(),
+            valobj.GetType().GetBasicType(lldb.eBasicTypeChar),
+            valobj.GetType().GetBasicType(lldb.eBasicTypeShort),
+            valobj.GetType().GetBasicType(lldb.eBasicTypeInt),
+            valobj.GetType().GetBasicType(lldb.eBasicTypeLongLong),
+            valobj.GetType().GetBasicType(lldb.eBasicTypeFloat),
+            valobj.GetType().GetBasicType(lldb.eBasicTypeDouble),
+            valobj.GetType().GetBasicType(lldb.eBasicTypeVoid).GetPointerType(),
+            valobj.GetType().GetBasicType(lldb.eBasicTypeBool)
+        ]
+
 
     def update(self):
         self._children_count = int(evaluate("(int)Konan_DebugGetFieldCount({})".format(self._ptr)).GetValue())
@@ -118,6 +131,9 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
     def __read_memory(self, address, fmt, size, error):
         content = self._process.ReadMemory(address, size, error)
         return struct.unpack(fmt, content)[0] if error.Success() else "error: {:#x}".format(address)
+
+    def _read_type(self, index):
+        return self._types[int(evaluate("(int)Konan_DebugGetFieldType({}, {})".format(self._ptr, index)).GetValue())]
 
 
 class KonanStringSyntheticProvider(KonanHelperProvider):
@@ -185,8 +201,12 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
         if index < 0 or index >= self._children_count:
             return None
         error = lldb.SBError()
-        value = self._read_value(index, error)
-        return value if error.Success() else None
+        type = self._read_type(index)
+        base = evaluate("(long){})".format(self._ptr)).unsigned
+        address = evaluate("(long)Konan_DebugGetFieldAddress({}, (int){})".format(self._ptr, index)).unsigned
+        child = self._valobj.CreateChildAtOffset(self._children[index], address - base, type)
+        child.SetSyntheticChildrenGenerated(True)
+        return child if error.Success() else None
 
     # TODO: fix cyclic structures stringification.
     def to_string(self):
@@ -199,6 +219,7 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
         super(KonanArraySyntheticProvider, self).__init__(valobj)
         if self._ptr is None:
             return
+        valobj.SetSyntheticChildrenGenerated(True)
         self.update()
 
     def update(self):
