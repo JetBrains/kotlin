@@ -807,6 +807,10 @@ task enum_loop(type: RunKonanTest) {
     source = "codegen/enum/loop.kt"
 }
 
+task enum_reorderedArguments(type: RunKonanTest) {
+    source = "codegen/enum/reorderedArguments.kt"
+}
+
 task switchLowering(type: RunKonanTest) {
     goldValue = "EnumA.A\nok\nok\nok\nok\nok\n"
     source = "codegen/enum/switchLowering.kt"

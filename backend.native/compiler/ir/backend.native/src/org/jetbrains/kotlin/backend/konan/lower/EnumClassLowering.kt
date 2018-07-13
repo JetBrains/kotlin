@@ -19,20 +19,16 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
+import org.jetbrains.kotlin.backend.common.ir.addSimpleDelegatingConstructor
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_ENUM
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.common.ir.addSimpleDelegatingConstructor
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWith
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
@@ -40,6 +36,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -333,7 +330,13 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                     enumEntries
                             .sortedBy { it.descriptor.name }
                             .map {
-                                val entryConstructorCall = it.initializerExpression!! as IrCall
+                                val initializer = it.initializerExpression
+                                val entryConstructorCall = when {
+                                        initializer is IrCall -> initializer
+                                        initializer is IrBlock && initializer.origin == ARGUMENTS_REORDERING_FOR_CALL ->
+                                            initializer.statements.last() as IrCall
+                                        else -> error("Unexpected initializer: $initializer")
+                                    }
                                 val entryConstructor = entryConstructorCall.symbol.owner as IrConstructor
                                 val entryClass = entryConstructor.constructedClass
 
@@ -383,6 +386,12 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             val startOffset = irClass.startOffset
             val endOffset = irClass.endOffset
 
+            fun IrBlockBodyBuilder.initInstanceCall(instance: IrCall, constructor: IrCall): IrCall =
+                irCall(initInstanceSymbol).apply {
+                    putValueArgument(0, instance)
+                    putValueArgument(1, constructor)
+                }
+
             return IrAnonymousInitializerImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, loweredEnum.implObject.descriptor).apply {
                 body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody(irClass) {
                     val instances = irTemporary(irGetField(irGet(loweredEnum.implObject.thisReceiver!!), loweredEnum.valuesField))
@@ -394,10 +403,16 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                                     dispatchReceiver = irGet(instances)
                                     putValueArgument(0, irInt(it.index))
                                 }
-                                val initializer = it.value.initializerExpression!! as IrCall
-                                +irCall(initInstanceSymbol).apply {
-                                    putValueArgument(0, instance)
-                                    putValueArgument(1, initializer)
+                                val initializer = it.value.initializerExpression!!
+                                when {
+                                    initializer is IrCall -> +initInstanceCall(instance, initializer)
+                                    initializer is IrBlock && initializer.origin == ARGUMENTS_REORDERING_FOR_CALL -> {
+                                        val statements = initializer.statements
+                                        val constructorCall = statements.last() as IrCall
+                                        statements[statements.lastIndex] = initInstanceCall(instance, constructorCall)
+                                        +initializer
+                                    }
+                                    else -> error("Unexpected initializer: $initializer")
                                 }
                             }
                     +irCall(this@EnumClassLowering.context.ir.symbols.freeze, listOf(arrayType)).apply {
