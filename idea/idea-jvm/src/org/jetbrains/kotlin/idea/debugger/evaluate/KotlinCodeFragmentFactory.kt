@@ -125,7 +125,10 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
 
                 val frameDescriptor = getFrameInfo(contextElement, debuggerContext)
                 if (frameDescriptor == null) {
-                    LOG.warn("Couldn't get info about 'this' and local variables for ${debuggerContext.sourcePosition.file.name}:${debuggerContext.sourcePosition.line}")
+                    LOG.warn(
+                        "Couldn't get info about 'this' and local variables for " +
+                                "${debuggerContext.sourcePosition?.file?.name}:${debuggerContext.sourcePosition?.line}"
+                    )
                     return@putCopyableUserData emptyFile
                 }
 
