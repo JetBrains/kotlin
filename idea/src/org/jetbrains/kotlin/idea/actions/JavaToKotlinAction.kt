@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
@@ -101,7 +102,10 @@ class JavaToKotlinAction : AnAction() {
             var converterResult: JavaToKotlinConverter.FilesResult? = null
             fun convert() {
                 val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
-                converterResult = converter.filesToKotlin(javaFiles, J2kPostProcessor(formatCode = true), ProgressManager.getInstance().progressIndicator!!)
+                converterResult = converter.filesToKotlin(
+                    javaFiles, J2kPostProcessor(formatCode = true),
+                    ProgressManager.getInstance().progressIndicatorNullable!!
+                )
             }
 
 
@@ -120,7 +124,9 @@ class JavaToKotlinAction : AnAction() {
                     ProgressManager.getInstance().runProcessWithProgressSynchronously(
                             {
                                 runReadAction {
-                                    externalCodeUpdate = converterResult!!.externalCodeProcessing!!.prepareWriteOperation(ProgressManager.getInstance().progressIndicator!!)
+                                    externalCodeUpdate = converterResult!!.externalCodeProcessing!!.prepareWriteOperation(
+                                        ProgressManager.getInstance().progressIndicatorNullable!!
+                                    )
                                 }
                             },
                             title,

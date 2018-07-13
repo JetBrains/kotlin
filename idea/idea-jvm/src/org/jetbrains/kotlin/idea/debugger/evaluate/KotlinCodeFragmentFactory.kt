@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.refactoring.j2k
 import org.jetbrains.kotlin.idea.refactoring.j2kText
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.psi.*
@@ -93,7 +94,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
                 semaphore.down()
                 val nameRef = AtomicReference<KotlinType>()
                 val worker = object : KotlinRuntimeTypeEvaluator(
-                    null, expression, debuggerContext, ProgressManager.getInstance().progressIndicator!!
+                    null, expression, debuggerContext, ProgressManager.getInstance().progressIndicatorNullable!!
                 ) {
                     override fun typeCalculationFinished(type: KotlinType?) {
                         nameRef.set(type)

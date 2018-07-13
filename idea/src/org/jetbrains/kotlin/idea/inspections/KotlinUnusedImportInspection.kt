@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.OptimizedImportsBuilder
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
@@ -143,7 +144,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         val optimizedImports = KotlinImportOptimizer.prepareOptimizedImports(file, data) ?: return // return if already optimized
 
         // unwrap progress indicator
-        val progress = generateSequence(ProgressManager.getInstance().progressIndicator) {
+        val progress = generateSequence(ProgressManager.getInstance().progressIndicatorNullable) {
             (it as? ProgressWrapper)?.originalProgressIndicator
         }.last() as DaemonProgressIndicator
         val highlightingSession = HighlightingSessionImpl.getHighlightingSession(file, progress)
