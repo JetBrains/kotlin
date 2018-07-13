@@ -61,6 +61,11 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
             runTest("idea/testData/editor/optimizeImports/jvm/DuplicatedImports.kt");
         }
 
+        @TestMetadata("ExplicitImportOfDefault.kt")
+        public void testExplicitImportOfDefault() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/jvm/ExplicitImportOfDefault.kt");
+        }
+
         @TestMetadata("FromCompanionObject.kt")
         public void testFromCompanionObject() throws Exception {
             runTest("idea/testData/editor/optimizeImports/jvm/FromCompanionObject.kt");
@@ -139,6 +144,11 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
         @TestMetadata("TrivialAlias.kt")
         public void testTrivialAlias() throws Exception {
             runTest("idea/testData/editor/optimizeImports/jvm/TrivialAlias.kt");
+        }
+
+        @TestMetadata("TypeAliasVsUnderlyingClass.kt")
+        public void testTypeAliasVsUnderlyingClass() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/jvm/TypeAliasVsUnderlyingClass.kt");
         }
 
         @TestMetadata("UnusedImports.kt")
