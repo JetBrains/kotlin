@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.android.synthetic.idea.res
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.CachedValue
@@ -34,6 +37,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import java.io.File
 
 class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileManager(module.project) {
     override val androidModule: AndroidModule?
@@ -66,7 +70,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
         val psiManager = PsiManager.getInstance(project)
         val layouts = layoutGroup.layouts.map { psiFile ->
             // Sometimes due to a race of later-invoked runnables, the PsiFile can be invalidated; make sure to refresh if possible,
-            val layout = if (psiFile.isValid) psiFile else psiManager.findFile(psiFile.virtualFile)
+            val layout = if (psiFile.isValid) psiFile else psiManager.findFileSafe(psiFile.virtualFile)
 
             val resources = arrayListOf<AndroidResource>()
             layout?.accept(AndroidXmlVisitor { id, widgetType, attribute ->
@@ -76,6 +80,13 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
         }
 
         return AndroidLayoutGroup(layoutGroup.name, layouts)
+    }
+
+    private fun PsiManager.findFileSafe(virtualFile: VirtualFile): PsiFile? {
+        if (virtualFile.isValid)
+            return findFile(virtualFile)
+
+        return null
     }
 
     override fun propertyToXmlAttributes(propertyDescriptor: PropertyDescriptor): List<PsiElement> {
