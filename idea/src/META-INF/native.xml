@@ -1,0 +1,37 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+    <application-components>
+        <component>
+            <implementation-class>org.jetbrains.konan.KonanApplicationComponent</implementation-class>
+        </component>
+        <component>
+            <implementation-class>org.jetbrains.konan.analyser.index.KonanDescriptorManager</implementation-class>
+        </component>
+    </application-components>
+
+    <project-components>
+        <component>
+            <implementation-class>org.jetbrains.konan.settings.KonanPaths</implementation-class>
+        </component>
+    </project-components>
+
+    <extensionPoints>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.native.konanModelProvider" interface="org.jetbrains.konan.settings.KonanModelProvider"/>
+    </extensionPoints>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="org.jetbrains.konan.SetupKotlinNativeStartupActivity"/>
+        <psi.classFileDecompiler implementation="org.jetbrains.konan.analyser.index.KonanMetadataDecompiler"/>
+
+        <fileType.fileViewProviderFactory filetype="KNM"
+                                          implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
+        <filetype.stubBuilder filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
+        <filetype.decompiler filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
+        <fileTypeFactory implementation="org.jetbrains.konan.analyser.index.KonanMetaFileTypeFactory"/>
+        <fileBasedIndex implementation="org.jetbrains.konan.analyser.index.KonanMetaFileIndex"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <binaryExtension implementation="org.jetbrains.konan.analyser.index.KonanMetaBinary"/>
+        <idePlatformSupport implementation="org.jetbrains.konan.analyser.KonanPlatformSupport" order="first"/>
+    </extensions>
+</idea-plugin>
