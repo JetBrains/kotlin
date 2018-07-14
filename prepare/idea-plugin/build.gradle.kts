@@ -1,11 +1,26 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.jvm.tasks.Jar
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
 
 description = "Kotlin IDEA plugin"
 
 plugins {
     `java-base`
+    id("com.github.jk1.tcdeps") version "0.17"
 }
+
+repositories {
+    teamcityServer {
+        setUrl("http://buildserver.labs.intellij.net")
+        credentials {
+            username = "guest"
+            password = "guest"
+        }
+    }
+}
+
+val kotlinNativeVersion = "0.9-dev-2798"
 
 // Do not rename, used in JPS importer
 val projectsToShadow by extra(listOf(
@@ -29,8 +44,10 @@ val projectsToShadow by extra(listOf(
         ":compiler:frontend.script",
         ":idea:ide-common",
         ":idea",
+        ":idea:idea-native",
         ":idea:idea-core",
         ":idea:idea-gradle",
+        ":idea:idea-gradle:native",
         //":idea-ultimate",
         ":compiler:ir.psi2ir",
         ":compiler:ir.tree",
@@ -54,6 +71,9 @@ val sideJars by configurations.creating
 dependencies {
     packedJars(protobufFull())
     packedJars(project(":core:builtins", configuration = "builtins"))
+    sideJars(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxDist:$kotlinNativeVersion:shared.jar"))
+    sideJars(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxDist:$kotlinNativeVersion:backend.native.jar"))
+    sideJars("org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.9-dev-2809") { isTransitive = false }
     sideJars(projectDist(":kotlin-script-runtime"))
     sideJars(projectDist(":kotlin-stdlib"))
     sideJars(projectDist(":kotlin-reflect"))
