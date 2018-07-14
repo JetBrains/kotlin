@@ -180,6 +180,12 @@ include ":kotlin-build-common",
         ':kotlin-noarg:plugin-marker',
         ":test-instrumenter"
 
+def isIncludeNative = true //todo: add property
+if (isIncludeNative) {
+    include ":idea:idea-native",
+            ":idea:idea-gradle:native"
+}
+
 def isTeamcityBuild = hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 def includeUltimate = hasProperty("intellijUltimateEnabled") && intellijUltimateEnabled != 'false'
 if (isTeamcityBuild || includeUltimate) {
