@@ -8,6 +8,8 @@
 
 package kotlin.collections
 
+import kotlin.internal.contracts.*
+
 private object EmptyMap : Map<Any?, Nothing>, Serializable {
     private const val serialVersionUID: Long = 8246714829545688274
 
@@ -140,9 +142,19 @@ private const val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
 @kotlin.internal.InlineOnly
 public inline fun <K, V> Map<out K, V>.isNotEmpty(): Boolean = !isEmpty()
 
-/** Returns `true` if this map is null or empty. */
+/**
+ * Returns `true` if this nullable map is either null or empty.
+ * @sample samples.collections.Maps.Usage.mapIsNullOrEmpty
+ */
+@SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
-public inline fun <K, V> Map<out K, V>?.isNullOrEmpty(): Boolean = this == null || isEmpty()
+public inline fun <K, V> Map<out K, V>?.isNullOrEmpty(): Boolean {
+    contract {
+        returns(false) implies (this@isNullOrEmpty != null)
+    }
+
+    return this == null || isEmpty()
+}
 
 /**
  * Returns the [Map] if its not `null`, or the empty [Map] otherwise.
