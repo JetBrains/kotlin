@@ -77,13 +77,15 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 @SinceKotlin("1.3")
 public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
-): Continuation<Unit> =
-    if (this is BaseContinuationImpl)
-        create(completion)
+): Continuation<Unit> {
+    val probeCompletion = probeCoroutineCreated(completion)
+    return if (this is BaseContinuationImpl)
+        create(probeCompletion)
     else
-        createCoroutineFromSuspendFunction(completion) {
+        createCoroutineFromSuspendFunction(probeCompletion) {
             (this as Function1<Continuation<T>, Any?>).invoke(it)
         }
+}
 
 /**
  * Creates unintercepted coroutine with receiver type [R] and result type [T].
@@ -110,14 +112,16 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
 public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     receiver: R,
     completion: Continuation<T>
-): Continuation<Unit> =
-    if (this is BaseContinuationImpl)
-        create(receiver, completion)
+): Continuation<Unit> {
+    val probeCompletion = probeCoroutineCreated(completion)
+    return if (this is BaseContinuationImpl)
+        create(receiver, probeCompletion)
     else {
-        createCoroutineFromSuspendFunction(completion) {
+        createCoroutineFromSuspendFunction(probeCompletion) {
             (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, it)
         }
     }
+}
 
 /**
  * Intercepts this continuation with [ContinuationInterceptor].
@@ -175,7 +179,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
     else
         object : ContinuationImpl(completion as Continuation<Any?>, context) {
             private var label = 0
-            
+
             override fun invokeSuspend(result: SuccessOrFailure<Any?>): Any? =
                 when (label) {
                     0 -> {
