@@ -33,7 +33,6 @@ abstract class MyScriptWithMavenDeps {
 object MyConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
     jvmJavaHomeParams + with(ScriptCompileConfigurationProperties) {
         listOf(
-            baseClass<MyScriptWithMavenDeps>(),
             defaultImports(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!),
             dependencies(
                 JvmDependency(

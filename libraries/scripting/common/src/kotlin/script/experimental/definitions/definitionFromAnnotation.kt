@@ -15,7 +15,6 @@ import kotlin.script.experimental.annotations.KotlinScriptDefinition
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.TypedKey
-import kotlin.script.experimental.util.chainPropertyBags
 
 private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
 
@@ -44,12 +43,12 @@ open class ScriptDefinitionFromAnnotatedBaseClass(
         baseClass.findAnnotation<KotlinScriptDefinition>()?.definition.takeIf { it != this::class }?.let { it.instantiateScriptHandler() }
 
     override val properties = run {
-        val baseProperties = chainPropertyBags(explicitDefinition?.properties, environment)
-        val propertiesData = arrayListOf<Pair<TypedKey<*>, Any?>>(ScriptDefinitionProperties.baseClass to baseClassType)
+        val baseProperties = explicitDefinition?.properties
+        val propertiesData = hashMapOf<TypedKey<*>, Any?>(ScriptDefinitionProperties.baseClass to baseClassType)
         baseClass.findAnnotation<KotlinScriptFileExtension>()?.let {
-            propertiesData += ScriptDefinitionProperties.fileExtension to it.extension
+            propertiesData[ScriptDefinitionProperties.fileExtension] = it.extension
         }
-        if (baseProperties.getOrNull(ScriptDefinitionProperties.name) == null) {
+        if (baseProperties?.getOrNull(ScriptDefinitionProperties.name) == null) {
             propertiesData += ScriptDefinitionProperties.name to mainAnnotation.name
         }
         baseClass.annotations.filterIsInstance(KotlinScriptDefaultCompilationConfiguration::class.java).forEach { ann ->
@@ -61,10 +60,12 @@ open class ScriptDefinitionFromAnnotatedBaseClass(
             params.forEach { param ->
                 if (param !is Pair<*, *> || param.first !is TypedKey<*>)
                     throw IllegalArgumentException("$ILLEGAL_CONFIG_ANN_ARG: invalid parameter $param")
-                propertiesData.add(param as Pair<TypedKey<*>, Any?>)
+                (param as Pair<TypedKey<*>, Any?>).let { (k, v) ->
+                    propertiesData[k] = v
+                }
             }
         }
-        ScriptingEnvironment(baseProperties, propertiesData)
+        ScriptingEnvironment.createOptimized(baseProperties, propertiesData)
     }
 
     private fun <T : Any> KClass<T>.instantiateScriptHandler(): T {

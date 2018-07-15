@@ -70,7 +70,7 @@ class KJVMCompiledScript<out ScriptBase : Any>(
     }
 }
 
-class KJVMCompilerImpl : KJVMCompilerProxy {
+class KJVMCompilerImpl(val hostEnvironment: ScriptingEnvironment) : KJVMCompilerProxy {
 
     override fun compile(
         script: ScriptSource,
@@ -104,7 +104,7 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
             val kotlinCompilerConfiguration = org.jetbrains.kotlin.config.CompilerConfiguration().apply {
                 add(
                     JVMConfigurationKeys.SCRIPT_DEFINITIONS,
-                    BridgeScriptDefinition(scriptDefinition, scriptCompileConfiguration, ::updateClasspath)
+                    BridgeScriptDefinition(scriptDefinition, scriptCompileConfiguration, hostEnvironment, ::updateClasspath)
                 )
                 put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
@@ -238,17 +238,23 @@ class ScriptDiagnosticsMessageCollector : MessageCollector {
 
 internal class BridgeScriptDefinition(
     scriptDefinition: ScriptDefinition,
-    calculatedBcriptCompilerConfiguration: ScriptCompileConfiguration,
+    calculatedScriptCompilerConfiguration: ScriptCompileConfiguration,
+    hostEnvironment: ScriptingEnvironment,
     updateClasspath: (List<File>) -> Unit
-) : KotlinScriptDefinition(calculatedBcriptCompilerConfiguration.getScriptBaseClass(BridgeScriptDefinition::class)) {
+) : KotlinScriptDefinition(
+    hostEnvironment.getScriptingClass(
+        scriptDefinition.properties[ScriptDefinitionProperties.baseClass],
+        BridgeScriptDefinition::class
+    )
+) {
     override val acceptedAnnotations = run {
         val cl = this::class.java.classLoader
-        calculatedBcriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)
+        calculatedScriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)
             ?.map { (cl.loadClass(it.typeName) as Class<out Annotation>).kotlin }
             ?: emptyList()
     }
 
     override val dependencyResolver: DependenciesResolver =
-        BridgeDependenciesResolver(scriptDefinition, calculatedBcriptCompilerConfiguration, updateClasspath)
+        BridgeDependenciesResolver(scriptDefinition, calculatedScriptCompilerConfiguration, updateClasspath)
 }
 

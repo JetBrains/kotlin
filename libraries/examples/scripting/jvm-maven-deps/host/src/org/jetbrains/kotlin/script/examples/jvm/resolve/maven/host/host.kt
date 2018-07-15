@@ -19,10 +19,10 @@ import kotlin.script.experimental.jvmhost.impl.KJVMCompilerImpl
 import kotlin.script.experimental.misc.invoke
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
-    val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(), DummyCompiledJvmScriptCache())
     val environment = ScriptingEnvironment(
         ScriptingEnvironmentProperties.getScriptingClass(JvmGetScriptingClass())
     )
+    val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(environment), DummyCompiledJvmScriptCache())
     val scriptDefinition = ScriptDefinitionFromAnnotatedBaseClass(
         KotlinType(MyScriptWithMavenDeps::class),
         environment

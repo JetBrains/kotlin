@@ -34,19 +34,20 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         messageCollector: MessageCollector
     ) : this(loadAnnotationsFromClass(classBytes), className, classpath, messageCollector)
 
+    override val hostEnvironment: ScriptingEnvironment by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        ScriptingEnvironment(
+            ScriptingEnvironmentProperties.configurationDependencies to listOf(JvmDependency(classpath)),
+            ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
+        )
+    }
+
     override val scriptDefinition: ScriptDefinition by lazy(LazyThreadSafetyMode.PUBLICATION) {
         messageCollector.report(
             CompilerMessageSeverity.LOGGING,
             "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
         )
         try {
-            ScriptDefinitionFromAnnotatedBaseClass(
-                KotlinType(className),
-                ScriptingEnvironment(
-                    ScriptingEnvironmentProperties.configurationDependencies to listOf(JvmDependency(classpath)),
-                    ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
-                )
-            )
+            ScriptDefinitionFromAnnotatedBaseClass(KotlinType(className), hostEnvironment)
         } catch (ex: ClassNotFoundException) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Cannot find script definition class $className")
             InvalidScriptDefinition

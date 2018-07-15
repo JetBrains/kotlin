@@ -18,16 +18,15 @@ import kotlin.script.experimental.misc.*
 
 val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationProperties) {
     listOf(
-        baseClass<MyScript>(),
         dependencies(JvmDependency(scriptCompilationClasspathFromContext("scripting-jvm-simple-script" /* script library jar name */)))
     )
 }
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
-    val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(), DummyCompiledJvmScriptCache())
     val environment = ScriptingEnvironment(
         ScriptingEnvironmentProperties.getScriptingClass(JvmGetScriptingClass())
     )
+    val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(environment), DummyCompiledJvmScriptCache())
     val scriptDefinition = ScriptDefinitionFromAnnotatedBaseClass(
         KotlinType(MyScript::class),
         environment

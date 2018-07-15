@@ -274,13 +274,15 @@ private fun loadScriptDefinition(
         val cls = classLoader.loadClass(template)
         val def =
             if (cls.annotations.firstIsInstanceOrNull<KotlinScript>() != null) {
+                val environment = ScriptingEnvironment(
+                    ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
+                )
                 KotlinScriptDefinitionAdapterFromNewAPI(
                     ScriptDefinitionFromAnnotatedBaseClass(
                         KotlinType(cls.kotlin),
-                        ScriptingEnvironment(
-                            ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
-                        )
-                    )
+                        environment
+                    ),
+                    environment
                 )
             } else {
                 KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, scriptResolverEnv)

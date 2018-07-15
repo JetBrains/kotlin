@@ -24,6 +24,8 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
 
     protected abstract val scriptDefinition: ScriptDefinition
 
+    protected abstract val hostEnvironment: ScriptingEnvironment
+
     abstract val scriptFileExtensionWithDot: String
 
     open val baseClass: KClass<*> by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -88,8 +90,8 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
             .orEmpty()
 
     private val scriptingClassGetter by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        scriptDefinition.properties.getOrNull(ScriptingEnvironmentProperties.getScriptingClass)
-                ?: throw IllegalArgumentException("Expecting 'getScriptingClass' property in the scripting environment")
+        hostEnvironment.getOrNull(ScriptingEnvironmentProperties.getScriptingClass)
+            ?: throw IllegalArgumentException("Expecting 'getScriptingClass' property in the scripting environment")
     }
 
     private fun getScriptingClass(type: KotlinType) =
@@ -102,7 +104,8 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
 
 
 class KotlinScriptDefinitionAdapterFromNewAPI(
-    override val scriptDefinition: ScriptDefinition
+    override val scriptDefinition: ScriptDefinition,
+    override val hostEnvironment: ScriptingEnvironment
 ) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
 
     override val name: String get() = scriptDefinition.properties.getOrNull(ScriptDefinitionProperties.name) ?: super.name

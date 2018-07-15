@@ -42,6 +42,7 @@ open class ChainedPropertyBag private constructor(private val parent: ChainedPro
     companion object {
         fun createOptimized(parent: ChainedPropertyBag?, data: Map<TypedKey<*>, Any?>): ChainedPropertyBag = when {
             parent != null && data.isEmpty() -> parent
+            parent != null && parent.data.isEmpty() -> createOptimized(parent.parent, data)
             else -> ChainedPropertyBag(parent, data)
         }
     }

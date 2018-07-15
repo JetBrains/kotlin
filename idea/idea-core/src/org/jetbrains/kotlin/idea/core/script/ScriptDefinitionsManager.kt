@@ -208,14 +208,13 @@ fun loadDefinitionsFromTemplates(
                     )
                 }
                 template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
+                    val hostEnvironment = ScriptingEnvironment(
+                        ScriptingEnvironmentProperties.configurationDependencies to listOf(JvmDependency(classpath)),
+                        ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
+                    )
                     KotlinScriptDefinitionAdapterFromNewAPI(
-                        ScriptDefinitionFromAnnotatedBaseClass(
-                            KotlinType(template),
-                            ScriptingEnvironment(
-                                ScriptingEnvironmentProperties.configurationDependencies to listOf(JvmDependency(classpath)),
-                                ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
-                            )
-                        )
+                        ScriptDefinitionFromAnnotatedBaseClass(KotlinType(template), hostEnvironment),
+                        hostEnvironment
                     )
                 }
                 else -> {

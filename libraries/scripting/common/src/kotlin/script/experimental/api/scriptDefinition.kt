@@ -29,8 +29,3 @@ object ScriptDefinitionProperties {
     val baseClass by typedKey<KotlinType>() // script base class
 }
 
-fun ScriptDefinitionPropertiesBag.getScriptBaseClass(contextClass: KClass<*>): KClass<*> =
-    getScriptingClass(get(ScriptDefinitionProperties.baseClass), contextClass)
-
-fun ScriptDefinitionPropertiesBag.getScriptBaseClass(context: Any): KClass<*> =
-    getScriptingClass(get(ScriptDefinitionProperties.baseClass), context::class)
