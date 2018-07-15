@@ -54,7 +54,7 @@ class KJVMCompiledScript<out ScriptBase : Any>(
 
     override suspend fun instantiate(scriptEvaluationEnvironment: ScriptEvaluationEnvironment): ResultWithDiagnostics<ScriptBase> = try {
         val baseClassLoader = scriptEvaluationEnvironment.getOrNull(JvmScriptEvaluationEnvironmentProperties.baseClassLoader)
-        val dependencies = configuration.getOrNull(ScriptCompileConfigurationProperties.dependencies)
+        val dependencies = configuration.getOrNull(ScriptDefinitionProperties.dependencies)
             ?.flatMap { (it as? JvmDependency)?.classpath?.map { it.toURI().toURL() } ?: emptyList() }
         // TODO: previous dependencies and classloaders should be taken into account here
         val classLoaderWithDeps =
@@ -91,12 +91,12 @@ class KJVMCompilerImpl(val hostEnvironment: ScriptingEnvironment) : KJVMCompiler
 
             fun updateClasspath(classpath: List<File>) {
                 environment!!.updateClasspath(classpath.map(::JvmClasspathRoot))
-                val updatedDeps = updatedScriptCompileConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)?.plus(
+                val updatedDeps = updatedScriptCompileConfiguration.getOrNull(ScriptDefinitionProperties.dependencies)?.plus(
                     JvmDependency(classpath)
                 ) ?: listOf(JvmDependency(classpath))
                 updatedScriptCompileConfiguration = ScriptCompileConfiguration(
                     updatedScriptCompileConfiguration,
-                    ScriptCompileConfigurationProperties.dependencies to updatedDeps
+                    ScriptDefinitionProperties.dependencies to updatedDeps
                 )
             }
 
@@ -115,7 +115,7 @@ class KJVMCompilerImpl(val hostEnvironment: ScriptingEnvironment) : KJVMCompiler
                     isModularJava = CoreJrtFileSystem.isModularJdk(it)
                 }
 
-                scriptCompileConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)?.let {
+                scriptCompileConfiguration.getOrNull(ScriptDefinitionProperties.dependencies)?.let {
                     addJvmClasspathRoots(
                         it.flatMap {
                             (it as JvmDependency).classpath
@@ -249,7 +249,7 @@ internal class BridgeScriptDefinition(
 ) {
     override val acceptedAnnotations = run {
         val cl = this::class.java.classLoader
-        calculatedScriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)
+        calculatedScriptCompilerConfiguration.getOrNull(ScriptDefinitionProperties.refineConfigurationOnAnnotations)
             ?.map { (cl.loadClass(it.typeName) as Class<out Annotation>).kotlin }
             ?: emptyList()
     }

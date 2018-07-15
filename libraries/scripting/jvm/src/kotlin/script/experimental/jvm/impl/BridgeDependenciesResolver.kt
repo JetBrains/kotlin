@@ -37,7 +37,7 @@ class BridgeDependenciesResolver(
             val processedScriptData =
                 ProcessedScriptData(ProcessedScriptDataProperties.foundAnnotations to scriptContents.annotations)
 
-            val refineFn = scriptDefinition.getOrNull(ScriptCompileConfigurationProperties.refineConfiguration)
+            val refineFn = scriptDefinition.getOrNull(ScriptDefinitionProperties.refineConfiguration)
             val refinedConfiguration =
                 if (refineFn == null) calculatedBaseScriptCompilerConfiguration
                 else {
@@ -52,10 +52,10 @@ class BridgeDependenciesResolver(
                     }
                 }
 
-            val newClasspath = refinedConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)
+            val newClasspath = refinedConfiguration.getOrNull(ScriptDefinitionProperties.dependencies)
                 ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
             if (refinedConfiguration != calculatedBaseScriptCompilerConfiguration) {
-                val oldClasspath = calculatedBaseScriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)
+                val oldClasspath = calculatedBaseScriptCompilerConfiguration.getOrNull(ScriptDefinitionProperties.dependencies)
                     ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
                 if (newClasspath != oldClasspath) {
                     onClasspathUpdated(newClasspath)
@@ -64,7 +64,7 @@ class BridgeDependenciesResolver(
             DependenciesResolver.ResolveResult.Success(
                 ScriptDependencies(
                     classpath = newClasspath, // TODO: maybe it should return only increment from the initial config
-                    imports = refinedConfiguration.getOrNull(ScriptCompileConfigurationProperties.defaultImports)?.toList()
+                    imports = refinedConfiguration.getOrNull(ScriptDefinitionProperties.defaultImports)?.toList()
                             ?: emptyList()
                 ),
                 diagnostics

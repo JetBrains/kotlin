@@ -55,24 +55,24 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
     }
 
     override val acceptedAnnotations: List<KClass<out Annotation>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        scriptDefinition.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)
+        scriptDefinition.getOrNull(ScriptDefinitionProperties.refineConfigurationOnAnnotations)
             .orEmpty()
             .map { getScriptingClass(it) as KClass<out Annotation> }
     }
 
     override val implicitReceivers: List<KType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        scriptDefinition.getOrNull(ScriptCompileConfigurationProperties.scriptImplicitReceivers)
+        scriptDefinition.getOrNull(ScriptDefinitionProperties.scriptImplicitReceivers)
             .orEmpty()
             .map { getScriptingClass(it).starProjectedType }
     }
 
     override val environmentVariables: List<Pair<String, KType>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        scriptDefinition.getOrNull(ScriptCompileConfigurationProperties.contextVariables)
+        scriptDefinition.getOrNull(ScriptDefinitionProperties.contextVariables)
             ?.map { (k, v) -> k to getScriptingClass(v).starProjectedType }.orEmpty()
     }
 
     override val additionalCompilerArguments: List<String>
-        get() = scriptDefinition.getOrNull(ScriptCompileConfigurationProperties.compilerOptions)
+        get() = scriptDefinition.getOrNull(ScriptDefinitionProperties.compilerOptions)
             .orEmpty()
 
     override val scriptExpectedLocations: List<ScriptExpectedLocation> =
@@ -82,11 +82,11 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
         )
 
     override val targetClassAnnotations: List<Annotation>
-        get() = scriptDefinition.getOrNull(ScriptCompileConfigurationProperties.generatedClassAnnotations)
+        get() = scriptDefinition.getOrNull(ScriptDefinitionProperties.generatedClassAnnotations)
             .orEmpty()
 
     override val targetMethodAnnotations: List<Annotation>
-        get() = scriptDefinition.getOrNull(ScriptCompileConfigurationProperties.generatedMethodAnnotations)
+        get() = scriptDefinition.getOrNull(ScriptDefinitionProperties.generatedMethodAnnotations)
             .orEmpty()
 
     private val scriptingClassGetter by lazy(LazyThreadSafetyMode.PUBLICATION) {

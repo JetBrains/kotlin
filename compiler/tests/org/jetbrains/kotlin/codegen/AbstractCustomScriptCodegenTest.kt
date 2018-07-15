@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_MISC_JAR
 import org.junit.Assert
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.annotations.KotlinScriptDefaultCompilationConfiguration
+import kotlin.script.experimental.annotations.KotlinScriptPropertiesFromList
 import kotlin.script.experimental.api.KotlinType
-import kotlin.script.experimental.api.ScriptCompileConfigurationProperties
+import kotlin.script.experimental.api.ScriptDefinitionProperties
 import kotlin.script.experimental.util.TypedKey
 
 abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
@@ -125,22 +125,22 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
 
 object TestScriptWithReceiversConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
     listOf(
-        ScriptCompileConfigurationProperties.scriptImplicitReceivers to listOf(KotlinType(String::class))
+        ScriptDefinitionProperties.scriptImplicitReceivers to listOf(KotlinType(String::class))
     )
 )
 
 @Suppress("unused")
 @KotlinScript
-@KotlinScriptDefaultCompilationConfiguration(TestScriptWithReceiversConfiguration::class)
+@KotlinScriptPropertiesFromList(TestScriptWithReceiversConfiguration::class)
 abstract class TestScriptWithReceivers
 
 object TestScriptWithSimpleEnvVarsConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
     listOf(
-        ScriptCompileConfigurationProperties.contextVariables to mapOf("stringVar1" to KotlinType(String::class))
+        ScriptDefinitionProperties.contextVariables to mapOf("stringVar1" to KotlinType(String::class))
     )
 )
 
 @Suppress("unused")
 @KotlinScript
-@KotlinScriptDefaultCompilationConfiguration(TestScriptWithSimpleEnvVarsConfiguration::class)
+@KotlinScriptPropertiesFromList(TestScriptWithSimpleEnvVarsConfiguration::class)
 abstract class TestScriptWithSimpleEnvVars

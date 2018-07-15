@@ -13,8 +13,8 @@ import java.io.File
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.annotations.KotlinScriptDefaultCompilationConfiguration
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
+import kotlin.script.experimental.annotations.KotlinScriptPropertiesFromList
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.jvmJavaHomeParams
@@ -25,13 +25,13 @@ import kotlin.script.experimental.util.TypedKey
 
 @KotlinScript
 @KotlinScriptFileExtension("scriptwithdeps.kts")
-@KotlinScriptDefaultCompilationConfiguration(MyConfiguration::class)
+@KotlinScriptPropertiesFromList(MyConfiguration::class)
 abstract class MyScriptWithMavenDeps {
 //    abstract fun body(vararg args: String): Int
 }
 
 object MyConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
-    jvmJavaHomeParams + with(ScriptCompileConfigurationProperties) {
+    jvmJavaHomeParams + with(ScriptDefinitionProperties) {
         listOf(
             defaultImports(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!),
             dependencies(
@@ -75,8 +75,8 @@ class MyConfigurator : RefineScriptCompilationConfiguration {
                 ?: return configuration.asSuccess(diagnostics)
             val newDependency = JvmDependency(resolvedClasspath)
             val updatedDeps =
-                configuration.getOrNull(ScriptCompileConfigurationProperties.dependencies)?.plus(newDependency) ?: listOf(newDependency)
-            ScriptCompileConfiguration(configuration, ScriptCompileConfigurationProperties.dependencies(updatedDeps)).asSuccess(diagnostics)
+                configuration.getOrNull(ScriptDefinitionProperties.dependencies)?.plus(newDependency) ?: listOf(newDependency)
+            ScriptCompileConfiguration(configuration, ScriptDefinitionProperties.dependencies(updatedDeps)).asSuccess(diagnostics)
         } catch (e: Throwable) {
             ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics())
         }

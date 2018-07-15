@@ -16,7 +16,7 @@ import kotlin.script.experimental.jvm.runners.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvmhost.impl.KJVMCompilerImpl
 import kotlin.script.experimental.misc.invoke
 
-val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationProperties) {
+val myJvmConfigParams = jvmJavaHomeParams + with(ScriptDefinitionProperties) {
     listOf(
         dependencies(JvmDependency(scriptCompilationClasspathFromContext("scripting-jvm-simple-script" /* script library jar name */)))
     )

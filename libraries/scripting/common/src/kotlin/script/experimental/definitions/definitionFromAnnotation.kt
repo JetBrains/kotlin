@@ -9,8 +9,8 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.annotations.KotlinScriptDefaultCompilationConfiguration
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
+import kotlin.script.experimental.annotations.KotlinScriptPropertiesFromList
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.TypedKey
 
@@ -43,9 +43,9 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
         propertiesData[ScriptDefinitionProperties.fileExtension] = it.extension
     }
     propertiesData += ScriptDefinitionProperties.name to mainAnnotation.name
-    baseClass.annotations.filterIsInstance(KotlinScriptDefaultCompilationConfiguration::class.java).forEach { ann ->
+    baseClass.annotations.filterIsInstance(KotlinScriptPropertiesFromList::class.java).forEach { ann ->
         val params = try {
-            ann.compilationConfiguration.objectInstance ?: ann.compilationConfiguration.createInstance()
+            ann.definitionProperties.objectInstance ?: ann.definitionProperties.createInstance()
         } catch (e: Throwable) {
             throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
         }

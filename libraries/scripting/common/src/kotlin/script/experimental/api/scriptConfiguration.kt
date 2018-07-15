@@ -8,11 +8,22 @@
 package kotlin.script.experimental.api
 
 import kotlin.script.experimental.util.ChainedPropertyBag
-
+import kotlin.script.experimental.util.typedKey
 
 typealias ScriptCompileConfiguration = ChainedPropertyBag
 
+object ScriptCompileConfigurationProperties {
+
+    val sourceFragments by typedKey<List<ScriptSourceNamedFragment>>()
+}
+
 typealias ProcessedScriptData = ChainedPropertyBag
+
+object ProcessedScriptDataProperties {
+    val foundAnnotations by typedKey<List<Annotation>>()
+
+    val foundFragments by typedKey<List<ScriptSourceNamedFragment>>()
+}
 
 interface RefineScriptCompilationConfiguration {
     suspend operator fun invoke(
