@@ -6,16 +6,19 @@
 package kotlin.script.experimental.definitions
 
 import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.script.experimental.annotations.*
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.basic.AnnotationsBasedCompilationConfigurator
 import kotlin.script.experimental.basic.DummyEvaluator
 import kotlin.script.experimental.util.TypedKey
 import kotlin.script.experimental.util.chainPropertyBags
 
 private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
+
+private const val ILLEGAL_CONFIG_ANN_ARG =
+    "Illegal argument to KotlinScriptDefaultCompilationConfiguration annotation: expecting List-derived object or default-constructed class of configuration parameters"
 
 open class ScriptDefinitionFromAnnotatedBaseClass(
     protected val baseClassType: KotlinType,
@@ -40,20 +43,27 @@ open class ScriptDefinitionFromAnnotatedBaseClass(
 
     override val properties = run {
         val baseProperties = chainPropertyBags(explicitDefinition?.properties, environment)
-        val propertiesData = arrayListOf<Pair<TypedKey<*>, Any>>(ScriptDefinitionProperties.baseClass to baseClassType)
+        val propertiesData = arrayListOf<Pair<TypedKey<*>, Any?>>(ScriptDefinitionProperties.baseClass to baseClassType)
         baseClass.findAnnotation<KotlinScriptFileExtension>()?.let {
             propertiesData += ScriptDefinitionProperties.fileExtension to it.extension
         }
         if (baseProperties.getOrNull(ScriptDefinitionProperties.name) == null) {
             propertiesData += ScriptDefinitionProperties.name to mainAnnotation.name
         }
+        baseClass.annotations.filterIsInstance(KotlinScriptDefaultCompilationConfiguration::class.java).forEach { ann ->
+            val params = try {
+                ann.compilationConfiguration.objectInstance ?: ann.compilationConfiguration.createInstance()
+            } catch (e: Throwable) {
+                throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
+            }
+            params.forEach { param ->
+                if (param !is Pair<*, *> || param.first !is TypedKey<*>)
+                    throw IllegalArgumentException("$ILLEGAL_CONFIG_ANN_ARG: invalid parameter $param")
+                propertiesData.add(param as Pair<TypedKey<*>, Any?>)
+            }
+        }
         ScriptingEnvironment(baseProperties, propertiesData)
     }
-
-    override val compilationConfigurator =
-        baseClass.findAnnotation<KotlinScriptCompilationConfigurator>()?.compilationConfigurator?.instantiateScriptHandler()
-            ?: explicitDefinition?.compilationConfigurator
-            ?: AnnotationsBasedCompilationConfigurator::class.instantiateScriptHandler()
 
     override val evaluator =
         baseClass.findAnnotation<KotlinScriptEvaluator>()?.evaluator?.instantiateScriptHandler()

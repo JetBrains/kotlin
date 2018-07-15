@@ -5,13 +5,8 @@
 
 package kotlin.script.experimental.jvm
 
-import kotlinx.coroutines.experimental.runBlocking
-import kotlin.script.experimental.api.*
 import java.io.File
 
 val jvmJavaHomeParams = with(JvmScriptCompileConfigurationProperties) {
     listOf(javaHomeDir to File(System.getProperty("java.home")))
 }
-
-val ScriptCompilationConfigurator?.defaultConfiguration: ScriptCompileConfiguration
-    get() = this?.let { runBlocking { defaultConfiguration } } ?: ScriptCompileConfiguration()

@@ -37,21 +37,20 @@ class BridgeDependenciesResolver(
             val processedScriptData =
                 ProcessedScriptData(ProcessedScriptDataProperties.foundAnnotations to scriptContents.annotations)
 
-            val refinedConfiguration = scriptDefinition.compilationConfigurator?.let { scriptConfigurator ->
-                val res = scriptConfigurator.refineConfiguration(
-                    scriptContents.toScriptSource(),
-                    calculatedBaseScriptCompilerConfiguration,
-                    processedScriptData
-                )
-                when (res) {
-                    is ResultWithDiagnostics.Failure ->
-                        return@resolveAsync DependenciesResolver.ResolveResult.Failure(res.reports.mapScriptReportsToDiagnostics())
-                    is ResultWithDiagnostics.Success -> {
-                        diagnostics.addAll(res.reports.mapScriptReportsToDiagnostics())
-                        res.value
+            val refineFn = scriptDefinition.properties.getOrNull(ScriptCompileConfigurationProperties.refineConfiguration)
+            val refinedConfiguration =
+                if (refineFn == null) calculatedBaseScriptCompilerConfiguration
+                else {
+                    val res = refineFn(scriptContents.toScriptSource(), calculatedBaseScriptCompilerConfiguration, processedScriptData)
+                    when (res) {
+                        is ResultWithDiagnostics.Failure ->
+                            return@resolveAsync DependenciesResolver.ResolveResult.Failure(res.reports.mapScriptReportsToDiagnostics())
+                        is ResultWithDiagnostics.Success -> {
+                            diagnostics.addAll(res.reports.mapScriptReportsToDiagnostics())
+                            res.value
+                        }
                     }
                 }
-            } ?: calculatedBaseScriptCompilerConfiguration
 
             val newClasspath = refinedConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)
                 ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()

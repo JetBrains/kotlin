@@ -13,51 +13,53 @@ import java.io.File
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.annotations.KotlinScriptCompilationConfigurator
+import kotlin.script.experimental.annotations.KotlinScriptDefaultCompilationConfiguration
 import kotlin.script.experimental.annotations.KotlinScriptEvaluator
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.runners.BasicJvmScriptEvaluator
 import kotlin.script.experimental.misc.*
+import kotlin.script.experimental.util.TypedKey
 
 @KotlinScript
 @KotlinScriptFileExtension("scriptwithdeps.kts")
-@KotlinScriptCompilationConfigurator(MyConfigurator::class)
+@KotlinScriptDefaultCompilationConfiguration(MyConfiguration::class)
 @KotlinScriptEvaluator(BasicJvmScriptEvaluator::class)
 abstract class MyScriptWithMavenDeps {
 //    abstract fun body(vararg args: String): Int
 }
 
-val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationProperties) {
-    listOf(
-        baseClass<MyScriptWithMavenDeps>(),
-        defaultImports(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!),
-        dependencies(
-            JvmDependency(
-                scriptCompilationClasspathFromContext(
-                    "scripting-jvm-maven-deps", // script library jar name
-                    "kotlin-script-util" // DependsOn annotation is taken from script-util
+object MyConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
+    jvmJavaHomeParams + with(ScriptCompileConfigurationProperties) {
+        listOf(
+            baseClass<MyScriptWithMavenDeps>(),
+            defaultImports(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!),
+            dependencies(
+                JvmDependency(
+                    scriptCompilationClasspathFromContext(
+                        "scripting-jvm-maven-deps", // script library jar name
+                        "kotlin-script-util" // DependsOn annotation is taken from script-util
+                    )
                 )
-            )
-        ),
-        refineConfigurationOnAnnotations(DependsOn::class, Repository::class)
-    )
-}
+            ),
+            refineConfiguration(MyConfigurator()),
+            refineConfigurationOnAnnotations(DependsOn::class, Repository::class)
+        )
+    }
+)
 
-class MyConfigurator(val environment: ScriptingEnvironment) : ScriptCompilationConfigurator {
+class MyConfigurator : RefineScriptCompilationConfiguration {
 
     private val resolver = FilesAndMavenResolver()
 
-    override val defaultConfiguration = ScriptCompileConfiguration(environment, myJvmConfigParams)
-
-    override suspend fun refineConfiguration(
+    override suspend operator fun invoke(
         scriptSource: ScriptSource,
         configuration: ScriptCompileConfiguration,
         processedScriptData: ProcessedScriptData
     ): ResultWithDiagnostics<ScriptCompileConfiguration> {
         val annotations = processedScriptData.getOrNull(ProcessedScriptDataProperties.foundAnnotations)?.takeIf { it.isNotEmpty() }
-                ?: return configuration.asSuccess()
+            ?: return configuration.asSuccess()
         val scriptContents = object : ScriptContents {
             override val annotations: Iterable<Annotation> = annotations
             override val file: File? = null
@@ -69,9 +71,9 @@ class MyConfigurator(val environment: ScriptingEnvironment) : ScriptCompilationC
         }
         return try {
             val newDepsFromResolver = resolver.resolve(scriptContents, emptyMap(), ::report, null).get()
-                    ?: return configuration.asSuccess(diagnostics)
+                ?: return configuration.asSuccess(diagnostics)
             val resolvedClasspath = newDepsFromResolver.classpath.toList().takeIf { it.isNotEmpty() }
-                    ?: return configuration.asSuccess(diagnostics)
+                ?: return configuration.asSuccess(diagnostics)
             val newDependency = JvmDependency(resolvedClasspath)
             val updatedDeps =
                 configuration.getOrNull(ScriptCompileConfigurationProperties.dependencies)?.plus(newDependency) ?: listOf(newDependency)

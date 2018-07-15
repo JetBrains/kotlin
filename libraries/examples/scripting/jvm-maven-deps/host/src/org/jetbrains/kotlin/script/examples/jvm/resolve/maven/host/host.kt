@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.script.examples.jvm.resolve.maven.host
 
 import org.jetbrains.kotlin.script.examples.jvm.resolve.maven.MyScriptWithMavenDeps
-import org.jetbrains.kotlin.script.examples.jvm.resolve.maven.myJvmConfigParams
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
@@ -16,7 +15,7 @@ import kotlin.script.experimental.jvm.JvmBasicScriptingHost
 import kotlin.script.experimental.jvm.JvmGetScriptingClass
 import kotlin.script.experimental.jvm.JvmScriptCompiler
 import kotlin.script.experimental.jvmhost.impl.KJVMCompilerImpl
-import kotlin.script.experimental.misc.*
+import kotlin.script.experimental.misc.invoke
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
     val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(), DummyCompiledJvmScriptCache())
@@ -30,7 +29,7 @@ fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
     val host = JvmBasicScriptingHost(scriptCompiler, scriptDefinition.evaluator)
 
     return host.eval(
-        scriptFile.toScriptSource(), scriptDefinition, ScriptCompileConfiguration(myJvmConfigParams), ScriptEvaluationEnvironment()
+        scriptFile.toScriptSource(), scriptDefinition, ScriptCompileConfiguration(), ScriptEvaluationEnvironment()
     )
 }
 

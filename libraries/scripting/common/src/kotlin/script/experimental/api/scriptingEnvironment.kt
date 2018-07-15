@@ -31,7 +31,7 @@ interface GetScriptingClass {
 
 fun ScriptingEnvironment.getScriptingClass(type: KotlinType, contextClass: KClass<*>): KClass<*> {
     val getClass = getOrNull(ScriptingEnvironmentProperties.getScriptingClass)
-            ?: throw IllegalArgumentException("Expecting 'getScriptingClass' property in the scripting environment: unable to load scripting class $type")
+        ?: throw IllegalArgumentException("Expecting 'getScriptingClass' property in the scripting environment: unable to load scripting class $type")
     return getClass(type, contextClass, this)
 }
 

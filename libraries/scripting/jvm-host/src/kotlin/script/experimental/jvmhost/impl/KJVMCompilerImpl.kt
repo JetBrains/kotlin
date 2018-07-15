@@ -85,11 +85,7 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
         try {
             setIdeaIoUseFallback()
 
-            val scriptCompileConfiguration = chainPropertyBags(
-                additionalConfiguration,
-                scriptDefinition.compilationConfigurator?.defaultConfiguration,
-                scriptDefinition.properties
-            )
+            val scriptCompileConfiguration = chainPropertyBags(additionalConfiguration, scriptDefinition.properties)
             var environment: KotlinCoreEnvironment? = null
             var updatedScriptCompileConfiguration = scriptCompileConfiguration
 

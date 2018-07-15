@@ -8,6 +8,7 @@
 package kotlin.script.experimental.jvm
 
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.util.chainPropertyBags
 
 open class JvmScriptCompiler(
     val compilerProxy: KJVMCompilerProxy,
@@ -19,15 +20,14 @@ open class JvmScriptCompiler(
         scriptDefinition: ScriptDefinition,
         additionalConfiguration: ScriptCompileConfiguration?
     ): ResultWithDiagnostics<CompiledScript<*>> {
-        val baseConfiguration = additionalConfiguration?.cloneWithNewParent(scriptDefinition.compilationConfigurator?.defaultConfiguration)
-                ?: scriptDefinition.compilationConfigurator?.defaultConfiguration
-                ?: ScriptCompileConfiguration()
+        val baseConfiguration = chainPropertyBags(additionalConfiguration, scriptDefinition.properties)
+        val refineConfigurationFn = baseConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfiguration)
         val refinedConfiguration =
             if (baseConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineBeforeParsing) == true) {
-                if (scriptDefinition.compilationConfigurator == null) {
+                if (refineConfigurationFn == null) {
                     return ResultWithDiagnostics.Failure("Non-null configurator expected".asErrorDiagnostics())
                 }
-                scriptDefinition.compilationConfigurator!!.refineConfiguration(script, baseConfiguration).let {
+                refineConfigurationFn(script, baseConfiguration).let {
                     when (it) {
                         is ResultWithDiagnostics.Failure -> return it
                         is ResultWithDiagnostics.Success -> it.value

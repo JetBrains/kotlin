@@ -18,7 +18,6 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 import kotlin.script.experimental.location.ScriptExpectedLocation
-import kotlin.script.experimental.util.chainPropertyBags
 
 // temporary trick with passing Any as a template and overwriting it below, TODO: fix after introducing new script definitions hierarchy
 abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinition(Any::class) {
@@ -27,12 +26,8 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
 
     abstract val scriptFileExtensionWithDot: String
 
-    protected val baseCompilationConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        chainPropertyBags(scriptDefinition.compilationConfigurator?.defaultConfiguration, scriptDefinition.properties)
-    }
-
     open val baseClass: KClass<*> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        getScriptingClass(baseCompilationConfiguration[ScriptDefinitionProperties.baseClass])
+        getScriptingClass(scriptDefinition.properties[ScriptDefinitionProperties.baseClass])
     }
 
     override val template: KClass<*> get() = baseClass
@@ -54,28 +49,28 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
         get() = emptyList()
 
     override val dependencyResolver: DependenciesResolver by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        BridgeDependenciesResolver(scriptDefinition, baseCompilationConfiguration)
+        BridgeDependenciesResolver(scriptDefinition, scriptDefinition.properties)
     }
 
     override val acceptedAnnotations: List<KClass<out Annotation>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        baseCompilationConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)
+        scriptDefinition.properties.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)
             .orEmpty()
             .map { getScriptingClass(it) as KClass<out Annotation> }
     }
 
     override val implicitReceivers: List<KType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        baseCompilationConfiguration.getOrNull(ScriptCompileConfigurationProperties.scriptImplicitReceivers)
+        scriptDefinition.properties.getOrNull(ScriptCompileConfigurationProperties.scriptImplicitReceivers)
             .orEmpty()
             .map { getScriptingClass(it).starProjectedType }
     }
 
     override val environmentVariables: List<Pair<String, KType>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        baseCompilationConfiguration.getOrNull(ScriptCompileConfigurationProperties.contextVariables)
+        scriptDefinition.properties.getOrNull(ScriptCompileConfigurationProperties.contextVariables)
             ?.map { (k, v) -> k to getScriptingClass(v).starProjectedType }.orEmpty()
     }
 
     override val additionalCompilerArguments: List<String>
-        get() = baseCompilationConfiguration.getOrNull(ScriptCompileConfigurationProperties.compilerOptions)
+        get() = scriptDefinition.properties.getOrNull(ScriptCompileConfigurationProperties.compilerOptions)
             .orEmpty()
 
     override val scriptExpectedLocations: List<ScriptExpectedLocation> =
@@ -85,11 +80,11 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
         )
 
     override val targetClassAnnotations: List<Annotation>
-        get() = baseCompilationConfiguration.getOrNull(ScriptCompileConfigurationProperties.generatedClassAnnotations)
+        get() = scriptDefinition.properties.getOrNull(ScriptCompileConfigurationProperties.generatedClassAnnotations)
             .orEmpty()
 
     override val targetMethodAnnotations: List<Annotation>
-        get() = baseCompilationConfiguration.getOrNull(ScriptCompileConfigurationProperties.generatedMethodAnnotations)
+        get() = scriptDefinition.properties.getOrNull(ScriptCompileConfigurationProperties.generatedMethodAnnotations)
             .orEmpty()
 
     private val scriptingClassGetter by lazy(LazyThreadSafetyMode.PUBLICATION) {

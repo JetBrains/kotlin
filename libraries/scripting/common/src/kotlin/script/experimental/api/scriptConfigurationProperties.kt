@@ -35,6 +35,8 @@ object ScriptCompileConfigurationProperties {
 
     val compilerOptions by typedKey<List<String>>() // Q: CommonCompilerOptions instead?
 
+    val refineConfiguration by typedKey<RefineScriptCompilationConfiguration>() // dynamic configurator
+
     val refineBeforeParsing by typedKey<Boolean>() // default: false
 
     val refineConfigurationOnAnnotations by typedKey<List<KotlinType>>()

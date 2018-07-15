@@ -19,8 +19,6 @@ interface ScriptDefinition {
 
     val properties: ScriptDefinitionPropertiesBag
 
-    val compilationConfigurator: ScriptCompilationConfigurator?
-
     val evaluator: ScriptEvaluator<*>?
 }
 

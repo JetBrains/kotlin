@@ -14,18 +14,10 @@ typealias ScriptCompileConfiguration = ChainedPropertyBag
 
 typealias ProcessedScriptData = ChainedPropertyBag
 
-
-interface ScriptCompilationConfigurator {
-
-    // constructor(properties: ScriptDefinitionPropertiesBag) // the constructor is expected from implementations
-
-    val defaultConfiguration: ScriptCompileConfiguration
-
-    suspend fun refineConfiguration(
+interface RefineScriptCompilationConfiguration {
+    suspend operator fun invoke(
         scriptSource: ScriptSource,
         configuration: ScriptCompileConfiguration,
         processedScriptData: ProcessedScriptData = ProcessedScriptData()
-    ): ResultWithDiagnostics<ScriptCompileConfiguration> =
-        configuration.cloneWithNewParent(defaultConfiguration).asSuccess()
+    ): ResultWithDiagnostics<ScriptCompileConfiguration>
 }
-
