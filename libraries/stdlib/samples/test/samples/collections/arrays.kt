@@ -17,6 +17,7 @@
 package samples.collections
 
 import samples.*
+import kotlin.test.*
 
 
 @RunWith(Enclosed::class)
@@ -38,10 +39,10 @@ class Arrays {
             val nullArray: Array<Any>? = null
             assertTrue(nullArray.isNullOrEmpty())
 
-            val emptyArray = emptyArray<Any>()
+            val emptyArray: Array<Any>? = emptyArray<Any>()
             assertTrue(emptyArray.isNullOrEmpty())
 
-            val array = arrayOf('a', 'b', 'c')
+            val array: Array<Char>? = arrayOf('a', 'b', 'c')
             assertFalse(array.isNullOrEmpty())
         }
     }
