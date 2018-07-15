@@ -106,6 +106,18 @@ class Maps {
             }
         }
 
+
+        @Sample
+        fun mapIsNullOrEmpty() {
+            val nullMap: Map<String, Any>? = null
+            assertTrue(nullMap.isNullOrEmpty())
+
+            val emptyMap: Map<String, Any>? = emptyMap<String, Any>()
+            assertTrue(emptyMap.isNullOrEmpty())
+
+            val map: Map<Char, Int>? = mapOf('a' to 1, 'b' to 2, 'c' to 3)
+            assertFalse(map.isNullOrEmpty())
+        }
     }
 
     class Filtering {
