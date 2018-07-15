@@ -170,9 +170,10 @@ public val <T> List<T>.lastIndex: Int
 public inline fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()
 
 /**
- * Returns `true` if the collection is null or if it is empty.
+ * Returns `true` if this nullable collection is either null or empty.
  * @sample samples.collections.Collections.Collections.collectionIsNullOrEmpty
  */
+@SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
 public inline fun <T> Collection<T>?.isNullOrEmpty(): Boolean {
     contract {
