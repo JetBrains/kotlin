@@ -7,18 +7,10 @@
 
 package kotlin.script.experimental.api
 
-import kotlin.reflect.KClass
 import kotlin.script.experimental.util.ChainedPropertyBag
 import kotlin.script.experimental.util.typedKey
 
-typealias ScriptDefinitionPropertiesBag = ChainedPropertyBag
-
-interface ScriptDefinition {
-
-    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
-
-    val properties: ScriptDefinitionPropertiesBag
-}
+typealias ScriptDefinition = ChainedPropertyBag
 
 object ScriptDefinitionProperties {
 

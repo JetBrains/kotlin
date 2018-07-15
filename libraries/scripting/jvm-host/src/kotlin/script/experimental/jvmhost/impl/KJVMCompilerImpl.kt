@@ -85,7 +85,7 @@ class KJVMCompilerImpl(val hostEnvironment: ScriptingEnvironment) : KJVMCompiler
         try {
             setIdeaIoUseFallback()
 
-            val scriptCompileConfiguration = chainPropertyBags(additionalConfiguration, scriptDefinition.properties)
+            val scriptCompileConfiguration = chainPropertyBags(additionalConfiguration, scriptDefinition)
             var environment: KotlinCoreEnvironment? = null
             var updatedScriptCompileConfiguration = scriptCompileConfiguration
 
@@ -243,7 +243,7 @@ internal class BridgeScriptDefinition(
     updateClasspath: (List<File>) -> Unit
 ) : KotlinScriptDefinition(
     hostEnvironment.getScriptingClass(
-        scriptDefinition.properties[ScriptDefinitionProperties.baseClass],
+        scriptDefinition[ScriptDefinitionProperties.baseClass],
         BridgeScriptDefinition::class
     )
 ) {

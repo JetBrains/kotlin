@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.script.examples.jvm.simple.host
 
 import org.jetbrains.kotlin.script.examples.jvm.simple.MyScript
-import org.jetbrains.kotlin.script.util.*
+import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
 import java.io.File
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.definitions.createScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.runners.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvmhost.impl.KJVMCompilerImpl
-import kotlin.script.experimental.misc.*
+import kotlin.script.experimental.misc.invoke
 
 val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationProperties) {
     listOf(
@@ -27,7 +27,7 @@ fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
         ScriptingEnvironmentProperties.getScriptingClass(JvmGetScriptingClass())
     )
     val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(environment), DummyCompiledJvmScriptCache())
-    val scriptDefinition = ScriptDefinitionFromAnnotatedBaseClass(
+    val scriptDefinition = createScriptDefinitionFromAnnotatedBaseClass(
         KotlinType(MyScript::class),
         environment
     )

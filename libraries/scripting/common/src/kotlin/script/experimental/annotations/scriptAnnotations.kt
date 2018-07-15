@@ -13,19 +13,11 @@
 package kotlin.script.experimental.annotations
 
 import kotlin.reflect.KClass
-import kotlin.script.experimental.api.ScriptDefinition
-import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class KotlinScript(
     val name: String = "Kotlin script"
-)
-
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class KotlinScriptDefinition(
-    val definition: KClass<out ScriptDefinition> = ScriptDefinitionFromAnnotatedBaseClass::class
 )
 
 @Target(AnnotationTarget.CLASS)

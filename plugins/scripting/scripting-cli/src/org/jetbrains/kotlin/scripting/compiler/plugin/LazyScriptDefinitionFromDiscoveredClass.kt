@@ -16,7 +16,7 @@ import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.definitions.createScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.JvmGetScriptingClass
 
@@ -47,7 +47,11 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
             "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
         )
         try {
-            ScriptDefinitionFromAnnotatedBaseClass(KotlinType(className), hostEnvironment)
+            createScriptDefinitionFromAnnotatedBaseClass(
+                KotlinType(className),
+                hostEnvironment,
+                LazyScriptDefinitionFromDiscoveredClass::class
+            )
         } catch (ex: ClassNotFoundException) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Cannot find script definition class $className")
             InvalidScriptDefinition
@@ -62,19 +66,16 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
 
     override val scriptFileExtensionWithDot: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val ext = annotationsFromAsm.find { it.name == KotlinScriptFileExtension::class.simpleName!! }?.args?.first()
-                ?: scriptDefinition.properties.let {
-                    it.getOrNull(ScriptDefinitionProperties.fileExtension) ?: "kts"
-                }
+            ?: scriptDefinition.let {
+                it.getOrNull(ScriptDefinitionProperties.fileExtension) ?: "kts"
+            }
         ".$ext"
     }
 
     override val name: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
         annotationsFromAsm.find { it.name == KotlinScript::class.simpleName!! }?.args?.first()
-                ?: super.name
+            ?: super.name
     }
 }
 
-object InvalidScriptDefinition : ScriptDefinition {
-    override val properties: ScriptDefinitionPropertiesBag = ScriptDefinitionPropertiesBag()
-}
-
+object InvalidScriptDefinition : ScriptDefinition()

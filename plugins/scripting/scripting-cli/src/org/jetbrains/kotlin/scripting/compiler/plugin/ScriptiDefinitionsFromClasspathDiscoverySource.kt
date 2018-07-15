@@ -20,7 +20,7 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptingEnvironment
 import kotlin.script.experimental.api.ScriptingEnvironmentProperties
-import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.definitions.createScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.jvm.JvmGetScriptingClass
 import kotlin.script.templates.ScriptTemplateDefinition
 
@@ -278,9 +278,10 @@ private fun loadScriptDefinition(
                     ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
                 )
                 KotlinScriptDefinitionAdapterFromNewAPI(
-                    ScriptDefinitionFromAnnotatedBaseClass(
+                    createScriptDefinitionFromAnnotatedBaseClass(
                         KotlinType(cls.kotlin),
-                        environment
+                        environment,
+                        KotlinScriptDefinition::class
                     ),
                     environment
                 )

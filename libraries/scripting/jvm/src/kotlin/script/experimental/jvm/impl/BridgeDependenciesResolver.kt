@@ -37,7 +37,7 @@ class BridgeDependenciesResolver(
             val processedScriptData =
                 ProcessedScriptData(ProcessedScriptDataProperties.foundAnnotations to scriptContents.annotations)
 
-            val refineFn = scriptDefinition.properties.getOrNull(ScriptCompileConfigurationProperties.refineConfiguration)
+            val refineFn = scriptDefinition.getOrNull(ScriptCompileConfigurationProperties.refineConfiguration)
             val refinedConfiguration =
                 if (refineFn == null) calculatedBaseScriptCompilerConfiguration
                 else {

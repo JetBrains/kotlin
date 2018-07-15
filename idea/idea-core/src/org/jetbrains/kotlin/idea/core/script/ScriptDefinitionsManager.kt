@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil.isInContent
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.*
-import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
 import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPIBase
+import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
@@ -51,7 +51,7 @@ import kotlin.script.dependencies.ScriptContents
 import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptingEnvironment
 import kotlin.script.experimental.api.ScriptingEnvironmentProperties
-import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.definitions.createScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.asSuccess
@@ -213,7 +213,7 @@ fun loadDefinitionsFromTemplates(
                         ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
                     )
                     KotlinScriptDefinitionAdapterFromNewAPI(
-                        ScriptDefinitionFromAnnotatedBaseClass(KotlinType(template), hostEnvironment),
+                        createScriptDefinitionFromAnnotatedBaseClass(KotlinType(template), hostEnvironment, KotlinScriptDefinition::class),
                         hostEnvironment
                     )
                 }
