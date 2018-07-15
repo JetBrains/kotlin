@@ -7,10 +7,10 @@ package kotlin.script.experimental.jvm.runners
 
 import kotlin.script.experimental.api.*
 
-open class BasicJvmScriptEvaluator<ScriptBase : Any>(val environment: ScriptingEnvironment) : ScriptEvaluator<ScriptBase> {
+open class BasicJvmScriptEvaluator() : ScriptEvaluator {
 
     override suspend fun eval(
-        compiledScript: CompiledScript<ScriptBase>,
+        compiledScript: CompiledScript<*>,
         scriptEvaluationEnvironment: ScriptEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult> =
         try {

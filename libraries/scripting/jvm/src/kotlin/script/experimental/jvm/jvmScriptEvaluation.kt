@@ -11,10 +11,10 @@ import kotlin.script.experimental.api.ScriptEvaluator
 import kotlin.script.experimental.host.BasicScriptingHost
 import kotlin.script.experimental.util.typedKey
 
-open class JvmBasicScriptingHost<ScriptBase : Any>(
+open class JvmBasicScriptingHost(
     compiler: JvmScriptCompiler,
-    evaluator: ScriptEvaluator<ScriptBase>
-) : BasicScriptingHost<ScriptBase>(compiler, evaluator)
+    evaluator: ScriptEvaluator
+) : BasicScriptingHost(compiler, evaluator)
 
 object JvmScriptEvaluationEnvironmentProperties {
     val baseClassLoader by typedKey<ClassLoader?>()

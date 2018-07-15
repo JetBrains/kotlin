@@ -75,6 +75,5 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
 
 object InvalidScriptDefinition : ScriptDefinition {
     override val properties: ScriptDefinitionPropertiesBag = ScriptDefinitionPropertiesBag()
-    override val evaluator: ScriptEvaluator<*>? = null
 }
 

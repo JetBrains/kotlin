@@ -14,18 +14,18 @@ import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptDefaultCompilationConfiguration
-import kotlin.script.experimental.annotations.KotlinScriptEvaluator
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.jvm.*
-import kotlin.script.experimental.jvm.runners.BasicJvmScriptEvaluator
-import kotlin.script.experimental.misc.*
+import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.jvmJavaHomeParams
+import kotlin.script.experimental.jvm.mapLegacyDiagnosticSeverity
+import kotlin.script.experimental.jvm.mapLegacyScriptPosition
+import kotlin.script.experimental.misc.invoke
 import kotlin.script.experimental.util.TypedKey
 
 @KotlinScript
 @KotlinScriptFileExtension("scriptwithdeps.kts")
 @KotlinScriptDefaultCompilationConfiguration(MyConfiguration::class)
-@KotlinScriptEvaluator(BasicJvmScriptEvaluator::class)
 abstract class MyScriptWithMavenDeps {
 //    abstract fun body(vararg args: String): Int
 }

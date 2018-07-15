@@ -14,7 +14,6 @@ package kotlin.script.experimental.annotations
 
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.ScriptDefinition
-import kotlin.script.experimental.api.ScriptEvaluator
 import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
 
 @Target(AnnotationTarget.CLASS)
@@ -33,12 +32,6 @@ annotation class KotlinScriptDefinition(
 @Retention(AnnotationRetention.RUNTIME)
 annotation class KotlinScriptFileExtension(
     val extension: String
-)
-
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class KotlinScriptEvaluator(
-    val evaluator: KClass<out ScriptEvaluator<*>>
 )
 
 @Target(AnnotationTarget.CLASS)

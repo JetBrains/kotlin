@@ -22,10 +22,10 @@ import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.runBlocking
 import kotlin.script.experimental.api.*
 
-abstract class BasicScriptingHost<ScriptBase : Any>(
+abstract class BasicScriptingHost(
     val compiler: ScriptCompiler,
     // TODO: does it belong here or to the definition?
-    val evaluator: ScriptEvaluator<ScriptBase>
+    val evaluator: ScriptEvaluator
 ) {
     open fun <T> runInCoroutineContext(block: suspend CoroutineScope.() -> T): T = runBlocking { block() }
 
@@ -40,8 +40,7 @@ abstract class BasicScriptingHost<ScriptBase : Any>(
             when (compiled) {
                 is ResultWithDiagnostics.Failure -> compiled
                 is ResultWithDiagnostics.Success -> {
-                    val compiledScript = compiled.value!! as CompiledScript<ScriptBase>
-                    evaluator.eval(compiledScript, environment)
+                    evaluator.eval(compiled.value, environment)
                 }
             }
         }

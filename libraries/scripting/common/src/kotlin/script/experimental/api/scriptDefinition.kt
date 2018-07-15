@@ -18,8 +18,6 @@ interface ScriptDefinition {
     // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
 
     val properties: ScriptDefinitionPropertiesBag
-
-    val evaluator: ScriptEvaluator<*>?
 }
 
 object ScriptDefinitionProperties {

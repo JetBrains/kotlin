@@ -24,13 +24,12 @@ typealias ScriptEvaluationEnvironment = ChainedPropertyBag
 
 data class EvaluationResult(val returnValue: Any?, val environment: ScriptEvaluationEnvironment)
 
-// NOTE: name inconsistency: run vs evaluate
-interface ScriptEvaluator<in ScriptBase : Any> {
+interface ScriptEvaluator {
 
     // constructor(properties: ScriptDefinitionPropertiesBag) // the constructor is expected from implementations
 
     suspend fun eval(
-        compiledScript: CompiledScript<ScriptBase>,
+        compiledScript: CompiledScript<*>,
         scriptEvaluationEnvironment: ScriptEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult>
 }

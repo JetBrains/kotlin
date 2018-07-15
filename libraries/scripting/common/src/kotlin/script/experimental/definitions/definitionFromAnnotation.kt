@@ -9,9 +9,11 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
-import kotlin.script.experimental.annotations.*
+import kotlin.script.experimental.annotations.KotlinScript
+import kotlin.script.experimental.annotations.KotlinScriptDefaultCompilationConfiguration
+import kotlin.script.experimental.annotations.KotlinScriptDefinition
+import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.basic.DummyEvaluator
 import kotlin.script.experimental.util.TypedKey
 import kotlin.script.experimental.util.chainPropertyBags
 
@@ -64,11 +66,6 @@ open class ScriptDefinitionFromAnnotatedBaseClass(
         }
         ScriptingEnvironment(baseProperties, propertiesData)
     }
-
-    override val evaluator =
-        baseClass.findAnnotation<KotlinScriptEvaluator>()?.evaluator?.instantiateScriptHandler()
-            ?: explicitDefinition?.evaluator
-            ?: DummyEvaluator::class.instantiateScriptHandler()
 
     private fun <T : Any> KClass<T>.instantiateScriptHandler(): T {
         val klass: KClass<T> = try {
