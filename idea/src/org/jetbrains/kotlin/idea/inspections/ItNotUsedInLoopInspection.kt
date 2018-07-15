@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.callExpressionVisitor
@@ -24,23 +26,7 @@ class ItNotUsedInLoopInspection : AbstractKotlinInspection() {
                 val descriptor = lambda.analyze()[BindingContext.FUNCTION, lambda.functionLiteral] ?: return@callExpressionVisitor
                 val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return@callExpressionVisitor
 
-                var used = false
-                lambda.bodyExpression?.acceptChildren(object : KtVisitorVoid() {
-                    override fun visitKtElement(element: KtElement) {
-                        if (!used) {
-                            if (element.children.isNotEmpty()) {
-                                element.acceptChildren(this)
-                            } else {
-                                val bindingContext = element.analyze()
-                                val resolvedCall = element.getResolvedCall(bindingContext) ?: return
-
-                                used = resolvedCall.candidateDescriptor == iterableParameter
-                            }
-                        }
-                    }
-                })
-
-                if (!used) {
+                if (lambda.bodyExpression?.usesDescriptor(iterableParameter) != true) {
                     holder.registerProblem(
                         lambda,
                         "Loop parameter '${iterableParameter.getThisLabelName()}' is unused",
@@ -49,5 +35,24 @@ class ItNotUsedInLoopInspection : AbstractKotlinInspection() {
                 }
             }
         }
+    }
+
+    private fun KtBlockExpression.usesDescriptor(descriptor: VariableDescriptor): Boolean {
+        var used = false
+        acceptChildren(object : KtVisitorVoid() {
+            override fun visitKtElement(element: KtElement) {
+                if (!used) {
+                    if (element.children.isNotEmpty()) {
+                        element.acceptChildren(this)
+                    } else {
+                        val bindingContext = element.analyze()
+                        val resolvedCall = element.getResolvedCall(bindingContext) ?: return
+
+                        used = resolvedCall.candidateDescriptor == descriptor
+                    }
+                }
+            }
+        })
+        return used
     }
 }
