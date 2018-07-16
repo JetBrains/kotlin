@@ -15,32 +15,33 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.language.cpp.internal.DefaultUsageContext
 import org.gradle.nativeplatform.Linkage
-import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeKLibrary
+import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSet
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import javax.inject.Inject
 
-open class KotlinNativeKLibraryImpl @Inject constructor(
+abstract class AbstractKotlinNativeLibrary(
         name: String,
         baseName: Provider<String>,
         componentImplementation: Configuration,
-        sources: KotlinNativeSourceSet,
+        component: KotlinNativeMainComponent,
         identity: KotlinNativeVariantIdentity,
-        objects: ObjectFactory,
         projectLayout: ProjectLayout,
+        outputKind: CompilerOutputKind,
+        objects: ObjectFactory,
         configurations: ConfigurationContainer,
         fileOperations: FileOperations
 ) : AbstractKotlinNativeBinary(name,
         baseName,
-        sources,
+        component,
         identity,
         projectLayout,
-        CompilerOutputKind.LIBRARY,
+        outputKind,
         objects,
         componentImplementation,
         configurations,
         fileOperations),
-    KotlinNativeKLibrary,
+    KotlinNativeLibrary,
     SoftwareComponentInternal, // TODO: SoftwareComponentInternal will be replaced with ComponentWithVariants by Gradle
     PublishableComponent
 {
@@ -68,3 +69,49 @@ open class KotlinNativeKLibraryImpl @Inject constructor(
 
     override val outputRootName = "lib"
 }
+
+open class KotlinNativeLibraryImpl @Inject constructor(
+    name: String,
+    baseName: Provider<String>,
+    componentImplementation: Configuration,
+    component: KotlinNativeMainComponent,
+    identity: KotlinNativeVariantIdentity,
+    projectLayout: ProjectLayout,
+    objects: ObjectFactory,
+    configurations: ConfigurationContainer,
+    fileOperations: FileOperations
+) : AbstractKotlinNativeLibrary(
+    name,
+    baseName,
+    componentImplementation,
+    component,
+    identity,
+    projectLayout,
+    CompilerOutputKind.LIBRARY,
+    objects,
+    configurations,
+    fileOperations
+)
+
+open class KotlinNativeFrameworkImpl @Inject constructor(
+    name: String,
+    baseName: Provider<String>,
+    componentImplementation: Configuration,
+    component: KotlinNativeMainComponent,
+    identity: KotlinNativeVariantIdentity,
+    projectLayout: ProjectLayout,
+    objects: ObjectFactory,
+    configurations: ConfigurationContainer,
+    fileOperations: FileOperations
+) : AbstractKotlinNativeLibrary(
+    name,
+    baseName,
+    componentImplementation,
+    component,
+    identity,
+    projectLayout,
+    CompilerOutputKind.FRAMEWORK,
+    objects,
+    configurations,
+    fileOperations
+)

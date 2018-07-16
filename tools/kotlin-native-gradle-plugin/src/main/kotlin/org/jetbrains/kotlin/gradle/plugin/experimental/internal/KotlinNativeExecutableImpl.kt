@@ -24,7 +24,7 @@ open class KotlinNativeExecutableImpl @Inject constructor(
         name: String,
         baseName: Provider<String>,
         componentImplementation: Configuration,
-        sources: KotlinNativeSourceSet,
+        component: KotlinNativeMainComponent,
         identity: KotlinNativeVariantIdentity,
         objects: ObjectFactory,
         projectLayout: ProjectLayout,
@@ -32,7 +32,7 @@ open class KotlinNativeExecutableImpl @Inject constructor(
         fileOperations: FileOperations
 ) : AbstractKotlinNativeBinary(name,
         baseName,
-        sources,
+        component,
         identity,
         projectLayout,
         CompilerOutputKind.PROGRAM,

@@ -48,9 +48,9 @@ interface KotlinNativeBinary: ComponentWithDependencies, BuildableComponent {
     val kind: CompilerOutputKind
 
     /**
-     * Additinal command line options passed to the compiler when this binary is compiled.
+     * Additional command line options passed to the compiler when this binary is compiled.
      */
-    val additionalCompilerOptions: MutableCollection<String>
+    val additionalCompilerOptions: Collection<String>
 
     companion object {
         val KONAN_TARGET_ATTRIBUTE = Attribute.of("org.gradle.native.kotlin.platform", String::class.java)
@@ -70,7 +70,7 @@ interface KotlinNativeExecutable : KotlinNativeBinary,
  *  A component representing a klibrary.
  */
 // TODO: Consider implementing ComponentWithLinkFile.
-interface KotlinNativeKLibrary : KotlinNativeBinary,
+interface KotlinNativeLibrary : KotlinNativeBinary,
         ComponentWithOutputs,
         PublishableComponent,
         ConfigurableComponentWithLinkUsage

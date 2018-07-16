@@ -83,7 +83,7 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
 
             for (kind in outputKinds) {
                 for (buildType in KotlinNativeBuildType.DEFAULT_BUILD_TYPES) {
-                    for (target in targets) {
+                    for (target in targets.filter { kind.availableFor(it) }) {
 
                         val buildTypeSuffix = buildType.name
                         val outputKindSuffix = createDimensionSuffix(kind.name, outputKinds)
@@ -112,12 +112,14 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
 
                         val binary = component.addBinary(kind, variantIdentity)
 
-                        if (hostManager.isEnabled(target)) {
-                            component.mainPublication.variants.add(binary)
-                        } else {
-                            // Known but not buildable.
-                            // It allows us to publish different parts of a multitarget library from differnt hosts.
-                            component.mainPublication.variants.add(variantIdentity)
+                        if (kind.publishable) {
+                            if (hostManager.isEnabled(target)) {
+                                component.mainPublication.variants.add(binary)
+                            } else {
+                                // Known but not buildable.
+                                // It allows us to publish different parts of a multitarget library from differnt hosts.
+                                component.mainPublication.variants.add(variantIdentity)
+                            }
                         }
 
                         if (kind == developmentKind &&

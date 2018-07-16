@@ -37,6 +37,12 @@ interface KotlinNativeComponent: ComponentWithBinaries, ComponentWithDependencie
     /** Set native targets for this component. */
     fun target(vararg targets: String)
 
+    /** Set additional compiler options for this component. */
+    val extraOpts: Collection<String>
+
+    fun extraOpts(vararg values: Any)
+    fun extraOpts(values: List<Any>)
+
     // endregion
 }
 

@@ -39,6 +39,8 @@ open class KotlinNativeCompile: DefaultTask() {
 
     val target: String @Input get() = binary.konanTarget.name
 
+    val additionalCompilerOptions: Collection<String> @Input get() = binary.additionalCompilerOptions
+
     @OutputFile
     val outputFile: RegularFileProperty = newOutputFile()
 
@@ -60,7 +62,7 @@ open class KotlinNativeCompile: DefaultTask() {
 
             add("-Xmulti-platform")
 
-            addAll(binary.additionalCompilerOptions)
+            addAll(additionalCompilerOptions)
 
             libraries.files.forEach {library ->
                 library.parent?.let { addArg("-r", it) }

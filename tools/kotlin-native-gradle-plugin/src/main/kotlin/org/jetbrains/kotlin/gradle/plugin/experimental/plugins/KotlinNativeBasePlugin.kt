@@ -14,10 +14,7 @@ import org.gradle.language.plugins.NativeBasePlugin
 import org.gradle.nativeplatform.test.tasks.RunTestExecutable
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin
-import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeBinary
-import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeExecutableImpl
-import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeKLibraryImpl
-import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeTestExecutableImpl
+import org.jetbrains.kotlin.gradle.plugin.experimental.internal.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.plugin.hasProperty
 import org.jetbrains.kotlin.gradle.plugin.konanCompilerDownloadDir
@@ -94,7 +91,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
 
             when(binary) {
                 is KotlinNativeExecutableImpl -> binary.runtimeFile.set(compileTask.outputFile)
-                is KotlinNativeKLibraryImpl -> binary.linkFile.set(compileTask.outputFile)
+                is AbstractKotlinNativeLibrary -> binary.linkFile.set(compileTask.outputFile)
             }
 
             if (binary is KotlinNativeTestExecutableImpl) {

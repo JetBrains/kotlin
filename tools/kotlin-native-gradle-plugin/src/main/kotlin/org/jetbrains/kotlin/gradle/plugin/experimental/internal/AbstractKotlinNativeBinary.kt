@@ -21,6 +21,7 @@ import org.gradle.nativeplatform.OperatingSystemFamily
 import org.gradle.nativeplatform.toolchain.NativeToolChain
 import org.jetbrains.kotlin.gradle.plugin.experimental.ComponentWithBaseName
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
+import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeComponent
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSet
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -41,7 +42,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 abstract class AbstractKotlinNativeBinary(
         private val name: String,
         private val baseName: Provider<String>,
-        val sourceSet: KotlinNativeSourceSet,
+        val component: KotlinNativeComponent,
         val identity: KotlinNativeVariantIdentity,
         val projectLayout: ProjectLayout,
         override val kind: CompilerOutputKind,
@@ -65,6 +66,9 @@ abstract class AbstractKotlinNativeBinary(
         get() = identity.konanTarget
 
     override fun getTargetPlatform(): KotlinNativePlatform = identity.targetPlatform
+
+    val sourceSet: KotlinNativeSourceSet
+        get() = component.sources
 
     open val debuggable: Boolean  get() = identity.isDebuggable
     open val optimized: Boolean   get() = identity.isOptimized
@@ -113,5 +117,6 @@ abstract class AbstractKotlinNativeBinary(
     private val outputs: ConfigurableFileCollection = fileOperations.files()
     override fun getOutputs() = outputs
 
-    override val additionalCompilerOptions = mutableListOf<String>()
+    override val additionalCompilerOptions: Collection<String>
+        get() = component.extraOpts
 }

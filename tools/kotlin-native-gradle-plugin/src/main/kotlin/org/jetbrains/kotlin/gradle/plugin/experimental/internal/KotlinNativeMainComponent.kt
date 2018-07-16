@@ -47,7 +47,7 @@ open class KotlinNativeMainComponent @Inject constructor(
                     "$name${identity.name.capitalize()}",
                     baseName,
                     getImplementationDependencies(),
-                    sources,
+                    this,
                     identity
             ).apply {
                 binaries.add(this)
@@ -57,10 +57,10 @@ open class KotlinNativeMainComponent @Inject constructor(
             addBinary(T::class.java, identity)
 
     fun addExecutable(identity: NativeVariantIdentity) = addBinary<KotlinNativeExecutableImpl>(identity)
-    fun addKLibrary(identity: NativeVariantIdentity) = addBinary<KotlinNativeKLibraryImpl>(identity)
+    fun addKLibrary(identity: NativeVariantIdentity) = addBinary<KotlinNativeLibraryImpl>(identity)
+    fun addFramework(identity: NativeVariantIdentity) = addBinary<KotlinNativeFrameworkImpl>(identity)
 
     fun addBinary(kind: OutputKind, identity: NativeVariantIdentity) = addBinary(kind.binaryClass, identity)
-
 
     // region Kotlin/Native variant
     // TODO: SoftwareComponentInternal will be replaced with ComponentWithVariants by Gradle
@@ -82,5 +82,8 @@ open class KotlinNativeMainComponent @Inject constructor(
 
         @JvmStatic
         val KLIBRARY = OutputKind.KLIBRARY
+
+        @JvmStatic
+        val FRAMEWORK = OutputKind.FRAMEWORK
     }
 }

@@ -38,7 +38,7 @@ open class KotlinNativeTestSuite @Inject constructor(
                     "$name${identity.name.capitalize()}",
                     getBaseName(),
                     getImplementationDependencies(),
-                    sources,
+                    this,
                     testedComponent.sources,
                     identity
             ).apply {

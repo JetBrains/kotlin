@@ -59,5 +59,12 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
         konanTargets.set(targets.map { hostManager.targetByName(it) })
     }
 
+    override val extraOpts = mutableListOf<String>()
+
+    override fun extraOpts(vararg values: Any) = extraOpts(values.toList())
+    override fun extraOpts(values: List<Any>) {
+        extraOpts.addAll(values.map { it.toString() })
+    }
+
     // endregion
 }
