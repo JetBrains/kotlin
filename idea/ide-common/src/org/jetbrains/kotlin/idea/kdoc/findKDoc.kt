@@ -66,16 +66,24 @@ fun KtElement.findKDoc(descriptorToPsi: (DeclarationDescriptorWithSource) -> Psi
 
     if (this is KtParameter || this is KtTypeParameter) {
         val containingDeclaration =
-            PsiTreeUtil.getParentOfType(this, KtDeclarationWithBody::class.java, KtClassOrObject::class.java, KtScript::class.java)
-        val classKDoc = containingDeclaration?.getChildOfType<KDoc>()
-        val subjectName = name
-        if (classKDoc != null && subjectName != null) {
-            val propertySection =
-                classKDoc.findSectionByTag(KDocKnownTag.PROPERTY, subjectName)?.takeIf { this is KtParameter && this.isPropertyParameter() }
-                    ?: classKDoc.findDescendantOfType<KDocTag> { it.knownTag == KDocKnownTag.PARAM && it.getSubjectName() == subjectName }
-            if (propertySection != null) {
-                return propertySection
+            PsiTreeUtil.findFirstParent(this, true) {
+                it is KtDeclarationWithBody && it !is KtPrimaryConstructor
+                        || it is KtClassOrObject
             }
+        val containerKDoc = containingDeclaration?.getChildOfType<KDoc>()
+        val subjectName = name
+        if (containerKDoc != null && subjectName != null) {
+
+            val propertyDoc =
+                containerKDoc.findSectionByTag(KDocKnownTag.PROPERTY, subjectName)
+                    ?.takeIf { this is KtParameter && this.isPropertyParameter() }
+
+            if (propertyDoc != null) return propertyDoc
+
+            val paramDoc =
+                containerKDoc.findDescendantOfType<KDocTag> { it.knownTag == KDocKnownTag.PARAM && it.getSubjectName() == subjectName }
+
+            if (paramDoc != null) return paramDoc
         }
     }
 
