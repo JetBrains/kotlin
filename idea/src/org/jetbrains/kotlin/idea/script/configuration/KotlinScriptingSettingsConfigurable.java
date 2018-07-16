@@ -54,15 +54,17 @@ public class KotlinScriptingSettingsConfigurable implements SearchableConfigurab
     @Override
     public boolean isModified() {
         return isModified(scriptDependenciesAutoReload, settings.isAutoReloadEnabled())
-               || !model.getItems().equals(manager.getAllDefinitions());
+               || isScriptDefinitionsChanged();
     }
 
     @Override
     public void apply() {
         settings.setAutoReloadEnabled(scriptDependenciesAutoReload.isSelected());
 
-
-        manager.saveNewDefinitions(Collections.unmodifiableList(model.getItems()));
+        if (isScriptDefinitionsChanged()) {
+            settings.saveScriptDefinitionsOrder(Collections.unmodifiableList(model.getItems()));
+            manager.reorderScriptDefinitions();
+        }
     }
 
     @Override
@@ -71,6 +73,11 @@ public class KotlinScriptingSettingsConfigurable implements SearchableConfigurab
 
         model.setItems(Lists.newArrayList(manager.getAllDefinitions()));
     }
+
+    private boolean isScriptDefinitionsChanged() {
+        return !model.getItems().equals(manager.getAllDefinitions());
+    }
+
 
     @Override
     @Nls
