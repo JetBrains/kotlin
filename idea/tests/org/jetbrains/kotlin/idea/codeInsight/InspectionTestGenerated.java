@@ -169,6 +169,11 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("idea/testData/inspections/equalsAndHashCode/inspectionData/inspections.test");
         }
 
+        @TestMetadata("forEachParameterNotUsed/inspectionData/inspections.test")
+        public void testForEachParameterNotUsed_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/forEachParameterNotUsed/inspectionData/inspections.test");
+        }
+
         @TestMetadata("gradleWrongPluginVersion/inspectionData/inspections.test")
         public void testGradleWrongPluginVersion_inspectionData_Inspections_test() throws Exception {
             runTest("idea/testData/inspections/gradleWrongPluginVersion/inspectionData/inspections.test");
