@@ -2,8 +2,8 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JS_IR
-// WITH_RUNTIME
 // WITH_REFLECT
+
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.companionObject

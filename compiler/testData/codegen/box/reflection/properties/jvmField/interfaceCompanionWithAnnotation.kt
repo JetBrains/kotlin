@@ -1,6 +1,5 @@
 // !LANGUAGE: +JvmFieldInInterface
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
 // WITH_REFLECT
 
 import kotlin.reflect.full.declaredMemberProperties

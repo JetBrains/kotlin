@@ -18368,21 +18368,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/properties/javaStaticField.kt");
             }
 
-            @TestMetadata("jvmFieldInAnnotationCompanionWithAnnotation.kt")
-            public void testJvmFieldInAnnotationCompanionWithAnnotation() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/properties/jvmFieldInAnnotationCompanionWithAnnotation.kt");
-            }
-
-            @TestMetadata("jvmFieldInInterfaceCompanion.kt")
-            public void testJvmFieldInInterfaceCompanion() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/properties/jvmFieldInInterfaceCompanion.kt");
-            }
-
-            @TestMetadata("jvmFieldInInterfaceCompanionWithAnnotation.kt")
-            public void testJvmFieldInInterfaceCompanionWithAnnotation() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/properties/jvmFieldInInterfaceCompanionWithAnnotation.kt");
-            }
-
             @TestMetadata("kotlinPropertyInheritedInJava.kt")
             public void testKotlinPropertyInheritedInJava() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/properties/kotlinPropertyInheritedInJava.kt");
@@ -18591,6 +18576,34 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("topLevelProperty.kt")
                 public void testTopLevelProperty() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/properties/getDelegate/topLevelProperty.kt");
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/reflection/properties/jvmField")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class JvmField extends AbstractLightAnalysisModeTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInJvmField() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/jvmField"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("annotationCompanionWithAnnotation.kt")
+                public void testAnnotationCompanionWithAnnotation() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/properties/jvmField/annotationCompanionWithAnnotation.kt");
+                }
+
+                @TestMetadata("interfaceCompanion.kt")
+                public void testInterfaceCompanion() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/properties/jvmField/interfaceCompanion.kt");
+                }
+
+                @TestMetadata("interfaceCompanionWithAnnotation.kt")
+                public void testInterfaceCompanionWithAnnotation() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/properties/jvmField/interfaceCompanionWithAnnotation.kt");
                 }
             }
 
