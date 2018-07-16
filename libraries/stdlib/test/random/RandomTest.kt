@@ -307,17 +307,20 @@ abstract class RandomSmokeTest {
             val prev = array.copyOf()
             subject.nextBytes(array, from, to)
 
-            val rangeSize = to - from
             var noChanges = array contentEquals prev
-            if (noChanges && rangeSize <= 4) {
+            val rangeSize = to - from
+            val retries = 4 / rangeSize
+            var n = 0
+            while (noChanges && n < retries) {
                 // there's a small chance that a small range will get the same value as before
                 // run randomization again
                 subject.nextBytes(array, from, to)
                 noChanges = array contentEquals prev
+                n++
             }
 
             if (noChanges) {
-                fail("Something should have changed in array after subrange [$from, $to) randomization: " +
+                fail("Something should have changed in array after subrange [$from, $to) randomization (${1 + retries} times): " +
                      array.copyOfRange(from, to).contentToString())
             }
 
