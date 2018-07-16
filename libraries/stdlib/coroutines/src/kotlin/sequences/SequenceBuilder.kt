@@ -55,7 +55,6 @@ public abstract class SequenceBuilder<in T> internal constructor() {
      * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      * @sample samples.collections.Sequences.Building.buildFibonacciSequence
      */
-    @kotlin.internal.RequireKotlin("1.3") // TODO: This is needed for tests only and can be safely removed after 1.3 is released
     public abstract suspend fun yield(value: T)
 
     /**
@@ -65,7 +64,6 @@ public abstract class SequenceBuilder<in T> internal constructor() {
      *
      * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      */
-    @kotlin.internal.RequireKotlin("1.3") // TODO: This is needed for tests only and can be safely removed after 1.3 is released
     public abstract suspend fun yieldAll(iterator: Iterator<T>)
 
     /**
@@ -73,7 +71,6 @@ public abstract class SequenceBuilder<in T> internal constructor() {
      *
      * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      */
-    @kotlin.internal.RequireKotlin("1.3") // TODO: This is needed for tests only and can be safely removed after 1.3 is released
     public suspend fun yieldAll(elements: Iterable<T>) {
         if (elements is Collection && elements.isEmpty()) return
         return yieldAll(elements.iterator())
@@ -86,7 +83,6 @@ public abstract class SequenceBuilder<in T> internal constructor() {
      *
      * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      */
-    @kotlin.internal.RequireKotlin("1.3") // TODO: This is needed for tests only and can be safely removed after 1.3 is released
     public suspend fun yieldAll(sequence: Sequence<T>) = yieldAll(sequence.iterator())
 }
 
