@@ -3,7 +3,7 @@ This build uses internal compiler arguments:
 
 -XXLanguage:+UnknownFeature
 
-This mode is strictly prohibited for production use,
+This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 

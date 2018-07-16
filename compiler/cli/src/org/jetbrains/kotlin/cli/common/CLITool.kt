@@ -135,7 +135,7 @@ abstract class CLITool<A : CommonToolArguments> {
                 "ATTENTION!\n" +
                         "This build uses internal compiler arguments:\n" +
                         arguments.internalArguments.joinToString(prefix = "\n", postfix = "\n\n", separator = "\n") +
-                        "This mode is strictly prohibited for production use,\n" +
+                        "This mode is not recommended for production use,\n" +
                         "as no stability/compatibility guarantees are given on\n" +
                         "compiler or generated code. Use it at your own risk!\n"
             )
