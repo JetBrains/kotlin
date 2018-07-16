@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -928,9 +930,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         boolean isNonCompanionObject = isNonCompanionObject(descriptor);
         boolean isInterfaceCompanion = isCompanionObjectInInterfaceNotIntrinsic(descriptor);
+        boolean isInterfaceCompanionWithBackingFieldsInOuter = isInterfaceCompanionWithBackingFieldsInOuter(descriptor);
         boolean isMappedIntrinsicCompanionObject = isMappedIntrinsicCompanionObject(descriptor);
-        boolean objectWithBackingFieldsInOuter = isCompanionObjectWithBackingFieldsInOuter(descriptor);
-        if (isNonCompanionObject || (isInterfaceCompanion && !objectWithBackingFieldsInOuter) || isMappedIntrinsicCompanionObject) {
+        boolean isClassCompanionWithBackingFieldsInOuter = isClassCompanionObjectWithBackingFieldsInOuter(descriptor);
+        if (isNonCompanionObject ||
+            (isInterfaceCompanion && !isInterfaceCompanionWithBackingFieldsInOuter) ||
+            isMappedIntrinsicCompanionObject
+        ) {
             ExpressionCodegen clInitCodegen = createOrGetClInitCodegen();
             InstructionAdapter v = clInitCodegen.v;
             markLineNumberForElement(element.getPsiOrParent(), v);
@@ -958,7 +964,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 );
             }
         }
-        else if (objectWithBackingFieldsInOuter) {
+        else if (isClassCompanionWithBackingFieldsInOuter || isInterfaceCompanionWithBackingFieldsInOuter) {
             ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
             ExpressionCodegen parentClInitCodegen = parentCodegen.createOrGetClInitCodegen();
             InstructionAdapter parentVisitor = parentClInitCodegen.v;
@@ -975,6 +981,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         else {
             assert false : "Unknown object type: " + descriptor;
         }
+    }
+
+    private static boolean isInterfaceCompanionWithBackingFieldsInOuter(@NotNull DeclarationDescriptor declarationDescriptor) {
+        DeclarationDescriptor interfaceClass = declarationDescriptor.getContainingDeclaration();
+        if (!isCompanionObject(declarationDescriptor) || !isJvmInterface(interfaceClass)) return false;
+
+        Collection<DeclarationDescriptor> descriptors = ((ClassDescriptor) declarationDescriptor).getUnsubstitutedMemberScope()
+                .getContributedDescriptors(DescriptorKindFilter.ALL, MemberScope.Companion.getALL_NAME_FILTER());
+        return CollectionsKt.any(descriptors, d -> d instanceof PropertyDescriptor && hasJvmFieldAnnotation((PropertyDescriptor) d));
     }
 
     private void generateCompanionObjectBackingFieldCopies() {
