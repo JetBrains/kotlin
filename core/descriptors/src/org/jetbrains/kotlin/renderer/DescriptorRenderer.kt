@@ -198,7 +198,7 @@ interface DescriptorRendererOptions {
     val includeAnnotationArguments: Boolean get() = annotationArgumentsRenderingPolicy.includeAnnotationArguments
     val includeEmptyAnnotationArguments: Boolean get() = annotationArgumentsRenderingPolicy.includeEmptyAnnotationArguments
 
-    var boldForNamesInHtml: Boolean
+    var boldOnlyForNamesInHtml: Boolean
 
     var includePropertyConstant: Boolean
     var parameterNameRenderingPolicy: ParameterNameRenderingPolicy

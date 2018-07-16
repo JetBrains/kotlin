@@ -48,7 +48,7 @@ internal class DescriptorRendererImpl(
     private fun renderKeyword(keyword: String): String {
         when (textFormat) {
             RenderingFormat.PLAIN -> return keyword
-            RenderingFormat.HTML -> return if (boldForNamesInHtml) keyword else "<b>$keyword</b>"
+            RenderingFormat.HTML -> return if (boldOnlyForNamesInHtml) keyword else "<b>$keyword</b>"
         }
     }
 
@@ -81,7 +81,7 @@ internal class DescriptorRendererImpl(
     /* NAMES RENDERING */
     override fun renderName(name: Name, rootRenderedElement: Boolean): String {
         val escaped = escape(name.render())
-        if (boldForNamesInHtml && textFormat == RenderingFormat.HTML && rootRenderedElement) {
+        if (boldOnlyForNamesInHtml && textFormat == RenderingFormat.HTML && rootRenderedElement) {
             return "<b>$escaped</b>"
         }
         return escaped

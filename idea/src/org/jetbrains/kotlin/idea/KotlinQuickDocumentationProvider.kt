@@ -171,7 +171,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             renderCompanionObjectName = true
             withDefinedIn = false
             eachAnnotationOnNewLine = true
-            boldForNamesInHtml = true
+            boldOnlyForNamesInHtml = true
         }
 
         private fun renderEnumSpecialFunction(element: KtClass, functionDescriptor: FunctionDescriptor, quickNavigation: Boolean): String {
