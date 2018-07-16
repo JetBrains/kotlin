@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.FqName
@@ -180,9 +181,9 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         )
 
         proto.setExtension(JvmProtoBuf.propertySignature, signature)
-        val fieldMovedFromInterfaceCompanion = bindings.get(FIELD_MOVED_FROM_INTERFACE_COMPANION, descriptor)
-        if (fieldMovedFromInterfaceCompanion != null && fieldMovedFromInterfaceCompanion) {
-            proto.setExtension(JvmProtoBuf.isMovedFromInterfaceCompanion, 1)
+        val flags = JvmFlags.getPropertyFlags(bindings.get(FIELD_MOVED_FROM_INTERFACE_COMPANION, descriptor) == true)
+        if (flags != 0) {
+            proto.setExtension(JvmProtoBuf.flags, flags)
         }
 
         if (JvmAbi.isInterfaceCompanionWithBackingFieldsInOuter(descriptor.containingDeclaration)) {

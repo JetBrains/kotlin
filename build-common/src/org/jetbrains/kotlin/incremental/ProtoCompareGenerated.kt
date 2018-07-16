@@ -520,9 +520,9 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.getExtension(JvmProtoBuf.propertySignature), new.getExtension(JvmProtoBuf.propertySignature))) return false
         }
 
-        if (old.hasExtension(JvmProtoBuf.isMovedFromInterfaceCompanion) != new.hasExtension(JvmProtoBuf.isMovedFromInterfaceCompanion)) return false
-        if (old.hasExtension(JvmProtoBuf.isMovedFromInterfaceCompanion)) {
-            if (old.getExtension(JvmProtoBuf.isMovedFromInterfaceCompanion) != new.getExtension(JvmProtoBuf.isMovedFromInterfaceCompanion)) return false
+        if (old.hasExtension(JvmProtoBuf.flags) != new.hasExtension(JvmProtoBuf.flags)) return false
+        if (old.hasExtension(JvmProtoBuf.flags)) {
+            if (old.getExtension(JvmProtoBuf.flags) != new.getExtension(JvmProtoBuf.flags)) return false
         }
 
         if (old.getExtensionCount(JsProtoBuf.propertyAnnotation) != new.getExtensionCount(JsProtoBuf.propertyAnnotation)) {
@@ -1734,8 +1734,8 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.propertySignature).hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasExtension(JvmProtoBuf.isMovedFromInterfaceCompanion)) {
-        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.isMovedFromInterfaceCompanion)
+    if (hasExtension(JvmProtoBuf.flags)) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.flags)
     }
 
     for(i in 0..getExtensionCount(JsProtoBuf.propertyAnnotation) - 1) {

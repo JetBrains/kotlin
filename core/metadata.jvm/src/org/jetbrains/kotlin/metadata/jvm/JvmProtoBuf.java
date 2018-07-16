@@ -11,7 +11,7 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.methodSignature);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.lambdaClassOriginName);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.propertySignature);
-    registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.isMovedFromInterfaceCompanion);
+    registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.flags);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.typeParameterAnnotation);
@@ -3859,14 +3859,19 @@ public final class JvmProtoBuf {
         100,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.JvmPropertySignature.class);
-  public static final int IS_MOVED_FROM_INTERFACE_COMPANION_FIELD_NUMBER = 101;
+  public static final int FLAGS_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   *
+   * <pre>
+   **
+   *isMovedFromInterfaceCompanion   true if this property is declared in an interface companion, and the field is stored in the interface
+   * </pre>
    */
   public static final
     org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Property,
-      java.lang.Integer> isMovedFromInterfaceCompanion = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+      java.lang.Integer> flags = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
         org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
         0,

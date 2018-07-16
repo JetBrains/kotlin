@@ -121,6 +121,6 @@ object JvmProtoBufUtil {
     }
 
     @JvmStatic
-    fun isMovedFromInterfaceCompanion(proto: ProtoBuf.Property) =
-        proto.getExtension(JvmProtoBuf.isMovedFromInterfaceCompanion).toInt().and(1) != 0
+    fun isMovedFromInterfaceCompanion(proto: ProtoBuf.Property): Boolean =
+        JvmFlags.IS_MOVED_FROM_INTERFACE_COMPANION.get(proto.getExtension(JvmProtoBuf.flags))
 }
