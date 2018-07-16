@@ -10,15 +10,17 @@ import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
+import org.jetbrains.kotlin.metadata.ProtoBuf;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -116,10 +118,13 @@ public final class JvmAbi {
 
     }
 
-    public static boolean isInterfaceCompanionWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
-        DeclarationDescriptor interfaceClass = companionObject.getContainingDeclaration();
-        if (!isInterface(interfaceClass) && !isAnnotationClass(interfaceClass)) return false;
-        Collection<DeclarationDescriptor> descriptors = ((ClassDescriptor) companionObject).getUnsubstitutedMemberScope()
+    public static boolean isInterfaceCompanionWithBackingFieldsInOuter(@NotNull DeclarationDescriptor declarationDescriptor) {
+        DeclarationDescriptor interfaceClass = declarationDescriptor.getContainingDeclaration();
+        if (!isCompanionObject(declarationDescriptor) ||
+            (!isInterface(interfaceClass) && !isAnnotationClass(interfaceClass))) {
+            return false;
+        }
+        Collection<DeclarationDescriptor> descriptors = ((ClassDescriptor) declarationDescriptor).getUnsubstitutedMemberScope()
                 .getContributedDescriptors(DescriptorKindFilter.ALL, MemberScope.Companion.getALL_NAME_FILTER());
         boolean hasJvmFieldAnnotation = false;
         for (DeclarationDescriptor next : descriptors) {
@@ -132,10 +137,18 @@ public final class JvmAbi {
                 return false;
             }
 
-            if (!hasJvmFieldAnnotation(propertyDescriptor)) return false;
+            if (!isMovedFromInterfaceCompanion(propertyDescriptor) && !hasJvmFieldAnnotation(propertyDescriptor)) return false;
             hasJvmFieldAnnotation = true;
         }
         return hasJvmFieldAnnotation;
+    }
+
+    private static boolean isMovedFromInterfaceCompanion(@NotNull PropertyDescriptor propertyDescriptor) {
+        if (propertyDescriptor instanceof DeserializedPropertyDescriptor) {
+            ProtoBuf.Property proto = ((DeserializedPropertyDescriptor) propertyDescriptor).getProto();
+            return JvmProtoBufUtil.isMovedFromInterfaceCompanion(proto);
+        }
+        return false;
     }
 
     public static boolean isMappedIntrinsicCompanionObject(@NotNull ClassDescriptor companionObject) {

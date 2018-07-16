@@ -33,6 +33,7 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.IllegalPropertyDelegateAccessException
 import kotlin.reflect.jvm.internal.JvmPropertySignature.*
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
 internal abstract class KPropertyImpl<out R> private constructor(
     override val container: KDeclarationContainerImpl,
@@ -192,9 +193,17 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
                 !DescriptorUtils.isInterface(possibleCompanionObject.containingDeclaration)
     }
 
-    fun isInsideInterfaceCompanionObjectWithJvmField(): Boolean {
+    fun isInsideJvmInterfaceCompanionObject(): Boolean {
         val possibleCompanionObject = property.descriptor.containingDeclaration
-        return JvmAbi.isInterfaceCompanionWithBackingFieldsInOuter(possibleCompanionObject)
+        return DescriptorUtils.isCompanionObject(possibleCompanionObject) &&
+                (DescriptorUtils.isInterface(possibleCompanionObject.containingDeclaration) ||
+                        DescriptorUtils.isAnnotationClass(possibleCompanionObject.containingDeclaration))
+    }
+
+    fun isInsideInterfaceCompanionObjectWithJvmField(): Boolean {
+        val propertyDescriptor = property.descriptor
+        if (propertyDescriptor !is DeserializedPropertyDescriptor || !isInsideJvmInterfaceCompanionObject()) return false
+        return JvmProtoBufUtil.isMovedFromInterfaceCompanion(propertyDescriptor.proto)
     }
 
     fun isJvmStaticProperty() =

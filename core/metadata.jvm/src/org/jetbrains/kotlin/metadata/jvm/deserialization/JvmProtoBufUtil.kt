@@ -120,6 +120,7 @@ object JvmProtoBufUtil {
         return if (type.hasClassName()) ClassMapperLite.mapClass(nameResolver.getQualifiedClassName(type.className)) else null
     }
 
+    @JvmStatic
     fun isMovedFromInterfaceCompanion(proto: ProtoBuf.Property) =
         proto.getExtension(JvmProtoBuf.isMovedFromInterfaceCompanion).toInt().and(1) != 0
 }
