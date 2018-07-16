@@ -1,6 +1,7 @@
 // !LANGUAGE: +ExpectedTypeFromCast
 
 @Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
 annotation class bar
 
 fun <T> foo(): T = TODO()

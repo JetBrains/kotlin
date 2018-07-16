@@ -118,7 +118,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     KClassWithIncorrectTypeArgumentChecker,
     SuspendOperatorsCheckers,
     InlineClassDeclarationChecker,
-    PropertiesWithBackingFieldsInsideInlineClass()
+    PropertiesWithBackingFieldsInsideInlineClass(),
+    AnnotationClassTargetAndRetentionChecker()
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
