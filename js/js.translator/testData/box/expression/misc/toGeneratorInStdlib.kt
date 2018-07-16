@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1407
+// EXPECTED_REACHABLE_NODES: 1548
 package foo
 
 fun sequenceFromFunctionWithInitialValue() {
