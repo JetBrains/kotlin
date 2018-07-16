@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.callExpressionVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-class ItNotUsedInLoopInspection : AbstractKotlinInspection() {
+class ForEachParameterNotUsed : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return callExpressionVisitor {
             if (it.calleeExpression?.text == "forEach") {
