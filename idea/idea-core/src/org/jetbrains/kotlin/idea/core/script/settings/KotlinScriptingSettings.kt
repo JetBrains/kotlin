@@ -29,7 +29,7 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
      */
     var suppressDefinitionsCheck = false
 
-    private var scriptDefinitions = linkedMapOf<KotlinScriptDefinitionKey, Int>()
+    private var scriptDefinitions = linkedMapOf<KotlinScriptDefinitionKey, KotlinScriptDefinitionValue>()
 
     override fun getState(): Element {
         val definitionsRootElement = Element("KotlinScriptingSettings")
@@ -67,21 +67,31 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
 
         val scriptDefinitionsList = state.getChildren(SCRIPT_DEFINITION_TAG)
         for (scriptDefinitionElement in scriptDefinitionsList) {
-            scriptDefinitions[scriptDefinitionElement.toKey()] = scriptDefinitionElement.getOrderTag()
+            scriptDefinitions[scriptDefinitionElement.toKey()] = scriptDefinitionElement.toValue()
         }
     }
 
-    fun saveScriptDefinitionsOrder(newScriptDefinitions: List<KotlinScriptDefinition>) {
-        for ((index, scriptDefinition) in newScriptDefinitions.withIndex()) {
-            scriptDefinitions[scriptDefinition.toKey()] = index
-        }
+    fun setOrder(scriptDefinition: KotlinScriptDefinition, order: Int) {
+        scriptDefinitions[scriptDefinition.toKey()] = scriptDefinitions[scriptDefinition.toKey()]?.copy(order = order) ?:
+                KotlinScriptDefinitionValue(order)
+    }
+
+
+    fun setEnabled(scriptDefinition: KotlinScriptDefinition, isEnabled: Boolean) {
+        scriptDefinitions[scriptDefinition.toKey()] = scriptDefinitions[scriptDefinition.toKey()]?.copy(isEnabled = isEnabled) ?:
+                KotlinScriptDefinitionValue(scriptDefinitions.size, isEnabled)
     }
 
     fun getScriptDefinitionOrder(scriptDefinition: KotlinScriptDefinition): Int {
-        return scriptDefinitions[scriptDefinition.toKey()] ?: Integer.MAX_VALUE
+        return scriptDefinitions[scriptDefinition.toKey()]?.order ?: Integer.MAX_VALUE
+    }
+
+    fun isScriptDefinitionEnabled(scriptDefinition: KotlinScriptDefinition): Boolean {
+        return scriptDefinitions[scriptDefinition.toKey()]?.isEnabled ?: true
     }
 
     private data class KotlinScriptDefinitionKey(val definitionName: String, val className: String)
+    private data class KotlinScriptDefinitionValue(val order: Int, val isEnabled: Boolean = true)
 
     private fun Element.toKey() = KotlinScriptDefinitionKey(
         getAttributeValue(KotlinScriptDefinitionKey::definitionName.name),
@@ -91,19 +101,28 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
     private fun KotlinScriptDefinition.toKey() =
         KotlinScriptDefinitionKey(this.name, this::class.qualifiedName ?: "unknown")
 
-    private fun Element.addScriptDefinitionContentElement(definition: KotlinScriptDefinitionKey, order: Int) {
+    private fun Element.addScriptDefinitionContentElement(definition: KotlinScriptDefinitionKey, settings: KotlinScriptDefinitionValue) {
         element(SCRIPT_DEFINITION_TAG).apply {
             attribute(KotlinScriptDefinitionKey::className.name, definition.className)
             attribute(KotlinScriptDefinitionKey::definitionName.name, definition.definitionName)
 
-            element(SCRIPT_DEFINITION_ORDER_TAG).apply {
-                text = order.toString()
+            element(KotlinScriptDefinitionValue::order.name).apply {
+                text = settings.order.toString()
+            }
+
+            if (!settings.isEnabled) {
+                element(KotlinScriptDefinitionValue::isEnabled.name).apply {
+                    text = settings.isEnabled.toString()
+                }
             }
         }
     }
 
-    private fun Element.getOrderTag(): Int {
-        return getChildText(SCRIPT_DEFINITION_ORDER_TAG)?.toInt() ?: Integer.MAX_VALUE
+    private fun Element.toValue(): KotlinScriptDefinitionValue {
+        val order = getChildText(KotlinScriptDefinitionValue::order.name)?.toInt() ?: Integer.MAX_VALUE
+        val isEnabled = getChildText(KotlinScriptDefinitionValue::isEnabled.name)?.toBoolean() ?: true
+
+        return KotlinScriptDefinitionValue(order, isEnabled)
     }
 
     companion object {
@@ -111,7 +130,6 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
             ServiceManager.getService(project, KotlinScriptingSettings::class.java)
 
         private const val SCRIPT_DEFINITION_TAG = "scriptDefinition"
-        private const val SCRIPT_DEFINITION_ORDER_TAG = "order"
 
     }
 }

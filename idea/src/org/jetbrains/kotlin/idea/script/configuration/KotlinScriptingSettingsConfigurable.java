@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.idea.script.configuration;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -15,10 +14,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager;
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings;
+import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collections;
 
 public class KotlinScriptingSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
     private JPanel root;
@@ -38,7 +37,7 @@ public class KotlinScriptingSettingsConfigurable implements SearchableConfigurab
     @Nullable
     @Override
     public JComponent createComponent() {
-        model = new KotlinScriptDefinitionsModel(Lists.newArrayList(manager.getAllDefinitions()));
+        model = KotlinScriptDefinitionsModel.Companion.createModel(manager.getAllDefinitions(), settings);
 
         panelScriptDefinitionsChooser.setLayout(new BorderLayout());
         panelScriptDefinitionsChooser.add(
@@ -62,7 +61,12 @@ public class KotlinScriptingSettingsConfigurable implements SearchableConfigurab
         settings.setAutoReloadEnabled(scriptDependenciesAutoReload.isSelected());
 
         if (isScriptDefinitionsChanged()) {
-            settings.saveScriptDefinitionsOrder(Collections.unmodifiableList(model.getItems()));
+            for (KotlinScriptDefinitionsModelDescriptor item : model.getItems()) {
+                KotlinScriptDefinition definition = item.getDefinition();
+                settings.setOrder(definition, model.getItems().indexOf(item));
+                settings.setEnabled(definition, item.isEnabled());
+            }
+
             manager.reorderScriptDefinitions();
         }
     }
@@ -71,11 +75,16 @@ public class KotlinScriptingSettingsConfigurable implements SearchableConfigurab
     public void reset() {
         scriptDependenciesAutoReload.setSelected(settings.isAutoReloadEnabled());
 
-        model.setItems(Lists.newArrayList(manager.getAllDefinitions()));
+        model.setDefinitions(manager.getAllDefinitions(), settings);
     }
 
     private boolean isScriptDefinitionsChanged() {
-        return !model.getItems().equals(manager.getAllDefinitions());
+        for (KotlinScriptDefinitionsModelDescriptor item : model.getItems()) {
+            if (settings.isScriptDefinitionEnabled(item.getDefinition()) != item.isEnabled()) {
+                return true;
+            }
+        }
+        return !model.getDefinitions().equals(manager.getAllDefinitions());
     }
 
 
