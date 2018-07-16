@@ -32,6 +32,8 @@ open class KaptExtension {
 
     open var mapDiagnosticLocations: Boolean = false
 
+    open var strictMode: Boolean = false
+
     @Deprecated("Use `annotationProcessor()` and `annotationProcessors()` instead")
     open var processors: String = ""
 

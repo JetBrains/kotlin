@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.base.plus
 import org.jetbrains.kotlin.kapt3.base.javac.kaptError
+import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
 import org.jetbrains.kotlin.kapt3.base.mapJList
 import org.jetbrains.kotlin.kapt3.base.mapJListIndexed
 import org.jetbrains.kotlin.kapt3.base.pairedListToMap
@@ -62,7 +63,8 @@ import com.sun.tools.javac.util.List as JavacList
 class ClassFileToSourceStubConverter(
         val kaptContext: KaptContextForStubGeneration,
         val generateNonExistentClass: Boolean,
-        val correctErrorTypes: Boolean
+        val correctErrorTypes: Boolean,
+        val strictMode: Boolean
 ) {
     private companion object {
         private val VISIBILITY_MODIFIERS = (Opcodes.ACC_PUBLIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED).toLong()
@@ -285,7 +287,7 @@ class ClassFileToSourceStubConverter(
             isTopLevel: Boolean
     ): JCClassDecl? {
         if (isSynthetic(clazz.access)) return null
-        if (checkIfShouldBeIgnored(Type.getObjectType(clazz.name))) return null
+        if (!checkIfValidTypeName(clazz, Type.getObjectType(clazz.name))) return null
 
         val descriptor = kaptContext.origins[clazz]?.descriptor ?: return null
         val isNested = (descriptor as? ClassDescriptor)?.isNested ?: false
@@ -393,21 +395,41 @@ class ClassFileToSourceStubConverter(
                 enumValues + fields + methods + nestedClasses).keepKdocComments(clazz)
     }
 
-    private tailrec fun checkIfShouldBeIgnored(type: Type): Boolean {
+    private tailrec fun checkIfValidTypeName(containingClass: ClassNode, type: Type): Boolean {
         if (type.sort == Type.ARRAY) {
-            return checkIfShouldBeIgnored(type.elementType)
+            return checkIfValidTypeName(containingClass, type.elementType)
         }
 
-        if (type.sort != Type.OBJECT) return false
+        if (type.sort != Type.OBJECT) return true
 
         val internalName = type.internalName
         // Ignore type names with Java keywords in it
         if (internalName.split('/', '.').any { it in JAVA_KEYWORDS }) {
-            return true
+            if (strictMode) {
+                kaptContext.reportKaptError(
+                    "Can't generate a stub for '${containingClass.className}'.",
+                    "Type name '${type.className}' contains a Java keyword."
+                )
+            }
+
+            return false
         }
 
-        val clazz = kaptContext.compiledClasses.firstOrNull { it.name == internalName } ?: return false
-        return checkIfInnerClassNameConflictsWithOuter(clazz)
+        val clazz = kaptContext.compiledClasses.firstOrNull { it.name == internalName } ?: return true
+
+        if (doesInnerClassNameConflictWithOuter(clazz)) {
+            if (strictMode) {
+                kaptContext.reportKaptError(
+                    "Can't generate a stub for '${containingClass.className}'.",
+                    "Its name '${clazz.simpleName}' is the same as one of the outer class names.",
+                    "Java forbids it. Please change one of the class names."
+                )
+            }
+
+            return false
+        }
+
+        return true
     }
 
     private fun findContainingClassNode(clazz: ClassNode): ClassNode? {
@@ -416,7 +438,7 @@ class ClassFileToSourceStubConverter(
     }
 
     // Java forbids outer and inner class names to be the same. Check if the names are different
-    private tailrec fun checkIfInnerClassNameConflictsWithOuter(
+    private tailrec fun doesInnerClassNameConflictWithOuter(
             clazz: ClassNode,
             outerClass: ClassNode? = findContainingClassNode(clazz)
     ): Boolean {
@@ -424,7 +446,7 @@ class ClassFileToSourceStubConverter(
         if (treeMaker.getSimpleName(clazz) == treeMaker.getSimpleName(outerClass)) return true
         // Try to find the containing class for outerClassNode (to check the whole tree recursively)
         val containingClassForOuterClass = findContainingClassNode(outerClass) ?: return false
-        return checkIfInnerClassNameConflictsWithOuter(clazz, containingClassForOuterClass)
+        return doesInnerClassNameConflictWithOuter(clazz, containingClassForOuterClass)
     }
 
     private fun getClassAccessFlags(clazz: ClassNode, descriptor: DeclarationDescriptor, isInner: Boolean, isNested: Boolean) = when {
@@ -469,7 +491,7 @@ class ClassFileToSourceStubConverter(
         if (!isValidIdentifier(name)) return null
 
         val type = Type.getType(field.desc)
-        if (checkIfShouldBeIgnored(type)) {
+        if (!checkIfValidTypeName(containingClass, type)) {
             return null
         }
 
@@ -537,7 +559,9 @@ class ClassFileToSourceStubConverter(
 
         val parametersInfo = method.getParametersInfo(containingClass)
 
-        if (checkIfShouldBeIgnored(asmReturnType) || parametersInfo.any { checkIfShouldBeIgnored(it.type) }) {
+        if (!checkIfValidTypeName(containingClass, asmReturnType)
+            || parametersInfo.any { !checkIfValidTypeName(containingClass, it.type) }
+        ) {
             return null
         }
 
