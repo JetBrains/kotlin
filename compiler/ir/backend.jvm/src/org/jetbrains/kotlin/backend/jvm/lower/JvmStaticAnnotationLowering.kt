@@ -99,6 +99,7 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
         proxyIrFunction.createParameterDeclarations()
 
         proxyIrFunction.body = createProxyBody(target, proxyIrFunction, companion)
+        target.annotations.mapTo(proxyIrFunction.annotations) { it.deepCopyWithSymbols() }
         return proxyIrFunction
     }
 
