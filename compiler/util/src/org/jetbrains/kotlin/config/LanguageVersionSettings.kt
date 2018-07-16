@@ -118,7 +118,7 @@ enum class LanguageFeature(
     }
 
     /**
-     * # [enabledInProgressiveMode]
+     * # [forcesPreReleaseBinaries]
      * If 'true', then enabling this feature (e.g. by '-XXLanguage:', or dedicated '-X'-flag)
      * will force generation of pre-release binaries (given that [sinceVersion] > [LanguageVersion.LATEST_STABLE]).
      * Use it for features that involve generation of non-trivial low-level code with non-finalized design.
@@ -129,7 +129,7 @@ enum class LanguageFeature(
      * generate 'kotlin-compiler' as pre-release.
      *
      *
-     * # [forcesPreReleaseBinaries]
+     * # [enabledInProgressiveMode]
      * If 'true', then this feature will be automatically enabled under '-Xprogressive' mode.
      *
      * Restrictions for using this flag for particular feature follow from restrictions of the progressive mode:
