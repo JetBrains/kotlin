@@ -26,9 +26,7 @@ data class EvaluationResult(val returnValue: Any?, val environment: ScriptEvalua
 
 interface ScriptEvaluator {
 
-    // constructor(properties: ScriptDefinitionPropertiesBag) // the constructor is expected from implementations
-
-    suspend fun eval(
+    suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
         scriptEvaluationEnvironment: ScriptEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult>

@@ -9,7 +9,7 @@ import kotlin.script.experimental.api.*
 
 open class BasicJvmScriptEvaluator() : ScriptEvaluator {
 
-    override suspend fun eval(
+    override suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
         scriptEvaluationEnvironment: ScriptEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult> =

@@ -40,7 +40,7 @@ abstract class BasicScriptingHost(
             when (compiled) {
                 is ResultWithDiagnostics.Failure -> compiled
                 is ResultWithDiagnostics.Success -> {
-                    evaluator.eval(compiled.value, environment)
+                    evaluator(compiled.value, environment)
                 }
             }
         }
