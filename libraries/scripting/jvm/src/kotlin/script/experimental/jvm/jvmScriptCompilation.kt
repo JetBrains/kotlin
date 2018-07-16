@@ -15,7 +15,7 @@ open class JvmScriptCompiler(
     val cache: CompiledJvmScriptsCache
 ) : ScriptCompiler {
 
-    override suspend fun compile(
+    override suspend operator fun invoke(
         script: ScriptSource,
         scriptDefinition: ScriptDefinition,
         additionalConfiguration: ScriptCompileConfiguration?

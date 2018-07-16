@@ -36,7 +36,7 @@ abstract class BasicScriptingHost(
         environment: ScriptEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult> =
         runInCoroutineContext {
-            val compiled = compiler.compile(script, scriptDefinition, compileConfiguration)
+            val compiled = compiler(script, scriptDefinition, compileConfiguration)
             when (compiled) {
                 is ResultWithDiagnostics.Failure -> compiled
                 is ResultWithDiagnostics.Success -> {

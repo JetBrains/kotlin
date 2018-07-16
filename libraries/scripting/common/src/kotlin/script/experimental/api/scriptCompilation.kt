@@ -7,7 +7,7 @@ package kotlin.script.experimental.api
 
 interface ScriptCompiler {
 
-    suspend fun compile(
+    suspend operator fun invoke(
         script: ScriptSource,
         scriptDefinition: ScriptDefinition,
         additionalConfiguration: ScriptCompileConfiguration? = null // overrides properties from definition and configurator.defaultConfiguration
