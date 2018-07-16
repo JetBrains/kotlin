@@ -3930,6 +3930,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/inline/innerOuterThis.kt");
         }
 
+        @TestMetadata("invokeOnField.kt")
+        public void testInvokeOnField() throws Exception {
+            runTest("js/js.translator/testData/box/inline/invokeOnField.kt");
+        }
+
         @TestMetadata("iteratorOnInlineFunctionResult.kt")
         public void testIteratorOnInlineFunctionResult() throws Exception {
             runTest("js/js.translator/testData/box/inline/iteratorOnInlineFunctionResult.kt");

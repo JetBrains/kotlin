@@ -109,22 +109,22 @@ private fun translateCall(
     if (resolvedCall is VariableAsFunctionResolvedCall) {
         assert(explicitReceivers.extensionReceiver == null) { "VariableAsFunctionResolvedCall must have one receiver" }
         val variableCall = resolvedCall.variableCall
+        val isFunctionType = variableCall.resultingDescriptor.type.isFunctionTypeOrSubtype
+        val inlineCall = if (isFunctionType) variableCall else resolvedCall
 
-        return if (variableCall.expectedReceivers()) {
+        val newExplicitReceivers = if (variableCall.expectedReceivers()) {
             val newReceiver = CallTranslator.translateGet(context, variableCall, explicitReceivers.extensionOrDispatchReceiver)
-            translateFunctionCall(context, resolvedCall.functionCall, resolvedCall.variableCall, ExplicitReceivers(newReceiver))
+            ExplicitReceivers(newReceiver)
         } else {
             val dispatchReceiver = CallTranslator.translateGet(context, variableCall, null)
-            val isFunctionType = resolvedCall.variableCall.resultingDescriptor.type.isFunctionTypeOrSubtype
-            val inlineCall = if (isFunctionType) resolvedCall.variableCall else resolvedCall
             if (explicitReceivers.extensionOrDispatchReceiver == null) {
-                translateFunctionCall(context, resolvedCall.functionCall, inlineCall, ExplicitReceivers(dispatchReceiver))
-            }
-            else {
-                translateFunctionCall(context, resolvedCall.functionCall, inlineCall,
-                                      ExplicitReceivers(dispatchReceiver, explicitReceivers.extensionOrDispatchReceiver))
+                ExplicitReceivers(dispatchReceiver)
+            } else {
+                ExplicitReceivers(dispatchReceiver, explicitReceivers.extensionOrDispatchReceiver)
             }
         }
+
+        return translateFunctionCall(context, resolvedCall.functionCall, inlineCall, newExplicitReceivers)
     }
 
     val call = resolvedCall.call
