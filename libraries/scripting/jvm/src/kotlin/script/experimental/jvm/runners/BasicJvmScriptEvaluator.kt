@@ -32,7 +32,8 @@ open class BasicJvmScriptEvaluator() : ScriptEvaluator {
                             scriptObject.getConstructor(Array<Any>::class.java).newInstance(receivers.toTypedArray())
                         }
 
-                        ResultWithDiagnostics.Success(EvaluationResult(instance, scriptEvaluationEnvironment))
+                        // TODO: fix result value
+                        ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Value("", instance, ""), scriptEvaluationEnvironment))
                     }
                 }
             }

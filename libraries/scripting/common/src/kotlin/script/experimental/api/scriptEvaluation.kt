@@ -22,7 +22,15 @@ object ScriptEvaluationEnvironmentParams {
 
 typealias ScriptEvaluationEnvironment = ChainedPropertyBag
 
-data class EvaluationResult(val returnValue: Any?, val environment: ScriptEvaluationEnvironment)
+sealed class ResultValue {
+    class Value(val name: String, val value: Any?, val type: String) : ResultValue() {
+        override fun toString(): String = "$name: $type = $value"
+    }
+
+    object Unit : ResultValue()
+}
+
+data class EvaluationResult(val returnValue: ResultValue, val environment: ScriptEvaluationEnvironment)
 
 interface ScriptEvaluator {
 

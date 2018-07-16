@@ -24,7 +24,6 @@ import kotlin.script.experimental.api.*
 
 abstract class BasicScriptingHost(
     val compiler: ScriptCompiler,
-    // TODO: does it belong here or to the definition?
     val evaluator: ScriptEvaluator
 ) {
     open fun <T> runInCoroutineContext(block: suspend CoroutineScope.() -> T): T = runBlocking { block() }
