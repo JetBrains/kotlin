@@ -83,4 +83,22 @@ public class DiagnosticsWithUnsignedTypesGenerated extends AbstractDiagnosticsWi
     public void testWrongLongSuffixForULong() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/wrongLongSuffixForULong.kt");
     }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithUnsignedTypes/conversions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Conversions extends AbstractDiagnosticsWithUnsignedTypes {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInConversions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithUnsignedTypes/conversions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("conversionOfSignedToUnsigned.kt")
+        public void testConversionOfSignedToUnsigned() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/conversions/conversionOfSignedToUnsigned.kt");
+        }
+    }
 }

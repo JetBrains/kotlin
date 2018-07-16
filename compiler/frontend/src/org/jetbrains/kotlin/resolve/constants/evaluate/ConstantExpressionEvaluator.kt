@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.COLLECTION_LITERAL_CALL
+import org.jetbrains.kotlin.resolve.annotations.hasImplicitIntegerCoercionAnnotation
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -401,7 +402,8 @@ private class ConstantExpressionEvaluatorVisitor(
                 isUnsignedNumberLiteral = isUnsigned,
                 isUnsignedLongNumberLiteral = isUnsignedLong,
                 usesVariableAsConstant = false,
-                usesNonConstValAsConstant = false
+                usesNonConstValAsConstant = false,
+                isConvertableConstVal = false
             )
         )
     }
@@ -450,7 +452,8 @@ private class ConstantExpressionEvaluatorVisitor(
                     isUnsignedLongNumberLiteral = false,
                     canBeUsedInAnnotation = canBeUsedInAnnotation,
                     usesVariableAsConstant = usesVariableAsConstant,
-                    usesNonConstValAsConstant = usesNonConstantVariableAsConstant
+                    usesNonConstValAsConstant = usesNonConstantVariableAsConstant,
+                    isConvertableConstVal = false
                 )
             )
         else null
@@ -513,7 +516,8 @@ private class ConstantExpressionEvaluatorVisitor(
                     isUnsignedNumberLiteral = false,
                     isUnsignedLongNumberLiteral = false,
                     usesVariableAsConstant = leftConstant.usesVariableAsConstant || rightConstant.usesVariableAsConstant,
-                    usesNonConstValAsConstant = leftConstant.usesNonConstValAsConstant || rightConstant.usesNonConstValAsConstant
+                    usesNonConstValAsConstant = leftConstant.usesNonConstValAsConstant || rightConstant.usesNonConstValAsConstant,
+                    isConvertableConstVal = false
                 )
             )
         } else {
@@ -560,7 +564,8 @@ private class ConstantExpressionEvaluatorVisitor(
                     canBeUsedInAnnotation,
                     !isNumberConversionMethod && isArgumentPure,
                     false, false,
-                    usesVariableAsConstant, usesNonConstValAsConstant
+                    usesVariableAsConstant, usesNonConstValAsConstant,
+                    false
                 )
             )
         } else if (argumentsEntrySet.size == 1) {
@@ -592,7 +597,7 @@ private class ConstantExpressionEvaluatorVisitor(
             val usesNonConstValAsConstant =
                 usesNonConstValAsConstant(argumentForReceiver.expression) || usesNonConstValAsConstant(argumentForParameter.expression)
             val parameters = CompileTimeConstant.Parameters(
-                canBeUsedInAnnotation, areArgumentsPure, false, false, usesVariableAsConstant, usesNonConstValAsConstant
+                canBeUsedInAnnotation, areArgumentsPure, false, false, usesVariableAsConstant, usesNonConstValAsConstant, false
             )
             return when (resultingDescriptorName) {
                 OperatorNameConventions.COMPARE_TO -> createCompileTimeConstantForCompareTo(result, callExpression)?.wrap(parameters)
@@ -705,6 +710,11 @@ private class ConstantExpressionEvaluatorVisitor(
                 // TODO: FIXME: see KT-10425
                 if (callableDescriptor is PropertyDescriptor && callableDescriptor.modality != Modality.FINAL) return null
 
+                val isConvertableConstVal =
+                    callableDescriptor.isConst &&
+                            callableDescriptor.hasImplicitIntegerCoercionAnnotation() &&
+                            callableDescriptor.compileTimeInitializer is IntValue
+
                 return callableDescriptor.compileTimeInitializer?.wrap(
                     CompileTimeConstant.Parameters(
                         canBeUsedInAnnotation = isPropertyCompileTimeConstant(callableDescriptor),
@@ -712,7 +722,8 @@ private class ConstantExpressionEvaluatorVisitor(
                         isUnsignedNumberLiteral = false,
                         isUnsignedLongNumberLiteral = false,
                         usesVariableAsConstant = true,
-                        usesNonConstValAsConstant = !callableDescriptor.isConst
+                        usesNonConstValAsConstant = !callableDescriptor.isConst,
+                        isConvertableConstVal = isConvertableConstVal
                     )
                 )
             }
@@ -973,11 +984,18 @@ private class ConstantExpressionEvaluatorVisitor(
         isUnsigned: Boolean = false,
         isUnsignedLong: Boolean = false,
         usesVariableAsConstant: Boolean = false,
-        usesNonConstValAsConstant: Boolean = false
+        usesNonConstValAsConstant: Boolean = false,
+        isConvertableConstVal: Boolean = false
     ): TypedCompileTimeConstant<T> =
         wrap(
             CompileTimeConstant.Parameters(
-                canBeUsedInAnnotation, isPure, isUnsigned, isUnsignedLong, usesVariableAsConstant, usesNonConstValAsConstant
+                canBeUsedInAnnotation,
+                isPure,
+                isUnsigned,
+                isUnsignedLong,
+                usesVariableAsConstant,
+                usesNonConstValAsConstant,
+                isConvertableConstVal
             )
         )
 }

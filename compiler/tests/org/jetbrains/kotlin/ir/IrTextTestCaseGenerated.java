@@ -1032,6 +1032,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/setFieldWithImplicitCast.kt");
         }
 
+        @TestMetadata("signedToUnsignedConversions.kt")
+        public void testSignedToUnsignedConversions() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/signedToUnsignedConversions.kt");
+        }
+
         @TestMetadata("simpleOperators.kt")
         public void testSimpleOperators() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/simpleOperators.kt");
