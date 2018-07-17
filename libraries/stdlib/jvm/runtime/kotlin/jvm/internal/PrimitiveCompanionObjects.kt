@@ -49,6 +49,8 @@ internal object CharCompanionObject {
     const val MAX_LOW_SURROGATE: Char = '\uDFFF'
     const val MIN_SURROGATE: Char = MIN_HIGH_SURROGATE
     const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
+    const val MAX_VALUE: Char = '\uffff'
+    const val MIN_VALUE: Char = '\u0000'
 }
 
 internal object StringCompanionObject {}
