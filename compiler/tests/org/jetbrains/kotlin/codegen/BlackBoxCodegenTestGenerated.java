@@ -7033,6 +7033,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/multiModule"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("inlineCrossModule.kt")
+            public void testInlineCrossModule_1_2() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineCrossModule.kt", "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("inlineCrossModule.kt")
+            public void testInlineCrossModule_1_3() throws Exception {
+                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineCrossModule.kt", "kotlin.coroutines");
+            }
+
             @TestMetadata("inlineFunctionWithOptionalParam.kt")
             public void testInlineFunctionWithOptionalParam_1_2() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineFunctionWithOptionalParam.kt", "kotlin.coroutines.experimental");

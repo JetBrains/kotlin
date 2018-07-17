@@ -4599,6 +4599,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/inlineMultiModule/importObjectInstance.kt");
         }
 
+        @TestMetadata("importStdLib.kt")
+        public void testImportStdLib() throws Exception {
+            runTest("js/js.translator/testData/box/inlineMultiModule/importStdLib.kt");
+        }
+
         @TestMetadata("inlineInInlineWithLambdaMultiModule.kt")
         public void testInlineInInlineWithLambdaMultiModule() throws Exception {
             runTest("js/js.translator/testData/box/inlineMultiModule/inlineInInlineWithLambdaMultiModule.kt");
