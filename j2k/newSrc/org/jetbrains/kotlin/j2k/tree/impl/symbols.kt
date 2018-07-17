@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKField
 import org.jetbrains.kotlin.j2k.tree.JKMethod
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedFunction
 
 interface JKSymbol {
     val target: Any
@@ -70,11 +71,14 @@ class JKMultiverseMethodSymbol(override val target: PsiMethod) : JKMethodSymbol 
 
 }
 
-class JKUniverseFieldSymbol() : JKFieldSymbol {
-    constructor(target: JKField) : this() {
-        this.target = target
-    }
+class JKMultiverseFunctionSymbol(override val target: KtNamedFunction) : JKMethodSymbol {
+    override val declaredIn: JKSymbol
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val fqName: String
+        get() = target.name!!
+}
 
+class JKUniverseFieldSymbol : JKFieldSymbol {
     override lateinit var target: JKField
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
