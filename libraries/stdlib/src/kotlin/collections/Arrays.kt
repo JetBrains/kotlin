@@ -37,3 +37,9 @@ public fun <T, R> Array<out Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
     }
     return listT to listR
 }
+
+/**
+ * Returns `true` if this array is null or empty.
+ * @sample samples.collections.Arrays.Usage.arrayIsNullOrEmpty
+ */
+public fun Array<*>?.isNullOrEmpty(): Boolean = this == null || this.isEmpty()

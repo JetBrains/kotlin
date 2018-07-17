@@ -169,6 +169,13 @@ public val <T> List<T>.lastIndex: Int
 public inline fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()
 
 /**
+ * Returns `true` if the collection is null or empty.
+ * @sample samples.collections.Collections.Collections.collectionIsNullOrEmpty
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Collection<T>?.isNullOrEmpty(): Boolean = this == null || isEmpty()
+
+/**
  * Returns this Collection if it's not `null` and the empty list otherwise.
  * @sample samples.collections.Collections.Collections.collectionOrEmpty
  */

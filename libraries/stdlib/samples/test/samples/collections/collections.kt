@@ -43,6 +43,18 @@ class Collections {
         }
 
         @Sample
+        fun collectionIsNullOrEmpty() {
+            val nullList: List<Any>? = null
+            assertTrue(nullList.isNullOrEmpty())
+
+            val empty = emptyList<Any>()
+            assertTrue(empty.isNullOrEmpty())
+
+            val collection = listOf('a', 'b', 'c')
+            assertFalse(collection.isNullOrEmpty())
+        }
+
+        @Sample
         fun collectionOrEmpty() {
             val nullCollection: Collection<Any>? = null
             assertPrints(nullCollection.orEmpty(), "[]")
