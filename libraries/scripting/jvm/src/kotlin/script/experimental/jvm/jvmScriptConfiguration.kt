@@ -12,7 +12,10 @@ val jvmJavaHomeParams = with(JvmScriptCompileConfigurationProperties) {
     listOf(javaHomeDir to File(System.getProperty("java.home")))
 }
 
-object jvmJavaHomeScriptingProperties : ScriptingProperties(
+object JvmJavaHomeScriptingProperties : ScriptingProperties(
     {
         JvmScriptCompileConfigurationProperties.javaHomeDir(File(System.getProperty("java.home")))
     })
+
+val jvmJavaHomeScriptingProperties = JvmJavaHomeScriptingProperties
+

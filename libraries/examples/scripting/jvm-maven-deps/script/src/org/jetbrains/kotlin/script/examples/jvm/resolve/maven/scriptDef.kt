@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.script.examples.jvm.resolve.maven
 import org.jetbrains.kotlin.script.util.DependsOn
 import org.jetbrains.kotlin.script.util.FilesAndMavenResolver
 import org.jetbrains.kotlin.script.util.Repository
-import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
 import java.io.File
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
@@ -31,14 +30,10 @@ object MyConfiguration : ScriptingProperties() {
         include(jvmJavaHomeScriptingProperties)
         ScriptDefinitionProperties {
             defaultImports<DependsOn>()
-            defaultImports<Repository>()
-            dependencies(
-                JvmDependency(
-                    scriptCompilationClasspathFromContext(
-                        "scripting-jvm-maven-deps", // script library jar name
-                        "kotlin-script-util" // DependsOn annotation is taken from script-util
-                    )
-                )
+            defaultImports(Repository::class)
+            jvmDependenciesFromCurrentContext(
+                "scripting-jvm-maven-deps", // script library jar name
+                "kotlin-script-util" // DependsOn annotation is taken from script-util
             )
             refineConfiguration {
                 handler(MyConfigurator())
