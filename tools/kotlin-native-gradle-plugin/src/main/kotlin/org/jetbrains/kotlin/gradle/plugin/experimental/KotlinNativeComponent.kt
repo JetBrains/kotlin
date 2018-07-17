@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.gradle.plugin.experimental
 
+import org.gradle.api.Action
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
+import org.gradle.api.publish.maven.MavenPom
 import org.gradle.language.BinaryCollection
 import org.gradle.language.ComponentWithBinaries
 import org.gradle.language.ComponentWithDependencies
@@ -43,6 +45,7 @@ interface KotlinNativeComponent: ComponentWithBinaries, ComponentWithDependencie
     fun extraOpts(vararg values: Any)
     fun extraOpts(values: List<Any>)
 
+    fun pom(action: Action<MavenPom>)
     // endregion
 }
 

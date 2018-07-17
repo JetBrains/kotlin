@@ -1,10 +1,12 @@
 package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
+import org.gradle.api.Action
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.internal.provider.LockableSetProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.publish.maven.MavenPom
 import org.gradle.language.internal.DefaultBinaryCollection
 import org.gradle.language.internal.DefaultComponentDependencies
 import org.gradle.language.nativeplatform.internal.ComponentWithNames
@@ -47,6 +49,7 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
     private val dependencies: DefaultComponentDependencies = objectFactory.newInstance(
             DefaultComponentDependencies::class.java,
             names.withSuffix("implementation"))
+    internal val poms = mutableListOf<Action<MavenPom>>()
 
     override fun getDependencies() = dependencies
 
@@ -66,5 +69,8 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
         extraOpts.addAll(values.map { it.toString() })
     }
 
+    override fun pom(action: Action<MavenPom>) {
+        poms.add(action)
+    }
     // endregion
 }

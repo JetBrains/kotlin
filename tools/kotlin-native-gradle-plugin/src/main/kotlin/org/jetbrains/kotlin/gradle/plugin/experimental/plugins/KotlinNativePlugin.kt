@@ -8,6 +8,8 @@ import org.gradle.api.internal.attributes.ImmutableAttributesFactory
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.language.cpp.CppBinary.DEBUGGABLE_ATTRIBUTE
 import org.gradle.language.cpp.CppBinary.OPTIMIZED_ATTRIBUTE
@@ -209,6 +211,24 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
 
             addBinariesForMainComponents(group, version)
             addBinariesForTestComponents(group, version)
+            pluginManager.withPlugin("maven-publish") {
+                val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
+                val components = project.components.withType(KotlinNativeMainComponent::class.java)
+                publishingExtension.publications.forEach { publication ->
+                    (publication as? MavenPublication)?.apply {
+                        val component = components.find {
+                            it.name == publication.name
+                                    || publication.name.startsWith("${it.name}Release")
+                                    || publication.name.startsWith("${it.name}Debug")
+                        }
+                        component?.let {
+                            it.poms.forEach {
+                                publication.pom(it)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
