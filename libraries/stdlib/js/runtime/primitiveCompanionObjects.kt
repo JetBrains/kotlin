@@ -100,3 +100,5 @@ private object CharCompanionObject {
 
 private object StringCompanionObject {}
 
+private object BooleanCompanionObject {}
+
