@@ -25,7 +25,7 @@ object ProcessedScriptDataProperties : PropertiesGroup {
     val foundFragments by typedKey<List<ScriptSourceNamedFragment>>()
 }
 
-interface RefineScriptCompilationConfiguration {
+interface RefineScriptCompilationConfigurationHandler {
     suspend operator fun invoke(
         scriptSource: ScriptSource,
         configuration: ScriptCompileConfiguration,

@@ -21,9 +21,9 @@ open class JvmScriptCompiler(
         additionalConfiguration: ScriptCompileConfiguration?
     ): ResultWithDiagnostics<CompiledScript<*>> {
         val baseConfiguration = chainPropertyBags(additionalConfiguration, scriptDefinition)
-        val refineConfigurationFn = baseConfiguration.getOrNull(ScriptDefinitionProperties.refineConfiguration)
+        val refineConfigurationFn = baseConfiguration.getOrNull(ScriptDefinitionProperties.refineConfigurationHandler)
         val refinedConfiguration =
-            if (baseConfiguration.getOrNull(ScriptDefinitionProperties.refineBeforeParsing) == true) {
+            if (baseConfiguration.getOrNull(ScriptDefinitionProperties.refineConfigurationBeforeParsing) == true) {
                 if (refineConfigurationFn == null) {
                     return ResultWithDiagnostics.Failure("Non-null configurator expected".asErrorDiagnostics())
                 }

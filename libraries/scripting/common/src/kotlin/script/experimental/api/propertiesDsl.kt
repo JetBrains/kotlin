@@ -6,11 +6,22 @@
 package kotlin.script.experimental.api
 
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.script.experimental.util.ChainedPropertyBag
 import kotlin.script.experimental.util.TypedKey
 
 interface PropertiesGroup
+
+
+open class PropertiesBuilder(val props: ScriptingProperties)
+
+class PropertiesBuilderDelegate<T: PropertiesBuilder>(val kclass: KClass<T>) {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): KClass<T> = kclass
+}
+
+inline fun <reified T : PropertiesBuilder> propertiesBuilder() = PropertiesBuilderDelegate(T::class)
+
 
 open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
 
@@ -34,6 +45,12 @@ open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
     //   }
 
     inline operator fun <T : PropertiesGroup> T.invoke(body: T.() -> Unit) = body()
+
+    // generic invoke for properties builder - for extending dsl with complex builders
+
+    inline operator fun <reified T : PropertiesBuilder> KClass<T>.invoke(body: T.() -> Unit) {
+        constructors.first().call(this@ScriptingProperties).body()
+    }
 
     // chaining:
 

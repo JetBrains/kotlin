@@ -7,6 +7,7 @@
 
 package kotlin.script.experimental.api
 
+import kotlin.reflect.KClass
 import kotlin.script.experimental.util.ChainedPropertyBag
 import kotlin.script.experimental.util.typedKey
 
@@ -40,12 +41,59 @@ object ScriptDefinitionProperties : PropertiesGroup {
 
     val compilerOptions by typedKey<List<String>>() // Q: CommonCompilerOptions instead?
 
-    val refineConfiguration by typedKey<RefineScriptCompilationConfiguration>() // dynamic configurator
+    val refineConfigurationHandler by typedKey<RefineScriptCompilationConfigurationHandler>() // dynamic configurator
 
-    val refineBeforeParsing by typedKey<Boolean>() // default: false
+    val refineConfigurationBeforeParsing by typedKey<Boolean>() // default: false
 
     val refineConfigurationOnAnnotations by typedKey<List<KotlinType>>()
 
     val refineConfigurationOnSections by typedKey<List<String>>()
+
+    // DSL:
+
+    val refineConfiguration by propertiesBuilder<RefineConfigurationBuilder>()
+}
+
+// DSL --------------------
+
+
+@Suppress("MemberVisibilityCanBePrivate")
+class RefineConfigurationBuilder(props: ScriptingProperties) : PropertiesBuilder(props) {
+
+    inline operator fun invoke(body: RefineConfigurationBuilder.() -> Unit) {
+        body()
+    }
+
+    fun handler(fn: RefineScriptCompilationConfigurationHandler) {
+        props.data[ScriptDefinitionProperties.refineConfigurationHandler] = fn
+    }
+
+    fun beforeParsing(value: Boolean = true) {
+        props.data[ScriptDefinitionProperties.refineConfigurationBeforeParsing] = value
+    }
+
+    fun onAnnotations(annotations: Iterable<KotlinType>) {
+        props.data.addToListProperty(ScriptDefinitionProperties.refineConfigurationOnAnnotations, annotations)
+    }
+
+    fun onAnnotations(vararg annotations: KotlinType) {
+        onAnnotations(annotations.asIterable())
+    }
+
+    inline fun <reified T : Annotation> onAnnotations() {
+        onAnnotations(KotlinType(T::class))
+    }
+
+    fun onAnnotations(vararg annotations: KClass<out Annotation>) {
+        onAnnotations(annotations.map { KotlinType(it) })
+    }
+
+    fun onSections(sections: Iterable<String>) {
+        props.data.addToListProperty(ScriptDefinitionProperties.refineConfigurationOnSections, sections)
+    }
+
+    fun onSections(vararg sections: String) {
+        props.data.addToListProperty(ScriptDefinitionProperties.refineConfigurationOnSections, *sections)
+    }
 }
 

@@ -15,11 +15,9 @@ import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.annotations.KotlinScriptProperties
-import kotlin.script.experimental.annotations.KotlinScriptPropertiesFromList
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.misc.invoke
-import kotlin.script.experimental.util.TypedKey
 
 @KotlinScript
 @KotlinScriptFileExtension("scriptwithdeps.kts")
@@ -42,13 +40,15 @@ object MyConfiguration : ScriptingProperties() {
                     )
                 )
             )
-            refineConfiguration(MyConfigurator())
-            refineConfigurationOnAnnotations(DependsOn::class, Repository::class)
+            refineConfiguration {
+                handler(MyConfigurator())
+                onAnnotations(DependsOn::class, Repository::class)
+            }
         }
     }
 }
 
-class MyConfigurator : RefineScriptCompilationConfiguration {
+class MyConfigurator : RefineScriptCompilationConfigurationHandler {
 
     private val resolver = FilesAndMavenResolver()
 
