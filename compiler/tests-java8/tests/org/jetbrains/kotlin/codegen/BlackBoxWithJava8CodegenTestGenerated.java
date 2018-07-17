@@ -749,16 +749,6 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/reflection"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("realParameterNames.kt")
-        public void testRealParameterNames() throws Exception {
-            runTest("compiler/testData/codegen/java8/box/reflection/realParameterNames.kt");
-        }
-
-        @TestMetadata("synthesizedParameterNames.kt")
-        public void testSynthesizedParameterNames() throws Exception {
-            runTest("compiler/testData/codegen/java8/box/reflection/synthesizedParameterNames.kt");
-        }
-
         @TestMetadata("compiler/testData/codegen/java8/box/reflection/parameters")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -771,9 +761,14 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/reflection/parameters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("javaParametersHaveDefaultNames.kt")
-            public void testJavaParametersHaveDefaultNames() throws Exception {
-                runTest("compiler/testData/codegen/java8/box/reflection/parameters/javaParametersHaveDefaultNames.kt");
+            @TestMetadata("realParameterNames.kt")
+            public void testRealParameterNames() throws Exception {
+                runTest("compiler/testData/codegen/java8/box/reflection/parameters/realParameterNames.kt");
+            }
+
+            @TestMetadata("synthesizedParameterNames.kt")
+            public void testSynthesizedParameterNames() throws Exception {
+                runTest("compiler/testData/codegen/java8/box/reflection/parameters/synthesizedParameterNames.kt");
             }
         }
     }
