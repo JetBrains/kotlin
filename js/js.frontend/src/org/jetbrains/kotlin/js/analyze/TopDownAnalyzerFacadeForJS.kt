@@ -36,19 +36,7 @@ object TopDownAnalyzerFacadeForJS {
         files: Collection<KtFile>,
         config: JsConfig
     ): JsAnalysisResult {
-        val configuration = config.configuration
-
-        // The hack to avoid adding lookups for builtins:
-        // save current lookup tracker and temporarily provide dummy version instead.
-        val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER)
-        configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, LookupTracker.DO_NOTHING)
-
         config.init()
-
-        // The second part of hack to avoid adding lookups for builtins:
-        // restore previous lookup tracker.
-        lookupTracker?.let { configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, it) }
-
         return analyzeFiles(files, config.project, config.configuration, config.moduleDescriptors, config.friendModuleDescriptors)
     }
 
