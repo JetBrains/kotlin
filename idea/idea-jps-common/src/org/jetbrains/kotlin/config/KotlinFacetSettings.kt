@@ -54,7 +54,7 @@ object CoroutineSupport {
 
     fun byCompilerArgumentsOrNull(arguments: CommonCompilerArguments?): LanguageFeature.State? = when (arguments?.coroutinesState) {
         CommonCompilerArguments.ENABLE -> LanguageFeature.State.ENABLED
-        CommonCompilerArguments.WARN -> LanguageFeature.State.ENABLED_WITH_WARNING
+        CommonCompilerArguments.WARN, CommonCompilerArguments.DEFAULT -> LanguageFeature.State.ENABLED_WITH_WARNING
         CommonCompilerArguments.ERROR -> LanguageFeature.State.ENABLED_WITH_ERROR
         else -> null
     }
