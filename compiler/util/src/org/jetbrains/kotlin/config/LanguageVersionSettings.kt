@@ -71,9 +71,6 @@ enum class LanguageFeature(
     ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion(KOTLIN_1_3, kind = BUG_FIX),
     ProhibitNonConstValuesAsVarargsInAnnotations(KOTLIN_1_3, kind = BUG_FIX),
     ReleaseCoroutines(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
-    ReadDeserializedContracts(KOTLIN_1_3),
-    UseReturnsEffect(KOTLIN_1_3),
-    UseCallsInPlaceEffect(KOTLIN_1_3),
     VariableDeclarationInWhenSubject(KOTLIN_1_3),
     ProhibitLocalAnnotations(KOTLIN_1_3, kind = BUG_FIX),
     ProhibitSmartcastsOnLocalDelegatedProperty(KOTLIN_1_3, kind = BUG_FIX),
@@ -94,6 +91,9 @@ enum class LanguageFeature(
         State.ENABLED_WITH_WARNING
     ),
 
+    ReadDeserializedContracts(sinceVersion = null, defaultState = State.DISABLED),
+    UseReturnsEffect(sinceVersion = null, defaultState = State.DISABLED),
+    UseCallsInPlaceEffect(sinceVersion = null, defaultState = State.DISABLED),
     AllowContractsForCustomFunctions(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
 
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
