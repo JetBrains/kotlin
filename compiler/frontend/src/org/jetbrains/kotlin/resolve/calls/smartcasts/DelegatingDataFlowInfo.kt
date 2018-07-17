@@ -64,7 +64,6 @@ internal class DelegatingDataFlowInfo private constructor(
         nullability: Nullability,
         languageVersionSettings: LanguageVersionSettings,
         newTypeInfoBuilder: SetMultimap<DataFlowValue, KotlinType>? = null,
-        affectReceiver: Boolean = true,
         // TODO: remove me in version 1.3! I'm very dirty hack!
         // In normal circumstances this should be always true
         recordUnstable: Boolean = true
@@ -74,8 +73,7 @@ internal class DelegatingDataFlowInfo private constructor(
         }
 
         val identifierInfo = value.identifierInfo
-        if (affectReceiver && !nullability.canBeNull() &&
-            languageVersionSettings.supportsFeature(LanguageFeature.SafeCallBoundSmartCasts)) {
+        if (!nullability.canBeNull() && languageVersionSettings.supportsFeature(LanguageFeature.SafeCallBoundSmartCasts)) {
             when (identifierInfo) {
                 is IdentifierInfo.Qualified -> {
                     val receiverType = identifierInfo.receiverType
@@ -112,6 +110,7 @@ internal class DelegatingDataFlowInfo private constructor(
             }
         }
     }
+
 
     override fun getCollectedTypes(key: DataFlowValue, languageVersionSettings: LanguageVersionSettings) =
         getCollectedTypes(key, true, languageVersionSettings)
@@ -169,9 +168,8 @@ internal class DelegatingDataFlowInfo private constructor(
     }
 
     override fun assign(a: DataFlowValue, b: DataFlowValue, languageVersionSettings: LanguageVersionSettings): DataFlowInfo {
-        val nullability = hashMapOf<DataFlowValue, Nullability>()
         val nullabilityOfB = getStableNullability(b)
-        putNullabilityAndTypeInfo(nullability, a, nullabilityOfB, languageVersionSettings, affectReceiver = false)
+        val nullabilityUpdate = mapOf(a to nullabilityOfB)
 
         var typesForB = getStableTypes(b, languageVersionSettings)
         // Own type of B must be recorded separately, e.g. for a constant
@@ -182,7 +180,7 @@ internal class DelegatingDataFlowInfo private constructor(
             typesForB += b.type
         }
 
-        return create(this, nullability, listOf(Tuple2(a, typesForB)), a)
+        return create(this, nullabilityUpdate, listOf(Tuple2(a, typesForB)), a)
     }
 
     override fun equate(
