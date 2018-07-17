@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.composeContainer
 import org.jetbrains.kotlin.container.useInstance
@@ -71,6 +70,17 @@ abstract class TargetPlatform(val platformName: String) {
     open val excludedImports: List<FqName> get() = emptyList()
 
     abstract val multiTargetPlatform: MultiTargetPlatform
+
+    // This function is used in "cat.helm.clean:0.1.1-SNAPSHOT": https://plugins.jetbrains.com/plugin/index?xmlId=cat.helm.clean
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Use getDefaultImports(LanguageVersionSettings, Boolean) instead.", level = DeprecationLevel.ERROR)
+    fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath> {
+        return getDefaultImports(
+            if (includeKotlinComparisons) LanguageVersionSettingsImpl.DEFAULT
+            else LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_0, ApiVersion.KOTLIN_1_0),
+            true
+        )
+    }
 
     object Common : TargetPlatform("Default") {
         override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {}
