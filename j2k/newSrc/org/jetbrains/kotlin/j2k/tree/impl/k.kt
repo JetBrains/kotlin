@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class JKKtPropertyImpl(
     modifierList: JKModifierList,
@@ -129,13 +130,11 @@ class JKKtModifierImpl(override val type: JKKtModifier.KtModifierType) : JKKtMod
 }
 
 class JKKtAlsoCallExpressionImpl(
-    override val statement: JKStatement,
-    override val parameterName: String = "it"
+    override val statement: JKStatement, override val identifier: JKMethodSymbol, override val parameterName: String = "it"
 ) : JKKtAlsoCallExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAlsoCallExpression(this, data)
-
-    override val identifier
-        get() = TODO()
+    val parameter
+        get() = arguments.expressions.first().cast<JKLambdaExpression>().parameters.first()
     override var arguments: JKExpressionList by child(
         JKExpressionListImpl(
             listOf(
@@ -151,4 +150,12 @@ class JKKtAlsoCallExpressionImpl(
             )
         )
     )
+}
+
+class JKKtAssignmentStatementImpl(
+    override var field: JKAssignableExpression, expression: JKExpression, override var operator: JKOperator
+) : JKKtAssignmentStatement, JKBranchElementBase() {
+    override var expression by child(expression)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAssignmentStatement(this, data)
+
 }

@@ -65,3 +65,12 @@ interface JKJavaPrimitiveType : JKType {
 interface JKJavaArrayType : JKType {
     val type: JKType
 }
+
+inline fun <reified T> JKElement.getParentOfType(): T? {
+    var p = parent
+    while (true) {
+        if (p is T || p == null)
+            return p as? T
+        p = p.parent
+    }
+}
