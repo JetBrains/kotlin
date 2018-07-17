@@ -20,7 +20,7 @@ repositories {
     }
 }
 
-val kotlinNativeVersion = "0.9-dev-2798"
+val kotlinNativeVersion = "0.9-dev-2859"
 
 // Do not rename, used in JPS importer
 val projectsToShadow by extra(listOf(
