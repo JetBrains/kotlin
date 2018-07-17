@@ -295,6 +295,27 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestKotlinLibraryWithWrongMetadataVersionJs("library", "-Xskip-metadata-version-check")
     }
 
+    fun testRequireKotlinInNestedClasses() {
+        compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
+    }
+
+    fun testRequireKotlinInNestedClassesJs() {
+        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(compileJsLibrary("library")), K2JSCompiler())
+    }
+
+    fun testRequireKotlinInNestedClassesAgainst14() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xmetadata-version=1.4.0"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xskip-metadata-version-check"))
+    }
+
+    fun testRequireKotlinInNestedClassesAgainst14Js() {
+        val library = compileJsLibrary("library", additionalOptions = listOf("-Xmetadata-version=1.4.0"))
+        compileKotlin(
+            "source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(),
+            additionalOptions = listOf("-Xskip-metadata-version-check")
+        )
+    }
+
     /*test source mapping generation when source info is absent*/
     fun testInlineFunWithoutDebugInfo() {
         compileKotlin("sourceInline.kt", tmpdir)
