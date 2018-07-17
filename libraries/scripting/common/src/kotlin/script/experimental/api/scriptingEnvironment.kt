@@ -11,7 +11,7 @@ import kotlin.script.experimental.util.typedKey
 
 typealias ScriptingEnvironment = ChainedPropertyBag
 
-object ScriptingEnvironmentProperties {
+object ScriptingEnvironmentProperties : PropertiesGroup {
 
     // should contain all dependencies needed for baseClass and compilationConfigurator
     val configurationDependencies by typedKey<List<ScriptDependency>>()

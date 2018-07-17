@@ -6,7 +6,13 @@
 package kotlin.script.experimental.jvm
 
 import java.io.File
+import kotlin.script.experimental.api.ScriptingProperties
 
 val jvmJavaHomeParams = with(JvmScriptCompileConfigurationProperties) {
     listOf(javaHomeDir to File(System.getProperty("java.home")))
 }
+
+object jvmJavaHomeScriptingProperties : ScriptingProperties(
+    {
+        JvmScriptCompileConfigurationProperties.javaHomeDir(File(System.getProperty("java.home")))
+    })

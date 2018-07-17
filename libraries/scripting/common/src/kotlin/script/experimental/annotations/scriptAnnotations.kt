@@ -13,6 +13,7 @@
 package kotlin.script.experimental.annotations
 
 import kotlin.reflect.KClass
+import kotlin.script.experimental.api.ScriptingProperties
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -28,6 +29,13 @@ annotation class KotlinScriptFileExtension(
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
+@Deprecated("Use KotlinScriptProperties", replaceWith = ReplaceWith("KotlinScriptProperties"))
 annotation class KotlinScriptPropertiesFromList(
     val definitionProperties: KClass<out List<*>> // object or class filled in 0-ary constructor
+)
+
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class KotlinScriptProperties(
+    val definitionProperties: KClass<out ScriptingProperties> // object or class filled in 0-ary constructor
 )

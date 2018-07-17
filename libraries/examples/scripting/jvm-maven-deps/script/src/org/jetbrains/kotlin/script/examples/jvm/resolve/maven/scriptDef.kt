@@ -14,26 +14,25 @@ import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
+import kotlin.script.experimental.annotations.KotlinScriptProperties
 import kotlin.script.experimental.annotations.KotlinScriptPropertiesFromList
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.jvmJavaHomeParams
-import kotlin.script.experimental.jvm.mapLegacyDiagnosticSeverity
-import kotlin.script.experimental.jvm.mapLegacyScriptPosition
+import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.misc.invoke
 import kotlin.script.experimental.util.TypedKey
 
 @KotlinScript
 @KotlinScriptFileExtension("scriptwithdeps.kts")
-@KotlinScriptPropertiesFromList(MyConfiguration::class)
+@KotlinScriptProperties(MyConfiguration::class)
 abstract class MyScriptWithMavenDeps {
 //    abstract fun body(vararg args: String): Int
 }
 
-object MyConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
-    jvmJavaHomeParams + with(ScriptDefinitionProperties) {
-        listOf(
-            defaultImports(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!),
+object MyConfiguration : ScriptingProperties() {
+    init {
+        include(jvmJavaHomeScriptingProperties)
+        ScriptDefinitionProperties {
+            defaultImports(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!)
             dependencies(
                 JvmDependency(
                     scriptCompilationClasspathFromContext(
@@ -41,12 +40,12 @@ object MyConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
                         "kotlin-script-util" // DependsOn annotation is taken from script-util
                     )
                 )
-            ),
-            refineConfiguration(MyConfigurator()),
+            )
+            refineConfiguration(MyConfigurator())
             refineConfigurationOnAnnotations(DependsOn::class, Repository::class)
-        )
+        }
     }
-)
+}
 
 class MyConfigurator : RefineScriptCompilationConfiguration {
 

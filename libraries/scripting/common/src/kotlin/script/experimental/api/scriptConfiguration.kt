@@ -12,14 +12,14 @@ import kotlin.script.experimental.util.typedKey
 
 typealias ScriptCompileConfiguration = ChainedPropertyBag
 
-object ScriptCompileConfigurationProperties {
+object ScriptCompileConfigurationProperties : PropertiesGroup {
 
     val sourceFragments by typedKey<List<ScriptSourceNamedFragment>>()
 }
 
 typealias ProcessedScriptData = ChainedPropertyBag
 
-object ProcessedScriptDataProperties {
+object ProcessedScriptDataProperties : PropertiesGroup {
     val foundAnnotations by typedKey<List<Annotation>>()
 
     val foundFragments by typedKey<List<ScriptSourceNamedFragment>>()

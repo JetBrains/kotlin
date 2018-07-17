@@ -10,6 +10,7 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
+import kotlin.script.experimental.annotations.KotlinScriptProperties
 import kotlin.script.experimental.annotations.KotlinScriptPropertiesFromList
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.TypedKey
@@ -56,6 +57,15 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
                 propertiesData[k] = v
             }
         }
+    }
+    baseClass.annotations.filterIsInstance(KotlinScriptProperties::class.java).forEach { ann ->
+        val params = try {
+            ann.definitionProperties.objectInstance ?: ann.definitionProperties.createInstance()
+        } catch (e: Throwable) {
+            throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
+        }
+        propertiesData.putAll(params.data)
+        // TODO: chaining is lost here, fix it
     }
     return ScriptingEnvironment.createOptimized(null, propertiesData)
 }

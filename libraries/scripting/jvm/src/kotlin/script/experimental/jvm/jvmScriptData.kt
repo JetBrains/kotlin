@@ -8,10 +8,11 @@
 package kotlin.script.experimental.jvm
 
 import java.io.File
+import kotlin.script.experimental.api.PropertiesGroup
 import kotlin.script.experimental.api.ScriptDependency
 import kotlin.script.experimental.util.typedKey
 
-object JvmScriptCompileConfigurationProperties {
+object JvmScriptCompileConfigurationProperties : PropertiesGroup {
     val javaHomeDir by typedKey<File>()
 }
 

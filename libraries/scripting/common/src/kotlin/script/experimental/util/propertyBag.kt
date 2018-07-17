@@ -17,7 +17,7 @@ class TypedKeyDelegate<T>(val defaultValue: T? = null) {
 
 fun <T> typedKey(defaultValue: T? = null) = TypedKeyDelegate(defaultValue)
 
-open class ChainedPropertyBag private constructor(private val parent: ChainedPropertyBag?, private val data: Map<TypedKey<*>, Any?>) {
+open class ChainedPropertyBag internal constructor(private val parent: ChainedPropertyBag?, internal val data: Map<TypedKey<*>, Any?>) {
     constructor(parent: ChainedPropertyBag? = null, pairs: Iterable<Pair<TypedKey<*>, Any?>>) :
             this(parent, HashMap<TypedKey<*>, Any?>().also { it.putAll(pairs) })
 

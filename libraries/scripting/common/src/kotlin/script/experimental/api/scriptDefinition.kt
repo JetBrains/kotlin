@@ -12,7 +12,7 @@ import kotlin.script.experimental.util.typedKey
 
 typealias ScriptDefinition = ChainedPropertyBag
 
-object ScriptDefinitionProperties {
+object ScriptDefinitionProperties : PropertiesGroup {
 
     val name by typedKey<String>() // Name of the script type, by default "Kotlin script"
 
