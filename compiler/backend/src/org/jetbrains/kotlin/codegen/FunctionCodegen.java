@@ -1614,7 +1614,7 @@ public class FunctionCodegen {
 
                         StackValue stackValue = AsmUtil.genNotNullAssertions(
                                 state,
-                                StackValue.onStack(delegateToMethod.getReturnType()),
+                                StackValue.onStack(delegateToMethod.getReturnType(), delegatedTo.getReturnType()),
                                 RuntimeAssertionInfo.create(
                                         delegateFunction.getReturnType(),
                                         delegatedTo.getReturnType(),
@@ -1622,7 +1622,7 @@ public class FunctionCodegen {
                                 )
                         );
 
-                        stackValue.put(delegateMethod.getReturnType(), iv);
+                        stackValue.put(delegateMethod.getReturnType(), delegatedTo.getReturnType(), iv);
 
                         iv.areturn(delegateMethod.getReturnType());
                     }

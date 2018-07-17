@@ -45,8 +45,9 @@ class ResourcePropertyStackValue(
         val syntheticProperty = resource as AndroidSyntheticProperty
 
         if ((containerOptions.cache ?: globalCacheImpl).hasCache && shouldCacheResource(resource)) {
-            val declarationDescriptorType = typeMapper.mapType(container)
-            receiver.put(declarationDescriptorType, v)
+            val declarationDescriptorKotlinType = container.defaultType
+            val declarationDescriptorType = typeMapper.mapType(declarationDescriptorKotlinType)
+            receiver.put(declarationDescriptorType, declarationDescriptorKotlinType, v)
 
             val resourceId = syntheticProperty.resource.id
             val packageName = resourceId.packageName ?: androidPackage

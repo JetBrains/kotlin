@@ -1821,7 +1821,7 @@ public abstract class StackValue {
             value = StackValue.complexReceiver(value, true, false, true);
             value.put(this.type, this.kotlinType, v);
 
-            value.store(codegen.invokeFunction(resolvedCall, StackValue.onStack(this.type)), v, true);
+            value.store(codegen.invokeFunction(resolvedCall, StackValue.onStack(this.type, this.kotlinType)), v, true);
 
             value.put(this.type, this.kotlinType, v, true);
             coerceTo(type, kotlinType, v);

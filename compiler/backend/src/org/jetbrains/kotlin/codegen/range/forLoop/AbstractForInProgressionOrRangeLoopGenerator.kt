@@ -50,7 +50,7 @@ abstract class AbstractForInProgressionOrRangeLoopGenerator(codegen: ExpressionC
         assert(endVar != -1) {
             "endVar must be allocated, endVar = " + endVar
         }
-        loopParameter().put(asmElementType, v)
+        loopParameter().put(asmElementType, elementType, v)
         v.load(endVar, asmElementType)
         if (asmElementType.sort == Type.LONG) {
             v.lcmp()

@@ -823,7 +823,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                         property.put(signature.getReturnType(), iv);
                     }
                     else {
-                        property.store(StackValue.onStack(property.type), iv, true);
+                        property.store(StackValue.onStack(property.type, property.kotlinType), iv, true);
                     }
 
                     iv.areturn(signature.getReturnType());
@@ -906,7 +906,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
         callableMethod.genInvokeInstruction(iv);
 
-        return StackValue.onStack(callableMethod.getReturnType());
+        return StackValue.onStack(callableMethod.getReturnType(), functionDescriptor.getReturnType());
     }
 
     public void generateAssertField() {

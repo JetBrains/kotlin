@@ -26,7 +26,7 @@ class ForInProgressionExpressionLoopGenerator(
     private val rangeExpression: KtExpression
 ) : AbstractForInProgressionLoopGenerator(codegen, forExpression) {
     override fun storeProgressionParametersToLocalVars() {
-        codegen.gen(rangeExpression, asmLoopRangeType)
+        codegen.gen(rangeExpression, asmLoopRangeType, kotlinLoopRangeType)
         v.dup()
         v.dup()
 

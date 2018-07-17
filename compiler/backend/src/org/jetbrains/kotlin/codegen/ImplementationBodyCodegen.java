@@ -579,7 +579,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.store(2, OBJECT_TYPE);
 
             for (PropertyDescriptor propertyDescriptor : properties) {
-                Type asmType = typeMapper.mapType(propertyDescriptor);
+                KotlinType kotlinType = propertyDescriptor.getReturnType();
+                Type asmType = typeMapper.mapType(kotlinType);
 
                 Type thisPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, ImplementationBodyCodegen.this.classAsmType, 0);
                 StackValue.coerce(thisPropertyType, asmType, iv);
@@ -596,8 +597,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifne(ne);
                 }
                 else {
-                    StackValue value =
-                            genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
+                    StackValue value = genEqualsForExpressionsOnStack(
+                            KtTokens.EQEQ, StackValue.onStack(asmType, kotlinType), StackValue.onStack(asmType, kotlinType)
+                    );
                     value.put(Type.BOOLEAN_TYPE, iv);
                     iv.ifeq(ne);
                 }
@@ -1474,7 +1476,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
                         Type traitImplType = typeMapper.mapDefaultImpls(containingTrait);
 
-                        Method traitMethod = typeMapper.mapAsmMethod(interfaceFun.getOriginal(), OwnerKind.DEFAULT_IMPLS);
+                        FunctionDescriptor originalInterfaceFun = interfaceFun.getOriginal();
+                        Method traitMethod = typeMapper.mapAsmMethod(originalInterfaceFun, OwnerKind.DEFAULT_IMPLS);
 
                         Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
                         Type[] originalArgTypes = traitMethod.getArgumentTypes();
@@ -1499,7 +1502,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         }
 
                         Type returnType = signature.getReturnType();
-                        StackValue.onStack(traitMethod.getReturnType()).put(returnType, iv);
+                        StackValue.onStack(traitMethod.getReturnType(), originalInterfaceFun.getReturnType()).put(returnType, iv);
                         iv.areturn(returnType);
                     }
                 }

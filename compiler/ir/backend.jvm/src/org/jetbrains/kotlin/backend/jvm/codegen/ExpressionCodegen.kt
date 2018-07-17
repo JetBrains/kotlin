@@ -180,7 +180,7 @@ class ExpressionCodegen(
             //coerceNotToUnit(r.type, Type.VOID_TYPE)
             exp.accept(this, data)
         }
-        return coerceNotToUnit(result.type, expression.type.toKotlinType())
+        return coerceNotToUnit(result.type, result.kotlinType, expression.type.toKotlinType())
     }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: BlockInfo): StackValue {
@@ -306,7 +306,7 @@ class ExpressionCodegen(
             mv.aconst(null)
             mv.athrow()
         } else if (expression.descriptor !is ConstructorDescriptor) {
-            return returnType?.run { coerceNotToUnit(callable.returnType, this) } ?: onStack(callable.returnType)
+            return returnType?.run { coerceNotToUnit(callable.returnType, returnType, this) } ?: onStack(callable.returnType, returnType)
         } else {
             return none()
         }
@@ -576,7 +576,7 @@ class ExpressionCodegen(
 
         val result = thenBranch.run {
             val stackValue = gen(this, data)
-            coerceNotToUnit(stackValue.type, type)
+            coerceNotToUnit(stackValue.type, stackValue.kotlinType, type)
         }
 
         mv.goTo(end)
@@ -963,13 +963,13 @@ class ExpressionCodegen(
 
     }
 
-    private fun coerceNotToUnit(fromType: Type, toType: KotlinType): StackValue {
-        val asmType = toType.asmType
-        if (asmType != AsmTypes.UNIT_TYPE || TypeUtils.isNullableType(toType)) {
-            coerce(fromType, asmType, mv)
-            return onStack(asmType)
+    private fun coerceNotToUnit(fromType: Type, fromKotlinType: KotlinType?, toKotlinType: KotlinType): StackValue {
+        val asmToType = toKotlinType.asmType
+        if (asmToType != AsmTypes.UNIT_TYPE || TypeUtils.isNullableType(toKotlinType)) {
+            coerce(fromType, fromKotlinType, asmToType, toKotlinType, mv)
+            return onStack(asmToType, toKotlinType)
         }
-        return onStack(fromType)
+        return onStack(fromType, fromKotlinType)
     }
 
     val IrExpression.asmType: Type
