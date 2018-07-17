@@ -7,19 +7,33 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Named
 import org.gradle.api.attributes.Attribute
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.Serializable
 
-enum class KotlinPlatformType: Named, Serializable {
-    common, jvm, js,
-    native; // TODO: split native into separate entries here or transform the enum to interface and implement entries in K/N
+// TODO: Do we really need a separate platform type for each native target?
+open class KotlinPlatformType(private val name: String) : Named, Serializable {
 
     override fun toString(): String = name
     override fun getName(): String = name
 
     companion object {
+
+        val COMMON = KotlinPlatformType("common")
+        val JVM = KotlinPlatformType("JVM")
+        val JS = KotlinPlatformType("JS")
+
         val attribute = Attribute.of(
             "org.jetbrains.kotlin.platform.type",
             KotlinPlatformType::class.java
         )
     }
 }
+
+// TODO: Make KonanTarget serializable
+data class KotlinNativePlatformType(val konanTargetName: String) : KotlinPlatformType(konanTargetName) {
+    val konanTarget: KonanTarget
+        get() = HostManager().targetByName(konanTargetName)
+}
+
+fun KonanTarget.toKotlinPlatformType(): KotlinNativePlatformType = KotlinNativePlatformType(name)

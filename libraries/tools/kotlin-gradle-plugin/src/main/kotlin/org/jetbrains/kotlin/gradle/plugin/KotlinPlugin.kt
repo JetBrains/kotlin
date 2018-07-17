@@ -455,13 +455,13 @@ internal open class KotlinPlugin(
     kotlinPluginVersion: String
 ) : AbstractKotlinPlugin(tasksProvider, kotlinPluginVersion) {
     override val platformType: KotlinPlatformType
-        get() = KotlinPlatformType.jvm
+        get() = KotlinPlatformType.JVM
 
     override fun buildSourceSetProcessor(project: Project, compilation: KotlinCompilation, kotlinPluginVersion: String) =
             Kotlin2JvmSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget(project, KotlinPlatformType.js, "kotlin").apply {
+        val target = KotlinWithJavaTarget(project, KotlinPlatformType.JS, "kotlin").apply {
             disambiguationClassifier = null // don't add anything to the task names
         }
         (project.kotlinExtension as KotlinSingleTargetProjectExtension).target = target
@@ -477,7 +477,7 @@ internal open class KotlinCommonPlugin(
 ) : AbstractKotlinPlugin(tasksProvider, kotlinPluginVersion) {
 
     override val platformType: KotlinPlatformType
-        get() = KotlinPlatformType.common
+        get() = KotlinPlatformType.COMMON
 
     override fun buildSourceSetProcessor(
         project: Project,
@@ -487,7 +487,7 @@ internal open class KotlinCommonPlugin(
         KotlinCommonSourceSetProcessor(project, compilation, tasksProvider, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget(project, KotlinPlatformType.js, "common").apply {
+        val target = KotlinWithJavaTarget(project, KotlinPlatformType.JS, "common").apply {
             disambiguationClassifier = "common"
         }
         (project.kotlinExtension as KotlinSingleTargetProjectExtension).target = target
@@ -501,7 +501,7 @@ internal open class Kotlin2JsPlugin(
     kotlinPluginVersion: String
 ) : AbstractKotlinPlugin(tasksProvider, kotlinPluginVersion) {
     override val platformType: KotlinPlatformType
-        get() = KotlinPlatformType.js
+        get() = KotlinPlatformType.JS
 
     override fun buildSourceSetProcessor(
         project: Project,
@@ -513,7 +513,7 @@ internal open class Kotlin2JsPlugin(
         )
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget(project, KotlinPlatformType.js, "2Js").apply {
+        val target = KotlinWithJavaTarget(project, KotlinPlatformType.JS, "2Js").apply {
             disambiguationClassifier = "2Js"
         }
 

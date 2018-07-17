@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal val Project.multiplatformExtension get(): KotlinMultiplatformExtension? =
     project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
@@ -78,6 +80,9 @@ internal class KotlinMultiplatformPlugin(
             add(KotlinJsTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion, buildOutputCleanupRegistry))
             add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
+            HostManager().targets.forEach { name, target ->
+                add(KotlinNativeTargetPreset(name, project, target.toKotlinPlatformType(), buildOutputCleanupRegistry))
+            }
         }
     }
 

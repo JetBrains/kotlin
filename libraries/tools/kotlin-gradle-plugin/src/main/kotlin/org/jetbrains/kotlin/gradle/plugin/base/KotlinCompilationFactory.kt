@@ -76,8 +76,6 @@ class KotlinJvmAndroidCompilationFactory(
     }
 }
 
-class Kotlin
-
 class KotlinJsCompilationFactory(
     val project: Project,
     val target: KotlinOnlyTarget<KotlinJsCompilation>
@@ -87,4 +85,25 @@ class KotlinJsCompilationFactory(
 
     override fun create(name: String): KotlinJsCompilation =
             KotlinJsCompilation(target, name, project.createSourceSetOutput(name))
+}
+
+class KotlinNativeCompilationFactory(
+    val project: Project,
+    val target: KotlinNativeTarget
+) : KotlinCompilationFactory<KotlinNativeCompilation> {
+
+    override val itemClass: Class<KotlinNativeCompilation>
+        get() = KotlinNativeCompilation::class.java
+
+    override fun create(name: String): KotlinNativeCompilation =
+        KotlinNativeCompilation(target, name, project.createSourceSetOutput(name)).apply {
+            if (name == KotlinCompilation.TEST_COMPILATION_NAME) {
+                outputKinds = mutableListOf(NativeOutputKind.EXECUTABLE)
+                buildTypes = mutableListOf(NativeBuildType.DEBUG)
+                isTestCompilation = true
+            } else {
+                buildTypes = mutableListOf(NativeBuildType.DEBUG, NativeBuildType.RELEASE)
+            }
+        }
+
 }

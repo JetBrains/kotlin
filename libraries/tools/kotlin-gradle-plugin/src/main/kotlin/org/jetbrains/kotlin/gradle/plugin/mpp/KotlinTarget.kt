@@ -11,11 +11,13 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.plugins.JavaPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinNativePlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.base.KotlinJvmAndroidCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.base.KotlinWithJavaCompilationFactory
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class AbstractKotlinTarget (
     override val project: Project
@@ -55,7 +57,7 @@ open class KotlinAndroidTarget(project: Project) : AbstractKotlinTarget(project)
         internal set
 
     override val platformType: KotlinPlatformType
-        get() = KotlinPlatformType.jvm
+        get() = KotlinPlatformType.JVM
 
     private val compilationFactory = KotlinJvmAndroidCompilationFactory(project, this)
 
@@ -106,3 +108,13 @@ open class KotlinOnlyTarget<T : KotlinCompilation>(
     override var disambiguationClassifier: String? = null
         internal set
 }
+
+class KotlinNativeTarget(
+    project: Project,
+    override val platformType: KotlinNativePlatformType
+) : KotlinOnlyTarget<KotlinNativeCompilation>(project, platformType) {
+
+    val konanTarget: KonanTarget
+        get() = platformType.konanTarget
+}
+
