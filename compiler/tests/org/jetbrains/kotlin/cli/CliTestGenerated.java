@@ -396,6 +396,21 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/kotlinPackage.args");
         }
 
+        @TestMetadata("kt19628_12.args")
+        public void testKt19628_12() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt19628_12.args");
+        }
+
+        @TestMetadata("kt19628_13.args")
+        public void testKt19628_13() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt19628_13.args");
+        }
+
+        @TestMetadata("kt19628_progressive.args")
+        public void testKt19628_progressive() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt19628_progressive.args");
+        }
+
         @TestMetadata("kt22304.args")
         public void testKt22304() throws Exception {
             runTest("compiler/testData/cli/jvm/kt22304.args");
