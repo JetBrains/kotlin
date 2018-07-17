@@ -1,7 +1,6 @@
 // !LANGUAGE: +JvmFieldInInterface
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
-import kotlin.reflect.full.memberProperties
 
 class Bar(val value: String)
 
