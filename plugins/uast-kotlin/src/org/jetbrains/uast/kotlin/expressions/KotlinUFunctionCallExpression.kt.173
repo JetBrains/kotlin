@@ -88,7 +88,9 @@ class KotlinUFunctionCallExpression(
 
     override val receiver: UExpression?
         get() {
-            (uastParent as? UQualifiedReferenceExpression)?.let { return it.takeIf { it.selector == this }?.receiver }
+            (uastParent as? UQualifiedReferenceExpression)?.let {
+                if (it.selector == this) return it.receiver
+            }
 
             val ktNameReferenceExpression = psi.calleeExpression as? KtNameReferenceExpression ?: return null
             val variableCallDescriptor =
