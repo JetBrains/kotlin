@@ -6,4 +6,8 @@ fun foo() {
 
 fun doSelectItem(selectItemFunction: () -> Unit) {
     selectItemFunction()
+    val baz = fun() {
+        Local()
+    }
+    baz()
 }

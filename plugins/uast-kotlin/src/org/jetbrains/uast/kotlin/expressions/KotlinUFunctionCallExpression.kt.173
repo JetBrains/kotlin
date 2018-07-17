@@ -18,15 +18,14 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -94,12 +93,15 @@ class KotlinUFunctionCallExpression(
             }
 
             val ktNameReferenceExpression = psi.calleeExpression as? KtNameReferenceExpression ?: return null
-            val variableAsFunctionResolvedCall = resolvedCall as? VariableAsFunctionResolvedCall ?: return null
+            val variableCallDescriptor =
+                (resolvedCall as? VariableAsFunctionResolvedCall)?.variableCall?.resultingDescriptor
+                    ?: (resolvedCall?.resultingDescriptor as? FunctionDescriptor)?.takeIf { it.visibility == Visibilities.LOCAL }
+                    ?: return null
 
             // an implicit receiver for variables calls (KT-25524)
             return object : KotlinAbstractUExpression(this), UReferenceExpression {
 
-                private val resolvedDeclaration = variableAsFunctionResolvedCall.variableCall.resultingDescriptor.toSource()
+                private val resolvedDeclaration = variableCallDescriptor.toSource()
 
                 override val psi: KtNameReferenceExpression get() = ktNameReferenceExpression
 
