@@ -74,7 +74,7 @@ dependencies {
     packedJars(project(":core:builtins", configuration = "builtins"))
     sideJars(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxDist:$kotlinNativeVersion:shared.jar"))
     sideJars(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxDist:$kotlinNativeVersion:backend.native.jar"))
-    sideJars("org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.9-dev-2809") { isTransitive = false }
+    sideJars("org.jetbrains.kotlin:kotlin-native-gradle-plugin:$kotlinNativeVersion") { isTransitive = false }
     sideJars(projectDist(":kotlin-script-runtime"))
     sideJars(projectDist(":kotlin-stdlib"))
     sideJars(projectDist(":kotlin-reflect"))
