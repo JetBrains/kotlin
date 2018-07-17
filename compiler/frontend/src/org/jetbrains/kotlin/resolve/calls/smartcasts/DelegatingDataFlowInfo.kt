@@ -68,7 +68,7 @@ internal class DelegatingDataFlowInfo private constructor(
         // TODO: remove me in version 1.3! I'm very dirty hack!
         // In normal circumstances this should be always true
         recordUnstable: Boolean = true
-    ): Boolean {
+    ) {
         if (value.isStable || recordUnstable) {
             map[value] = nullability
         }
@@ -111,8 +111,6 @@ internal class DelegatingDataFlowInfo private constructor(
                 }
             }
         }
-
-        return nullability != getCollectedNullability(value)
     }
 
     override fun getCollectedTypes(key: DataFlowValue, languageVersionSettings: LanguageVersionSettings) =
@@ -189,30 +187,47 @@ internal class DelegatingDataFlowInfo private constructor(
 
     override fun equate(
         a: DataFlowValue, b: DataFlowValue, identityEquals: Boolean, languageVersionSettings: LanguageVersionSettings
+    ): DataFlowInfo = equateOrDisequate(a, b, languageVersionSettings, identityEquals, isEquate = true)
+
+    override fun disequate(
+        a: DataFlowValue, b: DataFlowValue, languageVersionSettings: LanguageVersionSettings
+    ): DataFlowInfo = equateOrDisequate(a, b, languageVersionSettings, identityEquals = false, isEquate = false)
+
+    private fun equateOrDisequate(
+        a: DataFlowValue,
+        b: DataFlowValue,
+        languageVersionSettings: LanguageVersionSettings,
+        identityEquals: Boolean,
+        isEquate: Boolean
     ): DataFlowInfo {
         val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
+        val newTypeInfoBuilder = newTypeInfoBuilder()
+
         val nullabilityOfA = getStableNullability(a)
         val nullabilityOfB = getStableNullability(b)
+        val newANullability = nullabilityOfA.refine(if (isEquate) nullabilityOfB else nullabilityOfB.invert())
+        val newBNullability = nullabilityOfB.refine(if (isEquate) nullabilityOfA else nullabilityOfA.invert())
 
-        val newTypeInfoBuilder = newTypeInfoBuilder()
-        var changed =
-            putNullabilityAndTypeInfo(
-                resultNullabilityInfo,
-                a,
-                nullabilityOfA.refine(nullabilityOfB),
-                languageVersionSettings,
-                newTypeInfoBuilder
-            ) or
-                    putNullabilityAndTypeInfo(
-                        resultNullabilityInfo,
-                        b,
-                        nullabilityOfB.refine(nullabilityOfA),
-                        languageVersionSettings,
-                        newTypeInfoBuilder
-                    )
+        putNullabilityAndTypeInfo(
+            resultNullabilityInfo,
+            a,
+            newANullability,
+            languageVersionSettings,
+            newTypeInfoBuilder
+        )
+
+        putNullabilityAndTypeInfo(
+            resultNullabilityInfo,
+            b,
+            newBNullability,
+            languageVersionSettings,
+            newTypeInfoBuilder
+        )
+
+        var changed = getCollectedNullability(a) != newANullability || getCollectedNullability(b) != newBNullability
 
         // NB: == has no guarantees of type equality, see KT-11280 for the example
-        if (identityEquals || !nullabilityOfA.canBeNonNull() || !nullabilityOfB.canBeNonNull()) {
+        if (isEquate && (identityEquals || !nullabilityOfA.canBeNonNull() || !nullabilityOfB.canBeNonNull())) {
             newTypeInfoBuilder.putAll(a, getStableTypes(b, false, languageVersionSettings))
             newTypeInfoBuilder.putAll(b, getStableTypes(a, false, languageVersionSettings))
             if (a.type != b.type) {
@@ -228,34 +243,6 @@ internal class DelegatingDataFlowInfo private constructor(
         }
 
         return if (changed) create(this, resultNullabilityInfo, newTypeInfoBuilder) else this
-    }
-
-    override fun disequate(
-        a: DataFlowValue, b: DataFlowValue, languageVersionSettings: LanguageVersionSettings
-    ): DataFlowInfo {
-        val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
-        val nullabilityOfA = getStableNullability(a)
-        val nullabilityOfB = getStableNullability(b)
-
-        val newTypeInfoBuilder = newTypeInfoBuilder()
-        val changed =
-            putNullabilityAndTypeInfo(
-                resultNullabilityInfo,
-                a,
-                nullabilityOfA.refine(nullabilityOfB.invert()),
-                languageVersionSettings,
-                newTypeInfoBuilder
-            ) or
-                    putNullabilityAndTypeInfo(
-                        resultNullabilityInfo,
-                        b,
-                        nullabilityOfB.refine(nullabilityOfA.invert()),
-                        languageVersionSettings,
-                        newTypeInfoBuilder
-                    )
-
-        return if (changed) create(this, resultNullabilityInfo, newTypeInfoBuilder) else this
-
     }
 
     override fun establishSubtyping(
