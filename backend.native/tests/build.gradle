@@ -2466,6 +2466,11 @@ task inline_changingCapturedLocal(type: RunKonanTest) {
     source = "codegen/inline/changingCapturedLocal.kt"
 }
 
+task inline_defaultArgs(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/inline/defaultArgs.kt"
+}
+
 task deserialized_inline0(type: RunKonanTest) {
     source = "serialization/deserialized_inline0.kt"
 }

@@ -448,8 +448,13 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
              * For simplicity and to produce simpler IR we don't create temporaries for every immutable variable,
              * not only for those referring to inlinable lambdas.
              */
-            if (it.isInlinableLambdaArgument || it.isImmutableVariableLoad) {
+            if (it.isInlinableLambdaArgument) {
                 substituteMap[parameterDescriptor] = it.argumentExpression
+                return@forEach
+            }
+
+            if (it.isImmutableVariableLoad) {
+                substituteMap[parameterDescriptor] = it.argumentExpression.transform(substitutor, data = null)   // Arguments may reference the previous ones - substitute them.
                 return@forEach
             }
 
