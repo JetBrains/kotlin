@@ -19,7 +19,7 @@ repositories {
     }
 }
 
-val kotlinNativeVersion = "0.9-dev-2798"
+val kotlinNativeVersion = "0.9-dev-2859"
 
 dependencies {
     compile(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxDist:$kotlinNativeVersion:shared.jar"))
