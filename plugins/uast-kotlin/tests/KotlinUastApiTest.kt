@@ -407,6 +407,54 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         }
     }
 
+    @Test
+    fun testLocalLambdaCall() {
+        doTest("Lambdas") { _, file ->
+            val lambdaCall = file.findElementByTextFromPsi<UCallExpression>("baz()")
+            assertEquals(
+                "UIdentifier (Identifier (baz))",
+                lambdaCall.methodIdentifier?.asLogString()
+            )
+            assertEquals(
+                "baz",
+                lambdaCall.methodIdentifier?.name
+            )
+            assertEquals(
+                "invoke",
+                lambdaCall.methodName
+            )
+            val receiver = lambdaCall.receiver ?: kotlin.test.fail("receiver expected")
+            assertEquals("UReferenceExpression", receiver.asLogString())
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            assertEquals("ULocalVariable (name = baz)", uParameter.asLogString())
+        }
+    }
+
+    @Test
+    fun testLocalDeclarationCall() {
+        doTest("LocalDeclarations") { _, file ->
+            val localFunction = file.findElementByTextFromPsi<UElement>("bar() == Local()").
+                findElementByText<UCallExpression>("bar()")
+            assertEquals(
+                "UIdentifier (Identifier (bar))",
+                localFunction.methodIdentifier?.asLogString()
+            )
+            assertEquals(
+                "bar",
+                localFunction.methodIdentifier?.name
+            )
+            assertEquals(
+                "bar",
+                localFunction.methodName
+            )
+            assertNull(localFunction.resolve())
+            val receiver = localFunction.receiver ?: kotlin.test.fail("receiver expected")
+            assertEquals("UReferenceExpression", receiver.asLogString())
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            assertEquals("ULambdaExpression", uParameter.asLogString())
+        }
+    }
+
 }
 
 fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T =

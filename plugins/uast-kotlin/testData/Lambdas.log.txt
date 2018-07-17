@@ -26,3 +26,13 @@ UFile (package = )
                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                     UIdentifier (Identifier (selectItemFunction))
                     USimpleNameReferenceExpression (identifier = invoke)
+                UDeclarationsExpression
+                    ULocalVariable (name = baz)
+                        ULambdaExpression
+                            UBlockExpression
+                                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                    UIdentifier (Identifier (Local))
+                                    USimpleNameReferenceExpression (identifier = <anonymous class>)
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                    UIdentifier (Identifier (baz))
+                    USimpleNameReferenceExpression (identifier = invoke)
