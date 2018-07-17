@@ -910,6 +910,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testNoInlineInCmp() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/constProperty/noInlineInCmp.kt");
         }
+
+        @TestMetadata("nonConstValHasNoDefaultValue_after.kt")
+        public void testNonConstValHasNoDefaultValue_after() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/constProperty/nonConstValHasNoDefaultValue_after.kt");
+        }
+
+        @TestMetadata("nonConstValHasNoDefaultValue_before.kt")
+        public void testNonConstValHasNoDefaultValue_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/constProperty/nonConstValHasNoDefaultValue_before.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/constantConditions")

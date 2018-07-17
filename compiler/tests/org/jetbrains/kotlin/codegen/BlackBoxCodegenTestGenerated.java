@@ -15390,6 +15390,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testInterfaceCompanion() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/const/interfaceCompanion.kt");
             }
+
+            @TestMetadata("nonConstValsAreProperlyInitialized.kt")
+            public void testNonConstValsAreProperlyInitialized() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/const/nonConstValsAreProperlyInitialized.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/properties/lateinit")
