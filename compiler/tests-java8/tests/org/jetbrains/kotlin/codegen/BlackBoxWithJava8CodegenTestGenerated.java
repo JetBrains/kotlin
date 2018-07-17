@@ -711,6 +711,11 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             runTest("compiler/testData/codegen/java8/box/parametersMetadata/defaultImpls.kt");
         }
 
+        @TestMetadata("delegation.kt")
+        public void testDelegation() throws Exception {
+            runTest("compiler/testData/codegen/java8/box/parametersMetadata/delegation.kt");
+        }
+
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             runTest("compiler/testData/codegen/java8/box/parametersMetadata/enum.kt");
