@@ -1,4 +1,3 @@
-warning: language version 1.3 is experimental, there are no backwards compatibility guarantees for new language and library features
 compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.kt:1:1: error: unsupported [cannot use release coroutines with api version less than 1.3]
 suspend fun dummy() {}
 ^

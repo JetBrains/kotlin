@@ -33,6 +33,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         const val WARN = "warn"
         const val ERROR = "error"
         const val ENABLE = "enable"
+        const val DEFAULT = "default"
     }
 
     @get:Transient
@@ -108,7 +109,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         valueDescription = "{enable|warn|error}",
         description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"
     )
-    var coroutinesState: String? by FreezableVar(WARN)
+    var coroutinesState: String? by FreezableVar(DEFAULT)
 
     @Argument(
         value = "-Xnew-inference",
@@ -200,7 +201,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             when (coroutinesState) {
                 CommonCompilerArguments.ERROR -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED_WITH_ERROR)
                 CommonCompilerArguments.ENABLE -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED)
-                CommonCompilerArguments.WARN -> {
+                CommonCompilerArguments.WARN, CommonCompilerArguments.DEFAULT -> {
                 }
                 else -> {
                     val message = "Invalid value of -Xcoroutines (should be: enable, warn or error): " + coroutinesState
@@ -293,12 +294,23 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             )
         }
 
-        return LanguageVersionSettingsImpl(
+        val languageVersionSettings = LanguageVersionSettingsImpl(
             languageVersion,
             ApiVersion.createByLanguageVersion(apiVersion),
             configureAnalysisFlags(collector),
             configureLanguageFeatures(collector)
         )
+
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) {
+            if (coroutinesState != DEFAULT) {
+                collector.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    "-Xcoroutines has no effect: coroutines are enabled anyway in 1.3 and beyond"
+                )
+            }
+        }
+
+        return languageVersionSettings
     }
 
     private fun parseVersion(collector: MessageCollector, value: String?, versionOf: String): LanguageVersion? =
