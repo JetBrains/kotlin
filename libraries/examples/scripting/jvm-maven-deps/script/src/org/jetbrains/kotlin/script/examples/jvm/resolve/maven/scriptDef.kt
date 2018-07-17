@@ -12,20 +12,19 @@ import java.io.File
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.annotations.KotlinScriptFileExtension
-import kotlin.script.experimental.annotations.KotlinScriptProperties
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.misc.invoke
 
-@KotlinScript
-@KotlinScriptFileExtension("scriptwithdeps.kts")
-@KotlinScriptProperties(MyConfiguration::class)
+@KotlinScript(
+    extension = "scriptwithdeps.kts",
+    properties = MyScriptProperties::class
+)
 abstract class MyScriptWithMavenDeps {
 //    abstract fun body(vararg args: String): Int
 }
 
-object MyConfiguration : ScriptingProperties() {
+object MyScriptProperties : ScriptingProperties() {
     init {
         include(jvmJavaHomeScriptingProperties)
         scriptDefinition {

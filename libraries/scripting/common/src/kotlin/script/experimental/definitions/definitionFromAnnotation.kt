@@ -40,9 +40,10 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript annotation on the $baseClass")
 
     val propertiesData = hashMapOf<TypedKey<*>, Any?>(ScriptDefinitionProperties.baseClass to baseClassType)
-    baseClass.findAnnotation<KotlinScriptFileExtension>()?.let {
-        propertiesData[ScriptDefinitionProperties.fileExtension] = it.extension
-    }
+
+    propertiesData[ScriptDefinitionProperties.fileExtension] =
+            baseClass.findAnnotation<KotlinScriptFileExtension>()?.let { it.extension }
+            ?: mainAnnotation.extension
     propertiesData += ScriptDefinitionProperties.name to mainAnnotation.name
     baseClass.annotations.filterIsInstance(KotlinScriptPropertiesFromList::class.java).forEach { ann ->
         val params = try {
@@ -58,15 +59,18 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
             }
         }
     }
-    baseClass.annotations.filterIsInstance(KotlinScriptProperties::class.java).forEach { ann ->
-        val params = try {
-            ann.definitionProperties.objectInstance ?: ann.definitionProperties.createInstance()
-        } catch (e: Throwable) {
-            throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
-        }
-        propertiesData.putAll(params.data)
-        // TODO: chaining is lost here, fix it
+
+    fun scriptingPropsInstance(kclass: KClass<out ScriptingProperties>): ScriptingProperties = try {
+        kclass.objectInstance ?: kclass.createInstance()
+    } catch (e: Throwable) {
+        throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
     }
+
+    baseClass.annotations.filterIsInstance(KotlinScriptProperties::class.java).forEach { ann ->
+        propertiesData.putAll(scriptingPropsInstance(ann.definitionProperties).data)
+    }
+    // TODO: chaining is lost here and above, fix it
+    propertiesData.putAll(scriptingPropsInstance(mainAnnotation.properties).data)
     return ScriptingEnvironment.createOptimized(null, propertiesData)
 }
 

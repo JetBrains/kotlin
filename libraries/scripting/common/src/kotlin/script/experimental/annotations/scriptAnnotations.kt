@@ -18,7 +18,9 @@ import kotlin.script.experimental.api.ScriptingProperties
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class KotlinScript(
-    val name: String = "Kotlin script"
+    val name: String = "Kotlin script",
+    val extension: String = "kts",
+    val properties: KClass<out ScriptingProperties> = ScriptingProperties::class // object or class filled in 0-ary constructor
 )
 
 @Target(AnnotationTarget.CLASS)
