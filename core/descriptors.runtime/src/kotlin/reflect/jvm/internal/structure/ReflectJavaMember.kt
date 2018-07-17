@@ -46,9 +46,13 @@ abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOw
     ): List<JavaValueParameter> {
         val result = ArrayList<JavaValueParameter>(parameterTypes.size)
         val names = Java8ParameterNamesLoader.loadParameterNames(member)
+
+        // Skip synthetic parameters such as outer class instance
+        val shift = names?.size?.minus(parameterTypes.size) ?: 0
+
         for (i in parameterTypes.indices) {
             val type = ReflectJavaType.create(parameterTypes[i])
-            val name = names?.run { get(i) }
+            val name = names?.getOrNull(i + shift) ?: error("No parameter with index $i+$shift (name=$name type=$type) in $this")
             val isParamVararg = isVararg && i == parameterTypes.lastIndex
             result.add(ReflectJavaValueParameter(type, parameterAnnotations[i], name, isParamVararg))
         }

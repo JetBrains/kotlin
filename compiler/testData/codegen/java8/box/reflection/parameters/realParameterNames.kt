@@ -9,6 +9,10 @@ public class J {
     public void foo(int methodParam) {}
 
     public static void bar(J staticMethodParam) {}
+
+    class Inner {
+        public Inner(double innerParam, Object innerParam2) {}
+    }
 }
 
 // FILE: K.kt
@@ -19,6 +23,7 @@ fun box(): String {
     assertEquals(listOf("constructorParam"), ::J.parameters.map { it.name })
     assertEquals(listOf(null, "methodParam"), J::foo.parameters.map { it.name })
     assertEquals(listOf("staticMethodParam"), J::bar.parameters.map { it.name })
+    assertEquals(listOf(null, "innerParam", "innerParam2"), J::Inner.parameters.map { it.name })
 
     return "OK"
 }
