@@ -17,6 +17,8 @@ object ScriptCompileConfigurationProperties : PropertiesGroup {
     val sourceFragments by typedKey<List<ScriptSourceNamedFragment>>()
 }
 
+val ScriptingProperties.compilationConfiguration get() = ScriptCompileConfigurationProperties
+
 typealias ProcessedScriptData = ChainedPropertyBag
 
 object ProcessedScriptDataProperties : PropertiesGroup {

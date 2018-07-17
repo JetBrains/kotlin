@@ -25,6 +25,8 @@ object ScriptingEnvironmentProperties : PropertiesGroup {
     val getScriptingClass by typedKey<GetScriptingClass>()
 }
 
+val ScriptingProperties.scriptingEnvironment get() = ScriptDefinitionProperties
+
 interface GetScriptingClass {
     operator fun invoke(classType: KotlinType, contextClass: KClass<*>, environment: ScriptingEnvironment): KClass<*>
 }

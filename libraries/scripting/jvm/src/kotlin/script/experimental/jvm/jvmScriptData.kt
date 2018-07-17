@@ -10,11 +10,14 @@ package kotlin.script.experimental.jvm
 import java.io.File
 import kotlin.script.experimental.api.PropertiesGroup
 import kotlin.script.experimental.api.ScriptDependency
+import kotlin.script.experimental.api.ScriptingProperties
 import kotlin.script.experimental.util.typedKey
 
 object JvmScriptCompileConfigurationProperties : PropertiesGroup {
     val javaHomeDir by typedKey<File>()
 }
+
+val ScriptingProperties.jvmCompileConfiguration get() = JvmScriptCompileConfigurationProperties
 
 class JvmDependency(val classpath: List<File>) : ScriptDependency {
     constructor(vararg classpathEntries: File) : this(classpathEntries.asList())

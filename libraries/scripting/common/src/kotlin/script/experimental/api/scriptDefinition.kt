@@ -56,6 +56,7 @@ object ScriptDefinitionProperties : PropertiesGroup {
 
 // DSL --------------------
 
+val ScriptingProperties.scriptDefinition get() = ScriptDefinitionProperties
 
 @Suppress("MemberVisibilityCanBePrivate")
 class RefineConfigurationBuilder(props: ScriptingProperties) : PropertiesBuilder(props) {

@@ -28,7 +28,7 @@ abstract class MyScriptWithMavenDeps {
 object MyConfiguration : ScriptingProperties() {
     init {
         include(jvmJavaHomeScriptingProperties)
-        ScriptDefinitionProperties {
+        scriptDefinition {
             defaultImports<DependsOn>()
             defaultImports(Repository::class)
             jvmDependenciesFromCurrentContext(
