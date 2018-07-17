@@ -78,6 +78,15 @@
                      hasStaticDescription="true"
                      level="WARNING" />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.MavenCoroutinesDeprecationInspection"
+                     displayName="Maven dependency is incompatible with Kotlin 1.3+ and should be updated"
+                     groupPath="Kotlin,Migration"
+                     groupName="Maven"
+                     enabledByDefault="true"
+                     language="XML"
+                     hasStaticDescription="true"
+                     level="ERROR" />
+
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.maven.actions.MavenPluginSourcesMoveToBuild</className>
       <category>Kotlin</category>
