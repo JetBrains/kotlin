@@ -10,7 +10,7 @@ import kotlin.reflect.KType
 import kotlin.script.experimental.util.ChainedPropertyBag
 import kotlin.script.experimental.util.TypedKey
 
-interface PropertiesGroup 
+interface PropertiesGroup
 
 open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
 
@@ -25,10 +25,17 @@ open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
     internal fun makePropertyBag(): ChainedPropertyBag =
         ChainedPropertyBag.createOptimized(parentPropertiesBag ?: parentPropertiesBuilder?.makePropertyBag(), data)
 
-    // generic invoke for properties groups
+    // --------------------------
+    // DSL:
+
+    // generic invoke for properties groups, allowing to use syntax:
+    //   PropertiesGroup {
+    //     ...
+    //   }
+
     inline operator fun <T : PropertiesGroup> T.invoke(body: T.() -> Unit) = body()
 
-    // chaining
+    // chaining:
 
     private fun chain(propsBag: ChainedPropertyBag?, propsBuilder: ScriptingProperties?, replaceParent: Boolean) {
         assert(propsBag == null || propsBuilder == null)
@@ -46,7 +53,7 @@ open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
         chain(props, null, replaceParent)
     }
 
-    // inclusion
+    // inclusion:
 
     fun include(props: ScriptingProperties) {
         data.putAll(props.data)
@@ -56,11 +63,18 @@ open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
         data.putAll(props.data)
     }
 
-    // builders for known property types:
+    // builders for known property types, allowing to use syntax
+    //   propertyKey(value...)
+    // or
+    //   propertyKey<Type>()
+
+    // generic:
 
     inline operator fun <reified T> TypedKey<T>.invoke(v: T) {
         data[this] = v
     }
+
+    // for KotlinType:
 
     inline operator fun <reified K> TypedKey<KotlinType>.invoke() {
         data[this] = KotlinType(K::class)
@@ -78,38 +92,93 @@ open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
         data[this] = KotlinType(fqname)
     }
 
+    // for list of KotlinTypes
+
+    @JvmName("invoke_kotlintype_list_from_generic")
+    inline operator fun <reified K> TypedKey<in List<KotlinType>>.invoke() {
+        data.addToListProperty(this, KotlinType(K::class))
+    }
+
     operator fun TypedKey<List<KotlinType>>.invoke(vararg classes: KClass<*>) {
-        data[this] = classes.map { KotlinType(it) }
+        data.addToListProperty(this, classes.map { KotlinType(it) })
     }
 
     operator fun TypedKey<List<KotlinType>>.invoke(vararg types: KType) {
-        data[this] = types.map { KotlinType(it) }
+        data.addToListProperty(this, types.map { KotlinType(it) })
     }
 
     operator fun TypedKey<List<KotlinType>>.invoke(vararg fqnames: String) {
-        data[this] = fqnames.map { KotlinType(it) }
+        data.addToListProperty(this, fqnames.map { KotlinType(it) })
     }
 
+    // generic for list
+
     inline operator fun <reified E> TypedKey<List<E>>.invoke(vararg vs: E) {
-        data[this] = vs.toList()
+        data.addToListProperty(this, vs.toList())
     }
+
+    // for map of generic keys to KotlinTypes:
 
     @JvmName("invoke_kotlintype_map_from_kclass")
     inline operator fun <reified K> TypedKey<Map<K, KotlinType>>.invoke(vararg classes: Pair<K, KClass<*>>) {
-        data[this] = HashMap<K, KotlinType>().also { it.putAll(classes.asSequence().map { (k, v) -> k to KotlinType(v) }) }
+        data.addToMapProperty(this, classes.map { (k, v) -> k to KotlinType(v) })
     }
 
     @JvmName("invoke_kotlintype_map_from_ktype")
     inline operator fun <reified K> TypedKey<Map<K, KotlinType>>.invoke(vararg types: Pair<K, KType>) {
-        data[this] = HashMap<K, KotlinType>().also { it.putAll(types.asSequence().map { (k, v) -> k to KotlinType(v) }) }
+        data.addToMapProperty(this, types.map { (k, v) -> k to KotlinType(v) })
     }
 
     @JvmName("invoke_kotlintype_map_from_fqname")
     inline operator fun <reified K> TypedKey<Map<K, KotlinType>>.invoke(vararg fqnames: Pair<K, String>) {
-        data[this] = HashMap<K, KotlinType>().also { it.putAll(fqnames.asSequence().map { (k, v) -> k to KotlinType(v) }) }
+        data.addToMapProperty(this, fqnames.map { (k, v) -> k to KotlinType(v) })
     }
 
+    // generic for maps:
+
     inline operator fun <reified K, reified V> TypedKey<Map<K, V>>.invoke(vararg vs: Pair<K, V>) {
-        data[this] = hashMapOf(*vs)
+        data.addToMapProperty(this, vs.asIterable())
     }
+
+    // for strings and list of strings that could be converted from other types
+
+    @JvmName("invoke_string_fqn_from_generic")
+    inline operator fun <reified K> TypedKey<String>.invoke() {
+        data[this] = K::class.qualifiedName!!
+    }
+
+    @JvmName("invoke_string_fqn_from_reflected_class")
+    operator fun TypedKey<String>.invoke(kclass: KClass<*>) {
+        data[this] = kclass.qualifiedName!!
+    }
+
+    @JvmName("invoke_string_list_fqn_from_generic")
+    inline operator fun <reified K> TypedKey<in List<String>>.invoke() {
+        data.addToListProperty(this, K::class.qualifiedName!!)
+    }
+
+    @JvmName("invoke_string_list_fqn_from_reflected_class")
+    operator fun TypedKey<in List<String>>.invoke(vararg kclasses: KClass<*>) {
+        data.addToListProperty(this, kclasses.map { it.qualifiedName!! })
+    }
+}
+
+fun <V> HashMap<TypedKey<*>, Any?>.addToListProperty(key: TypedKey<in List<V>>, values: Iterable<V>) {
+    val newValues = get(key)?.let { (it as List<V>) + values } ?: values.toList()
+    put(key, newValues)
+}
+
+fun <V> HashMap<TypedKey<*>, Any?>.addToListProperty(key: TypedKey<in List<V>>, vararg values: V) {
+    val newValues = get(key)?.let { (it as List<V>) + values } ?: values.toList()
+    put(key, newValues)
+}
+
+fun <K, V> HashMap<TypedKey<*>, Any?>.addToMapProperty(key: TypedKey<in Map<K, V>>, values: Map<K, V>) {
+    val newValues = get(key)?.let { (it as Map<K, V>) + values } ?: values
+    put(key, newValues)
+}
+
+fun <K, V> HashMap<TypedKey<*>, Any?>.addToMapProperty(key: TypedKey<in Map<K, V>>, values: Iterable<Pair<K, V>>) {
+    val newValues = get(key)?.let { (it as Map<K, V>) + values } ?: values
+    put(key, newValues)
 }

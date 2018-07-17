@@ -32,7 +32,8 @@ object MyConfiguration : ScriptingProperties() {
     init {
         include(jvmJavaHomeScriptingProperties)
         ScriptDefinitionProperties {
-            defaultImports(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!)
+            defaultImports<DependsOn>()
+            defaultImports<Repository>()
             dependencies(
                 JvmDependency(
                     scriptCompilationClasspathFromContext(
