@@ -28,15 +28,12 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.types.FlexibleType
-import org.jetbrains.kotlin.utils.JsMetadataVersion
 
 class KotlinJavascriptSerializerExtension(
     private val fileRegistry: KotlinFileRegistry,
-    private val languageVersionSettings: LanguageVersionSettings
-) : KotlinSerializerExtensionBase(JsSerializerProtocol) {
+    private val languageVersionSettings: LanguageVersionSettings,
     override val metadataVersion: BinaryVersion
-        get() = JsMetadataVersion.INSTANCE
-
+) : KotlinSerializerExtensionBase(JsSerializerProtocol) {
     override val stringTable = JavaScriptStringTable()
 
     override fun serializeFlexibleType(flexibleType: FlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {

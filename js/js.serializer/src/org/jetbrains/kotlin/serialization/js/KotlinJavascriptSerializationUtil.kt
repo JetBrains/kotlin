@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
@@ -70,26 +71,32 @@ object KotlinJavascriptSerializationUtil {
     fun serializeMetadata(
         bindingContext: BindingContext,
         jsDescriptor: JsModuleDescriptor<ModuleDescriptor>,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        metadataVersion: JsMetadataVersion
     ): SerializedMetadata {
         val serializedFragments = HashMap<FqName, ProtoBuf.PackageFragment>()
         val module = jsDescriptor.data
 
         for (fqName in getPackagesFqNames(module).sortedBy { it.asString() }) {
-            val fragment = serializePackageFragment(bindingContext, module, fqName, languageVersionSettings)
+            val fragment = serializeDescriptors(
+                bindingContext, module,
+                module.getPackage(fqName).memberScope.getContributedDescriptors(),
+                fqName, languageVersionSettings, metadataVersion
+            )
 
             if (!fragment.isEmpty()) {
                 serializedFragments[fqName] = fragment
             }
         }
 
-        return SerializedMetadata(serializedFragments, jsDescriptor, languageVersionSettings)
+        return SerializedMetadata(serializedFragments, jsDescriptor, languageVersionSettings, metadataVersion)
     }
 
     class SerializedMetadata(
         private val serializedFragments: Map<FqName, ProtoBuf.PackageFragment>,
         private val jsDescriptor: JsModuleDescriptor<ModuleDescriptor>,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val metadataVersion: JsMetadataVersion
     ) {
         class SerializedPackage(val fqName: FqName, val bytes: ByteArray)
 
@@ -99,7 +106,7 @@ object KotlinJavascriptSerializationUtil {
             for ((fqName, part) in serializedFragments) {
                 val stream = ByteArrayOutputStream()
                 with(DataOutputStream(stream)) {
-                    val version = JsMetadataVersion.INSTANCE.toArray()
+                    val version = metadataVersion.toArray()
                     writeInt(version.size)
                     version.forEach(this::writeInt)
                 }
@@ -114,7 +121,7 @@ object KotlinJavascriptSerializationUtil {
         }
 
         fun asString(): String =
-            KotlinJavascriptMetadataUtils.formatMetadataAsString(jsDescriptor.name, asByteArray())
+            KotlinJavascriptMetadataUtils.formatMetadataAsString(jsDescriptor.name, asByteArray(), metadataVersion)
 
         private fun asByteArray(): ByteArray =
             ByteArrayOutputStream().apply {
@@ -153,28 +160,13 @@ object KotlinJavascriptSerializationUtil {
         }
     }
 
-    private fun serializePackageFragment(
-        bindingContext: BindingContext,
-        module: ModuleDescriptor,
-        fqName: FqName,
-        languageVersionSettings: LanguageVersionSettings
-    ): ProtoBuf.PackageFragment {
-        val packageView = module.getPackage(fqName)
-        return serializeDescriptors(
-            bindingContext,
-            module,
-            packageView.memberScope.getContributedDescriptors(),
-            fqName,
-            languageVersionSettings
-        )
-    }
-
     fun serializeDescriptors(
         bindingContext: BindingContext,
         module: ModuleDescriptor,
         scope: Collection<DeclarationDescriptor>,
         fqName: FqName,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        metadataVersion: BinaryVersion
     ): ProtoBuf.PackageFragment {
         val builder = ProtoBuf.PackageFragment.newBuilder()
 
@@ -190,7 +182,7 @@ object KotlinJavascriptSerializationUtil {
         }
 
         val fileRegistry = KotlinFileRegistry()
-        val extension = KotlinJavascriptSerializerExtension(fileRegistry, languageVersionSettings)
+        val extension = KotlinJavascriptSerializerExtension(fileRegistry, languageVersionSettings, metadataVersion)
 
         val classDescriptors = scope.filterIsInstance<ClassDescriptor>().sortedBy { it.fqNameSafe.asString() }
 

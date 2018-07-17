@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -82,7 +83,8 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
                     data = analysisResult.moduleDescriptor
             )
             val serializedMetadata = KotlinJavascriptSerializationUtil.serializeMetadata(
-                    analysisResult.bindingContext, description, configuration.languageVersionSettings
+                    analysisResult.bindingContext, description, configuration.languageVersionSettings,
+                    configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? JsMetadataVersion ?: JsMetadataVersion.INSTANCE
             )
             FileUtil.writeToFile(metaFile, serializedMetadata.asString())
         }

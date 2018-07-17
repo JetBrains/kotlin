@@ -174,6 +174,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var progressiveMode by FreezableVar(false)
 
+    @Argument(
+        value = "-Xmetadata-version",
+        description = "Change metadata version of the generated binary files"
+    )
+    var metadataVersion: String? by FreezableVar(null)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)

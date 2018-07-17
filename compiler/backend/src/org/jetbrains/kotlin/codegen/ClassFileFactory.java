@@ -33,10 +33,8 @@ import org.jetbrains.kotlin.descriptors.DescriptorUtilKt;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.kotlin.ModuleMappingUtilKt;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMappingKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts;
@@ -125,7 +123,7 @@ public class ClassFileFactory implements OutputFileCollection {
         generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
             @Override
             public byte[] asBytes(ClassBuilderFactory factory) {
-                return ModuleMappingKt.serializeToByteArray(moduleProto, JvmMetadataVersion.INSTANCE.toArray());
+                return ModuleMappingKt.serializeToByteArray(moduleProto, state.getMetadataVersion().toArray());
             }
 
             @Override

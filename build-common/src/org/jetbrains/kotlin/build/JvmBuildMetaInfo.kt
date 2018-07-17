@@ -53,25 +53,29 @@ data class JvmBuildMetaInfo(
             multiplatformEnable: Boolean,
             ownVersion: Int,
             coroutinesVersion: Int,
-            multiplatformVersion: Int
-        ) = JvmBuildMetaInfo(
-            isEAP = isEAP,
-            compilerBuildVersion = compilerBuildVersion,
-            languageVersionString = languageVersionString,
-            apiVersionString = apiVersionString,
-            coroutinesEnable = coroutinesEnable,
-            coroutinesWarn = coroutinesWarn,
-            coroutinesError = coroutinesError,
-            multiplatformEnable = multiplatformEnable,
-            metadataVersionMajor = JvmMetadataVersion.INSTANCE.major,
-            metadataVersionMinor = JvmMetadataVersion.INSTANCE.minor,
-            metadataVersionPatch = JvmMetadataVersion.INSTANCE.patch,
-            bytecodeVersionMajor = JvmBytecodeBinaryVersion.INSTANCE.major,
-            bytecodeVersionMinor = JvmBytecodeBinaryVersion.INSTANCE.minor,
-            bytecodeVersionPatch = JvmBytecodeBinaryVersion.INSTANCE.patch,
-            ownVersion = ownVersion,
-            coroutinesVersion = coroutinesVersion,
-            multiplatformVersion = multiplatformVersion
-        )
+            multiplatformVersion: Int,
+            metadataVersionArray: IntArray?
+        ): JvmBuildMetaInfo {
+            val metadataVersion = metadataVersionArray?.let(::JvmMetadataVersion) ?: JvmMetadataVersion.INSTANCE
+            return JvmBuildMetaInfo(
+                isEAP = isEAP,
+                compilerBuildVersion = compilerBuildVersion,
+                languageVersionString = languageVersionString,
+                apiVersionString = apiVersionString,
+                coroutinesEnable = coroutinesEnable,
+                coroutinesWarn = coroutinesWarn,
+                coroutinesError = coroutinesError,
+                multiplatformEnable = multiplatformEnable,
+                metadataVersionMajor = metadataVersion.major,
+                metadataVersionMinor = metadataVersion.minor,
+                metadataVersionPatch = metadataVersion.patch,
+                bytecodeVersionMajor = JvmBytecodeBinaryVersion.INSTANCE.major,
+                bytecodeVersionMinor = JvmBytecodeBinaryVersion.INSTANCE.minor,
+                bytecodeVersionPatch = JvmBytecodeBinaryVersion.INSTANCE.patch,
+                ownVersion = ownVersion,
+                coroutinesVersion = coroutinesVersion,
+                multiplatformVersion = multiplatformVersion
+            )
+        }
     }
 }

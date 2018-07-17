@@ -276,6 +276,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/internalArgumentOverrideExtraArgument.args");
         }
 
+        @TestMetadata("invalidMetadataVersion.args")
+        public void testInvalidMetadataVersion() throws Exception {
+            runTest("compiler/testData/cli/jvm/invalidMetadataVersion.args");
+        }
+
         @TestMetadata("javaSrcWrongPackage.args")
         public void testJavaSrcWrongPackage() throws Exception {
             runTest("compiler/testData/cli/jvm/javaSrcWrongPackage.args");
