@@ -3,15 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-/*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
- */
-
-/*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
- */
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
@@ -82,4 +73,25 @@ class KotlinJsCompilationFactory(
 
     override fun create(name: String): KotlinJsCompilation =
             KotlinJsCompilation(target, name, target.createCompilationOutput(name))
+}
+
+class KotlinNativeCompilationFactory(
+    val project: Project,
+    val target: KotlinNativeTarget
+) : KotlinCompilationFactory<KotlinNativeCompilation> {
+
+    override val itemClass: Class<KotlinNativeCompilation>
+        get() = KotlinNativeCompilation::class.java
+
+    override fun create(name: String): KotlinNativeCompilation =
+        KotlinNativeCompilation(target, name, target.createCompilationOutput(name)).apply {
+            if (name == KotlinCompilation.TEST_COMPILATION_NAME) {
+                outputKinds = mutableListOf(NativeOutputKind.EXECUTABLE)
+                buildTypes = mutableListOf(NativeBuildType.DEBUG)
+                isTestCompilation = true
+            } else {
+                buildTypes = mutableListOf(NativeBuildType.DEBUG, NativeBuildType.RELEASE)
+            }
+        }
+
 }

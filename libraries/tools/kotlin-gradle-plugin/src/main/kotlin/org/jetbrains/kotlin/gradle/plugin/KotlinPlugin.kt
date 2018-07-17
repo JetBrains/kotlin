@@ -432,7 +432,7 @@ internal abstract class AbstractKotlinPlugin(
             // Setup the consuming configurations:
             project.dependencies.attributesSchema.attribute(KotlinPlatformType.attribute)
             kotlinTarget.compilations.all { compilation ->
-                KotlinTargetConfigurator.defineConfigurationsForCompilation(compilation, kotlinTarget, project.configurations)
+                AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation, kotlinTarget, project.configurations)
             }
 
             // Setup the published configurations:

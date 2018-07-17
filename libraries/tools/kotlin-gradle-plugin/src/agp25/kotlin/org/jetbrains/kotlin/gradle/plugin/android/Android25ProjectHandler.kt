@@ -102,7 +102,7 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
     override fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmAndroidCompilation) {
         val project = compilation.target.project
 
-        KotlinTargetConfigurator.defineConfigurationsForCompilation(compilation, compilation.target, project.configurations)
+        AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation, compilation.target, project.configurations)
 
         compilation.compileDependencyFiles = variant.compileConfiguration.apply {
             usesPlatformOf(compilation.target)
