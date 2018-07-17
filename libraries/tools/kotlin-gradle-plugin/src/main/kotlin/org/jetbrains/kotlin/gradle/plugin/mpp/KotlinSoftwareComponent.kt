@@ -33,6 +33,12 @@ class KotlinSoftwareComponent(
     }
 }
 
+// At the moment all KN artifacts have JAVA_API usage.
+// TODO: Replace it with a specific usage
+object NativeUsage {
+    const val KOTLIN_KLIB = "kotlin-klib"
+}
+
 internal class KotlinPlatformUsageContext(
     val project: Project,
     val kotlinTarget: KotlinTarget,

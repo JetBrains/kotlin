@@ -3,16 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-/*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
- */
-
-/*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
- */
-
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
@@ -59,7 +49,7 @@ internal class DefaultKotlinDependencyHandler(
 }
 
 abstract class AbstractKotlinCompilation(
-    final override val target: KotlinTarget,
+    override val target: KotlinTarget,
     override val compilationName: String
 ) : KotlinCompilation, HasKotlinDependencies {
     private val attributeContainer = HierarchyAttributeContainer(target.attributes)
@@ -243,3 +233,72 @@ class KotlinCommonCompilation(
     name: String,
     override val output: SourceSetOutput
 ) : AbstractKotlinCompilation(target, name)
+
+class KotlinNativeCompilation(
+    override val target: KotlinNativeTarget,
+    name: String,
+    override val output: SourceSetOutput
+) : AbstractKotlinCompilation(target, name) {
+
+    val linkAllTaskName: String
+        get() = lowerCamelCaseName(
+            "link",
+            compilationName.takeIf { it != "main" }.orEmpty(),
+            target.disambiguationClassifier
+        )
+
+    var isTestCompilation = false
+
+    // Native-specific DSL.
+    val extraOpts = mutableListOf<String>()
+
+    fun extraOpts(vararg values: Any) = extraOpts(values.toList())
+    fun extraOpts(values: List<Any>) {
+        extraOpts.addAll(values.map { it.toString() })
+    }
+
+    var buildTypes = mutableListOf<NativeBuildType>()
+    var outputKinds = mutableListOf<NativeOutputKind>()
+
+    // Naming
+
+    override val compileDependencyConfigurationName: String
+        get() = lowerCamelCaseName(
+            target.disambiguationClassifier,
+            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
+            "compileKlibraries"
+        )
+
+    override val compileAllTaskName: String
+        get() = lowerCamelCaseName(
+            target.disambiguationClassifier,
+            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
+            "klibrary"
+        )
+
+
+    // TODO: Integrate with Big Kotlin tasks and runners and remove this method.
+    override fun source(sourceSet: KotlinSourceSet) {
+        if (kotlinSourceSets.add(sourceSet)) {
+            with(target.project) {
+                addExtendsFromRelation(apiConfigurationName, sourceSet.apiConfigurationName, forced = false)
+                addExtendsFromRelation(implementationConfigurationName, sourceSet.implementationConfigurationName, forced = false)
+
+                addExtendsFromRelation(compileOnlyConfigurationName, sourceSet.compileOnlyConfigurationName)
+                if (this is KotlinCompilationToRunnableFiles) {
+                    addExtendsFromRelation(runtimeOnlyConfigurationName, sourceSet.runtimeOnlyConfigurationName)
+                }
+            }
+        }
+    }
+
+    // TODO: Can we do it better?
+    companion object {
+        val DEBUG = NativeBuildType.DEBUG
+        val RELEASE = NativeBuildType.RELEASE
+
+        val EXECUTABLE = NativeOutputKind.EXECUTABLE
+        val FRAMEWORK = NativeOutputKind.FRAMEWORK
+    }
+
+}
