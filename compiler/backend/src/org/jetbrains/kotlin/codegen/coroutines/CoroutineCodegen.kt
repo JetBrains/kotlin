@@ -224,10 +224,19 @@ class CoroutineCodegenForLambda private constructor(
         if (allFunctionParameters().size <= 1) {
             val delegate = typeMapper.mapSignatureSkipGeneric(createCoroutineDescriptor).asmMethod
 
-            val bridgeParameters = (1 until delegate.argumentTypes.size).map { AsmTypes.OBJECT_TYPE } + delegate.argumentTypes.last()
-            val bridge = Method(delegate.name, delegate.returnType, bridgeParameters.toTypedArray())
+            val bridgeParameterAsmTypes =
+                List(delegate.argumentTypes.size - 1) { AsmTypes.OBJECT_TYPE } + delegate.argumentTypes.last()
 
-            generateBridge(bridge, createCoroutineDescriptor.returnType, delegate, createCoroutineDescriptor.returnType, false)
+            val bridgeParameterKotlinTypes =
+                List(delegate.argumentTypes.size - 1) { builtIns.nullableAnyType } + createCoroutineDescriptor.valueParameters.last().type
+
+            val bridge = Method(delegate.name, delegate.returnType, bridgeParameterAsmTypes.toTypedArray())
+
+            generateBridge(
+                bridge, bridgeParameterKotlinTypes, createCoroutineDescriptor.returnType,
+                delegate, createCoroutineDescriptor.returnType,
+                false
+            )
         }
     }
 

@@ -195,8 +195,11 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             erasedInterfaceFunction = samType.getOriginalAbstractMethod();
         }
 
+        List<KotlinType> bridgeParameterKotlinTypes = CollectionsKt.map(erasedInterfaceFunction.getValueParameters(), ValueDescriptor::getType);
+
         generateBridge(
                 typeMapper.mapAsmMethod(erasedInterfaceFunction),
+                bridgeParameterKotlinTypes,
                 erasedInterfaceFunction.getReturnType(),
                 typeMapper.mapAsmMethod(funDescriptor),
                 funDescriptor.getReturnType(),
@@ -269,6 +272,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     protected void generateBridge(
             @NotNull Method bridge,
+            @NotNull List<KotlinType> bridgeParameterKotlinTypes,
             @Nullable KotlinType bridgeReturnType,
             @NotNull Method delegate,
             @Nullable KotlinType delegateReturnType,
@@ -287,12 +291,15 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         InstructionAdapter iv = new InstructionAdapter(mv);
         MemberCodegen.markLineNumberForDescriptor(DescriptorUtils.getParentOfType(funDescriptor, ClassDescriptor.class), iv);
 
-        Type[] myParameterTypes = bridge.getArgumentTypes();
+        Type[] bridgeParameterTypes = bridge.getArgumentTypes();
         if (isVarargInvoke) {
-            assert myParameterTypes.length == 1 && myParameterTypes[0].equals(AsmUtil.getArrayType(OBJECT_TYPE)) :
+            assert bridgeParameterTypes.length == 1 && bridgeParameterTypes[0].equals(AsmUtil.getArrayType(OBJECT_TYPE)) :
                     "Vararg invoke must have one parameter of type [Ljava/lang/Object;: " + bridge;
             generateVarargInvokeArityAssert(iv, delegate.getArgumentTypes().length);
         }
+
+        assert bridgeParameterTypes.length == bridgeParameterKotlinTypes.size() :
+                "Asm parameter types should be the same length as Kotlin parameter types";
 
         iv.load(0, asmType);
 
@@ -308,12 +315,14 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             StackValue value;
             if (isVarargInvoke) {
                 value = StackValue.arrayElement(
-                        OBJECT_TYPE, null, StackValue.local(1, myParameterTypes[0], parameterType), StackValue.constant(i)
+                        OBJECT_TYPE, null,
+                        StackValue.local(1, bridgeParameterTypes[0], bridgeParameterKotlinTypes.get(0)),
+                        StackValue.constant(i)
                 );
             }
             else {
-                Type type = myParameterTypes[i];
-                value = StackValue.local(slot, type, parameterType);
+                Type type = bridgeParameterTypes[i];
+                value = StackValue.local(slot, type, bridgeParameterKotlinTypes.get(i));
                 slot += type.getSize();
             }
             value.put(typeMapper.mapType(calleeParameter), parameterType, iv);
