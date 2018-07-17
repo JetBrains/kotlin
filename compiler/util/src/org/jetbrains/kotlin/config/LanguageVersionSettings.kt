@@ -82,7 +82,7 @@ enum class LanguageFeature(
     FunctionTypesWithBigArity(KOTLIN_1_3, sinceApiVersion = ApiVersion.KOTLIN_1_3),
 
     StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
-    ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED),
+    ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED, kind = BUG_FIX),
 
     // Experimental features
 
