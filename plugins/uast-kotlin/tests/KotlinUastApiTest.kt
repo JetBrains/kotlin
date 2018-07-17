@@ -384,6 +384,29 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         }
     }
 
+    @Test
+    fun testLambdaParamCall() {
+        doTest("Lambdas") { _, file ->
+            val lambdaCall = file.findElementByTextFromPsi<UCallExpression>("selectItemFunction()")
+            assertEquals(
+                "UIdentifier (Identifier (selectItemFunction))",
+                lambdaCall.methodIdentifier?.asLogString()
+            )
+            assertEquals(
+                "selectItemFunction",
+                lambdaCall.methodIdentifier?.name
+            )
+            assertEquals(
+                "invoke",
+                lambdaCall.methodName
+            )
+            val receiver = lambdaCall.receiver ?: kotlin.test.fail("receiver expected")
+            assertEquals("UReferenceExpression", receiver.asLogString())
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            assertEquals("UParameter (name = selectItemFunction)", uParameter.asLogString())
+        }
+    }
+
 }
 
 fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T =
