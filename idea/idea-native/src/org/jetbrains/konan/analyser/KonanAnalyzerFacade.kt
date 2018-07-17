@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
@@ -46,8 +45,7 @@ class KonanAnalyzerFacade : ResolverForModuleFactory() {
     targetEnvironment: TargetEnvironment,
     resolverForProject: ResolverForProject<M>,
     languageVersionSettings: LanguageVersionSettings,
-    targetPlatformVersion: TargetPlatformVersion,
-    packagePartProvider: PackagePartProvider): ResolverForModule {
+    targetPlatformVersion: TargetPlatformVersion): ResolverForModule {
 
     val (syntheticFiles, moduleContentScope) = destructModuleContent(moduleContent)
     val project = getProject(moduleContext)
