@@ -29,8 +29,7 @@ class CoroutinesTest {
                 val ref = switcher::run // callable reference
                 ref.startCoroutine(Continuation(contextDispatcher) { result ->
                     contextDispatcher.assertThread()
-                    // todo: below does not work due to a bug in inline classes
-//                    assertEquals(42, result.getOrThrow())
+                    assertEquals(42, result.getOrThrow())
                     done.release()
                 })
                 done.acquire()

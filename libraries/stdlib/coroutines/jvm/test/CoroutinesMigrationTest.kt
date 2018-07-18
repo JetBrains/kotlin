@@ -109,8 +109,7 @@ class CoroutinesMigrationTest {
             }
             testCode.startCoroutine(Continuation(dispatcher) { result ->
                 dispatcher.assertThread()
-                // todo: below does not work due to a bug in inline classes
-//                    assertEquals("DONE", result.getOrThrow())
+                assertEquals("DONE", result.getOrThrow())
                 semaphore.release()
             })
             semaphore.acquire()
