@@ -70,6 +70,14 @@ compileCoroutinesKotlinCommon {
     }
 }
 
+compileTestKotlinCommon {
+    kotlinOptions {
+        freeCompilerArgs += [
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+        ]
+    }
+}
+
 kotlin.experimental.coroutines 'enable'
 
 jar {
