@@ -16,8 +16,10 @@ annotation class E2
 
 @Experimental(Experimental.Level.WARNING)
 <!EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET!>@Target(EXPRESSION)<!>
+@Retention(AnnotationRetention.SOURCE)
 annotation class E3
 
 @Experimental(Experimental.Level.WARNING)
 <!EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET!>@Target(FILE, EXPRESSION)<!>
+@Retention(AnnotationRetention.SOURCE)
 annotation class E4
