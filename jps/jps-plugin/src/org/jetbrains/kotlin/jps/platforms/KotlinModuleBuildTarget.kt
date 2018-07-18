@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.ChangesCollector
 import org.jetbrains.kotlin.incremental.ExpectActualTrackerImpl
+import org.jetbrains.kotlin.incremental.LookupTrackerImpl
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
@@ -52,6 +53,8 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo>(
     val context: CompileContext,
     val jpsModuleBuildTarget: ModuleBuildTarget
 ) {
+    abstract val isIncrementalCompilationEnabled: Boolean
+
     val module: JpsModule
         get() = jpsModuleBuildTarget.module
 
@@ -241,8 +244,10 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo>(
         // Should not be cached since may be vary in different rounds
 
         val jpsModuleTarget = target.jpsModuleBuildTarget
-        return if (IncrementalCompilation.isEnabled()) dirtyFilesHolder.getDirtyFiles(jpsModuleTarget)
-        else target.sourceFiles
+        return when {
+            isIncrementalCompilationEnabled -> dirtyFilesHolder.getDirtyFiles(jpsModuleTarget)
+            else -> target.sourceFiles
+        }
     }
 
     protected fun checkShouldCompileAndLog(dirtyFilesHolder: KotlinDirtySourceFilesHolder, moduleSources: Collection<File>) =
@@ -278,7 +283,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo>(
     fun saveVersions(context: CompileContext, chunk: ModuleChunk, commonArguments: CommonCompilerArguments) {
         val dataManager = context.projectDescriptor.dataManager
         val targets = chunk.targets
-        val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
+        val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths, isIncrementalCompilationEnabled)
         cacheVersionsProvider.allVersions(targets).forEach { it.saveIfNeeded() }
 
         val buildMetaInfo = buildMetaInfoFactory.create(commonArguments)
