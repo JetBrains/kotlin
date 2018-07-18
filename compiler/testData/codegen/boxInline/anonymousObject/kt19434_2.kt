@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: NATIVE
 // FILE: 1.kt
 //WITH_RUNTIME
 package test

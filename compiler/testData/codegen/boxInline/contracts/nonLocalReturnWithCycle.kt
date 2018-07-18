@@ -1,5 +1,6 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect +ReadDeserializedContracts
 // IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // FILE: 1.kt
 package test
