@@ -428,11 +428,15 @@ abstract class AbstractIncrementalJpsTest(
 
             moduleNames = nameToModule.keys
         }
-        AbstractKotlinJpsBuildTestCase.addKotlinStdlibDependency(myProject)
-        AbstractKotlinJpsBuildTestCase.addKotlinTestDependency(myProject)
+
+        configureDependencies()
         return moduleNames
     }
 
+    protected open fun configureDependencies() {
+        AbstractKotlinJpsBuildTestCase.addKotlinStdlibDependency(myProject)
+        AbstractKotlinJpsBuildTestCase.addKotlinTestDependency(myProject)
+    }
 
     protected open fun preProcessSources(srcDir: File) {
     }
