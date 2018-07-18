@@ -261,6 +261,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/internalArgMissingModificator.args");
         }
 
+        @TestMetadata("internalArgNoWarningForEnablingBugfix.args")
+        public void testInternalArgNoWarningForEnablingBugfix() throws Exception {
+            runTest("compiler/testData/cli/jvm/internalArgNoWarningForEnablingBugfix.args");
+        }
+
         @TestMetadata("internalArgUnrecognizedFeature.args")
         public void testInternalArgUnrecognizedFeature() throws Exception {
             runTest("compiler/testData/cli/jvm/internalArgUnrecognizedFeature.args");

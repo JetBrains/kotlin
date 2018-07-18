@@ -245,11 +245,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(collector: MessageCollector) {
-        val languageSettingsParser = LanguageSettingsParser()
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
 
-        for (argument in internalArguments) {
-            val (feature, state) = languageSettingsParser.parseInternalArgument(argument, collector) ?: continue
+        for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
                 featuresThatForcePreReleaseBinaries += feature
