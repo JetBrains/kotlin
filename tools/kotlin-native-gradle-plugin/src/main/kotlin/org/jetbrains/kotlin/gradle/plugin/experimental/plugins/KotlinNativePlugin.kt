@@ -112,22 +112,25 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
                                 objects
                         )
 
-                        val binary = component.addBinary(kind, variantIdentity)
+                        if (hostManager.isEnabled(target)) {
+                            val binary = component.addBinary(kind, variantIdentity)
 
-                        if (kind.publishable) {
-                            if (hostManager.isEnabled(target)) {
+                            if (kind == developmentKind &&
+                                buildType == KotlinNativeBuildType.DEBUG &&
+                                target == developmentTarget) {
+                                component.developmentBinary.set(binary)
+                            }
+
+                            if (kind.publishable) {
                                 component.mainPublication.variants.add(binary)
-                            } else {
+                            }
+
+                        } else {
+                            if (kind.publishable) {
                                 // Known but not buildable.
                                 // It allows us to publish different parts of a multitarget library from differnt hosts.
                                 component.mainPublication.variants.add(variantIdentity)
                             }
-                        }
-
-                        if (kind == developmentKind &&
-                            buildType == KotlinNativeBuildType.DEBUG &&
-                            target == developmentTarget) {
-                            component.developmentBinary.set(binary)
                         }
                     }
                 }
