@@ -138,6 +138,11 @@ public inline class UShort internal constructor(private val data: Short) : Compa
 
     public override fun toString(): String = toInt().toString()
 
+    public override fun hashCode(): Int = toInt()
+
+    public override fun equals(other: Any?): Boolean =
+        other is UShort && this.data == other.data
+
 }
 
 @SinceKotlin("1.3")
