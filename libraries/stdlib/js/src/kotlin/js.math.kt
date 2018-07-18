@@ -12,6 +12,7 @@ package kotlin.js
 public external object Math {
     @Deprecated("Use kotlin.math.PI instead.", ReplaceWith("PI", "kotlin.math.PI"))
     public val PI: Double
+    @Deprecated("Use Random.nextDouble instead", ReplaceWith("kotlin.random.Random.nextDouble()", "kotlin.random.Random"))
     public fun random(): Double
     @Deprecated("Use kotlin.math.abs instead.", ReplaceWith("abs(value)", "kotlin.math.abs"))
     public fun abs(value: Double): Double
