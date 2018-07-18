@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
@@ -469,7 +470,7 @@ class CompileServiceImpl(
         }
 
         val workingDir = incrementalCompilationOptions.workingDir
-        val versions = commonCacheVersions(workingDir) +
+        val versions = commonCacheVersions(workingDir, enabled = true) +
                        customCacheVersion(incrementalCompilationOptions.customCacheVersion,
                                           incrementalCompilationOptions.customCacheVersionFileName,
                                           workingDir,
@@ -519,7 +520,7 @@ class CompileServiceImpl(
         }
 
         val workingDir = incrementalCompilationOptions.workingDir
-        val versions = commonCacheVersions(workingDir) +
+        val versions = commonCacheVersions(workingDir, enabled = true) +
                        customCacheVersion(incrementalCompilationOptions.customCacheVersion,
                                           incrementalCompilationOptions.customCacheVersionFileName,
                                           workingDir,

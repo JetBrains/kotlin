@@ -40,7 +40,7 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
 
     override fun setUp() {
         super.setUp()
-        isICEnabledBackup = IncrementalCompilation.isEnabled()
+        isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
         IncrementalCompilation.setIsEnabled(true)
     }
 
@@ -89,7 +89,7 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
         val targets = projectDescriptor.allModuleTargets
         val dataManager = projectDescriptor.dataManager
         val paths = dataManager.dataPaths
-        val versions = CacheVersionProvider(paths)
+        val versions = CacheVersionProvider(paths, isIncrementalCompilationEnabled = true)
 
         dumpCachesForTarget(p, paths, KotlinDataContainerTarget, versions.dataContainerVersion().formatVersionFile)
 
