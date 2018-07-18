@@ -223,4 +223,12 @@ compileUnsignedKotlin {
     }
 }
 
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs += [
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+        ]
+    }
+}
+
 kotlin.experimental.coroutines 'enable'

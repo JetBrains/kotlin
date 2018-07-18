@@ -181,7 +181,8 @@ compileTestKotlin2Js {
     kotlinOptions {
         moduleKind = "umd"
         freeCompilerArgs += [
-            "-XXLanguage:-ReleaseCoroutines"
+            "-XXLanguage:-ReleaseCoroutines",
+            "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
         ]
     }
 }
