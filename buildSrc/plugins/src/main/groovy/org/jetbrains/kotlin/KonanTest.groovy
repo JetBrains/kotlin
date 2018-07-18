@@ -20,10 +20,9 @@ import groovy.json.JsonOutput
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
-import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.properties.*
 
 import javax.inject.Inject
+import java.nio.file.Paths
 import java.util.regex.Pattern
 
 abstract class KonanTest extends JavaExec {
@@ -119,6 +118,7 @@ abstract class KonanTest extends JavaExec {
             if (enableKonanAssertions) {
                 args "-ea"
             }
+            println(args)
             standardOutput = log
             errorOutput = log
             super.exec()
@@ -181,6 +181,57 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
         createFile(file, text.toString())
     }
 
+    String createTextForHelpers() {
+        def coroutinesPackage = "kotlin.coroutines.experimental"
+
+        def emptyContinuationBody =
+            """
+                |override fun resume(data: Any?) {}
+                |override fun resumeWithException(exception: Throwable) { throw exception }
+            """.stripMargin()
+
+        def handleResultContinuationBody = """
+                |override fun resumeWithException(exception: Throwable) {
+                |   throw exception
+                |}
+                |
+                |override fun resume(data: T) = x(data)
+            """.stripMargin()
+
+        def handleExceptionContinuationBody = """
+                |override fun resumeWithException(exception: Throwable) {
+                |   x(exception)
+                |}
+                |
+                |override fun resume(data: Any?) {}
+            """.stripMargin()
+
+        return """
+            |package helpers
+            |import $coroutinesPackage.*
+            |
+            |fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {
+            |    override val context = EmptyCoroutineContext
+            |    $handleResultContinuationBody
+            |}
+            |
+            |
+            |fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = object: Continuation<Any?> {
+            |    override val context = EmptyCoroutineContext
+            |    $handleExceptionContinuationBody
+            |}
+            |
+            |open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
+            |    companion object : EmptyContinuation()
+            |    $emptyContinuationBody
+            |}
+            |
+            |abstract class ContinuationAdapter<in T> : Continuation<T> {
+            |    override val context: CoroutineContext = EmptyCoroutineContext
+            |}
+        """.stripMargin()
+    }
+
     // TODO refactor
     List<String> buildCompileList() {
         def result = []
@@ -192,7 +243,12 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
         if (srcText.contains('// WITH_COROUTINES')) {
             def coroutineUtilFileName = "$outputDirectory/CoroutineUtil.kt"
             createCoroutineUtil(coroutineUtilFileName)
+
+            def coroutineHelpersFileName = "$outputDirectory/helpers.kt"
+            createFile(coroutineHelpersFileName, createTextForHelpers())
+
             result.add(coroutineUtilFileName)
+            result.add(coroutineHelpersFileName)
         }
 
         if (!matcher.find()) {
@@ -217,7 +273,12 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
     }
 
     void createFile(String file, String text) {
-        project.file(file).write(text)
+        Paths.get(file).with {
+            getParent().toFile().with {
+                if (!exists()) { mkdirs() }
+            }
+            write(text)
+        }
     }
 
     @TaskAction
@@ -631,6 +692,23 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
         return null
     }
 
+    void parseLanguageFlags() {
+        def text = project.file(source).text
+        def languageSettings = findLinesWithPrefixesRemoved(text, "// !LANGUAGE: ")
+        if (languageSettings.size() != 0) {
+            languageSettings.forEach { line ->
+                line.split(" ").toList().forEach { flags.add("-XXLanguage:$it") }
+            }
+        }
+
+        def experimentalSettings = findLinesWithPrefixesRemoved(text, "// !USE_EXPERIMENTAL: ")
+        if (experimentalSettings.size() != 0) {
+            experimentalSettings.forEach { line ->
+                line.split(" ").toList().forEach { flags.add("-Xuse-experimental=$it") }
+            }
+        }
+    }
+
     List<String> createTestFiles() {
         def identifier = /[a-zA-Z_][a-zA-Z0-9_]/
         def fullQualified = /[a-zA-Z_][a-zA-Z0-9_.]/
@@ -641,14 +719,14 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
         def classPattern = ~/.*(class|object|enum)\s+(${identifier}*).*/
 
         def sourceName = "_" + normalize(project.file(source).name)
-        def packages = new LinkedHashSet()
+        def packages = new LinkedHashSet<String>()
         def imports = []
 
         def result = super.buildCompileList()
         for (String filePath : result) {
             def text = project.file(filePath).text
             if (text.contains('COROUTINES_PACKAGE')) {
-                text.replaceAll('COROUTINES_PACKAGE', 'kotlin.coroutines.experimental')
+                text = text.replace('COROUTINES_PACKAGE', 'kotlin.coroutines.experimental')
             }
             def pkg = null
             if (text =~ packagePattern) {
@@ -704,11 +782,15 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
                 text = (pkg ? "$pkg\n" : "") + "import $sourceName.*\n" + text
             }
             // now replace all package usages in full qualified names
-            def res = ""
-            text.eachLine {
-                def line = it
-                packages.each { String pkg ->
-                    if (line.contains("$pkg.") && ! (line =~ packagePattern || line =~ importRegex)) {
+            def res = ""                      // result
+            def vars = new HashSet<String>()  // variables that has the same name as a package
+            text.eachLine { line ->
+                packages.each { pkg ->
+                    if (line =~ ~/va(l|r) *$pkg *\=/) {
+                        vars.add(pkg)
+                    }
+                    if (line.contains("$pkg.") && ! (line =~ packagePattern || line =~ importRegex)
+                            && ! vars.contains(pkg)) {
                         def idx = line.indexOf("$pkg")
                         if (! (idx > 0 && Character.isJavaIdentifierPart(line.charAt(idx - 1))) ) {
                             line = line.substring(0, idx) + "$sourceName.$pkg" + line.substring(idx + pkg.length())
@@ -768,6 +850,19 @@ fun runTest() {
 
     boolean isEnabledForNativeBackend(String fileName) {
         def text = project.file(fileName).text
+
+        def unsigned = findLinesWithPrefixesRemoved(text, '// WITH_UNSIGNED')
+        if (unsigned.size() != 0) {
+            // Unsigned types are not yet supported
+            return false
+        }
+
+        def version = findLinesWithPrefixesRemoved(text, '// LANGUAGE_VERSION: ')
+        if (version.size() != 0 && version.contains("1.3")) {
+            // 1.3 is not yet supported
+            return false
+        }
+
         def targetBackend = findLinesWithPrefixesRemoved(text, "// TARGET_BACKEND")
         if (targetBackend.size() != 0) {
             // There is some target backend. Check if it is NATIVE or not.
@@ -834,6 +929,7 @@ fun runTest() {
                 // Create separate output directory for each test in the group.
                 outputDirectory = outputRootDirectory + "/${it.name}"
                 project.file(outputDirectory).mkdirs()
+                parseLanguageFlags()
                 compileList.addAll(createTestFiles())
             }
         }
@@ -863,11 +959,13 @@ fun runTest() {
             testCase.start()
             if (isEnabledForNativeBackend(source)) {
                 try {
+                    println(source)
                     super.executeTest()
                     currentResult = testCase.pass()
                 } catch (TestFailedException e) {
                     currentResult = testCase.fail(e)
                 } catch (Exception ex) {
+                    ex.printStackTrace()
                     currentResult = testCase.error(ex)
                 }
             } else {
