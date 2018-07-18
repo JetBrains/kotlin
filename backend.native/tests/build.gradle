@@ -1231,6 +1231,11 @@ task kclass1(type: RunKonanTest) {
     source = "codegen/kclass/kclass1.kt"
 }
 
+task kclassEnumArgument(type: RunKonanTest) {
+    goldValue = "String\n"
+    source = "codegen/kclass/kClassEnumArgument.kt"
+}
+
 task coroutines_simple(type: RunKonanTest) {
     goldValue = "42\n"
     source = "codegen/coroutines/simple.kt"

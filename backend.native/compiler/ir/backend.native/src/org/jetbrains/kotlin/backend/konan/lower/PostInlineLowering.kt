@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
-import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWith
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWithStarProjections
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWithoutArguments
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
@@ -40,11 +39,13 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
     private val symbols get() = context.ir.symbols
 
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
+        irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
 
             override fun visitClassReference(expression: IrClassReference): IrExpression {
                 expression.transformChildrenVoid()
-                builder.at(expression)
+
+                val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
+                        expression.startOffset, expression.endOffset)
 
                 val typeArgument = expression.symbol.typeWithStarProjections
 
@@ -55,9 +56,12 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
 
             override fun visitGetClass(expression: IrGetClass): IrExpression {
                 expression.transformChildrenVoid()
-                builder.at(expression)
+
+                val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
+                        expression.startOffset, expression.endOffset)
 
                 val typeArgument = expression.argument.type
+
                 return builder.irCall(symbols.kClassImplConstructor, listOf(typeArgument)).apply {
                     val typeInfo = builder.irCall(symbols.getObjectTypeInfo).apply {
                         putValueArgument(0, expression.argument)
