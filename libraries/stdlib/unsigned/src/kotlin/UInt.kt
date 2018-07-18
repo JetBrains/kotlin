@@ -142,6 +142,11 @@ public inline class UInt internal constructor(private val data: Int) : Comparabl
 
     public override fun toString(): String = toLong().toString()
 
+    public override fun hashCode(): Int = toInt()
+
+    public override fun equals(other: Any?): Boolean =
+        other is UInt && this.data == other.data
+
 }
 
 @SinceKotlin("1.3")

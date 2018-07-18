@@ -142,6 +142,11 @@ public inline class ULong internal constructor(private val data: Long) : Compara
 
     public override fun toString(): String = ulongToString(data)
 
+    public override fun hashCode(): Int = ((this shr 32).toInt() xor this.toInt())
+
+    public override fun equals(other: Any?): Boolean =
+        other is ULong && this.data == other.data
+
 }
 
 @SinceKotlin("1.3")
