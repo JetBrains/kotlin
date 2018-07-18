@@ -229,6 +229,17 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             UnsignedType.ULONG -> out.println("ulongToString(data)")
             else -> error(type)
         }
+        out.println()
+
+        out.print("    public override fun hashCode(): Int = ")
+        when (type) {
+            UnsignedType.UBYTE, UnsignedType.USHORT, UnsignedType.UINT -> out.println("toInt()")
+            UnsignedType.ULONG -> out.println("((this shr 32).toInt() xor this.toInt())")
+        }
+        out.println()
+
+        out.println("    public override fun equals(other: Any?): Boolean =")
+        out.println("        other is ${type.capitalized} && this.data == other.data")
 
         out.println()
     }
