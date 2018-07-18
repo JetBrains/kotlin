@@ -44,9 +44,9 @@ fun canBePropertyAccessor(identifier: String): Boolean {
     return identifier.startsWith("get") || identifier.startsWith("is") || identifier.startsWith("set")
 }
 
-interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
-    val getMethod: FunctionDescriptor
-    val setMethod: FunctionDescriptor?
+interface SyntheticJavaPropertyDescriptor : PropertyDescriptor, SyntheticPropertyDescriptor {
+    override val getMethod: FunctionDescriptor
+    override val setMethod: FunctionDescriptor?
 
     companion object {
         fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, syntheticScopes: SyntheticScopes): SyntheticJavaPropertyDescriptor? {
