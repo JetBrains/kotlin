@@ -11,8 +11,5 @@ public actual fun assertTypeEquals(expected: Any?, actual: Any?) {
     assertEquals(expected?.let { it::class.js }, actual?.let { it::class.js })
 }
 
-@Suppress("DEPRECATION")
-public actual fun randomInt(limit: Int): Int = (kotlin.js.Math.random() * limit).toInt()
-
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun String.removeLeadingPlusOnJava6(): String = this
