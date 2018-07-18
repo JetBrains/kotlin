@@ -21,6 +21,7 @@ import kotlin.system.measureNanoTime
 //-----------------------------------------------------------------------------//
 
 class Blackhole {
+    @konan.ThreadLocal
     companion object {
         var consumer = 0
         fun consume(value: Any) {
@@ -32,6 +33,7 @@ class Blackhole {
 //-----------------------------------------------------------------------------//
 
 class Random() {
+    @konan.ThreadLocal
     companion object {
         var seedInt = 0
         fun nextInt(boundary: Int = 100): Int {
