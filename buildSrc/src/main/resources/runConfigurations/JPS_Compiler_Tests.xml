@@ -13,7 +13,7 @@
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="package" />
-    <option name="VM_PARAMETERS" value="-ea -XX:+HeapDumpOnOutOfMemoryError -Xmx1024m -XX:+UseCodeCacheFlushing -XX:ReservedCodeCacheSize=128m -Djna.nosys=true -Didea.home.path=$IDEA_HOME_PATH$" />
+    <option name="VM_PARAMETERS" value="-ea -XX:+HeapDumpOnOutOfMemoryError -Xmx1024m -XX:+UseCodeCacheFlushing -XX:ReservedCodeCacheSize=128m -Djna.nosys=true -Duse.pill=true -Didea.home.path=$IDEA_HOME_PATH$" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="PASS_PARENT_ENVS" value="true" />
