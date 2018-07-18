@@ -9,7 +9,7 @@
     </extension>
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" />
-    <option name="PACKAGE_NAME" value="org.jetbrains.kotlin.codegen" />
+    <option name="PACKAGE_NAME" value="org.jetbrains.kotlin" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="package" />
@@ -18,7 +18,7 @@
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="PASS_PARENT_ENVS" value="true" />
     <option name="TEST_SEARCH_SCOPE">
-      <value defaultName="moduleWithDependencies" />
+      <value defaultName="singleModule" />
     </option>
     <patterns />
     <RunnerSettings RunnerId="Debug">
