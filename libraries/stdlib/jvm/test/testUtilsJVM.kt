@@ -11,8 +11,6 @@ public actual fun assertTypeEquals(expected: Any?, actual: Any?) {
     assertEquals(expected?.javaClass, actual?.javaClass)
 }
 
-public actual fun randomInt(limit: Int): Int = (Math.random() * limit).toInt()
-
 private val isJava6 = System.getProperty("java.version").startsWith("1.6.")
 
 internal actual fun String.removeLeadingPlusOnJava6(): String =
