@@ -71,7 +71,7 @@ class LazyJavaClassMemberScope(
     override fun computeMemberIndex() = ClassDeclaredMemberIndex(jClass, { !it.isStatic })
 
     override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
-        ownerDescriptor.typeConstructor.supertypes.flatMapTo(HashSet()) {
+        ownerDescriptor.typeConstructor.supertypes.flatMapTo(hashSetOf()) {
             it.memberScope.getFunctionNames()
         }.apply {
             addAll(declaredMemberIndex().getMethodNames())

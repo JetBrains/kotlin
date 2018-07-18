@@ -24,6 +24,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.search.GlobalSearchScope
 import gnu.trove.THashMap
+import gnu.trove.THashSet
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
@@ -216,7 +217,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
-        val result = hashSetOf<String>()
+        val result = THashSet<String>()
         index.traverseDirectoriesInPackage(packageFqName, continueSearch = { dir, _ ->
             for (child in dir.children) {
                 if (child.extension == "class" || child.extension == "java") {
