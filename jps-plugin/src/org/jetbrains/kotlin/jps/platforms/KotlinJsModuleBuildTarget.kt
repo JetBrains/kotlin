@@ -45,6 +45,9 @@ private const val JS_BUILD_META_INFO_FILE_NAME = "js-build-meta-info.txt"
 class KotlinJsModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
     KotlinModuleBuildTarget<JsBuildMetaInfo>(compileContext, jpsModuleBuildTarget) {
 
+    override val isIncrementalCompilationEnabled: Boolean
+        get() = IncrementalCompilation.isEnabledForJs()
+
     override val buildMetaInfoFactory
         get() = JsBuildMetaInfo
 
@@ -68,7 +71,7 @@ class KotlinJsModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTa
         with(builder) {
             register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
 
-            if (IncrementalCompilation.isEnabled() && !isFirstBuild) {
+            if (isIncrementalCompilationEnabled && !isFirstBuild) {
                 val cache = incrementalCaches[jpsModuleBuildTarget] as IncrementalJsCache
 
                 register(

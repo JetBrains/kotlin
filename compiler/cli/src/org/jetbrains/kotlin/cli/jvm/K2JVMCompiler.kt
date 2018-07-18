@@ -302,7 +302,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun setupPlatformSpecificArgumentsAndServices(
         configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments, services: Services
     ) {
-        if (IncrementalCompilation.isEnabled()) {
+        if (IncrementalCompilation.isEnabledForJvm()) {
             services.get(LookupTracker::class.java)?.let {
                 configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, it)
             }

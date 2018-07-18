@@ -61,7 +61,6 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYS
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.withIC
-import org.jetbrains.kotlin.jps.model.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.LibraryDependency.*
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
@@ -451,7 +450,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesExistInOutput(module, "Foo.class", "Bar.class")
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
-        if (IncrementalCompilation.isEnabled()) {
+        if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
         }
         else {
@@ -470,7 +469,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesExistInOutput(module, "Foo.class", "Bar.class")
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
-        if (IncrementalCompilation.isEnabled()) {
+        if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
             checkWhen(touch("src/dir/subdir/bar.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Bar")))
         }
@@ -491,7 +490,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFilesExistInOutput(module, "Foo.class", "Bar.class")
         assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
-        if (IncrementalCompilation.isEnabled()) {
+        if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("src/foo.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "Foo")))
         }
         else {
@@ -508,7 +507,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     fun testKotlinProjectTwoFilesInOnePackage() {
         doTest()
 
-        if (IncrementalCompilation.isEnabled()) {
+        if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"))
             checkWhen(touch("src/test2.kt"), null, packageClasses("kotlinProject", "src/test2.kt", "_DefaultPackage"))
         }
@@ -577,7 +576,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         result.assertSuccessful()
 
-        if (IncrementalCompilation.isEnabled()) {
+        if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("src/kt2.kt"), null, packageClasses("kotlinProject", "src/kt2.kt", "kt2.Kt2Kt"))
             checkWhen(touch("module2/src/kt1.kt"), null, packageClasses("module2", "module2/src/kt1.kt", "kt1.Kt1Kt"))
         }
@@ -600,7 +599,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "getB", "setB")
 
 
-        if (IncrementalCompilation.isEnabled()) {
+        if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
             checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
         }
@@ -622,7 +621,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "funA", "getA")
         UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "funB", "getB", "setB")
 
-        if (IncrementalCompilation.isEnabled()) {
+        if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
             checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
         }
@@ -903,7 +902,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         initProject(JVM_MOCK_RUNTIME)
         buildAllModules().assertSuccessful()
 
-        if (IncrementalCompilation.isEnabled()) {
+        if (IncrementalCompilation.isEnabledForJvm()) {
             checkWhen(touch("src/utils.kt"), null, packageClasses("kotlinProject", "src/utils.kt", "_DefaultPackage"))
         }
         else {
