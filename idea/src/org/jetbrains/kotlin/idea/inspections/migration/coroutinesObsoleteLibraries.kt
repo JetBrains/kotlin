@@ -5,12 +5,29 @@
 
 package org.jetbrains.kotlin.idea.inspections.migration
 
+import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.versions.LibInfo
+
+interface VersionUpdater {
+    fun updateVersion(currentVersion: String): String
+}
+
+object KotlinxVersionUpdater : VersionUpdater {
+    override fun updateVersion(currentVersion: String): String {
+        return when {
+            currentVersion.contains("eap13") -> return currentVersion
+            (VersionComparatorUtil.compare(currentVersion, "0.30.0") >= 0) -> return currentVersion
+            (VersionComparatorUtil.compare(currentVersion, "0.24.0") < 0) -> return "0.24.0-eap13"
+            else -> "$currentVersion-eap13"
+        }
+    }
+}
 
 data class DeprecatedForKotlinLibInfo(
     val lib: LibInfo,
     val sinceKotlinLanguageVersion: LanguageVersion,
+    val versionUpdater: VersionUpdater,
     val message: String
 )
 
@@ -19,6 +36,7 @@ private fun kotlinxCoroutinesDeprecation(name: String): DeprecatedForKotlinLibIn
     return DeprecatedForKotlinLibInfo(
         lib = LibInfo("org.jetbrains.kotlinx", name),
         sinceKotlinLanguageVersion = LanguageVersion.KOTLIN_1_3,
+        versionUpdater = KotlinxVersionUpdater,
         message = "Library should be updated to be compatible with Kotlin 1.3"
     )
 }

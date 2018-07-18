@@ -93,7 +93,10 @@ class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
             return classpathEntry.findElementAt(indexOf) ?: classpathEntry
         }
 
-        private fun libraryVersionFromOrderEntry(file: PsiFile, libraryId: String): String? {
+    }
+
+    companion object {
+        fun libraryVersionFromOrderEntry(file: PsiFile, libraryId: String): String? {
             val module = ProjectRootManager.getInstance(file.project).fileIndex.getModuleForFile(file.virtualFile) ?: return null
             val libMarker = ":$libraryId:"
 

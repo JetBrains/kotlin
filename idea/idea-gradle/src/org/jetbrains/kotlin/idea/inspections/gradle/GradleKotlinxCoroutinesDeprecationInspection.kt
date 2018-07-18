@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.configuration.getWholeModuleGroup
+import org.jetbrains.kotlin.idea.inspections.ReplaceStringInDocumentFix
 import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUCTION_DEPENDENCY_STATEMENTS
 import org.jetbrains.kotlin.idea.inspections.migration.DEPRECATED_COROUTINES_LIBRARIES_INFORMATION
 import org.jetbrains.kotlin.idea.inspections.migration.DeprecatedForKotlinLibInfo
@@ -49,11 +50,34 @@ class GradleKotlinxCoroutinesDeprecationInspection : GradleBaseInspection(), Cle
                         return
                     }
 
+                    val libVersion =
+                        DifferentStdlibGradleVersionInspection.getResolvedLibVersion(
+                            dependencyStatement.containingFile, outdatedInfo.lib.groupId, listOf(outdatedInfo.lib.name)
+                        ) ?: DeprecatedGradleDependencyInspection.libraryVersionFromOrderEntry(
+                            dependencyStatement.containingFile,
+                            outdatedInfo.lib.name
+                        ) ?: continue
+
+                    val updatedVersion = outdatedInfo.versionUpdater.updateVersion(libVersion)
+                    if (libVersion == updatedVersion) {
+                        continue
+                    }
+
+                    if (dependencyText.contains(updatedVersion)) {
+                        continue
+                    }
+
                     val reportOnElement = reportOnElement(dependencyStatement, outdatedInfo)
+
+                    val fix = if (dependencyText.contains(libVersion)) {
+                        ReplaceStringInDocumentFix(reportOnElement, libVersion, updatedVersion)
+                    } else {
+                        null
+                    }
 
                     registerError(
                         reportOnElement, outdatedInfo.message,
-                        emptyArray(),
+                        if (fix != null) arrayOf(fix) else emptyArray(),
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                     )
 
