@@ -138,6 +138,11 @@ public inline class UByte internal constructor(private val data: Byte) : Compara
 
     public override fun toString(): String = toInt().toString()
 
+    public override fun hashCode(): Int = toInt()
+
+    public override fun equals(other: Any?): Boolean =
+        other is UByte && this.data == other.data
+
 }
 
 @SinceKotlin("1.3")
