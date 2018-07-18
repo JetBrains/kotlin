@@ -229,6 +229,8 @@ public final class kotlin/UByte : java/lang/Comparable {
 	public final fun div (I)I
 	public final fun div (J)J
 	public final fun div (S)I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public final fun inc ()B
 	public final fun inv ()B
 	public final fun minus (B)I
@@ -277,6 +279,8 @@ public final class kotlin/UByte$Erased {
 	public static final fun div (BI)I
 	public static final fun div (BJ)J
 	public static final fun div (BS)I
+	public static fun equals (BLjava/lang/Object;)Z
+	public static fun hashCode (B)I
 	public static final fun inc (B)B
 	public static final fun inv (B)B
 	public static final fun minus (BB)I
@@ -374,6 +378,8 @@ public final class kotlin/UInt : java/lang/Comparable {
 	public final fun div (I)I
 	public final fun div (J)J
 	public final fun div (S)I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public final fun inc ()I
 	public final fun inv ()I
 	public final fun minus (B)I
@@ -424,6 +430,8 @@ public final class kotlin/UInt$Erased {
 	public static final fun div (II)I
 	public static final fun div (IJ)J
 	public static final fun div (IS)I
+	public static fun equals (ILjava/lang/Object;)Z
+	public static fun hashCode (I)I
 	public static final fun inc (I)I
 	public static final fun inv (I)I
 	public static final fun minus (IB)I
@@ -523,6 +531,8 @@ public final class kotlin/ULong : java/lang/Comparable {
 	public final fun div (I)J
 	public final fun div (J)J
 	public final fun div (S)J
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public final fun inc ()J
 	public final fun inv ()J
 	public final fun minus (B)J
@@ -573,6 +583,8 @@ public final class kotlin/ULong$Erased {
 	public static final fun div (JI)J
 	public static final fun div (JJ)J
 	public static final fun div (JS)J
+	public static fun equals (JLjava/lang/Object;)Z
+	public static fun hashCode (J)I
 	public static final fun inc (J)J
 	public static final fun inv (J)J
 	public static final fun minus (JB)J
@@ -672,6 +684,8 @@ public final class kotlin/UShort : java/lang/Comparable {
 	public final fun div (I)I
 	public final fun div (J)J
 	public final fun div (S)I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public final fun inc ()S
 	public final fun inv ()S
 	public final fun minus (B)I
@@ -720,6 +734,8 @@ public final class kotlin/UShort$Erased {
 	public static final fun div (SI)I
 	public static final fun div (SJ)J
 	public static final fun div (SS)I
+	public static fun equals (SLjava/lang/Object;)Z
+	public static fun hashCode (S)I
 	public static final fun inc (S)S
 	public static final fun inv (S)S
 	public static final fun minus (SB)I
