@@ -1385,6 +1385,16 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/stubs/javaStaticMethod.kt");
         }
 
+        @TestMetadata("javaSyntheticProperty.kt")
+        public void testJavaSyntheticProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/javaSyntheticProperty.kt");
+        }
+
+        @TestMetadata("jdkClassSyntheticProperty.kt")
+        public void testJdkClassSyntheticProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/jdkClassSyntheticProperty.kt");
+        }
+
         @TestMetadata("kotlinInnerClass.kt")
         public void testKotlinInnerClass() throws Exception {
             runTest("compiler/testData/ir/irText/stubs/kotlinInnerClass.kt");
