@@ -35,9 +35,8 @@ class CacheVersion(
         private val whenVersionChanged: CacheVersion.Action,
         private val whenTurnedOn: CacheVersion.Action,
         private val whenTurnedOff: CacheVersion.Action,
-        isEnabled: ()->Boolean
+        private val isEnabled: Boolean
 ) {
-    private val isEnabled by lazy(isEnabled)
 
     private val actualVersion: Int?
         get() = try {
@@ -95,18 +94,18 @@ class CacheVersion(
     }
 }
 
-fun normalCacheVersion(dataRoot: File, enabled: Boolean? = null): CacheVersion =
+fun normalCacheVersion(dataRoot: File, enabled: Boolean): CacheVersion =
         CacheVersion(ownVersion = NORMAL_VERSION,
                      versionFile = File(dataRoot, NORMAL_VERSION_FILE_NAME),
                      whenVersionChanged = CacheVersion.Action.REBUILD_CHUNK,
                      whenTurnedOn = CacheVersion.Action.REBUILD_CHUNK,
                      whenTurnedOff = CacheVersion.Action.CLEAN_NORMAL_CACHES,
-                     isEnabled = { enabled ?: IncrementalCompilation.isEnabled() })
+                     isEnabled = enabled)
 
-fun dataContainerCacheVersion(dataRoot: File, enabled: Boolean? = null): CacheVersion =
+fun dataContainerCacheVersion(dataRoot: File, enabled: Boolean): CacheVersion =
         CacheVersion(ownVersion = DATA_CONTAINER_VERSION,
                      versionFile = File(dataRoot, DATA_CONTAINER_VERSION_FILE_NAME),
                      whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                      whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
                      whenTurnedOff = CacheVersion.Action.CLEAN_DATA_CONTAINER,
-                     isEnabled = { enabled ?: IncrementalCompilation.isEnabled() })
+                     isEnabled = enabled)

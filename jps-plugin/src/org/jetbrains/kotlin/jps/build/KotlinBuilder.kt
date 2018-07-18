@@ -34,7 +34,6 @@ import org.jetbrains.jps.model.java.JpsJavaClasspathKind
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.build.GeneratedFile
-import org.jetbrains.kotlin.build.JvmBuildMetaInfo
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
@@ -88,7 +87,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     override fun buildStarted(context: CompileContext) {
         LOG.debug("==========================================")
-        LOG.info("is Kotlin incremental compilation enabled: ${IncrementalCompilation.isEnabled()}")
+        LOG.info("is Kotlin incremental compilation enabled for JVM: ${IncrementalCompilation.isEnabledForJvm()}")
+        LOG.info("is Kotlin incremental compilation enabled for JS: ${IncrementalCompilation.isEnabledForJs()}")
         LOG.info("is Kotlin compiler daemon enabled: ${isDaemonEnabled()}")
 
         val historyLabel = context.getBuilderParameter("history label")
@@ -128,8 +128,13 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         )
         val fsOperations = FSOperationsHelper(context, chunk, roundDirtyFiles, LOG)
 
-        if (System.getProperty(SKIP_CACHE_VERSION_CHECK_PROPERTY) == null) {
-            val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
+        val jpsRepresentativeTarget = chunk.representativeTarget()
+        val representativeTarget = context.kotlinBuildTargets[jpsRepresentativeTarget]
+        if (representativeTarget == null) {
+            LOG.warn("Unable to find Kotlin build target for JPS target ${jpsRepresentativeTarget.presentableName}")
+        }
+        if (System.getProperty(SKIP_CACHE_VERSION_CHECK_PROPERTY) == null && representativeTarget != null) {
+            val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths, representativeTarget.isIncrementalCompilationEnabled)
             val actions = checkCachesVersions(context, cacheVersionsProvider, chunk)
             applyActionsOnCacheVersionChange(actions, cacheVersionsProvider, context, dataManager, targets, fsOperations)
             if (CacheVersion.Action.REBUILD_ALL_KOTLIN in actions) {
@@ -280,7 +285,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 || targets.any { rebuildAfterCacheVersionChanged[it] == true }
 
         if (kotlinDirtyFilesHolder.hasDirtyOrRemovedFiles) {
-            if (!isChunkRebuilding && !IncrementalCompilation.isEnabled()) {
+            if (!isChunkRebuilding && !representativeTarget.isIncrementalCompilationEnabled) {
                 targets.forEach { rebuildAfterCacheVersionChanged[it] = true }
                 return CHUNK_REBUILD_REQUIRED
             }
@@ -300,7 +305,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         val project = projectDescriptor.project
-        val lookupTracker = getLookupTracker(project)
+        val lookupTracker = getLookupTracker(project, representativeTarget)
         val exceptActualTracer = ExpectActualTrackerImpl()
         val incrementalCaches = getIncrementalCaches(chunk, context)
         val environment = createCompileEnvironment(
@@ -366,7 +371,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             incrementalCaches
         )
 
-        if (!IncrementalCompilation.isEnabled()) {
+        if (!representativeTarget.isIncrementalCompilationEnabled) {
             return OK
         }
 
@@ -477,7 +482,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     private fun doCompileModuleChunk(
         chunk: ModuleChunk,
-        kotlinTarget: KotlinModuleBuildTarget<*>,
+        representativeTarget: KotlinModuleBuildTarget<*>,
         commonArguments: CommonCompilerArguments,
         context: CompileContext,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
@@ -486,26 +491,25 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCache>
     ): OutputItemsCollector? {
 
-        val representativeTarget = chunk.representativeTarget()
-
         fun concatenate(strings: Array<String>?, cp: List<String>) = arrayOf(*strings.orEmpty(), *cp.toTypedArray())
 
         for (argumentProvider in ServiceLoader.load(KotlinJpsCompilerArgumentsProvider::class.java)) {
+            val jpsModuleBuildTarget = representativeTarget.jpsModuleBuildTarget
             // appending to pluginOptions
             commonArguments.pluginOptions = concatenate(
                 commonArguments.pluginOptions,
-                argumentProvider.getExtraArguments(representativeTarget, context)
+                argumentProvider.getExtraArguments(jpsModuleBuildTarget, context)
             )
             // appending to classpath
             commonArguments.pluginClasspaths = concatenate(
                 commonArguments.pluginClasspaths,
-                argumentProvider.getClasspath(representativeTarget, context)
+                argumentProvider.getClasspath(jpsModuleBuildTarget, context)
             )
 
             LOG.debug("Plugin loaded: ${argumentProvider::class.java.simpleName}")
         }
 
-        if (IncrementalCompilation.isEnabled()) {
+        if (representativeTarget.isIncrementalCompilationEnabled) {
             for (target in chunk.targets) {
                 val cache = incrementalCaches[target]
                 val targetDirtyFiles = dirtyFilesHolder.byTarget[target]
@@ -519,7 +523,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             }
         }
 
-        val isDoneSomething = kotlinTarget.compileModuleChunk(chunk, commonArguments, dirtyFilesHolder, environment)
+        val isDoneSomething = representativeTarget.compileModuleChunk(chunk, commonArguments, dirtyFilesHolder, environment)
 
         return if (isDoneSomething) environment.outputItemsCollector else null
     }
@@ -663,10 +667,10 @@ private fun ChangesCollector.getDirtyFiles(
     return dirtyFilesFromLookups + mapClassesFqNamesToFiles(caches, dirtyClassFqNames, reporter)
 }
 
-private fun getLookupTracker(project: JpsProject): LookupTracker {
+private fun getLookupTracker(project: JpsProject, representativeTarget: KotlinModuleBuildTarget<*>): LookupTracker {
     val testLookupTracker = project.testingContext?.lookupTracker ?: LookupTracker.DO_NOTHING
 
-    if (IncrementalCompilation.isEnabled()) return LookupTrackerImpl(testLookupTracker)
+    if (representativeTarget.isIncrementalCompilationEnabled) return LookupTrackerImpl(testLookupTracker)
 
     return testLookupTracker
 }

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.model.k2MetadataCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
@@ -25,6 +26,9 @@ private const val COMMON_BUILD_META_INFO_FILE_NAME = "common-build-meta-info.txt
 
 class KotlinCommonModuleBuildTarget(context: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
     KotlinModuleBuildTarget<CommonBuildMetaInfo>(context, jpsModuleBuildTarget) {
+
+    override val isIncrementalCompilationEnabled: Boolean
+        get() = false
 
     override val buildMetaInfoFactory
         get() = CommonBuildMetaInfo

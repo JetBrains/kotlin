@@ -163,7 +163,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         super.setUp()
         srcDir = File(workingDir, "src").apply { mkdirs() }
         outDir = File(workingDir, "out")
-        isICEnabledBackup = IncrementalCompilation.isEnabled()
+        isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
         IncrementalCompilation.setIsEnabled(true)
     }
 
