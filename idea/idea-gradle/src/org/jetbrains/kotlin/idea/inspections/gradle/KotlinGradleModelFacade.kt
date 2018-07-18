@@ -30,15 +30,15 @@ interface KotlinGradleModelFacade {
         val EP_NAME: ExtensionPointName<KotlinGradleModelFacade> = ExtensionPointName.create("org.jetbrains.kotlin.gradleModelFacade")
     }
 
-    fun getResolvedKotlinStdlibVersionByModuleData(moduleData: DataNode<*>, libraryIds: List<String>): String?
+    fun getResolvedVersionByModuleData(moduleData: DataNode<*>, groupId: String, libraryIds: List<String>): String?
     fun getDependencyModules(ideModule: DataNode<ModuleData>, gradleIdeaProject: IdeaProject): Collection<DataNode<ModuleData>>
 }
 
 class DefaultGradleModelFacade : KotlinGradleModelFacade {
-    override fun getResolvedKotlinStdlibVersionByModuleData(moduleData: DataNode<*>, libraryIds: List<String>): String? {
+    override fun getResolvedVersionByModuleData(moduleData: DataNode<*>, groupId: String, libraryIds: List<String>): String? {
         for (libraryDependencyData in ExternalSystemApiUtil.findAllRecursively(moduleData, ProjectKeys.LIBRARY_DEPENDENCY)) {
             for (libraryId in libraryIds) {
-                val libraryNameMarker = "org.jetbrains.kotlin:$libraryId:"
+                val libraryNameMarker = "$groupId:$libraryId:"
                 if (libraryDependencyData.data.externalName.startsWith(libraryNameMarker)) {
                     return libraryDependencyData.data.externalName.substringAfter(libraryNameMarker)
                 }

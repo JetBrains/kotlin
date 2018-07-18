@@ -61,10 +61,9 @@ class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
                 val libMarker = outdatedInfo.old.gradleMarker
 
                 if (dependencyText.contains(libMarker)) {
-                    // Should be generified for any library, not exactly Kotlin stdlib
                     val libVersion =
-                        DifferentStdlibGradleVersionInspection.getResolvedKotlinStdlibVersion(
-                            dependencyStatement.containingFile, listOf(outdatedInfo.old.name)
+                        DifferentStdlibGradleVersionInspection.getResolvedLibVersion(
+                            dependencyStatement.containingFile, outdatedInfo.old.groupId, listOf(outdatedInfo.old.name)
                         ) ?: libraryVersionFromOrderEntry(dependencyStatement.containingFile, outdatedInfo.old.name)
 
 
