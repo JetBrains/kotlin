@@ -5,6 +5,6 @@ FILE fqName:<root> fileName:/jdkClassSyntheticProperty.kt
       $receiver: VALUE_PARAMETER name:<this> type:java.lang.Class<*> flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test>() on Class<*>: Array<(out) Field!>!'
-          CALL '<get-declaredFields>() on Class<out Any!>: Array<(out) Field!>!' type=kotlin.Array<out java.lang.reflect.Field!>? origin=GET_PROPERTY
+          CALL 'getDeclaredFields(): Array<(out) Field!>!' type=kotlin.Array<out java.lang.reflect.Field!>? origin=GET_PROPERTY
             <`0>: kotlin.Any?
             $receiver: GET_VAR 'this@test: Class<*>' type=java.lang.Class<*> origin=null

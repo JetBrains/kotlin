@@ -902,6 +902,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/interfaceThisRef.kt");
         }
 
+        @TestMetadata("javaSyntheticPropertyAccess.kt")
+        public void testJavaSyntheticPropertyAccess() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/javaSyntheticPropertyAccess.kt");
+        }
+
         @TestMetadata("jvmInstanceFieldReference.kt")
         public void testJvmInstanceFieldReference() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/jvmInstanceFieldReference.kt");

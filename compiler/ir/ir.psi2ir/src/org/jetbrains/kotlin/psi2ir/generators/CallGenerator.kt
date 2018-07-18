@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.intermediate.*
+import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
@@ -103,7 +104,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
     fun generateDelegatingConstructorCall(startOffset: Int, endOffset: Int, call: CallBuilder): IrExpression =
         call.callReceiver.call { dispatchReceiver, extensionReceiver ->
             val descriptor = call.descriptor as? ClassConstructorDescriptor
-                    ?: throw AssertionError("Class constructor expected: ${call.descriptor}")
+                ?: throw AssertionError("Class constructor expected: ${call.descriptor}")
             val constructorSymbol = context.symbolTable.referenceConstructor(descriptor.original)
             val irCall = IrDelegatingConstructorCallImpl(
                 startOffset, endOffset,
@@ -142,7 +143,8 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
             val superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
 
-            val getterDescriptor = descriptor.getter
+            val getterDescriptor = descriptor.unwrappedGetMethod
+
             if (getterDescriptor != null) {
                 val getterSymbol = context.symbolTable.referenceFunction(getterDescriptor.original)
                 IrGetterCallImpl(
