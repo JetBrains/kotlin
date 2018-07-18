@@ -928,11 +928,25 @@ fun main(args: Array<String>) {
 /*  There is no jps in AS
     testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         testClass<AbstractIncrementalJpsTest> {
-            model("incremental/multiModule", extension = null, excludeParentDirs = true)
+            model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
+            model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, recursive = false)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
             model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)
+        }
+
+        actualizeMppJpsIncTestCaseDirs(testDataRoot, "incremental/multiplatform/multiModule")
+
+        testClass<AbstractIncrementalJsJpsTest> {
+            model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
+        }
+
+        testClass<AbstractMultiplatformJpsTest> {
+            model(
+                "incremental/multiplatform/multiModule", extension = null, excludeParentDirs = true,
+                testClassName = "MultiplatformMultiModule", recursive = true
+            )
         }
 
         testClass<AbstractJvmLookupTrackerTest> {

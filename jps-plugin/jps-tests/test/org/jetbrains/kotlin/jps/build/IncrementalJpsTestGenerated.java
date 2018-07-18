@@ -19,224 +19,134 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
-    @TestMetadata("jps-plugin/testData/incremental/multiModule")
+    @TestMetadata("jps-plugin/testData/incremental/multiModule/common")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class MultiModule extends AbstractIncrementalJpsTest {
+    public static class Common extends AbstractIncrementalJpsTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
 
-        public void testAllFilesPresentInMultiModule() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("circular")
-        public void testCircular() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/circular/");
-        }
-
-        @TestMetadata("circularDependencyClasses")
-        public void testCircularDependencyClasses() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/circularDependencyClasses/");
-        }
-
-        @TestMetadata("circularDependencySamePackageUnchanged")
-        public void testCircularDependencySamePackageUnchanged() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/circularDependencySamePackageUnchanged/");
-        }
-
-        @TestMetadata("circularDependencyTopLevelFunctions")
-        public void testCircularDependencyTopLevelFunctions() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/circularDependencyTopLevelFunctions/");
-        }
-
-        @TestMetadata("circularDependencyWithAccessToInternal")
-        public void testCircularDependencyWithAccessToInternal() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/circularDependencyWithAccessToInternal/");
+        public void testAllFilesPresentInCommon() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classAdded")
         public void testClassAdded() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/classAdded/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/classAdded/");
         }
 
         @TestMetadata("classRemoved")
         public void testClassRemoved() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/classRemoved/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/classRemoved/");
         }
 
         @TestMetadata("constantValueChanged")
         public void testConstantValueChanged() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/constantValueChanged/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/constantValueChanged/");
         }
 
         @TestMetadata("copyFileToAnotherModule")
         public void testCopyFileToAnotherModule() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/copyFileToAnotherModule/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/copyFileToAnotherModule/");
         }
 
         @TestMetadata("defaultArgumentInConstructorRemoved")
         public void testDefaultArgumentInConstructorRemoved() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/defaultArgumentInConstructorRemoved/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/defaultArgumentInConstructorRemoved/");
         }
 
         @TestMetadata("defaultParameterAdded")
         public void testDefaultParameterAdded() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/defaultParameterAdded/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/defaultParameterAdded/");
         }
 
         @TestMetadata("defaultParameterAddedForTopLevelFun")
         public void testDefaultParameterAddedForTopLevelFun() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/defaultParameterAddedForTopLevelFun/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/defaultParameterAddedForTopLevelFun/");
         }
 
         @TestMetadata("defaultParameterRemoved")
         public void testDefaultParameterRemoved() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/defaultParameterRemoved/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/defaultParameterRemoved/");
         }
 
         @TestMetadata("defaultParameterRemovedForTopLevelFun")
         public void testDefaultParameterRemovedForTopLevelFun() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/defaultParameterRemovedForTopLevelFun/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/defaultParameterRemovedForTopLevelFun/");
         }
 
         @TestMetadata("defaultValueInConstructorRemoved")
         public void testDefaultValueInConstructorRemoved() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/defaultValueInConstructorRemoved/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/defaultValueInConstructorRemoved/");
         }
 
         @TestMetadata("duplicatedClass")
         public void testDuplicatedClass() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/duplicatedClass/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/duplicatedClass/");
         }
 
         @TestMetadata("exportedDependency")
         public void testExportedDependency() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/exportedDependency/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/exportedDependency/");
         }
 
         @TestMetadata("inlineFunctionInlined")
         public void testInlineFunctionInlined() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/inlineFunctionInlined/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined/");
         }
 
         @TestMetadata("inlineFunctionTwoPackageParts")
         public void testInlineFunctionTwoPackageParts() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/inlineFunctionTwoPackageParts/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/inlineFunctionTwoPackageParts/");
         }
 
         @TestMetadata("moveFileToAnotherModule")
         public void testMoveFileToAnotherModule() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/moveFileToAnotherModule/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/moveFileToAnotherModule/");
         }
 
         @TestMetadata("simple")
         public void testSimple() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/simple/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/simple/");
         }
 
         @TestMetadata("simpleDependency")
         public void testSimpleDependency() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/simpleDependency/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/simpleDependency/");
         }
 
         @TestMetadata("simpleDependencyErrorOnAccessToInternal1")
         public void testSimpleDependencyErrorOnAccessToInternal1() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/simpleDependencyErrorOnAccessToInternal1/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal1/");
         }
 
         @TestMetadata("simpleDependencyErrorOnAccessToInternal2")
         public void testSimpleDependencyErrorOnAccessToInternal2() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/simpleDependencyErrorOnAccessToInternal2/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal2/");
         }
 
         @TestMetadata("simpleDependencyUnchanged")
         public void testSimpleDependencyUnchanged() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/simpleDependencyUnchanged/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/simpleDependencyUnchanged/");
         }
 
         @TestMetadata("transitiveDependency")
         public void testTransitiveDependency() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/transitiveDependency/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/transitiveDependency/");
         }
 
         @TestMetadata("transitiveInlining")
         public void testTransitiveInlining() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/transitiveInlining/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/transitiveInlining/");
         }
 
         @TestMetadata("twoDependants")
         public void testTwoDependants() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/twoDependants/");
+            runTest("jps-plugin/testData/incremental/multiModule/common/twoDependants/");
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/circular")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Circular extends AbstractIncrementalJpsTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInCircular() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/circular"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
-            }
-        }
-
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/circularDependencyClasses")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class CircularDependencyClasses extends AbstractIncrementalJpsTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInCircularDependencyClasses() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/circularDependencyClasses"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
-            }
-        }
-
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/circularDependencySamePackageUnchanged")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class CircularDependencySamePackageUnchanged extends AbstractIncrementalJpsTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInCircularDependencySamePackageUnchanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/circularDependencySamePackageUnchanged"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
-            }
-        }
-
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/circularDependencyTopLevelFunctions")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class CircularDependencyTopLevelFunctions extends AbstractIncrementalJpsTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInCircularDependencyTopLevelFunctions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/circularDependencyTopLevelFunctions"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
-            }
-        }
-
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/circularDependencyWithAccessToInternal")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class CircularDependencyWithAccessToInternal extends AbstractIncrementalJpsTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInCircularDependencyWithAccessToInternal() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/circularDependencyWithAccessToInternal"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
-            }
-        }
-
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/classAdded")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/classAdded")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassAdded extends AbstractIncrementalJpsTest {
@@ -245,11 +155,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInClassAdded() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/classAdded"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/classAdded"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/classRemoved")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/classRemoved")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassRemoved extends AbstractIncrementalJpsTest {
@@ -258,11 +168,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInClassRemoved() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/classRemoved"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/classRemoved"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/constantValueChanged")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/constantValueChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ConstantValueChanged extends AbstractIncrementalJpsTest {
@@ -271,11 +181,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInConstantValueChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/constantValueChanged"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/constantValueChanged"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/copyFileToAnotherModule")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/copyFileToAnotherModule")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CopyFileToAnotherModule extends AbstractIncrementalJpsTest {
@@ -284,11 +194,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInCopyFileToAnotherModule() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/copyFileToAnotherModule"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/copyFileToAnotherModule"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/defaultArgumentInConstructorRemoved")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/defaultArgumentInConstructorRemoved")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DefaultArgumentInConstructorRemoved extends AbstractIncrementalJpsTest {
@@ -297,11 +207,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInDefaultArgumentInConstructorRemoved() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/defaultArgumentInConstructorRemoved"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultArgumentInConstructorRemoved"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/defaultParameterAdded")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/defaultParameterAdded")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DefaultParameterAdded extends AbstractIncrementalJpsTest {
@@ -310,11 +220,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInDefaultParameterAdded() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/defaultParameterAdded"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultParameterAdded"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/defaultParameterAddedForTopLevelFun")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/defaultParameterAddedForTopLevelFun")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DefaultParameterAddedForTopLevelFun extends AbstractIncrementalJpsTest {
@@ -323,11 +233,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInDefaultParameterAddedForTopLevelFun() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/defaultParameterAddedForTopLevelFun"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultParameterAddedForTopLevelFun"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/defaultParameterRemoved")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/defaultParameterRemoved")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DefaultParameterRemoved extends AbstractIncrementalJpsTest {
@@ -336,11 +246,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInDefaultParameterRemoved() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/defaultParameterRemoved"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultParameterRemoved"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/defaultParameterRemovedForTopLevelFun")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/defaultParameterRemovedForTopLevelFun")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DefaultParameterRemovedForTopLevelFun extends AbstractIncrementalJpsTest {
@@ -349,11 +259,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInDefaultParameterRemovedForTopLevelFun() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/defaultParameterRemovedForTopLevelFun"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultParameterRemovedForTopLevelFun"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/defaultValueInConstructorRemoved")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/defaultValueInConstructorRemoved")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DefaultValueInConstructorRemoved extends AbstractIncrementalJpsTest {
@@ -362,11 +272,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInDefaultValueInConstructorRemoved() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/defaultValueInConstructorRemoved"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultValueInConstructorRemoved"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/duplicatedClass")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/duplicatedClass")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DuplicatedClass extends AbstractIncrementalJpsTest {
@@ -375,11 +285,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInDuplicatedClass() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/duplicatedClass"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/duplicatedClass"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/exportedDependency")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/exportedDependency")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ExportedDependency extends AbstractIncrementalJpsTest {
@@ -388,11 +298,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInExportedDependency() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/exportedDependency"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/exportedDependency"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionInlined")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class InlineFunctionInlined extends AbstractIncrementalJpsTest {
@@ -401,11 +311,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInInlineFunctionInlined() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/inlineFunctionInlined"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionTwoPackageParts")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/inlineFunctionTwoPackageParts")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class InlineFunctionTwoPackageParts extends AbstractIncrementalJpsTest {
@@ -414,11 +324,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInInlineFunctionTwoPackageParts() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/inlineFunctionTwoPackageParts"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/inlineFunctionTwoPackageParts"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/moveFileToAnotherModule")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/moveFileToAnotherModule")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MoveFileToAnotherModule extends AbstractIncrementalJpsTest {
@@ -427,11 +337,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInMoveFileToAnotherModule() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/moveFileToAnotherModule"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/moveFileToAnotherModule"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/simple")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/simple")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Simple extends AbstractIncrementalJpsTest {
@@ -440,11 +350,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInSimple() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/simple"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simple"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/simpleDependency")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/simpleDependency")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SimpleDependency extends AbstractIncrementalJpsTest {
@@ -453,11 +363,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInSimpleDependency() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/simpleDependency"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simpleDependency"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/simpleDependencyErrorOnAccessToInternal1")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal1")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SimpleDependencyErrorOnAccessToInternal1 extends AbstractIncrementalJpsTest {
@@ -466,11 +376,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInSimpleDependencyErrorOnAccessToInternal1() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/simpleDependencyErrorOnAccessToInternal1"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal1"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/simpleDependencyErrorOnAccessToInternal2")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal2")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SimpleDependencyErrorOnAccessToInternal2 extends AbstractIncrementalJpsTest {
@@ -479,11 +389,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInSimpleDependencyErrorOnAccessToInternal2() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/simpleDependencyErrorOnAccessToInternal2"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal2"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/simpleDependencyUnchanged")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/simpleDependencyUnchanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SimpleDependencyUnchanged extends AbstractIncrementalJpsTest {
@@ -492,11 +402,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInSimpleDependencyUnchanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/simpleDependencyUnchanged"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simpleDependencyUnchanged"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/transitiveDependency")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/transitiveDependency")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TransitiveDependency extends AbstractIncrementalJpsTest {
@@ -505,11 +415,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInTransitiveDependency() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/transitiveDependency"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/transitiveDependency"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/transitiveInlining")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/transitiveInlining")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TransitiveInlining extends AbstractIncrementalJpsTest {
@@ -518,11 +428,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInTransitiveInlining() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/transitiveInlining"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/transitiveInlining"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/twoDependants")
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/common/twoDependants")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TwoDependants extends AbstractIncrementalJpsTest {
@@ -531,7 +441,110 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             }
 
             public void testAllFilesPresentInTwoDependants() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/twoDependants"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/twoDependants"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+        }
+    }
+
+    @TestMetadata("jps-plugin/testData/incremental/multiModule/jvm")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Jvm extends AbstractIncrementalJpsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJvm() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/jvm"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("circular")
+        public void testCircular() throws Exception {
+            runTest("jps-plugin/testData/incremental/multiModule/jvm/circular/");
+        }
+
+        @TestMetadata("circularDependencyClasses")
+        public void testCircularDependencyClasses() throws Exception {
+            runTest("jps-plugin/testData/incremental/multiModule/jvm/circularDependencyClasses/");
+        }
+
+        @TestMetadata("circularDependencySamePackageUnchanged")
+        public void testCircularDependencySamePackageUnchanged() throws Exception {
+            runTest("jps-plugin/testData/incremental/multiModule/jvm/circularDependencySamePackageUnchanged/");
+        }
+
+        @TestMetadata("circularDependencyTopLevelFunctions")
+        public void testCircularDependencyTopLevelFunctions() throws Exception {
+            runTest("jps-plugin/testData/incremental/multiModule/jvm/circularDependencyTopLevelFunctions/");
+        }
+
+        @TestMetadata("circularDependencyWithAccessToInternal")
+        public void testCircularDependencyWithAccessToInternal() throws Exception {
+            runTest("jps-plugin/testData/incremental/multiModule/jvm/circularDependencyWithAccessToInternal/");
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/jvm/circular")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Circular extends AbstractIncrementalJpsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCircular() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/jvm/circular"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/jvm/circularDependencyClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CircularDependencyClasses extends AbstractIncrementalJpsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCircularDependencyClasses() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/jvm/circularDependencyClasses"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/jvm/circularDependencySamePackageUnchanged")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CircularDependencySamePackageUnchanged extends AbstractIncrementalJpsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCircularDependencySamePackageUnchanged() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/jvm/circularDependencySamePackageUnchanged"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/jvm/circularDependencyTopLevelFunctions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CircularDependencyTopLevelFunctions extends AbstractIncrementalJpsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCircularDependencyTopLevelFunctions() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/jvm/circularDependencyTopLevelFunctions"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/jvm/circularDependencyWithAccessToInternal")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CircularDependencyWithAccessToInternal extends AbstractIncrementalJpsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCircularDependencyWithAccessToInternal() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/jvm/circularDependencyWithAccessToInternal"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
     }

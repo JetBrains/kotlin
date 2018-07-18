@@ -75,6 +75,10 @@ public abstract class AbstractKotlinJpsBuildTestCase extends BaseKotlinJpsBuildT
         return addDependency("KotlinJavaScript", PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath());
     }
 
+    static JpsLibrary addKotlinJavaScriptStdlibDependency(@NotNull JpsProject project) {
+        return addDependency(project,"KotlinJavaScript", PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath());
+    }
+
     static JpsLibrary addKotlinStdlibDependency(@NotNull JpsProject project) {
        return addKotlinStdlibDependency(project.getModules(), false);
     }

@@ -917,7 +917,8 @@ fun main(args: Array<String>) {
 
     testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         testClass<AbstractIncrementalJpsTest> {
-            model("incremental/multiModule", extension = null, excludeParentDirs = true)
+            model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
+            model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, recursive = false)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
@@ -925,6 +926,10 @@ fun main(args: Array<String>) {
         }
 
         actualizeMppJpsIncTestCaseDirs(testDataRoot, "incremental/multiplatform/multiModule")
+
+        testClass<AbstractIncrementalJsJpsTest> {
+            model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
+        }
 
         testClass<AbstractMultiplatformJpsTest> {
             model(
