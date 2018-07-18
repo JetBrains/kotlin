@@ -32,6 +32,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableC
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.anonymousInitializers
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryPropertiesDescriptorsMap
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializationPackage
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
 
@@ -49,7 +50,7 @@ class SerializableJsTranslator(
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) {
 
-        val missingExceptionClassRef = serializableDescriptor.getClassFromSerializationPackage("MissingFieldException")
+        val missingExceptionClassRef = serializableDescriptor.getClassFromSerializationPackage(MISSING_FIELD_EXC)
             .let { context.translateQualifiedReference(it) }
 
         val f = context.buildFunction(constructorDescriptor) { jsFun, context ->

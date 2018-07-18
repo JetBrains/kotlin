@@ -35,6 +35,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.polymorphicSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.internalPackageFqName
 
 open class SerialTypeInfo(
     val property: SerializableProperty,
@@ -84,7 +85,7 @@ fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescri
     if (userOverride != null) return userOverride.toClassDescriptor
     if (kType.requiresPolymorphism()) return findPolymorphicSerializer(module)
     if (kType.isTypeParameter()) return null
-    if (KotlinBuiltIns.isArray(kType)) return module.getClassFromInternalSerializationPackage("ReferenceArraySerializer")
+    if (KotlinBuiltIns.isArray(kType)) return module.getClassFromInternalSerializationPackage(SpecialBuiltins.referenceArraySerializer)
     return kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
             ?: findStandardKotlinTypeSerializer(module, kType) // otherwise see if there is a standard serializer
             ?: findEnumTypeSerializer(module, kType)

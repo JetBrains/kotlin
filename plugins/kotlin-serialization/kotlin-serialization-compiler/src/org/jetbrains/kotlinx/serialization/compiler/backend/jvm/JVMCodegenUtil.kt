@@ -30,24 +30,38 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerialTypeInfo
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.typeArgPrefix
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.KSERIALIZER_CLASS
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_CTOR_MARKER_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESCRIPTOR_CLASS
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESCRIPTOR_CLASS_IMPL
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_EXC
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_LOADER_CLASS
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_SAVER_CLASS
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_DECODER_CLASS
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_ENCODER_CLASS
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.UNKNOWN_FIELD_EXC
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.internalPackageFqName
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.packageFqName
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-internal val descType = Type.getObjectType("kotlinx/serialization/SerialDescriptor")
-internal val descImplType = Type.getObjectType("kotlinx/serialization/internal/SerialClassDescImpl")
-internal val kOutputType = Type.getObjectType("kotlinx/serialization/StructureEncoder")
-internal val kInputType = Type.getObjectType("kotlinx/serialization/StructureDecoder")
+// todo: extract packages constants too?
+internal val descType = Type.getObjectType("kotlinx/serialization/$SERIAL_DESCRIPTOR_CLASS")
+internal val descImplType = Type.getObjectType("kotlinx/serialization/internal/$SERIAL_DESCRIPTOR_CLASS_IMPL")
+internal val kOutputType = Type.getObjectType("kotlinx/serialization/$STRUCTURE_ENCODER_CLASS")
+internal val kInputType = Type.getObjectType("kotlinx/serialization/$STRUCTURE_DECODER_CLASS")
 
 
-internal val kSerialSaverType = Type.getObjectType("kotlinx/serialization/SerializationStrategy")
-internal val kSerialLoaderType = Type.getObjectType("kotlinx/serialization/DeserializationStrategy")
-internal val kSerializerType = Type.getObjectType("kotlinx/serialization/KSerializer")
-internal val kSerializerArrayType = Type.getObjectType("[Lkotlinx/serialization/KSerializer;")
+internal val kSerialSaverType = Type.getObjectType("kotlinx/serialization/$SERIAL_SAVER_CLASS")
+internal val kSerialLoaderType = Type.getObjectType("kotlinx/serialization/$SERIAL_LOADER_CLASS")
+internal val kSerializerType = Type.getObjectType("kotlinx/serialization/$KSERIALIZER_CLASS")
+internal val kSerializerArrayType = Type.getObjectType("[Lkotlinx/serialization/$KSERIALIZER_CLASS;")
 
-internal val serializationExceptionName = "kotlinx/serialization/SerializationException"
-internal val serializationExceptionMissingFieldName = "kotlinx/serialization/MissingFieldException"
-internal val serializationExceptionUnknownIndexName = "kotlinx/serialization/UnknownFieldException"
+internal val serializationExceptionName = "kotlinx/serialization/$SERIAL_EXC"
+internal val serializationExceptionMissingFieldName = "kotlinx/serialization/$MISSING_FIELD_EXC"
+internal val serializationExceptionUnknownIndexName = "kotlinx/serialization/$UNKNOWN_FIELD_EXC"
 
 val OPT_MASK_TYPE: Type = Type.INT_TYPE
 val OPT_MASK_BITS = 32
@@ -78,7 +92,7 @@ fun InstructionAdapter.genKOutputMethodCall(property: SerializableProperty, clas
     else stackValueSerializerInstanceFromClass(classCodegen, sti, fromClassStartVar)
     if (!sti.unit) classCodegen.genPropertyOnStack(this, expressionCodegen.context, property.descriptor, propertyOwnerType, ownerVar)
     invokeinterface(kOutputType.internalName,
-                  "encode" + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + "ElementValue",
+        CallingConventions.encode + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + CallingConventions.elementPostfix,
                   "(" + descType.descriptor + "I" +
                   (if (useSerializer) kSerialSaverType.descriptor else "") +
                   (if (sti.unit) "" else sti.type.descriptor) + ")V")
@@ -94,7 +108,7 @@ internal fun InstructionAdapter.buildInternalConstructorDesc(propsStartVar: Int,
         load(propVar, propertyType)
         propVar += propertyType.size
     }
-    constructorDesc.append("Lkotlinx/serialization/SerializationConstructorMarker;)V")
+    constructorDesc.append("Lkotlinx/serialization/$SERIAL_CTOR_MARKER_NAME;)V")
     aconst(null)
     return constructorDesc.toString()
 }
@@ -110,10 +124,10 @@ internal fun ImplementationBodyCodegen.generateMethod(function: FunctionDescript
 }
 
 
-internal val enumSerializerId = ClassId(internalPackageFqName, Name.identifier("EnumSerializer"))
-internal val polymorphicSerializerId = ClassId(packageFqName, Name.identifier("PolymorphicSerializer"))
-internal val referenceArraySerializerId = ClassId(internalPackageFqName, Name.identifier("ReferenceArraySerializer"))
-internal val contextSerializerId = ClassId(packageFqName, Name.identifier("ContextSerializer"))
+internal val enumSerializerId = ClassId(internalPackageFqName, Name.identifier(SpecialBuiltins.enumSerializer))
+internal val polymorphicSerializerId = ClassId(packageFqName, Name.identifier(SpecialBuiltins.polymorphicSerializer))
+internal val referenceArraySerializerId = ClassId(internalPackageFqName, Name.identifier(SpecialBuiltins.referenceArraySerializer))
+internal val contextSerializerId = ClassId(packageFqName, Name.identifier(SpecialBuiltins.contextSerializer))
 
 
 internal fun InstructionAdapter.stackValueSerializerInstanceFromClass(codegen: ClassBodyCodegen, sti: JVMSerialTypeInfo, varIndexStart: Int): Boolean {
@@ -184,7 +198,7 @@ internal fun stackValueSerializerInstance(codegen: ClassBodyCodegen, module: Mod
             assert(stackValueSerializerInstance(codegen, module, argType, argSerializer, this, argType.genericIndex, genericSerializerFieldGetter))
             // wrap into nullable serializer if argType is nullable
             if (argType.isMarkedNullable) {
-                invokestatic("kotlinx/serialization/internal/BuiltinSerializersKt", "makeNullable",
+                invokestatic("kotlinx/serialization/internal/BuiltinSerializersKt", "makeNullable", // todo: extract?
                              "(" + kSerializerType.descriptor + ")" + kSerializerType.descriptor, false)
 
             }

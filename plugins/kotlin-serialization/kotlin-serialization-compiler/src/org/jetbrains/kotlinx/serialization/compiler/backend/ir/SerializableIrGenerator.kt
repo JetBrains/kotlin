@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializationPackage
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
 
@@ -49,7 +50,7 @@ class SerializableIrGenerator(
 
             // Missing field exception parts
             val exceptionCtor =
-                serializableDescriptor.getClassFromSerializationPackage("MissingFieldException")
+                serializableDescriptor.getClassFromSerializationPackage(MISSING_FIELD_EXC)
                     .unsubstitutedPrimaryConstructor!!
             val exceptionCtorRef = compilerContext.symbolTable.referenceConstructor(exceptionCtor)
             val exceptionType = exceptionCtor.returnType.toIrType()

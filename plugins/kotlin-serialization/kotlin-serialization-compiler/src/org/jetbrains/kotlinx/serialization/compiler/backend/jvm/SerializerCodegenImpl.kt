@@ -22,11 +22,8 @@ import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.typeArgPrefix
-import org.jetbrains.kotlinx.serialization.compiler.resolve.annotationsWithArguments
-import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorBySerializer
-import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -85,13 +82,18 @@ class SerializerCodegenImpl(
                 if (property.transient) continue
                 load(classDescVar, descImplType)
                 aconst(property.name)
-                invokevirtual(descImplType.internalName, "addElement", "(Ljava/lang/String;)V", false)
+                invokevirtual(descImplType.internalName, CallingConventions.addElement, "(Ljava/lang/String;)V", false)
                 // pushing annotations
                 for ((annotationClass, args, consParams) in property.annotationsWithArguments) {
                     if (args.size != consParams.size) throw IllegalArgumentException("Can't use arguments with defaults for serializable annotations yet")
                     load(classDescVar, descImplType)
                     expr.generateSyntheticAnnotationOnStack(annotationClass, args, consParams)
-                    invokevirtual(descImplType.internalName, "pushAnnotation", "(Ljava/lang/annotation/Annotation;)V", false)
+                    invokevirtual(
+                        descImplType.internalName,
+                        CallingConventions.addAnnotation,
+                        "(Ljava/lang/annotation/Annotation;)V",
+                        false
+                    )
                 }
             }
             // add annotations on class itself
@@ -99,7 +101,12 @@ class SerializerCodegenImpl(
                 if (args.size != consParams.size) throw IllegalArgumentException("Can't use arguments with defaults for serializable annotations yet")
                 load(classDescVar, descImplType)
                 expr.generateSyntheticAnnotationOnStack(annotationClass, args, consParams)
-                invokevirtual(descImplType.internalName, "pushClassAnnotation", "(Ljava/lang/annotation/Annotation;)V", false)
+                invokevirtual(
+                    descImplType.internalName,
+                    CallingConventions.addClassAnnotation,
+                    "(Ljava/lang/annotation/Annotation;)V",
+                    false
+                )
             }
             load(classDescVar, descImplType)
             putstatic(serializerAsmType.internalName, serialDescField, descType.descriptor)
@@ -111,7 +118,8 @@ class SerializerCodegenImpl(
         args: List<ValueArgument>,
         ctorParams: List<ValueParameterDescriptor>
     ) {
-        val implType = codegen.typeMapper.mapType(annotationClass).internalName + "\$" + KSerializerDescriptorResolver.IMPL_NAME.identifier
+        val implType =
+            codegen.typeMapper.mapType(annotationClass).internalName + "\$" + SerialEntityNames.IMPL_NAME.identifier
         with(v) {
             // new Annotation$Impl(...)
             anew(Type.getObjectType(implType))
@@ -155,7 +163,8 @@ class SerializerCodegenImpl(
             load(outputVar, kOutputType)
             load(descVar, descType)
             genArrayOfTypeParametersSerializers()
-            invokeinterface(kOutputType.internalName, "beginStructure",
+            invokeinterface(
+                kOutputType.internalName, CallingConventions.begin,
                           "(" + descType.descriptor + kSerializerArrayType.descriptor +
                           ")" + kOutputType.descriptor)
             store(outputVar, kOutputType)
@@ -171,7 +180,8 @@ class SerializerCodegenImpl(
                     sig.append(kSerializerType.descriptor)
                 }
                 sig.append(")V")
-                invokevirtual(objType.internalName, KSerializerDescriptorResolver.WRITE_SELF_NAME.asString(),
+                invokevirtual(
+                    objType.internalName, SerialEntityNames.WRITE_SELF_NAME.asString(),
                               sig.toString(), false)
             }
             else {
@@ -190,7 +200,8 @@ class SerializerCodegenImpl(
             // output.writeEnd(classDesc)
             load(outputVar, kOutputType)
             load(descVar, descType)
-            invokeinterface(kOutputType.internalName, "endStructure",
+            invokeinterface(
+                kOutputType.internalName, CallingConventions.end,
                           "(" + descType.descriptor + ")V")
             // return
             areturn(Type.VOID_TYPE)
@@ -245,7 +256,8 @@ class SerializerCodegenImpl(
             load(inputVar, kInputType)
             load(descVar, descType)
             genArrayOfTypeParametersSerializers()
-            invokeinterface(kInputType.internalName, "beginStructure",
+            invokeinterface(
+                kInputType.internalName, CallingConventions.begin,
                           "(" + descType.descriptor + kSerializerArrayType.descriptor +
                           ")" + kInputType.descriptor)
             store(inputVar, kInputType)
@@ -254,7 +266,8 @@ class SerializerCodegenImpl(
             visitLabel(readElementLabel)
             load(inputVar, kInputType)
             load(descVar, descType)
-            invokeinterface(kInputType.internalName, "decodeElement",
+            invokeinterface(
+                kInputType.internalName, CallingConventions.decodeElementIndex,
                           "(" + descType.descriptor + ")I")
             store(indexVar, Type.INT_TYPE)
             // switch(index)
@@ -297,7 +310,7 @@ class SerializerCodegenImpl(
 
                     fun produceCall(update: Boolean) {
                         invokeinterface(kInputType.internalName,
-                                      (if (update) "update" else "decode") + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + "ElementValue",
+                            (if (update) CallingConventions.update else CallingConventions.decode) + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + CallingConventions.elementPostfix,
                                       "(" + descType.descriptor + "I" +
                                       (if (useSerializer) kSerialLoaderType.descriptor else "")
                                       + (if (unknownSer) AsmTypes.K_CLASS_TYPE.descriptor else "")
@@ -351,7 +364,7 @@ class SerializerCodegenImpl(
             visitLabel(readEndLabel)
             load(inputVar, kInputType)
             load(descVar, descType)
-            invokeinterface(kInputType.internalName, "endStructure",
+            invokeinterface(kInputType.internalName, CallingConventions.end,
                           "(" + descType.descriptor + ")V")
             if (!serializableDescriptor.isInternalSerializable) {
                 //validate all required (constructor) fields

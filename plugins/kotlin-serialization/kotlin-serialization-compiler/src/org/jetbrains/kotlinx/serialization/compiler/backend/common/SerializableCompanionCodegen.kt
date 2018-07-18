@@ -19,11 +19,11 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.common
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.SERIALIZER_PROVIDER_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_PROVIDER_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
 
 abstract class SerializableCompanionCodegen(
-    protected val companionDescriptor: ClassDescriptor /*declaration: KtPureClassOrObject*/
+    protected val companionDescriptor: ClassDescriptor
 ) {
     protected val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorByCompanion(companionDescriptor)!!
 

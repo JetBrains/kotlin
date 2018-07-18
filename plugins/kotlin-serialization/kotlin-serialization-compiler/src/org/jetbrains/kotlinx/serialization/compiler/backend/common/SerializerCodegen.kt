@@ -28,8 +28,11 @@ import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor
 
-abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContext: BindingContext) {
-    protected val serializerDescriptor: ClassDescriptor = declaration.findClassDescriptor(bindingContext)
+abstract class SerializerCodegen(
+    protected val serializerDescriptor: ClassDescriptor,
+    bindingContext: BindingContext
+) {
+    //    protected val serializerDescriptor: ClassDescriptor = declaration.findClassDescriptor(bindingContext)
     protected val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorBySerializer(serializerDescriptor)!!
     protected val serialName: String = serializableDescriptor.annotations.serialNameValue ?: serializableDescriptor.fqNameUnsafe.asString()
     protected val properties = SerializableProperties(serializableDescriptor, bindingContext)
@@ -66,7 +69,7 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
         return !found
     }
 
-    protected val serialDescPropertyDescriptor = getPropertyToGenerate(serializerDescriptor, KSerializerDescriptorResolver.SERIAL_DESC_FIELD,
+    protected val serialDescPropertyDescriptor = getPropertyToGenerate(serializerDescriptor, SerialEntityNames.SERIAL_DESC_FIELD,
                                                                        serializerDescriptor::checkSerializableClassPropertyResult)
     protected abstract fun generateSerialDesc()
 
@@ -86,7 +89,7 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
     }
 
     private fun generateSaveIfNeeded(): Boolean {
-        val function = getMemberToGenerate(serializerDescriptor, KSerializerDescriptorResolver.SAVE,
+        val function = getMemberToGenerate(serializerDescriptor, SerialEntityNames.SAVE,
                                            serializerDescriptor::checkSaveMethodResult, serializerDescriptor::checkSaveMethodParameters)
                        ?: return false
         generateSave(function)
@@ -94,7 +97,7 @@ abstract class SerializerCodegen(declaration: KtPureClassOrObject, bindingContex
     }
 
     private fun generateLoadIfNeeded(): Boolean {
-        val function = getMemberToGenerate(serializerDescriptor, KSerializerDescriptorResolver.LOAD,
+        val function = getMemberToGenerate(serializerDescriptor, SerialEntityNames.LOAD,
                                            serializerDescriptor::checkLoadMethodResult, serializerDescriptor::checkLoadMethodParameters)
                        ?: return false
         generateLoad(function)
