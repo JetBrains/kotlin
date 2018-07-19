@@ -1,6 +1,6 @@
 // test/Klass.class
 // ------------------------------------------
-  // requires API version 1.2.0 (level=WARNING, message="Klass must not be used!")
+// requires API version 1.2.0 (level=WARNING, message="Klass must not be used!")
 public final class test/Klass : kotlin/Any {
 
   // signature: <init>()V

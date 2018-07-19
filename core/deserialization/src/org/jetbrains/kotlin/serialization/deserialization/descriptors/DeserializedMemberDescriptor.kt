@@ -27,7 +27,7 @@ interface DeserializedMemberDescriptor : MemberDescriptor {
 
     val versionRequirementTable: VersionRequirementTable
 
-    val versionRequirement: VersionRequirement?
+    val versionRequirements: List<VersionRequirement>
         get() = VersionRequirement.create(proto, nameResolver, versionRequirementTable)
 
     // Information about the origin of this callable's container (class or package part on JVM) or null if there's no such information.

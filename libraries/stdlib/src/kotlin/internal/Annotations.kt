@@ -84,6 +84,7 @@ internal annotation class AccessibleLateinitPropertyLiteral
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPEALIAS)
 @Retention(AnnotationRetention.SOURCE)
+@Repeatable
 @SinceKotlin("1.2")
 internal annotation class RequireKotlin(
     val version: String,

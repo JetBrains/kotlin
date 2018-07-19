@@ -9,7 +9,6 @@ import kotlinx.metadata.*
 import kotlinx.metadata.impl.extensions.MetadataExtensions
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
-import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.metadata.deserialization.Flags as F
 
 class ReadContext(
@@ -77,8 +76,8 @@ fun ProtoBuf.Class.accept(v: KmClassVisitor, strings: NameResolver) {
         v.visitSealedSubclass(c.className(sealedSubclassFqName))
     }
 
-    if (hasVersionRequirement()) {
-        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(it, c) }
+    for (versionRequirement in versionRequirementList) {
+        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
     }
 
     for (extension in c.extensions) {
@@ -134,8 +133,8 @@ private fun ProtoBuf.Constructor.accept(v: KmConstructorVisitor, c: ReadContext)
         v.visitValueParameter(parameter.flags, c[parameter.name])?.let { parameter.accept(it, c) }
     }
 
-    if (hasVersionRequirement()) {
-        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(it, c) }
+    for (versionRequirement in versionRequirementList) {
+        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
     }
 
     for (extension in c.extensions) {
@@ -168,8 +167,8 @@ private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
         v.visitContract()?.let { contract.accept(it, c) }
     }
 
-    if (hasVersionRequirement()) {
-        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(it, c) }
+    for (versionRequirement in versionRequirementList) {
+        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
     }
 
     for (extension in c.extensions) {
@@ -199,8 +198,8 @@ fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
         v.visitReturnType(returnType.typeFlags)?.let { returnType.accept(it, c) }
     }
 
-    if (hasVersionRequirement()) {
-        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(it, c) }
+    for (versionRequirement in versionRequirementList) {
+        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
     }
 
     for (extension in c.extensions) {
@@ -229,8 +228,8 @@ private fun ProtoBuf.TypeAlias.accept(v: KmTypeAliasVisitor, outer: ReadContext)
         v.visitAnnotation(annotation.readAnnotation(c.strings))
     }
 
-    if (hasVersionRequirement()) {
-        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(it, c) }
+    for (versionRequirement in versionRequirementList) {
+        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
     }
 
     v.visitEnd()
@@ -327,9 +326,9 @@ private fun ProtoBuf.Type.accept(v: KmTypeVisitor, c: ReadContext) {
     v.visitEnd()
 }
 
-private fun MessageLite.acceptVersionRequirementVisitor(v: KmVersionRequirementVisitor, c: ReadContext) {
-    val message = VersionRequirement.create(this, c.strings, c.versionRequirements)
-            ?: throw InconsistentKotlinMetadataException("No VersionRequirement with the given id in the table")
+private fun acceptVersionRequirementVisitor(id: Int, v: KmVersionRequirementVisitor, c: ReadContext) {
+    val message = VersionRequirement.create(id, c.strings, c.versionRequirements)
+        ?: throw InconsistentKotlinMetadataException("No VersionRequirement with the given id in the table")
 
     val kind = when (message.kind) {
         ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION -> KmVersionRequirementVersionKind.LANGUAGE_VERSION

@@ -18,7 +18,7 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
         val params = mutableListOf<String>()
         var receiverParameterType: String? = null
         var returnType: String? = null
-        var versionRequirement: String? = null
+        val versionRequirements = mutableListOf<String>()
         var jvmDesc: JvmMemberSignature? = null
         var lambdaClassOriginName: String? = null
 
@@ -37,7 +37,7 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
             printType(flags) { returnType = it }
 
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
-            printVersionRequirement { versionRequirement = it }
+            printVersionRequirement { versionRequirements.add(it) }
 
         override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? {
             if (type != JvmFunctionExtensionVisitor.TYPE) return null
@@ -57,7 +57,7 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
             if (lambdaClassOriginName != null) {
                 sb.appendln("  // lambda class origin: $lambdaClassOriginName")
             }
-            if (versionRequirement != null) {
+            for (versionRequirement in versionRequirements) {
                 sb.appendln("  // $versionRequirement")
             }
             if (jvmDesc != null) {
@@ -90,7 +90,7 @@ private fun visitProperty(
         var receiverParameterType: String? = null
         var returnType: String? = null
         var setterParameter: String? = null
-        var versionRequirement: String? = null
+        val versionRequirements = mutableListOf<String>()
         var jvmFieldDesc: JvmMemberSignature? = null
         var jvmGetterDesc: JvmMemberSignature? = null
         var jvmSetterDesc: JvmMemberSignature? = null
@@ -109,7 +109,7 @@ private fun visitProperty(
             printType(flags) { returnType = it }
 
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
-            printVersionRequirement { versionRequirement = it }
+            printVersionRequirement { versionRequirements.add(it) }
 
         override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? {
             if (type != JvmPropertyExtensionVisitor.TYPE) return null
@@ -128,7 +128,7 @@ private fun visitProperty(
 
         override fun visitEnd() {
             sb.appendln()
-            if (versionRequirement != null) {
+            for (versionRequirement in versionRequirements) {
                 sb.appendln("  // $versionRequirement")
             }
             if (jvmFieldDesc != null) {
@@ -181,14 +181,14 @@ private fun visitProperty(
 private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisitor =
     object : KmConstructorVisitor() {
         val params = mutableListOf<String>()
-        var versionRequirement: String? = null
+        val versionRequirements = mutableListOf<String>()
         var jvmDesc: JvmMemberSignature? = null
 
         override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor? =
             printValueParameter(flags, name) { params.add(it) }
 
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
-            printVersionRequirement { versionRequirement = it }
+            printVersionRequirement { versionRequirements.add(it) }
 
         override fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? {
             if (type != JvmConstructorExtensionVisitor.TYPE) return null
@@ -201,7 +201,7 @@ private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisi
 
         override fun visitEnd() {
             sb.appendln()
-            if (versionRequirement != null) {
+            for (versionRequirement in versionRequirements) {
                 sb.appendln("  // $versionRequirement")
             }
             if (jvmDesc != null) {
@@ -221,7 +221,7 @@ private fun visitTypeAlias(settings: KotlinpSettings, sb: StringBuilder, flags: 
         val typeParams = mutableListOf<String>()
         var underlyingType: String? = null
         var expandedType: String? = null
-        var versionRequirement: String? = null
+        val versionRequirements = mutableListOf<String>()
 
         override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
             printTypeParameter(settings, flags, name, id, variance) { typeParams.add(it) }
@@ -237,11 +237,11 @@ private fun visitTypeAlias(settings: KotlinpSettings, sb: StringBuilder, flags: 
         }
 
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
-            printVersionRequirement { versionRequirement = it }
+            printVersionRequirement { versionRequirements.add(it) }
 
         override fun visitEnd() {
             sb.appendln()
-            if (versionRequirement != null) {
+            for (versionRequirement in versionRequirements) {
                 sb.appendln("  // $versionRequirement")
             }
             for (annotation in annotations) {
@@ -536,7 +536,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
     private var name: ClassName? = null
     private val typeParams = mutableListOf<String>()
     private val supertypes = mutableListOf<String>()
-    private var versionRequirement: String? = null
+    private val versionRequirements = mutableListOf<String>()
     private var anonymousObjectOriginName: String? = null
 
     override fun visit(flags: Flags, name: ClassName) {
@@ -548,8 +548,8 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
         if (anonymousObjectOriginName != null) {
             result.appendln("// anonymous object origin: $anonymousObjectOriginName")
         }
-        if (versionRequirement != null) {
-            result.appendln("  // $versionRequirement")
+        for (versionRequirement in versionRequirements) {
+            result.appendln("// $versionRequirement")
         }
         result.appendFlags(flags!!, CLASS_FLAGS_MAP)
         result.append(name)
@@ -604,7 +604,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
     }
 
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
-        printVersionRequirement { versionRequirement = it }
+        printVersionRequirement { versionRequirements.add(it) }
 
     override fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor? {
         if (type != JvmClassExtensionVisitor.TYPE) return null

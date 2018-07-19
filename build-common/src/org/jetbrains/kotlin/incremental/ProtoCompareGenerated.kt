@@ -177,10 +177,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
-        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
-        if (old.hasVersionRequirement()) {
-            if (old.versionRequirement != new.versionRequirement) return false
-        }
+        if (!checkEqualsClassVersionRequirement(old, new)) return false
 
         if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) return false
         if (old.hasVersionRequirementTable()) {
@@ -251,7 +248,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         ENUM_ENTRY_LIST,
         SEALED_SUBCLASS_FQ_NAME_LIST,
         TYPE_TABLE,
-        VERSION_REQUIREMENT,
+        VERSION_REQUIREMENT_LIST,
         VERSION_REQUIREMENT_TABLE,
         JVM_EXT_CLASS_MODULE_NAME,
         JVM_EXT_CLASS_LOCAL_VARIABLE_LIST,
@@ -302,10 +299,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) result.add(ProtoBufClassKind.TYPE_TABLE)
         }
 
-        if (old.hasVersionRequirement() != new.hasVersionRequirement()) result.add(ProtoBufClassKind.VERSION_REQUIREMENT)
-        if (old.hasVersionRequirement()) {
-            if (old.versionRequirement != new.versionRequirement) result.add(ProtoBufClassKind.VERSION_REQUIREMENT)
-        }
+        if (!checkEqualsClassVersionRequirement(old, new)) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_LIST)
 
         if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_TABLE)
         if (old.hasVersionRequirementTable()) {
@@ -404,10 +398,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
-        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
-        if (old.hasVersionRequirement()) {
-            if (old.versionRequirement != new.versionRequirement) return false
-        }
+        if (!checkEqualsFunctionVersionRequirement(old, new)) return false
 
         if (old.hasContract() != new.hasContract()) return false
         if (old.hasContract()) {
@@ -510,10 +501,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (old.setterFlags != new.setterFlags) return false
         }
 
-        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
-        if (old.hasVersionRequirement()) {
-            if (old.versionRequirement != new.versionRequirement) return false
-        }
+        if (!checkEqualsPropertyVersionRequirement(old, new)) return false
 
         if (old.hasExtension(JvmProtoBuf.propertySignature) != new.hasExtension(JvmProtoBuf.propertySignature)) return false
         if (old.hasExtension(JvmProtoBuf.propertySignature)) {
@@ -603,10 +591,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsTypeAliasAnnotation(old, new)) return false
 
-        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
-        if (old.hasVersionRequirement()) {
-            if (old.versionRequirement != new.versionRequirement) return false
-        }
+        if (!checkEqualsTypeAliasVersionRequirement(old, new)) return false
 
         return true
     }
@@ -788,10 +773,7 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsConstructorValueParameter(old, new)) return false
 
-        if (old.hasVersionRequirement() != new.hasVersionRequirement()) return false
-        if (old.hasVersionRequirement()) {
-            if (old.versionRequirement != new.versionRequirement) return false
-        }
+        if (!checkEqualsConstructorVersionRequirement(old, new)) return false
 
         if (old.hasExtension(JvmProtoBuf.constructorSignature) != new.hasExtension(JvmProtoBuf.constructorSignature)) return false
         if (old.hasExtension(JvmProtoBuf.constructorSignature)) {
@@ -1262,6 +1244,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEqualsClassVersionRequirement(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.versionRequirementCount != new.versionRequirementCount) return false
+
+        for(i in 0..old.versionRequirementCount - 1) {
+            if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsFunctionTypeParameter(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
         if (old.typeParameterCount != new.typeParameterCount) return false
 
@@ -1282,11 +1274,31 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         return true
     }
 
+    open fun checkEqualsFunctionVersionRequirement(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
+        if (old.versionRequirementCount != new.versionRequirementCount) return false
+
+        for(i in 0..old.versionRequirementCount - 1) {
+            if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsPropertyTypeParameter(old: ProtoBuf.Property, new: ProtoBuf.Property): Boolean {
         if (old.typeParameterCount != new.typeParameterCount) return false
 
         for(i in 0..old.typeParameterCount - 1) {
             if (!checkEquals(old.getTypeParameter(i), new.getTypeParameter(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsPropertyVersionRequirement(old: ProtoBuf.Property, new: ProtoBuf.Property): Boolean {
+        if (old.versionRequirementCount != new.versionRequirementCount) return false
+
+        for(i in 0..old.versionRequirementCount - 1) {
+            if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
         }
 
         return true
@@ -1307,6 +1319,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         for(i in 0..old.annotationCount - 1) {
             if (!checkEquals(old.getAnnotation(i), new.getAnnotation(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsTypeAliasVersionRequirement(old: ProtoBuf.TypeAlias, new: ProtoBuf.TypeAlias): Boolean {
+        if (old.versionRequirementCount != new.versionRequirementCount) return false
+
+        for(i in 0..old.versionRequirementCount - 1) {
+            if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
         }
 
         return true
@@ -1367,6 +1389,16 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         for(i in 0..old.valueParameterCount - 1) {
             if (!checkEquals(old.getValueParameter(i), new.getValueParameter(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsConstructorVersionRequirement(old: ProtoBuf.Constructor, new: ProtoBuf.Constructor): Boolean {
+        if (old.versionRequirementCount != new.versionRequirementCount) return false
+
+        for(i in 0..old.versionRequirementCount - 1) {
+            if (old.getVersionRequirement(i) != new.getVersionRequirement(i)) return false
         }
 
         return true
@@ -1562,8 +1594,8 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasVersionRequirement()) {
-        hashCode = 31 * hashCode + versionRequirement
+    for(i in 0..versionRequirementCount - 1) {
+        hashCode = 31 * hashCode + getVersionRequirement(i)
     }
 
     if (hasVersionRequirementTable()) {
@@ -1642,8 +1674,8 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasVersionRequirement()) {
-        hashCode = 31 * hashCode + versionRequirement
+    for(i in 0..versionRequirementCount - 1) {
+        hashCode = 31 * hashCode + getVersionRequirement(i)
     }
 
     if (hasContract()) {
@@ -1726,8 +1758,8 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + setterFlags
     }
 
-    if (hasVersionRequirement()) {
-        hashCode = 31 * hashCode + versionRequirement
+    for(i in 0..versionRequirementCount - 1) {
+        hashCode = 31 * hashCode + getVersionRequirement(i)
     }
 
     if (hasExtension(JvmProtoBuf.propertySignature)) {
@@ -1802,8 +1834,8 @@ fun ProtoBuf.TypeAlias.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
         hashCode = 31 * hashCode + getAnnotation(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasVersionRequirement()) {
-        hashCode = 31 * hashCode + versionRequirement
+    for(i in 0..versionRequirementCount - 1) {
+        hashCode = 31 * hashCode + getVersionRequirement(i)
     }
 
     return hashCode
@@ -1960,8 +1992,8 @@ fun ProtoBuf.Constructor.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (I
         hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasVersionRequirement()) {
-        hashCode = 31 * hashCode + versionRequirement
+    for(i in 0..versionRequirementCount - 1) {
+        hashCode = 31 * hashCode + getVersionRequirement(i)
     }
 
     if (hasExtension(JvmProtoBuf.constructorSignature)) {

@@ -8284,21 +8284,29 @@ public final class ProtoBuf {
     org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable getTypeTable();
 
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    boolean hasVersionRequirement();
+    java.util.List<java.lang.Integer> getVersionRequirementList();
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    int getVersionRequirement();
+    int getVersionRequirementCount();
+    /**
+     * <code>repeated int32 version_requirement = 31;</code>
+     *
+     * <pre>
+     * Index into the VersionRequirementTable
+     * </pre>
+     */
+    int getVersionRequirement(int index);
 
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
@@ -8508,13 +8516,29 @@ public final class ProtoBuf {
               break;
             }
             case 248: {
-              bitField0_ |= 0x00000010;
-              versionRequirement_ = input.readInt32();
+              if (!((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+                versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00004000;
+              }
+              versionRequirement_.add(input.readInt32());
+              break;
+            }
+            case 250: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00004000) == 0x00004000) && input.getBytesUntilLimit() > 0) {
+                versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00004000;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                versionRequirement_.add(input.readInt32());
+              }
+              input.popLimit(limit);
               break;
             }
             case 258: {
               org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000020) == 0x00000020)) {
+              if (((bitField0_ & 0x00000010) == 0x00000010)) {
                 subBuilder = versionRequirementTable_.toBuilder();
               }
               versionRequirementTable_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.PARSER, extensionRegistry);
@@ -8522,7 +8546,7 @@ public final class ProtoBuf {
                 subBuilder.mergeFrom(versionRequirementTable_);
                 versionRequirementTable_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000020;
+              bitField0_ |= 0x00000010;
               break;
             }
           }
@@ -8562,6 +8586,9 @@ public final class ProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00001000) == 0x00001000)) {
           sealedSubclassFqName_ = java.util.Collections.unmodifiableList(sealedSubclassFqName_);
+        }
+        if (((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -9097,26 +9124,37 @@ public final class ProtoBuf {
     }
 
     public static final int VERSION_REQUIREMENT_FIELD_NUMBER = 31;
-    private int versionRequirement_;
+    private java.util.List<java.lang.Integer> versionRequirement_;
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    public boolean hasVersionRequirement() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
+    public java.util.List<java.lang.Integer>
+        getVersionRequirementList() {
+      return versionRequirement_;
     }
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    public int getVersionRequirement() {
-      return versionRequirement_;
+    public int getVersionRequirementCount() {
+      return versionRequirement_.size();
+    }
+    /**
+     * <code>repeated int32 version_requirement = 31;</code>
+     *
+     * <pre>
+     * Index into the VersionRequirementTable
+     * </pre>
+     */
+    public int getVersionRequirement(int index) {
+      return versionRequirement_.get(index);
     }
 
     public static final int VERSION_REQUIREMENT_TABLE_FIELD_NUMBER = 32;
@@ -9125,7 +9163,7 @@ public final class ProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
      */
     public boolean hasVersionRequirementTable() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
+      return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
@@ -9149,7 +9187,7 @@ public final class ProtoBuf {
       enumEntry_ = java.util.Collections.emptyList();
       sealedSubclassFqName_ = java.util.Collections.emptyList();
       typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
-      versionRequirement_ = 0;
+      versionRequirement_ = java.util.Collections.emptyList();
       versionRequirementTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
@@ -9278,10 +9316,10 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(30, typeTable_);
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        output.writeInt32(31, versionRequirement_);
+      for (int i = 0; i < versionRequirement_.size(); i++) {
+        output.writeInt32(31, versionRequirement_.get(i));
       }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
         output.writeMessage(32, versionRequirementTable_);
       }
       extensionWriter.writeUntil(19000, output);
@@ -9380,11 +9418,16 @@ public final class ProtoBuf {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(30, typeTable_);
       }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32Size(31, versionRequirement_);
+      {
+        int dataSize = 0;
+        for (int i = 0; i < versionRequirement_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(versionRequirement_.get(i));
+        }
+        size += dataSize;
+        size += 2 * getVersionRequirementList().size();
       }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(32, versionRequirementTable_);
       }
@@ -9510,7 +9553,7 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00001000);
         typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00002000);
-        versionRequirement_ = 0;
+        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00004000);
         versionRequirementTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirementTable.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00008000);
@@ -9603,12 +9646,13 @@ public final class ProtoBuf {
           to_bitField0_ |= 0x00000008;
         }
         result.typeTable_ = typeTable_;
-        if (((from_bitField0_ & 0x00004000) == 0x00004000)) {
-          to_bitField0_ |= 0x00000010;
+        if (((bitField0_ & 0x00004000) == 0x00004000)) {
+          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
+          bitField0_ = (bitField0_ & ~0x00004000);
         }
         result.versionRequirement_ = versionRequirement_;
         if (((from_bitField0_ & 0x00008000) == 0x00008000)) {
-          to_bitField0_ |= 0x00000020;
+          to_bitField0_ |= 0x00000010;
         }
         result.versionRequirementTable_ = versionRequirementTable_;
         result.bitField0_ = to_bitField0_;
@@ -9729,8 +9773,15 @@ public final class ProtoBuf {
         if (other.hasTypeTable()) {
           mergeTypeTable(other.getTypeTable());
         }
-        if (other.hasVersionRequirement()) {
-          setVersionRequirement(other.getVersionRequirement());
+        if (!other.versionRequirement_.isEmpty()) {
+          if (versionRequirement_.isEmpty()) {
+            versionRequirement_ = other.versionRequirement_;
+            bitField0_ = (bitField0_ & ~0x00004000);
+          } else {
+            ensureVersionRequirementIsMutable();
+            versionRequirement_.addAll(other.versionRequirement_);
+          }
+          
         }
         if (other.hasVersionRequirementTable()) {
           mergeVersionRequirementTable(other.getVersionRequirementTable());
@@ -11097,50 +11148,96 @@ public final class ProtoBuf {
         return this;
       }
 
-      private int versionRequirement_ ;
-      /**
-       * <code>optional int32 version_requirement = 31;</code>
-       *
-       * <pre>
-       * Index into the VersionRequirementTable
-       * </pre>
-       */
-      public boolean hasVersionRequirement() {
-        return ((bitField0_ & 0x00004000) == 0x00004000);
+      private java.util.List<java.lang.Integer> versionRequirement_ = java.util.Collections.emptyList();
+      private void ensureVersionRequirementIsMutable() {
+        if (!((bitField0_ & 0x00004000) == 0x00004000)) {
+          versionRequirement_ = new java.util.ArrayList<java.lang.Integer>(versionRequirement_);
+          bitField0_ |= 0x00004000;
+         }
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
-      public int getVersionRequirement() {
-        return versionRequirement_;
+      public java.util.List<java.lang.Integer>
+          getVersionRequirementList() {
+        return java.util.Collections.unmodifiableList(versionRequirement_);
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder setVersionRequirement(int value) {
-        bitField0_ |= 0x00004000;
-        versionRequirement_ = value;
+      public int getVersionRequirementCount() {
+        return versionRequirement_.size();
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public int getVersionRequirement(int index) {
+        return versionRequirement_.get(index);
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder setVersionRequirement(
+          int index, int value) {
+        ensureVersionRequirementIsMutable();
+        versionRequirement_.set(index, value);
         
         return this;
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder addVersionRequirement(int value) {
+        ensureVersionRequirementIsMutable();
+        versionRequirement_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder addAllVersionRequirement(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureVersionRequirementIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, versionRequirement_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
       public Builder clearVersionRequirement() {
+        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00004000);
-        versionRequirement_ = 0;
         
         return this;
       }
@@ -13066,21 +13163,29 @@ public final class ProtoBuf {
     int getValueParameterCount();
 
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    boolean hasVersionRequirement();
+    java.util.List<java.lang.Integer> getVersionRequirementList();
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    int getVersionRequirement();
+    int getVersionRequirementCount();
+    /**
+     * <code>repeated int32 version_requirement = 31;</code>
+     *
+     * <pre>
+     * Index into the VersionRequirementTable
+     * </pre>
+     */
+    int getVersionRequirement(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.Constructor}
@@ -13147,8 +13252,24 @@ public final class ProtoBuf {
               break;
             }
             case 248: {
-              bitField0_ |= 0x00000002;
-              versionRequirement_ = input.readInt32();
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              versionRequirement_.add(input.readInt32());
+              break;
+            }
+            case 250: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
+                versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                versionRequirement_.add(input.readInt32());
+              }
+              input.popLimit(limit);
               break;
             }
           }
@@ -13161,6 +13282,9 @@ public final class ProtoBuf {
       } finally {
         if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
           valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
+        }
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -13251,32 +13375,43 @@ public final class ProtoBuf {
     }
 
     public static final int VERSION_REQUIREMENT_FIELD_NUMBER = 31;
-    private int versionRequirement_;
+    private java.util.List<java.lang.Integer> versionRequirement_;
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    public boolean hasVersionRequirement() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
+    public java.util.List<java.lang.Integer>
+        getVersionRequirementList() {
+      return versionRequirement_;
     }
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    public int getVersionRequirement() {
-      return versionRequirement_;
+    public int getVersionRequirementCount() {
+      return versionRequirement_.size();
+    }
+    /**
+     * <code>repeated int32 version_requirement = 31;</code>
+     *
+     * <pre>
+     * Index into the VersionRequirementTable
+     * </pre>
+     */
+    public int getVersionRequirement(int index) {
+      return versionRequirement_.get(index);
     }
 
     private void initFields() {
       flags_ = 6;
       valueParameter_ = java.util.Collections.emptyList();
-      versionRequirement_ = 0;
+      versionRequirement_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -13310,8 +13445,8 @@ public final class ProtoBuf {
       for (int i = 0; i < valueParameter_.size(); i++) {
         output.writeMessage(2, valueParameter_.get(i));
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(31, versionRequirement_);
+      for (int i = 0; i < versionRequirement_.size(); i++) {
+        output.writeInt32(31, versionRequirement_.get(i));
       }
       extensionWriter.writeUntil(19000, output);
       output.writeRawBytes(unknownFields);
@@ -13331,9 +13466,14 @@ public final class ProtoBuf {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, valueParameter_.get(i));
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32Size(31, versionRequirement_);
+      {
+        int dataSize = 0;
+        for (int i = 0; i < versionRequirement_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(versionRequirement_.get(i));
+        }
+        size += dataSize;
+        size += 2 * getVersionRequirementList().size();
       }
       size += extensionsSerializedSize();
       size += unknownFields.size();
@@ -13433,7 +13573,7 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         valueParameter_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000002);
-        versionRequirement_ = 0;
+        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
@@ -13467,8 +13607,9 @@ public final class ProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000002);
         }
         result.valueParameter_ = valueParameter_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000002;
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
+          bitField0_ = (bitField0_ & ~0x00000004);
         }
         result.versionRequirement_ = versionRequirement_;
         result.bitField0_ = to_bitField0_;
@@ -13490,8 +13631,15 @@ public final class ProtoBuf {
           }
           
         }
-        if (other.hasVersionRequirement()) {
-          setVersionRequirement(other.getVersionRequirement());
+        if (!other.versionRequirement_.isEmpty()) {
+          if (versionRequirement_.isEmpty()) {
+            versionRequirement_ = other.versionRequirement_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureVersionRequirementIsMutable();
+            versionRequirement_.addAll(other.versionRequirement_);
+          }
+          
         }
         this.mergeExtensionFields(other);
         setUnknownFields(
@@ -13713,50 +13861,96 @@ public final class ProtoBuf {
         return this;
       }
 
-      private int versionRequirement_ ;
-      /**
-       * <code>optional int32 version_requirement = 31;</code>
-       *
-       * <pre>
-       * Index into the VersionRequirementTable
-       * </pre>
-       */
-      public boolean hasVersionRequirement() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
+      private java.util.List<java.lang.Integer> versionRequirement_ = java.util.Collections.emptyList();
+      private void ensureVersionRequirementIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          versionRequirement_ = new java.util.ArrayList<java.lang.Integer>(versionRequirement_);
+          bitField0_ |= 0x00000004;
+         }
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
-      public int getVersionRequirement() {
-        return versionRequirement_;
+      public java.util.List<java.lang.Integer>
+          getVersionRequirementList() {
+        return java.util.Collections.unmodifiableList(versionRequirement_);
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder setVersionRequirement(int value) {
-        bitField0_ |= 0x00000004;
-        versionRequirement_ = value;
+      public int getVersionRequirementCount() {
+        return versionRequirement_.size();
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public int getVersionRequirement(int index) {
+        return versionRequirement_.get(index);
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder setVersionRequirement(
+          int index, int value) {
+        ensureVersionRequirementIsMutable();
+        versionRequirement_.set(index, value);
         
         return this;
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder addVersionRequirement(int value) {
+        ensureVersionRequirementIsMutable();
+        versionRequirement_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder addAllVersionRequirement(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureVersionRequirementIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, versionRequirement_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
       public Builder clearVersionRequirement() {
+        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000004);
-        versionRequirement_ = 0;
         
         return this;
       }
@@ -13906,21 +14100,29 @@ public final class ProtoBuf {
     org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable getTypeTable();
 
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    boolean hasVersionRequirement();
+    java.util.List<java.lang.Integer> getVersionRequirementList();
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    int getVersionRequirement();
+    int getVersionRequirementCount();
+    /**
+     * <code>repeated int32 version_requirement = 31;</code>
+     *
+     * <pre>
+     * Index into the VersionRequirementTable
+     * </pre>
+     */
+    int getVersionRequirement(int index);
 
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.Contract contract = 32;</code>
@@ -14063,13 +14265,29 @@ public final class ProtoBuf {
               break;
             }
             case 248: {
-              bitField0_ |= 0x00000100;
-              versionRequirement_ = input.readInt32();
+              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+                versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000400;
+              }
+              versionRequirement_.add(input.readInt32());
+              break;
+            }
+            case 250: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400) && input.getBytesUntilLimit() > 0) {
+                versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000400;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                versionRequirement_.add(input.readInt32());
+              }
+              input.popLimit(limit);
               break;
             }
             case 258: {
               org.jetbrains.kotlin.metadata.ProtoBuf.Contract.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000200) == 0x00000200)) {
+              if (((bitField0_ & 0x00000100) == 0x00000100)) {
                 subBuilder = contract_.toBuilder();
               }
               contract_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Contract.PARSER, extensionRegistry);
@@ -14077,7 +14295,7 @@ public final class ProtoBuf {
                 subBuilder.mergeFrom(contract_);
                 contract_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000200;
+              bitField0_ |= 0x00000100;
               break;
             }
           }
@@ -14093,6 +14311,9 @@ public final class ProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
           valueParameter_ = java.util.Collections.unmodifiableList(valueParameter_);
+        }
+        if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -14339,26 +14560,37 @@ public final class ProtoBuf {
     }
 
     public static final int VERSION_REQUIREMENT_FIELD_NUMBER = 31;
-    private int versionRequirement_;
+    private java.util.List<java.lang.Integer> versionRequirement_;
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    public boolean hasVersionRequirement() {
-      return ((bitField0_ & 0x00000100) == 0x00000100);
+    public java.util.List<java.lang.Integer>
+        getVersionRequirementList() {
+      return versionRequirement_;
     }
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    public int getVersionRequirement() {
-      return versionRequirement_;
+    public int getVersionRequirementCount() {
+      return versionRequirement_.size();
+    }
+    /**
+     * <code>repeated int32 version_requirement = 31;</code>
+     *
+     * <pre>
+     * Index into the VersionRequirementTable
+     * </pre>
+     */
+    public int getVersionRequirement(int index) {
+      return versionRequirement_.get(index);
     }
 
     public static final int CONTRACT_FIELD_NUMBER = 32;
@@ -14367,7 +14599,7 @@ public final class ProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Contract contract = 32;</code>
      */
     public boolean hasContract() {
-      return ((bitField0_ & 0x00000200) == 0x00000200);
+      return ((bitField0_ & 0x00000100) == 0x00000100);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.Contract contract = 32;</code>
@@ -14387,7 +14619,7 @@ public final class ProtoBuf {
       receiverTypeId_ = 0;
       valueParameter_ = java.util.Collections.emptyList();
       typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
-      versionRequirement_ = 0;
+      versionRequirement_ = java.util.Collections.emptyList();
       contract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
@@ -14480,10 +14712,10 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
         output.writeMessage(30, typeTable_);
       }
-      if (((bitField0_ & 0x00000100) == 0x00000100)) {
-        output.writeInt32(31, versionRequirement_);
+      for (int i = 0; i < versionRequirement_.size(); i++) {
+        output.writeInt32(31, versionRequirement_.get(i));
       }
-      if (((bitField0_ & 0x00000200) == 0x00000200)) {
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
         output.writeMessage(32, contract_);
       }
       extensionWriter.writeUntil(19000, output);
@@ -14536,11 +14768,16 @@ public final class ProtoBuf {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(30, typeTable_);
       }
-      if (((bitField0_ & 0x00000100) == 0x00000100)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32Size(31, versionRequirement_);
+      {
+        int dataSize = 0;
+        for (int i = 0; i < versionRequirement_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(versionRequirement_.get(i));
+        }
+        size += dataSize;
+        size += 2 * getVersionRequirementList().size();
       }
-      if (((bitField0_ & 0x00000200) == 0x00000200)) {
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(32, contract_);
       }
@@ -14658,7 +14895,7 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000100);
         typeTable_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeTable.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000200);
-        versionRequirement_ = 0;
+        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000400);
         contract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000800);
@@ -14727,12 +14964,13 @@ public final class ProtoBuf {
           to_bitField0_ |= 0x00000080;
         }
         result.typeTable_ = typeTable_;
-        if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
-          to_bitField0_ |= 0x00000100;
+        if (((bitField0_ & 0x00000400) == 0x00000400)) {
+          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
+          bitField0_ = (bitField0_ & ~0x00000400);
         }
         result.versionRequirement_ = versionRequirement_;
         if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
-          to_bitField0_ |= 0x00000200;
+          to_bitField0_ |= 0x00000100;
         }
         result.contract_ = contract_;
         result.bitField0_ = to_bitField0_;
@@ -14785,8 +15023,15 @@ public final class ProtoBuf {
         if (other.hasTypeTable()) {
           mergeTypeTable(other.getTypeTable());
         }
-        if (other.hasVersionRequirement()) {
-          setVersionRequirement(other.getVersionRequirement());
+        if (!other.versionRequirement_.isEmpty()) {
+          if (versionRequirement_.isEmpty()) {
+            versionRequirement_ = other.versionRequirement_;
+            bitField0_ = (bitField0_ & ~0x00000400);
+          } else {
+            ensureVersionRequirementIsMutable();
+            versionRequirement_.addAll(other.versionRequirement_);
+          }
+          
         }
         if (other.hasContract()) {
           mergeContract(other.getContract());
@@ -15510,50 +15755,96 @@ public final class ProtoBuf {
         return this;
       }
 
-      private int versionRequirement_ ;
-      /**
-       * <code>optional int32 version_requirement = 31;</code>
-       *
-       * <pre>
-       * Index into the VersionRequirementTable
-       * </pre>
-       */
-      public boolean hasVersionRequirement() {
-        return ((bitField0_ & 0x00000400) == 0x00000400);
+      private java.util.List<java.lang.Integer> versionRequirement_ = java.util.Collections.emptyList();
+      private void ensureVersionRequirementIsMutable() {
+        if (!((bitField0_ & 0x00000400) == 0x00000400)) {
+          versionRequirement_ = new java.util.ArrayList<java.lang.Integer>(versionRequirement_);
+          bitField0_ |= 0x00000400;
+         }
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
-      public int getVersionRequirement() {
-        return versionRequirement_;
+      public java.util.List<java.lang.Integer>
+          getVersionRequirementList() {
+        return java.util.Collections.unmodifiableList(versionRequirement_);
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder setVersionRequirement(int value) {
-        bitField0_ |= 0x00000400;
-        versionRequirement_ = value;
+      public int getVersionRequirementCount() {
+        return versionRequirement_.size();
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public int getVersionRequirement(int index) {
+        return versionRequirement_.get(index);
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder setVersionRequirement(
+          int index, int value) {
+        ensureVersionRequirementIsMutable();
+        versionRequirement_.set(index, value);
         
         return this;
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder addVersionRequirement(int value) {
+        ensureVersionRequirementIsMutable();
+        versionRequirement_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder addAllVersionRequirement(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureVersionRequirementIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, versionRequirement_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
       public Builder clearVersionRequirement() {
+        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000400);
-        versionRequirement_ = 0;
         
         return this;
       }
@@ -15795,21 +16086,29 @@ public final class ProtoBuf {
     int getSetterFlags();
 
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    boolean hasVersionRequirement();
+    java.util.List<java.lang.Integer> getVersionRequirementList();
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    int getVersionRequirement();
+    int getVersionRequirementCount();
+    /**
+     * <code>repeated int32 version_requirement = 31;</code>
+     *
+     * <pre>
+     * Index into the VersionRequirementTable
+     * </pre>
+     */
+    int getVersionRequirement(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.Property}
@@ -15945,8 +16244,24 @@ public final class ProtoBuf {
               break;
             }
             case 248: {
-              bitField0_ |= 0x00000400;
-              versionRequirement_ = input.readInt32();
+              if (!((mutable_bitField0_ & 0x00000800) == 0x00000800)) {
+                versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000800;
+              }
+              versionRequirement_.add(input.readInt32());
+              break;
+            }
+            case 250: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000800) == 0x00000800) && input.getBytesUntilLimit() > 0) {
+                versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000800;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                versionRequirement_.add(input.readInt32());
+              }
+              input.popLimit(limit);
               break;
             }
           }
@@ -15959,6 +16274,9 @@ public final class ProtoBuf {
       } finally {
         if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
           typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
+        }
+        if (((mutable_bitField0_ & 0x00000800) == 0x00000800)) {
+          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -16228,26 +16546,37 @@ public final class ProtoBuf {
     }
 
     public static final int VERSION_REQUIREMENT_FIELD_NUMBER = 31;
-    private int versionRequirement_;
+    private java.util.List<java.lang.Integer> versionRequirement_;
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    public boolean hasVersionRequirement() {
-      return ((bitField0_ & 0x00000400) == 0x00000400);
+    public java.util.List<java.lang.Integer>
+        getVersionRequirementList() {
+      return versionRequirement_;
     }
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    public int getVersionRequirement() {
-      return versionRequirement_;
+    public int getVersionRequirementCount() {
+      return versionRequirement_.size();
+    }
+    /**
+     * <code>repeated int32 version_requirement = 31;</code>
+     *
+     * <pre>
+     * Index into the VersionRequirementTable
+     * </pre>
+     */
+    public int getVersionRequirement(int index) {
+      return versionRequirement_.get(index);
     }
 
     private void initFields() {
@@ -16262,7 +16591,7 @@ public final class ProtoBuf {
       setterValueParameter_ = org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.getDefaultInstance();
       getterFlags_ = 0;
       setterFlags_ = 0;
-      versionRequirement_ = 0;
+      versionRequirement_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -16345,8 +16674,8 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeInt32(11, flags_);
       }
-      if (((bitField0_ & 0x00000400) == 0x00000400)) {
-        output.writeInt32(31, versionRequirement_);
+      for (int i = 0; i < versionRequirement_.size(); i++) {
+        output.writeInt32(31, versionRequirement_.get(i));
       }
       extensionWriter.writeUntil(19000, output);
       output.writeRawBytes(unknownFields);
@@ -16402,9 +16731,14 @@ public final class ProtoBuf {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(11, flags_);
       }
-      if (((bitField0_ & 0x00000400) == 0x00000400)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32Size(31, versionRequirement_);
+      {
+        int dataSize = 0;
+        for (int i = 0; i < versionRequirement_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(versionRequirement_.get(i));
+        }
+        size += dataSize;
+        size += 2 * getVersionRequirementList().size();
       }
       size += extensionsSerializedSize();
       size += unknownFields.size();
@@ -16522,7 +16856,7 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000200);
         setterFlags_ = 0;
         bitField0_ = (bitField0_ & ~0x00000400);
-        versionRequirement_ = 0;
+        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000800);
         return this;
       }
@@ -16592,8 +16926,9 @@ public final class ProtoBuf {
           to_bitField0_ |= 0x00000200;
         }
         result.setterFlags_ = setterFlags_;
-        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
-          to_bitField0_ |= 0x00000400;
+        if (((bitField0_ & 0x00000800) == 0x00000800)) {
+          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
+          bitField0_ = (bitField0_ & ~0x00000800);
         }
         result.versionRequirement_ = versionRequirement_;
         result.bitField0_ = to_bitField0_;
@@ -16642,8 +16977,15 @@ public final class ProtoBuf {
         if (other.hasSetterFlags()) {
           setSetterFlags(other.getSetterFlags());
         }
-        if (other.hasVersionRequirement()) {
-          setVersionRequirement(other.getVersionRequirement());
+        if (!other.versionRequirement_.isEmpty()) {
+          if (versionRequirement_.isEmpty()) {
+            versionRequirement_ = other.versionRequirement_;
+            bitField0_ = (bitField0_ & ~0x00000800);
+          } else {
+            ensureVersionRequirementIsMutable();
+            versionRequirement_.addAll(other.versionRequirement_);
+          }
+          
         }
         this.mergeExtensionFields(other);
         setUnknownFields(
@@ -17347,50 +17689,96 @@ public final class ProtoBuf {
         return this;
       }
 
-      private int versionRequirement_ ;
-      /**
-       * <code>optional int32 version_requirement = 31;</code>
-       *
-       * <pre>
-       * Index into the VersionRequirementTable
-       * </pre>
-       */
-      public boolean hasVersionRequirement() {
-        return ((bitField0_ & 0x00000800) == 0x00000800);
+      private java.util.List<java.lang.Integer> versionRequirement_ = java.util.Collections.emptyList();
+      private void ensureVersionRequirementIsMutable() {
+        if (!((bitField0_ & 0x00000800) == 0x00000800)) {
+          versionRequirement_ = new java.util.ArrayList<java.lang.Integer>(versionRequirement_);
+          bitField0_ |= 0x00000800;
+         }
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
-      public int getVersionRequirement() {
-        return versionRequirement_;
+      public java.util.List<java.lang.Integer>
+          getVersionRequirementList() {
+        return java.util.Collections.unmodifiableList(versionRequirement_);
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder setVersionRequirement(int value) {
-        bitField0_ |= 0x00000800;
-        versionRequirement_ = value;
+      public int getVersionRequirementCount() {
+        return versionRequirement_.size();
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public int getVersionRequirement(int index) {
+        return versionRequirement_.get(index);
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder setVersionRequirement(
+          int index, int value) {
+        ensureVersionRequirementIsMutable();
+        versionRequirement_.set(index, value);
         
         return this;
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder addVersionRequirement(int value) {
+        ensureVersionRequirementIsMutable();
+        versionRequirement_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder addAllVersionRequirement(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureVersionRequirementIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, versionRequirement_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
       public Builder clearVersionRequirement() {
+        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000800);
-        versionRequirement_ = 0;
         
         return this;
       }
@@ -18421,21 +18809,29 @@ public final class ProtoBuf {
     int getAnnotationCount();
 
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    boolean hasVersionRequirement();
+    java.util.List<java.lang.Integer> getVersionRequirementList();
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    int getVersionRequirement();
+    int getVersionRequirementCount();
+    /**
+     * <code>repeated int32 version_requirement = 31;</code>
+     *
+     * <pre>
+     * Index into the VersionRequirementTable
+     * </pre>
+     */
+    int getVersionRequirement(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.TypeAlias}
@@ -18551,8 +18947,24 @@ public final class ProtoBuf {
               break;
             }
             case 248: {
-              bitField0_ |= 0x00000040;
-              versionRequirement_ = input.readInt32();
+              if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+                versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000100;
+              }
+              versionRequirement_.add(input.readInt32());
+              break;
+            }
+            case 250: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000100) == 0x00000100) && input.getBytesUntilLimit() > 0) {
+                versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000100;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                versionRequirement_.add(input.readInt32());
+              }
+              input.popLimit(limit);
               break;
             }
           }
@@ -18568,6 +18980,9 @@ public final class ProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
           annotation_ = java.util.Collections.unmodifiableList(annotation_);
+        }
+        if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -18766,26 +19181,37 @@ public final class ProtoBuf {
     }
 
     public static final int VERSION_REQUIREMENT_FIELD_NUMBER = 31;
-    private int versionRequirement_;
+    private java.util.List<java.lang.Integer> versionRequirement_;
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    public boolean hasVersionRequirement() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
+    public java.util.List<java.lang.Integer>
+        getVersionRequirementList() {
+      return versionRequirement_;
     }
     /**
-     * <code>optional int32 version_requirement = 31;</code>
+     * <code>repeated int32 version_requirement = 31;</code>
      *
      * <pre>
      * Index into the VersionRequirementTable
      * </pre>
      */
-    public int getVersionRequirement() {
-      return versionRequirement_;
+    public int getVersionRequirementCount() {
+      return versionRequirement_.size();
+    }
+    /**
+     * <code>repeated int32 version_requirement = 31;</code>
+     *
+     * <pre>
+     * Index into the VersionRequirementTable
+     * </pre>
+     */
+    public int getVersionRequirement(int index) {
+      return versionRequirement_.get(index);
     }
 
     private void initFields() {
@@ -18797,7 +19223,7 @@ public final class ProtoBuf {
       expandedType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
       expandedTypeId_ = 0;
       annotation_ = java.util.Collections.emptyList();
-      versionRequirement_ = 0;
+      versionRequirement_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -18871,8 +19297,8 @@ public final class ProtoBuf {
       for (int i = 0; i < annotation_.size(); i++) {
         output.writeMessage(8, annotation_.get(i));
       }
-      if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        output.writeInt32(31, versionRequirement_);
+      for (int i = 0; i < versionRequirement_.size(); i++) {
+        output.writeInt32(31, versionRequirement_.get(i));
       }
       extensionWriter.writeUntil(200, output);
       output.writeRawBytes(unknownFields);
@@ -18916,9 +19342,14 @@ public final class ProtoBuf {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(8, annotation_.get(i));
       }
-      if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32Size(31, versionRequirement_);
+      {
+        int dataSize = 0;
+        for (int i = 0; i < versionRequirement_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(versionRequirement_.get(i));
+        }
+        size += dataSize;
+        size += 2 * getVersionRequirementList().size();
       }
       size += extensionsSerializedSize();
       size += unknownFields.size();
@@ -19030,7 +19461,7 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000040);
         annotation_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000080);
-        versionRequirement_ = 0;
+        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000100);
         return this;
       }
@@ -19089,8 +19520,9 @@ public final class ProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000080);
         }
         result.annotation_ = annotation_;
-        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
-          to_bitField0_ |= 0x00000040;
+        if (((bitField0_ & 0x00000100) == 0x00000100)) {
+          versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
+          bitField0_ = (bitField0_ & ~0x00000100);
         }
         result.versionRequirement_ = versionRequirement_;
         result.bitField0_ = to_bitField0_;
@@ -19137,8 +19569,15 @@ public final class ProtoBuf {
           }
           
         }
-        if (other.hasVersionRequirement()) {
-          setVersionRequirement(other.getVersionRequirement());
+        if (!other.versionRequirement_.isEmpty()) {
+          if (versionRequirement_.isEmpty()) {
+            versionRequirement_ = other.versionRequirement_;
+            bitField0_ = (bitField0_ & ~0x00000100);
+          } else {
+            ensureVersionRequirementIsMutable();
+            versionRequirement_.addAll(other.versionRequirement_);
+          }
+          
         }
         this.mergeExtensionFields(other);
         setUnknownFields(
@@ -19719,50 +20158,96 @@ public final class ProtoBuf {
         return this;
       }
 
-      private int versionRequirement_ ;
-      /**
-       * <code>optional int32 version_requirement = 31;</code>
-       *
-       * <pre>
-       * Index into the VersionRequirementTable
-       * </pre>
-       */
-      public boolean hasVersionRequirement() {
-        return ((bitField0_ & 0x00000100) == 0x00000100);
+      private java.util.List<java.lang.Integer> versionRequirement_ = java.util.Collections.emptyList();
+      private void ensureVersionRequirementIsMutable() {
+        if (!((bitField0_ & 0x00000100) == 0x00000100)) {
+          versionRequirement_ = new java.util.ArrayList<java.lang.Integer>(versionRequirement_);
+          bitField0_ |= 0x00000100;
+         }
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
-      public int getVersionRequirement() {
-        return versionRequirement_;
+      public java.util.List<java.lang.Integer>
+          getVersionRequirementList() {
+        return java.util.Collections.unmodifiableList(versionRequirement_);
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
-      public Builder setVersionRequirement(int value) {
-        bitField0_ |= 0x00000100;
-        versionRequirement_ = value;
+      public int getVersionRequirementCount() {
+        return versionRequirement_.size();
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public int getVersionRequirement(int index) {
+        return versionRequirement_.get(index);
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder setVersionRequirement(
+          int index, int value) {
+        ensureVersionRequirementIsMutable();
+        versionRequirement_.set(index, value);
         
         return this;
       }
       /**
-       * <code>optional int32 version_requirement = 31;</code>
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder addVersionRequirement(int value) {
+        ensureVersionRequirementIsMutable();
+        versionRequirement_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
+       *
+       * <pre>
+       * Index into the VersionRequirementTable
+       * </pre>
+       */
+      public Builder addAllVersionRequirement(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureVersionRequirementIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, versionRequirement_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 version_requirement = 31;</code>
        *
        * <pre>
        * Index into the VersionRequirementTable
        * </pre>
        */
       public Builder clearVersionRequirement() {
+        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000100);
-        versionRequirement_ = 0;
         
         return this;
       }

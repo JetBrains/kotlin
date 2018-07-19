@@ -76,9 +76,9 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
                 it is CallableMemberDescriptor && it.hasJvmDefaultAnnotation()
             }
         ) {
-            assert(!builder.hasVersionRequirement()) { "VersionRequirement should be empty for $classDescriptor" }
-            builder.versionRequirement =
-                    writeVersionRequirement(1, 2, 40, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+            builder.addVersionRequirement(
+                writeVersionRequirement(1, 2, 40, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+            )
         }
     }
 
@@ -183,9 +183,9 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         if (descriptor.isJvmFieldPropertyInInterfaceCompanion()) {
             proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
 
-            assert(!proto.hasVersionRequirement()) { "VersionRequirement should be empty for $descriptor" }
-            proto.versionRequirement =
-                    writeVersionRequirement(1, 2, 70, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+            proto.addVersionRequirement(
+                writeVersionRequirement(1, 2, 70, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+            )
         }
     }
 

@@ -296,6 +296,10 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestKotlinLibraryWithWrongMetadataVersionJs("library", "-Xskip-metadata-version-check")
     }
 
+    fun testRequireKotlin() {
+        compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
+    }
+
     fun testRequireKotlinInNestedClasses() {
         compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
     }
