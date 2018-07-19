@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallFastCheck
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -32,12 +32,6 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 
 class ContractParsingServices(val languageVersionSettings: LanguageVersionSettings) {
-    fun fastCheckIfContractPresent(element: KtElement): Boolean {
-        if (!isContractAllowedHere(element)) return false
-        val firstExpression = ((element as? KtFunction)?.bodyExpression as? KtBlockExpression)?.statements?.firstOrNull() ?: return false
-        return isContractDescriptionCallFastCheck(firstExpression)
-    }
-
     fun checkContractAndRecordIfPresent(expression: KtExpression, trace: BindingTrace, scope: LexicalScope, isFirstStatement: Boolean) {
         val ownerDescriptor = scope.ownerDescriptor
         if (!isContractDescriptionCallFastCheck(expression) || ownerDescriptor !is FunctionDescriptor) return
@@ -77,14 +71,8 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
     internal fun isContractDescriptionCall(expression: KtExpression, context: BindingContext): Boolean =
         isContractDescriptionCallFastCheck(expression) && isContractDescriptionCallPreciseCheck(expression, context)
 
-    private fun isContractAllowedHere(element: KtElement): Boolean =
-        element is KtNamedFunction && element.isTopLevel && element.hasBlockBody() && !element.hasModifier(KtTokens.OPERATOR_KEYWORD)
-
     private fun isContractAllowedHere(scope: LexicalScope): Boolean =
         scope.kind == LexicalScopeKind.CODE_BLOCK && (scope.parent as? LexicalScope)?.kind == LexicalScopeKind.FUNCTION_INNER_SCOPE
-
-    private fun isContractDescriptionCallFastCheck(expression: KtExpression): Boolean =
-        expression is KtCallExpression && expression.calleeExpression?.text == "contract"
 
     private fun isContractDescriptionCallPreciseCheck(expression: KtExpression, context: BindingContext): Boolean =
         expression.getResolvedCall(context)?.resultingDescriptor?.isContractCallDescriptor() ?: false

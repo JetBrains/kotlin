@@ -291,6 +291,21 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
     return forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
 }
 
+// ----------- Contracts -------------------------------------------------------------------------------------------------------------------
+
+fun fastCheckIfContractPresent(element: KtElement): Boolean {
+    if (!isContractAllowedHere(element)) return false
+    val firstExpression = ((element as? KtFunction)?.bodyExpression as? KtBlockExpression)?.statements?.firstOrNull() ?: return false
+    return isContractDescriptionCallFastCheck(firstExpression)
+}
+
+private fun isContractAllowedHere(element: KtElement): Boolean =
+    element is KtNamedFunction && element.isTopLevel && element.hasBlockBody() && !element.hasModifier(KtTokens.OPERATOR_KEYWORD)
+
+fun isContractDescriptionCallFastCheck(expression: KtExpression): Boolean =
+    expression is KtCallExpression && expression.calleeExpression?.text == "contract"
+
+
 // ----------- Other -----------------------------------------------------------------------------------------------------------------------
 
 fun KtClassOrObject.effectiveDeclarations(): List<KtDeclaration> {
