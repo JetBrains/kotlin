@@ -647,7 +647,8 @@ class ExpressionCodegen(
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: BlockInfo): StackValue {
         AsmUtil.genStringBuilderConstructor(mv)
         expression.arguments.forEach {
-            AsmUtil.genInvokeAppendMethod(mv, gen(it, data).type)
+            val stackValue = gen(it, data)
+            AsmUtil.genInvokeAppendMethod(mv, stackValue.type, stackValue.kotlinType)
         }
 
         mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)

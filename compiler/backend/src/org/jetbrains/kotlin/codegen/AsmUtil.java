@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -527,15 +528,38 @@ public class AsmUtil {
         v.invokespecial("java/lang/StringBuilder", "<init>", "()V", false);
     }
 
-    public static void genInvokeAppendMethod(InstructionAdapter v, Type type) {
-        type = stringBuilderAppendType(type);
-        v.invokevirtual("java/lang/StringBuilder", "append", "(" + type.getDescriptor() + ")Ljava/lang/StringBuilder;", false);
+    public static void genInvokeAppendMethod(@NotNull InstructionAdapter v, @NotNull Type type, @Nullable KotlinType kotlinType) {
+        Type appendParameterType;
+        if (kotlinType != null && InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
+            appendParameterType = OBJECT_TYPE;
+            SimpleType nullableAnyType = kotlinType.getConstructor().getBuiltIns().getNullableAnyType();
+            StackValue.coerce(type, kotlinType, appendParameterType, nullableAnyType, v);
+        }
+        else {
+            appendParameterType = stringBuilderAppendType(type);
+        }
+
+        v.invokevirtual("java/lang/StringBuilder", "append", "(" + appendParameterType.getDescriptor() + ")Ljava/lang/StringBuilder;", false);
     }
 
-    public static StackValue genToString(StackValue receiver, Type receiverType) {
+    public static StackValue genToString(
+            @NotNull StackValue receiver,
+            @NotNull Type receiverType,
+            @Nullable KotlinType receiverKotlinType
+    ) {
         return StackValue.operation(JAVA_STRING_TYPE, v -> {
-            Type type = stringValueOfType(receiverType);
-            receiver.put(type, v);
+            Type type;
+            KotlinType kotlinType;
+            if (receiverKotlinType != null && InlineClassesUtilsKt.isInlineClassType(receiverKotlinType)) {
+                type = OBJECT_TYPE;
+                kotlinType = receiverKotlinType.getConstructor().getBuiltIns().getNullableAnyType();
+            }
+            else {
+                type = stringValueOfType(receiverType);
+                kotlinType = null;
+            }
+
+            receiver.put(type, kotlinType, v);
             v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
             return null;
         });

@@ -1456,7 +1456,7 @@ public abstract class StackValue {
             if (getter == null) {
                 assert fieldName != null : "Property should have either a getter or a field name: " + descriptor;
                 assert backingFieldOwner != null : "Property should have either a getter or a backingFieldOwner: " + descriptor;
-                if (inlineConstantIfNeeded(type, v)) return;
+                if (inlineConstantIfNeeded(type, kotlinType, v)) return;
 
                 v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD,
                                  backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
@@ -1499,19 +1499,19 @@ public abstract class StackValue {
             }
         }
 
-        private boolean inlineConstantIfNeeded(@NotNull Type type, @NotNull InstructionAdapter v) {
+        private boolean inlineConstantIfNeeded(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
             if (JvmCodegenUtil.isInlinedJavaConstProperty(descriptor)) {
-                return inlineConstant(type, v);
+                return inlineConstant(type, kotlinType, v);
             }
 
             if (descriptor.isConst() && codegen.getState().getShouldInlineConstVals()) {
-                return inlineConstant(type, v);
+                return inlineConstant(type, kotlinType, v);
             }
 
             return false;
         }
 
-        private boolean inlineConstant(@NotNull Type type, @NotNull InstructionAdapter v) {
+        private boolean inlineConstant(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
             assert AsmUtil.isPrimitive(this.type) || AsmTypes.JAVA_STRING_TYPE.equals(this.type) :
                     "Const property should have primitive or string type: " + descriptor;
             assert isStaticPut : "Const property should be static" + descriptor;
@@ -1524,7 +1524,7 @@ public abstract class StackValue {
                 value = ((Double) value).floatValue();
             }
 
-            StackValue.constant(value, this.type).putSelector(type, null, v);
+            StackValue.constant(value, this.type, this.kotlinType).putSelector(type, kotlinType, v);
 
             return true;
         }

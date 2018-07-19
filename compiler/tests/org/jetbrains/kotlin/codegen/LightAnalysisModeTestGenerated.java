@@ -11236,6 +11236,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassImplementsCollection.kt");
         }
 
+        @TestMetadata("inlineClassValuesInsideStrings.kt")
+        public void testInlineClassValuesInsideStrings() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValuesInsideStrings.kt");
+        }
+
         @TestMetadata("inlineClassesCheckCast.kt")
         public void testInlineClassesCheckCast() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCast.kt");
@@ -21445,6 +21450,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("boxConstValOfUnsignedType.kt")
+        public void testBoxConstValOfUnsignedType() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/boxConstValOfUnsignedType.kt");
+        }
+
         @TestMetadata("checkBasicUnsignedLiterals.kt")
         public void testCheckBasicUnsignedLiterals() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/checkBasicUnsignedLiterals.kt");
@@ -21468,6 +21478,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("unsignedLiteralsWithSignedOverflow.kt")
         public void testUnsignedLiteralsWithSignedOverflow() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedLiteralsWithSignedOverflow.kt");
+        }
+
+        @TestMetadata("unsignedTypeValuesInsideStringTemplates.kt")
+        public void testUnsignedTypeValuesInsideStringTemplates() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedTypeValuesInsideStringTemplates.kt");
         }
 
         @TestMetadata("varargsOfUnsignedTypes.kt")

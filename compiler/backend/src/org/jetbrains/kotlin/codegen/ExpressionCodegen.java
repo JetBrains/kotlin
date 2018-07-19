@@ -808,7 +808,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             StringTemplateEntry entry = entries.get(0);
             if (entry instanceof StringTemplateEntry.Expression) {
                 KtExpression expr = ((StringTemplateEntry.Expression) entry).expression;
-                return genToString(gen(expr), expressionType(expr));
+                return genToString(gen(expr), expressionType(expr), kotlinType(expr));
             }
             else {
                 return StackValue.constant(((StringTemplateEntry.Constant) entry).value, type);
@@ -833,11 +833,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 String value = ((StringTemplateEntry.Constant) entry).value;
                 if (value.length() == 1) {
                     v.iconst(value.charAt(0));
-                    genInvokeAppendMethod(v, Type.CHAR_TYPE);
+                    genInvokeAppendMethod(v, Type.CHAR_TYPE, null);
                 }
                 else {
                     v.aconst(value);
-                    genInvokeAppendMethod(v, JAVA_STRING_TYPE);
+                    genInvokeAppendMethod(v, JAVA_STRING_TYPE, null);
                 }
             }
         }
@@ -3739,11 +3739,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type exprType = expressionType(expr);
         KotlinType exprKotlinType = kotlinType(expr);
         if (compileTimeConstant != null) {
-            StackValue.constant(compileTimeConstant.getValue(), exprType).put(exprType, null, v);
+            StackValue.constant(compileTimeConstant.getValue(), exprType, exprKotlinType).put(exprType, exprKotlinType, v);
         } else {
             gen(expr, exprType, exprKotlinType);
         }
-        genInvokeAppendMethod(v, exprType.getSort() == Type.ARRAY ? OBJECT_TYPE : exprType);
+
+        genInvokeAppendMethod(v, exprType.getSort() == Type.ARRAY ? OBJECT_TYPE : exprType, exprKotlinType);
     }
 
     @Nullable
