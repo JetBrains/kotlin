@@ -210,6 +210,12 @@ public class PropertyCodegen {
             return !isDefaultAccessor;
         }
 
+        // Non-private properties with private setter should not be generated for trivial properties
+        // as the class will use direct field access instead
+        if (accessor != null && accessor.isSetter() && Visibilities.isPrivate(descriptor.getSetter().getVisibility())) {
+            return !isDefaultAccessor;
+        }
+
         return true;
     }
 
