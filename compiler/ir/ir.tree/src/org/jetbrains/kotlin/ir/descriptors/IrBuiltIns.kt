@@ -147,6 +147,7 @@ class IrBuiltIns(
     val eqeqFun = defineOperator("EQEQ", bool, listOf(anyN, anyN))
     val throwNpeFun = defineOperator("THROW_NPE", nothing, listOf())
     val throwCceFun = defineOperator("THROW_CCE", nothing, listOf())
+    val throwIseFun = defineOperator("THROW_ISE", nothing, listOf())
     val booleanNotFun = defineOperator("NOT", bool, listOf(bool))
     val noWhenBranchMatchedExceptionFun = defineOperator("noWhenBranchMatchedException", nothing, listOf())
 
@@ -161,6 +162,7 @@ class IrBuiltIns(
     val eqeqSymbol = eqeqFun.symbol
     val throwNpeSymbol = throwNpeFun.symbol
     val throwCceSymbol = throwCceFun.symbol
+    val throwIseSymbol = throwIseFun.symbol
     val booleanNotSymbol = booleanNotFun.symbol
     val noWhenBranchMatchedExceptionSymbol = noWhenBranchMatchedExceptionFun.symbol
 

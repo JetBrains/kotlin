@@ -8,16 +8,10 @@ package org.jetbrains.kotlin.ir.builders
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
@@ -80,6 +74,9 @@ fun <T : IrElement> IrStatementsBuilder<T>.defineTemporaryVar(value: IrExpressio
 fun IrBuilderWithScope.irExprBody(value: IrExpression) =
     IrExpressionBodyImpl(startOffset, endOffset, value)
 
+fun IrBuilderWithScope.irWhen(type: IrType, branches: List<IrBranch>) =
+    IrWhenImpl(startOffset, endOffset, type, null, branches)
+
 fun IrBuilderWithScope.irReturn(value: IrExpression) =
     IrReturnImpl(
         startOffset, endOffset,
@@ -93,10 +90,17 @@ fun IrBuilderWithScope.irReturn(value: IrExpression) =
 fun IrBuilderWithScope.irBoolean(value: Boolean) =
     IrConstImpl(startOffset, endOffset, context.irBuiltIns.booleanType, IrConstKind.Boolean, value)
 
+fun IrBuilderWithScope.irUnit() =
+    irGetObjectValue(context.irBuiltIns.unitType, context.irBuiltIns.unitClass)
+
 fun IrBuilderWithScope.irTrue() = irBoolean(true)
 fun IrBuilderWithScope.irFalse() = irBoolean(false)
 fun IrBuilderWithScope.irReturnTrue() = irReturn(irTrue())
 fun IrBuilderWithScope.irReturnFalse() = irReturn(irFalse())
+fun IrBuilderWithScope.irReturnUnit() = irReturn(irUnit())
+
+fun IrBuilderWithScope.irBranch(condition: IrExpression, result: IrExpression) =
+    IrBranchImpl(startOffset, endOffset, condition, result)
 
 fun IrBuilderWithScope.irElseBranch(expression: IrExpression) =
     IrElseBranchImpl(startOffset, endOffset, irTrue(), expression)
@@ -141,6 +145,9 @@ fun IrBuilderWithScope.irSetVar(variable: IrVariableSymbol, value: IrExpression)
 fun IrBuilderWithScope.irGetField(receiver: IrExpression?, field: IrField) =
     IrGetFieldImpl(startOffset, endOffset, field.symbol, field.type, receiver)
 
+fun IrBuilderWithScope.irGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =
+    IrGetObjectValueImpl(startOffset, endOffset, type, classSymbol)
+
 fun IrBuilderWithScope.irEqeqeq(arg1: IrExpression, arg2: IrExpression) =
     context.eqeqeq(startOffset, endOffset, arg1, arg2)
 
@@ -153,13 +160,16 @@ fun IrBuilderWithScope.irEqualsNull(argument: IrExpression) =
         argument, irNull()
     )
 
+fun IrBuilderWithScope.irEquals(arg1: IrExpression, arg2: IrExpression) =
+    primitiveOp2(
+        startOffset, endOffset, context.irBuiltIns.eqeqSymbol, IrStatementOrigin.EXCLEQ,
+        arg1, arg2
+    )
+
 fun IrBuilderWithScope.irNotEquals(arg1: IrExpression, arg2: IrExpression) =
     primitiveOp1(
         startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCLEQ,
-        primitiveOp2(
-            startOffset, endOffset, context.irBuiltIns.eqeqSymbol, IrStatementOrigin.EXCLEQ,
-            arg1, arg2
-        )
+        irEquals(arg1, arg2)
     )
 
 fun IrBuilderWithScope.irGet(type: IrType, receiver: IrExpression, getterSymbol: IrFunctionSymbol): IrCall =
@@ -185,6 +195,8 @@ fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDesc
 fun IrBuilderWithScope.irCall(callee: IrFunction): IrCall =
     irCall(callee.symbol, callee.descriptor, callee.returnType)
 
+fun IrBuilderWithScope.irDelegatingConstructorCall(callee: IrConstructor): IrDelegatingConstructorCall =
+    IrDelegatingConstructorCallImpl(startOffset, endOffset, callee.returnType, callee.symbol, callee.descriptor, callee.typeParameters.size)
 
 fun IrBuilderWithScope.irCallOp(
     callee: IrFunctionSymbol,

@@ -61,6 +61,9 @@ open class NoSuchElementException(message: String?, cause: Throwable?) : Runtime
 }
 
 // TODO: fix function names to satisfy style convention (depends on built-in names)
+fun THROW_ISE() {
+    throw IllegalStateException()
+}
 fun THROW_CCE() {
     throw ClassCastException()
 }

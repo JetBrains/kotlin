@@ -174,7 +174,7 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) : IrElementTransfor
                 typeParameters += ctorOrig.typeParameters
 //                parent = ctorOrig.parent
 
-                val returnType = type
+                returnType = type
                 val createFunctionIntrinsic = context.intrinsics.jsObjectCreate
                 val irCreateCall = JsIrBuilder.buildCall(
                     createFunctionIntrinsic.symbol,

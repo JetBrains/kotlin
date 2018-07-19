@@ -88,6 +88,8 @@ private fun JsIrBackendContext.lower(file: IrFile) {
     DefaultArgumentStubGenerator(this).runOnFilePostfix(file)
     DefaultParameterInjector(this).runOnFilePostfix(file)
     SharedVariablesLowering(this).runOnFilePostfix(file)
+    EnumClassLowering(this).runOnFilePostfix(file)
+    EnumUsageLowering(this).lower(file)
     ReturnableBlockLowering(this).lower(file)
     LocalDeclarationsLowering(this).runOnFilePostfix(file)
     InnerClassesLowering(this).runOnFilePostfix(file)

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 enum class State {
   _0,
   _1,
