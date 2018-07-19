@@ -3,6 +3,7 @@
 public annotation class Ann
 
 @kotlin.annotation.Target
+@kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
