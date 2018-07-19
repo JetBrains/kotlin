@@ -180,7 +180,7 @@ include ":kotlin-build-common",
         ':kotlin-noarg:plugin-marker',
         ":test-instrumenter"
 
-def isIncludeNative = true //todo: add property
+def isIncludeNative = hasProperty("kotlinNativeEnabled") && kotlinNativeEnabled != 'false'
 if (isIncludeNative) {
     include ":idea:idea-native",
             ":idea:idea-gradle:native"

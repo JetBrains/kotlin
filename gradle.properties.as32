@@ -11,5 +11,6 @@ kotlin.incremental=false
 #bootstrap.kotlin.version=1.1.50-dev-1451
 #signingRequired=true
 
+kotlinNativeEnabled=true
 intellijUltimateEnabled=false
 intellijEnforceCommunitySdk=true

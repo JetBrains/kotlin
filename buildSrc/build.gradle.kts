@@ -57,6 +57,7 @@ rootProject.apply {
 val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 val intellijUltimateEnabled by extra(project.getBooleanProperty("intellijUltimateEnabled") ?: isTeamcityBuild)
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
+val kotlinNativeEnabled by extra(project.getBooleanProperty("kotlinNativeEnabled") ?: false)
 
 extra["intellijRepo"] = "https://www.jetbrains.com/intellij-repository"
 
