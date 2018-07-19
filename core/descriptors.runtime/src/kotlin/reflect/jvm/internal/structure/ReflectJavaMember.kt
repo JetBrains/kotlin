@@ -52,7 +52,9 @@ abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOw
 
         for (i in parameterTypes.indices) {
             val type = ReflectJavaType.create(parameterTypes[i])
-            val name = names?.getOrNull(i + shift) ?: error("No parameter with index $i+$shift (name=$name type=$type) in $this")
+            val name = names?.run {
+                getOrNull(i + shift) ?: error("No parameter with index $i+$shift (name=$name type=$type) in $this@ReflectJavaMember")
+            }
             val isParamVararg = isVararg && i == parameterTypes.lastIndex
             result.add(ReflectJavaValueParameter(type, parameterAnnotations[i], name, isParamVararg))
         }
