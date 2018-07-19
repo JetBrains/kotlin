@@ -34,6 +34,8 @@ interface DeserializedMemberDescriptor : MemberDescriptor {
 
     val typeTable: TypeTable
 
+    var isExperimentalCoroutineInReleaseEnvironment: Boolean
+
     val versionRequirementTable: VersionRequirementTable
 
     val versionRequirement: VersionRequirement?
@@ -68,7 +70,8 @@ class DeserializedSimpleFunctionDescriptor(
     override val typeTable: TypeTable,
     override val versionRequirementTable: VersionRequirementTable,
     override val containerSource: DeserializedContainerSource?,
-    source: SourceElement? = null
+    source: SourceElement? = null,
+    override var isExperimentalCoroutineInReleaseEnvironment: Boolean = false
 ) : DeserializedCallableMemberDescriptor,
     SimpleFunctionDescriptorImpl(
         containingDeclaration, original, annotations, name, kind,
@@ -85,7 +88,7 @@ class DeserializedSimpleFunctionDescriptor(
     ): FunctionDescriptorImpl {
         return DeserializedSimpleFunctionDescriptor(
             newOwner, original as SimpleFunctionDescriptor?, annotations, newName ?: name, kind,
-            proto, nameResolver, typeTable, versionRequirementTable, containerSource, source
+            proto, nameResolver, typeTable, versionRequirementTable, containerSource, source, isExperimentalCoroutineInReleaseEnvironment
         )
     }
 }
@@ -108,7 +111,8 @@ class DeserializedPropertyDescriptor(
     override val nameResolver: NameResolver,
     override val typeTable: TypeTable,
     override val versionRequirementTable: VersionRequirementTable,
-    override val containerSource: DeserializedContainerSource?
+    override val containerSource: DeserializedContainerSource?,
+    override var isExperimentalCoroutineInReleaseEnvironment: Boolean = false
 ) : DeserializedCallableMemberDescriptor, PropertyDescriptorImpl(
     containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE,
     isLateInit, isConst, isExpect, false, isExternal, isDelegated
@@ -123,7 +127,8 @@ class DeserializedPropertyDescriptor(
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
             newOwner, original, annotations, newModality, newVisibility, isVar, newName, kind, isLateInit, isConst, isExternal,
-            @Suppress("DEPRECATION") isDelegated, isExpect, proto, nameResolver, typeTable, versionRequirementTable, containerSource
+            @Suppress("DEPRECATION") isDelegated, isExpect, proto, nameResolver, typeTable, versionRequirementTable, containerSource,
+            isExperimentalCoroutineInReleaseEnvironment
         )
     }
 
@@ -141,7 +146,8 @@ class DeserializedClassConstructorDescriptor(
     override val typeTable: TypeTable,
     override val versionRequirementTable: VersionRequirementTable,
     override val containerSource: DeserializedContainerSource?,
-    source: SourceElement? = null
+    source: SourceElement? = null,
+    override var isExperimentalCoroutineInReleaseEnvironment: Boolean = false
 ) : DeserializedCallableMemberDescriptor,
     ClassConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, source ?: SourceElement.NO_SOURCE) {
 
@@ -178,7 +184,8 @@ class DeserializedTypeAliasDescriptor(
     override val nameResolver: NameResolver,
     override val typeTable: TypeTable,
     override val versionRequirementTable: VersionRequirementTable,
-    override val containerSource: DeserializedContainerSource?
+    override val containerSource: DeserializedContainerSource?,
+    override var isExperimentalCoroutineInReleaseEnvironment: Boolean = false
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility),
     DeserializedMemberDescriptor {
     override lateinit var constructors: Collection<TypeAliasConstructorDescriptor> private set
@@ -210,7 +217,8 @@ class DeserializedTypeAliasDescriptor(
         if (substitutor.isEmpty) return this
         val substituted = DeserializedTypeAliasDescriptor(
             storageManager, containingDeclaration, annotations, name, visibility,
-            proto, nameResolver, typeTable, versionRequirementTable, containerSource
+            proto, nameResolver, typeTable, versionRequirementTable, containerSource,
+            isExperimentalCoroutineInReleaseEnvironment
         )
         substituted.initialize(
             declaredTypeParameters,
