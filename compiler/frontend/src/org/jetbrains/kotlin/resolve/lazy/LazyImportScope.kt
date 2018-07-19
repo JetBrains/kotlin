@@ -73,22 +73,28 @@ interface ImportForceResolver {
     fun forceResolveImport(importDirective: KtImportDirective)
 }
 
-open class LazyImportResolver<I : KtImportInfo>(
+class ImportResolutionComponents(
     val storageManager: StorageManager,
-    private val qualifiedExpressionResolver: QualifiedExpressionResolver,
+    val qualifiedExpressionResolver: QualifiedExpressionResolver,
     val moduleDescriptor: ModuleDescriptor,
-    private val platformToKotlinClassMap: PlatformToKotlinClassMap,
+    val platformToKotlinClassMap: PlatformToKotlinClassMap,
     val languageVersionSettings: LanguageVersionSettings,
-    val indexedImports: IndexedImports<I>,
-    excludedImportNames: Collection<FqName>,
-    protected val traceForImportResolve: BindingTrace,
-    private val packageFragment: PackageFragmentDescriptor?,
     val deprecationResolver: DeprecationResolver
+)
+
+open class LazyImportResolver<I : KtImportInfo>(
+    internal val components: ImportResolutionComponents,
+    val indexedImports: IndexedImports<I>,
+    val excludedImportNames: Collection<FqName>,
+    val traceForImportResolve: BindingTrace,
+    val packageFragment: PackageFragmentDescriptor?
 ) {
-    private val importedScopesProvider = storageManager.createMemoizedFunctionWithNullableValues { directive: KtImportInfo ->
-        qualifiedExpressionResolver.processImportReference(
-            directive, moduleDescriptor, traceForImportResolve, excludedImportNames, packageFragment
-        )
+    private val importedScopesProvider = with(components) {
+        storageManager.createMemoizedFunctionWithNullableValues { directive: KtImportInfo ->
+            qualifiedExpressionResolver.processImportReference(
+                directive, moduleDescriptor, traceForImportResolve, excludedImportNames, packageFragment
+            )
+        }
     }
 
     fun <D : DeclarationDescriptor> selectSingleFromImports(
@@ -106,14 +112,14 @@ open class LazyImportResolver<I : KtImportInfo>(
             }
             return target
         }
-        return storageManager.compute(::compute)
+        return components.storageManager.compute(::compute)
     }
 
     fun <D : DeclarationDescriptor> collectFromImports(
         name: Name,
         descriptorsSelector: (ImportingScope, Name) -> Collection<D>
     ): Collection<D> {
-        return storageManager.compute {
+        return components.storageManager.compute {
             var descriptors: Collection<D>? = null
             for (directive in indexedImports.importsForName(name)) {
                 val descriptorsForImport = descriptorsSelector(getImportScope(directive), name)
@@ -143,42 +149,28 @@ open class LazyImportResolver<I : KtImportInfo>(
 }
 
 class LazyImportResolverForKtImportDirective(
-    storageManager: StorageManager,
-    qualifiedExpressionResolver: QualifiedExpressionResolver,
-    moduleDescriptor: ModuleDescriptor,
-    platformToKotlinClassMap: PlatformToKotlinClassMap,
-    languageVersionSettings: LanguageVersionSettings,
+    components: ImportResolutionComponents,
     indexedImports: IndexedImports<KtImportDirective>,
     excludedImportNames: Collection<FqName>,
     traceForImportResolve: BindingTrace,
-    packageFragment: PackageFragmentDescriptor?,
-    deprecationResolver: DeprecationResolver
+    packageFragment: PackageFragmentDescriptor?
 ) : LazyImportResolver<KtImportDirective>(
-    storageManager,
-    qualifiedExpressionResolver,
-    moduleDescriptor,
-    platformToKotlinClassMap,
-    languageVersionSettings,
-    indexedImports,
-    excludedImportNames,
-    traceForImportResolve,
-    packageFragment,
-    deprecationResolver
+    components, indexedImports, excludedImportNames, traceForImportResolve, packageFragment
 ), ImportForceResolver {
 
-    private val forceResolveImportDirective = storageManager.createMemoizedFunction { directive: KtImportDirective ->
+    private val forceResolveImportDirective = components.storageManager.createMemoizedFunction { directive: KtImportDirective ->
         val scope = getImportScope(directive)
         if (scope is LazyExplicitImportScope) {
             val allDescriptors = scope.storeReferencesToDescriptors()
             PlatformClassesMappedToKotlinChecker.checkPlatformClassesMappedToKotlin(
-                platformToKotlinClassMap, traceForImportResolve, directive, allDescriptors
+                components.platformToKotlinClassMap, traceForImportResolve, directive, allDescriptors
             )
         }
 
         Unit
     }
 
-    private val forceResolveNonDefaultImportsTask: NotNullLazyValue<Unit> = storageManager.createLazyValue {
+    private val forceResolveNonDefaultImportsTask: NotNullLazyValue<Unit> = components.storageManager.createLazyValue {
         val explicitClassImports = HashMultimap.create<String, KtImportDirective>()
         for (importInfo in indexedImports.imports) {
             forceResolveImport(importInfo)
@@ -249,12 +241,12 @@ class LazyImportScope(
     private fun LazyImportResolver<*>.isClassifierVisible(descriptor: ClassifierDescriptor): Boolean {
         if (filteringKind == FilteringKind.ALL) return true
 
-        if (deprecationResolver.isHiddenInResolution(descriptor)) return false
+        if (components.deprecationResolver.isHiddenInResolution(descriptor)) return false
 
         val visibility = (descriptor as DeclarationDescriptorWithVisibility).visibility
         val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
         if (!visibility.mustCheckInImports()) return includeVisible
-        return Visibilities.isVisibleIgnoringReceiver(descriptor, moduleDescriptor) == includeVisible
+        return Visibilities.isVisibleIgnoringReceiver(descriptor, components.moduleDescriptor) == includeVisible
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
@@ -295,9 +287,9 @@ class LazyImportScope(
         // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
 
-        val storageManager = importResolver.storageManager
+        val storageManager = importResolver.components.storageManager
         if (secondaryImportResolver != null) {
-            assert(storageManager === secondaryImportResolver.storageManager) { "Multiple storage managers are not supported" }
+            assert(storageManager === secondaryImportResolver.components.storageManager) { "Multiple storage managers are not supported" }
         }
 
         return storageManager.compute {
