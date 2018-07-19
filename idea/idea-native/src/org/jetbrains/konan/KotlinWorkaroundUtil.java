@@ -1,6 +1,7 @@
 package org.jetbrains.konan;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo;
+import org.jetbrains.kotlin.idea.caches.project.ModuleProductionSourceInfo;
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider;
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText;
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter;
@@ -106,5 +108,10 @@ public class KotlinWorkaroundUtil {
   @NotNull
   public static LibraryInfo createLibraryInfo(@NotNull Project project, @NotNull Library library) {
     return new LibraryInfo(project, library);
+  }
+
+  @NotNull
+  public static Module getModule(@NotNull ModuleProductionSourceInfo sourceInfo) {
+    return sourceInfo.getModule();
   }
 }
