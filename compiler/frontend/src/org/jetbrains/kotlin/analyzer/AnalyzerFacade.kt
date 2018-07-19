@@ -94,7 +94,8 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
     private val firstDependency: M? = null,
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
-    private val invalidateOnOOCB: Boolean = true
+    private val invalidateOnOOCB: Boolean = true,
+    private val isReleaseCoroutines: Boolean? = null
 ) : ResolverForProject<M>() {
 
     private class ModuleData(
@@ -176,7 +177,8 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                 val moduleContent = modulesContent(module)
                 val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
 
-                val languageVersionSettings = moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project)
+                val languageVersionSettings =
+                    moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project, isReleaseCoroutines)
                 val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module)
 
                 resolverForModuleFactory.createResolverForModule(
@@ -409,12 +411,20 @@ interface PackageOracleFactory {
 }
 
 interface LanguageSettingsProvider {
-    fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings
+    fun getLanguageVersionSettings(
+        moduleInfo: ModuleInfo,
+        project: Project,
+        isReleaseCoroutines: Boolean? = null
+    ): LanguageVersionSettings
 
     fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion
 
     object Default : LanguageSettingsProvider {
-        override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project) = LanguageVersionSettingsImpl.DEFAULT
+        override fun getLanguageVersionSettings(
+            moduleInfo: ModuleInfo,
+            project: Project,
+            isReleaseCoroutines: Boolean?
+        ) = LanguageVersionSettingsImpl.DEFAULT
 
         override fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion = TargetPlatformVersion.NoVersion
     }

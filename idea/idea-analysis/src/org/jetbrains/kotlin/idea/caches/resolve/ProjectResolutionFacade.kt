@@ -154,7 +154,8 @@ internal class ProjectResolutionFacade(
             delegateResolver = delegateResolverForProject,
             firstDependency = settings.sdk?.let { SdkInfo(project, it) },
             packageOracleFactory = ServiceManager.getService(project, IdePackageOracleFactory::class.java),
-            invalidateOnOOCB = invalidateOnOOCB
+            invalidateOnOOCB = invalidateOnOOCB,
+            isReleaseCoroutines = settings.isReleaseCoroutines
         )
 
         if (delegateBuiltIns == null && builtIns is JvmBuiltIns) {

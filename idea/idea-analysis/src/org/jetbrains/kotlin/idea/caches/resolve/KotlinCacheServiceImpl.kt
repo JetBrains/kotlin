@@ -61,7 +61,12 @@ internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
 // For every different instance of these settings we must create a different builtIns instance and thus a different moduleDescriptor graph
 // since in the current implementation types from one module are leaking into other modules' resolution
 // meaning that we can't just change those setting on a per module basis
-data class PlatformAnalysisSettings(val platform: TargetPlatform, val sdk: Sdk?, val isAdditionalBuiltInFeaturesSupported: Boolean)
+data class PlatformAnalysisSettings(
+    val platform: TargetPlatform, val sdk: Sdk?,
+    val isAdditionalBuiltInFeaturesSupported: Boolean,
+    // Effectively unused as a property. Needed only to distinguish different modes when being put in a map
+    val isReleaseCoroutines: Boolean
+)
 
 class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     override fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade {
@@ -89,7 +94,10 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     ): ProjectResolutionFacade {
         val sdk = dependenciesModuleInfo.sdk
         val platform = JvmPlatform // TODO: Js scripts?
-        val settings = PlatformAnalysisSettings(platform, sdk, true)
+        val settings = PlatformAnalysisSettings(
+            platform, sdk, true,
+            LanguageFeature.ReleaseCoroutines.defaultState == LanguageFeature.State.ENABLED
+        )
 
         val dependenciesForScriptDependencies = listOf(
             LibraryModificationTracker.getInstance(project),
@@ -162,10 +170,22 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         )
     }
 
+    private fun IdeaModuleInfo.platformSettings(targetPlatform: TargetPlatform) = PlatformAnalysisSettings(
+        targetPlatform, sdk,
+        supportsAdditionalBuiltInsMembers(),
+        isReleaseCoroutines()
+    )
+
     private fun IdeaModuleInfo.supportsAdditionalBuiltInsMembers(): Boolean {
         return IDELanguageSettingsProvider
             .getLanguageVersionSettings(this, project)
             .supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)
+    }
+
+    private fun IdeaModuleInfo.isReleaseCoroutines(): Boolean {
+        return IDELanguageSettingsProvider
+            .getLanguageVersionSettings(this, project)
+            .supportsFeature(LanguageFeature.ReleaseCoroutines)
     }
 
     private fun globalFacade(settings: PlatformAnalysisSettings) =
@@ -184,8 +204,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         // we assume that all files come from the same module
         val targetPlatform = files.map { TargetPlatformDetector.getPlatform(it) }.toSet().single()
         val specialModuleInfo = files.map(KtFile::getModuleInfo).toSet().single()
-        val sdk = specialModuleInfo.sdk
-        val settings = PlatformAnalysisSettings(targetPlatform, sdk, specialModuleInfo.supportsAdditionalBuiltInsMembers())
+        val settings = specialModuleInfo.platformSettings(targetPlatform)
 
         // File copies are created during completion and receive correct modification events through POM.
         // Dummy files created e.g. by J2K do not receive events.
@@ -419,7 +438,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 
     private fun getResolutionFacadeByModuleInfo(moduleInfo: IdeaModuleInfo, platform: TargetPlatform): ResolutionFacade {
-        val settings = PlatformAnalysisSettings(platform, moduleInfo.sdk, moduleInfo.supportsAdditionalBuiltInsMembers())
+        val settings = moduleInfo.platformSettings(platform)
         val projectFacade = when (moduleInfo) {
             is ScriptDependenciesInfo.ForProject,
             is ScriptDependenciesSourceInfo.ForProject -> facadeForScriptDependenciesForProject
