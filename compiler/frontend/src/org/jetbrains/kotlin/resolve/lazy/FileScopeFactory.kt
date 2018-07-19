@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportInfo
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.*
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
 
-data class FileScopes(val lexicalScope: LexicalScope, val importingScope: ImportingScope, val importResolver: ImportResolver)
+data class FileScopes(val lexicalScope: LexicalScope, val importingScope: ImportingScope, val importForceResolver: ImportForceResolver)
 
 class FileScopeFactory(
     private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
@@ -69,13 +70,13 @@ class FileScopeFactory(
     }
 
     private data class DefaultImportResolvers(
-        val explicit: LazyImportResolver,
-        val allUnder: LazyImportResolver,
-        val lowPriority: LazyImportResolver
+        val explicit: LazyImportResolver<DefaultImportImpl>,
+        val allUnder: LazyImportResolver<DefaultImportImpl>,
+        val lowPriority: LazyImportResolver<DefaultImportImpl>
     )
 
     private fun createDefaultImportResolvers(
-        extraImports: Collection<KtImportInfo>,
+        extraImports: Collection<DefaultImportImpl>,
         aliasImportNames: Collection<FqName>
     ): DefaultImportResolvers {
         val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve", false)
@@ -87,20 +88,20 @@ class FileScopeFactory(
             allImplicitImports.filter { it.isAllUnder || it.importedFqName !in aliasImportNames }
         }
 
-        val explicit = createImportResolver(
+        val explicit = createDefaultImportResolver(
             ExplicitImportsIndexed(defaultImportsFiltered),
             tempTrace,
             packageFragment = null,
             aliasImportNames = aliasImportNames
         )
-        val allUnder = createImportResolver(
+        val allUnder = createDefaultImportResolver(
             AllUnderImportsIndexed(defaultImportsFiltered),
             tempTrace,
             packageFragment = null,
             aliasImportNames = aliasImportNames,
             excludedImports = targetPlatform.excludedImports
         )
-        val lowPriority = createImportResolver(
+        val lowPriority = createDefaultImportResolver(
             AllUnderImportsIndexed(defaultLowPriorityImports.also { imports ->
                 assert(imports.all { it.isAllUnder }) { "All low priority imports must be all-under: $imports" }
             }),
@@ -116,8 +117,8 @@ class FileScopeFactory(
         createDefaultImportResolvers(emptyList(), emptyList())
     }
 
-    private fun createImportResolver(
-        indexedImports: IndexedImports,
+    private fun createDefaultImportResolver(
+        indexedImports: IndexedImports<DefaultImportImpl>,
         trace: BindingTrace,
         aliasImportNames: Collection<FqName>,
         packageFragment: PackageFragmentDescriptor?,
@@ -128,6 +129,17 @@ class FileScopeFactory(
         deprecationResolver
     )
 
+    private fun createImportResolver(
+        indexedImports: IndexedImports<KtImportDirective>,
+        trace: BindingTrace,
+        aliasImportNames: Collection<FqName>,
+        packageFragment: PackageFragmentDescriptor?,
+        excludedImports: List<FqName>? = null
+    ) = LazyImportResolverForKtImportDirective(
+        storageManager, qualifiedExpressionResolver, moduleDescriptor, platformToKotlinClassMap, languageVersionSettings,
+        indexedImports, aliasImportNames concat excludedImports, trace, packageFragment,
+        deprecationResolver
+    )
 
     private inner class FilesScopesBuilder(
         private val file: KtFile,
@@ -156,13 +168,13 @@ class FileScopeFactory(
         val lexicalScope =
             LexicalScope.Base(lazyImportingScope, topLevelDescriptorProvider.getPackageFragmentOrDiagnoseFailure(file.packageFqName, file))
 
-        val importResolver = object : ImportResolver {
-            override fun forceResolveAllImports() {
-                explicitImportResolver.forceResolveAllImports()
-                allUnderImportResolver.forceResolveAllImports()
+        val importResolver = object : ImportForceResolver {
+            override fun forceResolveNonDefaultImports() {
+                explicitImportResolver.forceResolveNonDefaultImports()
+                allUnderImportResolver.forceResolveNonDefaultImports()
             }
 
-            override fun forceResolveImport(importDirective: KtImportInfo) {
+            override fun forceResolveImport(importDirective: KtImportDirective) {
                 if (importDirective.isAllUnder) {
                     allUnderImportResolver.forceResolveImport(importDirective)
                 } else {
