@@ -106,6 +106,11 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         updateDefinitions()
     }
 
+    override fun getDefaultScriptDefinition(): KotlinScriptDefinition {
+        return StandardIdeScriptDefinition(project)
+    }
+
+    @Suppress("DEPRECATION")
     fun isInExpectedLocation(ktFile: KtFile, scriptDefinition: KotlinScriptDefinition): Boolean {
         if (ScratchFileService.isInScratchRoot(ktFile.virtualFile)) return true
 

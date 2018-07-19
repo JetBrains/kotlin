@@ -29,6 +29,7 @@ import kotlin.concurrent.write
 interface ScriptDefinitionProvider {
     fun findScriptDefinition(fileName: String): KotlinScriptDefinition?
     fun isScript(fileName: String): Boolean
+    fun getDefaultScriptDefinition(): KotlinScriptDefinition
 
     companion object {
         fun getInstance(project: Project): ScriptDefinitionProvider =
