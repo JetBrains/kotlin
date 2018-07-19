@@ -88,13 +88,13 @@ object EmptyICReporter : ICReporter {
 
 inline fun <R> withIC(enabled: Boolean = true, fn: ()->R): R {
     val isEnabledBackup = IncrementalCompilation.isEnabledForJvm()
-    IncrementalCompilation.setIsEnabled(enabled)
+    IncrementalCompilation.setIsEnabledForJvm(enabled)
 
     try {
         return fn()
     }
     finally {
-        IncrementalCompilation.setIsEnabled(isEnabledBackup)
+        IncrementalCompilation.setIsEnabledForJvm(isEnabledBackup)
     }
 }
 

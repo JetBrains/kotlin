@@ -36,11 +36,11 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
     override fun setUp() {
         super.setUp()
         isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
-        IncrementalCompilation.setIsEnabled(true)
+        IncrementalCompilation.setIsEnabledForJvm(true)
     }
 
     override fun tearDown() {
-        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
+        IncrementalCompilation.setIsEnabledForJvm(isICEnabledBackup)
         super.tearDown()
     }
 

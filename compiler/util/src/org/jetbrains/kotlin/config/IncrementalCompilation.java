@@ -33,7 +33,7 @@ public class IncrementalCompilation {
     }
 
     @TestOnly
-    public static void setIsEnabled(boolean value) {
+    public static void setIsEnabledForJvm(boolean value) {
         System.setProperty(INCREMENTAL_COMPILATION_JVM_PROPERTY, String.valueOf(value));
     }
 

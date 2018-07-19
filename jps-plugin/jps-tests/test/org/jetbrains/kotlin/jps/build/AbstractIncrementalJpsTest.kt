@@ -115,7 +115,7 @@ abstract class AbstractIncrementalJpsTest(
         super.setUp()
         lookupsDuringTest = hashSetOf()
         isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
-        IncrementalCompilation.setIsEnabled(true)
+        IncrementalCompilation.setIsEnabledForJvm(true)
 
         if (DEBUG_LOGGING_ENABLED) {
             enableDebugLogging()
@@ -128,7 +128,7 @@ abstract class AbstractIncrementalJpsTest(
         (AbstractIncrementalJpsTest::projectDescriptor).javaField!![this] = null
         (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
         lookupsDuringTest.clear()
-        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
+        IncrementalCompilation.setIsEnabledForJvm(isICEnabledBackup)
         super.tearDown()
     }
 
