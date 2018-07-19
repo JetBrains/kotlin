@@ -1,3 +1,4 @@
+// !LANGUAGE: -RestrictRetentionForExpressionAnnotations
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 package foo
