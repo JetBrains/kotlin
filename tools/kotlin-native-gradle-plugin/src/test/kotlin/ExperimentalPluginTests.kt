@@ -1,6 +1,12 @@
 package org.jetbrains.kotlin.gradle.plugin.test
 
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.TaskOutcome
+import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeMainComponent
+import org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinNativePlugin
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Rule
@@ -19,6 +25,21 @@ class ExperimentalPluginTests {
         get() = tmpFolder.root
 
     val exeSuffix = HostManager.host.family.exeSuffix
+
+    private fun withProject(
+        name: String = "testProject",
+        plugins: Collection<Class<out Plugin<out Project>>> = listOf(KotlinNativePlugin::class.java),
+        parent: Project? = null,
+        block: ProjectInternal.() -> Unit
+    ) {
+        val builder = ProjectBuilder.builder().withProjectDir(projectDirectory).withName(name)
+        parent?.let { builder.withParent(it) }
+        val project = builder.build() as ProjectInternal
+        plugins.forEach {
+            project.pluginManager.apply(it)
+        }
+        project.block()
+    }
 
     @Test
     fun `Plugin should compile one executable`() {
@@ -374,4 +395,20 @@ class ExperimentalPluginTests {
         assertTrue(projectDirectory.resolve("build/exe/foo/release/foo.$exeSuffix").exists())
     }
 
+    @Test
+    fun `Plugin should not create compilation tasks for targets unsupported by the current host`() =
+        withProject {
+            val hosts = arrayOf("macos_x64", "linux_x64", "mingw_x64")
+            components.withType(KotlinNativeMainComponent::class.java).getByName("main").target(*hosts)
+            evaluate()
+            hosts.map { HostManager().targetByName(it) }.forEach {
+                val task = tasks.findByName("compileDebug${it.name.capitalize()}KotlinNative")
+
+                if (it == HostManager.host) {
+                    assertNotNull(task)
+                } else {
+                    assertNull(task)
+                }
+            }
+        }
 }
