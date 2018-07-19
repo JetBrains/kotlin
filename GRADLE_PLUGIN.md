@@ -16,7 +16,7 @@ using Gradle plugin DSL:
         id "org.jetbrains.kotlin.konan" version "0.8"
     }
 
-You also can get the plugin from a Bintray repository. In addition to releases this repo contains old and development
+You also can get the plugin from a Bintray repository. In addition to releases, this repo contains old and development
 versions of the plugin which are not available at the plugin portal. To get the plugin from the Bintray repo, include
 the following snippet in your build script:
 
@@ -257,7 +257,7 @@ project to a common project:
     }
 
 When a common project is added as an `expectedBy` dependency, all the artifacts with the multiplatform support enabled
-will use it's `main` source set as a common module. One may specify custom source sets for each artifact using the
+will use its `main` source set as a common module. One may specify custom source sets for each artifact using the
 `commonSourceSets` DSL method. In this case the multiplatform support will be also enabled for this artifact.
 
     konanArtifacts {
@@ -300,7 +300,7 @@ for each an artifact defined in a `konanArtifacts` block. Such a task may have d
 
     |Property        |Type                        |Description                                              |
     |----------------|----------------------------|---------------------------------------------------------|
-    |`target        `|`String`                    |Target the artfact is built for. Read only.              |
+    |`target        `|`String`                    |Target the artifact is built for. Read only.              |
     |`artifactName  `|`String`                    |Base name for the output file (without an extension)     |
     |`destinationDir`|`File`                      |Directory to place the output artifact                   |
     |`artifact      `|`File`                      |The output artifact. Read only.                          |
@@ -447,15 +447,15 @@ tables below.
                 artifact 'baz'
 
                 // An artifact from another project
-                artifact project(':path:to:a:project'), 'artifcatName'
+                artifact project(':path:to:a:project'), 'artifactName'
 
-                // All libraries from anohter project
+                // All libraries from another project
                 allLibrariesFrom project(':some:project')
 
-                // Only interoperability libraries from anohter project
+                // Only interoperability libraries from another project
                 allInteropLibrariesFrom project(':some:interop:project')
 
-                // Named libraries for search in repositoreis
+                // Named libraries for search in repositories
                 klib 'foo'
                 klib 'bar', 'baz'
 
@@ -465,7 +465,7 @@ tables below.
 
             }
 
-            // A naitve library (*.bc) for linking.
+            // A native library (*.bc) for linking.
             nativeLibrary project.file('path/to/native/library.bc')
             nativeLibraries 'library1.bc', 'library2.bc'
 
@@ -615,16 +615,16 @@ tables below.
 
 ## Publishing to Maven.
 
-Publishing the Kotlin/Native artifacts depends on mechanisms which was introduced in Gradle Native support, e.g. Gradle's 
-metadata feature, thus there are some additional steps are required. First of all gradle version it shouldn't be less 
-then gradle version of kotlin native plugin depends on (currently Gradle 4.7). before Gradle 5.0 feature 
+Publishing the Kotlin/Native artifacts depends on mechanisms which were introduced in Gradle Native support, e.g. Gradle's 
+metadata feature. Thus some additional steps are required. First of all, the gradle version shouldn't be less 
+than gradle version of kotlin native plugin it depends on (currently Gradle 4.7). Before Gradle 5.0, feature 
 [GRADLE_METADATA](https://github.com/gradle/gradle/blob/master/subprojects/docs/src/docs/design/gradle-module-metadata-specification.md) 
 should be enabled for build. e.g. in settings.gradle
 ````
 enableFeaturePreview('GRADLE_METADATA')
 ````
 
-Some maven repositories requires some declarations in `pom` files, that should be presents in all auxilary `pom` files (
+Some maven repositories require some declarations in `pom` files, that should be presents in all auxiliary `pom` files (
 platform x build types). To meet this requirement the Kotlin/Native plugin has following syntax to do it:
 
  ````
