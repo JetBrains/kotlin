@@ -40,13 +40,11 @@
 			{"visibility": "internal",	"declaration": "final fun <set-internalVar>(<set-?>: kotlin.String): kotlin.Unit", "name": "setInternalVar$test_module", "desc": "(Ljava/lang/String;)V"},
 			{"visibility": "internal",	"declaration": "final lateinit var internalVarPrivateSet: kotlin.String", "name": "internalVarPrivateSet", "desc": "Ljava/lang/String;"},
 			{"visibility": "internal",	"declaration": "final fun <get-internalVarPrivateSet>(): kotlin.String", "name": "getInternalVarPrivateSet$test_module", "desc": "()Ljava/lang/String;"},
-			{"visibility": "private",	"declaration": "final fun <set-internalVarPrivateSet>(<set-?>: kotlin.String): kotlin.Unit", "name": "setInternalVarPrivateSet", "desc": "(Ljava/lang/String;)V"},
 			{"visibility": "protected",	"declaration": "final lateinit var protectedVar: kotlin.String", "name": "protectedVar", "desc": "Ljava/lang/String;"},
 			{"visibility": "protected",	"declaration": "final fun <get-protectedVar>(): kotlin.String", "name": "getProtectedVar", "desc": "()Ljava/lang/String;"},
 			{"visibility": "protected",	"declaration": "final fun <set-protectedVar>(<set-?>: kotlin.String): kotlin.Unit", "name": "setProtectedVar", "desc": "(Ljava/lang/String;)V"},
 			{"visibility": "protected",	"declaration": "final lateinit var protectedVarPrivateSet: kotlin.String", "name": "protectedVarPrivateSet", "desc": "Ljava/lang/String;"},
 			{"visibility": "protected",	"declaration": "final fun <get-protectedVarPrivateSet>(): kotlin.String", "name": "getProtectedVarPrivateSet", "desc": "()Ljava/lang/String;"},
-			{"visibility": "private",	"declaration": "final fun <set-protectedVarPrivateSet>(<set-?>: kotlin.String): kotlin.Unit", "name": "setProtectedVarPrivateSet", "desc": "(Ljava/lang/String;)V"},
 			{"visibility": "private",	"declaration": "final lateinit var privateVar: kotlin.Any", "name": "privateVar", "desc": "Ljava/lang/Object;"},
 			{"visibility": "public",	"declaration": "constructor ClassWithLateinit()", "name": "<init>", "desc": "()V"}
 		]
