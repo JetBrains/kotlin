@@ -121,9 +121,10 @@ fun StatementGenerator.generateSingletonReference(
 }
 
 private fun StatementGenerator.shouldGenerateReceiverAsSingletonReference(receiverClassDescriptor: ClassDescriptor): Boolean {
+    val scopeOwner = this.scopeOwner
     return receiverClassDescriptor.kind.isSingleton &&
-            this.scopeOwner != receiverClassDescriptor && //For anonymous initializers
-            this.scopeOwner.containingDeclaration != receiverClassDescriptor
+            scopeOwner != receiverClassDescriptor && // For anonymous initializers
+            !(scopeOwner is FunctionDescriptor && scopeOwner.containingDeclaration == receiverClassDescriptor) // Methods of object
 }
 
 private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverValue, classDescriptor: ClassDescriptor): IrExpression {

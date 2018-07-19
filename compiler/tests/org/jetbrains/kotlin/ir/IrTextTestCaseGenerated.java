@@ -812,6 +812,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/enumEntryAsReceiver.kt");
         }
 
+        @TestMetadata("enumEntryReferenceFromEnumEntryClass.kt")
+        public void testEnumEntryReferenceFromEnumEntryClass() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/enumEntryReferenceFromEnumEntryClass.kt");
+        }
+
         @TestMetadata("equality.kt")
         public void testEquality() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/equality.kt");
@@ -965,6 +970,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("objectClassReference.kt")
         public void testObjectClassReference() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/objectClassReference.kt");
+        }
+
+        @TestMetadata("objectReference.kt")
+        public void testObjectReference() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/objectReference.kt");
         }
 
         @TestMetadata("outerClassInstanceReference.kt")
