@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.fastCheckIfContractPresent
+import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultModality
@@ -242,7 +242,7 @@ class FunctionDescriptorResolver(
                 // We need to enable contracts if we're compiling "kotlin"-package to be able to ship contracts in stdlib in 1.2
                 languageVersionSettings.getFlag(AnalysisFlag.allowKotlinPackage)
 
-        if (!isContractsEnabled || !fastCheckIfContractPresent(function)) return emptyContract
+        if (!isContractsEnabled || !function.isContractPresentPsiCheck()) return emptyContract
 
         return provideByDeferredForceResolve
     }
