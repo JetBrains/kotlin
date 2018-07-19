@@ -54,6 +54,11 @@ public class KotlinMavenInspectionTestGenerated extends AbstractKotlinMavenInspe
         runTest("idea/idea-maven/testData/maven-inspections/deprecatedKotlinxCoroutines.xml");
     }
 
+    @TestMetadata("deprecatedKotlinxCoroutinesNoError.xml")
+    public void testDeprecatedKotlinxCoroutinesNoError() throws Exception {
+        runTest("idea/idea-maven/testData/maven-inspections/deprecatedKotlinxCoroutinesNoError.xml");
+    }
+
     @TestMetadata("ideAndMavenVersions.xml")
     public void testIdeAndMavenVersions() throws Exception {
         runTest("idea/idea-maven/testData/maven-inspections/ideAndMavenVersions.xml");
