@@ -41,11 +41,11 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
     override fun setUp() {
         super.setUp()
         isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
-        IncrementalCompilation.setIsEnabled(true)
+        IncrementalCompilation.setIsEnabledForJvm(true)
     }
 
     override fun tearDown() {
-        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
+        IncrementalCompilation.setIsEnabledForJvm(isICEnabledBackup)
         super.tearDown()
     }
 
@@ -67,7 +67,7 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
 
             when {
                 name.endsWith("incremental-compilation") -> {
-                    IncrementalCompilation.setIsEnabled(modification.dataFile.readAsBool())
+                    IncrementalCompilation.setIsEnabledForJvm(modification.dataFile.readAsBool())
                 }
             }
         }

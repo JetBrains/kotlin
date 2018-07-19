@@ -164,11 +164,11 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         srcDir = File(workingDir, "src").apply { mkdirs() }
         outDir = File(workingDir, "out")
         isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
-        IncrementalCompilation.setIsEnabled(true)
+        IncrementalCompilation.setIsEnabledForJvm(true)
     }
 
     override fun tearDown() {
-        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
+        IncrementalCompilation.setIsEnabledForJvm(isICEnabledBackup)
         super.tearDown()
     }
 
