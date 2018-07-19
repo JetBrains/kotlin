@@ -89,6 +89,11 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         runTest("jps-plugin/testData/incremental/multiModule/common/exportedDependency/");
     }
 
+    @TestMetadata("functionFromDifferentPackageChanged")
+    public void testFunctionFromDifferentPackageChanged() throws Exception {
+        runTest("jps-plugin/testData/incremental/multiModule/common/functionFromDifferentPackageChanged/");
+    }
+
     @TestMetadata("inlineFunctionInlined")
     public void testInlineFunctionInlined() throws Exception {
         runTest("jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined/");
@@ -297,6 +302,19 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
 
         public void testAllFilesPresentInExportedDependency() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/exportedDependency"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+    }
+
+    @TestMetadata("jps-plugin/testData/incremental/multiModule/common/functionFromDifferentPackageChanged")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FunctionFromDifferentPackageChanged extends AbstractIncrementalJsJpsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFunctionFromDifferentPackageChanged() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/functionFromDifferentPackageChanged"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
     }
 
