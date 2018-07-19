@@ -21,46 +21,54 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 
-class ModuleSourceRootGroup(val baseModule: Module,
-                            val sourceRootModules: List<Module>)
+class ModuleSourceRootGroup(
+    val baseModule: Module,
+    val sourceRootModules: List<Module>
+)
 
 class ModuleSourceRootMap(val modules: Collection<Module>) {
     private val baseModuleByExternalPath: Map<String, Module>
+
+    @Suppress("JoinDeclarationAndAssignment")
     private val allModulesByExternalPath: Map<String, List<Module>>
 
-    constructor(project: Project): this(project.allModules())
+    constructor(project: Project) : this(project.allModules())
 
     init {
         allModulesByExternalPath = modules
-                .filter { it.externalProjectPath != null && it.externalProjectId != null }
-                .groupBy { it.externalProjectPath!! }
+            .filter { it.externalProjectPath != null && it.externalProjectId != null }
+            .groupBy { it.externalProjectPath!! }
 
         baseModuleByExternalPath = allModulesByExternalPath
-                .mapValues { (path, modules) ->
-                    modules.reduce { m1, m2 ->
-                        if (isSourceRootPrefix(m2.externalProjectId!!, m1.externalProjectId!!)) m2 else m1
-                    }
+            .mapValues { (_, modules) ->
+                modules.reduce { m1, m2 ->
+                    if (isSourceRootPrefix(m2.externalProjectId!!, m1.externalProjectId!!)) m2 else m1
                 }
+            }
     }
 
     fun groupByBaseModules(modules: Collection<Module>): List<ModuleSourceRootGroup> {
         return modules
-                .groupBy { module ->
-                    val externalPath = module.externalProjectPath
-                    if (externalPath == null) module else (baseModuleByExternalPath[externalPath] ?: module)
-                }
-                .map { (module, sourceRootModules) ->
-                    ModuleSourceRootGroup(module,
-                                          if (sourceRootModules.size > 1) sourceRootModules - module else sourceRootModules)
-                }
+            .groupBy { module ->
+                val externalPath = module.externalProjectPath
+                if (externalPath == null) module else (baseModuleByExternalPath[externalPath] ?: module)
+            }
+            .map { (module, sourceRootModules) ->
+                ModuleSourceRootGroup(
+                    module,
+                    if (sourceRootModules.size > 1) sourceRootModules - module else sourceRootModules
+                )
+            }
     }
 
     fun toModuleGroup(module: Module): ModuleSourceRootGroup = groupByBaseModules(listOf(module)).single()
 
     fun getWholeModuleGroup(module: Module): ModuleSourceRootGroup {
         val externalPath = module.externalProjectPath
-        val baseModule = (if (externalPath != null) baseModuleByExternalPath[externalPath] else null) ?:
-                         return ModuleSourceRootGroup(module, listOf(module))
+        val baseModule = (if (externalPath != null) baseModuleByExternalPath[externalPath] else null) ?: return ModuleSourceRootGroup(
+            module,
+            listOf(module)
+        )
 
         val externalPathModules = allModulesByExternalPath[externalPath] ?: listOf()
         return ModuleSourceRootGroup(baseModule, if (externalPathModules.size > 1) externalPathModules - module else externalPathModules)
@@ -70,8 +78,8 @@ class ModuleSourceRootMap(val modules: Collection<Module>) {
 fun Module.toModuleGroup() = ModuleSourceRootMap(project).toModuleGroup(this)
 fun Module.getWholeModuleGroup() = ModuleSourceRootMap(project).getWholeModuleGroup(this)
 
-private fun isSourceRootPrefix(externalId: String, previousModuleExternalId: String)
-        = externalId.length < previousModuleExternalId.length && previousModuleExternalId.startsWith(externalId)
+private fun isSourceRootPrefix(externalId: String, previousModuleExternalId: String) =
+    externalId.length < previousModuleExternalId.length && previousModuleExternalId.startsWith(externalId)
 
 val Module.externalProjectId: String?
     get() = ExternalSystemApiUtil.getExternalProjectId(this)
