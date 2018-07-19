@@ -17601,6 +17601,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/reflection/genericSignature/defaultImplsGenericSignature.kt");
             }
 
+            @TestMetadata("delegatedMembers.kt")
+            public void testDelegatedMembers() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/genericSignature/delegatedMembers.kt");
+            }
+
             @TestMetadata("functionLiteralGenericSignature.kt")
             public void testFunctionLiteralGenericSignature() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/genericSignature/functionLiteralGenericSignature.kt");
@@ -17629,6 +17634,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("kt6106.kt")
             public void testKt6106() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/genericSignature/kt6106.kt");
+            }
+
+            @TestMetadata("samWrappedLambdaVsReference.kt")
+            public void testSamWrappedLambdaVsReference() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/genericSignature/samWrappedLambdaVsReference.kt");
             }
 
             @TestMetadata("signatureOfDeepGenericInner.kt")

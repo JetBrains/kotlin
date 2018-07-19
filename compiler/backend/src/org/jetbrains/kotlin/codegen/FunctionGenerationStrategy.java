@@ -28,6 +28,10 @@ public abstract class FunctionGenerationStrategy {
 
     public abstract boolean skipNotNullAssertionsForParameters();
 
+    public boolean skipGenericSignature() {
+        return false;
+    }
+
     public MethodVisitor wrapMethodVisitor(@NotNull MethodVisitor mv, int access, @NotNull String name, @NotNull String desc) {
         return mv;
     }
