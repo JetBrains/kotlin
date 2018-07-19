@@ -1,12 +1,25 @@
+plugins {
+    id 'com.github.jk1.tcdeps' version '0.17'
+}
+
 apply plugin: 'kotlin'
 apply plugin: 'maven'
 apply plugin: 'jps-compatible'
+
+def kotlinNativeVersion = "0.9-dev-2798" // TODO: Get from root dir
 
 configureJvmProject(project)
 configurePublishing(project)
 
 repositories {
     mavenLocal()
+    teamcityServer {
+        url = "http://buildserver.labs.intellij.net"
+        credentials {
+            username = "guest"
+            password = "guest"
+        }
+    }
 }
 
 pill {
@@ -15,7 +28,8 @@ pill {
 
 dependencies {
     compile project(':kotlin-stdlib')
-    
+
+    compileOnly tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxDist:$kotlinNativeVersion:shared.jar")
     compileOnly gradleApi()
     compileOnly 'com.android.tools.build:gradle:0.4.2'
 }
