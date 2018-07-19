@@ -808,7 +808,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             StringTemplateEntry entry = entries.get(0);
             if (entry instanceof StringTemplateEntry.Expression) {
                 KtExpression expr = ((StringTemplateEntry.Expression) entry).expression;
-                return genToString(gen(expr), type);
+                return genToString(gen(expr), expressionType(expr));
             }
             else {
                 return StackValue.constant(((StringTemplateEntry.Constant) entry).value, type);

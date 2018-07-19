@@ -2747,6 +2747,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testPrimitiveToString() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/primitiveToString.kt");
         }
+
+        @TestMetadata("primitivesAsStringTemplates.kt")
+        public void testPrimitivesAsStringTemplates() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/primitivesAsStringTemplates.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/varargs")
