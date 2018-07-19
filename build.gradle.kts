@@ -558,6 +558,8 @@ val zipTestData by task<Zip> {
     from("compiler/testData") { into("compiler") }
     from("idea/testData") { into("ide") }
     from("idea/idea-completion/testData") { into("ide/completion") }
+    from("libraries/stdlib/common/test") { into("stdlib/common") }
+    from("libraries/stdlib/test") { into("stdlib/test") }
     doLast {
         logger.lifecycle("Test data packed to $archivePath")
     }
