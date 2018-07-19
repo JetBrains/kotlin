@@ -61,7 +61,7 @@ class JvmDeclarationFactory(
             IrFieldImpl(
                 enumEntry.startOffset,
                 enumEntry.endOffset,
-                JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
+                IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
                 symbol,
                 type
             )
@@ -181,7 +181,7 @@ class JvmDeclarationFactory(
             return IrFieldImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
-                JvmLoweredDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE,
+                IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE,
                 symbol,
                 singleton.defaultType
             )

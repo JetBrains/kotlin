@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -159,7 +158,7 @@ open class ClassCodegen protected constructor(
             fieldSignature, null/*TODO support default values*/
         )
 
-        if (field.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) {
+        if (field.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) {
             AnnotationCodegen.forField(fv, this, typeMapper).genAnnotations(field.descriptor, null)
         } else {
 
@@ -254,7 +253,12 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
 
 private fun MemberDescriptor.calcModalityFlag(): Int {
     var flags = 0
-    when (effectiveModality) {
+    if (this is PropertyDescriptor) {
+        // Modality for a field: set FINAL for vals
+        if (!isVar && !isLateInit) {
+            flags = flags.or(Opcodes.ACC_FINAL)
+        }
+    } else when (effectiveModality) {
         Modality.ABSTRACT -> {
             flags = flags.or(Opcodes.ACC_ABSTRACT)
         }

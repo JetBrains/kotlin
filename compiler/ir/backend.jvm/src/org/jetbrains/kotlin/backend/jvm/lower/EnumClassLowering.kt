@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import gnu.trove.TObjectIntHashMap
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmPropertyDescriptorImpl
 import org.jetbrains.kotlin.backend.jvm.descriptors.createValueParameter
 import org.jetbrains.kotlin.descriptors.*
@@ -221,7 +220,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
             val irValuesInitializer = createSyntheticValuesFieldInitializerExpression()
 
             return IrFieldImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_VALUES,
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES,
                 createSyntheticValuesFieldDescriptor(valuesArrayType),
                 valuesArrayType.toIrType()!!,
                 IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValuesInitializer)

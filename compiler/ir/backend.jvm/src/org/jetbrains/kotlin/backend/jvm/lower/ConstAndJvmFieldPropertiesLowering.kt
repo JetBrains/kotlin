@@ -5,30 +5,23 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetterCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetterCallImpl
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
-class ConstAndJvmFieldPropertiesLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
-
+class ConstAndJvmFieldPropertiesLowering(val context: CommonBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }
@@ -43,7 +36,8 @@ class ConstAndJvmFieldPropertiesLowering(val context: JvmBackendContext) : IrEle
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val irProperty = (expression.symbol.owner as? IrSimpleFunction)?.correspondingProperty ?: return super.visitCall(expression)
+        val irSimpleFunction = (expression.symbol.owner as? IrSimpleFunction) ?: return super.visitCall(expression)
+        val irProperty = irSimpleFunction.correspondingProperty ?: return super.visitCall(expression)
 
         if (irProperty.isConst) {
             (irProperty.backingField?.initializer?.expression as? IrConst<*>)?.let { return it }
@@ -63,28 +57,60 @@ class ConstAndJvmFieldPropertiesLowering(val context: JvmBackendContext) : IrEle
         return super.visitCall(expression)
     }
 
-    private fun substituteSetter(irProperty: IrProperty, expression: IrCall): IrSetFieldImpl {
-        return IrSetFieldImpl(
+    private fun substituteSetter(irProperty: IrProperty, expression: IrCall): IrExpression {
+        val backingField = irProperty.backingField!!
+        val receiver = expression.dispatchReceiver?.let { super.visitExpression(it) }
+        val setExpr = IrSetFieldImpl(
             expression.startOffset,
             expression.endOffset,
-            irProperty.backingField!!.symbol,
-            expression.dispatchReceiver,
-            expression.getValueArgument(expression.symbol.owner.valueParameters.lastIndex)!!,
+            backingField.symbol,
+            receiver,
+            super.visitExpression(expression.getValueArgument(expression.valueArgumentsCount - 1)!!),
             expression.type,
             expression.origin,
-            expression.superQualifier?.let { context.ir.symbols.externalSymbolTable.referenceClass(it) }
+            expression.superQualifierSymbol
         )
+        return buildSubstitution(backingField.isStaticField(), setExpr, receiver)
     }
 
     private fun substituteGetter(irProperty: IrProperty, expression: IrCall): IrExpression {
-        return IrGetFieldImpl(
+        val backingField = irProperty.backingField!!
+        val receiver = expression.dispatchReceiver?.let { super.visitExpression(it) }
+        val getExpr = IrGetFieldImpl(
             expression.startOffset,
             expression.endOffset,
-            irProperty.backingField!!.symbol,
+            backingField.symbol,
             expression.type,
-            expression.dispatchReceiver,
+            receiver,
             expression.origin,
-            expression.superQualifier?.let { context.ir.symbols.externalSymbolTable.referenceClass(it) }
+            expression.superQualifierSymbol
         )
+        return buildSubstitution(backingField.isStaticField(), getExpr, receiver)
+    }
+
+    private fun buildSubstitution(needBlock: Boolean, setOrGetExpr: IrFieldAccessExpression, receiver: IrExpression?): IrExpression {
+        if (receiver != null && needBlock) {
+            // Evaluate `dispatchReceiver` for the sake of its side effects, then return `setOrGetExpr`.
+            return context.createIrBuilder(setOrGetExpr.symbol, setOrGetExpr.startOffset, setOrGetExpr.endOffset).irBlock(setOrGetExpr) {
+                // `coerceToUnit()` is private in InsertImplicitCasts, have to reproduce it here
+                val receiverVoid = IrTypeOperatorCallImpl(
+                    receiver.startOffset, receiver.endOffset,
+                    context.irBuiltIns.unitType,
+                    IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+                    context.irBuiltIns.unitType, context.irBuiltIns.unitType.classifierOrFail,
+                    receiver
+                )
+
+                +receiverVoid
+                setOrGetExpr.receiver = null
+                +setOrGetExpr
+            }
+        } else {
+            // Just `setOrGetExpr` (`dispatchReceiver` is evaluated as a subexpression thereof)
+            return setOrGetExpr
+        }
     }
 }
+
+// Should probably be an utility function with a more direct implementation.
+private fun IrField.isStaticField() = (descriptor.dispatchReceiverParameter == null)

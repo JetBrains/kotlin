@@ -36,7 +36,8 @@ class PropertiesLowering : IrElementTransformerVoid(), FileLoweringPass {
     private fun lowerProperty(declaration: IrDeclaration, kind: ClassKind): List<IrDeclaration>? =
         if (declaration is IrProperty)
             ArrayList<IrDeclaration>(3).apply {
-                if (kind != ClassKind.ANNOTATION_CLASS) {
+                // JvmFields in a companion object refer to companion's owners and should not be generated within companion.
+                if (kind != ClassKind.ANNOTATION_CLASS && declaration.backingField?.parent == declaration.parent) {
                     addIfNotNull(declaration.backingField)
                 }
                 addIfNotNull(declaration.getter)

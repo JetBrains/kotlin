@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -200,6 +201,7 @@ open class WrappedVariableDescriptor(
 
     override fun getContainingDeclaration() = (owner.parent as IrFunction).descriptor
     override fun getType() = owner.type.toKotlinType()
+    override fun getReturnType() = getType()
     override fun getName() = owner.name
     override fun isConst() = owner.isConst
     override fun isVar() = owner.isVar
@@ -489,7 +491,7 @@ open class WrappedPropertyDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
 ) : PropertyDescriptor, WrappedDeclarationDescriptor<IrField>(annotations) {
-    override fun getModality() = if (owner.isFinal) Modality.FINAL else Modality.OPEN
+    override fun getModality() = owner.correspondingProperty?.modality ?: Modality.FINAL
 
     override fun setOverriddenDescriptors(overriddenDescriptors: MutableCollection<out CallableMemberDescriptor>) {
         TODO("not implemented")
@@ -553,21 +555,18 @@ open class WrappedPropertyDescriptor(
 
     override fun getType(): KotlinType = owner.type.toKotlinType()
 
-    override fun isVar() = owner.isFinal
+    override fun isVar() = !owner.isFinal
 
-    override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? {
-        TODO("not implemented")
-    }
+    override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? =
+        if (owner.isStatic) null else (owner.parentAsClass.thisReceiver?.descriptor as ReceiverParameterDescriptor)
 
     override fun isConst() = false
 
     override fun getContainingDeclaration() = (owner.parent as IrSymbolOwner).symbol.descriptor
 
-    override fun isLateInit() = false
+    override fun isLateInit() = owner.correspondingProperty?.isLateinit ?: false
 
-    override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? {
-        TODO("not implemented")
-    }
+    override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = owner.correspondingProperty?.descriptor?.extensionReceiverParameter
 
     override fun isExternal() = owner.isExternal
 

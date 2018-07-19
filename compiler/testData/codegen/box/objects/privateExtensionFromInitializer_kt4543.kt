@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class A(val result: String)
 
 fun a(body: A.() -> String): String {

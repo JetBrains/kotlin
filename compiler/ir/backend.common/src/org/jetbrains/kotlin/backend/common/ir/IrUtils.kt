@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import java.io.StringWriter
 
@@ -303,3 +304,21 @@ fun IrType.remapTypeParameters(source: IrTypeParametersContainer, target: IrType
         else -> this
     }
 
+/* Copied from K/N */
+fun IrDeclarationContainer.addChild(declaration: IrDeclaration) {
+    this.declarations += declaration
+    declaration.accept(SetDeclarationsParentVisitor, this)
+}
+
+object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent> {
+    override fun visitElement(element: IrElement, data: IrDeclarationParent) {
+        if (element !is IrDeclarationParent) {
+            element.acceptChildren(this, data)
+        }
+    }
+
+    override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent) {
+        declaration.parent = data
+        super.visitDeclaration(declaration, data)
+    }
+}

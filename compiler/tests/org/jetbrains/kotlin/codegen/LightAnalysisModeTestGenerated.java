@@ -13435,6 +13435,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/jvmField/constructorProperty.kt");
         }
 
+        @TestMetadata("initializersOrder.kt")
+        public void testInitializersOrder() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/initializersOrder.kt");
+        }
+
         @TestMetadata("interfaceCompanion.kt")
         public void testInterfaceCompanion() throws Exception {
             runTest("compiler/testData/codegen/box/jvmField/interfaceCompanion.kt");
@@ -13448,6 +13453,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("publicField.kt")
         public void testPublicField() throws Exception {
             runTest("compiler/testData/codegen/box/jvmField/publicField.kt");
+        }
+
+        @TestMetadata("publicFieldJava.kt")
+        public void testPublicFieldJava() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/publicFieldJava.kt");
         }
 
         @TestMetadata("simpleMemberProperty.kt")
