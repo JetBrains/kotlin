@@ -140,18 +140,17 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         endOffset: Int,
         call: CallBuilder
     ): IrExpression {
-        return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-            val superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
+        val getMethodDescriptor = descriptor.unwrappedGetMethod
+        val superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
 
-            val getterDescriptor = descriptor.unwrappedGetMethod
-
-            if (getterDescriptor != null) {
-                val getterSymbol = context.symbolTable.referenceFunction(getterDescriptor.original)
+        return if (getMethodDescriptor != null) {
+            call.callReceiver.adjustForCallee(getMethodDescriptor).call { dispatchReceiverValue, extensionReceiverValue ->
+                val getterSymbol = context.symbolTable.referenceFunction(getMethodDescriptor.original)
                 IrGetterCallImpl(
                     startOffset, endOffset,
                     descriptor.type.toIrType(),
                     getterSymbol,
-                    getterDescriptor,
+                    getMethodDescriptor,
                     descriptor.typeParametersCount,
                     dispatchReceiverValue?.load(),
                     extensionReceiverValue?.load(),
@@ -160,8 +159,9 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 ).apply {
                     putTypeArguments(call.typeArguments) { it.toIrType() }
                 }
-
-            } else {
+            }
+        } else {
+            call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
                 val fieldSymbol = context.symbolTable.referenceField(descriptor.original)
                 IrGetFieldImpl(
                     startOffset, endOffset,

@@ -141,11 +141,11 @@ class AccessorPropertyLValue(
     }
 
     override fun load(): IrExpression =
-        callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+        callReceiver.adjustForCallee(getterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue ->
             IrGetterCallImpl(
                 startOffset, endOffset,
                 type,
-                getter!!, getterDescriptor!!,
+                getter!!, getterDescriptor,
                 typeArgumentsCount,
                 dispatchReceiverValue?.load(),
                 extensionReceiverValue?.load(),
@@ -157,11 +157,11 @@ class AccessorPropertyLValue(
         }
 
     override fun store(irExpression: IrExpression) =
-        callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+        callReceiver.adjustForCallee(setterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue ->
             IrSetterCallImpl(
                 startOffset, endOffset,
                 context.irBuiltIns.unitType,
-                setter!!, setterDescriptor!!,
+                setter!!, setterDescriptor,
                 typeArgumentsCount,
                 dispatchReceiverValue?.load(),
                 extensionReceiverValue?.load(),

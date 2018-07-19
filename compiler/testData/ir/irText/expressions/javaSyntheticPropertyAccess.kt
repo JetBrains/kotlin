@@ -1,5 +1,8 @@
 // FILE: javaSyntheticPropertyAccess.kt
 fun test(j: J) {
+    j.foo
+    j.foo = 1
+    j.foo++
     j.foo += 1
 }
 
