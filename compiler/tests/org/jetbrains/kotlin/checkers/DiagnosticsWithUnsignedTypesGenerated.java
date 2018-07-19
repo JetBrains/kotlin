@@ -44,6 +44,11 @@ public class DiagnosticsWithUnsignedTypesGenerated extends AbstractDiagnosticsWi
         runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/forbiddenEqualsOnUnsignedTypes.kt");
     }
 
+    @TestMetadata("lateinitUnsignedType.kt")
+    public void testLateinitUnsignedType() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/lateinitUnsignedType.kt");
+    }
+
     @TestMetadata("overloadResolutionOfBasicOperations.kt")
     public void testOverloadResolutionOfBasicOperations() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/overloadResolutionOfBasicOperations.kt");
