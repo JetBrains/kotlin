@@ -810,7 +810,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
         val underlyingType = classDescriptor.underlyingRepresentation()?.type ?: return null
 
-        val argument = valueArguments.values.single().arguments.single()
+        val argument = valueArguments.values.singleOrNull()?.arguments?.singleOrNull() ?: return null
         val argumentExpression = argument.getArgumentExpression() ?: return null
 
         val compileTimeConstant = evaluate(argumentExpression, underlyingType)
