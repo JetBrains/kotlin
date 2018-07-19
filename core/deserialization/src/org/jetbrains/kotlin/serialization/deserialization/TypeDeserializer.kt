@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.builtins.isSuspendFunctionType
-import org.jetbrains.kotlin.builtins.transformRuntimeFunctionTypeToSuspendFunction
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -25,7 +23,8 @@ class TypeDeserializer(
     private val c: DeserializationContext,
     private val parent: TypeDeserializer?,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
-    private val debugName: String
+    private val debugName: String,
+    var experimentalSuspendFunctionTypeEncountered: Boolean = false
 ) {
     private val classDescriptors: (Int) -> ClassDescriptor? = c.storageManager.createMemoizedFunctionWithNullableValues { fqNameIndex ->
         computeClassDescriptor(fqNameIndex)
@@ -91,7 +90,7 @@ class TypeDeserializer(
         }.toList()
 
         val simpleType = if (Flags.SUSPEND_TYPE.get(proto.flags)) {
-            createSuspendFunctionType(annotations, constructor, arguments, proto.nullable, c.components.configuration.releaseCoroutines)
+            createSuspendFunctionType(annotations, constructor, arguments, proto.nullable)
         } else {
             KotlinTypeFactory.simpleType(annotations, constructor, arguments, proto.nullable)
         }
@@ -131,11 +130,10 @@ class TypeDeserializer(
         annotations: Annotations,
         functionTypeConstructor: TypeConstructor,
         arguments: List<TypeProjection>,
-        nullable: Boolean,
-        isReleaseCoroutines: Boolean
+        nullable: Boolean
     ): SimpleType {
         val result = when (functionTypeConstructor.parameters.size - arguments.size) {
-            0 -> createSuspendFunctionTypeForBasicCase(annotations, functionTypeConstructor, arguments, nullable, isReleaseCoroutines)
+            0 -> createSuspendFunctionTypeForBasicCase(annotations, functionTypeConstructor, arguments, nullable)
             // This case for types written by eap compiler 1.1
             1 -> {
                 val arity = arguments.size - 1
@@ -162,8 +160,7 @@ class TypeDeserializer(
         annotations: Annotations,
         functionTypeConstructor: TypeConstructor,
         arguments: List<TypeProjection>,
-        nullable: Boolean,
-        isReleaseCoroutines: Boolean
+        nullable: Boolean
     ): SimpleType? {
         val functionType = KotlinTypeFactory.simpleType(annotations, functionTypeConstructor, arguments, nullable)
         if (!functionType.isFunctionType) return null
@@ -171,16 +168,18 @@ class TypeDeserializer(
         // kotlin.suspend is still built with LV=1.2, thus it references old Continuation
         // And otherwise, once stdlib is compiled with 1.3 one may want to stay at LV=1.2
         if (c.containingDeclaration.safeAs<CallableDescriptor>()?.fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) {
-            transformRuntimeFunctionTypeToSuspendFunction(functionType, false)?.let { oldSuspend ->
-                if (oldSuspend.isSuspendFunctionType) return oldSuspend
-
-                transformRuntimeFunctionTypeToSuspendFunction(functionType, true)?.let { newSuspend -> return newSuspend }
-            }
+            val (suspendFun, experimental) = transformRuntimeFunctionTypeToSuspendFunction(functionType, true)
+            if (experimental)
+                transformRuntimeFunctionTypeToSuspendFunction(functionType, false).first?.let { return it }
+            else
+                return suspendFun
         }
 
-        transformRuntimeFunctionTypeToSuspendFunction(functionType, isReleaseCoroutines)?.let { return it }
+        val (type, experimental) = transformRuntimeFunctionTypeToSuspendFunction(functionType, c.components.configuration.releaseCoroutines)
 
-        return null
+        experimentalSuspendFunctionTypeEncountered = experimental || experimentalSuspendFunctionTypeEncountered
+
+        return type
     }
 
     private fun typeParameterTypeConstructor(typeParameterId: Int): TypeConstructor? =

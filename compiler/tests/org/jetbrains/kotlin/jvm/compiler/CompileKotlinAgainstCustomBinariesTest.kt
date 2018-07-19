@@ -457,6 +457,20 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         )
     }
 
+    fun testExperimentalCoroutineCallFromRelease() {
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf("-language-version", "1.2"),
+            checkKotlinOutput = {}
+        )
+        compileKotlin(
+            "release.kt",
+            tmpdir,
+            listOf(library),
+            additionalOptions = listOf("-language-version", "1.3", "-api-version", "1.3")
+        )
+    }
+
     companion object {
         // compiler before 1.1.4 version  did not include suspension marks into bytecode.
         private fun stripSuspensionMarksToImitateLegacyCompiler(bytes: ByteArray): Pair<ByteArray, Int> {

@@ -103,6 +103,13 @@ private data class DeprecatedByOverridden(private val deprecations: Collection<D
         "Overrides deprecated member in '${DescriptorUtils.getContainingClass(target)!!.fqNameSafe.asString()}'"
 }
 
+private data class DeprecatedExperimentalCoroutine(
+    override val target: DeclarationDescriptor
+) : Deprecation {
+    override val deprecationLevel: DeprecationLevelValue = DeprecationLevelValue.ERROR
+    override val message: String? = "Experimental coroutine cannot be used with API version 1.3"
+}
+
 private data class DeprecatedByVersionRequirement(
     val versionRequirement: VersionRequirement,
     override val target: DeclarationDescriptor
@@ -304,6 +311,7 @@ class DeprecationResolver(
             }
 
             getDeprecationByVersionRequirement(target)?.let(result::add)
+            getDeprecationByCoroutinesVersion(target)?.let(result::add)
         }
 
         fun addUseSiteTargetedDeprecationIfPresent(annotatedDescriptor: DeclarationDescriptor, useSiteTarget: AnnotationUseSiteTarget?) {
@@ -342,6 +350,11 @@ class DeprecationResolver(
 
         return result.distinct()
     }
+
+    private fun getDeprecationByCoroutinesVersion(target: DeclarationDescriptor): DeprecatedExperimentalCoroutine? =
+        if (target is DeserializedMemberDescriptor && target.isExperimentalCoroutineInReleaseEnvironment)
+            DeprecatedExperimentalCoroutine(target)
+        else null
 
     private fun getDeprecationByVersionRequirement(target: DeclarationDescriptor): DeprecatedByVersionRequirement? {
         fun createVersion(version: String): MavenComparableVersion? = try {
