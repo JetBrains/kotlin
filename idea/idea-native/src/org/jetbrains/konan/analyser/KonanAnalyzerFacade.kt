@@ -1,13 +1,9 @@
 package org.jetbrains.konan.analyser
 
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.konan.KotlinWorkaroundUtil.*
 import org.jetbrains.konan.analyser.index.KonanDescriptorManager
 import org.jetbrains.konan.settings.KonanPaths
@@ -21,7 +17,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.idea.caches.project.ModuleProductionSourceInfo
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -68,9 +64,11 @@ class KonanAnalyzerFacade : ResolverForModuleFactory() {
     val libraryPaths = konanPaths.libraryPaths().toMutableList()
     libraryPaths.addAll(konanPaths.konanPlatformLibraries())
 
-    val module = resolveModule(syntheticFiles, project)
+    val moduleInfo = moduleContent.moduleInfo as? ModuleProductionSourceInfo
+    val module = moduleInfo?.let { getModule(it) }
 
     fun setLibraryForDescriptor(path: Path, descriptor: ModuleDescriptorImpl) {
+      if (module == null) return
       val library = findLibrary(module, path) ?: return
       //todo: replace reflection by changes to kotlin-native?
       descriptor.setField("capabilities", { oldValue ->
@@ -117,20 +115,6 @@ class KonanAnalyzerFacade : ResolverForModuleFactory() {
     fragmentProviders.add(forwardDeclarationsModule.packageFragmentProvider)
 
     return ResolverForModule(CompositePackageFragmentProvider(fragmentProviders), container)
-  }
-
-  private fun resolveModule(syntheticFiles: MutableCollection<KtFile>,
-                            project: Project): Module {
-    val virtualFilePath = try {
-      syntheticFiles.firstOrNull()?.virtualFilePath
-    }
-    catch (e: IllegalStateException) {
-      null
-    }
-    return virtualFilePath
-             ?.run { VfsUtil.findFileByIoFile(java.io.File(this), false) }
-             ?.run { ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(this) }
-           ?: ModuleManager.getInstance(project).modules.first()
   }
 
   private fun findLibrary(module: Module, path: Path): Library? {
