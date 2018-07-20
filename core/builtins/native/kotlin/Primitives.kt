@@ -533,13 +533,23 @@ public class Int private constructor() : Number(), Comparable<Int> {
     /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
     public infix fun ushr(bitCount: Int): Int
     /** Performs a bitwise AND operation between the two values. */
+    @Deprecated("Use bitAnd(other) instead", ReplaceWith("bitAnd(other)"), DeprecationLevel.WARNING)
     public infix fun and(other: Int): Int
     /** Performs a bitwise OR operation between the two values. */
+    @Deprecated("Use bitOr(other) instead", ReplaceWith("bitOr(other)"), DeprecationLevel.WARNING)
     public infix fun or(other: Int): Int
     /** Performs a bitwise XOR operation between the two values. */
+    @Deprecated("Use bitXor(other) instead", ReplaceWith("bitXor(other)"), DeprecationLevel.WARNING)
     public infix fun xor(other: Int): Int
     /** Inverts the bits in this value. */
     public fun inv(): Int
+
+    /** Performs a bitwise AND operation between the two values */
+    public operator fun bitAnd(other: Int): Int
+    /** Performs a bitwise OR operation between the two values */
+    public operator fun bitOr(other: Int): Int
+    /** Performs a bitwise XOR operation between the two values */
+    public operator fun bitXor(other: Int): Int
 
     public override fun toByte(): Byte
     public override fun toChar(): Char
@@ -724,13 +734,23 @@ public class Long private constructor() : Number(), Comparable<Long> {
     /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
     public infix fun ushr(bitCount: Int): Long
     /** Performs a bitwise AND operation between the two values. */
+    @Deprecated("Use bitAnd(other) instead", ReplaceWith("bitAnd(other)"), DeprecationLevel.WARNING)
     public infix fun and(other: Long): Long
     /** Performs a bitwise OR operation between the two values. */
+    @Deprecated("Use bitOr(other) instead", ReplaceWith("bitOr(other)"), DeprecationLevel.WARNING)
     public infix fun or(other: Long): Long
     /** Performs a bitwise XOR operation between the two values. */
+    @Deprecated("Use bitXor(other) instead", ReplaceWith("bitXor(other"), DeprecationLevel.WARNING)
     public infix fun xor(other: Long): Long
     /** Inverts the bits in this value. */
     public fun inv(): Long
+
+    /** Performs a bitwise AND operation between the two values. */
+    public operator fun bitAnd(other: Long): Long
+    /** Performs a bitwise OR operation between the two values. */
+    public operator fun bitOr(other: Long): Long
+    /** Performs a bitwise XOR operation between the two values. */
+    public operator fun bitXor(other: Long): Long
 
     public override fun toByte(): Byte
     public override fun toChar(): Char

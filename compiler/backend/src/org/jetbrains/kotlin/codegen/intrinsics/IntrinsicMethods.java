@@ -133,6 +133,9 @@ public class IntrinsicMethods {
         declareBinaryOp("and", IAND);
         declareBinaryOp("or", IOR);
         declareBinaryOp("xor", IXOR);
+        declareBinaryOp("bitAnd", IAND);
+        declareBinaryOp("bitOr", IOR);
+        declareBinaryOp("bitXor", IXOR);
 
         declareIntrinsicFunction(FQ_NAMES._boolean, "not", 0, new Not());
 
