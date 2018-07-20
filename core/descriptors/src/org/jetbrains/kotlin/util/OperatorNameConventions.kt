@@ -48,6 +48,9 @@ object OperatorNameConventions {
     @JvmField val BIT_AND = Name.identifier("bitAnd")
     @JvmField val BIT_OR = Name.identifier("bitOr")
     @JvmField val BIT_XOR = Name.identifier("bitXor")
+    @JvmField val SHIFT_LEFT = Name.identifier("shiftLeft")
+    @JvmField val SHIFT_RIGHT = Name.identifier("shiftRight")
+    @JvmField val USHIFT_RIGHT = Name.identifier("ushiftRight")
 
     @JvmField val UNARY_MINUS = Name.identifier("unaryMinus")
     @JvmField val UNARY_PLUS = Name.identifier("unaryPlus")
@@ -67,6 +70,9 @@ object OperatorNameConventions {
     @JvmField val AND_ASSIGN = Name.identifier("andAssign")
     @JvmField val OR_ASSIGN = Name.identifier("orAssign")
     @JvmField val XOR_ASSIGN = Name.identifier("xorAssign")
+    @JvmField val SHL_ASSIGN = Name.identifier("shlAssign")
+    @JvmField val SHR_ASSIGN = Name.identifier("shrAssign")
+    @JvmField val USHR_ASSIGN = Name.identifier("ushrAssign")
 
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 
@@ -77,8 +83,8 @@ object OperatorNameConventions {
     internal val SIMPLE_UNARY_OPERATION_NAMES = setOf(UNARY_PLUS, UNARY_MINUS, NOT)
 
     @JvmField
-    val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, REM, RANGE_TO, BIT_AND, BIT_OR, BIT_XOR)
+    val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, REM, RANGE_TO, BIT_AND, BIT_OR, BIT_XOR, SHIFT_LEFT, SHIFT_RIGHT, USHIFT_RIGHT)
 
     @JvmField
-    internal val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, REM_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, AND_ASSIGN, OR_ASSIGN, XOR_ASSIGN)
+    internal val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, REM_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, AND_ASSIGN, OR_ASSIGN, XOR_ASSIGN, SHL_ASSIGN, SHR_ASSIGN, USHR_ASSIGN)
 }

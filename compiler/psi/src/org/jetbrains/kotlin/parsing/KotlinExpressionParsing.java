@@ -68,7 +68,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
             // TODO GTEQ,   foo<bar, baz>=x
             EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS,
-            SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS,
+            SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ,    PLUSEQ, MINUSEQ, NOT_IN, NOT_IS,
             COLONCOLON,
             COLON
     );
@@ -168,6 +168,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
         MULTIPLICATIVE(MUL, DIV, PERC),
         ADDITIVE(PLUS, MINUS),
+        SHIFT(LTLT, GTGT, GTGTGT),
         RANGE(KtTokens.RANGE),
         SIMPLE_NAME(IDENTIFIER),
         ELVIS(KtTokens.ELVIS),
@@ -190,7 +191,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         CONJUNCTION(ANDAND),
         DISJUNCTION(OROR),
         //        ARROW(KtTokens.ARROW),
-        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ, BITANDEQ, BITOREQ, BITXOREQ),
+        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ, BITANDEQ, BITOREQ, BITXOREQ, LTLTEQ, GTGTEQ, GTGTGTEQ),
         ;
 
         static {

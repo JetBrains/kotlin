@@ -113,12 +113,18 @@ public interface KtTokens {
     KtSingleValueToken EXCLEXCL    = new KtSingleValueToken("EXCLEXCL", "!!");
     KtSingleValueToken ANDAND      = new KtSingleValueToken("ANDAND", "&&");
     KtSingleValueToken OROR        = new KtSingleValueToken("OROR", "||");
-    KtSingleValueToken BITAND         = new KtSingleValueToken("BITAND", "&");
-    KtSingleValueToken BITOR          = new KtSingleValueToken("BITOR", "|");
-    KtSingleValueToken BITXOR         = new KtSingleValueToken("BITXOR", "^");
-    KtSingleValueToken BITANDEQ       = new KtSingleValueToken("BITANDEQ", "&=");
-    KtSingleValueToken BITOREQ        = new KtSingleValueToken("BITOREQ", "|=");
-    KtSingleValueToken BITXOREQ       = new KtSingleValueToken("BITXOREQ", "^=");
+    KtSingleValueToken BITAND      = new KtSingleValueToken("BITAND", "&");
+    KtSingleValueToken BITOR       = new KtSingleValueToken("BITOR", "|");
+    KtSingleValueToken BITXOR      = new KtSingleValueToken("BITXOR", "^");
+    KtSingleValueToken BITANDEQ    = new KtSingleValueToken("BITANDEQ", "&=");
+    KtSingleValueToken BITOREQ     = new KtSingleValueToken("BITOREQ", "|=");
+    KtSingleValueToken BITXOREQ    = new KtSingleValueToken("BITXOREQ", "^=");
+    KtSingleValueToken LTLT        = new KtSingleValueToken("LTLT", "<<");
+    KtSingleValueToken GTGT        = new KtSingleValueToken("GTGT", ">>");
+    KtSingleValueToken GTGTGT      = new KtSingleValueToken("GTGTGT", ">>>");
+    KtSingleValueToken LTLTEQ      = new KtSingleValueToken("LTLTEQ", "<<=");
+    KtSingleValueToken GTGTEQ      = new KtSingleValueToken("GTGTEQ", ">>=");
+    KtSingleValueToken GTGTGTEQ    = new KtSingleValueToken("GTGTGTEQ", ">>>=");
     KtSingleValueToken SAFE_ACCESS = new KtSingleValueToken("SAFE_ACCESS", "?.");
     KtSingleValueToken ELVIS       = new KtSingleValueToken("ELVIS", "?:");
     KtSingleValueToken QUEST       = new KtSingleValueToken("QUEST", "?");
@@ -261,12 +267,12 @@ public interface KtTokens {
     TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, REGULAR_STRING_PART);
     TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, EXCLEXCL, MUL, PLUS,
                                           MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
-                                          BITAND, BITOR, BITXOR, BITANDEQ, BITOREQ, BITXOREQ,
+                                          BITAND, BITOR, BITXOR, BITANDEQ, BITOREQ, BITXOREQ, LTLT, GTGT, GTGTGT, LTLTEQ, GTGTEQ, GTGTGTEQ,
                                           SAFE_ACCESS, ELVIS,
                                           RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
                                           NOT_IN, NOT_IS,
                                           IDENTIFIER);
 
-    TokenSet AUGMENTED_ASSIGNMENTS = TokenSet.create(PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);
-    TokenSet ALL_ASSIGNMENTS = TokenSet.create(EQ, PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);
+    TokenSet AUGMENTED_ASSIGNMENTS = TokenSet.create(PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ, BITANDEQ, BITOREQ, BITXOREQ, LTLTEQ, GTGTEQ, GTGTGTEQ);
+    TokenSet ALL_ASSIGNMENTS = TokenSet.create(EQ, PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ, BITANDEQ, BITOREQ, BITXOREQ, LTLTEQ, GTGTEQ, GTGTGTEQ);
 }

@@ -291,9 +291,15 @@ LONELY_BACKTICK=`
 "&"          { return KtTokens.BITAND    ; }
 "|"          { return KtTokens.BITOR     ; }
 "^"          { return KtTokens.BITXOR    ; }
+"<<"         { return KtTokens.LTLT      ; }
+">>"         { return KtTokens.GTGT      ; }
+">>>"        { return KtTokens.GTGTGT    ; }
 "&="         { return KtTokens.BITANDEQ  ; }
 "|="         { return KtTokens.BITOREQ   ; }
 "^="         { return KtTokens.BITXOREQ  ; }
+"<<="        { return KtTokens.LTLTEQ    ; }
+">>="        { return KtTokens.GTGTEQ    ; }
+">>>="       { return KtTokens.GTGTGTEQ  ; }
 "*="         { return KtTokens.MULTEQ    ; }
 "/="         { return KtTokens.DIVEQ     ; }
 "%="         { return KtTokens.PERCEQ    ; }

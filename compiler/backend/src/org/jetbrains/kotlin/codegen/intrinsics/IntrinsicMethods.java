@@ -136,6 +136,9 @@ public class IntrinsicMethods {
         declareBinaryOp("bitAnd", IAND);
         declareBinaryOp("bitOr", IOR);
         declareBinaryOp("bitXor", IXOR);
+        declareBinaryOp("shiftLeft", ISHL);
+        declareBinaryOp("shiftRight", ISHR);
+        declareBinaryOp("ushiftRight", IUSHR);
 
         declareIntrinsicFunction(FQ_NAMES._boolean, "not", 0, new Not());
 
