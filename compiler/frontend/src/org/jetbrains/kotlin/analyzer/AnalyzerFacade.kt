@@ -417,6 +417,12 @@ interface LanguageSettingsProvider {
         isReleaseCoroutines: Boolean? = null
     ): LanguageVersionSettings
 
+    @Deprecated("Use `getLanguageVersionSettings` method with default parameter instead")
+    fun getLanguageVersionSettings(
+        moduleInfo: ModuleInfo,
+        project: Project
+    ) = getLanguageVersionSettings(moduleInfo, project, null)
+
     fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion
 
     object Default : LanguageSettingsProvider {
