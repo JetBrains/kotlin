@@ -578,10 +578,10 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 if (type == Type.SHORT_TYPE && ((Number) value).shortValue() == 0) {
                     return true;
                 }
-                if (type == Type.DOUBLE_TYPE && ((Number) value).doubleValue() == 0d) {
+                if (type == Type.DOUBLE_TYPE && value.equals(0.0)) {
                     return true;
                 }
-                if (type == Type.FLOAT_TYPE && ((Number) value).floatValue() == 0f) {
+                if (type == Type.FLOAT_TYPE && value.equals(0.0f)) {
                     return true;
                 }
             }
