@@ -27,6 +27,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.plugins.HelpTasksPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskContainer
@@ -81,6 +82,19 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
     private val KonanTarget.canRunOnHost: Boolean
         get() = this == HostManager.host
 
+    private fun Project.addTargetInfoTask() = tasks.create("targets").apply {
+        group = HelpTasksPlugin.HELP_GROUP
+        description = "Prints Kotlin/Native targets available for this project"
+        doLast { _ ->
+            components.withType(AbstractKotlinNativeComponent::class.java) { component ->
+                logger.lifecycle("Component '${component.name}' targets:")
+                component.konanTargets.get().forEach {
+                    logger.lifecycle(it.name)
+                }
+                logger.lifecycle("")
+            }
+        }
+    }
 
     // TODO: Rework this part: the task should be created in the binary constructor (if it is possible).
     private fun Project.addCompilationTasks() {
@@ -186,6 +200,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
         addCompilerDownloadingTask()
 
         addCompilationTasks()
+        addTargetInfoTask()
     }
 
     companion object {
