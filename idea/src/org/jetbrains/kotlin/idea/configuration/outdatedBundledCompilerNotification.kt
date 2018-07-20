@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.actions.ConfigurePluginUpdatesAction
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.UserDataProperty
+import java.util.concurrent.ConcurrentHashMap
 import javax.swing.event.HyperlinkEvent
 
 var Module.externalCompilerVersion: String? by UserDataProperty(Key.create("EXTERNAL_COMPILER_VERSION"))
@@ -71,6 +72,8 @@ fun notifyOutdatedBundledCompilerIfNecessary(project: Project) {
     )
 }
 
+private var alreadyNotified = ConcurrentHashMap<String, String>()
+
 fun createOutdatedBundledCompilerMessage(project: Project, bundledCompilerVersion: String = KotlinCompilerVersion.VERSION): String? {
     val bundledCompilerMajorVersion = MajorVersion.create(bundledCompilerVersion) ?: return null
 
@@ -97,6 +100,14 @@ fun createOutdatedBundledCompilerMessage(project: Project, bundledCompilerVersio
     if (maxCompilerInfo == null) {
         return null
     }
+
+    val lastProjectNotified = alreadyNotified[project.name]
+    if (lastProjectNotified == maxCompilerInfo.externalCompilerVersion) {
+        if (!ApplicationManager.getApplication().isUnitTestMode) {
+            return null
+        }
+    }
+    alreadyNotified[project.name] = maxCompilerInfo.externalCompilerVersion
 
     val selectedNewerModulesInfos = selectedModulesForPopup(project, maxCompilerInfo, newerModuleCompilerInfos)
     if (selectedNewerModulesInfos.isEmpty()) {
