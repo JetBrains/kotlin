@@ -191,18 +191,24 @@ public final class Translation {
         return null;
     }
 
-    private static JsExpression translateUnsignedConstant(@NotNull UnsignedValueConstant<?> unsignedConstant, @NotNull TranslationContext context) {
+    @Nullable
+    private static JsExpression translateUnsignedConstant(
+            @NotNull UnsignedValueConstant<?> unsignedConstant,
+            @NotNull TranslationContext context
+    ) {
         if (unsignedConstant instanceof UByteValue) {
-            return null;
+            return JsAstUtils.byteToUByte(((UByteValue) unsignedConstant).getValue(), context);
         }
         else if (unsignedConstant instanceof UShortValue) {
-            return null;
+            return JsAstUtils.shortToUShort(((UShortValue) unsignedConstant).getValue(), context);
         }
         else if (unsignedConstant instanceof UIntValue) {
             return JsAstUtils.intToUInt(((UIntValue) unsignedConstant).getValue(), context);
         }
         else if (unsignedConstant instanceof ULongValue) {
-            return null;
+            Long value = ((ULongValue) unsignedConstant).getValue();
+            JsExpression longExpression = JsAstUtils.newLong(value);
+            return JsAstUtils.longToULong(longExpression, context);
         } else {
             return null;
         }
