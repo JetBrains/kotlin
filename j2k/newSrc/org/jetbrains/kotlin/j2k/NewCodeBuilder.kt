@@ -286,7 +286,8 @@ class NewCodeBuilder {
             when (type) {
                 is JKClassType ->
                     (type.classReference as JKClassSymbol).fqName?.let { printer.printWithNoIndent(FqName(it).shortName().asString()) }
-
+                is JKUnresolvedClassType ->
+                    printer.printWithNoIndent(type.name)
                 else -> printer.printWithNoIndent("Unit /* TODO: ${type::class} */")
             }
             when (type.nullability) {

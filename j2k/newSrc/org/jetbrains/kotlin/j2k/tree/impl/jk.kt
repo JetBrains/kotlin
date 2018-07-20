@@ -176,6 +176,7 @@ class JKClassTypeImpl(
 
 
 class JKUnresolvedClassType(
+    val name: String,
     var parameters: List<JKType>,
     override val nullability: Nullability = Nullability.Default
 ) : JKType
