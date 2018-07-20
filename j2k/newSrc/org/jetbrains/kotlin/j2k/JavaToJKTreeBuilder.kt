@@ -22,6 +22,7 @@ import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
+import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
@@ -207,7 +208,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             }
         }
 
-        fun PsiType.toJK(): JKType {
+        fun PsiType.toJK(nullability: Nullability = Nullability.Default): JKType {
             return when (this) {
                 is PsiClassType -> {
                     val target = resolve()
@@ -215,13 +216,14 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                     if (target != null) {
                         JKClassTypeImpl(
                             target.let { symbolProvider.provideDirectSymbol(it) as JKClassSymbol },
-                            parameters
+                            parameters,
+                            nullability
                         )
                     } else {
-                        JKUnresolvedClassType(parameters)
+                        JKUnresolvedClassType(this.presentableText, parameters, nullability)
                     }
                 }
-                is PsiArrayType -> JKJavaArrayTypeImpl(componentType.toJK())
+                is PsiArrayType -> JKJavaArrayTypeImpl(componentType.toJK(), nullability)
                 is PsiPrimitiveType -> JKJavaPrimitiveTypeImpl.KEYWORD_TO_INSTANCE[presentableText]
                         ?: error("Invalid primitive type $presentableText")
                 else -> throw Exception("Invalid PSI")
@@ -237,8 +239,12 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 isInterface -> JKClass.ClassKind.INTERFACE
                 else -> JKClass.ClassKind.CLASS
             }
-            val implTypes = this.implementsList?.referencedTypes?.map { with(expressionTreeMapper) { JKTypeElementImpl(it.toJK()) } }.orEmpty()
-            val extTypes = this.extendsList?.referencedTypes?.map { with(expressionTreeMapper) { JKTypeElementImpl(it.toJK()) } }.orEmpty()
+
+            fun PsiReferenceList.mapTypes() =
+                this.referencedTypes.map { with(expressionTreeMapper) { JKTypeElementImpl(it.toJK(Nullability.NotNull)) } }
+
+            val implTypes = this.implementsList?.mapTypes().orEmpty()
+            val extTypes = this.extendsList?.mapTypes().orEmpty()
             return JKClassImpl(
                 with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name!!), JKInheritanceInfoImpl(extTypes + implTypes),
                 classKind
@@ -333,7 +339,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiSwitchLabelStatement -> if (isDefaultCase) JKSwitchDefaultLabelStatementImpl() else
                     JKSwitchLabelStatementImpl(with(expressionTreeMapper) { caseValue.toJK() })
                 is PsiBreakStatement -> {
-                    labelIdentifier?.also { TODO("Label break") }
+                    //labelIdentifier?.also { TODO("Label break") }
                     JKBreakStatementImpl()
                 }
                 else -> TODO("for ${this::class}")
