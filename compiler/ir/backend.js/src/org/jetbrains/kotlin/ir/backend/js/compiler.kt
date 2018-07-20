@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -59,6 +60,11 @@ fun compile(
 
     ExternalDependenciesGenerator(psi2IrContext.moduleDescriptor, psi2IrContext.symbolTable, psi2IrContext.irBuiltIns)
         .generateUnboundSymbolsAsDependencies(moduleFragment)
+
+    val extensions = IrGenerationExtension.getInstances(project)
+    extensions.forEach { extension ->
+        moduleFragment.files.forEach { irFile -> extension.generate(irFile, context, psi2IrContext.bindingContext) }
+    }
 
     MoveExternalDeclarationsToSeparatePlace().lower(moduleFragment.files)
 
