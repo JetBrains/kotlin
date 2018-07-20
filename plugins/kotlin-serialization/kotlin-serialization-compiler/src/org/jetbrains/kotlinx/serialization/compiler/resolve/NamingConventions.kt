@@ -33,12 +33,12 @@ object SerialEntityNames {
     val IMPL_NAME = Name.identifier("Impl")
 
     const val ENCODER_CLASS = "Encoder"
-    const val STRUCTURE_ENCODER_CLASS = "StructureEncoder"
+    const val STRUCTURE_ENCODER_CLASS = "CompositeEncoder"
     const val DECODER_CLASS = "Decoder"
-    const val STRUCTURE_DECODER_CLASS = "StructureDecoder"
+    const val STRUCTURE_DECODER_CLASS = "CompositeDecoder"
 
     const val SERIAL_SAVER_CLASS = "SerializationStrategy"
-    const val SERIAL_LOADER_CLASS = "SerializationStrategy"
+    const val SERIAL_LOADER_CLASS = "DeserializationStrategy"
 
     const val SERIAL_DESCRIPTOR_CLASS = "SerialDescriptor"
     const val SERIAL_DESCRIPTOR_CLASS_IMPL = "SerialClassDescImpl"
@@ -75,8 +75,8 @@ object CallingConventions {
     const val decode = "decode"
     const val update = "update"
     const val encode = "encode"
-    const val decodeElementIndex = "decodeElement"
-    const val elementPostfix = "ElementValue"
+    const val decodeElementIndex = "decodeElementIndex"
+    const val elementPostfix = "Element"
 
     const val addElement = "addElement"
     const val addAnnotation = "pushAnnotation"

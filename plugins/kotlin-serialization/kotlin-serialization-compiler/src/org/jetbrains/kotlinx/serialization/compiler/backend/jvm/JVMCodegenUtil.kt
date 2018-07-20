@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerialTypeInfo
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.DECODER_CLASS
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENCODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.KSERIALIZER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_CTOR_MARKER_NAME
@@ -51,6 +53,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 internal val descType = Type.getObjectType("kotlinx/serialization/$SERIAL_DESCRIPTOR_CLASS")
 internal val descImplType = Type.getObjectType("kotlinx/serialization/internal/$SERIAL_DESCRIPTOR_CLASS_IMPL")
 internal val kOutputType = Type.getObjectType("kotlinx/serialization/$STRUCTURE_ENCODER_CLASS")
+internal val encoderType = Type.getObjectType("kotlinx/serialization/$ENCODER_CLASS")
+internal val decoderType = Type.getObjectType("kotlinx/serialization/$DECODER_CLASS")
 internal val kInputType = Type.getObjectType("kotlinx/serialization/$STRUCTURE_DECODER_CLASS")
 
 
@@ -198,7 +202,7 @@ internal fun stackValueSerializerInstance(codegen: ClassBodyCodegen, module: Mod
             assert(stackValueSerializerInstance(codegen, module, argType, argSerializer, this, argType.genericIndex, genericSerializerFieldGetter))
             // wrap into nullable serializer if argType is nullable
             if (argType.isMarkedNullable) {
-                invokestatic("kotlinx/serialization/internal/BuiltinSerializersKt", "makeNullable", // todo: extract?
+                invokestatic("kotlinx/serialization/internal/NullableSerializerKt", "makeNullable", // todo: extract?
                              "(" + kSerializerType.descriptor + ")" + kSerializerType.descriptor, false)
 
             }

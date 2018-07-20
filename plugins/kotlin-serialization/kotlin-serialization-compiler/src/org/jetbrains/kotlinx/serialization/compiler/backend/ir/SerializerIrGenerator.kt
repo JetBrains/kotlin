@@ -49,7 +49,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
     override val translator: TypeTranslator = TypeTranslator(compilerContext.symbolTable)
 
     override fun generateSerialDesc() {
-        val desc: PropertyDescriptor = serialDescPropertyDescriptor ?: return
+        val desc: PropertyDescriptor = generatedSerialDescPropertyDescriptor ?: return
         val serialDescImplClass = serializerDescriptor
             .getClassFromInternalSerializationPackage(SERIAL_DESCRIPTOR_CLASS_IMPL)
         val serialDescImplConstructor = serialDescImplClass
@@ -97,7 +97,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                     +irSetField(
                         generateReceiverExpressionForFieldAccess(
                             thisAsReceiverParameter.symbol,
-                            serialDescPropertyDescriptor
+                            generatedSerialDescPropertyDescriptor
                         ),
                         prop.backingField!!,
                         irGet(localDesc)
@@ -168,7 +168,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
 
         val kOutputClass = serializerDescriptor.getClassFromSerializationPackage(STRUCTURE_ENCODER_CLASS)
 
-        val descriptorGetterSymbol = compilerContext.symbolTable.referenceFunction(serialDescPropertyDescriptor?.getter!!)
+        val descriptorGetterSymbol = compilerContext.symbolTable.referenceFunction(anySerialDescProperty?.getter!!)
 
         val localSerialDesc = irTemporary(irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol), "desc")
 
@@ -256,7 +256,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         fun IrVariable.get() = irGet(this)
 
         val inputClass = serializerDescriptor.getClassFromSerializationPackage(STRUCTURE_DECODER_CLASS)
-        val descriptorGetterSymbol = compilerContext.symbolTable.referenceFunction(serialDescPropertyDescriptor?.getter!!)
+        val descriptorGetterSymbol = compilerContext.symbolTable.referenceFunction(anySerialDescProperty?.getter!!)
         val localSerialDesc = irTemporary(irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol), "desc")
 
         // workaround due to unavailability of labels (KT-25386)

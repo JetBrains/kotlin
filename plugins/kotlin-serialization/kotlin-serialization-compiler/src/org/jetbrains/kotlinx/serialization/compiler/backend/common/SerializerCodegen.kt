@@ -69,8 +69,14 @@ abstract class SerializerCodegen(
         return !found
     }
 
-    protected val serialDescPropertyDescriptor = getPropertyToGenerate(serializerDescriptor, SerialEntityNames.SERIAL_DESC_FIELD,
+    protected val generatedSerialDescPropertyDescriptor = getPropertyToGenerate(
+        serializerDescriptor, SerialEntityNames.SERIAL_DESC_FIELD,
                                                                        serializerDescriptor::checkSerializableClassPropertyResult)
+    protected val anySerialDescProperty = getProperty(
+        serializerDescriptor, SerialEntityNames.SERIAL_DESC_FIELD,
+        serializerDescriptor::checkSerializableClassPropertyResult
+    ) { true }
+
     protected abstract fun generateSerialDesc()
 
     protected abstract fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ConstructorDescriptor)
@@ -82,7 +88,7 @@ abstract class SerializerCodegen(
     protected abstract fun generateLoad(function: FunctionDescriptor)
 
     private fun generateSerializableClassPropertyIfNeeded(): Boolean {
-        val property = serialDescPropertyDescriptor
+        val property = generatedSerialDescPropertyDescriptor
                        ?: return false
         generateSerializableClassProperty(property)
         return true
@@ -108,14 +114,29 @@ abstract class SerializerCodegen(
             classDescriptor: ClassDescriptor,
             name: String,
             isReturnTypeOk: (PropertyDescriptor) -> Boolean
-    ): PropertyDescriptor? =
-            classDescriptor.unsubstitutedMemberScope.getContributedVariables(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
-                    .singleOrNull { property ->
-                        property.kind.let { kind -> kind == CallableMemberDescriptor.Kind.SYNTHESIZED || kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE } &&
-                        property.modality != Modality.FINAL &&
-                        property.returnType != null &&
-                        isReturnTypeOk(property)
-                    }
+    ): PropertyDescriptor? = getProperty(
+        classDescriptor,
+        name,
+        isReturnTypeOk
+    ) { kind ->
+        kind == CallableMemberDescriptor.Kind.SYNTHESIZED || kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+    }
+
+    fun getProperty(
+        classDescriptor: ClassDescriptor,
+        name: String,
+        isReturnTypeOk: (PropertyDescriptor) -> Boolean,
+        isKindOk: (CallableMemberDescriptor.Kind) -> Boolean
+    ): PropertyDescriptor? = classDescriptor.unsubstitutedMemberScope.getContributedVariables(
+        Name.identifier(name),
+        NoLookupLocation.FROM_BACKEND
+    )
+        .singleOrNull { property ->
+            isKindOk(property.kind) &&
+                    property.modality != Modality.FINAL &&
+                    property.returnType != null &&
+                    isReturnTypeOk(property)
+        }
 
     protected fun ClassDescriptor.getFuncDesc(funcName: String): Sequence<FunctionDescriptor> =
             unsubstitutedMemberScope.getDescriptorsFiltered { it == Name.identifier(funcName) }.asSequence().filterIsInstance<FunctionDescriptor>()

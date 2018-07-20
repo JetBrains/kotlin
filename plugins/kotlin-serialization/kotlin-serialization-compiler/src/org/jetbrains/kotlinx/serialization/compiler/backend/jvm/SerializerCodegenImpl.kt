@@ -160,11 +160,11 @@ class SerializerCodegenImpl(
             serialCLassDescToLocalVar(descVar)
             val objType = signature.valueParameters[1].asmType
             // output = output.writeBegin(classDesc, new KSerializer[0])
-            load(outputVar, kOutputType)
+            load(outputVar, encoderType)
             load(descVar, descType)
             genArrayOfTypeParametersSerializers()
             invokeinterface(
-                kOutputType.internalName, CallingConventions.begin,
+                encoderType.internalName, CallingConventions.begin,
                           "(" + descType.descriptor + kSerializerArrayType.descriptor +
                           ")" + kOutputType.descriptor)
             store(outputVar, kOutputType)
@@ -253,11 +253,11 @@ class SerializerCodegenImpl(
                 propVar += propertyType.size
             }
             // input = input.readBegin(classDesc, new KSerializer[0])
-            load(inputVar, kInputType)
+            load(inputVar, decoderType)
             load(descVar, descType)
             genArrayOfTypeParametersSerializers()
             invokeinterface(
-                kInputType.internalName, CallingConventions.begin,
+                decoderType.internalName, CallingConventions.begin,
                           "(" + descType.descriptor + kSerializerArrayType.descriptor +
                           ")" + kInputType.descriptor)
             store(inputVar, kInputType)

@@ -27,10 +27,8 @@ import org.jetbrains.kotlin.js.translate.declaration.DefaultPropertyTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
@@ -41,7 +39,6 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESCRIPTOR_CLASS_IMPL
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_ENCODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
 
 class SerializerJsTranslator(declaration: KtPureClassOrObject,
@@ -55,7 +52,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
 
 
     override fun generateSerialDesc() {
-        val desc = serialDescPropertyDescriptor ?: return
+        val desc = generatedSerialDescPropertyDescriptor ?: return
         val serialDescImplClass = serializerDescriptor
                 .getClassFromInternalSerializationPackage(SERIAL_DESCRIPTOR_CLASS_IMPL)
         val serialDescImplConstructor = serialDescImplClass
@@ -70,7 +67,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
         val addFunc = serialDescImplClass.getFuncDesc(CallingConventions.addElement).single()
         val pushFunc = serialDescImplClass.getFuncDesc(CallingConventions.addAnnotation).single()
         val pushClassFunc = serialDescImplClass.getFuncDesc(CallingConventions.addClassAnnotation).single()
-        val serialClassDescRef = JsNameRef(context.getNameForDescriptor(serialDescPropertyDescriptor), JsThisRef())
+        val serialClassDescRef = JsNameRef(context.getNameForDescriptor(generatedSerialDescPropertyDescriptor), JsThisRef())
 
         for (prop in orderedProperties) {
             if (prop.transient) continue
@@ -96,7 +93,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
     }
 
     override fun generateSerializableClassProperty(property: PropertyDescriptor) {
-        val propDesc = serialDescPropertyDescriptor ?: return
+        val propDesc = generatedSerialDescPropertyDescriptor ?: return
         val propTranslator = DefaultPropertyTranslator(propDesc, context,
                                                        translator.getBackingFieldReference(propDesc))
         val getterDesc = propDesc.getter!!
@@ -122,10 +119,11 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
     }
 
     override fun generateSave(function: FunctionDescriptor) = generateFunction(function) { jsFun, ctx ->
+        val encoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.ENCODER_CLASS)
         val kOutputClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.STRUCTURE_ENCODER_CLASS)
         val wBeginFunc = ctx.getNameForDescriptor(
-                kOutputClass.getFuncDesc(CallingConventions.begin).single { it.valueParameters.size == 2 })
-        val serialClassDescRef = JsNameRef(context.getNameForDescriptor(serialDescPropertyDescriptor!!), JsThisRef())
+                encoderClass.getFuncDesc(CallingConventions.begin).single { it.valueParameters.size == 2 })
+        val serialClassDescRef = JsNameRef(context.getNameForDescriptor(anySerialDescProperty!!), JsThisRef())
 
         // output.writeBegin(desc, [])
         val typeParams = serializableDescriptor.declaredTypeParameters.mapIndexed { idx, _ ->
@@ -212,7 +210,8 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
 
     override fun generateLoad(function: FunctionDescriptor) = generateFunction(function) { jsFun, context ->
         val inputClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.STRUCTURE_DECODER_CLASS)
-        val serialClassDescRef = JsNameRef(context.getNameForDescriptor(serialDescPropertyDescriptor!!), JsThisRef())
+        val decoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.DECODER_CLASS)
+        val serialClassDescRef = JsNameRef(context.getNameForDescriptor(anySerialDescProperty!!), JsThisRef())
 
         // var index = -1, readAll = false
         val indexVar = JsNameRef(jsFun.scope.declareFreshName("index"))
@@ -236,7 +235,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
             JsNameRef(context.scope().declareName("$typeArgPrefix$idx"), JsThisRef())
         }
         val inputVar = JsNameRef(jsFun.scope.declareFreshName("input"))
-        val readBeginF = inputClass.getFuncDesc(CallingConventions.begin).single()
+        val readBeginF = decoderClass.getFuncDesc(CallingConventions.begin).single()
         val call = JsInvocation(JsNameRef(context.getNameForDescriptor(readBeginF), JsNameRef(jsFun.parameters[0].name)),
                                 serialClassDescRef, JsArrayLiteral(typeParams))
         +JsVars(JsVars.JsVar(inputVar.name, call))
@@ -312,12 +311,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
                         }
                         // char unboxing crutch
                         if (KotlinBuiltIns.isCharOrNullableChar(property.type)) {
-                            // can't use KotlinCompilerVersion.VERSION because javac inlines final string literal :(
-                            val coerceTo = if (KotlinVersion.CURRENT.run { major == 1 && minor == 2 && patch in (0..10) }) {
-                                context.currentModule.builtIns.charType
-                            } else {
-                                TranslationUtils.getReturnTypeForCoercion(property.descriptor)
-                            }
+                            val coerceTo = TranslationUtils.getReturnTypeForCoercion(property.descriptor)
                             +JsAstUtils.assignment(
                                     localProps[i],
                                     TranslationUtils.coerce(context, localProps[i], coerceTo)
