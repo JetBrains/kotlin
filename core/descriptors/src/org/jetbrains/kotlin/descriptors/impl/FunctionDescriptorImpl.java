@@ -824,6 +824,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     // Don't use on published descriptors
     public <V> void putInUserDataMap(UserDataKey<V> key, Object value) {
+        if (userDataMap == null) {
+            userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
+        }
         userDataMap.put(key, value);
     }
 }
