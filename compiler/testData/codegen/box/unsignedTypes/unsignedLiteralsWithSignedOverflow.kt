@@ -1,6 +1,5 @@
-// IGNORE_BACKEND: JVM_IR
 // WITH_UNSIGNED
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JVM_IR, JS_IR
 
 fun box(): String {
     val u1: UByte = 255u
