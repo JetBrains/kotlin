@@ -2,12 +2,12 @@ package org.jetbrains.kotlin.gradle.plugin.experimental.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemLocation
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.KonanCompilerRunner
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin
 import org.jetbrains.kotlin.gradle.plugin.addArg
@@ -50,7 +50,13 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
             val prefix = kind.prefix(konanTarget)
             val suffix = kind.suffix(konanTarget)
             val baseName = getBaseName().get()
-            "$root/${binary.names.dirName}/${prefix}${baseName}${suffix}"
+
+            var fileName = "${prefix}${baseName}${suffix}"
+            if (kind == CompilerOutputKind.FRAMEWORK) {
+                fileName = fileName.replace('-', '_')
+            }
+
+            "$root/${binary.names.dirName}/$fileName"
         }
     }
 

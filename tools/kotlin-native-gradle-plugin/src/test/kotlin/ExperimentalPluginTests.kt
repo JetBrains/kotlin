@@ -9,8 +9,10 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeMainComponent
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.OutputKind
 import org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinNativePlugin
+import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -463,5 +465,23 @@ class ExperimentalPluginTests {
 
         val result2 = project.createRunner().withArguments("assemble").build()
         assertCompileOutcome(result2, compileTasks, TaskOutcome.UP_TO_DATE)
+    }
+
+    @Test
+    fun `Framework name should not contain "-" symbols`() = withProject("test-framework-project") {
+        assumeTrue(HostManager.hostIsMac)
+        components.withType(KotlinNativeMainComponent::class.java)
+            .getByName("main")
+            .outputKinds
+            .set(listOf(OutputKind.FRAMEWORK, OutputKind.KLIBRARY))
+        evaluate()
+
+        val compileTasks = tasks.withType(KotlinNativeCompile::class.java)
+        val frameworkTask = compileTasks.getByName("compileDebugFrameworkKotlinNative")
+        val klibraryTask = compileTasks.getByName("compileDebugKlibraryKotlinNative")
+
+
+        assertEquals("test_framework_project", frameworkTask.outputFile.nameWithoutExtension)
+        assertEquals("test-framework-project", klibraryTask.outputFile.nameWithoutExtension)
     }
 }
