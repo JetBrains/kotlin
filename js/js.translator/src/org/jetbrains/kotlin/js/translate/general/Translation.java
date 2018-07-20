@@ -44,7 +44,10 @@ import org.jetbrains.kotlin.js.translate.expression.PatternTranslator;
 import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
 import org.jetbrains.kotlin.js.translate.utils.*;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.*;
@@ -136,7 +139,7 @@ public final class Translation {
     ) {
         KotlinType expectedType = context.bindingContext().getType(expression);
         ConstantValue<?> constant = compileTimeValue.toConstantValue(expectedType != null ? expectedType : TypeUtils.NO_EXPECTED_TYPE);
-        JsExpression result = translateConstantWithoutType(constant);
+        JsExpression result = translateConstantWithoutType(constant, context);
         if (result != null) {
             MetadataProperties.setType(result, expectedType);
         }
@@ -144,12 +147,12 @@ public final class Translation {
     }
 
     @Nullable
-    private static JsExpression translateConstantWithoutType(@NotNull ConstantValue<?> constant) {
+    private static JsExpression translateConstantWithoutType(@NotNull ConstantValue<?> constant, @NotNull TranslationContext context) {
         if (constant instanceof NullValue) {
             return new JsNullLiteral();
         }
         if (constant instanceof UnsignedValueConstant<?>) {
-            return translateUnsignedConstant((UnsignedValueConstant<?>) constant);
+            return translateUnsignedConstant((UnsignedValueConstant<?>) constant, context);
         }
 
         Object value = constant.getValue();
@@ -188,7 +191,7 @@ public final class Translation {
         return null;
     }
 
-    private static JsExpression translateUnsignedConstant(@NotNull UnsignedValueConstant<?> unsignedConstant) {
+    private static JsExpression translateUnsignedConstant(@NotNull UnsignedValueConstant<?> unsignedConstant, @NotNull TranslationContext context) {
         if (unsignedConstant instanceof UByteValue) {
             return null;
         }
@@ -196,7 +199,7 @@ public final class Translation {
             return null;
         }
         else if (unsignedConstant instanceof UIntValue) {
-            return JsAstUtils.intToUInt(((UIntValue) unsignedConstant).getValue());
+            return JsAstUtils.intToUInt(((UIntValue) unsignedConstant).getValue(), context);
         }
         else if (unsignedConstant instanceof ULongValue) {
             return null;
