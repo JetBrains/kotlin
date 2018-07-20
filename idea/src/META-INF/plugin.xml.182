@@ -355,6 +355,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.ProbablyNothingCallableNames"
                     serviceImplementation="org.jetbrains.kotlin.idea.project.ProbablyNothingCallableNamesImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.ProbablyContractedCallableNames"
+                    serviceImplementation="org.jetbrains.kotlin.idea.project.ProbablyContractedCallableNamesImpl"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"/>
 
@@ -702,6 +705,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinAnnotationsIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingFunctionShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingPropertyShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinProbablyContractedFunctionShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeFqNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFilePartClassIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeClassByPackageIndex"/>
