@@ -105,8 +105,7 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
                                 variantName,
                                 component.baseName,
                                 group, version, target,
-                                buildType.debuggable,
-                                buildType.optimized,
+                                buildType,
                                 linkUsageContext,
                                 runtimeUsageContext,
                                 objects
@@ -153,8 +152,7 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
                         variantName,
                         component.getBaseName(),
                         group, version, target,
-                        buildType.debuggable,
-                        buildType.optimized,
+                        buildType,
                         null,
                         null,
                         objects
@@ -166,6 +164,25 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
                 }
             }
             component.binaries.realizeNow()
+        }
+    }
+
+    private fun Project.setUpMavenPublish() =  pluginManager.withPlugin("maven-publish") {
+        val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
+        val components = project.components.withType(KotlinNativeMainComponent::class.java)
+        publishingExtension.publications.forEach { publication ->
+            (publication as? MavenPublication)?.apply {
+                val component = components.find {
+                    it.name == publication.name
+                            || publication.name.startsWith("${it.name}Release")
+                            || publication.name.startsWith("${it.name}Debug")
+                }
+                component?.let {
+                    it.poms.forEach {
+                        publication.pom(it)
+                    }
+                }
+            }
         }
     }
 
@@ -214,24 +231,7 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
 
             addBinariesForMainComponents(group, version)
             addBinariesForTestComponents(group, version)
-            pluginManager.withPlugin("maven-publish") {
-                val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
-                val components = project.components.withType(KotlinNativeMainComponent::class.java)
-                publishingExtension.publications.forEach { publication ->
-                    (publication as? MavenPublication)?.apply {
-                        val component = components.find {
-                            it.name == publication.name
-                                    || publication.name.startsWith("${it.name}Release")
-                                    || publication.name.startsWith("${it.name}Debug")
-                        }
-                        component?.let {
-                            it.poms.forEach {
-                                publication.pom(it)
-                            }
-                        }
-                    }
-                }
-            }
+            setUpMavenPublish()
         }
     }
 }

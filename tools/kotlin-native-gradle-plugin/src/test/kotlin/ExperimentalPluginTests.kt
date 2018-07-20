@@ -4,8 +4,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeMainComponent
+import org.jetbrains.kotlin.gradle.plugin.experimental.internal.OutputKind
 import org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinNativePlugin
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -411,4 +413,55 @@ class ExperimentalPluginTests {
                 }
             }
         }
+
+    private fun assertCompileOutcome(result: BuildResult, compileTasks: Collection<String>, expectedOutcome: TaskOutcome) {
+        compileTasks.forEach { taskName ->
+            val task = result.task(taskName)
+            assertNotNull(task, "Task '$taskName' was not executed") {
+                assertEquals(
+                    it.outcome,
+                    expectedOutcome,
+                    "Task '$taskName' has incorrect outcome. Expected: $expectedOutcome, actual: ${it.outcome}"
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `Compilation should be up-to-date if there is no changes`() {
+        val project = KonanProject.create(projectDirectory).apply {
+            buildFile.writeText("""
+                plugins { id 'kotlin-native' }
+
+                sourceSets.main {
+                    component {
+                        outputKinds = [ EXECUTABLE, KLIBRARY, FRAMEWORK ]
+                        target 'host', 'wasm32'
+                    }
+                }
+
+            """.trimIndent())
+        }
+
+        val outputKinds = arrayOf(OutputKind.EXECUTABLE, OutputKind.KLIBRARY, OutputKind.FRAMEWORK)
+        val buildTypes = arrayOf("Debug", "Release")
+        val targets = arrayOf(HostManager.host, KonanTarget.WASM32)
+
+        val compileTasks = targets.flatMap { target ->
+            outputKinds.filter { it.availableFor(target) }.flatMap { kind ->
+                buildTypes.map { type ->
+                    ":compile${type}${kind.name.toLowerCase().capitalize()}${target.name.capitalize()}KotlinNative"
+                }
+            }
+        }
+
+        val ttt = project.createRunner().withArguments("tasks").build()
+        println(ttt.output)
+
+        val result1 = project.createRunner().withArguments("assemble").build()
+        assertCompileOutcome(result1, compileTasks, TaskOutcome.SUCCESS)
+
+        val result2 = project.createRunner().withArguments("assemble").build()
+        assertCompileOutcome(result2, compileTasks, TaskOutcome.UP_TO_DATE)
+    }
 }

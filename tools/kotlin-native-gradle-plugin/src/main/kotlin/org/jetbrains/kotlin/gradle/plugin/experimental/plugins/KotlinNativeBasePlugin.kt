@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.plugin.experimental.plugins
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
+import org.gradle.api.Task
 import org.gradle.api.component.SoftwareComponentContainer
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.FeaturePreviews
@@ -59,16 +60,28 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
     private val KonanTarget.canRunOnHost: Boolean
         get() = this == HostManager.host
 
+
     private fun addCompilationTasks(
             tasks: TaskContainer,
             components: SoftwareComponentContainer,
             buildDirectory: DirectoryProperty,
             providers: ProviderFactory
     ) {
+        val assembleTask = tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
+        val typeToAssemble = mutableMapOf<KotlinNativeBuildType, Task>()
+        val targetToAssemble = mutableMapOf<KonanTarget, Task>()
+
+        fun TaskContainer.createSpecialAssembleTask(name: String, description: String) = create(name) {
+            it.group = BasePlugin.BUILD_GROUP
+            it.description = description
+            assembleTask.dependsOn(it)
+        }
+
         components.withType(AbstractKotlinNativeBinary::class.java) { binary ->
             val names = binary.names
             val target = binary.konanTarget
             val kind = binary.kind
+            val buildType = binary.buildType
 
             val compileTask = tasks.create(
                     names.getCompileTaskName(LANGUAGE_NAME),
@@ -95,6 +108,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
             }
 
             if (binary is KotlinNativeTestExecutableImpl) {
+                // Generate a task for test execution.
                 val taskName = binary.names.getTaskName("run")
                 val testTask = if (target.canRunOnHost) {
                     tasks.createRunTestTask(taskName, binary, compileTask)
@@ -104,6 +118,23 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
                     tasks.createDummyTestTask(taskName, target)
                 }
                 binary.runTask.set(testTask)
+            } else {
+                // Add dependency for assemble tasks.
+                targetToAssemble.getOrPut(target) {
+                    tasks.createSpecialAssembleTask(
+                        "assembleAll${target.name.capitalize()}",
+                        "Compiles all Kotlin/Native binaries for target '${target.name}'"
+                    )
+                }.dependsOn(compileTask)
+
+                typeToAssemble.getOrPut(buildType) {
+                    val buildTypeName = buildType.name
+                    tasks.createSpecialAssembleTask(
+                        "assembleAll${buildTypeName.capitalize()}",
+                        "Compiles all ${buildTypeName} Kotlin/Native binaries for all targets"
+                    )
+                }.dependsOn(compileTask)
+
             }
         }
     }
@@ -146,7 +177,6 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
         checkGradleVersion()
         addCompilerDownloadingTask()
 
-        // Create compile tasks
         addCompilationTasks(tasks, components, layout.buildDirectory, providers)
     }
 

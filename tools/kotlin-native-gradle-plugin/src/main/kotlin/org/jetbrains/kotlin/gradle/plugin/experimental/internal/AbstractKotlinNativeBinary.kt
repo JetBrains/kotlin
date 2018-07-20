@@ -70,6 +70,7 @@ abstract class AbstractKotlinNativeBinary(
     val sourceSet: KotlinNativeSourceSet
         get() = component.sources
 
+    val buildType: KotlinNativeBuildType get() = identity.buildType
     open val debuggable: Boolean  get() = identity.isDebuggable
     open val optimized: Boolean   get() = identity.isOptimized
 
