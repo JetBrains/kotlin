@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k
 
+import org.jetbrains.kotlin.j2k.NewCodeBuilder.ParenthesisKind.*
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
@@ -107,12 +108,9 @@ class NewCodeBuilder {
             }
 
             if (klass.declarationList.isNotEmpty()) {
-                printer.println(" {")
-                printer.pushIndent()
-                klass.declarationList.forEach { it.accept(this) }
-                printer.popIndent()
-                printer.println("}")
-
+                printer.block(multiline = true) {
+                    klass.declarationList.forEach { it.accept(this) }
+                }
             } else {
                 printer.println()
             }
@@ -154,11 +152,42 @@ class NewCodeBuilder {
             printer.printWithNoIndent(")", ": ")
             ktFunction.returnType.accept(this)
             if (ktFunction.block !== JKBodyStub) {
-                printer.printlnWithNoIndent(" {")
-                printer.pushIndent()
-                ktFunction.block.accept(this)
-                printer.popIndent()
-                printer.printWithNoIndent("}")
+                printer.block(multiline = true) {
+                    ktFunction.block.accept(this)
+                }
+            }
+        }
+
+
+        override fun visitIfElseExpression(ifElseExpression: JKIfElseExpression) {
+            printer.printWithNoIndent("if (")
+            ifElseExpression.condition.accept(this)
+            printer.printWithNoIndent(")")
+            ifElseExpression.thenBranch.accept(this)
+            printer.printWithNoIndent(" else ")
+            ifElseExpression.elseBranch.accept(this)
+        }
+
+        override fun visitIfStatement(ifStatement: JKIfStatement) {
+            printer.printWithNoIndent("if (")
+            ifStatement.condition.accept(this)
+            printer.printWithNoIndent(")")
+            renderStatementOrBlock(ifStatement.thenBranch)
+        }
+
+        override fun visitIfElseStatement(ifElseStatement: JKIfElseStatement) {
+            visitIfStatement(ifElseStatement)
+            printer.printWithNoIndent(" else ")
+            renderStatementOrBlock(ifElseStatement.elseBranch)
+        }
+
+        private fun renderStatementOrBlock(statement: JKStatement, multiline: Boolean = false) {
+            if (statement is JKBlockStatement) {
+                printer.block(multiline) {
+                    statement.block.statements.forEach { it.accept(this) }
+                }
+            } else {
+                statement.accept(this)
             }
         }
 
@@ -206,15 +235,15 @@ class NewCodeBuilder {
 
         override fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression) {
             printer.printWithNoIndent(FqName(methodCallExpression.identifier.fqName).shortName().asString())
-            printer.printWithNoIndent("(")
-            methodCallExpression.arguments.accept(this)
-            printer.printWithNoIndent(")")
+            printer.par {
+                methodCallExpression.arguments.accept(this)
+            }
         }
 
         override fun visitParenthesizedExpression(parenthesizedExpression: JKParenthesizedExpression) {
-            printer.printWithNoIndent("(")
-            parenthesizedExpression.expression.accept(this)
-            printer.printWithNoIndent(")")
+            printer.par {
+                parenthesizedExpression.expression.accept(this)
+            }
         }
 
         override fun visitDeclarationStatement(declarationStatement: JKDeclarationStatement) {
@@ -232,17 +261,8 @@ class NewCodeBuilder {
         override fun visitWhileStatement(whileStatement: JKWhileStatement) {
             printer.print("while(")
             whileStatement.condition.accept(this)
-            printer.printlnWithNoIndent(")", "{")
-            printer.pushIndent()
-            val body = whileStatement.body
-            if (body is JKBlockStatement) {
-                body.block.statements.forEach { it.accept(this) }
-            } else {
-                body.accept(this)
-            }
-            printer.popIndent()
-            printer.println("}")
-
+            printer.printWithNoIndent(")")
+            renderStatementOrBlock(whileStatement.body, multiline = true)
         }
 
         override fun visitLocalVariable(localVariable: JKLocalVariable) {
@@ -299,10 +319,30 @@ class NewCodeBuilder {
 
         override fun visitArrayAccessExpression(arrayAccessExpression: JKArrayAccessExpression) {
             arrayAccessExpression.expression.accept(this)
-            printer.printWithNoIndent("[")
-            arrayAccessExpression.indexExpression.accept(this)
-            printer.printWithNoIndent("]")
+            printer.par(SQUARE) { arrayAccessExpression.indexExpression.accept(this) }
         }
+
+        private inline fun Printer.indented(block: () -> Unit) {
+            this.pushIndent()
+            block()
+            this.popIndent()
+        }
+
+        private inline fun Printer.block(multiline: Boolean = false, crossinline body: () -> Unit) {
+            par(if (multiline) CURVED_MULTILINE else CURVED) {
+                indented(body)
+            }
+        }
+
+        private inline fun Printer.par(kind: ParenthesisKind = ParenthesisKind.ROUND, body: () -> Unit) {
+            this.printWithNoIndent(kind.open)
+            body()
+            this.printWithNoIndent(kind.close)
+        }
+    }
+
+    private enum class ParenthesisKind(val open: String, val close: String) {
+        ROUND("(", ")"), SQUARE("[", "]"), CURVED("{", "}"), CURVED_MULTILINE("{\n", "}\n"), INLINE_COMMENT("/*", "*/")
 
         override fun visitLambdaExpression(lambdaExpression: JKLambdaExpression) {
             printer.printWithNoIndent("{")
