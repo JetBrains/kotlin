@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
+import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
 
@@ -61,6 +62,14 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
                 assertEquals(ConfigureKotlinStatus.BROKEN, findJsGradleModuleConfigurator().getStatus(moduleGroup))
             }
         }
+
+        Assert.assertEquals(
+            """
+            <p>The compiler bundled to Kotlin plugin (1.0.0) is older than external compiler (1.1.0).</p>
+            <p>Kotlin plugin should be updated to avoid compatibility problems.</p>
+            <p><a href="update">Update</a>  <a href="ignore">Ignore</a></p>
+            """.trimIndent().lines().joinToString(separator = ""),
+            createOutdatedBundledCompilerMessage(myProject, "1.0.0"))
     }
 
     @Test

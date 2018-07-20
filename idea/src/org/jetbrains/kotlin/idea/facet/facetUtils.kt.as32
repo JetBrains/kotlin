@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumen
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
+import org.jetbrains.kotlin.idea.configuration.externalCompilerVersion
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.*
@@ -162,6 +163,8 @@ fun KotlinFacet.configureFacet(
         }
         this.coroutineSupport = coroutineSupport
     }
+
+    module.externalCompilerVersion = compilerVersion
 }
 
 fun KotlinFacet.noVersionAutoAdvance() {

@@ -1,4 +1,10 @@
 <idea-plugin>
+  <project-components>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.maven.MavenImportListener</implementation-class>
+    </component>
+  </project-components>
+
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <projectConfigurator implementation="org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator"/>
     <projectConfigurator implementation="org.jetbrains.kotlin.idea.maven.configuration.KotlinJavascriptMavenConfigurator"/>
