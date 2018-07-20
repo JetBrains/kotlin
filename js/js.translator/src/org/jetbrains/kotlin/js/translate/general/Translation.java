@@ -47,9 +47,7 @@ import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.constants.NullValue;
+import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.serialization.js.ast.JsAstDeserializer;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -150,6 +148,10 @@ public final class Translation {
         if (constant instanceof NullValue) {
             return new JsNullLiteral();
         }
+        if (constant instanceof UnsignedValueConstant<?>) {
+            return translateUnsignedConstant((UnsignedValueConstant<?>) constant);
+        }
+
         Object value = constant.getValue();
         if (value instanceof Integer || value instanceof Short || value instanceof Byte) {
             return new JsIntLiteral(((Number) value).intValue());
@@ -184,6 +186,23 @@ public final class Translation {
         }
 
         return null;
+    }
+
+    private static JsExpression translateUnsignedConstant(@NotNull UnsignedValueConstant<?> unsignedConstant) {
+        if (unsignedConstant instanceof UByteValue) {
+            return null;
+        }
+        else if (unsignedConstant instanceof UShortValue) {
+            return null;
+        }
+        else if (unsignedConstant instanceof UIntValue) {
+            return JsAstUtils.intToUInt(((UIntValue) unsignedConstant).getValue());
+        }
+        else if (unsignedConstant instanceof ULongValue) {
+            return null;
+        } else {
+            return null;
+        }
     }
 
     @NotNull
