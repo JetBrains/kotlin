@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
@@ -223,15 +224,39 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression intToUInt(int value, @NotNull TranslationContext context) {
-        ClassDescriptor uintClassDescriptor = findClassAcrossModuleDependencies(context.getCurrentModule(), KotlinBuiltIns.FQ_NAMES.uInt);
-        assert uintClassDescriptor != null;
-        JsName descName = context.getInnerNameForDescriptor(uintClassDescriptor);
-
+    public static JsExpression byteToUByte(byte value, @NotNull TranslationContext context) {
         // replace with external builder
-        JsIntLiteral literal = new JsIntLiteral(value);
+        return toUnsignedNumber(new JsIntLiteral(value), context, KotlinBuiltIns.FQ_NAMES.uByte);
+    }
 
-        return new JsNew(descName.makeRef(), Collections.singletonList(literal));
+    @NotNull
+    public static JsExpression shortToUShort(short value, @NotNull TranslationContext context) {
+        // replace with external builder
+        return toUnsignedNumber(new JsIntLiteral(value), context, KotlinBuiltIns.FQ_NAMES.uShort);
+    }
+
+    @NotNull
+    public static JsExpression intToUInt(int value, @NotNull TranslationContext context) {
+        // replace with external builder
+        return toUnsignedNumber(new JsIntLiteral(value), context, KotlinBuiltIns.FQ_NAMES.uInt);
+    }
+
+    @NotNull
+    public static JsExpression longToULong(@NotNull JsExpression expression, @NotNull TranslationContext context) {
+        // replace with external builder
+        return toUnsignedNumber(expression, context, KotlinBuiltIns.FQ_NAMES.uLong);
+    }
+
+    private static JsExpression toUnsignedNumber(
+            @NotNull JsExpression expression,
+            @NotNull TranslationContext context,
+            @NotNull ClassId unsignedClassId
+    ) {
+        ClassDescriptor classDescriptor = findClassAcrossModuleDependencies(context.getCurrentModule(), unsignedClassId);
+        assert classDescriptor != null : "Class descriptor is null for " + unsignedClassId;
+
+        JsName descName = context.getInnerNameForDescriptor(classDescriptor);
+        return new JsNew(descName.makeRef(), Collections.singletonList(expression));
     }
 
     @NotNull
