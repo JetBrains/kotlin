@@ -39,12 +39,12 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
             group = LifecycleBasePlugin.VERIFICATION_GROUP
             description = "Executes Kotlin/Native unit tests."
 
-            val testExecutableProperty = compileTask.outputFile
-            executable = testExecutableProperty.asFile.get().absolutePath
+            val testExecutable = compileTask.outputFile
+            executable = testExecutable.absolutePath
 
-            onlyIf { testExecutableProperty.asFile.get().exists() }
-            inputs.file(testExecutableProperty)
-            dependsOn(testExecutableProperty)
+            onlyIf { testExecutable.exists() }
+            inputs.file(testExecutable)
+            dependsOn(compileTask)
 
             // TODO: Find or implement some mechanism for test result saving.
             outputDir = project.layout.buildDirectory.dir("test-results/" + binary.names.dirName).get().asFile
@@ -66,6 +66,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
         get() = this == HostManager.host
 
 
+    // TODO: Rework this part: the task should be created in the binary constructor (if it is possible).
     private fun Project.addCompilationTasks() {
         val assembleTask = tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
         val typeToAssemble = mutableMapOf<KotlinNativeBuildType, Task>()
@@ -80,31 +81,22 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
         components.withType(AbstractKotlinNativeBinary::class.java) { binary ->
             val names = binary.names
             val target = binary.konanTarget
-            val kind = binary.kind
             val buildType = binary.buildType
 
             val compileTask = tasks.create(
                     names.getCompileTaskName(LANGUAGE_NAME),
-                    KotlinNativeCompile::class.java
+                    KotlinNativeCompile::class.java,
+                    binary
             ).apply {
-                this.binary = binary
-                outputFile.set(layout.buildDirectory.file(providers.provider {
-                    val root = binary.outputRootName
-                    val prefix = kind.prefix(target)
-                    val suffix = kind.suffix(target)
-                    val baseName = binary.getBaseName().get()
-                    "$root/${names.dirName}/${prefix}${baseName}${suffix}"
-                }))
-
                 group = BasePlugin.BUILD_GROUP
                 description = "Compiles Kotlin/Native source set '${binary.sourceSet.name}' into a ${binary.kind.name.toLowerCase()}"
             }
             binary.compileTask.set(compileTask)
-            binary.outputs.from(compileTask.outputFile)
+            binary.outputs.from(compileTask.outputLocationProvider)
 
             when(binary) {
-                is KotlinNativeExecutableImpl -> binary.runtimeFile.set(compileTask.outputFile)
-                is KotlinNativeLibraryImpl -> binary.linkFile.set(compileTask.outputFile)
+                is KotlinNativeExecutableImpl -> binary.runtimeFile.set(compileTask.outputLocationProvider as RegularFileProperty)
+                is KotlinNativeLibraryImpl -> binary.linkFile.set(compileTask.outputLocationProvider as RegularFileProperty)
             }
 
             if (binary is KotlinNativeTestExecutableImpl) {

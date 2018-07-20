@@ -419,8 +419,8 @@ class ExperimentalPluginTests {
             val task = result.task(taskName)
             assertNotNull(task, "Task '$taskName' was not executed") {
                 assertEquals(
-                    it.outcome,
                     expectedOutcome,
+                    it.outcome,
                     "Task '$taskName' has incorrect outcome. Expected: $expectedOutcome, actual: ${it.outcome}"
                 )
             }

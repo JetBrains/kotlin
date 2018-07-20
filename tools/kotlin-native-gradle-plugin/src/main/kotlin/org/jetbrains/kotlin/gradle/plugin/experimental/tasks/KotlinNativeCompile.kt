@@ -4,7 +4,9 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.KonanCompilerRunner
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin
@@ -13,15 +15,14 @@ import org.jetbrains.kotlin.gradle.plugin.addKey
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeBinary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File
+import javax.inject.Inject
 
-open class KotlinNativeCompile: DefaultTask() {
-
+open class KotlinNativeCompile @Inject constructor(internal val binary: AbstractKotlinNativeBinary)
+    : DefaultTask()
+{
     init {
         super.dependsOn(KonanPlugin.KONAN_DOWNLOAD_TASK_NAME)
     }
-
-    // TODO: May be replace with Gradle's property
-    internal lateinit var binary: AbstractKotlinNativeBinary
 
     // Inputs and outputs
 
@@ -40,18 +41,41 @@ open class KotlinNativeCompile: DefaultTask() {
 
     val additionalCompilerOptions: Collection<String> @Input get() = binary.additionalCompilerOptions
 
-    @OutputFile
-    val outputFile: RegularFileProperty = newOutputFile()
+    val outputFile: File
+        get() = outputLocationProvider.get().asFile
+
+    private val outputPathProvider: Provider<String> = project.provider {
+        with(binary) {
+            val root = outputRootName
+            val prefix = kind.prefix(konanTarget)
+            val suffix = kind.suffix(konanTarget)
+            val baseName = getBaseName().get()
+            "$root/${binary.names.dirName}/${prefix}${baseName}${suffix}"
+        }
+    }
+
+    val outputLocationProvider: Provider<out FileSystemLocation> = with(project.layout) {
+        if (kind == CompilerOutputKind.FRAMEWORK) {
+            newOutputDirectory().apply {
+                set(buildDirectory.dir(outputPathProvider))
+                outputs.dir(this)
+            }
+        } else {
+            newOutputFile().apply {
+                set(buildDirectory.file(outputPathProvider))
+                outputs.file(this)
+            }
+        }
+    }
 
     // Task action
 
     @TaskAction
     fun compile() {
-        val output = outputFile.asFile.get()
-        output.parentFile.mkdirs()
+        outputFile.parentFile.mkdirs()
 
         val args = mutableListOf<String>().apply {
-            addArg("-o", outputFile.get().asFile.absolutePath)
+            addArg("-o", outputFile.absolutePath)
             addKey("-opt", optimized)
             addKey("-g", debuggable)
             addKey("-ea", debuggable)
