@@ -297,9 +297,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                     "Vararg invoke must have one parameter of type [Ljava/lang/Object;: " + bridge;
             generateVarargInvokeArityAssert(iv, delegate.getArgumentTypes().length);
         }
-
-        assert bridgeParameterTypes.length == bridgeParameterKotlinTypes.size() :
-                "Asm parameter types should be the same length as Kotlin parameter types";
+        else {
+            assert bridgeParameterTypes.length == bridgeParameterKotlinTypes.size() :
+                    "Asm parameter types should be the same length as Kotlin parameter types";
+        }
 
         iv.load(0, asmType);
 
