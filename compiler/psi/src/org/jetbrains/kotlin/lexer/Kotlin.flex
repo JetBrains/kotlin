@@ -288,6 +288,12 @@ LONELY_BACKTICK=`
 "!="         { return KtTokens.EXCLEQ    ; }
 "&&"         { return KtTokens.ANDAND    ; }
 "||"         { return KtTokens.OROR      ; }
+"&"          { return KtTokens.AND       ; }
+"|"          { return KtTokens.OR        ; }
+"^"          { return KtTokens.XOR       ; }
+"&="         { return KtTokens.ANDEQ     ; }
+"|="         { return KtTokens.OREQ      ; }
+"^="         { return KtTokens.XOREQ     ; }
 "*="         { return KtTokens.MULTEQ    ; }
 "/="         { return KtTokens.DIVEQ     ; }
 "%="         { return KtTokens.PERCEQ    ; }
