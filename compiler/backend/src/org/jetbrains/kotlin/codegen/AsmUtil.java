@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
-import org.jetbrains.kotlin.builtins.UnsignedTypes;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.intrinsics.HashCode;
@@ -146,6 +145,10 @@ public class AsmUtil {
     @Nullable
     public static Type unboxPrimitiveTypeOrNull(@NotNull Type boxedType) {
         return primitiveTypeByBoxedType.get(boxedType);
+    }
+
+    public static boolean isBoxedPrimitiveType(@NotNull Type boxedType) {
+        return primitiveTypeByBoxedType.get(boxedType) != null;
     }
 
     @NotNull
