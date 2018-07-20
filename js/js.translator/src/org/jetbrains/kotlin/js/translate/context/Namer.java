@@ -62,6 +62,7 @@ public final class Namer {
     public static final String LONG_FROM_NUMBER = "fromNumber";
     public static final String LONG_TO_NUMBER = "toNumber";
     public static final String LONG_FROM_INT = "fromInt";
+    public static final String UINT_FROM_INT = "toUInt";
     public static final String LONG_ZERO = "ZERO";
     public static final String LONG_ONE = "ONE";
     public static final String LONG_NEG_ONE = "NEG_ONE";

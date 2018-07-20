@@ -217,6 +217,11 @@ public final class JsAstUtils {
         return invokeMethod(expression, Namer.LONG_TO_NUMBER);
     }
 
+    public static JsExpression intToUInt(int value) {
+        JsIntLiteral literal = new JsIntLiteral(value);
+        return invokeMethod(Namer.kotlinObject(), Namer.UINT_FROM_INT, literal);
+    }
+
     @NotNull
     public static JsExpression compareForObject(@NotNull JsExpression left, @NotNull JsExpression right) {
         return invokeMethod(left, Namer.COMPARE_TO_METHOD_NAME, right);

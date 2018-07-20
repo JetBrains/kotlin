@@ -13908,11 +13908,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public static class PrimitiveCompanion extends AbstractJsCodegenBoxTest {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
-                }
+        }
 
                 public void testAllFilesPresentInPrimitiveCompanion() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
-                }
+    }
 
                 @TestMetadata("byteCompanionObject.kt")
                 public void testByteCompanionObject() throws Exception {
@@ -20976,6 +20976,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("boxConstValOfUnsignedType.kt")
         public void testBoxConstValOfUnsignedType() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/boxConstValOfUnsignedType.kt");
+        }
+
+        @TestMetadata("checkBasicUnsignedLiterals.kt")
+        public void testCheckBasicUnsignedLiterals() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/checkBasicUnsignedLiterals.kt");
         }
 
         @TestMetadata("forEachIndexedInListOfUInts.kt")
