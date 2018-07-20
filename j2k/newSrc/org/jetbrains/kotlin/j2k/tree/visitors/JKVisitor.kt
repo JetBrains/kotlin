@@ -7,6 +7,7 @@ interface JKVisitor<out R, in D> {
     fun visitDeclaration(declaration: JKDeclaration, data: D): R = visitTreeElement(declaration, data)
     fun visitFile(file: JKFile, data: D): R = visitTreeElement(file, data)
     fun visitClass(klass: JKClass, data: D): R = visitDeclaration(klass, data)
+    fun visitInheritanceInfo(inheritanceInfo: JKInheritanceInfo, data: D): R = visitTreeElement(inheritanceInfo, data)
     fun visitMethod(method: JKMethod, data: D): R = visitDeclaration(method, data)
     fun visitField(field: JKField, data: D): R = visitDeclaration(field, data)
     fun visitLocalVariable(localVariable: JKLocalVariable, data: D): R = visitField(localVariable, data)

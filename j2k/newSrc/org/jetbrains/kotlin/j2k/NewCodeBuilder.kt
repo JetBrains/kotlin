@@ -96,6 +96,20 @@ class NewCodeBuilder {
             )
         }
 
+        override fun visitInheritanceInfo(inheritanceInfo: JKInheritanceInfo) {
+            renderList(inheritanceInfo.inherit) { it.accept(this) }
+        }
+
+
+        private inline fun <T> renderList(list: List<T>, separator: String = ", ", renderElement: (T) -> Unit) {
+            val (head, tail) = list.headTail()
+            head?.let(renderElement) ?: return
+            tail?.forEach {
+                builder.append(separator)
+                renderElement(it)
+            }
+        }
+
         override fun visitClass(klass: JKClass) {
             klass.modifierList.accept(this)
             builder.append(" ")
@@ -104,7 +118,7 @@ class NewCodeBuilder {
             printer.printWithNoIndent(klass.name.value)
             if (klass.inheritance.inherit.isNotEmpty()) {
                 printer.printWithNoIndent(" : ")
-                klass.inheritance.inherit.forEach { it.accept(this) }
+                klass.inheritance.accept(this)
             }
 
             if (klass.declarationList.isNotEmpty()) {
@@ -377,4 +391,10 @@ class NewCodeBuilder {
         Visitor().also { root.accept(it) }
         return builder.toString()
     }
+}
+
+private inline fun <T> List<T>.headTail(): Pair<T?, List<T>?> {
+    val head = this.firstOrNull()
+    val tail = if (size <= 1) null else subList(1, size)
+    return head to tail
 }
