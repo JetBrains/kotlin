@@ -44,6 +44,11 @@ object OperatorNameConventions {
     @JvmField val MINUS = Name.identifier("minus")
     @JvmField val NOT = Name.identifier("not")
 
+    // TODO: Come up with better names for these functions
+    @JvmField val BIT_AND = Name.identifier("bitAnd")
+    @JvmField val BIT_OR = Name.identifier("bitOr")
+    @JvmField val BIT_XOR = Name.identifier("bitXor")
+
     @JvmField val UNARY_MINUS = Name.identifier("unaryMinus")
     @JvmField val UNARY_PLUS = Name.identifier("unaryPlus")
 
@@ -59,6 +64,9 @@ object OperatorNameConventions {
     @JvmField val REM_ASSIGN = Name.identifier("remAssign")
     @JvmField val PLUS_ASSIGN = Name.identifier("plusAssign")
     @JvmField val MINUS_ASSIGN = Name.identifier("minusAssign")
+    @JvmField val AND_ASSIGN = Name.identifier("andAssign")
+    @JvmField val OR_ASSIGN = Name.identifier("orAssign")
+    @JvmField val XOR_ASSIGN = Name.identifier("xorAssign")
 
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 
@@ -69,8 +77,8 @@ object OperatorNameConventions {
     internal val SIMPLE_UNARY_OPERATION_NAMES = setOf(UNARY_PLUS, UNARY_MINUS, NOT)
 
     @JvmField
-    val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, REM, RANGE_TO)
+    val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, REM, RANGE_TO, BIT_AND, BIT_OR, BIT_XOR)
 
     @JvmField
-    internal val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, REM_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN)
+    internal val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, REM_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN, AND_ASSIGN, OR_ASSIGN, XOR_ASSIGN)
 }

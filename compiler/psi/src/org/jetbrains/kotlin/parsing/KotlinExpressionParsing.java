@@ -184,10 +184,13 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         },
         COMPARISON(LT, GT, LTEQ, GTEQ),
         EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
+        AND(BITAND),
+        OR(BITOR),
+        XOR(BITXOR),
         CONJUNCTION(ANDAND),
         DISJUNCTION(OROR),
         //        ARROW(KtTokens.ARROW),
-        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
+        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ, BITANDEQ, BITOREQ, BITXOREQ),
         ;
 
         static {

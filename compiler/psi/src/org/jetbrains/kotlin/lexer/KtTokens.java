@@ -113,12 +113,12 @@ public interface KtTokens {
     KtSingleValueToken EXCLEXCL    = new KtSingleValueToken("EXCLEXCL", "!!");
     KtSingleValueToken ANDAND      = new KtSingleValueToken("ANDAND", "&&");
     KtSingleValueToken OROR        = new KtSingleValueToken("OROR", "||");
-    KtSingleValueToken AND         = new KtSingleValueToken("AND", "&");
-    KtSingleValueToken OR          = new KtSingleValueToken("OR", "|");
-    KtSingleValueToken XOR         = new KtSingleValueToken("XOR", "^");
-    KtSingleValueToken ANDEQ       = new KtSingleValueToken("ANDEQ", "&=");
-    KtSingleValueToken OREQ        = new KtSingleValueToken("OREQ", "|=");
-    KtSingleValueToken XOREQ       = new KtSingleValueToken("XOREQ", "^=");
+    KtSingleValueToken BITAND         = new KtSingleValueToken("BITAND", "&");
+    KtSingleValueToken BITOR          = new KtSingleValueToken("BITOR", "|");
+    KtSingleValueToken BITXOR         = new KtSingleValueToken("BITXOR", "^");
+    KtSingleValueToken BITANDEQ       = new KtSingleValueToken("BITANDEQ", "&=");
+    KtSingleValueToken BITOREQ        = new KtSingleValueToken("BITOREQ", "|=");
+    KtSingleValueToken BITXOREQ       = new KtSingleValueToken("BITXOREQ", "^=");
     KtSingleValueToken SAFE_ACCESS = new KtSingleValueToken("SAFE_ACCESS", "?.");
     KtSingleValueToken ELVIS       = new KtSingleValueToken("ELVIS", "?:");
     KtSingleValueToken QUEST       = new KtSingleValueToken("QUEST", "?");
@@ -261,6 +261,7 @@ public interface KtTokens {
     TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, REGULAR_STRING_PART);
     TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, EXCLEXCL, MUL, PLUS,
                                           MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
+                                          BITAND, BITOR, BITXOR, BITANDEQ, BITOREQ, BITXOREQ,
                                           SAFE_ACCESS, ELVIS,
                                           RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
                                           NOT_IN, NOT_IS,
