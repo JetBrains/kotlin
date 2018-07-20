@@ -1,5 +1,5 @@
 // WITH_UNSIGNED
-// IGNORE_BACKEND: JVM_IR, JS_IR, JS
+// IGNORE_BACKEND: JVM_IR, JS_IR
 
 const val maxUByte: UByte = 0xFFu
 
