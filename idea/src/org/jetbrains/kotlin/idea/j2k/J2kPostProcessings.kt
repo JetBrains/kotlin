@@ -122,6 +122,14 @@ object J2KPostProcessingRegistrar {
             fix.invoke()
         }
 
+        registerDiagnosticBasedProcessing<KtModifierListOwner>(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS) { _, diagnostic ->
+            val fix =
+                RemoveModifierFix
+                    .createRemoveModifierFromListOwnerFactory(KtTokens.OPEN_KEYWORD)
+                    .createActions(diagnostic).single() as RemoveModifierFix
+            fix.invoke()
+        }
+
         registerDiagnosticBasedProcessingFactory(
                 Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION, Errors.CAPTURED_MEMBER_VAL_INITIALIZATION
         ) {
