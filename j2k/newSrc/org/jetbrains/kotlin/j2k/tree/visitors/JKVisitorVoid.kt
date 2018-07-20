@@ -11,6 +11,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitFile(file: JKFile, data: Nothing?) = visitFile(file)
     fun visitClass(klass: JKClass) = visitDeclaration(klass, null)
     override fun visitClass(klass: JKClass, data: Nothing?) = visitClass(klass)
+    fun visitInheritanceInfo(inheritanceInfo: JKInheritanceInfo) = visitTreeElement(inheritanceInfo, null)
+    override fun visitInheritanceInfo(inheritanceInfo: JKInheritanceInfo, data: Nothing?) = visitInheritanceInfo(inheritanceInfo)
     fun visitMethod(method: JKMethod) = visitDeclaration(method, null)
     override fun visitMethod(method: JKMethod, data: Nothing?) = visitMethod(method)
     fun visitField(field: JKField) = visitDeclaration(field, null)

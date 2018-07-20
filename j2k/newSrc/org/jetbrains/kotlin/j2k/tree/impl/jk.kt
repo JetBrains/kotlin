@@ -323,4 +323,6 @@ class JKLambdaExpressionImpl(parameters: List<JKParameter>, returnType: JKTypeEl
 
 class JKInheritanceInfoImpl(implements: List<JKTypeElement>) : JKInheritanceInfo, JKBranchElementBase() {
     override val inherit: List<JKTypeElement> by children(implements)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitInheritanceInfo(this, data)
 }
