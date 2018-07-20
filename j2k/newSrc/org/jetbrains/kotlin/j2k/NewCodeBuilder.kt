@@ -136,7 +136,9 @@ class NewCodeBuilder {
         }
 
         override fun visitKtFunction(ktFunction: JKKtFunction) {
-            printer.print("fun ", ktFunction.name.value, "(")
+            printer.printIndent()
+            ktFunction.modifierList.accept(this)
+            printer.printWithNoIndent(" fun ", ktFunction.name.value, "(")
             for (parameter in ktFunction.parameters) {
                 if (parameter != ktFunction.parameters.first()) {
                     printer.printWithNoIndent(", ")

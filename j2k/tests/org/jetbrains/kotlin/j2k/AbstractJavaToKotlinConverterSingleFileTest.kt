@@ -116,7 +116,7 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
 
     private fun statementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val funBody = text.lines().joinToString(separator = "\n", transform = { "  $it" })
-        val result = methodToKotlin("void main() {\n$funBody\n}", settings, project)
+        val result = methodToKotlin("public void main() {\n$funBody\n}", settings, project)
 
         return result
                 .substringBeforeLast("}")
