@@ -57,7 +57,7 @@ open class KotlinNativeMainComponent @Inject constructor(
             addBinary(T::class.java, identity)
 
     fun addExecutable(identity: NativeVariantIdentity) = addBinary<KotlinNativeExecutableImpl>(identity)
-    fun addKLibrary(identity: NativeVariantIdentity) = addBinary<KotlinNativeLibraryImpl>(identity)
+    fun addLibrary(identity: NativeVariantIdentity) = addBinary<KotlinNativeLibraryImpl>(identity)
     fun addFramework(identity: NativeVariantIdentity) = addBinary<KotlinNativeFrameworkImpl>(identity)
 
     fun addBinary(kind: OutputKind, identity: NativeVariantIdentity) = addBinary(kind.binaryClass, identity)

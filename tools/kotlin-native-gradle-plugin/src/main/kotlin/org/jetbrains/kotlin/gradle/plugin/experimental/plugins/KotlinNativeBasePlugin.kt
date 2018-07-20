@@ -2,12 +2,16 @@ package org.jetbrains.kotlin.gradle.plugin.experimental.plugins
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.component.SoftwareComponentContainer
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -23,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.setProperty
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompilerDownloadTask
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 
 class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
 
@@ -61,12 +66,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
         get() = this == HostManager.host
 
 
-    private fun addCompilationTasks(
-            tasks: TaskContainer,
-            components: SoftwareComponentContainer,
-            buildDirectory: DirectoryProperty,
-            providers: ProviderFactory
-    ) {
+    private fun Project.addCompilationTasks() {
         val assembleTask = tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
         val typeToAssemble = mutableMapOf<KotlinNativeBuildType, Task>()
         val targetToAssemble = mutableMapOf<KonanTarget, Task>()
@@ -88,7 +88,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
                     KotlinNativeCompile::class.java
             ).apply {
                 this.binary = binary
-                outputFile.set(buildDirectory.file(providers.provider {
+                outputFile.set(layout.buildDirectory.file(providers.provider {
                     val root = binary.outputRootName
                     val prefix = kind.prefix(target)
                     val suffix = kind.suffix(target)
@@ -104,7 +104,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
 
             when(binary) {
                 is KotlinNativeExecutableImpl -> binary.runtimeFile.set(compileTask.outputFile)
-                is AbstractKotlinNativeLibrary -> binary.linkFile.set(compileTask.outputFile)
+                is KotlinNativeLibraryImpl -> binary.linkFile.set(compileTask.outputFile)
             }
 
             if (binary is KotlinNativeTestExecutableImpl) {
@@ -177,7 +177,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
         checkGradleVersion()
         addCompilerDownloadingTask()
 
-        addCompilationTasks(tasks, components, layout.buildDirectory, providers)
+        addCompilationTasks()
     }
 
     companion object {

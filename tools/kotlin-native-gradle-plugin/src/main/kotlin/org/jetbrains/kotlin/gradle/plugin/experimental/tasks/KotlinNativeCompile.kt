@@ -2,18 +2,17 @@ package org.jetbrains.kotlin.gradle.plugin.experimental.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.KonanCompilerRunner
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin
 import org.jetbrains.kotlin.gradle.plugin.addArg
 import org.jetbrains.kotlin.gradle.plugin.addKey
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeBinary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import java.io.File
 
 open class KotlinNativeCompile: DefaultTask() {
 
