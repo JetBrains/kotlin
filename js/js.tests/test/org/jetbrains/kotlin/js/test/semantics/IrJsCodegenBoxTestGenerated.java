@@ -19305,6 +19305,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
         }
 
+        @TestMetadata("checkBasicUnsignedLiterals.kt")
+        public void testCheckBasicUnsignedLiterals() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/checkBasicUnsignedLiterals.kt");
+        }
+
         @TestMetadata("varargsOfUnsignedTypes.kt")
         public void testVarargsOfUnsignedTypes() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/varargsOfUnsignedTypes.kt");

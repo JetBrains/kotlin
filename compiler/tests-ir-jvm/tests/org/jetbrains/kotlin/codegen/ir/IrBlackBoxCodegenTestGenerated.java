@@ -10280,11 +10280,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @RunWith(JUnit3RunnerWithInners.class)
         public static class BigArity extends AbstractIrBlackBoxCodegenTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
             }
 
             public void testAllFilesPresentInBigArity() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions/bigArity"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions/bigArity"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
             }
 
             @TestMetadata("callWithIncorrectNumberOfArguments.kt")
