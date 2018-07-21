@@ -1053,17 +1053,17 @@ class _JetLexer implements FlexLexer {
             // fall through
           case 137: break;
           case 21: 
-            { return KtTokens.BITAND    ;
+            { return KtTokens.AMP       ;
             } 
             // fall through
           case 138: break;
           case 22: 
-            { return KtTokens.BITOR     ;
+            { return KtTokens.PIPE      ;
             } 
             // fall through
           case 139: break;
           case 23: 
-            { return KtTokens.BITXOR    ;
+            { return KtTokens.CARET     ;
             } 
             // fall through
           case 140: break;
@@ -1286,7 +1286,7 @@ class _JetLexer implements FlexLexer {
             // fall through
           case 181: break;
           case 65: 
-            { return KtTokens.BITANDEQ  ;
+            { return KtTokens.AMPEQ     ;
             } 
             // fall through
           case 182: break;
@@ -1296,7 +1296,7 @@ class _JetLexer implements FlexLexer {
             // fall through
           case 183: break;
           case 67: 
-            { return KtTokens.BITOREQ   ;
+            { return KtTokens.PIPEEQ    ;
             } 
             // fall through
           case 184: break;
@@ -1306,7 +1306,7 @@ class _JetLexer implements FlexLexer {
             // fall through
           case 185: break;
           case 69: 
-            { return KtTokens.BITXOREQ  ;
+            { return KtTokens.CARETEQ   ;
             } 
             // fall through
           case 186: break;
