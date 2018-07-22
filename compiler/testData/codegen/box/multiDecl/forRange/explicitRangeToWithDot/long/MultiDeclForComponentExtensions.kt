@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 
 fun f(l : Long) {
   l.rangeTo(l)
