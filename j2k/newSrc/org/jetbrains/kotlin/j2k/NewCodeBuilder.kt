@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k
 
+import org.jetbrains.kotlin.j2k.NewCodeBuilder.ParenthesisKind.*
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
@@ -95,6 +96,20 @@ class NewCodeBuilder {
             )
         }
 
+        override fun visitInheritanceInfo(inheritanceInfo: JKInheritanceInfo) {
+            renderList(inheritanceInfo.inherit) { it.accept(this) }
+        }
+
+
+        private inline fun <T> renderList(list: List<T>, separator: String = ", ", renderElement: (T) -> Unit) {
+            val (head, tail) = list.headTail()
+            head?.let(renderElement) ?: return
+            tail?.forEach {
+                builder.append(separator)
+                renderElement(it)
+            }
+        }
+
         override fun visitClass(klass: JKClass) {
             klass.modifierList.accept(this)
             builder.append(" ")
@@ -103,16 +118,13 @@ class NewCodeBuilder {
             printer.printWithNoIndent(klass.name.value)
             if (klass.inheritance.inherit.isNotEmpty()) {
                 printer.printWithNoIndent(" : ")
-                klass.inheritance.inherit.forEach { it.accept(this) }
+                klass.inheritance.accept(this)
             }
 
             if (klass.declarationList.isNotEmpty()) {
-                printer.println(" {")
-                printer.pushIndent()
-                klass.declarationList.forEach { it.accept(this) }
-                printer.popIndent()
-                printer.println("}")
-
+                printer.block(multiline = true) {
+                    klass.declarationList.forEach { it.accept(this) }
+                }
             } else {
                 printer.println()
             }
@@ -136,7 +148,9 @@ class NewCodeBuilder {
         }
 
         override fun visitKtFunction(ktFunction: JKKtFunction) {
-            printer.print("fun ", ktFunction.name.value, "(")
+            printer.printIndent()
+            ktFunction.modifierList.accept(this)
+            printer.printWithNoIndent(" fun ", ktFunction.name.value, "(")
             for (parameter in ktFunction.parameters) {
                 if (parameter != ktFunction.parameters.first()) {
                     printer.printWithNoIndent(", ")
@@ -152,11 +166,42 @@ class NewCodeBuilder {
             printer.printWithNoIndent(")", ": ")
             ktFunction.returnType.accept(this)
             if (ktFunction.block !== JKBodyStub) {
-                printer.printlnWithNoIndent(" {")
-                printer.pushIndent()
-                ktFunction.block.accept(this)
-                printer.popIndent()
-                printer.printWithNoIndent("}")
+                printer.block(multiline = true) {
+                    ktFunction.block.accept(this)
+                }
+            }
+        }
+
+
+        override fun visitIfElseExpression(ifElseExpression: JKIfElseExpression) {
+            printer.printWithNoIndent("if (")
+            ifElseExpression.condition.accept(this)
+            printer.printWithNoIndent(")")
+            ifElseExpression.thenBranch.accept(this)
+            printer.printWithNoIndent(" else ")
+            ifElseExpression.elseBranch.accept(this)
+        }
+
+        override fun visitIfStatement(ifStatement: JKIfStatement) {
+            printer.printWithNoIndent("if (")
+            ifStatement.condition.accept(this)
+            printer.printWithNoIndent(")")
+            renderStatementOrBlock(ifStatement.thenBranch)
+        }
+
+        override fun visitIfElseStatement(ifElseStatement: JKIfElseStatement) {
+            visitIfStatement(ifElseStatement)
+            printer.printWithNoIndent(" else ")
+            renderStatementOrBlock(ifElseStatement.elseBranch)
+        }
+
+        private fun renderStatementOrBlock(statement: JKStatement, multiline: Boolean = false) {
+            if (statement is JKBlockStatement) {
+                printer.block(multiline) {
+                    statement.block.statements.forEach { it.accept(this) }
+                }
+            } else {
+                statement.accept(this)
             }
         }
 
@@ -204,15 +249,15 @@ class NewCodeBuilder {
 
         override fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression) {
             printer.printWithNoIndent(FqName(methodCallExpression.identifier.fqName).shortName().asString())
-            printer.printWithNoIndent("(")
-            methodCallExpression.arguments.accept(this)
-            printer.printWithNoIndent(")")
+            printer.par {
+                methodCallExpression.arguments.accept(this)
+            }
         }
 
         override fun visitParenthesizedExpression(parenthesizedExpression: JKParenthesizedExpression) {
-            printer.printWithNoIndent("(")
-            parenthesizedExpression.expression.accept(this)
-            printer.printWithNoIndent(")")
+            printer.par {
+                parenthesizedExpression.expression.accept(this)
+            }
         }
 
         override fun visitDeclarationStatement(declarationStatement: JKDeclarationStatement) {
@@ -230,17 +275,8 @@ class NewCodeBuilder {
         override fun visitWhileStatement(whileStatement: JKWhileStatement) {
             printer.print("while(")
             whileStatement.condition.accept(this)
-            printer.printlnWithNoIndent(")", "{")
-            printer.pushIndent()
-            val body = whileStatement.body
-            if (body is JKBlockStatement) {
-                body.block.statements.forEach { it.accept(this) }
-            } else {
-                body.accept(this)
-            }
-            printer.popIndent()
-            printer.println("}")
-
+            printer.printWithNoIndent(")")
+            renderStatementOrBlock(whileStatement.body, multiline = true)
         }
 
         override fun visitLocalVariable(localVariable: JKLocalVariable) {
@@ -264,7 +300,8 @@ class NewCodeBuilder {
             when (type) {
                 is JKClassType ->
                     (type.classReference as JKClassSymbol).fqName?.let { printer.printWithNoIndent(FqName(it).shortName().asString()) }
-
+                is JKUnresolvedClassType ->
+                    printer.printWithNoIndent(type.name)
                 else -> printer.printWithNoIndent("Unit /* TODO: ${type::class} */")
             }
             when (type.nullability) {
@@ -297,9 +334,25 @@ class NewCodeBuilder {
 
         override fun visitArrayAccessExpression(arrayAccessExpression: JKArrayAccessExpression) {
             arrayAccessExpression.expression.accept(this)
-            printer.printWithNoIndent("[")
-            arrayAccessExpression.indexExpression.accept(this)
-            printer.printWithNoIndent("]")
+            printer.par(SQUARE) { arrayAccessExpression.indexExpression.accept(this) }
+        }
+
+        private inline fun Printer.indented(block: () -> Unit) {
+            this.pushIndent()
+            block()
+            this.popIndent()
+        }
+
+        private inline fun Printer.block(multiline: Boolean = false, crossinline body: () -> Unit) {
+            par(if (multiline) CURVED_MULTILINE else CURVED) {
+                indented(body)
+            }
+        }
+
+        private inline fun Printer.par(kind: ParenthesisKind = ParenthesisKind.ROUND, body: () -> Unit) {
+            this.printWithNoIndent(kind.open)
+            body()
+            this.printWithNoIndent(kind.close)
         }
 
         override fun visitLambdaExpression(lambdaExpression: JKLambdaExpression) {
@@ -330,8 +383,18 @@ class NewCodeBuilder {
         }
     }
 
+    private enum class ParenthesisKind(val open: String, val close: String) {
+        ROUND("(", ")"), SQUARE("[", "]"), CURVED("{", "}"), CURVED_MULTILINE("{\n", "}\n"), INLINE_COMMENT("/*", "*/")
+    }
+
     fun printCodeOut(root: JKTreeElement): String {
         Visitor().also { root.accept(it) }
         return builder.toString()
     }
+}
+
+private inline fun <T> List<T>.headTail(): Pair<T?, List<T>?> {
+    val head = this.firstOrNull()
+    val tail = if (size <= 1) null else subList(1, size)
+    return head to tail
 }
