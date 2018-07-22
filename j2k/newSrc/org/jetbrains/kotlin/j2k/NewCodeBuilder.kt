@@ -301,6 +301,33 @@ class NewCodeBuilder {
             arrayAccessExpression.indexExpression.accept(this)
             printer.printWithNoIndent("]")
         }
+
+        override fun visitLambdaExpression(lambdaExpression: JKLambdaExpression) {
+            printer.printWithNoIndent("{")
+            lambdaExpression.parameters.firstOrNull()?.accept(this)
+            lambdaExpression.parameters.asSequence().drop(1).forEach { printer.printWithNoIndent(", "); it.accept(this) }
+            printer.printWithNoIndent(" -> ")
+            lambdaExpression.statement.accept(this)
+            printer.printWithNoIndent("}")
+        }
+
+        override fun visitBlockStatement(blockStatement: JKBlockStatement) {
+            printer.printWithNoIndent("{ ")
+            blockStatement.block.accept(this)
+            printer.printWithNoIndent(" }")
+        }
+
+        override fun visitParameter(parameter: JKParameter) {
+            printer.printWithNoIndent(parameter.name.value)
+        }
+
+        override fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement) {
+            ktAssignmentStatement.field.accept(this)
+            printer.printWithNoIndent(" ")
+            printer.printWithNoIndent(ktAssignmentStatement.operator.operatorText)
+            printer.printWithNoIndent(" ")
+            ktAssignmentStatement.expression.accept(this)
+        }
     }
 
     fun printCodeOut(root: JKTreeElement): String {

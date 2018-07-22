@@ -132,9 +132,9 @@ interface JKPrefixExpression : JKUnaryExpression
 interface JKPostfixExpression : JKUnaryExpression
 
 interface JKQualifiedExpression : JKExpression, JKAssignableExpression {
-    val receiver: JKExpression
-    val operator: JKQualifier
-    val selector: JKExpression
+    var receiver: JKExpression
+    var operator: JKQualifier
+    var selector: JKExpression
 }
 
 interface JKMethodCallExpression : JKExpression {
@@ -151,8 +151,8 @@ interface JKClassAccessExpression : JKExpression {
 }
 
 interface JKArrayAccessExpression : JKAssignableExpression {
-    val expression: JKExpression
-    val indexExpression: JKExpression
+    var expression: JKExpression
+    var indexExpression: JKExpression
 }
 
 interface JKParenthesizedExpression : JKExpression {

@@ -109,12 +109,20 @@ class JKKtOperatorImpl private constructor(val token: KtSingleValueToken) : JKOp
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.LT]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.LT]!!
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.LE]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.LTEQ]!!
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.PERC]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.PERC]!!
+
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.EQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.EQ]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.PLUSEQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.PLUSEQ]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.MINUSEQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.MINUSEQ]!!
+
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.AND]!!] = JKKtWordOperatorImpl("and")
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.OR]!!] = JKKtWordOperatorImpl("or")
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.XOR]!!] = JKKtWordOperatorImpl("xor")
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GTGTGT]!!] = JKKtWordOperatorImpl("ushr")
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GTGT]!!] = JKKtWordOperatorImpl("shr")
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.LTLT]!!] = JKKtWordOperatorImpl("shl")
+
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.OREQ]!!] = JKKtWordOperatorImpl("or")
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.ANDEQ]!!] = JKKtWordOperatorImpl("and")
             }
         }
     }

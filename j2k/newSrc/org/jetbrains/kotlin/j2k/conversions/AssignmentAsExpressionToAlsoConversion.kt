@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class AssignmentAsExpressionToAlsoConversion(val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -19,18 +20,21 @@ class AssignmentAsExpressionToAlsoConversion(val context: ConversionContext) : R
         ) as JKMethodSymbol
 
         val alsoExpression = JKKtAlsoCallExpressionImpl(
-            JKKtAssignmentStatementImpl(element.field, JKStubExpressionImpl(), element.operator), alsoSymbol
+            JKBlockStatementImpl(
+                JKBlockImpl(listOf(JKKtAssignmentStatementImpl(element.field, JKStubExpressionImpl(), element.operator)))
+            ), alsoSymbol
         ).also {
-            (it.statement as JKKtAssignmentStatement).expression =
+            it.statement.cast<JKBlockStatement>().block.statements.first().cast<JKKtAssignmentStatement>().expression =
                     JKKtFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it.parameter))
         }
         element.invalidate()
 
-        return JKQualifiedExpressionImpl(
-            element.expression,
-            JKKtQualifierImpl.DOT,
-            alsoExpression
+        return recurse(
+            JKQualifiedExpressionImpl(
+                element.expression,
+                JKKtQualifierImpl.DOT,
+                alsoExpression
+            )
         )
-
     }
 }

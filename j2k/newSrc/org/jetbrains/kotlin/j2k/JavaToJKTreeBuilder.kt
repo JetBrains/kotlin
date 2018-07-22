@@ -227,7 +227,6 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 else -> throw Exception("Invalid PSI")
             }
         }
-
     }
 
     private inner class DeclarationMapper(val expressionTreeMapper: ExpressionTreeMapper) {
