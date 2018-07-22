@@ -48,6 +48,8 @@ class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKEle
 class JKModifierListImpl(
     modifiers: List<JKModifier> = emptyList()
 ) : JKModifierList, JKBranchElementBase() {
+    constructor(vararg modifiers: JKModifier) : this(modifiers.asList())
+
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitModifierList(this, data)
 
     override var modifiers: List<JKModifier> by children(modifiers)
