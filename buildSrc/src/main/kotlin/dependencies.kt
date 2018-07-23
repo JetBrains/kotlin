@@ -11,6 +11,10 @@ import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
+fun Project.isKotlinNativeEnabled(): Boolean {
+    return rootProject.hasProperty("kotlinNativeEnabled") &&
+            rootProject.property("kotlinNativeEnabled") == "true"
+}
 
 fun Project.commonDep(coord: String): String {
     val parts = coord.split(':')
@@ -57,7 +61,13 @@ fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: 
 
 fun Project.kotlinDep(artifactBaseName: String, version: String): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:$version"
 
-fun DependencyHandler.projectDist(name: String): ProjectDependency = project(name, configuration = "distJar").apply { isTransitive = false }
+fun DependencyHandler.projectDist(name: String): ProjectDependency {
+    if (false) {
+        return project(name, configuration = "distJar").apply { isTransitive = false }
+    } else {
+        return project(name)
+    }
+}
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
 fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")
 fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
