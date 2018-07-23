@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 %{
     private static final class State {
         final int lBraceCount;
+        final int ltCount;
         final int state;
 
-        public State(int state, int lBraceCount) {
+        public State(int state, int lBraceCount, int ltCount) {
             this.state = state;
             this.lBraceCount = lBraceCount;
+            this.ltCount = ltCount;
         }
 
         @Override
@@ -32,19 +34,22 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 
     private final Stack<State> states = new Stack<State>();
     private int lBraceCount;
+    private int ltCount;
 
     private int commentStart;
     private int commentDepth;
 
     private void pushState(int state) {
-        states.push(new State(yystate(), lBraceCount));
+        states.push(new State(yystate(), lBraceCount, ltCount));
         lBraceCount = 0;
+        ltCount = 0;
         yybegin(state);
     }
 
     private void popState() {
         State state = states.pop();
         lBraceCount = state.lBraceCount;
+        ltCount = state.ltCount;
         yybegin(state.state);
     }
 
@@ -291,9 +296,6 @@ LONELY_BACKTICK=`
 "&"          { return KtTokens.AMP       ; }
 "|"          { return KtTokens.PIPE      ; }
 "^"          { return KtTokens.CARET     ; }
-"<<"         { return KtTokens.LTLT      ; }
-">>"         { return KtTokens.GTGT      ; }
-">>>"        { return KtTokens.GTGTGT    ; }
 "&="         { return KtTokens.AMPEQ     ; }
 "|="         { return KtTokens.PIPEEQ    ; }
 "^="         { return KtTokens.CARETEQ   ; }
@@ -322,8 +324,29 @@ LONELY_BACKTICK=`
 "!"          { return KtTokens.EXCL      ; }
 "/"          { return KtTokens.DIV       ; }
 "%"          { return KtTokens.PERC      ; }
-"<"          { return KtTokens.LT        ; }
-">"          { return KtTokens.GT        ; }
+"<"          { ltCount++; return KtTokens.LT        ; }
+">"          { ltCount--; return KtTokens.GT        ; }
+"<<"         { return KtTokens.LTLT      ; }
+">>" {
+          if(ltCount >= 2) {
+              ltCount--;
+              yypushback(1);
+              return KtTokens.GT;
+          } else {
+              return KtTokens.GTGT;
+
+          }
+      }
+">>>" {
+          if(ltCount >= 3) {
+              ltCount--;
+              yypushback(2);
+              return KtTokens.GT;
+          } else {
+              return KtTokens.GTGTGT;
+          }
+      }
+//">>>"        { return KtTokens.GTGTGT    ; }
 "?"          { return KtTokens.QUEST     ; }
 ":"          { return KtTokens.COLON     ; }
 ";;"          { return KtTokens.DOUBLE_SEMICOLON;}
