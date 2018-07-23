@@ -27,7 +27,7 @@ abstract class MyScriptWithMavenDeps {
 //    abstract fun body(vararg args: String): Int
 }
 
-object MyScriptProperties : ScriptingProperties() {
+class MyScriptProperties : ScriptingProperties() {
     override fun setup() {
         scriptDefinition {
             defaultImports<DependsOn>()

@@ -61,7 +61,7 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
     }
 
     fun scriptingPropsInstance(kclass: KClass<out ScriptingProperties>): ScriptingProperties = try {
-        kclass.objectInstance ?: kclass.createInstance().also { it.setup() }
+        kclass.objectInstance ?: kclass.createInstance().also { it.setupOnce() }
     } catch (e: Throwable) {
         throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
     }

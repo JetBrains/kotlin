@@ -33,7 +33,12 @@ open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
 
     init {
         body()
-        setup() // TODO: does it work?
+        setupOnce() // TODO: does it work?
+    }
+
+    private var isSetUp = false
+    fun setupOnce() {
+        if (!isSetUp) setup()
     }
 
     open fun setup() {}
@@ -78,7 +83,7 @@ open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
     // inclusion:
 
     fun include(props: ScriptingProperties) {
-        props.setup()
+        props.setupOnce()
         data.putAll(props.data)
     }
 
