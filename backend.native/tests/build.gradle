@@ -2913,6 +2913,20 @@ if (isMac() && project.testTarget != 'wasm32') {
     }
 }
 
+task buildKonanRegexTests(type: BuildKonanTest) {
+    outputSourceSetName = "testOutputStdlib"
+    compileList = [ "harmony_regex" ]
+}
+
+task runKonanRegexTests(type: RunKonanTest) {
+    dependsOn('buildKonanRegexTests')
+    outputSourceSetName = "testOutputStdlib"
+    // runs all tests and hence source name should be not null
+    source = "harmony_regex/ModeTest.kt"
+    useFilter = false
+    runnerLogger = RunKonanTest.Logger.GTEST
+}
+
 task buildKonanStdlibTests(type: BuildKonanTest) {
     outputSourceSetName = "testOutputStdlib"
     compileList = [ "stdlib_external", "testUtils.kt" ]
