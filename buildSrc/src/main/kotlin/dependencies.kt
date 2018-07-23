@@ -11,6 +11,10 @@ import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
+fun Project.isKotlinNativeEnabled(): Boolean {
+    return rootProject.hasProperty("kotlinNativeEnabled") &&
+            rootProject.property("kotlinNativeEnabled") == "true"
+}
 
 fun Project.commonDep(coord: String): String {
     val parts = coord.split(':')

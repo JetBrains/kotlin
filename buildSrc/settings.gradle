@@ -1,3 +1,9 @@
 
 include "prepare-deps:android-dx",
         "prepare-deps:intellij-sdk"
+
+include 'shared'
+include 'plugins'
+
+project(':shared').projectDir = file("../kotlin-native/buildSrc/shared")
+project(':plugins').projectDir = file("../kotlin-native/buildSrc/plugins")
