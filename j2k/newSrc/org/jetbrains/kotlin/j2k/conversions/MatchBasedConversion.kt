@@ -10,16 +10,16 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKBranchElementBase
 
 abstract class MatchBasedConversion : BaseConversion() {
 
-    fun applyRecursive(element: JKTreeElement, func: (JKTreeElement) -> JKTreeElement): JKTreeElement {
+    fun <T> applyRecursive(element: JKTreeElement, data: T, func: (JKTreeElement, T) -> JKTreeElement): JKTreeElement {
         if (element is JKBranchElementBase) {
             val iter = element.children.listIterator()
             while (iter.hasNext()) {
                 val child = iter.next()
 
                 if (child is List<*>) {
-                    iter.set(applyRecursiveToList(element, child as List<JKTreeElement>, iter, func))
+                    iter.set(applyRecursiveToList(element, child as List<JKTreeElement>, iter, data, func))
                 } else if (child is JKTreeElement) {
-                    val newChild = func(child)
+                    val newChild = func(child, data)
                     if (child !== newChild) {
                         child.detach(element)
                         iter.set(newChild)
@@ -34,15 +34,20 @@ abstract class MatchBasedConversion : BaseConversion() {
         return element
     }
 
-    private inline fun applyRecursiveToList(
+    inline fun applyRecursive(element: JKTreeElement, crossinline func: (JKTreeElement) -> JKTreeElement): JKTreeElement {
+        return applyRecursive(element, null) { it, _ -> func(it) }
+    }
+
+    private inline fun <T> applyRecursiveToList(
         element: JKTreeElement,
         child: List<JKTreeElement>,
         iter: MutableListIterator<Any>,
-        func: (JKTreeElement) -> JKTreeElement
+        data: T,
+        func: (JKTreeElement, T) -> JKTreeElement
     ): List<JKTreeElement> {
 
         val newChild = child.map {
-            func(it)
+            func(it, data)
         }
 
         child.forEach { it.detach(element) }
