@@ -5525,6 +5525,84 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/suspiciousCollectionReassignment")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SuspiciousCollectionReassignment extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSuspiciousCollectionReassignment() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/suspiciousCollectionReassignment"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("int.kt")
+        public void testInt() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/int.kt");
+        }
+
+        @TestMetadata("listMinusEqual.kt")
+        public void testListMinusEqual() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/listMinusEqual.kt");
+        }
+
+        @TestMetadata("listPlusEqual.kt")
+        public void testListPlusEqual() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/listPlusEqual.kt");
+        }
+
+        @TestMetadata("mapMinusEqual.kt")
+        public void testMapMinusEqual() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/mapMinusEqual.kt");
+        }
+
+        @TestMetadata("mapPlusEqual.kt")
+        public void testMapPlusEqual() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/mapPlusEqual.kt");
+        }
+
+        @TestMetadata("minus.kt")
+        public void testMinus() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/minus.kt");
+        }
+
+        @TestMetadata("mutableList.kt")
+        public void testMutableList() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/mutableList.kt");
+        }
+
+        @TestMetadata("mutableMap.kt")
+        public void testMutableMap() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/mutableMap.kt");
+        }
+
+        @TestMetadata("mutableSet.kt")
+        public void testMutableSet() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/mutableSet.kt");
+        }
+
+        @TestMetadata("plus.kt")
+        public void testPlus() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/plus.kt");
+        }
+
+        @TestMetadata("setMinusEqual.kt")
+        public void testSetMinusEqual() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/setMinusEqual.kt");
+        }
+
+        @TestMetadata("setPlusEqual.kt")
+        public void testSetPlusEqual() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/setPlusEqual.kt");
+        }
+
+        @TestMetadata("val.kt")
+        public void testVal() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/val.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/unnecessaryVariable")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
