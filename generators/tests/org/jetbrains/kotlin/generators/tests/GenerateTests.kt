@@ -390,7 +390,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractQuickDocProviderTest> {
-            model("editor/quickDoc", pattern = """^([^_]+)\.[^\.]*$""")
+            model("editor/quickDoc", pattern = """^([^_]+)\.(kt|java)$""")
         }
 
         testClass<AbstractSafeDeleteTest> {
