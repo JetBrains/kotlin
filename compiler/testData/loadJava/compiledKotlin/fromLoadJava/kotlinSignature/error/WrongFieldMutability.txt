@@ -2,7 +2,7 @@ package test
 
 public open class WrongFieldMutability {
     /*primary*/ public constructor WrongFieldMutability()
-    public final val fooFinal: kotlin.String? = "Test"
+    public final val fooFinal: kotlin.String?
         public final fun <get-fooFinal>(): kotlin.String?
     public final var fooNotFinal: kotlin.String?
         public final fun <get-fooNotFinal>(): kotlin.String?
