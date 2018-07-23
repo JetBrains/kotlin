@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 
-package kotlinx.coroutines
+package kotlinx.coroutines.experimental
 
 interface Deferred<T> {
     suspend fun await(): T
@@ -44,5 +44,5 @@ suspend fun <T> withContext(
 }
 
 suspend fun test(ctx: CoroutineContext) {
-    withContext(ctx, CoroutineStart.LAZY) { 42 }
+    <caret>async(ctx) { 42 }.await()
 }

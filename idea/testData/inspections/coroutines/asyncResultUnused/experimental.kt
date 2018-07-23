@@ -1,4 +1,4 @@
-package kotlinx.coroutines
+package kotlinx.coroutines.experimental
 
 interface Deferred<T> {
     suspend fun await(): T
