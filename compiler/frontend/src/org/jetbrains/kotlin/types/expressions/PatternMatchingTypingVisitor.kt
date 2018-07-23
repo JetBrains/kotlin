@@ -154,7 +154,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         }
 
 
-        object None : Subject(null, null, null) {
+        class None : Subject(null, null, null) {
             override fun createDataFlowValue(contextAfterSubject: ExpressionTypingContext, builtIns: KotlinBuiltIns) =
                 DataFlowValue.nullValue(builtIns)
 
@@ -195,7 +195,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 )
 
             else ->
-                Subject.None
+                Subject.None()
         }
 
         val contextAfterSubject = run {
