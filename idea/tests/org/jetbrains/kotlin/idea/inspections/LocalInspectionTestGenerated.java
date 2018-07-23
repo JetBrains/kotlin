@@ -1358,6 +1358,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/coroutines/redundantAsync"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("experimental.kt")
+            public void testExperimental() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/experimental.kt");
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/simple.kt");
