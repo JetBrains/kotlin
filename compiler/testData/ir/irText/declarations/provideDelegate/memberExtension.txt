@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
       FIELD DELEGATE name:plusK$delegate type:Host.StringDelegate visibility:private flags:final
         EXPRESSION_BODY
           CALL 'provideDelegate(Any?, Any) on String: Host.StringDelegate' type=Host.StringDelegate origin=null
-            $this: GET_OBJECT 'Host' type=Host
+            $this: GET_VAR 'this@Host: Host' type=Host origin=null
             $receiver: CONST String type=kotlin.String value=K
             host: GET_VAR 'this@Host: Host' type=Host origin=null
             p: PROPERTY_REFERENCE 'plusK: String on String' field=null getter='<get-plusK>() on String: String' setter=null type=kotlin.reflect.KProperty2<kotlin.String, Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
       FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           CALL '<get-plusK>() on String: String' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_OBJECT 'Host' type=Host
+            $this: GET_VAR 'this@Host: Host' type=Host origin=null
             $receiver: CONST String type=kotlin.String value=O
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> ($this:Host) returnType:kotlin.String flags:
         correspondingProperty: PROPERTY name:ok visibility:public modality:FINAL flags:val
@@ -100,4 +100,3 @@ FILE fqName:<root> fileName:/memberExtension.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-

@@ -124,7 +124,7 @@ private fun StatementGenerator.shouldGenerateReceiverAsSingletonReference(receiv
     val scopeOwner = this.scopeOwner
     return receiverClassDescriptor.kind.isSingleton &&
             scopeOwner != receiverClassDescriptor && // For anonymous initializers
-            !(scopeOwner is FunctionDescriptor && scopeOwner.containingDeclaration == receiverClassDescriptor) // Methods of object
+            !(scopeOwner is CallableMemberDescriptor && scopeOwner.containingDeclaration == receiverClassDescriptor) // Members of object
 }
 
 private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverValue, classDescriptor: ClassDescriptor): IrExpression {

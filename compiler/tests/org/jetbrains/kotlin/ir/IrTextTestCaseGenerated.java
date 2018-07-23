@@ -977,6 +977,16 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/objectReference.kt");
         }
 
+        @TestMetadata("objectReferenceInClosureInSuperConstructorCall.kt")
+        public void testObjectReferenceInClosureInSuperConstructorCall() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/objectReferenceInClosureInSuperConstructorCall.kt");
+        }
+
+        @TestMetadata("objectReferenceInFieldInitializer.kt")
+        public void testObjectReferenceInFieldInitializer() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/objectReferenceInFieldInitializer.kt");
+        }
+
         @TestMetadata("outerClassInstanceReference.kt")
         public void testOuterClassInstanceReference() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/outerClassInstanceReference.kt");
