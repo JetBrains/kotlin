@@ -16,27 +16,4 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.j2k.IdeaNewJavaToKotlinServices
-import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
-import org.jetbrains.kotlin.psi.KtPsiFactory
-
-abstract class AbstractNewJavaToKotlinConverterNewSingleFileTest : AbstractJavaToKotlinConverterSingleFileTest() {
-
-    override fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val file = createJavaFile(text)
-        val factory = KtPsiFactory(project, true)
-        val postProcessor = J2kPostProcessor(true)
-
-
-        return NewJavaToKotlinConverter(project, settings, IdeaNewJavaToKotlinServices).filesToKotlin(listOf(file)).map {
-            factory.createFileWithLightClassSupport("Dummy.kt", it, file)
-        }.map {
-            CommandProcessor.getInstance().runUndoTransparentAction {
-                postProcessor.doAdditionalProcessing(it, null)
-            }
-            it.text
-        }.single()
-    }
-}
+abstract class AbstractNewJavaToKotlinConverterNewSingleFileTest : AbstractNewJavaToKotlinConverterSingleFileTest()
