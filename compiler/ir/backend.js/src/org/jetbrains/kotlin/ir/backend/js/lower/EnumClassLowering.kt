@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -64,6 +65,9 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
         // Pass these parameters to delegating constructor calls
         lowerEnumConstructorsBody()
 
+        // The first step creates a new `IrConstructor` with new `IrValueParameter`s so references to old `IrValueParameter`s must be replaced with new ones.
+        fixReferencesToConstructorParameters()
+
         // Create instance variable for each enum entry initialized with `null`
         val entryInstances = createEnumEntryInstanceVariables()
 
@@ -93,6 +97,29 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
         replaceIrEntriesWithCorrespondingClasses()
 
         return listOf(irClass) + entryInstances + listOf(entryInstancesInitializedVar, initEntryInstancesFun) + entryGetInstanceFuns
+    }
+
+    private fun fixReferencesToConstructorParameters() {
+        val fromOldToNewParameter = mutableMapOf<IrValueParameterSymbol, IrValueParameter>()
+
+        loweredEnumConstructors.forEach { (oldCtorSymbol, newCtor) ->
+            val oldParameters = oldCtorSymbol.owner.valueParameters
+            val newParameters = newCtor.valueParameters
+
+            oldParameters.forEach { old ->
+                fromOldToNewParameter[old.symbol] = newParameters.single { it.name == old.name }
+            }
+        }
+
+        irClass.transformChildrenVoid(object: IrElementTransformerVoid() {
+            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                fromOldToNewParameter[expression.symbol]?.let {
+                    return builder.irGet(it)
+                }
+
+                return super.visitGetValue(expression)
+            }
+        })
     }
 
     private fun createEnumValueOfBody(): IrBody {

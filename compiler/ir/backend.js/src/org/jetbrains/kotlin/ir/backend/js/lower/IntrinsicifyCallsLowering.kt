@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.utils.isNullable
 import org.jetbrains.kotlin.backend.common.utils.isSubtypeOf
 import org.jetbrains.kotlin.backend.common.utils.isSubtypeOfClass
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.ConversionNames
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
-import org.jetbrains.kotlin.ir.backend.js.utils.isFakeOverriddenFromAny
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -23,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.isNullConst
@@ -261,6 +260,22 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
                 if (call is IrCall) {
                     val symbol = call.symbol
+
+                    if (symbol.isEffectivelyExternal()) {
+                        when (call.origin) {
+                            IrStatementOrigin.GET_PROPERTY -> {
+                                val fieldSymbol = IrFieldSymbolImpl((symbol.descriptor as PropertyAccessorDescriptor).correspondingProperty)
+                                return JsIrBuilder.buildGetField(fieldSymbol, call.dispatchReceiver, type = call.type)
+                            }
+
+                            // assignment to a property
+                            IrStatementOrigin.EQ -> {
+                                val fieldSymbol = IrFieldSymbolImpl((symbol.descriptor as PropertyAccessorDescriptor).correspondingProperty)
+                                return JsIrBuilder.buildSetField(fieldSymbol, call.dispatchReceiver, call.getValueArgument(0)!!, call.type)
+
+                            }
+                        }
+                    }
 
                     symbolToTransformer[symbol]?.let {
                         return it(call)
