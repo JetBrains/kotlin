@@ -34,9 +34,13 @@ object MyScriptProperties : ScriptingProperties() {
                 "scripting-jvm-maven-deps", // script library jar name
                 "kotlin-script-util" // DependsOn annotation is taken from script-util
             )
+            // variant: dependencies(collectDependenciesFromCurrentContext(...
             refineConfiguration {
+            // variant ^: dynamicConfiguration
                 handler(MyConfigurator())
-                onAnnotations(DependsOn::class, Repository::class)
+                triggerOnAnnotations(DependsOn::class, Repository::class)
+                // variants: onAnnotations, refineOnAnnotations (esp. for dynamicConfiguration), updateOnAnnotations
+                // other triggers: beforeParsing, onSections
             }
         }
     }

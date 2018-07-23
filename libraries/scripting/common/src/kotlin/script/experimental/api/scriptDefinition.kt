@@ -69,31 +69,31 @@ class RefineConfigurationBuilder(props: ScriptingProperties) : PropertiesBuilder
         props.data[ScriptDefinitionProperties.refineConfigurationHandler] = fn
     }
 
-    fun beforeParsing(value: Boolean = true) {
+    fun triggerBeforeParsing(value: Boolean = true) {
         props.data[ScriptDefinitionProperties.refineConfigurationBeforeParsing] = value
     }
 
-    fun onAnnotations(annotations: Iterable<KotlinType>) {
+    fun triggerOnAnnotations(annotations: Iterable<KotlinType>) {
         props.data.addToListProperty(ScriptDefinitionProperties.refineConfigurationOnAnnotations, annotations)
     }
 
-    fun onAnnotations(vararg annotations: KotlinType) {
-        onAnnotations(annotations.asIterable())
+    fun triggerOnAnnotations(vararg annotations: KotlinType) {
+        triggerOnAnnotations(annotations.asIterable())
     }
 
-    inline fun <reified T : Annotation> onAnnotations() {
-        onAnnotations(KotlinType(T::class))
+    inline fun <reified T : Annotation> triggerOnAnnotations() {
+        triggerOnAnnotations(KotlinType(T::class))
     }
 
-    fun onAnnotations(vararg annotations: KClass<out Annotation>) {
-        onAnnotations(annotations.map { KotlinType(it) })
+    fun triggerOnAnnotations(vararg annotations: KClass<out Annotation>) {
+        triggerOnAnnotations(annotations.map { KotlinType(it) })
     }
 
-    fun onSections(sections: Iterable<String>) {
+    fun triggerOnSections(sections: Iterable<String>) {
         props.data.addToListProperty(ScriptDefinitionProperties.refineConfigurationOnSections, sections)
     }
 
-    fun onSections(vararg sections: String) {
+    fun triggerOnSections(vararg sections: String) {
         props.data.addToListProperty(ScriptDefinitionProperties.refineConfigurationOnSections, *sections)
     }
 }
