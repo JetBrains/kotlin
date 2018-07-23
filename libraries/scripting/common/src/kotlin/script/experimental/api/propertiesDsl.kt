@@ -33,6 +33,8 @@ open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
         body()
     }
 
+    open fun setup() {}
+
     internal fun makePropertyBag(): ChainedPropertyBag =
         ChainedPropertyBag.createOptimized(parentPropertiesBag ?: parentPropertiesBuilder?.makePropertyBag(), data)
 
