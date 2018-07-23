@@ -10,25 +10,16 @@ import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.definitions.createScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvm.DummyCompiledJvmScriptCache
-import kotlin.script.experimental.jvm.JvmBasicScriptingHost
-import kotlin.script.experimental.jvm.JvmGetScriptingClass
-import kotlin.script.experimental.jvm.JvmScriptCompiler
-import kotlin.script.experimental.jvm.runners.BasicJvmScriptEvaluator
-import kotlin.script.experimental.jvmhost.impl.KJVMCompilerImpl
-import kotlin.script.experimental.misc.invoke
+import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
+import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
-    val environment = ScriptingEnvironment(
-        ScriptingEnvironmentProperties.getScriptingClass(JvmGetScriptingClass())
-    )
-    val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(environment), DummyCompiledJvmScriptCache())
     val scriptDefinition = createScriptDefinitionFromAnnotatedBaseClass(
         KotlinType(MyScriptWithMavenDeps::class),
-        environment
+        defaultJvmScriptingEnvironment
     )
 
-    val host = JvmBasicScriptingHost(scriptCompiler, BasicJvmScriptEvaluator())
+    val host = BasicJvmScriptingHost()
 
     return host.eval(
         scriptFile.toScriptSource(), scriptDefinition, ScriptCompileConfiguration(), ScriptEvaluationEnvironment()

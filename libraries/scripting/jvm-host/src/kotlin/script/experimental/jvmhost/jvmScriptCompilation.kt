@@ -1,18 +1,31 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("unused")
 
-package kotlin.script.experimental.jvm
+package kotlin.script.experimental.jvmhost
 
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
+import kotlin.script.experimental.jvmhost.impl.KJvmCompilerImpl
 import kotlin.script.experimental.util.chainPropertyBags
 
+interface CompiledJvmScriptsCache {
+    fun get(script: ScriptSource, configuration: ScriptCompileConfiguration): CompiledScript<*>?
+    fun store(compiledScript: CompiledScript<*>, configuration: ScriptCompileConfiguration)
+
+    object NoCache : CompiledJvmScriptsCache {
+        override fun get(script: ScriptSource, configuration: ScriptCompileConfiguration): CompiledScript<*>? = null
+        override fun store(compiledScript: CompiledScript<*>, configuration: ScriptCompileConfiguration) {}
+    }
+}
+
 open class JvmScriptCompiler(
-    val compilerProxy: KJVMCompilerProxy,
-    val cache: CompiledJvmScriptsCache
+    hostEnvironment: ScriptingEnvironment = defaultJvmScriptingEnvironment,
+    val compilerProxy: KJvmCompilerProxy = KJvmCompilerImpl(hostEnvironment.cloneWithNewParent(defaultJvmScriptingEnvironment)),
+    val cache: CompiledJvmScriptsCache = CompiledJvmScriptsCache.NoCache
 ) : ScriptCompiler {
 
     override suspend operator fun invoke(
@@ -48,21 +61,11 @@ open class JvmScriptCompiler(
     }
 }
 
-interface CompiledJvmScriptsCache {
-    fun get(script: ScriptSource, configuration: ScriptCompileConfiguration): CompiledScript<*>?
-    fun store(compiledScript: CompiledScript<*>, configuration: ScriptCompileConfiguration)
-}
-
-interface KJVMCompilerProxy {
+interface KJvmCompilerProxy {
     fun compile(
         script: ScriptSource,
         scriptDefinition: ScriptDefinition,
         additionalConfiguration: ScriptCompileConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>>
-}
-
-class DummyCompiledJvmScriptCache : CompiledJvmScriptsCache {
-    override fun get(script: ScriptSource, configuration: ScriptCompileConfiguration): CompiledScript<*>? = null
-    override fun store(compiledScript: CompiledScript<*>, configuration: ScriptCompileConfiguration) {}
 }
 

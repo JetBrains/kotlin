@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,8 +16,8 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.ScriptReport
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.mapToLegacyScriptReportPosition
-import kotlin.script.experimental.jvm.mapToLegacyScriptReportSeverity
+import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportPosition
+import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportSeverity
 
 class BridgeDependenciesResolver(
     val scriptDefinition: ScriptDefinition,

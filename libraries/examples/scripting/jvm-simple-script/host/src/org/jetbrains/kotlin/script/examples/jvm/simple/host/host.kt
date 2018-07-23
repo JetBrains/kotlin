@@ -6,36 +6,29 @@
 package org.jetbrains.kotlin.script.examples.jvm.simple.host
 
 import org.jetbrains.kotlin.script.examples.jvm.simple.MyScript
-import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.definitions.createScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvm.*
-import kotlin.script.experimental.jvm.runners.BasicJvmScriptEvaluator
-import kotlin.script.experimental.jvmhost.impl.KJVMCompilerImpl
-import kotlin.script.experimental.misc.invoke
-
-val myJvmConfigParams = jvmJavaHomeParams + with(ScriptDefinitionProperties) {
-    listOf(
-        dependencies(JvmDependency(scriptCompilationClasspathFromContext("scripting-jvm-simple-script" /* script library jar name */)))
-    )
-}
+import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
+import kotlin.script.experimental.jvm.jvmDependenciesFromCurrentContext
+import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
-    val environment = ScriptingEnvironment(
-        ScriptingEnvironmentProperties.getScriptingClass(JvmGetScriptingClass())
-    )
-    val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(environment), DummyCompiledJvmScriptCache())
     val scriptDefinition = createScriptDefinitionFromAnnotatedBaseClass(
         KotlinType(MyScript::class),
-        environment
+        defaultJvmScriptingEnvironment
     )
+    val additionalCompilationProperties = buildScriptingProperties {
+        jvmDependenciesFromCurrentContext(
+            "scripting-jvm-simple-script" /* script library jar name */
+        )
+    }
 
-    val host = JvmBasicScriptingHost(scriptCompiler, BasicJvmScriptEvaluator())
+    val host = BasicJvmScriptingHost()
 
     return host.eval(
-        scriptFile.toScriptSource(), scriptDefinition, ScriptCompileConfiguration(myJvmConfigParams), ScriptEvaluationEnvironment()
+        scriptFile.toScriptSource(), scriptDefinition, additionalCompilationProperties, ScriptEvaluationEnvironment()
     )
 }
 

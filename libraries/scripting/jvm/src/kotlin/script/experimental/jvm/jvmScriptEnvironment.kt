@@ -9,6 +9,15 @@ import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 
+private object DefaultJvmScriptingEnvironmentPropertiesBuilder : ScriptingProperties() {
+    init {
+        ScriptingEnvironmentProperties.getScriptingClass(JvmGetScriptingClass())
+    }
+}
+
+val defaultJvmScriptingEnvironment = DefaultJvmScriptingEnvironmentPropertiesBuilder.build()
+
+
 class JvmGetScriptingClass : GetScriptingClass {
 
     private var dependencies: List<ScriptDependency>? = null

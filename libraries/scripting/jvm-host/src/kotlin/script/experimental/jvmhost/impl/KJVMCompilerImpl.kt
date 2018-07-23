@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 package kotlin.script.experimental.jvmhost.impl
@@ -41,12 +41,12 @@ import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.JvmScriptCompileConfigurationProperties
-import kotlin.script.experimental.jvm.JvmScriptEvaluationEnvironmentProperties
-import kotlin.script.experimental.jvm.KJVMCompilerProxy
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
+import kotlin.script.experimental.jvmhost.JvmScriptEvaluationEnvironmentProperties
+import kotlin.script.experimental.jvmhost.KJvmCompilerProxy
 import kotlin.script.experimental.util.chainPropertyBags
 
-class KJVMCompiledScript<out ScriptBase : Any>(
+class KJvmCompiledScript<out ScriptBase : Any>(
     override val configuration: ScriptCompileConfiguration,
     val generationState: GenerationState,
     val scriptClassFQName: String
@@ -70,7 +70,7 @@ class KJVMCompiledScript<out ScriptBase : Any>(
     }
 }
 
-class KJVMCompilerImpl(val hostEnvironment: ScriptingEnvironment) : KJVMCompilerProxy {
+class KJvmCompilerImpl(val hostEnvironment: ScriptingEnvironment) : KJvmCompilerProxy {
 
     override fun compile(
         script: ScriptSource,
@@ -192,7 +192,7 @@ class KJVMCompilerImpl(val hostEnvironment: ScriptingEnvironment) : KJVMCompiler
                 org.jetbrains.kotlin.codegen.CompilationErrorHandler.THROW_EXCEPTION
             )
 
-            val res = KJVMCompiledScript<Any>(updatedScriptCompileConfiguration, generationState, scriptFileName.capitalize())
+            val res = KJvmCompiledScript<Any>(updatedScriptCompileConfiguration, generationState, scriptFileName.capitalize())
 
             return ResultWithDiagnostics.Success(res, messageCollector.diagnostics)
         } catch (ex: Throwable) {

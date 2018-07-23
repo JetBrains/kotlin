@@ -6,9 +6,15 @@
 package kotlin.script.experimental.jvm
 
 import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
+import java.io.File
 import kotlin.script.experimental.api.ScriptDefinitionProperties
+import kotlin.script.experimental.api.ScriptDependency
 import kotlin.script.experimental.api.ScriptingProperties
 import kotlin.script.experimental.api.addToListProperty
+
+class JvmDependency(val classpath: List<File>) : ScriptDependency {
+    constructor(vararg classpathEntries: File) : this(classpathEntries.asList())
+}
 
 fun ScriptingProperties.jvmDependenciesFromCurrentContext(vararg libraries: String, wholeClasspath: Boolean = false) {
     jvmDependenciesFromClassloader(*libraries, wholeClasspath = wholeClasspath)

@@ -26,6 +26,7 @@ open class ChainedPropertyBag internal constructor(private val parent: ChainedPr
     constructor(vararg pairs: Pair<TypedKey<*>, Any?>) : this(null, pairs.asIterable())
 
     fun cloneWithNewParent(newParent: ChainedPropertyBag?): ChainedPropertyBag = when {
+        this == newParent -> this
         newParent == null -> this
         parent == null -> createOptimized(newParent, data)
         else -> createOptimized(parent.cloneWithNewParent(newParent), data)

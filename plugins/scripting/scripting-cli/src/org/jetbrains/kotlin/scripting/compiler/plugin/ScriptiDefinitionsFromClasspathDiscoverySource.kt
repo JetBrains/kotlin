@@ -18,10 +18,8 @@ import java.util.jar.JarFile
 import kotlin.coroutines.experimental.buildSequence
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.KotlinType
-import kotlin.script.experimental.api.ScriptingEnvironment
-import kotlin.script.experimental.api.ScriptingEnvironmentProperties
 import kotlin.script.experimental.definitions.createScriptDefinitionFromAnnotatedBaseClass
-import kotlin.script.experimental.jvm.JvmGetScriptingClass
+import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
 import kotlin.script.templates.ScriptTemplateDefinition
 
 internal const val SCRIPT_DEFINITION_MARKERS_PATH = "META-INF/kotlin/script/templates/"
@@ -274,9 +272,7 @@ private fun loadScriptDefinition(
         val cls = classLoader.loadClass(template)
         val def =
             if (cls.annotations.firstIsInstanceOrNull<KotlinScript>() != null) {
-                val environment = ScriptingEnvironment(
-                    ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
-                )
+                val environment = defaultJvmScriptingEnvironment
                 KotlinScriptDefinitionAdapterFromNewAPI(
                     createScriptDefinitionFromAnnotatedBaseClass(
                         KotlinType(cls.kotlin),

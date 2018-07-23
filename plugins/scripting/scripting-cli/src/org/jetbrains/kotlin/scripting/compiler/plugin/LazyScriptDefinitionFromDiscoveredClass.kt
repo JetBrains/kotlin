@@ -18,7 +18,7 @@ import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.definitions.createScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.JvmGetScriptingClass
+import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
 
 class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     private val annotationsFromAsm: ArrayList<BinAnnData>,
@@ -36,8 +36,8 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
 
     override val hostEnvironment: ScriptingEnvironment by lazy(LazyThreadSafetyMode.PUBLICATION) {
         ScriptingEnvironment(
-            ScriptingEnvironmentProperties.configurationDependencies to listOf(JvmDependency(classpath)),
-            ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
+            defaultJvmScriptingEnvironment,
+            ScriptingEnvironmentProperties.configurationDependencies to listOf(JvmDependency(classpath))
         )
     }
 

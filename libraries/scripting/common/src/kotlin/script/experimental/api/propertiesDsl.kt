@@ -22,6 +22,8 @@ class PropertiesBuilderDelegate<T: PropertiesBuilder>(val kclass: KClass<T>) {
 
 inline fun <reified T : PropertiesBuilder> propertiesBuilder() = PropertiesBuilderDelegate(T::class)
 
+fun buildScriptingProperties(body: ScriptingProperties.() -> Unit): ChainedPropertyBag =
+    ScriptingProperties(body).build()
 
 open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
 
@@ -31,12 +33,13 @@ open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
 
     init {
         body()
+        setup() // TODO: does it work?
     }
 
     open fun setup() {}
 
-    internal fun makePropertyBag(): ChainedPropertyBag =
-        ChainedPropertyBag.createOptimized(parentPropertiesBag ?: parentPropertiesBuilder?.makePropertyBag(), data)
+    fun build(): ChainedPropertyBag =
+        ChainedPropertyBag.createOptimized(parentPropertiesBag ?: parentPropertiesBuilder?.build(), data)
 
     // --------------------------
     // DSL:
@@ -75,6 +78,7 @@ open class ScriptingProperties(body: ScriptingProperties.() -> Unit = {}) {
     // inclusion:
 
     fun include(props: ScriptingProperties) {
+        props.setup()
         data.putAll(props.data)
     }
 
