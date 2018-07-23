@@ -1,0 +1,5 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <externalAnnotator language="kotlin" implementationClass="org.jetbrains.android.inspections.lint.AndroidLintExternalAnnotator"/>
+    </extensions>
+</idea-plugin>
