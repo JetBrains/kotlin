@@ -23,6 +23,7 @@ import kotlinx.coroutines.experimental.runBlocking
 import kotlin.script.experimental.api.*
 
 abstract class BasicScriptingHost(
+    val scriptDefinition: ScriptDefinition,
     val compiler: ScriptCompiler,
     val evaluator: ScriptEvaluator
 ) {
@@ -30,7 +31,6 @@ abstract class BasicScriptingHost(
 
     open fun eval(
         script: ScriptSource,
-        scriptDefinition: ScriptDefinition,
         compileConfiguration: ScriptCompileConfiguration,
         environment: ScriptEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult> =
