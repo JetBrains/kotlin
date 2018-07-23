@@ -1,7 +1,7 @@
 public final class ClassObjectField {
     @org.jetbrains.annotations.Nullable
-    private static final java.lang.String x = "";
-    private static final java.lang.String y = "";
+    private static final java.lang.String x;
+    private static final java.lang.String y;
     public static final ClassObjectField.Companion Companion;
 
     public ClassObjectField() { /* compiled code */ }
