@@ -325,7 +325,12 @@ LONELY_BACKTICK=`
 "/"          { return KtTokens.DIV       ; }
 "%"          { return KtTokens.PERC      ; }
 "<"          { ltCount++; return KtTokens.LT        ; }
-">"          { ltCount--; return KtTokens.GT        ; }
+">"          {
+          if(ltCount > 0) {
+              ltCount--;
+          }
+          return KtTokens.GT;
+      }
 "<<"         { return KtTokens.LTLT      ; }
 ">>" {
           if(ltCount >= 2) {
