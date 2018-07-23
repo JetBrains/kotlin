@@ -328,3 +328,14 @@ class JKInheritanceInfoImpl(implements: List<JKTypeElement>) : JKInheritanceInfo
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitInheritanceInfo(this, data)
 }
+
+class JKDelegationConstructorCallImpl(
+    override val identifier: JKMethodSymbol,
+    expression: JKExpression,
+    arguments: JKExpressionList
+) : JKBranchElementBase(), JKDelegationConstructorCall {
+    override val expression: JKExpression by child(expression)
+    override val arguments: JKExpressionList by child(arguments)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitDelegationConstructorCall(this, data)
+}

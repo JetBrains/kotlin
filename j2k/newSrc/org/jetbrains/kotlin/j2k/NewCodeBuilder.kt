@@ -147,22 +147,22 @@ class NewCodeBuilder {
             printer.printlnWithNoIndent()
         }
 
+        override fun visitParameter(parameter: JKParameter) {
+            printer.printWithNoIndent(parameter.name.value, ": ")
+            parameter.type.accept(this)
+            if (parameter.initializer !is JKStubExpression) {
+                printer.printWithNoIndent(" = ")
+                parameter.initializer.accept(this)
+            }
+        }
+
         override fun visitKtFunction(ktFunction: JKKtFunction) {
             printer.printIndent()
             ktFunction.modifierList.accept(this)
             printer.printWithNoIndent(" fun ", ktFunction.name.value, "(")
-            for (parameter in ktFunction.parameters) {
-                if (parameter != ktFunction.parameters.first()) {
-                    printer.printWithNoIndent(", ")
-                }
-                printer.printWithNoIndent(parameter.name.value, ": ")
-                parameter.type.accept(this)
-                if (parameter.initializer !is JKStubExpression) {
-                    printer.printWithNoIndent(" = ")
-                    parameter.initializer.accept(this)
-                }
+            renderList(ktFunction.parameters) {
+                it.accept(this)
             }
-
             printer.printWithNoIndent(")", ": ")
             ktFunction.returnType.accept(this)
             if (ktFunction.block !== JKBodyStub) {
@@ -220,6 +220,14 @@ class NewCodeBuilder {
         override fun visitPrefixExpression(prefixExpression: JKPrefixExpression) {
             printer.printWithNoIndent(prefixExpression.operator.operatorText)
             prefixExpression.expression.accept(this)
+        }
+
+        override fun visitThisExpression(thisExpression: JKThisExpression) {
+            printer.printWithNoIndent("this")
+        }
+
+        override fun visitSuperExpression(superExpression: JKSuperExpression) {
+            printer.printWithNoIndent("super")
         }
 
         override fun visitPostfixExpression(postfixExpression: JKPostfixExpression) {
@@ -350,6 +358,31 @@ class NewCodeBuilder {
             printer.par(SQUARE) { arrayAccessExpression.indexExpression.accept(this) }
         }
 
+        override fun visitDelegationConstructorCall(delegationConstructorCall: JKDelegationConstructorCall) {
+            delegationConstructorCall.expression.accept(this)
+            printer.par {
+                delegationConstructorCall.arguments.accept(this)
+            }
+        }
+
+        override fun visitKtConstructor(ktConstructor: JKKtConstructor) {
+            printer.print("constructor")
+            printer.par(ROUND) {
+                renderList(ktConstructor.parameters) {
+                    it.accept(this)
+                }
+            }
+            if (ktConstructor.delegationCall !is JKStubExpression) {
+                builder.append(" : ")
+                ktConstructor.delegationCall.accept(this)
+            }
+            if (ktConstructor.block !== JKBodyStub) {
+                printer.block(multiline = true) {
+                    ktConstructor.block.accept(this)
+                }
+            }
+        }
+
         private inline fun Printer.indented(block: () -> Unit) {
             this.pushIndent()
             block()
@@ -383,9 +416,9 @@ class NewCodeBuilder {
             printer.printWithNoIndent(" }")
         }
 
-        override fun visitParameter(parameter: JKParameter) {
+        /*override fun visitParameter(parameter: JKParameter) {
             printer.printWithNoIndent(parameter.name.value)
-        }
+        }*/
 
         override fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement) {
             ktAssignmentStatement.field.accept(this)

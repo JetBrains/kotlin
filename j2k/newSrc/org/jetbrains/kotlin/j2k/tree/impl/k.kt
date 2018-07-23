@@ -167,3 +167,21 @@ class JKKtAssignmentStatementImpl(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAssignmentStatement(this, data)
 
 }
+
+class JKKtConstructorImpl(
+    name: JKNameIdentifier,
+    parameters: List<JKParameter>,
+    block: JKBlock,
+    modifierList: JKModifierList,
+    delegationCall: JKExpression
+) : JKBranchElementBase(), JKKtConstructor {
+    override val returnType: JKTypeElement get() = TODO("!")
+
+    override var name: JKNameIdentifier by child(name)
+    override var parameters: List<JKParameter> by children(parameters)
+    override var block: JKBlock by child(block)
+    override var modifierList: JKModifierList by child(modifierList)
+    override var delegationCall: JKExpression by child(delegationCall)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtConstructor(this, data)
+}

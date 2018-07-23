@@ -105,6 +105,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitAssignableExpression(assignableExpression: JKAssignableExpression, data: Nothing?) = visitAssignableExpression(assignableExpression)
     fun visitLambdaExpression(lambdaExpression: JKLambdaExpression) = visitExpression(lambdaExpression, null)
     override fun visitLambdaExpression(lambdaExpression: JKLambdaExpression, data: Nothing?) = visitLambdaExpression(lambdaExpression)
+    fun visitDelegationConstructorCall(delegationConstructorCall: JKDelegationConstructorCall) = visitMethodCallExpression(delegationConstructorCall, null)
+    override fun visitDelegationConstructorCall(delegationConstructorCall: JKDelegationConstructorCall, data: Nothing?) = visitDelegationConstructorCall(delegationConstructorCall)
     fun visitJavaField(javaField: JKJavaField) = visitField(javaField, null)
     override fun visitJavaField(javaField: JKJavaField, data: Nothing?) = visitJavaField(javaField)
     fun visitJavaMethod(javaMethod: JKJavaMethod) = visitMethod(javaMethod, null)
