@@ -6,5 +6,5 @@ interface Trait {
 }
 
 open class Subclass() : Trait {
-    override open val shape = "circle"
+    override open val shape = { "circle" }()
 }
