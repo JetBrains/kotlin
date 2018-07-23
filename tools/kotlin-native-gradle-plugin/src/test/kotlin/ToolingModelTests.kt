@@ -16,12 +16,19 @@
 
 package org.jetbrains.kotlin.gradle.plugin.test
 
+import org.gradle.api.internal.FeaturePreviews
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.testfixtures.ProjectBuilder
+import org.jetbrains.kotlin.gradle.plugin.KonanPlugin
+import org.jetbrains.kotlin.gradle.plugin.konanArtifactsContainer
+import org.jetbrains.kotlin.gradle.plugin.model.KonanToolingModelBuilder
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.nio.file.Paths
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 open class ToolingModelTests {
     val tmpFolder = TemporaryFolder()
@@ -29,6 +36,8 @@ open class ToolingModelTests {
 
     val projectDirectory: File
         get() = tmpFolder.root
+
+    fun String.escapeBackSlashes() = KonanProject.escapeBackSlashes(this)
 
     @Test
     fun `The model should be serialized without exceptions`() {
@@ -200,4 +209,59 @@ open class ToolingModelTests {
         }
         project.createRunner().withArguments("testModelData").build()
     }
+
+    @Test
+    fun `The model should support maven libraries`() {
+        val repoDir = projectDirectory.resolve("repo").absolutePath.escapeBackSlashes()
+        val dependency = KonanProject.createEmpty(projectDirectory).apply {
+            buildFile.appendText("""
+                group 'test'
+                version '1.0'
+
+                konanArtifacts {
+                    library('foo')
+                }
+
+                apply plugin: 'maven-publish'
+
+                publishing {
+                    repositories {
+                        maven {
+                            url = '$repoDir'
+                        }
+                    }
+                }
+            """.trimIndent())
+            propertiesFile.appendText("konan.publication.enabled=true")
+            settingsFile.appendText("enableFeaturePreview('GRADLE_METADATA')")
+            generateSrcFile("main.kt")
+        }
+        dependency.createRunner().withArguments("build", "publish").build()
+
+        val dependentDir = projectDirectory.resolve("dependent").apply {
+            mkdirs()
+        }
+
+
+        val dependnent = ProjectBuilder.builder().withProjectDir(dependentDir).build() as ProjectInternal
+
+        with(dependnent) {
+            gradle.services.get(FeaturePreviews::class.java).enableFeature(FeaturePreviews.Feature.GRADLE_METADATA)
+            pluginManager.apply(KonanPlugin::class.java)
+            konanArtifactsContainer.library("bar")
+            repositories.maven {
+                it.setUrl(repoDir)
+            }
+            dependencies.apply {
+                add("artifactbar", "test:foo:1.0")
+            }
+        }
+        val model = KonanToolingModelBuilder.buildAll("konanModel", dependnent)
+        assertEquals(1, model.artifacts.size, "Incorrect number of artifacts.")
+        val libraries = model.artifacts[0].libraries
+        assertEquals(1, libraries.size, "Incorrect number of libraries.")
+        val library = libraries[0].name
+        assertEquals("foo.klib", library, "Incorrect library name.")
+    }
+
 }

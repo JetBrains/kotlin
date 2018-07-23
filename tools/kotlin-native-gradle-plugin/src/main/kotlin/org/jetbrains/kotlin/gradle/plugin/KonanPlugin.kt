@@ -82,9 +82,8 @@ internal fun Project.konanDefaultDefFile(libName: String)
         = file("${projectDir.canonicalPath}/src/main/c_interop/$libName.def")
 
 @Suppress("UNCHECKED_CAST")
-internal val Project.konanArtifactsContainer: NamedDomainObjectContainer<KonanBuildingConfig<*>>
-    get() = extensions.getByName(KonanPlugin.ARTIFACTS_CONTAINER_NAME)
-            as NamedDomainObjectContainer<KonanBuildingConfig<*>>
+internal val Project.konanArtifactsContainer: KonanArtifactContainer
+    get() = extensions.getByName(KonanPlugin.ARTIFACTS_CONTAINER_NAME) as KonanArtifactContainer
 
 // TODO: The Kotlin/Native compiler is downloaded manually by a special task so the compilation tasks
 // are configured without the compile distribution. After target management refactoring
