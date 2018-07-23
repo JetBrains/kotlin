@@ -179,9 +179,9 @@ class JKClassTypeImpl(
 
 class JKUnresolvedClassType(
     val name: String,
-    var parameters: List<JKType>,
+    override var parameters: List<JKType>,
     override val nullability: Nullability = Nullability.Default
-) : JKType
+) : JKParametrizedType
 
 
 class JKNullLiteral : JKLiteralExpression, JKElementBase() {

@@ -295,8 +295,8 @@ class NewCodeBuilder {
             printer.printlnWithNoIndent()
         }
 
-        override fun visitTypeElement(typeElement: JKTypeElement) {
-            val type = typeElement.type
+
+        private fun renderType(type: JKType) {
             when (type) {
                 is JKClassType ->
                     (type.classReference as JKClassSymbol).fqName?.let { printer.printWithNoIndent(FqName(it).shortName().asString()) }
@@ -310,6 +310,19 @@ class NewCodeBuilder {
                 else -> {
                 }
             }
+            if (type is JKParametrizedType && type.parameters.isNotEmpty()) {
+                printer.par(ANGLE) {
+                    renderList(type.parameters) {
+                        renderType(it)
+                    }
+                }
+            }
+        }
+
+        override fun visitTypeElement(typeElement: JKTypeElement) {
+            val type = typeElement.type
+
+            renderType(type)
         }
 
         override fun visitBlock(block: JKBlock) {
@@ -384,7 +397,7 @@ class NewCodeBuilder {
     }
 
     private enum class ParenthesisKind(val open: String, val close: String) {
-        ROUND("(", ")"), SQUARE("[", "]"), CURVED("{", "}"), CURVED_MULTILINE("{\n", "}\n"), INLINE_COMMENT("/*", "*/")
+        ROUND("(", ")"), SQUARE("[", "]"), CURVED("{", "}"), CURVED_MULTILINE("{\n", "}\n"), INLINE_COMMENT("/*", "*/"), ANGLE("<", ">")
     }
 
     fun printCodeOut(root: JKTreeElement): String {
