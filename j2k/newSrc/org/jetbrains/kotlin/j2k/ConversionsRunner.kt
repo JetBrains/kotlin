@@ -32,6 +32,7 @@ object ConversionsRunner {
             AssignmentStatementOperatorConversion().runConversion(it, context)
             JavaMethodToKotlinFunctionConversion().runConversion(it, context)
             LiteralConversion().runConversion(it, context)
+            InnerClassConversion().runConversion(it, context)
             ModifiersConversion().runConversion(it, context)
             PolyadicExpressionConversion().runConversion(it, context)
             BinaryExpressionConversion().runConversion(it, context)
