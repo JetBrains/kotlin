@@ -220,7 +220,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                             nullability
                         )
                     } else {
-                        JKUnresolvedClassType(this.presentableText, parameters, nullability)
+                        JKUnresolvedClassType(this.rawType().canonicalText, parameters, nullability)
                     }
                 }
                 is PsiArrayType -> JKJavaArrayTypeImpl(componentType.toJK(), nullability)

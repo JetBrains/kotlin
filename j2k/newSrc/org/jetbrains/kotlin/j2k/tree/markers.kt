@@ -50,10 +50,13 @@ interface JKType {
     val nullability: Nullability
 }
 
-interface JKClassType : JKType {
+interface JKParametrizedType : JKType {
+    val parameters: List<JKType>
+}
+
+interface JKClassType : JKParametrizedType {
     val classReference: JKSymbol?
     override val nullability: Nullability
-    val parameters: List<JKType>
 }
 
 interface JKJavaPrimitiveType : JKType {
