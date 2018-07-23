@@ -646,17 +646,21 @@ public class KotlinTypeMapper {
         List<TypeParameterDescriptor> parameters = classDescriptor.getDeclaredTypeParameters();
         List<TypeProjection> arguments = type.getArguments();
 
-        if (classDescriptor instanceof FunctionClassDescriptor &&
-            ((FunctionClassDescriptor) classDescriptor).getFunctionKind() == FunctionClassDescriptor.Kind.KFunction) {
-            // kotlin.reflect.KFunction{n}<P1, ... Pn, R> is mapped to kotlin.reflect.KFunction<R> on JVM (see JavaToKotlinClassMap).
-            // So for these classes, we need to skip all type arguments except the very last one
-            writeGenericArguments(
-                    signatureVisitor,
-                    Collections.singletonList(CollectionsKt.last(arguments)),
-                    Collections.singletonList(CollectionsKt.last(parameters)),
-                    mode
-            );
-            return;
+        if (classDescriptor instanceof FunctionClassDescriptor) {
+            FunctionClassDescriptor functionClass = (FunctionClassDescriptor) classDescriptor;
+            if (functionClass.hasBigArity() ||
+                functionClass.getFunctionKind() == FunctionClassDescriptor.Kind.KFunction) {
+                // kotlin.reflect.KFunction{n}<P1, ..., Pn, R> is mapped to kotlin.reflect.KFunction<R> (for all n), and
+                // kotlin.Function{n}<P1, ..., Pn, R> is mapped to kotlin.jvm.functions.FunctionN<R> (for n > 22).
+                // So for these classes, we need to skip all type arguments except the very last one
+                writeGenericArguments(
+                        signatureVisitor,
+                        Collections.singletonList(CollectionsKt.last(arguments)),
+                        Collections.singletonList(CollectionsKt.last(parameters)),
+                        mode
+                );
+                return;
+            }
         }
 
         writeGenericArguments(signatureVisitor, arguments, parameters, mode);
