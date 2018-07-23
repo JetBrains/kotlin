@@ -32,6 +32,7 @@ class IrBuiltIns(
     private val typeTranslator: TypeTranslator,
     outerSymbolTable: SymbolTable? = null
 ) {
+    val languageVersionSettings = typeTranslator.languageVersionSettings
 
     private val builtInsModule = builtIns.builtInsModule
 
@@ -39,7 +40,8 @@ class IrBuiltIns(
     val irBuiltInsExternalPackageFragment = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(packageFragment))
 
     private val symbolTable = outerSymbolTable ?: SymbolTable()
-    private val stubBuilder = DeclarationStubGenerator(builtInsModule, symbolTable, IrDeclarationOrigin.IR_BUILTINS_STUB)
+    private val stubBuilder =
+        DeclarationStubGenerator(builtInsModule, symbolTable, IrDeclarationOrigin.IR_BUILTINS_STUB, languageVersionSettings)
 
     private fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)

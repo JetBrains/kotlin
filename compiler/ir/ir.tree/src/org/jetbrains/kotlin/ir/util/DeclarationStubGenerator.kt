@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -34,9 +35,10 @@ import org.jetbrains.kotlin.types.KotlinType
 class DeclarationStubGenerator(
     moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
-    val origin: IrDeclarationOrigin
+    val origin: IrDeclarationOrigin,
+    val languageVersionSettings: LanguageVersionSettings
 ) {
-    private val typeTranslator = TypeTranslator(symbolTable)
+    private val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings)
     private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
 
     init {
