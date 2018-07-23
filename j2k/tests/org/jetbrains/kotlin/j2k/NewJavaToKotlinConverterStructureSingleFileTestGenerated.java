@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("j2k/testData/fileOrElement")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNewJavaToKotlinConverterSingleFileTest {
+public class NewJavaToKotlinConverterStructureSingleFileTestGenerated extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
@@ -32,7 +32,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Annotations extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Annotations extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -135,7 +135,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/anonymousBlock")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class AnonymousBlock extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class AnonymousBlock extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -158,7 +158,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/anonymousClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class AnonymousClass extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class AnonymousClass extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -181,7 +181,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/arrayAccessExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ArrayAccessExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ArrayAccessExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -209,7 +209,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/arrayInitializerExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ArrayInitializerExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ArrayInitializerExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -282,7 +282,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/arrayType")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ArrayType extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ArrayType extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -345,7 +345,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/assertStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class AssertStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class AssertStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -383,7 +383,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/assignmentExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class AssignmentExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class AssignmentExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -486,7 +486,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/binaryExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class BinaryExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class BinaryExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -599,7 +599,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/blocks")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Blocks extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Blocks extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -617,7 +617,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/boxedType")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class BoxedType extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class BoxedType extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -685,7 +685,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/breakStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class BreakStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class BreakStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -708,7 +708,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/callChainExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class CallChainExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class CallChainExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -751,7 +751,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/class")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Class extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Class extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -939,7 +939,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/classExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ClassExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ClassExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -972,7 +972,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/comments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Comments extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Comments extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -1020,7 +1020,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/conditionalExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConditionalExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ConditionalExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -1043,7 +1043,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/constructors")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Constructors extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Constructors extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -1261,7 +1261,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/continueStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ContinueStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ContinueStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -1284,7 +1284,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/declarationStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DeclarationStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class DeclarationStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -1327,7 +1327,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/detectProperties")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DetectProperties extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class DetectProperties extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -1570,7 +1570,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/doWhileStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DoWhileStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class DoWhileStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -1608,7 +1608,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/docComments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DocComments extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class DocComments extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -1696,7 +1696,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/enum")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Enum extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Enum extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -1799,7 +1799,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/equals")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Equals extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Equals extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -1842,7 +1842,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/field")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Field extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Field extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -1920,7 +1920,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/for")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class For extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class For extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -2153,7 +2153,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/foreachStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ForeachStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ForeachStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -2196,7 +2196,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/formatting")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Formatting extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Formatting extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -2244,7 +2244,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/function")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Function extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Function extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -2432,7 +2432,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/identifier")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Identifier extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Identifier extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -2460,7 +2460,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/ifStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class IfStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class IfStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -2513,7 +2513,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/importStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ImportStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ImportStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -2551,7 +2551,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/inheritance")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Inheritance extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Inheritance extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -2589,7 +2589,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/isOperator")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class IsOperator extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class IsOperator extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -2617,7 +2617,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/issues")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Issues extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Issues extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -2855,7 +2855,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/kotlinApiAccess")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class KotlinApiAccess extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class KotlinApiAccess extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -2963,7 +2963,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/labelStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class LabelStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class LabelStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -2981,7 +2981,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/list")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class List extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class List extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3004,7 +3004,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/literalExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class LiteralExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class LiteralExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3092,7 +3092,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/localVariable")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class LocalVariable extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class LocalVariable extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3150,7 +3150,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/methodCallExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class MethodCallExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class MethodCallExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3228,7 +3228,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/misc")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Misc extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Misc extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3271,7 +3271,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/mutableCollections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class MutableCollections extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class MutableCollections extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3324,7 +3324,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/newClassExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class NewClassExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class NewClassExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3412,7 +3412,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/nullability")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Nullability extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Nullability extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3610,7 +3610,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/objectLiteral")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ObjectLiteral extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ObjectLiteral extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3628,7 +3628,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/overloads")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Overloads extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Overloads extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3676,7 +3676,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/packageStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class PackageStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class PackageStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3694,7 +3694,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/parenthesizedExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ParenthesizedExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ParenthesizedExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3717,7 +3717,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/polyadicExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class PolyadicExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class PolyadicExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3760,7 +3760,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/postProcessing")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class PostProcessing extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class PostProcessing extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3823,7 +3823,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/postfixOperator")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class PostfixOperator extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class PostfixOperator extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3846,7 +3846,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/prefixOperator")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class PrefixOperator extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class PrefixOperator extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3889,7 +3889,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/projections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Projections extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Projections extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3907,7 +3907,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/protected")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Protected extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Protected extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3955,7 +3955,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/rawGenerics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class RawGenerics extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class RawGenerics extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -3988,7 +3988,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/returnStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ReturnStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ReturnStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4026,7 +4026,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/settings")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Settings extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Settings extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4059,7 +4059,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/staticMembers")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class StaticMembers extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class StaticMembers extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4097,7 +4097,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/strings")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Strings extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Strings extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4125,7 +4125,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/superExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SuperExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class SuperExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4153,7 +4153,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/switch")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Switch extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Switch extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4246,7 +4246,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/synchronizedStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SynchronizedStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class SynchronizedStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4264,7 +4264,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/thisExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ThisExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ThisExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4287,7 +4287,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/throwStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ThrowStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ThrowStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4305,7 +4305,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/toArray")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ToArray extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ToArray extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4323,7 +4323,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/toKotlinClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ToKotlinClasses extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class ToKotlinClasses extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4361,7 +4361,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/trait")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Trait extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class Trait extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4429,7 +4429,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/tryStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TryStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class TryStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4467,7 +4467,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/tryWithResource")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TryWithResource extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class TryWithResource extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4530,7 +4530,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/typeCastExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TypeCastExpression extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class TypeCastExpression extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4598,7 +4598,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/typeParameters")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TypeParameters extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class TypeParameters extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4686,7 +4686,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/varArg")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class VarArg extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class VarArg extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -4709,7 +4709,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     @TestMetadata("j2k/testData/fileOrElement/whileStatement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class WhileStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
+    public static class WhileStatement extends AbstractNewJavaToKotlinConverterStructureSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }

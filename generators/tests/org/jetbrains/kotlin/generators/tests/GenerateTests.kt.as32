@@ -921,6 +921,20 @@ fun main(args: Array<String>) {
             model("fileOrElement", extension = "java")
         }
     }
+
+    testGroup("j2k/tests", "j2k/testData") {
+        testClass<AbstractNewJavaToKotlinConverterSingleFileTest> {
+            model("fileOrElement", extension = "java")
+        }
+
+        testClass<AbstractNewJavaToKotlinConverterStructureSingleFileTest> {
+            model("fileOrElement", extension = "java")
+        }
+
+        testClass<AbstractNewJavaToKotlinConverterNewSingleFileTest> {
+            model("newFileOrElement", extension = "java")
+        }
+    }
 /*  There is no jps in AS
     testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         testClass<AbstractIncrementalJpsTest> {

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiJavaFile
@@ -79,6 +80,11 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
 
         val kotlinPath = javaPath.replace(".java", ".kt")
         val expectedFile = File(kotlinPath)
+
+        compareResults(expectedFile, actual)
+    }
+
+    open fun compareResults(expectedFile: File, actual: String) {
         KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
     }
 

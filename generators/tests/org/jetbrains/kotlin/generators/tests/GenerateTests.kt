@@ -923,6 +923,10 @@ fun main(args: Array<String>) {
             model("fileOrElement", extension = "java")
         }
 
+        testClass<AbstractNewJavaToKotlinConverterStructureSingleFileTest> {
+            model("fileOrElement", extension = "java")
+        }
+
         testClass<AbstractNewJavaToKotlinConverterNewSingleFileTest> {
             model("newFileOrElement", extension = "java")
         }
