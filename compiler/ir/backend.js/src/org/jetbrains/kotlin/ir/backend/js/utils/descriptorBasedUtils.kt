@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.types.KotlinType
 
 val IrConstructorSymbol.constructedClass get() = descriptor.constructedClass
@@ -46,3 +48,5 @@ fun CallableMemberDescriptor.isFakeOverriddenFromAny(): Boolean {
     }
     return overriddenDescriptors.all { it.isFakeOverriddenFromAny() }
 }
+
+fun IrDeclaration.isEffectivelyExternal() = descriptor.isEffectivelyExternal()

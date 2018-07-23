@@ -55,6 +55,8 @@ fun compile(
     ExternalDependenciesGenerator(psi2IrContext.moduleDescriptor, psi2IrContext.symbolTable, psi2IrContext.irBuiltIns)
         .generateUnboundSymbolsAsDependencies(moduleFragment)
 
+    MoveExternalDeclarationsToSeparatePlace().lower(moduleFragment.files)
+
     context.performInlining(moduleFragment)
 
     context.lower(moduleFragment.files)
