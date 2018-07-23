@@ -36,7 +36,7 @@ open class KotlinNativeTestExecutableImpl @Inject constructor(
         name: String,
         baseName: Provider<String>,
         componentImplementation: Configuration,
-        testComponent: KotlinNativeTestComponent,
+        testComponent: KotlinNativeTestSuite,
         val mainSources: KotlinNativeSourceSet,
         identity: KotlinNativeVariantIdentity,
         objects: ObjectFactory,

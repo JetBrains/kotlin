@@ -41,6 +41,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 // TODO: implement ComponentWithObjectFiles when we build klibs as objects
 interface KotlinNativeBinary: ComponentWithDependencies, BuildableComponent {
 
+    /** A component this binary belongs to. */
+    val component: KotlinNativeComponent
+
     /** Returns the source files of this binary. */
     val sources: FileCollection
 

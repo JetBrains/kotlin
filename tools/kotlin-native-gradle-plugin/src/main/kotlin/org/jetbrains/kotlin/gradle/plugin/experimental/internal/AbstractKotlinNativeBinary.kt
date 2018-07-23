@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 abstract class AbstractKotlinNativeBinary(
         private val name: String,
         private val baseName: Provider<String>,
-        val component: KotlinNativeComponent,
+        override val component: AbstractKotlinNativeComponent,
         val identity: KotlinNativeVariantIdentity,
         val projectLayout: ProjectLayout,
         override val kind: CompilerOutputKind,

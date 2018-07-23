@@ -62,6 +62,9 @@ interface KotlinNativeComponent: ComponentWithBinaries, ComponentWithDependencie
     fun extraOpts(values: List<Any>)
 
     fun pom(action: Action<MavenPom>)
+
+    val publishJavadoc: Boolean
+    val publishSources: Boolean
     // endregion
 }
 

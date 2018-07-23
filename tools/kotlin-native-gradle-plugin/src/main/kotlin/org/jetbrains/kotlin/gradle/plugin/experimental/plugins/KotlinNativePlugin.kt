@@ -27,6 +27,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.internal.reflect.Instantiator
+import org.gradle.jvm.tasks.Jar
 import org.gradle.language.cpp.CppBinary.DEBUGGABLE_ATTRIBUTE
 import org.gradle.language.cpp.CppBinary.OPTIMIZED_ATTRIBUTE
 import org.gradle.language.cpp.internal.DefaultUsageContext
@@ -183,21 +184,62 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
         }
     }
 
-    private fun Project.setUpMavenPublish() =  pluginManager.withPlugin("maven-publish") {
+    private val KotlinNativeSourceSetImpl.sourceSetSuffix: String
+        get() = name.let { if (it == MAIN_SOURCE_SET_NAME) "" else it }
+
+    private fun KotlinNativeSourceSetImpl.createSourcesJarTask(target: KonanTarget): Jar {
+        val sources = getAllSources(target)
+        val taskName = "sourcesJar${sourceSetSuffix}${target.name}"
+        val task = project.tasks.findByName(taskName)
+
+        return if (task != null) {
+            task as Jar
+        } else {
+            project.tasks.create(taskName, Jar::class.java) {
+                it.baseName = name
+                it.appendix = target.name
+                it.classifier = "sources"
+                it.from(sources)
+            }
+        }
+    }
+
+    private fun KotlinNativeSourceSetImpl.createEmptyJarTask(namePrefix: String, classifier: String): Jar =
+        project.tasks.maybeCreate("$namePrefix$sourceSetSuffix", Jar::class.java).apply {
+            baseName = name
+            this.classifier = classifier
+        }
+
+    private fun Project.setUpMavenPublish() =  pluginManager.withPlugin("maven-publish") { _ ->
         val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
-        val components = project.components.withType(KotlinNativeMainComponent::class.java)
-        publishingExtension.publications.forEach { publication ->
-            (publication as? MavenPublication)?.apply {
-                val component = components.find {
-                    it.name == publication.name
-                            || publication.name.startsWith("${it.name}Release")
-                            || publication.name.startsWith("${it.name}Debug")
+        loop@for (publication in publishingExtension.publications) {
+
+            if (publication !is MavenPublication) continue
+            val publicationComponent = components.find { it.name == publication.name } ?: continue
+
+            val sourcesJar: Jar
+            val mainComponent: AbstractKotlinNativeComponent
+
+            when (publicationComponent) {
+                is KotlinNativeMainComponent -> {
+                    mainComponent = publicationComponent
+                    sourcesJar = mainComponent.sources.createEmptyJarTask("sourcesJar", "sources")
                 }
-                component?.let {
-                    it.poms.forEach {
-                        publication.pom(it)
-                    }
+                is AbstractKotlinNativeBinary -> {
+                    mainComponent = publicationComponent.component
+                    sourcesJar = mainComponent.sources.createSourcesJarTask(publicationComponent.konanTarget)
                 }
+                else -> {
+                    logger.info("Unknown component type: $publicationComponent, ${publicationComponent::class.java}")
+                    continue@loop
+                }
+            }
+            val javadocJar = mainComponent.sources.createEmptyJarTask("javadocJar", "javadoc")
+
+            with(mainComponent) {
+                poms.forEach { publication.pom(it) }
+                if (publishSources) { publication.artifact(sourcesJar) }
+                if (publishJavadoc) { publication.artifact(javadocJar) }
             }
         }
     }
@@ -221,8 +263,8 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
         // TODO: We should be able to create a component automatically once
         // a source set is created by user. So we need a user DSL or some another way
         // to determine which component class should be instantiated (main or test).
-        val mainSourceSet = sourceSets.create("main").apply {
-            kotlin.srcDir("src/main/kotlin")
+        val mainSourceSet = sourceSets.create(MAIN_SOURCE_SET_NAME).apply {
+            kotlin.srcDir("src/$MAIN_SOURCE_SET_NAME/kotlin")
             component = objectFactory
                     .newInstance(KotlinNativeMainComponent::class.java, name, this)
                     .apply {
@@ -232,8 +274,8 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
                     }
         }
 
-        sourceSets.create("test").apply {
-            kotlin.srcDir("src/test/kotlin")
+        sourceSets.create(TEST_SOURCE_SET_NAME).apply {
+            kotlin.srcDir("src/$TEST_SOURCE_SET_NAME/kotlin")
             component = objectFactory
                     .newInstance(KotlinNativeTestSuite::class.java, name, this, mainSourceSet.component)
                     .apply {
@@ -249,5 +291,10 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
             addBinariesForTestComponents(group, version)
             setUpMavenPublish()
         }
+    }
+
+    companion object {
+        const val MAIN_SOURCE_SET_NAME = "main"
+        const val TEST_SOURCE_SET_NAME = "test"
     }
 }
