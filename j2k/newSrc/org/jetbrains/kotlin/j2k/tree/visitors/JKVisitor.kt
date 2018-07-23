@@ -54,6 +54,7 @@ interface JKVisitor<out R, in D> {
     fun visitIfElseExpression(ifElseExpression: JKIfElseExpression, data: D): R = visitExpression(ifElseExpression, data)
     fun visitAssignableExpression(assignableExpression: JKAssignableExpression, data: D): R = visitExpression(assignableExpression, data)
     fun visitLambdaExpression(lambdaExpression: JKLambdaExpression, data: D): R = visitExpression(lambdaExpression, data)
+    fun visitDelegationConstructorCall(delegationConstructorCall: JKDelegationConstructorCall, data: D): R = visitMethodCallExpression(delegationConstructorCall, data)
     fun visitJavaField(javaField: JKJavaField, data: D): R = visitField(javaField, data)
     fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): R = visitMethod(javaMethod, data)
     fun visitJavaMethodCallExpression(javaMethodCallExpression: JKJavaMethodCallExpression, data: D): R = visitMethodCallExpression(javaMethodCallExpression, data)

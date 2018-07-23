@@ -30,6 +30,7 @@ object ConversionsRunner {
             AssignmentAsExpressionToAlsoConversion(context).runConversion(it, context)
             AssignmentStatementValCreationConversion(context).runConversion(it, context)
             AssignmentStatementOperatorConversion().runConversion(it, context)
+            ConstructorConversion().runConversion(it, context)
             JavaMethodToKotlinFunctionConversion().runConversion(it, context)
             LiteralConversion().runConversion(it, context)
             InnerClassConversion().runConversion(it, context)

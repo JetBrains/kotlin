@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
+import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
+import com.intellij.psi.JavaTokenType.THIS_KEYWORD
 import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
@@ -129,11 +131,22 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiMethodCallExpression.toJK(): JKExpression {
             val method = methodExpression as PsiReferenceExpressionImpl
-            val call = JKJavaMethodCallExpressionImpl(symbolProvider.provideSymbol(method), argumentList.toJK())
-            return if (method.findChildByRole(ChildRole.DOT) != null) {
-                JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, call)
+            val referenceNameElement = methodExpression.referenceNameElement
+            val symbol = symbolProvider.provideSymbol<JKMethodSymbol>(method)
+            return if (referenceNameElement is PsiKeyword) {
+                val callee = when (referenceNameElement.tokenType) {
+                    SUPER_KEYWORD -> JKSuperExpressionImpl()
+                    THIS_KEYWORD -> JKThisExpressionImpl()
+                    else -> error("Unknown keyword in callee position")
+                }
+                JKDelegationConstructorCallImpl(symbol, callee, argumentList.toJK())
             } else {
-                call
+                val call = JKJavaMethodCallExpressionImpl(symbol, argumentList.toJK())
+                if (method.findChildByRole(ChildRole.DOT) != null) {
+                    JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, call)
+                } else {
+                    call
+                }
             }
         }
 

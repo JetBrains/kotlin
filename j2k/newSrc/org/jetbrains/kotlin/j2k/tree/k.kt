@@ -25,7 +25,12 @@ interface JKKtFunction : JKMethod {
     val block: JKBlock
 }
 
-interface JKKtConstructor : JKDeclaration
+interface JKKtConstructor : JKDeclaration, JKModifierListOwner, JKMethod {
+    override var name: JKNameIdentifier
+    override var parameters: List<JKParameter>
+    var block: JKBlock
+    var delegationCall: JKExpression
+}
 
 interface JKKtPrimaryConstructor : JKKtConstructor
 

@@ -108,7 +108,7 @@ interface JKNameIdentifier : JKIdentifier {
 
 interface JKExpression : JKTreeElement
 
-interface JKExpressionStatement : JKStatement {
+interface JKExpressionStatement : JKBranchElement, JKStatement {
     val expression: JKExpression
 }
 
@@ -241,4 +241,10 @@ interface JKLambdaExpression : JKExpression {
     var parameters: List<JKParameter>
     val returnType: JKTypeElement
     var statement: JKStatement
+}
+
+interface JKDelegationConstructorCall : JKMethodCallExpression {
+    override val identifier: JKMethodSymbol
+    val expression: JKExpression
+    override val arguments: JKExpressionList
 }
