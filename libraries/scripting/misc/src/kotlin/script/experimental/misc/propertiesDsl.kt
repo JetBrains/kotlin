@@ -38,18 +38,18 @@ inline operator fun <reified E> TypedKey<List<E>>.invoke(vararg vs: E): Pair<Typ
 
 @JvmName("invoke_kotlintype_map_from_kclass")
 inline operator fun <reified K> TypedKey<Map<K, KotlinType>>.invoke(vararg classes: Pair<K, KClass<*>>): Pair<TypedKey<Map<K, KotlinType>>, Map<K, KotlinType>> =
-    this to HashMap<K, KotlinType>().also { it.putAll(classes.asSequence().map { (k, v) -> k to KotlinType(v) }) }
+    this to LinkedHashMap<K, KotlinType>().also { it.putAll(classes.asSequence().map { (k, v) -> k to KotlinType(v) }) }
 
 @JvmName("invoke_kotlintype_map_from_ktype")
 inline operator fun <reified K> TypedKey<Map<K, KotlinType>>.invoke(vararg types: Pair<K, KType>): Pair<TypedKey<Map<K, KotlinType>>, Map<K, KotlinType>> =
-    this to HashMap<K, KotlinType>().also { it.putAll(types.asSequence().map { (k, v) -> k to KotlinType(v) }) }
+    this to LinkedHashMap<K, KotlinType>().also { it.putAll(types.asSequence().map { (k, v) -> k to KotlinType(v) }) }
 
 @JvmName("invoke_kotlintype_map_from_fqname")
 inline operator fun <reified K> TypedKey<Map<K, KotlinType>>.invoke(vararg fqnames: Pair<K, String>): Pair<TypedKey<Map<K, KotlinType>>, Map<K, KotlinType>> =
-    this to HashMap<K, KotlinType>().also { it.putAll(fqnames.asSequence().map { (k, v) -> k to KotlinType(v) }) }
+    this to LinkedHashMap<K, KotlinType>().also { it.putAll(fqnames.asSequence().map { (k, v) -> k to KotlinType(v) }) }
 
 inline operator fun <reified K, reified V> TypedKey<Map<K, V>>.invoke(vararg vs: Pair<K, V>): Pair<TypedKey<Map<K, V>>, Map<K, V>> =
-    this to hashMapOf(*vs)
+    this to mapOf(*vs)
 
 // TODO: make tests from examples below
 /*
