@@ -128,7 +128,7 @@ class CoroutineTransformerMethodVisitor(
                     LineNumberNode(lineNumber, tableSwitchLabel),
                     VarInsnNode(Opcodes.ASTORE, suspendMarkerVarIndex),
                     VarInsnNode(Opcodes.ALOAD, continuationIndex),
-                    createInsnForReadingLabel(),
+                    *withInstructionAdapter { getLabel() }.toArray(),
                     TableSwitchInsnNode(
                         0,
                         suspensionPoints.size,
@@ -165,37 +165,35 @@ class CoroutineTransformerMethodVisitor(
         methodNode.instructions.set(last, InsnNode(Opcodes.ACONST_NULL))
     }
 
-    private fun createInsnForReadingLabel() =
+    private fun InstructionAdapter.getLabel() {
         if (isForNamedFunction && !languageVersionSettings.isReleaseCoroutines())
-            MethodInsnNode(
-                Opcodes.INVOKEVIRTUAL,
+            invokevirtual(
                 classBuilderForCoroutineState.thisName,
                 "getLabel",
                 Type.getMethodDescriptor(Type.INT_TYPE),
                 false
             )
         else
-            FieldInsnNode(
-                Opcodes.GETFIELD,
+            getfield(
                 computeLabelOwner(languageVersionSettings, classBuilderForCoroutineState.thisName).internalName,
                 COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor
             )
+    }
 
-    private fun createInsnForSettingLabel() =
+    private fun InstructionAdapter.setLabel() {
         if (isForNamedFunction && !languageVersionSettings.isReleaseCoroutines())
-            MethodInsnNode(
-                Opcodes.INVOKEVIRTUAL,
+            invokevirtual(
                 classBuilderForCoroutineState.thisName,
                 "setLabel",
                 Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE),
                 false
             )
         else
-            FieldInsnNode(
-                Opcodes.PUTFIELD,
+            putfield(
                 computeLabelOwner(languageVersionSettings, classBuilderForCoroutineState.thisName).internalName,
                 COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor
             )
+    }
 
     private fun updateMaxStack(methodNode: MethodNode) {
         methodNode.instructions.resetLabels()
@@ -248,12 +246,7 @@ class CoroutineTransformerMethodVisitor(
             visitVarInsn(Opcodes.ASTORE, continuationIndex)
 
             visitVarInsn(Opcodes.ALOAD, continuationIndex)
-            invokevirtual(
-                classBuilderForCoroutineState.thisName,
-                "getLabel",
-                Type.getMethodDescriptor(Type.INT_TYPE),
-                false
-            )
+            getLabel()
 
             iconst(1 shl 31)
             and(Type.INT_TYPE)
@@ -261,21 +254,11 @@ class CoroutineTransformerMethodVisitor(
 
             visitVarInsn(Opcodes.ALOAD, continuationIndex)
             dup()
-            invokevirtual(
-                classBuilderForCoroutineState.thisName,
-                "getLabel",
-                Type.getMethodDescriptor(Type.INT_TYPE),
-                false
-            )
+            getLabel()
 
             iconst(1 shl 31)
             sub(Type.INT_TYPE)
-            invokevirtual(
-                classBuilderForCoroutineState.thisName,
-                "setLabel",
-                Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE),
-                false
-            )
+            setLabel()
 
             goTo(afterCoroutineStateCreated)
 
@@ -489,11 +472,11 @@ class CoroutineTransformerMethodVisitor(
             // Save state
             insertBefore(
                 suspension.suspensionCallBegin,
-                insnListOf(
-                    VarInsnNode(Opcodes.ALOAD, continuationIndex),
-                    *withInstructionAdapter { iconst(id) }.toArray(),
-                    createInsnForSettingLabel()
-                )
+                withInstructionAdapter {
+                    visitVarInsn(Opcodes.ALOAD, continuationIndex)
+                    iconst(id)
+                    setLabel()
+                }
             )
 
             insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
