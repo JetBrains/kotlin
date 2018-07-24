@@ -39,6 +39,7 @@ class SuccessOrFailureTest {
         assertEquals(v, ok.getOrElse { throw it })
         assertEquals(v, ok.getOrNull())
         assertEquals(v, ok.getOrElse { null })
+        assertEquals(v, ok.getOrDefault("DEF"))
         assertEquals(v, ok.getOrElse { "EX:$it" })
         assertEquals("V:$v", ok.fold({ "V:$it" }, { "EX:$it" }))
         assertEquals(null, ok.exceptionOrNull())
@@ -68,6 +69,7 @@ class SuccessOrFailureTest {
         assertFails { fail.getOrElse { throw it } }
         assertEquals(null, fail.getOrNull())
         assertEquals(null, fail.getOrElse { null })
+        assertEquals("DEF", fail.getOrDefault("DEF"))
         assertEquals("EX:java.lang.IllegalStateException: $msg", fail.getOrElse { "EX:$it" })
         assertEquals("EX:java.lang.IllegalStateException: $msg", fail.fold({ "V:$it" }, { "EX:$it" }))
         assertEquals(msg, fail.exceptionOrNull()!!.message)
