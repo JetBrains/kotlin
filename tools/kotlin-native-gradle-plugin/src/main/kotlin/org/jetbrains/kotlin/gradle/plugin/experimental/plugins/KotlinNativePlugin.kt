@@ -184,31 +184,28 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
         }
     }
 
-    private val KotlinNativeSourceSetImpl.sourceSetSuffix: String
-        get() = name.let { if (it == MAIN_SOURCE_SET_NAME) "" else it }
-
-    private fun KotlinNativeSourceSetImpl.createSourcesJarTask(target: KonanTarget): Jar {
-        val sources = getAllSources(target)
-        val taskName = "sourcesJar${sourceSetSuffix}${target.name}"
+    private fun KotlinNativeSourceSetImpl.createJarTask(taskName: String, configure: (Jar) -> Unit): Jar {
         val task = project.tasks.findByName(taskName)
-
         return if (task != null) {
             task as Jar
         } else {
-            project.tasks.create(taskName, Jar::class.java) {
-                it.baseName = name
-                it.appendix = target.name
-                it.classifier = "sources"
-                it.from(sources)
-            }
+            project.tasks.create(taskName, Jar::class.java, configure)
         }
     }
 
+    private fun KotlinNativeSourceSetImpl.createSourcesJarTask(target: KonanTarget): Jar =
+            createJarTask("sourcesJar${name.capitalize()}${target.name.capitalize()}") {
+                it.appendix = "$name-${target.name}"
+                it.classifier = "sources"
+                it.from(getAllSources(target))
+            }
+
     private fun KotlinNativeSourceSetImpl.createEmptyJarTask(namePrefix: String, classifier: String): Jar =
-        project.tasks.maybeCreate("$namePrefix$sourceSetSuffix", Jar::class.java).apply {
-            baseName = name
-            this.classifier = classifier
-        }
+            createJarTask("$namePrefix${name.capitalize()}") {
+                it.appendix = name
+                it.classifier = classifier
+            }
+
 
     private fun Project.setUpMavenPublish() =  pluginManager.withPlugin("maven-publish") { _ ->
         val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
