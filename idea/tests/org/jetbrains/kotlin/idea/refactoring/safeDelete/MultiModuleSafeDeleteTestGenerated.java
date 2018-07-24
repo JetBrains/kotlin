@@ -29,113 +29,113 @@ public class MultiModuleSafeDeleteTestGenerated extends AbstractMultiModuleSafeD
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/safeDeleteMultiModule"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
-    @TestMetadata("byHeaderClass/byHeaderClass.test")
-    public void testByHeaderClass_ByHeaderClass() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClass/byHeaderClass.test");
+    @TestMetadata("byActualClass/byActualClass.test")
+    public void testByActualClass_ByActualClass() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClass/byActualClass.test");
     }
 
-    @TestMetadata("byHeaderClassMemberFun/byHeaderClassMemberFun.test")
-    public void testByHeaderClassMemberFun_ByHeaderClassMemberFun() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassMemberFun/byHeaderClassMemberFun.test");
+    @TestMetadata("byActualClassMemberFun/byActualClassMemberFun.test")
+    public void testByActualClassMemberFun_ByActualClassMemberFun() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassMemberFun/byActualClassMemberFun.test");
     }
 
-    @TestMetadata("byHeaderClassMemberFunParameter/byHeaderClassMemberFunParameter.test")
-    public void testByHeaderClassMemberFunParameter_ByHeaderClassMemberFunParameter() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassMemberFunParameter/byHeaderClassMemberFunParameter.test");
+    @TestMetadata("byActualClassMemberFunParameterLiftingToExpect/byActualClassMemberFunParameterLiftingToExpect.test")
+    public void testByActualClassMemberFunParameterLiftingToExpect_ByActualClassMemberFunParameterLiftingToExpect() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassMemberFunParameterLiftingToExpect/byActualClassMemberFunParameterLiftingToExpect.test");
     }
 
-    @TestMetadata("byHeaderClassMemberVal/byHeaderClassMemberVal.test")
-    public void testByHeaderClassMemberVal_ByHeaderClassMemberVal() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassMemberVal/byHeaderClassMemberVal.test");
+    @TestMetadata("byActualClassMemberVal/byActualClassMemberVal.test")
+    public void testByActualClassMemberVal_ByActualClassMemberVal() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassMemberVal/byActualClassMemberVal.test");
     }
 
-    @TestMetadata("byHeaderClassPrimaryConstructorParameter/headersAndImplsByHeaderClassPrimaryConstructorParameter.test")
-    public void testByHeaderClassPrimaryConstructorParameter_HeadersAndImplsByHeaderClassPrimaryConstructorParameter() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassPrimaryConstructorParameter/headersAndImplsByHeaderClassPrimaryConstructorParameter.test");
+    @TestMetadata("byActualClassPrimaryConstructorParameterLiftingToExpect/expectsAndActualsByActualClassPrimaryConstructorParameter.test")
+    public void testByActualClassPrimaryConstructorParameterLiftingToExpect_ExpectsAndActualsByActualClassPrimaryConstructorParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassPrimaryConstructorParameterLiftingToExpect/expectsAndActualsByActualClassPrimaryConstructorParameter.test");
     }
 
-    @TestMetadata("byHeaderClassSecondaryConstructor/byHeaderClassSecondaryConstructor.test")
-    public void testByHeaderClassSecondaryConstructor_ByHeaderClassSecondaryConstructor() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassSecondaryConstructor/byHeaderClassSecondaryConstructor.test");
+    @TestMetadata("byActualClassSecondaryConstructor/byActualClassSecondaryConstructor.test")
+    public void testByActualClassSecondaryConstructor_ByActualClassSecondaryConstructor() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassSecondaryConstructor/byActualClassSecondaryConstructor.test");
     }
 
-    @TestMetadata("byHeaderClassSecondaryConstructorParameter/headersAndImplsByHeaderClassSecondaryConstructorParameter.test")
-    public void testByHeaderClassSecondaryConstructorParameter_HeadersAndImplsByHeaderClassSecondaryConstructorParameter() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassSecondaryConstructorParameter/headersAndImplsByHeaderClassSecondaryConstructorParameter.test");
+    @TestMetadata("byActualClassSecondaryConstructorParameterLiftingToExpect/expectsAndActualsByActualClassSecondaryConstructorParameter.test")
+    public void testByActualClassSecondaryConstructorParameterLiftingToExpect_ExpectsAndActualsByActualClassSecondaryConstructorParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassSecondaryConstructorParameterLiftingToExpect/expectsAndActualsByActualClassSecondaryConstructorParameter.test");
     }
 
-    @TestMetadata("byHeaderFun/byHeaderFun.test")
-    public void testByHeaderFun_ByHeaderFun() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderFun/byHeaderFun.test");
+    @TestMetadata("byActualFun/byActualFun.test")
+    public void testByActualFun_ByActualFun() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualFun/byActualFun.test");
     }
 
-    @TestMetadata("byHeaderFunParamerer/byHeaderFunParameter.test")
-    public void testByHeaderFunParamerer_ByHeaderFunParameter() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderFunParamerer/byHeaderFunParameter.test");
+    @TestMetadata("byActualFunParamererLiftingToExpect/byActualFunParameterLiftingToExpect.test")
+    public void testByActualFunParamererLiftingToExpect_ByActualFunParameterLiftingToExpect() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualFunParamererLiftingToExpect/byActualFunParameterLiftingToExpect.test");
     }
 
-    @TestMetadata("byHeaderFunVarargParamerer/byHeaderFunVarargParameter.test")
-    public void testByHeaderFunVarargParamerer_ByHeaderFunVarargParameter() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderFunVarargParamerer/byHeaderFunVarargParameter.test");
+    @TestMetadata("byActualFunParamererNoLiftingToExpect/byActualFunParameterNoLiftingToExpect.test")
+    public void testByActualFunParamererNoLiftingToExpect_ByActualFunParameterNoLiftingToExpect() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualFunParamererNoLiftingToExpect/byActualFunParameterNoLiftingToExpect.test");
     }
 
-    @TestMetadata("byHeaderVal/byHeaderVal.test")
-    public void testByHeaderVal_ByHeaderVal() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byHeaderVal/byHeaderVal.test");
+    @TestMetadata("byActualVal/byActualVal.test")
+    public void testByActualVal_ByActualVal() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualVal/byActualVal.test");
     }
 
-    @TestMetadata("byImplClass/byImplClass.test")
-    public void testByImplClass_ByImplClass() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClass/byImplClass.test");
+    @TestMetadata("byExpectClass/byExpectClass.test")
+    public void testByExpectClass_ByExpectClass() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClass/byExpectClass.test");
     }
 
-    @TestMetadata("byImplClassMemberFun/byImplClassMemberFun.test")
-    public void testByImplClassMemberFun_ByImplClassMemberFun() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClassMemberFun/byImplClassMemberFun.test");
+    @TestMetadata("byExpectClassMemberFun/byExpectClassMemberFun.test")
+    public void testByExpectClassMemberFun_ByExpectClassMemberFun() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClassMemberFun/byExpectClassMemberFun.test");
     }
 
-    @TestMetadata("byImplClassMemberFunParameterLiftingToHeader/byImplClassMemberFunParameterLiftingToHeader.test")
-    public void testByImplClassMemberFunParameterLiftingToHeader_ByImplClassMemberFunParameterLiftingToHeader() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClassMemberFunParameterLiftingToHeader/byImplClassMemberFunParameterLiftingToHeader.test");
+    @TestMetadata("byExpectClassMemberFunParameter/byExpectClassMemberFunParameter.test")
+    public void testByExpectClassMemberFunParameter_ByExpectClassMemberFunParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClassMemberFunParameter/byExpectClassMemberFunParameter.test");
     }
 
-    @TestMetadata("byImplClassMemberVal/byImplClassMemberVal.test")
-    public void testByImplClassMemberVal_ByImplClassMemberVal() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClassMemberVal/byImplClassMemberVal.test");
+    @TestMetadata("byExpectClassMemberVal/byExpectClassMemberVal.test")
+    public void testByExpectClassMemberVal_ByExpectClassMemberVal() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClassMemberVal/byExpectClassMemberVal.test");
     }
 
-    @TestMetadata("byImplClassPrimaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassPrimaryConstructorParameter.test")
-    public void testByImplClassPrimaryConstructorParameterLiftingToHeader_HeadersAndImplsByImplClassPrimaryConstructorParameter() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClassPrimaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassPrimaryConstructorParameter.test");
+    @TestMetadata("byExpectClassPrimaryConstructorParameter/expectsAndActualsByExpectClassPrimaryConstructorParameter.test")
+    public void testByExpectClassPrimaryConstructorParameter_ExpectsAndActualsByExpectClassPrimaryConstructorParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClassPrimaryConstructorParameter/expectsAndActualsByExpectClassPrimaryConstructorParameter.test");
     }
 
-    @TestMetadata("byImplClassSecondaryConstructor/byImplClassSecondaryConstructor.test")
-    public void testByImplClassSecondaryConstructor_ByImplClassSecondaryConstructor() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClassSecondaryConstructor/byImplClassSecondaryConstructor.test");
+    @TestMetadata("byExpectClassSecondaryConstructor/byExpectClassSecondaryConstructor.test")
+    public void testByExpectClassSecondaryConstructor_ByExpectClassSecondaryConstructor() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClassSecondaryConstructor/byExpectClassSecondaryConstructor.test");
     }
 
-    @TestMetadata("byImplClassSecondaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassSecondaryConstructorParameter.test")
-    public void testByImplClassSecondaryConstructorParameterLiftingToHeader_HeadersAndImplsByImplClassSecondaryConstructorParameter() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplClassSecondaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassSecondaryConstructorParameter.test");
+    @TestMetadata("byExpectClassSecondaryConstructorParameter/expectsAndActualsByExpectClassSecondaryConstructorParameter.test")
+    public void testByExpectClassSecondaryConstructorParameter_ExpectsAndActualsByExpectClassSecondaryConstructorParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClassSecondaryConstructorParameter/expectsAndActualsByExpectClassSecondaryConstructorParameter.test");
     }
 
-    @TestMetadata("byImplFun/byImplFun.test")
-    public void testByImplFun_ByImplFun() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplFun/byImplFun.test");
+    @TestMetadata("byExpectFun/byExpectFun.test")
+    public void testByExpectFun_ByExpectFun() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectFun/byExpectFun.test");
     }
 
-    @TestMetadata("byImplFunParamererLiftingToHeader/byImplFunParameterLiftingToHeader.test")
-    public void testByImplFunParamererLiftingToHeader_ByImplFunParameterLiftingToHeader() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplFunParamererLiftingToHeader/byImplFunParameterLiftingToHeader.test");
+    @TestMetadata("byExpectFunParamerer/byExpectFunParameter.test")
+    public void testByExpectFunParamerer_ByExpectFunParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectFunParamerer/byExpectFunParameter.test");
     }
 
-    @TestMetadata("byImplFunParamererNoLiftingToHeader/byImplFunParameterNoLiftingToHeader.test")
-    public void testByImplFunParamererNoLiftingToHeader_ByImplFunParameterNoLiftingToHeader() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplFunParamererNoLiftingToHeader/byImplFunParameterNoLiftingToHeader.test");
+    @TestMetadata("byExpectFunVarargParamerer/byExpectFunVarargParameter.test")
+    public void testByExpectFunVarargParamerer_ByExpectFunVarargParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectFunVarargParamerer/byExpectFunVarargParameter.test");
     }
 
-    @TestMetadata("byImplVal/byImplVal.test")
-    public void testByImplVal_ByImplVal() throws Exception {
-        runTest("idea/testData/refactoring/safeDeleteMultiModule/byImplVal/byImplVal.test");
+    @TestMetadata("byExpectVal/byExpectVal.test")
+    public void testByExpectVal_ByExpectVal() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectVal/byExpectVal.test");
     }
 }
