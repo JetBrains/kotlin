@@ -29,6 +29,11 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.ResolverForProject.Companion.resolverForLibrariesName
+import org.jetbrains.kotlin.analyzer.ResolverForProject.Companion.resolverForModulesName
+import org.jetbrains.kotlin.analyzer.ResolverForProject.Companion.resolverForScriptDependenciesName
+import org.jetbrains.kotlin.analyzer.ResolverForProject.Companion.resolverForSdkName
+import org.jetbrains.kotlin.analyzer.ResolverForProject.Companion.resolverForSpecialInfoName
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -116,7 +121,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val globalContext = globalFacade.globalContext.contextWithNewLockAndCompositeExceptionTracker()
         return ProjectResolutionFacade(
             "facadeForScriptDependencies",
-            "dependencies of scripts",
+            resolverForScriptDependenciesName,
             project, globalContext, settings,
             reuseDataFrom = globalFacade,
             allModules = dependenciesModuleInfo.dependencies(),
@@ -132,7 +137,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private inner class GlobalFacade(settings: PlatformAnalysisSettings) {
         private val sdkContext = GlobalContext()
         val facadeForSdk = ProjectResolutionFacade(
-            "facadeForSdk", "sdk ${settings.sdk}",
+            "facadeForSdk", "$resolverForSdkName ${settings.sdk}",
             project, sdkContext, settings,
             moduleFilter = { it is SdkInfo },
             dependencies = listOf(
@@ -145,7 +150,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
         private val librariesContext = sdkContext.contextWithNewLockAndCompositeExceptionTracker()
         val facadeForLibraries = ProjectResolutionFacade(
-            "facadeForLibraries", "project libraries for platform ${settings.sdk}",
+            "facadeForLibraries", "$resolverForLibrariesName for platform ${settings.sdk}",
             project, librariesContext, settings,
             reuseDataFrom = facadeForSdk,
             moduleFilter = { it is LibraryInfo },
@@ -158,7 +163,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
         private val modulesContext = librariesContext.contextWithNewLockAndCompositeExceptionTracker()
         val facadeForModules = ProjectResolutionFacade(
-            "facadeForModules", "project source roots and libraries for platform ${settings.platform}",
+            "facadeForModules", "$resolverForModulesName for platform ${settings.platform}",
             project, modulesContext, settings,
             reuseDataFrom = facadeForLibraries,
             moduleFilter = { !it.isLibraryClasses() },
@@ -225,7 +230,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             )
 
         val resolverDebugName =
-            "completion/highlighting in $specialModuleInfo for files ${files.joinToString { it.name }} for platform $targetPlatform"
+            "$resolverForSpecialInfoName $specialModuleInfo for files ${files.joinToString { it.name }} for platform $targetPlatform"
 
         fun makeProjectResolutionFacade(
             debugName: String,

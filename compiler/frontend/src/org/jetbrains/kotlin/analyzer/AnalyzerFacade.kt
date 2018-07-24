@@ -64,6 +64,15 @@ abstract class ResolverForProject<M : ModuleInfo> {
     abstract val builtIns: KotlinBuiltIns
 
     override fun toString() = name
+
+    companion object {
+        const val resolverForSdkName = "sdk"
+        const val resolverForLibrariesName = "project libraries"
+        const val resolverForModulesName = "project source roots and libraries"
+        const val resolverForScriptDependenciesName = "dependencies of scripts"
+
+        const val resolverForSpecialInfoName = "completion/highlighting in "
+    }
 }
 
 class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
@@ -205,8 +214,9 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         return doGetDescriptorForModule(moduleInfo)
     }
 
-    override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) =
-        throw AssertionError("$name does not know how to resolve $infos")
+    override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>): Nothing {
+        DiagnoseUnknownModuleInfoReporter.report(name, infos)
+    }
 
     private fun checkModuleIsCorrect(moduleInfo: M) {
         if (!isCorrectModuleInfo(moduleInfo)) {
@@ -444,4 +454,52 @@ interface ResolverForModuleComputationTracker {
         fun getInstance(project: Project): ResolverForModuleComputationTracker? =
             ServiceManager.getService(project, ResolverForModuleComputationTracker::class.java) ?: null
     }
+}
+
+private object DiagnoseUnknownModuleInfoReporter {
+    fun report(name: String, infos: List<ModuleInfo>): Nothing {
+        val message = "$name does not know how to resolve $infos"
+        when {
+            name.contains(ResolverForProject.resolverForSdkName) -> errorInSdkResolver(message)
+            name.contains(ResolverForProject.resolverForLibrariesName) -> errorInLibrariesResolver(message)
+            name.contains(ResolverForProject.resolverForModulesName) -> {
+                when {
+                    infos.isEmpty() -> errorInModulesResolverWithEmptyInfos(message)
+                    infos.size == 1 -> {
+                        val infoAsString = infos.single().toString()
+                        when {
+                            infoAsString.contains("ScriptDependencies") -> errorInModulesResolverWithScriptDependencies(message)
+                            infoAsString.contains("Library") -> errorInModulesResolverWithLibraryInfo(message)
+                            else -> errorInModulesResolver(message)
+                        }
+                    }
+                    else -> throw errorInModulesResolver(message)
+                }
+            }
+            name.contains(ResolverForProject.resolverForScriptDependenciesName) -> errorInScriptDependenciesInfoResolver(message)
+            name.contains(ResolverForProject.resolverForSpecialInfoName) -> {
+                when {
+                    name.contains("ScriptModuleInfo") -> errorInScriptModuleInfoResolver(message)
+                    else -> errorInSpecialModuleInfoResolver(message)
+                }
+            }
+            else -> otherError(message)
+        }
+    }
+
+    // Do not inline 'error*'-methods, they are needed to avoid Exception Analyzer merging those AssertionErrors
+
+    private fun errorInSdkResolver(message: String): Nothing = throw AssertionError(message)
+    private fun errorInLibrariesResolver(message: String): Nothing = throw AssertionError(message)
+    private fun errorInModulesResolver(message: String): Nothing = throw AssertionError(message)
+
+    private fun errorInModulesResolverWithEmptyInfos(message: String): Nothing = throw AssertionError(message)
+    private fun errorInModulesResolverWithScriptDependencies(message: String): Nothing = throw AssertionError(message)
+    private fun errorInModulesResolverWithLibraryInfo(message: String): Nothing = throw AssertionError(message)
+
+    private fun errorInScriptDependenciesInfoResolver(message: String): Nothing = throw AssertionError(message)
+    private fun errorInScriptModuleInfoResolver(message: String): Nothing = throw AssertionError(message)
+    private fun errorInSpecialModuleInfoResolver(message: String): Nothing = throw AssertionError(message)
+
+    private fun otherError(message: String): Nothing = throw AssertionError(message)
 }
