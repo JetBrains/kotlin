@@ -37,7 +37,7 @@ fun PsiElement.renderAsGotoImplementation(renderModule: Boolean = false): String
     if (navigationElement is KtObjectDeclaration && navigationElement.isCompanion()) {
         //default presenter return null for companion object
         val containingClass = PsiTreeUtil.getParentOfType(navigationElement, KtClass::class.java)!!
-        return "companion object of " + containingClass.renderAsGotoImplementation()
+        return "companion object of " + containingClass.renderAsGotoImplementation(renderModule)
     }
 
     if (navigationElement is KtStringTemplateExpression) {
