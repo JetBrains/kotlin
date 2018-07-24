@@ -81,7 +81,8 @@ compileCoroutinesKotlinCommon {
         languageVersion = "1.3"
         apiVersion = "1.3"
         freeCompilerArgs = [
-                "-module-name", project.name
+                "-module-name", project.name,
+                "-Xallow-kotlin-package"
         ]
     }
 }

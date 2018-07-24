@@ -865,6 +865,11 @@ public class CliTestGenerated extends AbstractCliTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/metadata"), Pattern.compile("^(.+)\\.args$"), TargetBackend.ANY, false);
         }
 
+        @TestMetadata("kotlinPackage.args")
+        public void testKotlinPackage() throws Exception {
+            runTest("compiler/testData/cli/metadata/kotlinPackage.args");
+        }
+
         @TestMetadata("moduleName.args")
         public void testModuleName() throws Exception {
             runTest("compiler/testData/cli/metadata/moduleName.args");
