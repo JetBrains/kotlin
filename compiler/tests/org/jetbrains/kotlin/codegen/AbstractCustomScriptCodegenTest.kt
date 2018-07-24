@@ -92,14 +92,10 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
 
     private fun runScript(scriptClass: Class<*>, receivers: List<Any?>, environmentVars: Map<String, Any?>, scriptParams: List<Any>): Any? {
 
-        val ctorParams = arrayListOf<Any>()
-        if (receivers.isNotEmpty()) {
-            ctorParams.add(receivers.toTypedArray())
-        }
-        if (environmentVars.isNotEmpty()) {
-            ctorParams.add(environmentVars)
-        }
+        val ctorParams = arrayListOf<Any?>()
         ctorParams.addAll(scriptParams)
+        ctorParams.addAll(receivers)
+        ctorParams.addAll(environmentVars.values)
 
         val constructor = scriptClass.constructors[0]
         return constructor.newInstance(*ctorParams.toTypedArray())

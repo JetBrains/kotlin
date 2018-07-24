@@ -33,11 +33,9 @@ import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptEnvironmentPropertyDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -521,10 +519,7 @@ public class PropertyCodegen {
 
         FunctionGenerationStrategy strategy;
         if (accessor == null || !accessor.hasBody()) {
-            if (accessorDescriptor.getCorrespondingProperty() instanceof ScriptEnvironmentPropertyDescriptor) {
-                strategy = new ScriptEnvPropertyAccessorStrategy(state, accessorDescriptor);
-            }
-            else if (p instanceof KtProperty && ((KtProperty) p).hasDelegate()) {
+            if (p instanceof KtProperty && ((KtProperty) p).hasDelegate()) {
                 strategy = new DelegatedPropertyAccessorStrategy(state, accessorDescriptor);
             }
             else {
@@ -634,42 +629,6 @@ public class PropertyCodegen {
             Type asmType = signature.getReturnType();
             lastValue.put(asmType, v);
             v.areturn(asmType);
-        }
-    }
-
-    static class ScriptEnvPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
-        public static final Type MAP_IFACE_TYPE = Type.getObjectType("java/util/Map");
-        public static final String MAP_FIELD_NAME = "$scriptEnvironment";
-        private final PropertyAccessorDescriptor propertyAccessorDescriptor;
-
-        public ScriptEnvPropertyAccessorStrategy(@NotNull GenerationState state, @NotNull PropertyAccessorDescriptor descriptor) {
-            super(state);
-            this.propertyAccessorDescriptor = descriptor;
-        }
-
-        @Override
-        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-            InstructionAdapter v = codegen.v;
-
-            Type scriptType = state.getTypeMapper().mapOwner(propertyAccessorDescriptor);
-            String scriptInternalName = scriptType.getInternalName();
-            v.load(0, scriptType);
-            v.getfield(scriptInternalName, MAP_FIELD_NAME, MAP_IFACE_TYPE.getDescriptor());
-            v.aconst(propertyAccessorDescriptor.getCorrespondingProperty().getName().asString());
-            if (propertyAccessorDescriptor instanceof PropertyGetterDescriptor) {
-                v.invokeinterface(MAP_IFACE_TYPE.getInternalName(), "get",
-                                  Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE));
-            }
-            else {
-                Type valueType = state.getTypeMapper().mapType(propertyAccessorDescriptor.getCorrespondingProperty());
-                v.load(1, valueType);
-                StackValue.coerce(valueType, AsmTypes.OBJECT_TYPE, v);
-                v.visitMethodInsn(Opcodes.INVOKEINTERFACE, MAP_IFACE_TYPE.getInternalName(), "put",
-                                  Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE), true);
-            }
-            Type returnType = state.getTypeMapper().mapReturnType(propertyAccessorDescriptor);
-            StackValue.coerce(AsmTypes.OBJECT_TYPE, returnType, v);
-            v.areturn(returnType);
         }
     }
 
