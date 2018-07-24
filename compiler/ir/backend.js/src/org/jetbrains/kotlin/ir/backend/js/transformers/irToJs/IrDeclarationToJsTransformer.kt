@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.js.backend.ast.JsVars
 
 class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
 
@@ -25,12 +26,13 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
 
     override fun visitField(declaration: IrField, context: JsGenerationContext): JsStatement {
         val fieldName = context.getNameForSymbol(declaration.symbol)
-        val initExpression =
-            declaration.initializer?.accept(IrElementToJsExpressionTransformer(), context) ?: JsPrefixOperation(
-                JsUnaryOperator.VOID,
-                JsIntLiteral(1)
-            )
-        return JsVars(JsVars.JsVar(fieldName, initExpression))
+
+        if (declaration.initializer != null) {
+            val initializer = declaration.initializer!!.accept(IrElementToJsExpressionTransformer(), context)
+            context.staticContext.initializerBlock.statements += jsAssignment(fieldName.makeRef(), initializer).makeStmt()
+        }
+
+        return JsVars(JsVars.JsVar(fieldName))
     }
 
     override fun visitVariable(declaration: IrVariable, context: JsGenerationContext): JsStatement {

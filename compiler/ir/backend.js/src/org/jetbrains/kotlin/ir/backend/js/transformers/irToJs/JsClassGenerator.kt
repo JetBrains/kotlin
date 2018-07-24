@@ -43,7 +43,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             when (declaration) {
                 is IrConstructor -> {
                     classBlock.statements += declaration.accept(transformer, context)
-                    classBlock.statements += generateInheritanceCode()
+                    classModel.preDeclarationBlock.statements += generateInheritanceCode()
                 }
                 is IrSimpleFunction -> {
                     generateMemberFunction(declaration)?.let { classBlock.statements += it }
@@ -115,6 +115,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         functionBody.statements += JsIf(
             JsBinaryOperation(JsBinaryOperator.REF_EQ, instanceVar.makeRef(), JsNullLiteral()),
+            // TODO: Fix initialization order
             jsAssignment(instanceVar.makeRef(), JsNew(classNameRef)).makeStmt()
         )
         functionBody.statements += JsReturn(instanceVar.makeRef())
@@ -127,7 +128,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             val func = JsFunction(JsFunctionScope(context.currentScope, "Ctor for ${irClass.name}"), JsBlock(), "Ctor for ${irClass.name}")
             func.name = className
             classBlock.statements += func.makeStmt()
-            classBlock.statements += generateInheritanceCode()
+            classModel.preDeclarationBlock.statements += generateInheritanceCode()
         }
     }
 

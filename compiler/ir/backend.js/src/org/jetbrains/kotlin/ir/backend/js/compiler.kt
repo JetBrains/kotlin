@@ -33,11 +33,6 @@ fun compile(
     export: FqName? = null,
     dependencies: List<ModuleDescriptor> = listOf()
 ): Result {
-    // Make compilation stable
-    // Shadow original list to prevent accidental usage
-    @Suppress("NAME_SHADOWING")
-    val files = files.sortedBy { it.virtualFilePath }
-
     val analysisResult =
         TopDownAnalyzerFacadeForJS.analyzeFiles(files, project, configuration, dependencies.filterIsInstance(), emptyList())
 

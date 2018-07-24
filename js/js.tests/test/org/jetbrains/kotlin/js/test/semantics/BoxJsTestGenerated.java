@@ -3616,6 +3616,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/inheritance/overrideAnyMethods.kt");
         }
 
+        @TestMetadata("prototypeOrder.kt")
+        public void testPrototypeOrder() throws Exception {
+            runTest("js/js.translator/testData/box/inheritance/prototypeOrder.kt");
+        }
+
         @TestMetadata("valOverride.kt")
         public void testValOverride() throws Exception {
             runTest("js/js.translator/testData/box/inheritance/valOverride.kt");
