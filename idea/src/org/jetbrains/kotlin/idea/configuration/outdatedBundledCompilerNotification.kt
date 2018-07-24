@@ -195,5 +195,5 @@ private fun createKotlinVersion(versionStr: String): KotlinVersion? {
 }
 
 private const val NUMBER_OF_MODULES_TO_SHOW = 2
-private const val SUPPRESSED_OUTDATED_COMPILER_PROPERTY_NAME = "oudtdated.bundled.kotlin.compiler"
+private const val SUPPRESSED_OUTDATED_COMPILER_PROPERTY_NAME = "outdated.bundled.kotlin.compiler"
 private const val OUTDATED_BUNDLED_COMPILER_GROUP_DISPLAY_ID = "Outdated Bundled Kotlin Compiler"
